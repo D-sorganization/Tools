@@ -3,6 +3,76 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 381,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "2b83d9104eb7798e60ba304b1e971a9ca4b230fbef138bc268591f1facee3676",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-PYTHON-PRESSURE-DROP-CALCULATOR-INIT-PY-8322CAAA3521",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/pressure_drop_calculator/python/pressure_drop_calculator/__init__.py",
+      "purpose": "Pressure Drop Calculator Python Package.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "PressureDropCalculationEngine",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PressureDropInputs",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PressureDropResults",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "calculate_pressure_drop",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 20,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
@@ -13130,6 +13200,7 @@
           "tests/rate_of_closure/test_ball_setup.py",
           "tests/rate_of_closure/test_ball_setup_parity.py",
           "tests/rate_of_closure/test_club_view_camera.py",
+          "tests/rate_of_closure/test_complete_trial_standalone_wheel.py",
           "tests/rate_of_closure/test_contracts.py",
           "tests/rate_of_closure/test_derivation.py",
           "tests/rate_of_closure/test_derivation_models.py",
@@ -15340,76 +15411,6 @@
         "unit_mentions": [
           "N",
           "g"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 5177,
-      "classification": "calculation",
-      "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "c7ed88c364576fe4a8ce1e63925356c47ce32fea0ec9f9b339a8981ac4e577da",
-      "family": "rate-of-closure-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-KINETICS-SERIES-PY-E94A627991E9",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/simulation/_kinetics_series.py",
-      "purpose": "Immutable output contract for double-pendulum swing kinetics.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "KineticsSeries",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CLUBHEAD_MASS_KG",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KINETIC_JOINT_NAMES",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/test_kinetics.py"
-        ],
-        "unit_mentions": [
-          "N",
-          "kg",
-          "s"
         ],
         "validation_paths": []
       }

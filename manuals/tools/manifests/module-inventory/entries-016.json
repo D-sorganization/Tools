@@ -3,6 +3,85 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 16375,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0a22504899b1b3c08442b123f4f7ecee246f0867deb5071f8434ba272a447e2c",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-MORRIS-DESIGN-PY-011DF4ADE0EC",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/morris_design.py",
+      "purpose": "Validated deterministic design and observation contracts for Morris screening.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MorrisDesign",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MorrisFactor",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MorrisObservations",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MorrisOutput",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CONSTANT_TOLERANCE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "generate_morris_design",
+            "signature": "factors: tuple[MorrisFactor, ...], trajectories: int, levels: int=4, seed: int=0"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 15804,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -13647,59 +13726,6 @@
         ],
         "test_paths": [
           "src/vessel_drafter/tests/test_cylindrical_bath_layout.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3328,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f71b77f205f0f3601a7d17ad3327a46336b65d84cfd9c658cd6287006f2cf407",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-PROJECTS-ELECTRODE-ADVISOR-DEFAULT-LAYOUT-PY-8810929EBD5A",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/python/vessel_drafter/projects/electrode_advisor_default_layout.py",
-      "purpose": "STEP-ready geometry for the default electrode advisor layout.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "build_default_layout_shape",
-            "signature": "layout: ElectrodeAdvisorLayout=DEFAULT_ELECTRODE_ADVISOR_LAYOUT"
-          }
-        ],
-        "test_paths": [
-          "src/vessel_drafter/tests/test_electrode_advisor_defaults.py"
         ],
         "unit_mentions": [],
         "validation_paths": []

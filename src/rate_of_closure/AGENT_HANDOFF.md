@@ -64,8 +64,9 @@ work or 200 ms cadence limits. Issue #4758/R11.1 is active on
 typed records and bounded schema-v3 durable write/read/resume. Array manifests,
 strict corruption gates, legacy-v2 read-only inspection, explicit units, exact
 serial/chunk/resume fingerprints, and the 3-source by 4-adapter matrix pass.
-Memory/artifact evidence, clean-wheel/package checks, full governance, and
-protected CI remain before R11.1 can become verified.
+The dc1cf1d4f scaling run and clean installed-wheel round-trip pass. Final
+ledger/guide traceability, full governance, PR review, protected CI, and
+remote-main ancestry remain before R11.1 can become verified.
 
 PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
 the initial React/PyQt visibility, accessibility, performance, and baseline

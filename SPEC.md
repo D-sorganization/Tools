@@ -27,10 +27,19 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.29                                    |
+| **Spec Version**        | 1.18.30                                    |
 | **Last Spec Update**    | 2026-08-26                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-26 Complete-Trial Qualification Evidence (#4758 / #4142 R11.1)
+
+Version 1.18.30 publishes the neutral reproducibility guide, executable scaling
+measurement, revision-bound 16/64-trial evidence, and an isolated installed-
+wheel round-trip for the public complete-trial reader. At fixed four-trial
+chunks, traced peak Python allocation grew 1.188 times while retained bytes per
+trial stayed effectively flat. These are software qualification results, not
+human biomechanics evidence.
 
 ### 2026-08-26 Durable Complete-Trial Retention (#4758 / #4142 R11.1)
 
@@ -5395,6 +5404,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-26 | 1.18.30 | docs/test(rate-of-closure, #4758 / #4142 R11.1): publish revision-bound complete-trial scaling evidence and its deterministic generator, document schema-v3 retention and the exhaustive source/adapter boundary in the public reproducibility guide, export the typed public record contract, and prove an exact built wheel can create, persist, install, read, and reconstruct complete records outside the checkout. |
 | 2026-08-26 | 1.18.29 | feat(rate-of-closure, #4758 / #4142 R11.1): add bounded schema-v3 complete-trial persistence with exact array identities, immutable strict-JSON reconstruction, hit/miss/failure nullability, corruption rejection, schema-v2 read-only compatibility, and serial/chunk/resume digest parity. Bind explicit units and publish the exhaustive 3-source by 4-adapter capability matrix with unsupported cells retained rather than fabricated. |
 | 2026-08-26 | 1.18.28 | feat(rate-of-closure, #4758 / #4142 R11.1): add a typed immutable per-trial evidence record that binds sampled inputs and execution/configuration identities to complete swing, event, impact, delivery, post-impact, launch, and flight state. Preserve explicit absence for misses/failures and source-specific manual/double/triple layouts; deliver records to sinks through the existing bounded chunk executor without claiming durable qualification or human validation. |
 | 2026-08-26 | 1.18.27 | test(rate-of-closure, #4759): measure the worst-library-mesh draw's bounded CPU work with a monotonic process clock so parallel hosted-runner scheduling cannot masquerade as a rendering regression. Preserve the 200 ms playback cadence and 0.5 s work ceiling. |

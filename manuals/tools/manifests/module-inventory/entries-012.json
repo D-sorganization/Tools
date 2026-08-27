@@ -3,6 +3,79 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 10955,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1f6c8467792cc39e90efe6c2e593918a91d307c90785b473529768cd58c70e35",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-GEMINI-CLI-ADAPTER-PY-68DBE34F3E89",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/adapters/gemini_cli_adapter.py",
+      "purpose": "Google Gemini CLI adapter.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GeminiCliAdapter",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_GEMINI_CLI_TIMEOUT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_FALLBACK_PATHS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_STATIC_MODELS",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/ai/test_gemini_cli_adapter.py",
+          "tests/unit/ai/adapters/test_gemini_cli_adapter.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 18529,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -14805,89 +14878,6 @@
           "s"
         ],
         "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 612,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6a2d60b598da6af64b256cfd6d27b091d56120b562926ca89e7e60cb19c5877e",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-COMPATIBILITY-PY-9E911063217F",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/compatibility.py",
-      "purpose": "Shared Python-version compatibility helpers for shared modules.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [
-          "src/movement_optimizer/tests/test_scipy_dependency_contract.py",
-          "src/p1am_control_system/backend/tests/test_safety_state_machine.py",
-          "src/p1am_control_system/backend/tests/test_strenum_compat.py",
-          "src/python/src/utils/test_utils.py",
-          "src/shared/python/ai/tests/test_adapter_factory.py",
-          "src/shared/python/sidekick/tests/test_json_io_boundary_3333.py",
-          "src/shared/python/sidekick/tests/test_unit_converter_widget.py",
-          "src/shared/python/swing_sim/ground/tests/test_contract.py",
-          "src/shared/python/swing_sim/ground/tests/test_ground_result_composer.py",
-          "tests/architecture/test_compatibility_imports_3316.py",
-          "tests/architecture/test_shared_import_aliases_3316.py",
-          "tests/data_processor_io/test_rust_engine_contract.py",
-          "tests/python/utils/test_compatibility.py",
-          "tests/rate_of_closure/test_primary_navigation.py",
-          "tests/rate_of_closure/test_python_310_datetime_boundaries.py",
-          "tests/rate_of_closure/test_python_compatibility.py",
-          "tests/rate_of_closure/test_variation_module_importability.py",
-          "tests/rotation_converter/test_rigid_transform.py",
-          "tests/scripts/test_generate_tools_json.py",
-          "tests/shared/python/chat/test_terminal_runtime.py",
-          "tests/shared/python/test_compatibility.py",
-          "tests/test_compatibility.py",
-          "tests/test_cross_repo_import_compatibility.py",
-          "tests/test_waves_2_3_imports.py",
-          "tests/tools/test_mypy_autofix_agent.py",
-          "tests/unit/rust/test_movement_optimizer_maturin_workflow.py",
-          "tests/unit/sidekick/test_python_repl_cancel_namespace_3715.py",
-          "tests/unit/sidekick/test_standalone_canonical_package.py",
-          "tests/unit/sidekick/test_standard_response_import.py",
-          "tests/unit/test_project_metadata_contracts.py",
-          "tests/unit/test_sidekick_import_deprecation.py",
-          "tests/vessel_drafter/test_contracts_unified.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "src/movement_optimizer/tests/test_scipy_dependency_contract.py",
-          "src/shared/python/swing_sim/ground/tests/test_contract.py",
-          "tests/data_processor_io/test_rust_engine_contract.py",
-          "tests/unit/test_project_metadata_contracts.py",
-          "tests/vessel_drafter/test_contracts_unified.py"
-        ]
       }
     }
   ],

@@ -3,6 +3,57 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 2777,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3be487d1ae3bd2ffacb462b852a7f19efa7abb16109af68a4ceb3690f23fcd3c",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VISUAL-STATE-FRAME-PY-4047ABD10B8B",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/ui/pyqt6/visual_state_frame.py",
+      "purpose": "Non-displacing accessible state overlay around a persistent visual widget.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "VisualStateFrame",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 3224,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -736,10 +787,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 4039,
+      "bytes_lf": 4250,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "64f718c9fa04a54dc91e6e3691f1d6efef6aeca9f502aa24364964c33a25dfac",
+      "content_sha256_lf": "3edcfd5fe6dbd1492c62fb836c5dbd3b1f4cbbe449a50ddfc63c86861023c36d",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-VARIATION-INIT-PY-5F9607A6AC35",
       "language": "python",
@@ -786,6 +837,11 @@
           },
           {
             "kind": "re-export",
+            "name": "COMPLETE_TRIAL_SCHEMA",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "CONTACT_OUTPUT_NAMES",
             "signature": null
           },
@@ -807,6 +863,16 @@
           {
             "kind": "re-export",
             "name": "CollectingEnsembleSink",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CompleteTrialRecord",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CompleteTrialRecordSource",
             "signature": null
           },
           {
@@ -2205,6 +2271,7 @@
           }
         ],
         "test_paths": [
+          "tests/rate_of_closure/test_complete_trial_standalone_wheel.py",
           "tests/rate_of_closure/test_variation_complete_trial_record.py",
           "tests/rate_of_closure/test_variation_durable_ensemble_chunks.py"
         ],
@@ -12124,68 +12191,6 @@
         "public_surfaces": [],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 15756,
-      "classification": "calculation",
-      "classification_basis": "path-marker:solver",
-      "content_sha256_lf": "422e2163c410f5ec4d6f853228a36a036a7bb83b836648dd760eb749d9069c91",
-      "family": "rate-of-closure-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-SOLVERPANEL-TSX-3D7801095A5D",
-      "language": "typescript-react",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/components/SolverPanel.tsx",
-      "purpose": null,
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "SolverPanel",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "deg",
-          "g",
-          "m/s",
-          "mm",
-          "rpm",
-          "s"
-        ],
         "validation_paths": []
       }
     }

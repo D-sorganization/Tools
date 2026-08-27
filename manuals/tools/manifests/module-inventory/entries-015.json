@@ -3,6 +3,62 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 4472,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "c57186a5551e9178878b5b659a18142ad5169074c13bb1d8b90583edd80bd651",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-LAZY-MAP-PY-7E79E0DA2DF8",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/shared/python/signal_toolkit/_lazy_map.py",
+      "purpose": "Lazy import dispatch table for ``signal_toolkit``.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "LAZY",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 5671,
       "classification": "calculation",
       "classification_basis": "path-marker:filter",
@@ -18557,85 +18613,6 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 16375,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0a22504899b1b3c08442b123f4f7ecee246f0867deb5071f8434ba272a447e2c",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-MORRIS-DESIGN-PY-011DF4ADE0EC",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/variation/morris_design.py",
-      "purpose": "Validated deterministic design and observation contracts for Morris screening.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "MorrisDesign",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "MorrisFactor",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "MorrisObservations",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "MorrisOutput",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CONSTANT_TOLERANCE",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "generate_morris_design",
-            "signature": "factors: tuple[MorrisFactor, ...], trajectories: int, levels: int=4, seed: int=0"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
         "validation_paths": []
       }
     }

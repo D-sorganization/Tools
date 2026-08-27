@@ -68,8 +68,9 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   `feat/4758-complete-trial-record`: typed full-trial records now survive
   schema-v3 durable write/read/resume with array identities, corruption gates,
   legacy-v2 read-only handling, and source/adapter coverage. Seventy-three core
-  tests plus the new capability/parity cases pass. Memory, artifact-size, clean
-  wheel, package, complete governance, and protected gates remain required.
+  tests plus the new capability/parity cases pass. Revision-bound 16/64-trial
+  scaling and a clean installed-wheel round-trip also pass. Final ledger,
+  complete governance, PR review, protected CI, and remote-main proof remain.
 
 ## Must-Read Architecture Pointers
 

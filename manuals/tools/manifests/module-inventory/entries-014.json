@@ -3,6 +3,75 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 8441,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5e4012fa2ac917e1078d8737f42124f979e1c27d937f17a91b2e8de482a5e396",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-CANONICAL-TOOLS-PY-1FE729CA5DD3",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/agent/canonical_tools.py",
+      "purpose": "Canonical-core tool adapter for Sidekick's agentic action layer.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CanonicalActionPort",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CanonicalOperationResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CanonicalToolAdapter",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CANONICAL_ACTION_IDS",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 6366,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17833,62 +17902,6 @@
         "test_paths": [
           "tests/shared/python/signal_toolkit/test_signal_loader.py"
         ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 4472,
-      "classification": "calculation",
-      "classification_basis": "path-marker:signal",
-      "content_sha256_lf": "c57186a5551e9178878b5b659a18142ad5169074c13bb1d8b90583edd80bd651",
-      "family": "signal-processing-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-LAZY-MAP-PY-7E79E0DA2DF8",
-      "language": "python",
-      "maintainer": "Signal processing maintainers",
-      "path": "src/shared/python/signal_toolkit/_lazy_map.py",
-      "purpose": "Lazy import dispatch table for ``signal_toolkit``.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "LAZY",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []
       }
