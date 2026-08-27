@@ -3,6 +3,366 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 4654,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7fd52dc236bf37fd8d1cba3e5a386cd1b6dcb55924dd8f7e24a732bdb0a7705d",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-PLOTTING-CATALOG-SCALAR-ENTRIES-PY-390D79DFD770",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/plotting/_catalog_scalar_entries.py",
+      "purpose": "Scalar input, impact, launch, and metric catalog rows.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "IMPACT_ROWS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "INPUT_ROWS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LAUNCH_ROWS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "METRIC_ROWS",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "J",
+          "deg",
+          "m/s",
+          "mm",
+          "rpm",
+          "s",
+          "µs"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5436,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4fb4be8b4bef7390df09621161e6802c66446c9bd10bca1a642852c5ce544195",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-PLOTTING-CATALOG-SERIES-ENTRIES-PY-4E3FF11D98FE",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/plotting/_catalog_series_entries.py",
+      "purpose": "Swing, kinetics, and flight series catalog rows.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "FLIGHT_ROWS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "KINETICS_ROWS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SWING_ROWS",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N",
+          "N·m",
+          "W",
+          "deg",
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6072,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "aa1d6dcb82f9ec5cfa09402887b8f040f4edc720077f84b3c4da65bb1891aecc",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-PLOTTING-BUILTINS-PY-4C722BAF1D23",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/plotting/builtins.py",
+      "purpose": "Built-in advanced plots, each a PlotSpec factory (epic #4120 V1).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "BUILTIN_PLOTS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "builtin_spec",
+            "signature": "name: str, run: SimulationRun | None=None"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N",
+          "N·m",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2077,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "df8c73cf5a4939db299036665622ab08e24fd097850a8849ccfe0679482c3333",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-PLOTTING-CATALOG-PY-01D6BE87862D",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/plotting/catalog.py",
+      "purpose": "Stable public catalog for every plottable simulation variable.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "CATALOG",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "catalog_keys",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "extract",
+            "signature": "run: SimulationRun, key: str"
+          },
+          {
+            "kind": "function",
+            "name": "variables_by_category",
+            "signature": "category: str"
+          },
+          {
+            "kind": "re-export",
+            "name": "CATEGORIES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DISTANCE_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "VariableSpec",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_plotting.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2850,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1b87ce82cf547fe7c39b0c08c73644ad4d6bc3644787b3f3fba640cad82f938e",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-PLOTTING-CATALOG-CONTRACT-PY-ED20F2ACD95A",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/plotting/catalog_contract.py",
+      "purpose": "Immutable metadata contract shared by plotting catalog consumers.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "VariableSpec",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CATEGORIES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DISTANCE_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCALE_HINTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SERIES_CATEGORIES",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_plotting.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 1925,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -12594,345 +12954,6 @@
           "tests/rate_of_closure/test_confidence_ellipsoid_mesh.py"
         ],
         "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5424,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c46caebaf5cbfe0a334b529a32c94cfbcce315448ff2b50039c84bf6902b1d1d",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VARIATION-LOCUS-EDITOR-PY-76A2F54F13A2",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/variation_locus_editor.py",
-      "purpose": "Localized torque locus editor and precision-preserving merge authority.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "LocalizedLocusEditor",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1263,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "5ceea5fc07ee37e411638b2bcc1b1b9b6772a12e5efe47b8d2197884e7df3368",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VARIATION-PLOT-CANVAS-PY-2B6D3006892B",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/variation_plot_canvas.py",
-      "purpose": "Small lifecycle-safe Matplotlib canvas for variation result views.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "VariationPlotCanvas",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 9847,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b596d48cdd494121d492a1082968d9e6df26340f53aeb90fbcb83d5d2d8b5f35",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VARIATION-PLOT-EXPORTS-PY-664AB84227D5",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/variation_plot_exports.py",
-      "purpose": "Testable PNG, SVG, and plot-definition exports for variation figures.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "VariationPlotExportControls",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "arc_plot_definition",
-            "signature": "dataset: EnsemblePlotDataset | None, point_id: str, criteria: LowVariabilityMetricCriteria, selected_trial_index: int | None, camera_yaw_deg: float, camera_pitch_deg: float, outcome_filter: str | None, phase_end_fraction: float, perturbation_source_key: str | None, perturbation_band: str | None, show_confidence_ellipsoids: bool"
-          },
-          {
-            "kind": "function",
-            "name": "distribution_matrix_csv",
-            "signature": "variation: VariationDataset | None, variable_keys: tuple[str, ...], outcomes: tuple[str, ...] | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "distribution_matrix_plot_definition",
-            "signature": "dataset: EnsemblePlotDataset | None, variation: VariationDataset | None, variable_keys: tuple[str, ...]"
-          },
-          {
-            "kind": "function",
-            "name": "geometric_variability_plot_definition",
-            "signature": "dataset: EnsemblePlotDataset | None, point_id: str, criteria: LowVariabilityMetricCriteria, outcome_filter: str | None, phase_end_fraction: float, perturbation_source_key: str | None, perturbation_band: str | None"
-          },
-          {
-            "kind": "function",
-            "name": "scatter_plot_definition",
-            "signature": "dataset: EnsemblePlotDataset | None, variation: VariationDataset | None, x_variable_key: str, y_variable_key: str, selected_trial_index: int | None"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "bar"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4527,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "23a6871570032c4cf7d594ea6f4ab78fc63953a3f5af9c04c9a9168910862efe",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VARIATION-PLOT-HELPERS-PY-A0237C3F7803",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/variation_plot_helpers.py",
-      "purpose": "Presentation helpers shared by PyQt variation visualization widgets.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "availability_text",
-            "signature": "summaries: Iterable[CohortAvailability]"
-          },
-          {
-            "kind": "function",
-            "name": "axis_label",
-            "signature": "variable: ScalarPlotVariable"
-          },
-          {
-            "kind": "function",
-            "name": "cohort_label",
-            "signature": "cohort: TrialEvaluationStatus"
-          },
-          {
-            "kind": "function",
-            "name": "dataset_values",
-            "signature": "dataset: VariationDataset, variable: ScalarPlotVariable"
-          },
-          {
-            "kind": "function",
-            "name": "draw_scalar_study_scatter",
-            "signature": "canvas: Any, dataset: VariationDataset, x_variable: ScalarPlotVariable, y_variable: ScalarPlotVariable"
-          },
-          {
-            "kind": "function",
-            "name": "equal_3d_axes",
-            "signature": "axes: Any, overlay: ArcOverlayData, extra_points_m: np.ndarray | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "point_label",
-            "signature": "point_id: str"
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/test_confidence_ellipsoid_mesh.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 9658,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8e2e0887696ddaf6c48b79e494c18b4cf56a720ff4f3a0037bfe66befd775e8c",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VARIATION-RESULTS-PY-B58CA206AC9C",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/variation_results.py",
-      "purpose": "Results widgets for the Variation tab (#4120 V3).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "LandingCanvas",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SensitivityTable",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SummaryTable",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "short_label",
-            "signature": "registry_key: str"
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/test_variation_visualization_widgets.py"
-        ],
-        "unit_mentions": [
-          "N",
           "s"
         ],
         "validation_paths": []

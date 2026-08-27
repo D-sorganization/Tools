@@ -16,6 +16,7 @@ from dataclasses import dataclass, field
 import numpy as np
 import numpy.typing as npt
 
+from double_pendulum_golf.swing_objectives.actuation import SwingActuation
 from double_pendulum_golf.physics import (
     JointLimits,
     PendulumParams,
@@ -75,6 +76,17 @@ class DownswingConfig:
         tolerance: Solver convergence tolerance. Must stay tight; at SciPy's
             default the solver stops as soon as it finds a feasible trajectory
             and returns the initial guess unchanged.
+        min_hand_speed_ms: Optional floor on hand speed at impact, in m/s. Real
+            golfers arrive with 6-9 m/s (Nesbit 2005); the unconstrained optimum
+            arrives near zero. Raising this floor is how epic #4775 measures the
+            model's structural coupling between releasing the club and stopping
+            the hands.
+        actuation: Optional Hill-type actuation limits. When supplied, torque
+            capacity falls with joint speed and braking is restricted to the
+            weaker antagonist budget, replacing the flat symmetric clamp as the
+            binding limit. ``torque_clamp`` still supplies the box bounds the
+            NLP is scaled against. See epic #4775: without this the
+            speed-optimal downswing brakes the arms to a standstill at impact.
     """
 
     params: PendulumParams
@@ -92,6 +104,8 @@ class DownswingConfig:
     collocation_method: str = "hermite_simpson"
     max_iterations: int = 400
     tolerance: float = 1e-9
+    min_hand_speed_ms: float | None = None
+    actuation: SwingActuation | None = None
     _validated: bool = field(default=False, repr=False, compare=False)
 
     def __post_init__(self) -> None:
