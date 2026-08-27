@@ -224,6 +224,7 @@ def putter_head_from_mesh(
     report = mesh_inertia(
         triangles, density_kg_m3=density_kg_m3, mass_kg=target_mass_kg
     )
+    tensor = report.inertia_at_cog_kg_m2
     return PutterHeadDocument(
         name=name,
         head_mass_kg=report.mass_kg,
@@ -236,7 +237,7 @@ def putter_head_from_mesh(
             target_mass_kg=target_mass_kg,
         ),
         cg_m=report.centroid_m,
-        inertia_at_cg_kg_m2=report.inertia_at_cog_kg_m2,
+        inertia_at_cg_kg_m2=(tensor[0], tensor[1], tensor[2]),
     )
 
 
@@ -476,7 +477,9 @@ def putter_head_from_json(text: str) -> PutterHeadDocument:
     provenance_data = require_mapping(data.get("provenance"), "provenance")
     reject_unknown_fields(provenance_data, _PROVENANCE_FIELDS, "provenance")
     provenance = PutterHeadProvenance(
-        source_kind=provenance_data.get("source_kind"),
+        source_kind=require_identifier(
+            provenance_data.get("source_kind"), "source_kind"
+        ),
         mesh_sha256=provenance_data.get("mesh_sha256"),
         density_kg_m3=_optional_number(provenance_data, "density_kg_m3"),
         target_mass_kg=_optional_number(provenance_data, "target_mass_kg"),
@@ -484,7 +487,7 @@ def putter_head_from_json(text: str) -> PutterHeadDocument:
     )
     cg_m, tensor = data.get("cg_m"), data.get("inertia_at_cg_kg_m2")
     return PutterHeadDocument(
-        name=data.get("name"),
+        name=require_identifier(data.get("name"), "name"),
         head_mass_kg=require_finite_float(data.get("head_mass_kg"), "head_mass_kg"),
         loft_deg=require_finite_float(data.get("loft_deg"), "loft_deg"),
         cor=require_finite_float(data.get("cor"), "cor"),
