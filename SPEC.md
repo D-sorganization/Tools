@@ -27,10 +27,18 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.54                                    |
+| **Spec Version**        | 1.18.55                                    |
 | **Last Spec Update**    | 2026-08-27                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-27 PyO3 0.29 Embedded-Test Initialization Compatibility
+
+Version 1.18.55 migrates the SCADA Rust unit test from the removed
+`pyo3::prepare_freethreaded_python` function to `Python::initialize`, the PyO3
+0.29 API with the same embedded-interpreter purpose. This repairs the optional
+workspace Rust gate exposed during #4783 qualification without changing SCADA
+runtime behavior or the paired-attribution scientific contract.
 
 ### 2026-08-27 Paired Localized Source-To-Downstream Attribution (#4783 / #4142 R13.3)
 
@@ -5502,6 +5510,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-27 | 1.18.55 | fix(tools-core): migrate the SCADA embedded-Python unit test to `Python::initialize` for PyO3 0.29 compatibility, repairing the workspace Rust test gate without changing runtime or scientific semantics. |
 | 2026-08-27 | 1.18.54 | feat/test/docs(variation, #4783 / #4142 R13.3): add immutable paired localized source-to-downstream attribution across exact state, impact, and shot scalars; bind source and execution identity; retain typed unavailable outcomes; reject confounded source designs; provide bounded deterministic replay and reviewer exports; and qualify the exhaustive capability and target matrix without making human causal or coaching claims. |
 | 2026-08-27 | 1.18.53 | fix/test(variation, #4765 / #4142 R12.3): make the three-axis response-field invariant and NumPy-to-scalar contract boundary explicit, preserve the protected-base provenance digest with a reviewed secret-scan allowlist, and leave estimator, schema, and scientific interpretation unchanged. |
 | 2026-08-27 | 1.18.52 | docs(pendulum-simulator, epic #4775): publish `SWING_ACTUATION_AND_REALISM` with hyperlinked literature. Records the impact-optimality theorem, the measured reference bands and their sources, the model-variant study, the feasibility frontier, and the ranked next steps. Every DOI was resolved before publication; the Jorgensen 1970 DOI was corrected from 10.1119/1.1976433 (which resolves to a different AJP article) to 10.1119/1.1976419. |

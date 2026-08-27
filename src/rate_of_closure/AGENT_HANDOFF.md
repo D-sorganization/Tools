@@ -63,6 +63,8 @@ unavailabilities and enumerates all 17 Rate target metrics. The 380-test serial
 variation, adapter, localized-torque, and epic-ledger suite passes. The ledger is 28 verified /
 3 partial. This is paired model-scenario response, not a global main effect,
 causal anatomy, governed human validation, or coaching authority.
+The same PR repairs the optional Rust gate's PyO3 0.29 test initializer with
+`Python::initialize`; no SCADA runtime or attribution semantics change.
 
 PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
 the initial React/PyQt visibility, accessibility, performance, and baseline

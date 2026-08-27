@@ -735,7 +735,7 @@ mod tests {
         let mut engine = AlarmEngine::new(limits).unwrap();
 
         // Initial normal value
-        pyo3::prepare_freethreaded_python();
+        Python::initialize();
         Python::attach(|py| {
             let events = engine.update_tag(py, "T1".to_string(), 50.0).unwrap();
             assert!(events.is_empty());
