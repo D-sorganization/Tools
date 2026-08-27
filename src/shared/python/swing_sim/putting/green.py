@@ -6,7 +6,12 @@ The surface geometry lives in :mod:`.surface`: a parametric plane
 (:class:`~.surface.PlanarGreenSurface` — grade + aspect, the model
 this module carried since #4125 H3) or a grid heightfield
 (:class:`~.surface.GridGreenSurface`). Frame: x = initial putt line,
-y = left of the putt line. Small-slope (grades are a few percent), so
+y = left of the putt line. The putt line is the **target line** (the
+hole sits at ``(hole_distance_m, 0)``); a stroke that starts off it
+launches at P1's ``start_azimuth_deg`` (``+`` = right, so ``vy < 0``),
+which is what the #4800 P5 dispersion layer perturbs. The square,
+straight-aimed limit ``start_azimuth_deg = 0`` is bit-identical to the
+pre-P5 initial condition. Small-slope (grades are a few percent), so
 the in-plane gravity component at ``(x, y)`` is ``-g * grad h``; for
 the uniform plane that reduces to the historic::
 
@@ -229,6 +234,33 @@ def _rk4_step(
     )
 
 
+def _start_velocity(launch: PuttLaunch) -> tuple[float, float]:
+    """Ground-velocity components for a launch's start azimuth.
+
+    The integration frame's ``x`` axis is the **target line** (the hole
+    sits at ``(hole_distance_m, 0)``), so P1's ``start_azimuth_deg``
+    — the start direction off that line, ``+`` = right — rotates the
+    launch off it: ``vy = -v sin(psi)`` because ``y`` is *left* while
+    the azimuth is positive to the *right*. A square, straight-aimed
+    stroke (``psi = 0``) short-circuits to the historic
+    ``(v, 0.0)`` so every pre-#4800 P5 trajectory stays bit-identical
+    (no ``-0.0`` from ``-v sin 0``).
+    """
+    require_finite(launch.start_azimuth_deg, "start_azimuth_deg")
+    require(
+        abs(launch.start_azimuth_deg) <= 90.0,
+        "start azimuth must be within +/-90 deg of the target line",
+        launch.start_azimuth_deg,
+    )
+    if launch.start_azimuth_deg == 0.0:
+        return (launch.horizontal_speed_mps, 0.0)
+    azimuth = math.radians(launch.start_azimuth_deg)
+    return (
+        launch.horizontal_speed_mps * math.cos(azimuth),
+        -launch.horizontal_speed_mps * math.sin(azimuth),
+    )
+
+
 def _integrate(
     launch: PuttLaunch,
     gravity_at: _GravityField,
@@ -239,14 +271,15 @@ def _integrate(
 ) -> PuttResult:
     """Core RK4 loop shared by the planar and surface entry points."""
     v_capture = capture_speed_mps()
+    start_vx, start_vy = _start_velocity(launch)
     state = (
         0.0,
         0.0,
-        launch.horizontal_speed_mps,
-        0.0,
+        start_vx,
+        start_vy,
         launch.spin_rad_s * GOLF_BALL_RADIUS_M,
     )
-    sliding = state[4] < state[2]
+    sliding = state[4] < launch.horizontal_speed_mps
     xs = [0.0]
     ys = [0.0]
     speeds = [launch.horizontal_speed_mps]
@@ -322,13 +355,13 @@ def _capture_predicate(capture_model: CaptureModel) -> _CaptureFn:
         v_capture = capture_speed_mps()
 
         def threshold(_to_hole: float, speed: float) -> bool:
-            return speed <= v_capture
+            return bool(speed <= v_capture)
 
         return threshold
     if capture_model == "effective_radius":
 
         def effective(to_hole: float, speed: float) -> bool:
-            return to_hole <= effective_hole_radius_m(speed)
+            return bool(to_hole <= effective_hole_radius_m(speed))
 
         return effective
     raise ValueError(f"unknown capture model: {capture_model!r}")
@@ -360,8 +393,10 @@ def simulate_putt_on_surface(
 ) -> PuttResult:
     """Integrate one putt on a green surface (planar or heightfield).
 
-    The ball starts at the origin aimed along +x with the hole at
-    ``(hole_distance_m, 0)``. In-plane gravity comes from the local
+    The ball starts at the origin with the hole at
+    ``(hole_distance_m, 0)``, launched along the target line unless
+    ``launch.start_azimuth_deg`` puts it off (``+`` = right; see
+    :func:`_start_velocity`). In-plane gravity comes from the local
     surface gradient at every RK4 stage; rolling resistance comes from
     the stimp reading via :func:`~.roll.stimp_to_rolling_mu`. Vertical
     launch motion is folded into the ground speed (documented
