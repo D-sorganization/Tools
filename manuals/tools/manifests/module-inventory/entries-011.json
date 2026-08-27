@@ -2575,10 +2575,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 7852,
+      "bytes_lf": 10941,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c1fcd33ef0d5872fdabc691aa1e88fd140c96d7a969640a5e93b49d34262100f",
+      "content_sha256_lf": "d8e641950206fa7c7f4a1c0a5560a3312e8e623d98566080ebe7fe8c06eedbbc",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONEXECUTIONSERVICE-TEST-TS-2BACC2CD08C9",
       "language": "typescript",
@@ -2612,6 +2612,7 @@
         "public_surfaces": [],
         "test_paths": [],
         "unit_mentions": [
+          "m/s",
           "s"
         ],
         "validation_paths": []
@@ -2619,10 +2620,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8506,
+      "bytes_lf": 9025,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a7169ba890098446cafe1d81626a6e7ad2c35f21af5644fe789c95521bfe0e05",
+      "content_sha256_lf": "0c98349c49f161b208e6a7b4b1ebf6ab4099407c135727eeaa923be2a6df23fc",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONEXECUTIONSERVICE-TS-C9EE95FD12AA",
       "language": "typescript",
@@ -2711,6 +2712,11 @@
             "kind": "export",
             "name": "plannedVariationRuns",
             "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "prepareVariationExecutionRequest",
+            "signature": null
           }
         ],
         "test_paths": [],
@@ -2720,10 +2726,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9295,
+      "bytes_lf": 9968,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "df4d8410d91e4987af9846eed78074d2cb301954bef594a764e2b0353648fcd7",
+      "content_sha256_lf": "93a5358c9e2cc076ebddb0dfb77026a1bdf963a4efdd77080161cabe534bfa34",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONEXECUTIONVALIDATION-TS-AD017BB5F1D1",
       "language": "typescript",
@@ -4064,10 +4070,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 15857,
+      "bytes_lf": 15892,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "dc8c95c35d122d1cab2075baf6d3dd24bb385f4dc10fdae9aef42af2ba409868",
+      "content_sha256_lf": "99b603c578bcdb8351e080990b30c3306d386adc710f73e1269d61966daaceec",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONSWINGENSEMBLE-TEST-TS-425B58BA2E5D",
       "language": "typescript",
