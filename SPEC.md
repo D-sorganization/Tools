@@ -27,10 +27,23 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.35                                    |
+| **Spec Version**        | 1.18.36                                    |
 | **Last Spec Update**    | 2026-08-26                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-26 RustSec Dependency Remediation (#4764)
+
+Version 1.18.36 raises the workspace compiler floor to Rust 1.83 and migrates
+the Python binding stack from PyO3/NumPy 0.24 to 0.29. It also advances the
+AI backend from Reqwest 0.11 to 0.12, resolving to `h2` 0.4. These floors
+exclude RUSTSEC-2026-0176, RUSTSEC-2026-0177, and RUSTSEC-2026-0258 after the
+credential-isolated audit exposed real advisories. The migration preserves the
+extension APIs using PyO3 0.29's explicit `Py<PyAny>`, attachment, detachment,
+and object-conversion contracts. Workspace formatting, warning-denied Clippy,
+351 passing Rust tests plus one explicitly ignored benchmark, the RustSec audit,
+and an isolated built-wheel `tools_core.Vector3` import all pass. The existing allowed unmaintained-
+crate warnings remain warnings rather than vulnerabilities.
 
 ### 2026-08-26 Complete UpstreamDrift Contract Checkout (#4764)
 
@@ -5454,6 +5467,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-26 | 1.18.36 | fix/test(rust, #4764): remediate the newly exposed PyO3 and h2 RustSec advisories by migrating the workspace to PyO3/NumPy 0.29, Reqwest 0.12, and Rust 1.83; preserve Python binding behavior through the official attachment, detachment, object, and conversion APIs; add dependency-floor regressions and verify formatting, warning-denied Clippy, 351 passing Rust tests plus one explicitly ignored benchmark, RustSec audit, and an isolated wheel import. |
 | 2026-08-26 | 1.18.35 | fix/test(ci, #4764): isolate the public RustSec fetch from runner-global and system Git credential rewrites as well as checkout-local credentials; prohibit interactive prompting and retain fail-closed `cargo audit` semantics. |
 | 2026-08-26 | 1.18.34 | fix(ci, #4764): include UpstreamDrift's `src/bunkershot3d`, double-pendulum engine, and parent package markers in the shallow downstream sparse checkout; isolate public RustSec advisory fetches from repository-scoped checkout credentials. |
 | 2026-08-26 | 1.18.33 | feat/test/docs(rate-of-closure, #4763 / #4142 R11.3): add the versioned fail-closed time-grid resampling authority, preserve stable point/frame/trial identities and missing intervals, retain approximate impact-marker error, qualify identity/subset equivalence for all three spatial layouts, and bind the inherited exhaustive adapter matrix and scientific boundary. |

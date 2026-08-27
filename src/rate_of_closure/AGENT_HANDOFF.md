@@ -66,7 +66,7 @@ governance CI. PR #4764 for issue #4763/R11.3 is active on
 rejects extrapolation and gap bridging, preserves stable point/frame/trial
 identity and typed unavailability, and retains approximate impact-marker error.
 Identity/subset equivalence passes for all three spatial layouts; the inherited
-adapter matrix remains two verified / ten explicitly unavailable. The exact CI repair retains UpstreamDrift's BunkerShot/pendulum package paths and isolates the public RustSec fetch from checkout and runner-global Git credentials. The ledger is 26 verified / 5 partial. Protected CI and remote-main proof remain.
+adapter matrix remains two verified / ten explicitly unavailable. The exact CI repair retains UpstreamDrift's BunkerShot/pendulum package paths, isolates the public RustSec fetch, and remediates the exposed PyO3/h2 advisories with PyO3/NumPy 0.29, Reqwest 0.12, and Rust 1.83. Formatting, warning-denied Clippy, 351 passing Rust tests plus one explicitly ignored benchmark, audit, and isolated wheel import pass. The ledger is 26 verified / 5 partial. Protected CI and remote-main proof remain.
 
 PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
 the initial React/PyQt visibility, accessibility, performance, and baseline

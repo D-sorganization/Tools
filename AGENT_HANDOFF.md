@@ -70,7 +70,7 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   time-grid authority rejects extrapolation and gap bridging, preserves
   frame/point/trial identities and typed unavailability, reports approximate
   impact-marker alignment error, and qualifies all three spatial layouts plus
-  the inherited fail-closed 3-source by 4-adapter matrix. Focused local gates pass; the exact CI repair retains UpstreamDrift's BunkerShot/pendulum package paths and runs the public RustSec fetch without checkout or runner-global Git credentials. Protected CI and remote-main evidence remain.
+  the inherited fail-closed 3-source by 4-adapter matrix. Focused local gates pass; the exact CI repair retains UpstreamDrift's BunkerShot/pendulum package paths, isolates the public RustSec fetch, and remediates the exposed PyO3/h2 advisories with PyO3/NumPy 0.29, Reqwest 0.12, and Rust 1.83. Formatting, warning-denied Clippy, 351 passing Rust tests plus one explicitly ignored benchmark, audit, and isolated wheel import pass. Protected CI and remote-main evidence remain.
 
 ## Must-Read Architecture Pointers
 

@@ -203,7 +203,7 @@
   },
   "shards": [
     {
-      "content_sha256_lf": "11f1bed47708885bcca86d6332bfceb95f6a62086473f906945ce7e45589b4be",
+      "content_sha256_lf": "c336c85f8ac91a8875593e27fad1ede47edbe383d80b77108ddf68164e59c62d",
       "entry_count": 200,
       "first_path": ".docker/entrypoint.sh",
       "last_path": "scripts/check_minimum_test_contract.py",
@@ -347,7 +347,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "0912074f5ac7a5fc9aeee9665fe82bcd60dc1ed8f2a54351b5c812140310e69d",
+  "source_tree_sha256": "41636380954b0a286cb0bbc39a04fa6a5367fb28931f44edab324e065745e354",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
