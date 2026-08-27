@@ -69,8 +69,8 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   OGLaptop's WSL VHDX cannot mount. Do not rerun or merge through that gap.
   #4791/R13.5 is pushed at `e2c1cbd1`; it binds exact point/time/frame target
   identity and all-input or selected-source views in PyQt and React. R14.3
-  issue #4792 is stacked on it and proves plan-through-export parity with a
-  governed interaction matrix. Serial evidence: 97 Python and 107 React tests,
+  issue #4792 is stacked on it at `b5d893c22` and proves plan-through-export
+  parity with a governed matrix. Serial evidence: 97 Python and 107 React tests,
   type/lint, inventory, and manual governance pass. Its branch ledger is 29
   verified / 2 partial; recalculate after each dependency merge.
 

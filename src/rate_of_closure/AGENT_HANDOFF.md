@@ -55,8 +55,8 @@ R12.3 protected-squash-merged via PR #4782 as `a1b00db14`. R13.3 PR #4784
 is held at exact head `100a50e58`: required checks pass, but optional fleet
 gates lack healthy capacity. R13.5 is pushed at `e2c1cbd1`; its
 `morris-target-selection` v1 binds point/time/frame target identity and exact
-all-input or selected-source views. R14.3 issue #4792 is stacked on R13.5. Its
-governed matrix proves PyQt/React parity from authoring through export,
+all-input or selected-source views. R14.3 issue #4792 is stacked on R13.5 at
+implementation commit `b5d893c22`. Its governed matrix proves PyQt/React parity,
 including `all_together`, `individual`, and `both` execution, dataset-free
 individual results, aggregate progress, cancellation, and 1--4096 durable
 chunks. The branch ledger is 29 verified / 2 partial. All remain model-scenario
