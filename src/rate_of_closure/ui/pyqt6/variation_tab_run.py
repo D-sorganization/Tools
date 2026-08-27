@@ -205,7 +205,8 @@ class VariationTabRunMixin:
                 "Internal worker returned unexpected joint-analysis availability."
             )
             return
-        self._on_succeeded(dataset, sensitivity)
+        accepted_dataset = dataset if isinstance(dataset, VariationDataset) else None
+        self._on_succeeded(accepted_dataset, sensitivity)
 
     def _accept_ensemble_succeeded(
         self, generation: int, owner: VariationWorker, result: object
