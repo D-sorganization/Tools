@@ -142,6 +142,14 @@ flight`, breaking the Morris UI import contract. Use the lazy-export map.
 
 ## Known Local-Environment Traps
 
+- **Regenerate the module inventory as the LAST step before EVERY push**, not
+  once per PR. `manuals/tools/manifests/` records a `content_sha256_lf` per
+  tracked source file, so any follow-up commit — even a pure refactor — staled
+  it and fails `test_inventory_is_deterministic_and_fresh` in CI while every
+  other test passes. `PYTHONPATH=. python3 scripts/build_tools_module_inventory.py`
+  then `--check`. On a merge conflict there, `git checkout --theirs` the files
+  and regenerate on the merged tree — never hand-merge a generated artifact
+  (#4818).
 - **Reproduce CI's mypy exactly.** Pass every changed file to one Python 3.12
   invocation with `MYPYPATH=src:src/python/src`; tests are excluded. The flag is
   **`--follow-imports=silent`**, matching `ci-standard.yml`; `=skip` crashes
