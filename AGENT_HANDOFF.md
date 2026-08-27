@@ -28,7 +28,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                           |
 | #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                                    |
 | #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                            |
-| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open at 24 verified / 7 partial. R10.3 is protected-merged; #4758 is the active R11.1 complete-trial retention dependency.                                                  |
+| #4142 | Ensemble variation, quiet zones, sensitivity attribution. PR #4762 carries #4758/R11.1 and advances the branch ledger to 25 verified / 6 partial; protected merge remains pending.                                                    |
 | #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                                |
 | #4433 | Visual-first tab visibility and visualization-led UX. Open. V0.1, strict cross-runtime parity, and V5.2 are merged through PR #4738; the audit is 8 verified / 23 partial obligations with seven gaps and two human actions retained. |
 | #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                        |
@@ -69,8 +69,8 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   schema-v3 durable write/read/resume with array identities, corruption gates,
   legacy-v2 read-only handling, and source/adapter coverage. Seventy-three core
   tests plus the new capability/parity cases pass. Revision-bound 16/64-trial
-  scaling and a clean installed-wheel round-trip also pass. Final ledger,
-  complete governance, PR review, protected CI, and remote-main proof remain.
+  scaling and a clean installed-wheel round-trip also pass. PR #4762 carries
+  the 25/6 ledger. Protected review, CI, merge, and remote-main proof remain.
 
 ## Must-Read Architecture Pointers
 

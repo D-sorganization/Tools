@@ -27,10 +27,17 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.30                                    |
+| **Spec Version**        | 1.18.31                                    |
 | **Last Spec Update**    | 2026-08-26                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-26 R11.1 Requirement-Ledger Qualification (#4758 / PR #4762)
+
+Version 1.18.31 advances R11.1 from partial to verified in the branch ledger,
+with immutable PR evidence and executable links to the typed record, durable
+reader, capability matrix, scaling artifact, and installed-wheel gate. The
+parent epic remains open at 25 verified and 6 partial requirements.
 
 ### 2026-08-26 Complete-Trial Qualification Evidence (#4758 / #4142 R11.1)
 
@@ -5404,6 +5411,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-26 | 1.18.31 | docs/test(rate-of-closure, #4758 / PR #4762 / #4142 R11.1): bind the complete-trial qualification to its protected pull request, advance the fail-closed epic ledger to 25 verified / 6 partial, and require the source/adapter matrix, durable/scaling evidence, installed-wheel proof, and scientific boundary to remain locally traceable. |
 | 2026-08-26 | 1.18.30 | docs/test(rate-of-closure, #4758 / #4142 R11.1): publish revision-bound complete-trial scaling evidence and its deterministic generator, document schema-v3 retention and the exhaustive source/adapter boundary in the public reproducibility guide, export the typed public record contract, and prove an exact built wheel can create, persist, install, read, and reconstruct complete records outside the checkout. |
 | 2026-08-26 | 1.18.29 | feat(rate-of-closure, #4758 / #4142 R11.1): add bounded schema-v3 complete-trial persistence with exact array identities, immutable strict-JSON reconstruction, hit/miss/failure nullability, corruption rejection, schema-v2 read-only compatibility, and serial/chunk/resume digest parity. Bind explicit units and publish the exhaustive 3-source by 4-adapter capability matrix with unsupported cells retained rather than fabricated. |
 | 2026-08-26 | 1.18.28 | feat(rate-of-closure, #4758 / #4142 R11.1): add a typed immutable per-trial evidence record that binds sampled inputs and execution/configuration identities to complete swing, event, impact, delivery, post-impact, launch, and flight state. Preserve explicit absence for misses/failures and source-specific manual/double/triple layouts; deliver records to sinks through the existing bounded chunk executor without claiming durable qualification or human validation. |

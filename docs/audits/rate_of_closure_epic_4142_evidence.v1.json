@@ -6,8 +6,8 @@
   "audit_scope": "Requirement-level implementation and evidence audit. A verified status is repository evidence, not validation of a human golf-swing mechanism.",
   "epic_closeable": false,
   "status_counts": {
-    "verified": 24,
-    "partial": 7,
+    "verified": 25,
+    "partial": 6,
     "unverified": 0,
     "external_blocked": 0
   },
@@ -133,20 +133,24 @@
     {
       "requirement_id": "R11.1",
       "requirement": "Retain sampled inputs, typed outcomes, event and impact state, shot result, and complete pre-impact traces for every trial.",
-      "status": "partial",
-      "rationale": "Core ensemble and Rate adapters retain sampled inputs, status, typed outcome, scalar outputs, and bounded trace tensors, but not every supported adapter binds the full requested event, impact, shot, and pre-impact trace set in one lossless document.",
+      "status": "verified",
+      "rationale": "Issue #4758 and PR #4762 add one immutable complete-trial record and bounded durable schema-v3 authority for every hit, no-impact, and numerical-failure trial. Records bind sampled inputs, plan/execution/configuration/source identities, frame, explicit units, stable point/joint IDs, complete swing kinematics and applied torques, event/contact state, and available impact/delivery/post-impact/launch/flight phases. Array-level shape, dtype, digest, range, strict JSON, corruption, legacy-v2 read-only, serial/chunk/resume parity, 16/64-trial scaling, and isolated installed-wheel gates pass. The exhaustive 3-source by 4-adapter matrix verifies the two qualified double-pendulum adapters and records ten other cells as explicitly unavailable without fabrication. This is model-data retention, not human or coaching validation.",
       "evidence_files": [
-        "src/shared/python/swing_sim/variation/ensemble_types.py",
-        "src/rate_of_closure/variation/simulation_types.py",
-        "tests/rate_of_closure/test_variation_simulation_adapter.py"
+        "src/rate_of_closure/variation/complete_trial_record.py",
+        "src/rate_of_closure/variation/durable_ensemble_chunks.py",
+        "docs/audits/rate_of_closure_r11_1_complete_trial_capabilities.v1.json",
+        "docs/rate_of_closure/complete_trial_retention_scaling.v1.json",
+        "tests/rate_of_closure/test_variation_complete_trial_record.py",
+        "tests/rate_of_closure/test_variation_durable_ensemble_chunks.py",
+        "tests/rate_of_closure/test_complete_trial_standalone_wheel.py"
       ],
       "validation_commands": [
-        "python -m pytest src/shared/python/swing_sim/variation/tests/test_ensemble_geometry.py tests/rate_of_closure/test_variation_simulation_adapter.py -q"
+        "python -m pytest -n 0 -q tests/rate_of_closure/test_variation_complete_trial_record.py tests/rate_of_closure/test_variation_durable_ensemble_chunks.py tests/rate_of_closure/test_variation_complete_trial_scaling_evidence.py tests/rate_of_closure/test_epic_4142_requirement_evidence.py",
+        "python -m pytest -n 0 -q tests/rate_of_closure/test_complete_trial_standalone_wheel.py",
+        "python -m scripts.measure_complete_trial_retention_scaling"
       ],
-      "remote_evidence": [],
-      "gaps": [
-        "A requirement matrix must prove complete event, impact, shot, and pre-impact trace retention for every compatible model adapter, including failure and no-impact paths."
-      ]
+      "remote_evidence": ["https://github.com/D-sorganization/Tools/pull/4762"],
+      "gaps": []
     },
     {
       "requirement_id": "R11.2",

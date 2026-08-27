@@ -118,8 +118,8 @@ def test_r10_4_is_verified_by_revision_bound_current_main_requalification() -> N
     )
 
     assert evidence["status_counts"] == {
-        "verified": 24,
-        "partial": 7,
+        "verified": 25,
+        "partial": 6,
         "unverified": 0,
         "external_blocked": 0,
     }
@@ -177,8 +177,8 @@ def test_r10_3_is_verified_by_exhaustive_cross_runtime_capabilities() -> None:
     )
 
     assert evidence["status_counts"] == {
-        "verified": 24,
-        "partial": 7,
+        "verified": 25,
+        "partial": 6,
         "unverified": 0,
         "external_blocked": 0,
     }
@@ -231,6 +231,8 @@ def test_r10_3_is_verified_by_exhaustive_cross_runtime_capabilities() -> None:
 
 def test_r11_1_capability_matrix_is_exhaustive_and_fail_closed() -> None:
     """Every current source/adapter cell must be verified or unavailable."""
+    requirements = {item["requirement_id"]: item for item in _load()["requirements"]}
+    r11_1 = requirements["R11.1"]
     audit = cast(
         dict[str, Any], json.loads(R11_1_CAPABILITY_AUDIT.read_text(encoding="utf-8"))
     )
@@ -246,6 +248,15 @@ def test_r11_1_capability_matrix_is_exhaustive_and_fail_closed() -> None:
     assert audit["implementation_issue"] == 4758
     assert audit["record_schema"] == "rate-complete-trial/v1"
     assert audit["durable_schema_version"] == 3
+    assert r11_1["status"] == "verified"
+    assert r11_1["gaps"] == []
+    assert (
+        "https://github.com/D-sorganization/Tools/pull/4762" in r11_1["remote_evidence"]
+    )
+    assert (
+        str(R11_1_CAPABILITY_AUDIT.relative_to(ROOT)).replace("\\", "/")
+        in r11_1["evidence_files"]
+    )
     assert len(cells) == len(sources) * len(adapters) == 12
     assert {(cell["source_kind"], cell["adapter_id"]) for cell in cells} == {
         (source, adapter) for source in sources for adapter in adapters
