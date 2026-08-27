@@ -6762,6 +6762,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 - **2026-07-14**: fix(security) — Added structural validation to the symbolic solver backend endpoints (`/solve`, `/derivative`, `/simplify`) before handing untrusted user input to `sympy.parse_expr`. This mitigates a critical code injection vulnerability where malicious AST constructs (e.g. `().__class__`) could be executed due to `parse_expr`'s internal use of `eval`.
 
 ### Version 1.1.250
+- **Performance**: Replaced chained array methods (`.map().join()`) with single-pass `for` loops in `downloadCsv` and `swingTracesToCsv` within the rate of closure web model to eliminate intermediate string allocations and reduce garbage collection pressure when exporting complete swing ensembles.
 
 - **Performance**: Replaced chained array methods (`.map().join()`) with single-pass `for` loops in the P1AM Control System frontend (`TrendFitOverlay` and `timeSeriesPath`) to eliminate high-frequency intermediate string allocations and reduce garbage collection pressure when drawing SVG trends.
 - 2024-07-23: fix(ux, #3919) - Improve accessibility of standard buttons in data processor web app by adding `focus-visible` styling (focus rings) to the global `.btn` class.
