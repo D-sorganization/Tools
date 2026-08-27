@@ -50,6 +50,13 @@ export interface PuttLaunch {
   /** Topspin positive; a struck putt starts negative (backspin). */
   spinRadS: number;
   effectiveLoftDeg: number;
+  /**
+   * Start direction [deg] off the target line, + = right. Always set
+   * by `strike` (#4800 P1); optional for pre-#4800 1-D literals.
+   */
+  startAzimuthDeg?: number;
+  /** Spin about the up axis [rad/s]; + = draw-side (ball turns left). */
+  sidespinRadS?: number;
 }
 
 export interface GreenConditions {
@@ -174,7 +181,12 @@ export function gridSurface(
       }
     }
   }
-  return { kind: "grid", originM: [originM[0], originM[1]], spacingM, heightsM };
+  return {
+    kind: "grid",
+    originM: [originM[0], originM[1]],
+    spacingM,
+    heightsM,
+  };
 }
 
 function gridCell(
@@ -193,7 +205,11 @@ function gridCell(
   return [i, j, u - i, v - j];
 }
 
-function gridInside(surface: GridGreenSurface, xM: number, yM: number): boolean {
+function gridInside(
+  surface: GridGreenSurface,
+  xM: number,
+  yM: number,
+): boolean {
   const nx = surface.heightsM[0].length;
   const ny = surface.heightsM.length;
   return (
@@ -247,8 +263,10 @@ function gravityField(
     const h10 = surface.heightsM[j][i + 1];
     const h01 = surface.heightsM[j + 1][i];
     const h11 = surface.heightsM[j + 1][i + 1];
-    const dhdx = ((h10 - h00) * (1.0 - ty) + (h11 - h01) * ty) / surface.spacingM;
-    const dhdy = ((h01 - h00) * (1.0 - tx) + (h11 - h10) * tx) / surface.spacingM;
+    const dhdx =
+      ((h10 - h00) * (1.0 - ty) + (h11 - h01) * ty) / surface.spacingM;
+    const dhdy =
+      ((h01 - h00) * (1.0 - tx) + (h11 - h10) * tx) / surface.spacingM;
     return [-GRAVITY_M_S2 * dhdx, -GRAVITY_M_S2 * dhdy];
   };
 }
@@ -445,7 +463,8 @@ export function simulatePutt(
   green: GreenConditions,
   holeDistanceM: number,
 ): PuttResult {
-  const muSlide = green.muSlide === undefined ? DEFAULT_SLIDING_MU : green.muSlide;
+  const muSlide =
+    green.muSlide === undefined ? DEFAULT_SLIDING_MU : green.muSlide;
   if (
     !Number.isFinite(green.gradePercent) ||
     !(green.gradePercent >= 0 && green.gradePercent <= 10)
