@@ -24,11 +24,17 @@ from rate_of_closure.application.morris._response_types import MorrisResponseJob
 from rate_of_closure.application.morris.presentation import (
     present_morris_factor_rows,
     present_morris_job,
-    present_morris_report,
 )
 from rate_of_closure.application.morris.request_document import (
     build_morris_request,
     suggested_factor_drafts,
+)
+from rate_of_closure.application.morris.selector import (
+    MorrisReportSelection,
+    MorrisTargetIdentity,
+    list_morris_source_options,
+    list_morris_target_options,
+    select_morris_report,
 )
 from rate_of_closure.application.morris.workspace import MorrisWorkspaceFactorDraft
 from rate_of_closure.club import get_club
@@ -182,8 +188,16 @@ class MorrisScreeningTab(MorrisWorkspaceMixin, QWidget):
             "Rank effects only within one output target; rankings are not mixed "
             "across units."
         )
-        self._target_combo.currentIndexChanged.connect(self._render_selected_target)
+        self._target_combo.currentIndexChanged.connect(self._target_changed)
         form.addRow("Target", self._target_combo)
+        self._source_combo = QComboBox()
+        self._source_combo.setAccessibleName("Morris result source")
+        self._source_combo.setToolTip(
+            "Show the global factor ranking or inspect one selected input while "
+            "retaining its global rank."
+        )
+        self._source_combo.currentIndexChanged.connect(self._render_selected_target)
+        form.addRow("Input", self._source_combo)
         self._target_detail = QLabel("Run a study to choose a target.")
         self._target_detail.setWordWrap(True)
         form.addRow("Convention", self._target_detail)
@@ -430,6 +444,7 @@ class MorrisScreeningTab(MorrisWorkspaceMixin, QWidget):
     def _clear_results(self) -> None:
         self._last_job = None
         self._target_combo.clear()
+        self._source_combo.clear()
         self._results.setRowCount(0)
         self._progress.setRange(0, 1)
         self._progress.setValue(0)
@@ -441,24 +456,49 @@ class MorrisScreeningTab(MorrisWorkspaceMixin, QWidget):
 
     def _populate_targets(self, job: MorrisResponseJob) -> None:
         assert job.report is not None
-        names = tuple(dict.fromkeys(item.target.name for item in job.report.estimates))
+        options = list_morris_target_options(job.report)
         self._target_combo.blockSignals(True)
         self._target_combo.clear()
-        for name in names:
-            presentation = present_morris_report(job.report, name)
-            self._target_combo.addItem(presentation.target.label, name)
+        for option in options:
+            self._target_combo.addItem(option.label, option.identity)
         self._target_combo.blockSignals(False)
-        if names:
+        if options:
             self._target_combo.setCurrentIndex(0)
-            self._render_selected_target()
+            self._target_changed()
         self._caveat.setText(job.report.interaction_caveat)
+
+    def _target_changed(self, *_args: object) -> None:
+        job = self._last_job
+        target = self._target_combo.currentData()
+        self._source_combo.blockSignals(True)
+        self._source_combo.clear()
+        if (
+            job is not None
+            and job.report is not None
+            and isinstance(target, MorrisTargetIdentity)
+        ):
+            self._source_combo.addItem("All Inputs", None)
+            for option in list_morris_source_options(job.report, target):
+                self._source_combo.addItem(option.label, option.spec_id)
+        self._source_combo.blockSignals(False)
+        self._render_selected_target()
 
     def _render_selected_target(self, *_args: object) -> None:
         job = self._last_job
         target = self._target_combo.currentData()
-        if job is None or job.report is None or not isinstance(target, str):
+        if (
+            job is None
+            or job.report is None
+            or not isinstance(target, MorrisTargetIdentity)
+        ):
             return
-        presentation = present_morris_report(job.report, target)
+        source = self._source_combo.currentData()
+        if source is not None and not isinstance(source, str):
+            return
+        presentation = select_morris_report(
+            job.report,
+            MorrisReportSelection(target, source),
+        )
         render_morris_report(presentation, self._results, self._target_detail)
 
     def has_running_workers(self) -> bool:

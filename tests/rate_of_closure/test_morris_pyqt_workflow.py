@@ -95,6 +95,54 @@ def _report() -> MorrisResponseReport:
     )
 
 
+def _multi_target_report() -> MorrisResponseReport:
+    sources = tuple(
+        MorrisSource(name, f"swing_sim.swing.{name}_deg", "deg", (-1.0, 1.0), None, ())
+        for name in ("yaw", "forward")
+    )
+    targets = (
+        MorrisTarget(
+            "clubhead_x_m",
+            "m",
+            "state-point",
+            0.10,
+            "clubhead",
+            "app_frame:x_target,y_up,z_right",
+        ),
+        MorrisTarget(
+            "clubhead_x_m",
+            "m",
+            "state-point",
+            0.20,
+            "grip",
+            "app_frame:x_target,y_up,z_right",
+        ),
+    )
+    estimates = tuple(
+        MorrisResponseEstimate(
+            source,
+            target,
+            MorrisEffects(value, value, 0.0, 0.0),
+            "available",
+            "limited",
+            MorrisDenominator(4, 4, 0, 0, 0, 0),
+        )
+        for target_index, target in enumerate(targets)
+        for source_index, source in enumerate(sources)
+        for value in (4.0 - target_index - source_index,)
+    )
+    return MorrisResponseReport(
+        4,
+        4,
+        7,
+        12,
+        2.0 / 3.0,
+        ("model scenario",),
+        "Interactions are screened, not decomposed.",
+        estimates,
+    )
+
+
 def _config() -> SimulationConfig:
     return SimulationConfig(
         scenario=ImpactScenario(clubhead_speed_mph=113.0),
@@ -233,10 +281,31 @@ def test_capability_enables_ordered_editable_factors_and_run(qtbot) -> None:  # 
     assert len(client.created) == 1
     request = client.created[0]
     assert request.levels == 6 and request.seed == 7
-    assert widget._target_combo.currentData() == "carry_m"
+    assert widget._target_combo.currentData().name == "carry_m"
+    assert widget._source_combo.itemText(0) == "All Inputs"
     assert widget._results.item(0, 2).text() == "2"
     assert widget._results.item(0, 3).text() == "0.25"
     assert "12/12 valid" in widget._results.item(0, 7).text()
+
+
+def test_result_selectors_keep_point_phase_and_input_views_distinct(qtbot) -> None:  # type: ignore[no-untyped-def]
+    widget = MorrisScreeningTab(None)
+    qtbot.addWidget(widget)
+
+    widget._accept_job(
+        widget._generation,
+        _job("completed", report=_multi_target_report()),
+    )
+
+    assert widget._target_combo.count() == 2
+    assert "clubhead" in widget._target_combo.itemText(0)
+    assert "t=0.1 s" in widget._target_combo.itemText(0)
+    assert "grip" in widget._target_combo.itemText(1)
+    assert widget._source_combo.count() == 3
+    assert widget._results.rowCount() == 2
+    widget._source_combo.setCurrentIndex(2)
+    assert widget._results.rowCount() == 1
+    assert widget._results.item(0, 0).text() in {"1", "2"}
 
 
 def test_stale_worker_updates_are_ignored(qtbot) -> None:  # type: ignore[no-untyped-def]

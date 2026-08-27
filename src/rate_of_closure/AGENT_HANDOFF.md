@@ -51,19 +51,18 @@ identity, missing intervals, outcomes, failure semantics, and approximate
 impact-marker error. The inherited 3-source by 4-adapter matrix has two verified
 double-pendulum cells and ten explicitly unavailable cells.
 
-PR #4782/#4765 R12.3 is active on `feat/4142-noise-response`. The immutable response
-field reports signed and magnitude paired-OAT position response per declared
-distribution standard deviation beside matched-cohort and all-eligible RMS
-scatter. It retains counts, typed adequacy and NaNs, method and policy IDs,
-provenance, bounded resumable statistics, deterministic fingerprints, and
-row-oriented plot data. Affine, metamorphic, nonlinear-countermodel,
-missingness, unsupported-design, drift, and serial/chunk/resume gates pass. The
-branch ledger is 27 verified / 4 partial. These are model-scenario software
-results, not causal anatomy, governed human validation, or coaching authority.
-The pre-merge repair passes CI-pinned MyPy by making NumPy boolean reductions
-explicit and passes detect-secrets without changing the protected-base SHA.
-SPEC 1.18.53 records the boundary; no runtime, schema, or scientific claim changed.
-The constructor-only test helper is explicitly allowlisted; assertions remain in its consumers.
+R12.3 protected-squash-merged via PR #4782 as `a1b00db14`; R13.3 PR #4784
+protected-squash-merged as `d6c8a0a67`. Its paired-attribution schema binds one
+independently estimable source and optional exact locus to state, impact, and
+shot scalars with ten unsupported cells preserved. #4791/R13.5 is active from
+that protected base. `morris-target-selection` v1 binds kind/name/unit/point/
+time/frame and exposes all-input or one-source views without analysis execution;
+PyQt and React share a state/impact/shot parity fixture, while selected rows
+retain global ranks and typed denominators. Protected PR #4794 contains
+implementation commit `f102ce59a`; #4793 was superseded without force-push after the matched visual
+manifest/audit/tests and vendored projection were added. The combined ledger is
+29 verified / 2 partial. These remain model-scenario responses, not global main
+effects, causal anatomy, governed human validation, or coaching authority.
 
 PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
 the initial React/PyQt visibility, accessibility, performance, and baseline

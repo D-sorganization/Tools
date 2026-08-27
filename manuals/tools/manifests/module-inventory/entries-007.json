@@ -3,6 +3,62 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 1218,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ceae76929580d9094b8b0dc821014f92b45a6e3b181f996f8053e00464a16ff1",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-PLOTTING-CATALOG-ENTRIES-PY-0DA593C1F9ED",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/plotting/_catalog_entries.py",
+      "purpose": "Private ordered composition of plotting catalog rows.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_GROUPS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_entries",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 234,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -8562,10 +8618,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 19524,
+      "bytes_lf": 20959,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "496731060b7c2b4549dc6f9e561d2625a66c04006468f3801638469651aa67e3",
+      "content_sha256_lf": "a979c4433f1901c8e7022c8f95cc44ea882d33d910780ab4b2fe232f2b15aaf5",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-MORRIS-TAB-PY-7FD5F2CF8182",
       "language": "python",
@@ -8608,7 +8664,8 @@
         ],
         "test_paths": [
           "tests/rate_of_closure/test_morris_pyqt_workflow.py",
-          "tests/rate_of_closure/test_morris_pyqt_workspace.py"
+          "tests/rate_of_closure/test_morris_pyqt_workspace.py",
+          "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
@@ -12850,57 +12907,6 @@
             "kind": "function",
             "name": "make_spin",
             "signature": "lo: float, hi: float, value: float, decimals: int"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 9028,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "88eec94eea4031f37968c2211fef1515cb7bbdaf6e3fd592eeb86314ae030d11",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VARIATION-FORGIVENESS-VIEW-PY-F66F1556B30A",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/variation_forgiveness_view.py",
-      "purpose": "Decision-ready PyQt presentation for conditional chip forgiveness studies.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ChipForgivenessView",
-            "signature": null
           }
         ],
         "test_paths": [],

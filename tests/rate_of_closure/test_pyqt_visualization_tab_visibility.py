@@ -12,12 +12,30 @@ from typing import Any, cast
 
 import pytest
 
+from rate_of_closure.ui.pyqt6.morris_tab import MorrisScreeningTab
 from rate_of_closure.visualization_performance_manifest import (
     load_visualization_performance_manifest,
 )
 
 pytest.importorskip("PyQt6")
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
+
+
+def test_initial_morris_result_selectors_are_visible_and_fail_closed(qtbot) -> None:
+    """Do not present a fabricated target or source before a completed report."""
+
+    tab = MorrisScreeningTab(None)
+    qtbot.addWidget(tab)
+    tab.resize(900, 600)
+    tab.show()
+
+    assert tab._target_combo.accessibleName() == "Morris result target"
+    assert tab._source_combo.accessibleName() == "Morris result source"
+    assert tab._target_combo.isVisible()
+    assert tab._source_combo.isVisible()
+    assert tab._target_combo.count() == 0
+    assert tab._source_combo.count() == 0
+    assert tab._target_detail.text() == "Run a study to choose a target."
 
 
 def _probe(
