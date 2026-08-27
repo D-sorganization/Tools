@@ -1,0 +1,161 @@
+{
+  "schema_version": "tools-r13.3-paired-attribution-capabilities/v1",
+  "requirement_id": "R13.3",
+  "qualified_base_revision": "a1b00db14ade32c527751922866a09a952848619",
+  "implementation_issue": 4783,
+  "record_schema": {
+    "schema_id": "swing-sim/paired-localized-attribution",
+    "schema_version": 1,
+    "method_id": "paired-model-intervention-difference/v1"
+  },
+  "adapter_cell_status_authority": "docs/audits/rate_of_closure_r12_3_noise_response_capabilities.v1.json",
+  "source_layouts": ["manual", "double_pendulum", "triple_pendulum"],
+  "adapter_cells": [
+    {
+      "source_kind": "manual",
+      "adapter_id": "global_simulation_value/v1",
+      "status": "explicitly_unavailable"
+    },
+    {
+      "source_kind": "manual",
+      "adapter_id": "localized_joint_torque_offset/v1",
+      "status": "explicitly_unavailable"
+    },
+    {
+      "source_kind": "manual",
+      "adapter_id": "regional_ground_value/v1",
+      "status": "explicitly_unavailable"
+    },
+    {
+      "source_kind": "manual",
+      "adapter_id": "turf_profile_value/v1",
+      "status": "explicitly_unavailable"
+    },
+    {
+      "source_kind": "double_pendulum",
+      "adapter_id": "global_simulation_value/v1",
+      "status": "verified"
+    },
+    {
+      "source_kind": "double_pendulum",
+      "adapter_id": "localized_joint_torque_offset/v1",
+      "status": "verified"
+    },
+    {
+      "source_kind": "double_pendulum",
+      "adapter_id": "regional_ground_value/v1",
+      "status": "explicitly_unavailable"
+    },
+    {
+      "source_kind": "double_pendulum",
+      "adapter_id": "turf_profile_value/v1",
+      "status": "explicitly_unavailable"
+    },
+    {
+      "source_kind": "triple_pendulum",
+      "adapter_id": "global_simulation_value/v1",
+      "status": "explicitly_unavailable"
+    },
+    {
+      "source_kind": "triple_pendulum",
+      "adapter_id": "localized_joint_torque_offset/v1",
+      "status": "explicitly_unavailable"
+    },
+    {
+      "source_kind": "triple_pendulum",
+      "adapter_id": "regional_ground_value/v1",
+      "status": "explicitly_unavailable"
+    },
+    {
+      "source_kind": "triple_pendulum",
+      "adapter_id": "turf_profile_value/v1",
+      "status": "explicitly_unavailable"
+    }
+  ],
+  "adapter_status_counts": { "verified": 2, "explicitly_unavailable": 10 },
+  "target_metrics": [
+    { "metric_id": "position_x_m", "kind": "state", "unit": "m" },
+    { "metric_id": "position_y_m", "kind": "state", "unit": "m" },
+    { "metric_id": "position_z_m", "kind": "state", "unit": "m" },
+    { "metric_id": "impact_time_s", "kind": "impact", "unit": "s" },
+    { "metric_id": "clubhead_speed_mps", "kind": "impact", "unit": "m/s" },
+    { "metric_id": "spin_loft_deg", "kind": "impact", "unit": "deg" },
+    { "metric_id": "face_to_path_deg", "kind": "impact", "unit": "deg" },
+    { "metric_id": "spin_axis_tilt_deg", "kind": "impact", "unit": "deg" },
+    { "metric_id": "ball_speed_mph", "kind": "shot", "unit": "mph" },
+    { "metric_id": "launch_angle_deg", "kind": "shot", "unit": "deg" },
+    { "metric_id": "launch_azimuth_deg", "kind": "shot", "unit": "deg" },
+    { "metric_id": "spin_rpm", "kind": "shot", "unit": "rpm" },
+    { "metric_id": "carry_m", "kind": "shot", "unit": "m" },
+    { "metric_id": "lateral_m", "kind": "shot", "unit": "m" },
+    { "metric_id": "max_height_m", "kind": "shot", "unit": "m" },
+    { "metric_id": "flight_time_s", "kind": "shot", "unit": "s" },
+    { "metric_id": "landing_angle_deg", "kind": "shot", "unit": "deg" }
+  ],
+  "state_locus": {
+    "point_selector": "any exact point ID in the governed R11.3 source layout",
+    "coordinate_selector": "any exact sample time in the governed R11.3 trace grid",
+    "coordinate_frame": "must equal the paired trace coordinate frame"
+  },
+  "input_designs": [
+    {
+      "design": "paired_oat_continuous_unbounded_independent",
+      "status": "verified",
+      "reason": null
+    },
+    {
+      "design": "bounded_input",
+      "status": "explicitly_unsupported",
+      "reason": "A local paired effect at an active bound is not identified by this v1 method."
+    },
+    {
+      "design": "discrete_input",
+      "status": "explicitly_unsupported",
+      "reason": "A discrete intervention is not a continuous local source difference."
+    },
+    {
+      "design": "correlated_or_grouped_input",
+      "status": "explicitly_unsupported",
+      "reason": "Independent source attribution is confounded under a grouped intervention."
+    },
+    {
+      "design": "simultaneous_nonlinear_interaction",
+      "status": "explicitly_unsupported",
+      "reason": "A paired local difference is baseline-dependent and does not identify a global interaction effect."
+    }
+  ],
+  "availability_states": [
+    "available",
+    "no-impact-unavailable",
+    "numerical-failure",
+    "missing-unavailable",
+    "nonfinite-unavailable",
+    "unsupported"
+  ],
+  "adverse_cases": [
+    "affine_analytical_golden",
+    "sign_reversal",
+    "zero_response_outside_locus",
+    "nonlinear_baseline_dependence",
+    "observational_association_without_paired_response",
+    "no_impact",
+    "numerical_failure",
+    "missing_state_trace",
+    "nonfinite_value",
+    "unsupported_value",
+    "zero_source_delta",
+    "trial_pair_identity_drift",
+    "model_identity_drift",
+    "source_adapter_identity_drift",
+    "coordinate_frame_drift",
+    "trace_grid_drift",
+    "plan_registry_execution_drift",
+    "target_registry_or_kind_drift",
+    "unsupported_source_design",
+    "serial_chunk_resume_archive_fingerprint_identity",
+    "precision_preserving_json_csv_export",
+    "bounded_resource_caps",
+    "immutable_record_arrays"
+  ],
+  "scientific_boundary": "Model-scenario paired intervention response only: not rank association, not a global main effect, not anatomical or human causal attribution, and not coaching authority."
+}

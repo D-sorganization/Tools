@@ -19,7 +19,7 @@ STATE_VALUES = frozenset(
         "mapped",
         "not-applicable",
         "unavailable",
-        "unmapped-pending-TOOLS-D3",
+        "unmapped-pending-TOOLS-D4",
         "unmapped-pending-TOOLS-D7",
     }
 )

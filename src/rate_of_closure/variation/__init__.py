@@ -3,6 +3,11 @@
 from __future__ import annotations
 
 from .chip_forgiveness import ChipStudySummary, ChipTrialCohort
+from .complete_trial_record import (
+    COMPLETE_TRIAL_SCHEMA,
+    CompleteTrialRecord,
+    CompleteTrialRecordSource,
+)
 from .durable_ensemble_chunks import (
     DurableEnsembleArchive,
     DurableEnsembleChunkSink,
@@ -41,6 +46,10 @@ from .morris_rate_adapter import (
     RateMorrisEvaluator,
     evaluate_rate_morris_design,
 )
+from .paired_attribution_adapter import (
+    RATE_PAIRED_ATTRIBUTION_ADAPTER_ID,
+    build_rate_paired_attribution_input,
+)
 from .request_builder import apply_global_simulation_values
 from .simulation_adapter import (
     APP_FRAME_ID,
@@ -61,6 +70,7 @@ from .simulation_adapter import (
     run_simulation_ensemble,
     run_simulation_ensemble_chunks,
     spatial_point_ids,
+    spatial_source_layouts,
 )
 from .streaming_ensemble_analysis import (
     AnalyzingDurableEnsembleSink,
@@ -84,6 +94,9 @@ __all__ = [
     "ChipStudySummary",
     "ChipTrialCohort",
     "CollectingEnsembleSink",
+    "COMPLETE_TRIAL_SCHEMA",
+    "CompleteTrialRecord",
+    "CompleteTrialRecordSource",
     "DurableEnsembleArchive",
     "DurableAnalysisEvidence",
     "DurableArchiveEvidence",
@@ -104,6 +117,7 @@ __all__ = [
     "NUMERICAL_FAILURE",
     "RATE_MORRIS_OUTPUTS",
     "RATE_MORRIS_VARIABLE_KEYS",
+    "RATE_PAIRED_ATTRIBUTION_ADAPTER_ID",
     "ResumableEnsembleChunkSink",
     "RateMorrisEvaluator",
     "SHOT_OUTPUT_NAMES",
@@ -123,6 +137,7 @@ __all__ = [
     "analyze_durable_ensemble",
     "build_simulation_ensemble_request",
     "build_ensemble_stream_header",
+    "build_rate_paired_attribution_input",
     "capture_simulation",
     "durable_ensemble_evidence",
     "durable_ensemble_evidence_from_document",
@@ -135,4 +150,5 @@ __all__ = [
     "run_simulation_ensemble",
     "run_simulation_ensemble_chunks",
     "spatial_point_ids",
+    "spatial_source_layouts",
 ]

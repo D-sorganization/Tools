@@ -1,0 +1,323 @@
+```{=openxml}
+<w:p><w:r><w:br w:type="page"/></w:r></w:p>
+```
+
+# Swing and Rate-of-Closure D-Plane Geometry {#swing-rate-of-closure-d-plane-exemplar}
+
+## Purpose and Scope
+
+This governed exemplar explains how `swing_sim` computes frame-explicit
+three-dimensional D-plane geometry and how Rate of Closure supplies three
+distinct rigid-body velocity points to that calculation. It is for developers,
+scientific reviewers, and integrators who need to reproduce the equations and
+follow every value into code and tests. It covers geometric direction
+relationships only. It does not predict ball launch, spin magnitude,
+aerodynamic flight, player outcome, equipment quality, or an operating
+decision. The calculation and rendered artifacts are verified-unapproved.
+
+## Design by Contract
+
+### Preconditions
+
+`analyze_dplane` accepts travel, face-normal, target, and up vectors with
+exactly three finite components. Face normal, target, and up must each have
+Euclidean norm greater than $10^{-12}$. Target and up must be orthogonal to
+absolute dot product $10^{-10}$. The Rate-of-Closure adapter additionally
+requires a typed `SimulationRun` with increasing sample times and internally
+consistent pose, twist, club, scenario, and inspection-event records.
+
+### Postconditions
+
+Every available direction is normalized and every angle is in degrees. Spin
+loft is the principal angle on $[0,180]$. A defined D-plane supplies a unit
+normal perpendicular to travel and face. Zero, parallel, antiparallel, and
+unprojectable states return explicit status or null fields; they never invent a
+plane, horizontal heading, or face-to-path result.
+
+### Invariants
+
+A common proper rotation of travel, face, target, and up preserves spin loft,
+planar spin loft, face-to-path, and intrinsic tilt. Reflecting the right axis
+reverses signed horizontal relationships while preserving spin loft.
+Multiplying a nonzero travel vector by a positive scalar does not change the
+geometry because only direction enters the method.
+
+## Coordinates, Frames, and Time
+
+### Coordinate Frames
+
+[]{#dplane-coordinate-frame}
+
+The default application frame is
+`app_frame:x_target,y_up,z_right`. Let $\hat{\mathbf t}$ be target and
+$\hat{\mathbf u}$ be up. The implementation constructs right as
+
+$$
+\hat{\mathbf r} =
+  \frac{\hat{\mathbf t}\times\hat{\mathbf u}}
+       {\lVert\hat{\mathbf t}\times\hat{\mathbf u}\rVert}.
+$$
+
+Rate of Closure interpolates the inspection-event rigid transform and twist,
+then expresses reference, face-center, and contact vectors in this same frame.
+
+### Axis and Handedness
+
+Positive path and face headings rotate from target toward right. Elevation is
+positive toward up. Target-times-up fixes the sign of right; reversing the
+cross-product order would reverse every signed horizontal result. The D-plane
+normal is travel-times-face, so its orientation also depends on declared order.
+
+### Time Convention
+
+The geometry is instantaneous and has no integration clock. Rate of Closure
+evaluates it at `inspection_time_s`. Pose and twist are interpolated to that
+event time; the closest sampled index is audit metadata and a bounded tangent
+fallback. A miss remains a closest-approach event and is not relabeled impact.
+
+## Units and Dimensions
+
+### Symbol and Unit Table
+
+| Symbol or field | Meaning | Unit |
+|---|---|---|
+| $\mathbf v$ | reference, face-center, or contact velocity | m/s |
+| $\hat{\mathbf n}$ | delivered face normal | 1 |
+| $\hat{\mathbf t},\hat{\mathbf u},\hat{\mathbf r}$ | target, up, right axes | 1 |
+| $\lambda$ | three-dimensional spin loft | degree |
+| $p,a,f,\ell$ | path, attack, face, and dynamic-loft angles | degree |
+| $\hat{\mathbf d}$ | D-plane normal | 1 |
+| `event_time_s` | interpolation time | s |
+
+### Dimensional Checks
+
+Normalizing $\mathbf v$ divides m/s by m/s, producing a unit direction. Dot and
+cross products operate on dimensionless directions. `acos` and `atan2`
+return dimensionless radians, converted to degrees. The rigid-body equation
+$\mathbf v_P=\mathbf v_O+\boldsymbol\omega\times\mathbf r_{OP}$ is consistent:
+rad/s is treated as $1/s$, and multiplying by metres produces m/s.
+
+## Derivation and Assumptions
+
+### Assumptions
+
+The calculation assumes Euclidean three-space, a right-handed orthonormal
+target frame, finite floating-point inputs, and one instantaneous delivered
+face normal. It treats the D-plane as geometry spanned by travel and face;
+collision dynamics and aerodynamic response lie outside this method. Rate of
+Closure assumes its interpolated homogeneous pose is rigid and its twist stores
+angular components followed by translational components.
+
+### Derivation
+
+Normalize travel and face as
+$\hat{\mathbf v}=\mathbf v/\lVert\mathbf v\rVert$ and
+$\hat{\mathbf n}=\mathbf n/\lVert\mathbf n\rVert$. Their dot product is the
+cosine of the included angle. Clipping protects `acos` from roundoff beyond
+the mathematical interval.
+
+[]{#dplane-spin-loft-equation}
+
+$$
+\lambda = \frac{180}{\pi}
+  \cos^{-1}\!\left(
+    \operatorname{clip}(\hat{\mathbf v}\cdot\hat{\mathbf n},-1,1)
+  \right).
+$$
+
+When the vectors are not collinear, the oriented plane normal is
+
+[]{#dplane-normal-equation}
+
+$$
+\hat{\mathbf d} =
+  \frac{\hat{\mathbf v}\times\hat{\mathbf n}}
+       {\lVert\hat{\mathbf v}\times\hat{\mathbf n}\rVert}.
+$$
+
+For any direction $\mathbf q$, remove its vertical component:
+$\mathbf q_h=\mathbf q-(\mathbf q\cdot\hat{\mathbf u})\hat{\mathbf u}$.
+Heading and elevation are
+$\operatorname{atan2}(\mathbf q_h\cdot\hat{\mathbf r},
+\mathbf q_h\cdot\hat{\mathbf t})$ and
+$\operatorname{atan2}(\mathbf q\cdot\hat{\mathbf u},
+\lVert\mathbf q_h\rVert)$. Face-to-path wraps $f-p$ to $[-180,180)$.
+Rate of Closure obtains face-center velocity from rigid-body kinematics before
+applying the same geometry.
+
+## Algorithm
+
+### Inputs
+
+The standalone calculation consumes `travel_vector`, `face_normal`,
+optional `target` and `up`, and descriptive `frame_id`. The consumer
+accepts one immutable `SimulationRun` and derives inspection pose, twist,
+shaft geometry, contact lever, face normal, leading-edge tangent, and arc
+tangent rather than asking callers to assemble those values.
+
+### Procedure
+
+1. Convert each vector to a finite three-component array and validate the frame.
+2. Normalize face, target, and up; derive right from target-times-up.
+3. Compute face heading and dynamic loft even if travel is zero.
+4. Return `zero_travel` when travel norm is at most $10^{-12}$.
+5. Normalize travel; compute path, attack, face-to-path, and spin loft.
+6. Return `parallel` or `antiparallel` for a singular cross product.
+7. Otherwise derive plane normal, tilt, inclination, and ground intersection.
+8. Rate of Closure repeats the calculation for reference, face center, and
+   contact so a consumer cannot silently confuse those datums.
+
+Standalone work is constant time and memory. Sector rendering is linear in the
+caller-bounded segment count and returns `segments + 1` unit directions.
+
+### Outputs
+
+`DPlaneAnalysis` returns status, frame, normalized basis vectors, optional
+plane and ground-intersection directions, three-dimensional and planar spin
+loft, residual, path, attack, face, dynamic loft, face-to-path, azimuth, tilt,
+and inclination. `ImpactKinematicSnapshot` wraps three analyses with event,
+geometry basis, limitations, pose, and wedge-kinematics evidence.
+
+## Implementation Symbols
+
+### Public Symbols
+
+The stable `shared.python.swing_sim.impact` facade exports
+`DPlaneStatus`, `DPlaneAnalysis`, `analyze_dplane`, and
+`spin_loft_sector_directions`. Rate of Closure exports
+`ImpactKinematicSnapshot` and `impact_kinematics_for_run`. Consumers should
+not import private helpers such as `_heading_deg` or `_shaft_geometry`.
+
+### Source Mapping
+
+Calculation `TOOLS-DPLANE-GEOMETRY` maps spin loft, normal, heading,
+elevation, singular states, and sectors to
+`src/shared/python/swing_sim/impact/dplane.py`. The Rate-of-Closure datum and
+point-velocity mapping lives in
+`src/rate_of_closure/simulation/impact_kinematics.py`. Both are pinned to D3
+base `916fb9f27f486486f0c071dcc6f15f81f68ecb18`; their provisional module
+IDs and public symbols remain recorded in the module inventory.
+
+## Error and Failure Semantics
+
+### Error Conditions
+
+Wrong vector shape, non-finite values, zero face/target/up, or a nonorthogonal
+frame raises `ValueError`. A non-`SimulationRun` input raises `TypeError`.
+Nonincreasing times, zero shaft geometry, zero path fallback, or degenerate
+projected leading edge also fail preconditions. These failures are distinct
+from valid singular geometry.
+
+### Recovery and Cancellation
+
+Callers recover by correcting source data or frame; the method does not coerce,
+interpolate missing vectors, or substitute a default. Valid singular statuses
+may be displayed with null fields intact. The synchronous calculation is
+bounded and has no external I/O, so it has no mid-operation cancellation seam.
+Higher-level cancellation occurs before calls or between complete runs.
+
+## Uncertainty and Sensitivity
+
+### Uncertainty Sources
+
+The implementation does not estimate covariance. Uncertainty can enter through
+travel, face orientation, coordinate transform, event interpolation, club
+geometry, or the choice of reference versus contact datum. Floating-point
+clipping addresses numerical roundoff only; it is not a measurement uncertainty
+model. Angles therefore remain model-conditioned rather than observed truth.
+
+### Sensitivity
+
+Small perturbations are smooth away from singular states. Sensitivity rises
+when horizontal projection approaches zero because heading becomes undefined,
+and when travel and face approach parallel or antiparallel because a small cross
+product cannot define a stable normal. The API exposes these limits as null or
+typed status; downstream code must not carry forward a prior frame's plane.
+
+## Verification and Validation
+
+### Test Evidence
+
+`test_matches_cross_client_golden_contract` executes three analytical cases
+from `dplane_golden_v1.json` at absolute tolerance $10^{-9}$ degree.
+Singular-state tests cover zero travel, parallel, antiparallel, vertical
+projection, and invalid frames. Rotation and reflection tests pin invariants.
+The Rate-of-Closure integration test derives face-center velocity independently
+as $\mathbf v_O+\boldsymbol\omega\times\mathbf r$, then proves the consumer
+normalizes that value for its face-center D-plane.
+
+### Acceptance Criteria
+
+The exemplar passes only when strict JSON Schema and typed loader agree;
+calculation, chapter, module, source, consumer, test, and golden-fixture links
+all resolve; the fourteen-section linter and focused tests pass; and HTML,
+LaTeX, PDF, and DOCX share the governed semantic digest. This evidence verifies
+reproduction, not scientific or publication approval.
+
+## Limits and Applicability
+
+### Validity Range
+
+Finite vectors may have any representable scale, but face and frame axes must
+exceed norm $10^{-12}$, and target/up orthogonality must satisfy $10^{-10}$.
+Spin loft spans $0$ through $180$ degrees. Signed relationships wrap to
+$[-180,180)$. The golden fixture qualifies only its declared cases and
+$10^{-9}$-degree tolerance.
+
+### Known Limitations
+
+The method does not compute ball response, impulse, spin rate, lift, drag,
+landing, biomechanics, or camera-derived pose. It does not establish that an
+external device's axes, timestamps, or face normal match this contract. Rate of
+Closure downstream flight currently consumes reference-point translation;
+shaft-induced contact velocity remains analysis. The markerless-mocap exemplar
+is deliberately absent because TOOLS-M0 issue #4708 and PR #4734 are open and
+no markerless module exists on this D3 base. Unmerged content is not promoted.
+
+## Worked Examples
+
+### Example Inputs
+
+The governed `square-descending` fixture supplies
+$\mathbf v=(0.9986295347545738,-0.052335956242943835,0)$, with path
+$0^\circ$ and attack $-3^\circ$. Its face normal is
+$\mathbf n=(0.9781476007338057,0.20791169081775934,0)$, with face
+$0^\circ$ and dynamic loft $12^\circ$. Target and up use default unit axes.
+The fixture tolerance is $10^{-9}$ degree.
+
+### Example Results
+
+The dot product is $\cos 15^\circ$, so spin loft is $15^\circ$. Dynamic loft
+minus attack is $12-(-3)=15^\circ$, making planar residual zero.
+Travel-times-face points along right, giving
+$\hat{\mathbf d}=(0,0,1)$, tilt $0^\circ$, inclination $90^\circ$, and ground
+intersection at $0^\circ$. Status is `defined`. Values come from the
+cross-client golden fixture and executable Python test, not renderer-only text.
+
+## References and Provenance
+
+### References
+
+Primary implementation authority is exact source at
+`916fb9f27f486486f0c071dcc6f15f81f68ecb18`. Numerical expectations come
+from `dplane-golden-v1`, with independent behavior exercised by the tests in
+the registry. External scientific literature has not completed review, so this
+chapter makes no literature-backed ball-flight or equipment-performance claim.
+
+### Provenance
+
+The calculation registry records method version `1.0.0`, symbols and commit,
+source digest, inputs, units, contracts, equation anchors, tests, artifacts,
+limitations, and approval blockers. D4 coverage separately records markerless
+as blocked. Generated HTML, LaTeX, PDF, and DOCX derive from canonical QMD via
+the pinned D2 toolchain and remain `generated-unapproved`.
+
+## Revision History
+
+### Revision Record
+
+Version 1.0.0, dated 2026-08-26, registers the first Tools textbook exemplar:
+frame-explicit D-plane geometry shared by swing simulation and Rate of Closure,
+with executable golden values and fail-closed markerless dependency status.
+Later revisions must update the descriptor, method version when mathematics or
+behavior changes, tests, provenance, limitations, and every generated artifact.

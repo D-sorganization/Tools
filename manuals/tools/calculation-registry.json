@@ -3,13 +3,233 @@
   "manual_id": "tools",
   "repository": "D-sorganization/Tools",
   "release_status": "provisional",
-  "inventory_commit": null,
+  "inventory_commit": "916fb9f27f486486f0c071dcc6f15f81f68ecb18",
   "blockers": [
     {
-      "id": "TOOLS-D3-pathway-contract-required",
-      "owner": "Tools documentation epic #4707",
-      "resolution": "Assign stable calculation IDs and map equations, symbols, tests, sources, units, limits, chapters, and approval evidence under TOOLS-D3 through TOOLS-D9."
+      "id": "TOOLS-MARKERLESS-EXEMPLAR-BLOCKED",
+      "owner": "TOOLS-M0 issue #4708 and TOOLS-D4 issue #4720",
+      "resolution": "Merge the markerless authority contracts through protected review, then register its source-backed calculation and textbook chapter without copying unmerged code into this stack."
+    },
+    {
+      "id": "TOOLS-DPLANE-APPROVAL-REQUIRED",
+      "owner": "TOOLS-D7 and TOOLS-D8 reviewers",
+      "resolution": "Complete scientific, rendered-page, accessibility, license, and human review before promoting the D-plane calculation or its artifacts."
     }
   ],
-  "calculations": []
+  "calculations": [
+    {
+      "schema_version": "1.0.0",
+      "calculation_id": "TOOLS-DPLANE-GEOMETRY",
+      "title": "Frame-Explicit D-Plane Geometry and Rate-of-Closure Adaptation",
+      "owner": {
+        "repository": "D-sorganization/Tools",
+        "module": "shared.python.swing_sim.impact",
+        "maintainers": [
+          "Rate of Closure maintainers",
+          "Swing simulation maintainers"
+        ]
+      },
+      "method_version": "1.0.0",
+      "implementation": {
+        "symbols": [
+          {
+            "path": "src/rate_of_closure/simulation/impact_kinematics.py",
+            "symbol": "impact_kinematics_for_run"
+          },
+          {
+            "path": "src/shared/python/swing_sim/impact/dplane.py",
+            "symbol": "analyze_dplane"
+          },
+          {
+            "path": "src/shared/python/swing_sim/impact/dplane.py",
+            "symbol": "spin_loft_sector_directions"
+          }
+        ],
+        "commit": "916fb9f27f486486f0c071dcc6f15f81f68ecb18"
+      },
+      "status": "model-conditioned",
+      "inputs": [
+        {
+          "name": "face_normal",
+          "type": "finite vector[3]",
+          "unit": "1",
+          "basis": "Delivered face-normal direction in the declared target frame.",
+          "coordinate_frame": "frame_id",
+          "availability": "required",
+          "valid_range": "Euclidean norm greater than 1e-12"
+        },
+        {
+          "name": "target",
+          "type": "finite vector[3]",
+          "unit": "1",
+          "basis": "Positive target direction; orthogonal to up.",
+          "coordinate_frame": "frame_id",
+          "availability": "optional",
+          "valid_range": "Euclidean norm greater than 1e-12"
+        },
+        {
+          "name": "travel_vector",
+          "type": "finite vector[3]",
+          "unit": "m/s",
+          "basis": "Club reference, face-center, or contact-point velocity; only direction enters geometry.",
+          "coordinate_frame": "frame_id",
+          "availability": "required",
+          "valid_range": "Any finite vector; norm at or below 1e-12 returns zero_travel"
+        },
+        {
+          "name": "up",
+          "type": "finite vector[3]",
+          "unit": "1",
+          "basis": "Positive vertical direction; orthogonal to target.",
+          "coordinate_frame": "frame_id",
+          "availability": "optional",
+          "valid_range": "Euclidean norm greater than 1e-12"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "dplane_normal_unit",
+          "type": "vector[3] or null",
+          "unit": "1",
+          "basis": "Normalized travel cross face normal.",
+          "coordinate_frame": "frame_id",
+          "availability": "derived"
+        },
+        {
+          "name": "face_to_path_deg",
+          "type": "float or null",
+          "unit": "degree",
+          "basis": "Wrapped face heading minus club-path heading.",
+          "coordinate_frame": "frame_id",
+          "availability": "derived",
+          "valid_range": "[-180, 180)"
+        },
+        {
+          "name": "spin_loft_3d_deg",
+          "type": "float or null",
+          "unit": "degree",
+          "basis": "Principal angle between travel and face-normal unit vectors.",
+          "coordinate_frame": "frame_id",
+          "availability": "derived",
+          "valid_range": "[0, 180]"
+        },
+        {
+          "name": "status",
+          "type": "DPlaneStatus",
+          "unit": "1",
+          "basis": "defined, zero_travel, parallel, or antiparallel.",
+          "availability": "derived"
+        }
+      ],
+      "contracts": {
+        "preconditions": [
+          "All supplied vectors contain exactly three finite components.",
+          "Face normal, target, and up have norms greater than 1e-12.",
+          "Target and up are orthogonal within an absolute dot-product tolerance of 1e-10."
+        ],
+        "postconditions": [
+          "Defined direction outputs are unit length within floating-point precision.",
+          "Spin loft is the clipped principal angle in [0, 180] degrees.",
+          "Singular states retain available face orientation and do not fabricate a D-plane axis."
+        ],
+        "invariants": [
+          "A common proper rotation preserves intrinsic angular metrics.",
+          "Right-left reflection reverses signed horizontal relationships and preserves spin loft.",
+          "Velocity magnitude does not change geometric outputs when travel direction is unchanged."
+        ],
+        "failure_modes": [
+          "Malformed, non-finite, zero face/axis, or non-orthogonal frame inputs raise ValueError.",
+          "Zero travel returns zero_travel with direction-dependent outputs set to null.",
+          "Parallel and antiparallel vectors return typed singular states without a fabricated normal."
+        ]
+      },
+      "equations": [
+        {
+          "equation_id": "TOOLS-DPLANE-FRAME",
+          "description": "Right axis and signed target-frame headings.",
+          "manual_anchor": "#dplane-coordinate-frame"
+        },
+        {
+          "equation_id": "TOOLS-DPLANE-NORMAL",
+          "description": "Normalized cross product defining the D-plane normal.",
+          "manual_anchor": "#dplane-normal-equation"
+        },
+        {
+          "equation_id": "TOOLS-DPLANE-SPIN-LOFT",
+          "description": "Principal three-dimensional angle between travel and face normal.",
+          "manual_anchor": "#dplane-spin-loft-equation"
+        }
+      ],
+      "numerical_method": {
+        "algorithm": "Finite 3-vector validation, Euclidean normalization, clipped dot-product inverse cosine, cross products, atan2 headings/elevations, and typed singular-state branching.",
+        "tolerances": [
+          "Golden angular comparison: absolute 1e-9 degree",
+          "Target/up orthogonality: absolute dot product <= 1e-10",
+          "Vector norm epsilon: 1e-12"
+        ],
+        "fallback_policy": "No numerical or physical estimate is substituted. Zero, parallel, antiparallel, and unprojectable states expose explicit null outputs."
+      },
+      "sources": [
+        {
+          "source_id": "TOOLS-DPLANE-CODE-D3",
+          "classification": "code",
+          "locator": "src/shared/python/swing_sim/impact/dplane.py",
+          "revision": "916fb9f27f486486f0c071dcc6f15f81f68ecb18",
+          "sha256": "e9ed3e3cce4c11f3519f937d69bfd5a13432dc9836dce8a55c5ebf202f1c4877"
+        },
+        {
+          "source_id": "TOOLS-DPLANE-GOLDEN-V1",
+          "classification": "test",
+          "locator": "src/rate_of_closure/web/src/model/__fixtures__/dplane_golden_v1.json",
+          "revision": "dplane-golden-v1"
+        }
+      ],
+      "tests": [
+        {
+          "test_id": "cross-client-golden",
+          "path": "src/shared/python/swing_sim/impact/tests/test_dplane.py::TestDPlaneAnalyticCases::test_matches_cross_client_golden_contract",
+          "level": "parity"
+        },
+        {
+          "test_id": "invalid-frame-rejection",
+          "path": "src/shared/python/swing_sim/impact/tests/test_dplane.py::TestDPlaneSingularStates::test_invalid_frame_is_rejected",
+          "level": "unit"
+        },
+        {
+          "test_id": "rate-face-center-consumer",
+          "path": "tests/rate_of_closure/test_impact_kinematics.py::test_face_center_dplane_uses_rigid_body_point_velocity",
+          "level": "integration"
+        }
+      ],
+      "manual": {
+        "canonical_source": "manuals/tools/chapters/04-swing-rate-of-closure-dplane.qmd",
+        "chapter_anchor": "#swing-rate-of-closure-d-plane-exemplar",
+        "artifact_ids": [
+          "tools-engineering-design-manual.docx",
+          "tools-engineering-design-manual.html",
+          "tools-engineering-design-manual.pdf",
+          "tools-engineering-design-manual.tex"
+        ]
+      },
+      "limitations": [
+        "The calculation is geometry only; it does not infer launch direction, spin magnitude, aerodynamic curvature, or equipment performance.",
+        "The default frame convention is a software contract, not a claim that an external sensor already uses that frame.",
+        "The Rate-of-Closure adapter reports reference, face-center, and contact analyses separately; downstream flight currently consumes reference-point translation.",
+        "Scientific, rendered-page, accessibility, and human approval remain outstanding."
+      ],
+      "approval": {
+        "state": "blocked-pending-human-approval",
+        "required_reviewers": [
+          "Scientific model reviewer",
+          "TOOLS-D7 artifact and accessibility reviewer",
+          "TOOLS-D8 publication reviewer"
+        ],
+        "blocking_items": [
+          "External scientific citation review",
+          "Human engineering approval",
+          "Publication and accessibility evidence"
+        ]
+      }
+    }
+  ]
 }

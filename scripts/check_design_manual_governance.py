@@ -20,10 +20,17 @@ from scripts.design_manual_contract import (
     DesignManualGovernanceSummary,
     is_valid_revision,
 )
+from scripts.render_tools_design_manual import check_manual
+from scripts.tools_exemplar_contract import (
+    ExemplarContractError,
+    verify_exemplar_repository,
+)
 from scripts.tools_module_inventory_contract import (
     ToolsModuleInventoryError,
 )
 from scripts.tools_module_inventory_storage import read_inventory
+from scripts.tools_textbook_chapter_contract import TextbookChapterError
+from scripts.tools_textbook_chapter_lint import verify_textbook_chapters
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 POLICY_PATH = PurePosixPath("config/design_manual_governance.json")
@@ -115,8 +122,55 @@ def _verify_outputs(policy: dict[str, object]) -> None:
     _equal(outputs["required_release_formats"], REQUIRED_FORMATS, "release formats")
     _equal(
         outputs["current_artifact_status"],
-        "not-generated-not-approved",
+        "generated-unapproved",
         "artifact status",
+    )
+
+
+def _verify_renderer(policy: dict[str, object]) -> None:
+    renderer = _object(
+        policy["renderer"],
+        "renderer",
+        {
+            "owner_subepic",
+            "status",
+            "toolchain_lock",
+            "artifact_manifest",
+            "toolchain_schema",
+            "artifact_schema",
+            "semantic_contract",
+            "reference_docx",
+            "figure_files",
+            "reproducibility",
+            "review_boundary",
+        },
+    )
+    _equal(renderer["owner_subepic"], 4712, "renderer owner")
+    _equal(renderer["status"], "qualified-generated-unapproved", "renderer status")
+    expected_paths = {
+        "toolchain_lock": "manuals/tools/toolchain-lock.json",
+        "artifact_manifest": "manuals/tools/manifests/artifacts.json",
+        "toolchain_schema": "manuals/tools/schemas/toolchain-lock.schema.json",
+        "artifact_schema": "manuals/tools/schemas/artifact-manifest.schema.json",
+        "semantic_contract": "manuals/tools/semantic-contract.json",
+        "reference_docx": "manuals/tools/styles/tools-reference.docx",
+    }
+    for field, expected in expected_paths.items():
+        _equal(_safe_path(renderer[field], field), PurePosixPath(expected), field)
+    figures = [
+        _safe_path(item, "renderer figure")
+        for item in _array(renderer["figure_files"], "renderer figures")
+    ]
+    _equal(
+        figures,
+        [PurePosixPath("manuals/tools/figures/render-pipeline.png")],
+        "renderer figures",
+    )
+    _equal(renderer["reproducibility"], "byte-and-semantic", "reproducibility")
+    _equal(
+        renderer["review_boundary"],
+        "page-accessibility-publication-human-review-pending-TOOLS-D7-D8",
+        "renderer review boundary",
     )
 
 
@@ -134,6 +188,81 @@ def _verify_freshness(policy: dict[str, object]) -> None:
         for item in _array(freshness["impacted_paths"], "impacted paths")
     ]
     _equal(paths, list(map(PurePosixPath, IMPACTED_PATHS)), "impacted paths")
+
+
+def _verify_chapter_contract(policy: dict[str, object]) -> None:
+    chapter_contract = _object(
+        policy["chapter_contract"],
+        "chapter contract",
+        {
+            "owner_subepic",
+            "status",
+            "contract",
+            "registry",
+            "contract_schema",
+            "registry_schema",
+            "linter",
+            "registered_chapter_count",
+            "next_owner",
+        },
+    )
+    _equal(chapter_contract["owner_subepic"], 4717, "chapter contract owner")
+    _equal(
+        chapter_contract["status"],
+        "qualified-one-exemplar-generated-unapproved",
+        "chapter contract status",
+    )
+    expected_paths = {
+        "contract": "manuals/tools/textbook-chapter-contract.json",
+        "registry": "manuals/tools/textbook-chapters.json",
+        "contract_schema": (
+            "manuals/tools/schemas/textbook-chapter-contract.schema.json"
+        ),
+        "registry_schema": (
+            "manuals/tools/schemas/textbook-chapter-registry.schema.json"
+        ),
+        "linter": "scripts/lint_tools_textbook_chapters.py",
+    }
+    for field, expected in expected_paths.items():
+        _equal(
+            _safe_path(chapter_contract[field], field),
+            PurePosixPath(expected),
+            field,
+        )
+    _equal(
+        chapter_contract["registered_chapter_count"],
+        1,
+        "registered chapter count",
+    )
+    _equal(chapter_contract["next_owner"], "TOOLS-D5", "chapter next owner")
+
+
+def _verify_exemplar_contract(policy: dict[str, object]) -> None:
+    exemplar = _object(
+        policy["exemplar_contract"],
+        "exemplar contract",
+        {
+            "owner_subepic",
+            "status",
+            "coverage",
+            "schema",
+            "checker",
+            "verified_exemplar_count",
+            "blocked_exemplar_count",
+            "next_owner",
+        },
+    )
+    _equal(exemplar["owner_subepic"], 4720, "exemplar owner")
+    _equal(exemplar["status"], "qualified-generated-unapproved", "exemplar status")
+    for field, expected in {
+        "coverage": "manuals/tools/exemplar-coverage.json",
+        "schema": "manuals/tools/schemas/exemplar-coverage.schema.json",
+        "checker": "scripts/check_tools_exemplars.py",
+    }.items():
+        _equal(_safe_path(exemplar[field], field), PurePosixPath(expected), field)
+    _equal(exemplar["verified_exemplar_count"], 1, "verified exemplar count")
+    _equal(exemplar["blocked_exemplar_count"], 1, "blocked exemplar count")
+    _equal(exemplar["next_owner"], "TOOLS-D5", "exemplar next owner")
 
 
 def _verify_publication(policy: dict[str, object]) -> bool:
@@ -165,7 +294,7 @@ def _verify_publication(policy: dict[str, object]) -> bool:
     )
     _equal(
         publication["current_approval"],
-        "blocked-pending-TOOLS-D1-through-D8",
+        "blocked-pending-TOOLS-D4-approvals-and-D5-through-D8",
         "publication approval",
     )
     evidence = [
@@ -209,7 +338,7 @@ def verify_governance_policy(policy: object) -> tuple[str, PurePosixPath, bool]:
     document = _object(policy, "governance policy", EXPECTED_POLICY_FIELDS)
     _equal(
         document["schema_version"],
-        "tools/design-manual-governance/1.1.0",
+        "tools/design-manual-governance/1.4.0",
         "schema version",
     )
     program = _object(
@@ -217,7 +346,7 @@ def verify_governance_policy(policy: object) -> tuple[str, PurePosixPath, bool]:
     )
     _equal(
         program,
-        {"epic": 4707, "current_subepic": 4711, "next_subepic": 4712},
+        {"epic": 4707, "current_subepic": 4720, "next_subepic": 4722},
         "program",
     )
     manual_id, source_path = _verify_source(document)
@@ -257,10 +386,13 @@ def verify_governance_policy(policy: object) -> tuple[str, PurePosixPath, bool]:
     )
     _equal(
         inventory["current_status"],
-        "provisional-module-baseline-pending-TOOLS-D3",
+        "provisional-module-baseline-one-exemplar-qualified-pending-TOOLS-D5",
         "inventory status",
     )
     _verify_outputs(document)
+    _verify_renderer(document)
+    _verify_chapter_contract(document)
+    _verify_exemplar_contract(document)
     _verify_freshness(document)
     allowed = _verify_publication(document)
     _verify_quality_license_git(document)
@@ -303,9 +435,14 @@ def verify_calculation_registry(registry: object) -> int:
                 "approved registry requires calculations, immutable commit, and no blockers"
             )
     elif status == "provisional":
-        if calculations or not blockers or document["inventory_commit"] is not None:
+        revision = document["inventory_commit"]
+        if not blockers or (calculations and not is_valid_revision(revision)):
             raise DesignManualGovernanceError(
-                "unapproved registry requires no calculations, null commit, and blockers"
+                "provisional calculations require an immutable inventory commit and blockers"
+            )
+        if not calculations and revision is not None:
+            raise DesignManualGovernanceError(
+                "empty provisional registry requires a null inventory commit"
             )
     else:
         raise DesignManualGovernanceError("release status is unsupported")
@@ -313,6 +450,23 @@ def verify_calculation_registry(registry: object) -> int:
         item = _object(blocker, "registry blocker", {"id", "owner", "resolution"})
         for field, value in item.items():
             _text(value, f"blocker {field}")
+    calculation_ids: list[str] = []
+    for calculation in calculations:
+        item = cast(dict[str, object], calculation)
+        calculation_id = _text(item.get("calculation_id"), "calculation ID")
+        approval = cast(dict[str, object], item.get("approval"))
+        approval_state = _text(approval.get("state"), "calculation approval state")
+        if status == "approved" and approval_state != "approved":
+            raise DesignManualGovernanceError(
+                "approved registry requires every calculation approval"
+            )
+        if status == "provisional" and approval_state == "approved":
+            raise DesignManualGovernanceError(
+                "provisional registry cannot contain an approved calculation"
+            )
+        calculation_ids.append(calculation_id)
+    if calculation_ids != sorted(set(calculation_ids)):
+        raise DesignManualGovernanceError("calculation IDs must be sorted and unique")
     return len(calculations)
 
 
@@ -324,14 +478,22 @@ def _verify_manual_tree(root: Path, source_path: PurePosixPath) -> int:
     manual_root = root.joinpath(*source_path.parts)
     if not manual_root.is_dir():
         raise DesignManualGovernanceError(f"canonical source is missing: {source_path}")
-    forbidden = sorted(
+    generated = sorted(
         path.relative_to(root).as_posix()
         for path in manual_root.rglob("*")
         if path.is_file() and path.suffix.lower() in GENERATED_SUFFIXES
     )
-    if forbidden:
+    expected_generated = [
+        "manuals/tools/dist/tools-engineering-design-manual.docx",
+        "manuals/tools/dist/tools-engineering-design-manual.html",
+        "manuals/tools/dist/tools-engineering-design-manual.pdf",
+        "manuals/tools/dist/tools-engineering-design-manual.tex",
+        "manuals/tools/styles/tools-header.tex",
+        "manuals/tools/styles/tools-reference.docx",
+    ]
+    if generated != expected_generated:
         raise DesignManualGovernanceError(
-            f"editable generated artifacts are forbidden: {forbidden}"
+            f"generated/manual style artifact set differs: {generated}"
         )
     qmd_paths = sorted(manual_root.rglob("*.qmd"))
     if not qmd_paths:
@@ -361,7 +523,10 @@ def _verify_context(root: Path, policy: dict[str, object]) -> None:
         context["required_gate"],
         (
             "python -m scripts.check_design_manual_governance && "
-            "python -m scripts.build_tools_module_inventory --check"
+            "python -m scripts.build_tools_module_inventory --check && "
+            "python -m scripts.lint_tools_textbook_chapters && "
+            "python -m scripts.check_tools_exemplars && "
+            "python -m scripts.render_tools_design_manual --check"
         ),
         "required gate",
     )
@@ -371,6 +536,9 @@ def _verify_context(root: Path, policy: dict[str, object]) -> None:
             "manuals/tools",
             "scripts.check_design_manual_governance",
             "scripts.build_tools_module_inventory",
+            "scripts.lint_tools_textbook_chapters",
+            "scripts.check_tools_exemplars",
+            "scripts.render_tools_design_manual",
         ):
             if phrase not in text:
                 raise DesignManualGovernanceError(f"{name} is missing manual context")
@@ -402,9 +570,12 @@ def verify_repository(root: Path = REPO_ROOT) -> DesignManualGovernanceSummary:
             raise DesignManualGovernanceError(f"{field.replace('_', ' ')} is missing")
     manifest_path = _safe_path(inventory["module_manifest"], "module manifest")
     read_inventory(root, root.joinpath(*manifest_path.parts))
+    check_manual(root)
     registry_path = _safe_path(inventory["path"], "inventory path")
     registry = _load(root.joinpath(*registry_path.parts))
     calculation_count = verify_calculation_registry(registry)
+    chapter_summary = verify_textbook_chapters(root)
+    verify_exemplar_repository(root)
     qmd_count = _verify_manual_tree(root, source_path)
     _verify_context(root, policy)
     for schema in (
@@ -426,6 +597,7 @@ def verify_repository(root: Path = REPO_ROOT) -> DesignManualGovernanceSummary:
         manual_id=manual_id,
         canonical_qmd_count=qmd_count,
         calculation_count=calculation_count,
+        textbook_chapter_count=chapter_summary.chapter_count,
         release_status=_text(registry_object["release_status"], "release status"),
         public_projection_allowed=allowed,
     )
@@ -437,6 +609,8 @@ def main() -> int:
         summary = verify_repository()
     except (
         DesignManualGovernanceError,
+        TextbookChapterError,
+        ExemplarContractError,
         ToolsModuleInventoryError,
         OSError,
         json.JSONDecodeError,
@@ -447,6 +621,7 @@ def main() -> int:
         "Design-manual governance verified: "
         f"{summary.canonical_qmd_count} QMD sources, "
         f"{summary.calculation_count} registered calculations, "
+        f"{summary.textbook_chapter_count} registered textbook chapters, "
         f"release={summary.release_status}."
     )
     return 0

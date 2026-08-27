@@ -1,0 +1,93 @@
+# Required Textbook Chapter Contract
+
+## Outcome and Authority
+
+TOOLS-D3 defines the public structure that every calculation-level textbook
+chapter must satisfy before registration. The contract is structural and
+traceability-focused: passing it does not approve an equation, implementation,
+dataset, artifact, license, or engineering use. TOOLS-D4 now registers one
+verified-unapproved swing and Rate-of-Closure exemplar; missing markerless
+authority remains an explicit blocker rather than an inferred calculation.
+
+Two version identifiers are fixed:
+
+- Contract: `tools-textbook-chapter-contract/1.0.0`
+- Registry: `tools-textbook-chapter-registry/1.0.0`
+
+Their repository-owned JSON Schemas allow external consumers to validate shape
+without importing producer code. The Python consumer then applies stricter
+invariants for normalized paths, ordering, uniqueness, authority state, and QMD
+content.
+
+## Required Chapter Anatomy
+
+Fourteen ordered sections are mandatory. A registered chapter must present,
+in order: Purpose and Scope; Design by Contract; Coordinates, Frames, and Time;
+Units and Dimensions; Derivation and Assumptions; Algorithm; Implementation
+Symbols; Error and Failure Semantics; Uncertainty and Sensitivity; Verification
+and Validation; Limits and Applicability; Worked Examples; References and
+Provenance; and Revision History.
+
+The contract also declares mandatory third-level headings. For example, Design
+by Contract requires Preconditions, Postconditions, and Invariants. Coordinates
+requires frame, handedness, and time declarations. Verification and Validation
+requires test evidence and acceptance criteria. Exact ordered headings remove
+format-dependent inference and make an omitted obligation a deterministic
+failure.
+
+## Registration and Traceability
+
+Each registered chapter has one stable chapter ID and one normalized QMD path.
+Its descriptor binds the chapter version and provisional authority to an owner,
+review owner, stable calculation IDs, module IDs, verification tests, source
+citations, explicit limitations, and revision history. All traceability arrays
+are non-empty, unique, and sorted; duplicate chapter IDs or paths are rejected.
+
+An `approved` chapter claim is unsupported by this D3 contract because later
+subepics own page, accessibility, publication, and human-review evidence. D3
+accepts only `provisional` and `verified-unapproved` chapter descriptors. The
+manual and every generated representation therefore remain
+`generated-unapproved`.
+
+## Linter Algorithm and Evidence
+
+The linter loads the contract and registry through strict typed consumers,
+resolves each registered path beneath `manuals/tools/chapters`, decodes UTF-8,
+and rejects forbidden placeholder or private-source tokens. It extracts level-2
+and level-3 headings, compares them with the exact ordered contract, and checks
+that every required section has governed body content.
+
+For normalized chapter text \(T\) and ordered section blocks \(S_i\), the linter
+records deterministic evidence as
+
+\[
+h_T = \operatorname{SHA256}(\operatorname{LF}(T)), \qquad
+h_i = \operatorname{SHA256}(\operatorname{LF}(S_i)).
+\]
+
+These hashes detect byte-level content drift while remaining independent of
+Windows or POSIX checkout line endings. They are lint evidence, not scientific
+approval or an immutable publication digest.
+
+## Failure and Ownership Boundaries
+
+Missing files, invalid UTF-8, unsafe paths, unknown fields or versions, duplicate
+identities, unsorted traceability, missing or reordered headings, empty governed
+content, placeholders, private-source references, unsupported status promotion,
+and stale generated artifacts all fail closed. The linter does not synthesize
+equations, units, sources, examples, tests, or limitations.
+
+TOOLS-D4 owns exemplar chapter registration and its fail-closed dependency
+coverage. TOOLS-D5 expands phased module
+coverage, TOOLS-D6 owns executable freshness, TOOLS-D7 owns rendered and
+accessibility review, and TOOLS-D8 owns immutable public projection and human
+approval.
+
+## Consumer Workflow
+
+Authors edit only canonical QMD and the machine-readable chapter registry. Run
+these commands in order:
+
+1. `python -m` `scripts.lint_tools_textbook_chapters`
+2. `python -m` `scripts.check_tools_exemplars`
+3. `python -m` `scripts.render_tools_design_manual` `--render`

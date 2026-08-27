@@ -296,12 +296,10 @@ const validateReport = (report: MorrisReport): void => {
     if (previous !== undefined && previous !== sourceIdentity) throw new RangeError("source provenance changes within report");
     sources.set(estimate.source.specId, sourceIdentity);
     const targetIdentity = JSON.stringify(estimate.target);
-    const previousTarget = targets.get(estimate.target.name);
-    if (previousTarget !== undefined && previousTarget !== targetIdentity) throw new RangeError("target provenance changes within report");
-    targets.set(estimate.target.name, targetIdentity);
+    targets.set(targetIdentity, targetIdentity);
     const sourceTargets = pairsBySource.get(estimate.source.specId) ?? new Set<string>();
-    if (sourceTargets.has(estimate.target.name)) throw new RangeError("source/target estimate pairs must be unique");
-    sourceTargets.add(estimate.target.name);
+    if (sourceTargets.has(targetIdentity)) throw new RangeError("source/target estimate pairs must be unique");
+    sourceTargets.add(targetIdentity);
     pairsBySource.set(estimate.source.specId, sourceTargets);
   }
   const expectedSamples = report.design.trajectories * (sources.size + 1);

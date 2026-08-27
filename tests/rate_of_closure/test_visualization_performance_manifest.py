@@ -157,7 +157,13 @@ def test_all_visualization_authorities_are_declared_as_package_data() -> None:
     # to one feature's entries makes any other feature's packaging a failure.
     # Anything outside both sets is still rejected, so drift is still caught.
     assert authorities <= packaged
-    allowed_non_visualization_data = {"data/*.json"}
+    allowed_non_visualization_data = {
+        "data/*.json",
+        # R10.3's execution-capability authority is feature-owned package data,
+        # not a visualization manifest.  Its own contract tests load it through
+        # importlib.resources and verify exact wheel/runtime parity.
+        "locus_execution_capabilities.v1.json",
+    }
     assert not {
         entry
         for entry in packaged - authorities - allowed_non_visualization_data

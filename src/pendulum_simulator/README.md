@@ -379,3 +379,35 @@ All files pass Ruff, Black, and Mypy with zero errors.
 ## License
 
 MIT
+
+## Swing Objective Lab
+
+`python -m double_pendulum_golf.swing_objectives` (or the **Swing Objective Lab**
+launcher tile) optimizes one golfer's downswing against five competing objectives
+under a single shared torque budget, then cross-scores every resulting swing
+against every objective:
+
+| Objective          | Rewards                          | Units |
+| ------------------ | -------------------------------- | ----- |
+| `clubhead_speed`   | tip speed at impact              | m/s   |
+| `centrifugal`      | sustaining lag at high arm speed | N·m·s |
+| `coriolis`         | draining the arms into the club  | J     |
+| `energy_transfer`  | power routed through the grip    | J     |
+| `impulse_transfer` | sustained pull on the club       | N·s   |
+
+It reuses this tool's existing physics kernel and `transfer_strategy` contract —
+no equations of motion are re-derived. The design contract, including the exact
+`P_coriolis = -2 * P_centrifugal` identity that forces the centrifugal objective
+to be an impulse rather than work, is in
+[`docs/specs/SWING_OBJECTIVE_COMPARISON.md`](../../docs/specs/SWING_OBJECTIVE_COMPARISON.md).
+
+**Read the degeneracy flag before concluding anything.** Close to the golfer's
+minimum downswing duration the constraints pin the trajectory, every objective
+returns the same swing, and the comparison matrix fills with 100% entries that
+look like unanimous agreement but are an artifact of the configuration. The
+surface says so explicitly when it happens.
+
+Research prototype and notebooks:
+[`Double-Pendulum-Optimization`](https://github.com/D-sorganization/Double-Pendulum-Optimization)
+— that repository is an independent cross-check of the same physics, not a
+dependency.

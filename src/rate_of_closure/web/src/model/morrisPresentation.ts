@@ -121,11 +121,30 @@ const titleFromName = (name: string): string => name.split("_")
   .map((part) => part[0]?.toUpperCase() + part.slice(1))
   .join(" ");
 
+export const morrisTargetLabel = (name: string): string => (
+  OUTPUT_LABELS[name] ?? titleFromName(name)
+);
+
 export function presentMorrisReport(report: MorrisReport, targetName: string): MorrisReportPresentation {
   if (typeof targetName !== "string" || targetName === "" || targetName !== targetName.trim()) {
     throw new RangeError("Morris target name must be a nonempty trimmed string");
   }
-  const estimates = report.estimates.filter((estimate) => estimate.target.name === targetName);
+  const targets = new Map<string, MorrisTargetProvenance>();
+  report.estimates.filter((estimate) => estimate.target.name === targetName)
+    .forEach((estimate) => targets.set(JSON.stringify(estimate.target), estimate.target));
+  if (targets.size === 0) throw new RangeError("Morris target is not present in the report");
+  if (targets.size !== 1) throw new RangeError("Morris target name is ambiguous");
+  return presentMorrisTarget(report, [...targets.values()][0]);
+}
+
+export function presentMorrisTarget(
+  report: MorrisReport,
+  selectedTarget: MorrisTargetProvenance,
+): MorrisReportPresentation {
+  const targetKey = JSON.stringify(selectedTarget);
+  const estimates = report.estimates.filter(
+    (estimate) => JSON.stringify(estimate.target) === targetKey,
+  );
   if (estimates.length === 0) throw new RangeError("Morris target is not present in the report");
   const rows = estimates.map((estimate): MorrisPresentationRow => Object.freeze({
     rank: null,
@@ -150,7 +169,7 @@ export function presentMorrisReport(report: MorrisReport, targetName: string): M
   })).sort(rowOrder).map((row, index) => withRank(row, row.muStar === null ? null : index + 1));
   const target = Object.freeze({
     ...estimates[0].target,
-    label: OUTPUT_LABELS[targetName] ?? titleFromName(targetName),
+    label: morrisTargetLabel(selectedTarget.name),
   });
   return Object.freeze({ target, rows: Object.freeze(rows) });
 }

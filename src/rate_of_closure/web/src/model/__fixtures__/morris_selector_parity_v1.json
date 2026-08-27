@@ -1,0 +1,48 @@
+{
+  "schema_id": "rate-of-closure/morris-selector-parity",
+  "schema_version": 1,
+  "targets": [
+    {
+      "name": "clubhead_x_m",
+      "unit": "m",
+      "kind": "state-point",
+      "time_s": 0.1,
+      "point_id": "clubhead",
+      "coordinate_frame": "app_frame:x_target,y_up,z_right"
+    },
+    {
+      "name": "clubhead_x_m",
+      "unit": "m",
+      "kind": "state-point",
+      "time_s": 0.2,
+      "point_id": "grip",
+      "coordinate_frame": "app_frame:x_target,y_up,z_right"
+    },
+    {
+      "name": "clubhead_speed_mps",
+      "unit": "m/s",
+      "kind": "impact",
+      "time_s": null,
+      "point_id": null,
+      "coordinate_frame": "app_frame:x_target,y_up,z_right"
+    },
+    {
+      "name": "carry_m",
+      "unit": "m",
+      "kind": "shot-outcome",
+      "time_s": null,
+      "point_id": null,
+      "coordinate_frame": "app_frame:x_target,y_up,z_right"
+    }
+  ],
+  "expected_labels": [
+    "Clubhead Speed — impact",
+    "Carry — shot-outcome",
+    "Clubhead X M — state-point · clubhead · t=0.1 s",
+    "Clubhead X M — state-point · grip · t=0.2 s"
+  ],
+  "expected_state_points": [
+    ["clubhead", 0.1],
+    ["grip", 0.2]
+  ]
+}

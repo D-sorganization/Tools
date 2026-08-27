@@ -55,6 +55,14 @@ def _matches_any(path: str, patterns: Sequence[str]) -> bool:
     return any(fnmatch.fnmatchcase(path, pattern) for pattern in patterns)
 
 
+def _is_react_surface_path(path: str) -> bool:
+    """Exclude test modules from the shipped React visual surface."""
+
+    return _matches_any(path, _REACT_PATTERNS) and not path.endswith(
+        (".test.tsx", ".spec.tsx")
+    )
+
+
 def _surface_requirements(surface: str) -> tuple[str, ...]:
     """Return the exact evidence co-change contract for one visual surface."""
 
@@ -78,7 +86,7 @@ def validate_visual_evidence_changes(changed_files: Iterable[str]) -> tuple[str,
 
     changed = _normalize_paths(changed_files)
     surfaces: list[str] = []
-    if any(_matches_any(path, _REACT_PATTERNS) for path in changed):
+    if any(_is_react_surface_path(path) for path in changed):
         surfaces.append("react")
     if any(_matches_any(path, _PYQT_PATTERNS) for path in changed):
         surfaces.append("pyqt")

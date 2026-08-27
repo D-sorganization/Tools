@@ -1,6 +1,7 @@
 {
   "description": "Canonical monorepo JSON files vendored into web/ so the public mirror (rate-of-closure-explorer) builds standalone. Keys are Tools-repo-root-relative canonical paths; values are web/-relative vendored copies. Refresh with `node scripts/refresh-vendored.mjs`. Drift is blocked by src/vendored/vendoredSync.test.ts (monorepo-only) and tests/rate_of_closure/test_web_vendored_sync.py.",
   "mappings": {
+    "src/rate_of_closure/locus_execution_capabilities.v1.json": "src/vendored/locus_execution_capabilities.v1.json",
     "src/rate_of_closure/visualization_tabs.v1.json": "src/vendored/visualization_tabs.v1.json",
     "src/rate_of_closure/visualization_accessibility.v1.json": "src/vendored/visualization_accessibility.v1.json",
     "src/rate_of_closure/visualization_performance.v1.json": "src/vendored/visualization_performance.v1.json",
