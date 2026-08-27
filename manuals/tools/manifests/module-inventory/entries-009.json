@@ -3,6 +3,100 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 3103,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "7ac4ecd4f5919ed839d10dcb083ca991887c057384d3e51a7d5b25544c502762",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-SIMULATIONSCRUBAUTHORITY-TEST-TSX-5BE2FEE5FDD7",
+      "language": "typescript-react",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/components/SimulationScrubAuthority.test.tsx",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 1809,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "5e39ea8b89b6c6805c8c9d3517f623f8fb5f6d24e2322a0e0503e2d82e333678",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-SIMULATIONSTATUSHEADER-TEST-TSX-C34BB1EA8CFB",
+      "language": "typescript-react",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/components/SimulationStatusHeader.test.tsx",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 3938,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
@@ -12349,176 +12443,6 @@
         "unit_mentions": [
           "m/s",
           "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5244,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0cbb0337b4743a12afa6bdb6c8684460d2a41b847ed4a835180f947a8a58e755",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-FLIGHTSAMPLEINSPECTOR-TEST-TS-E2120D2D8FA2",
-      "language": "typescript",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/model/flightSampleInspector.test.ts",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 7449,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "71198c85931420caabd86f1f46f21a42aaed8027af6b995d12040e552253c0f9",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-FLIGHTSAMPLEINSPECTOR-TS-F11297E03CA2",
-      "language": "typescript",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/model/flightSampleInspector.ts",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "DEFAULT_FLIGHT_HIT_RADIUS_PX",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "FlightCohort",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "FlightDisplaySample",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "FlightNavigation",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "FlightPhase",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "FlightSamplePlan",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "FlightSampleSelection",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "FlightSampleSource",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "MAX_FLIGHT_POSITION_M",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "MAX_FLIGHT_SAMPLES",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "MAX_FLIGHT_TIME_S",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "MAX_FLIGHT_VELOCITY_MPS",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "flightSampleSource",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "navigateFlightSamples",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "nearestFlightSample",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "planFlightSamples",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "N"
         ],
         "validation_paths": []
       }

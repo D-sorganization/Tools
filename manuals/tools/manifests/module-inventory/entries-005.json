@@ -13908,10 +13908,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 1044,
+      "bytes_lf": 1789,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "13e70d87cf676fcb864d1ff284b48e82f8a07c7e362d46758d21316dd7021e87",
+      "content_sha256_lf": "123fe1d3b6643f475fbe0982111b0956d6ed68d9d9bea98aa2a22558f05b6a7a",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-INIT-PY-BB0C6A767464",
       "language": "python",
@@ -13952,7 +13952,52 @@
         "public_surfaces": [
           {
             "kind": "re-export",
+            "name": "CENTRIFUGAL",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CLUBHEAD_SPEED",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CORIOLIS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ENERGY_TRANSFER",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "IMPULSE_TRANSFER",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SWING_OBJECTIVES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SwingObjective",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SwingSignals",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "VelocityTerms",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_swing_signals",
             "signature": null
           },
           {
@@ -13974,10 +14019,200 @@
             "kind": "re-export",
             "name": "decompose_velocity_terms",
             "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "evaluate_all",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "generalized_accelerations",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_objective",
+            "signature": null
           }
         ],
         "test_paths": [],
         "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 7604,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "cb8356724268ef307877b64d73dbcb0e7738660e40f5bca5a81b85c9d020bd05",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-OBJECTIVES-PY-673B5A3F0853",
+      "language": "python",
+      "maintainer": "Pendulum maintainers",
+      "path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/objectives.py",
+      "purpose": "The five competing objectives a golf downswing can be optimized for.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SwingObjective",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CENTRIFUGAL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CLUBHEAD_SPEED",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CORIOLIS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ENERGY_TRANSFER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "IMPULSE_TRANSFER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SWING_OBJECTIVES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "evaluate_all",
+            "signature": "signals: SwingSignals"
+          },
+          {
+            "kind": "function",
+            "name": "get_objective",
+            "signature": "objective: str | SwingObjective"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "J",
+          "N",
+          "N*m",
+          "N·m",
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 10779,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "c3e5bbaf0174c005e9805ebc5aa8e6da7c40a7997137541d58012ab3d72b093f",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-SIGNALS-PY-A76CFBA57D0D",
+      "language": "python",
+      "maintainer": "Pendulum maintainers",
+      "path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/signals.py",
+      "purpose": "Vectorized downswing signals shared by every swing objective.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SwingSignals",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_swing_signals",
+            "signature": "time_s: FloatArray, states: FloatArray, torques: FloatArray, params: PendulumParams"
+          },
+          {
+            "kind": "function",
+            "name": "generalized_accelerations",
+            "signature": "states: FloatArray, torques: FloatArray, params: PendulumParams"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N",
+          "N·m",
+          "W",
+          "g",
+          "m/s",
+          "rad/s",
+          "s"
+        ],
         "validation_paths": []
       }
     },
@@ -14897,109 +15132,6 @@
           "tests/folder_tool/test_gui_registration.py",
           "tests/rate_of_closure/test_gui_registration.py"
         ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 369,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "9e91af0d1586b853f2d3135ca667e97482b34979b107dc5c45e1885d71a7cd56",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-LAUNCH-PYQT6-PY-5459A6A44AC5",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/pressure_drop_calculator/launch_pyqt6.py",
-      "purpose": "Standalone PyQt6 launcher for Pressure Drop Calculator.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [
-          "tests/folder_tool/test_launch_pyqt6.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 447,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "bbc4f1d5ad3566e0473f276a1d9512a25891d0d14be750b5c450368b95b2b9e5",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-LAUNCH-WEB-PY-0BFDCD416F70",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/pressure_drop_calculator/launch_web.py",
-      "purpose": "Launch the Pressure Drop Calculator React web application.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "_REPO_ROOT",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []
       }

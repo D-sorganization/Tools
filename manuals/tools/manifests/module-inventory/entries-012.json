@@ -3,6 +3,155 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 11878,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b3ec336c6c8243bcb825641364321d1558a9f49999fdb4a8582c4bdf48a53c7b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLINE-ADAPTER-PY-F0F36B57553B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/adapters/cline_adapter.py",
+      "purpose": "Cline adapter for local IDE-based AI agent communication.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://localhost:3000",
+          "http://localhost:3000."
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ClineAdapter",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_CLINE_HOST",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_CLINE_TIMEOUT",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/ai/tests/test_adapter_factory.py",
+          "tests/shared/python/ai/test_adapter_contract.py",
+          "tests/shared/python/ai/test_adapter_factory.py",
+          "tests/shared/python/ai/test_classify_error.py",
+          "tests/unit/ai/adapters/test_cline_adapter.py",
+          "tests/unit/chat/test_adapter_capabilities.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "tests/shared/python/ai/test_adapter_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 12233,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "954e48d9c21f7ecb1000d209d94d88f9358870bf351fc3b2143e2f38e4e24f4c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CODEX-CLI-ADAPTER-PY-7AFE11EBF925",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/adapters/codex_cli_adapter.py",
+      "purpose": "OpenAI Codex CLI adapter.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CodexCliAdapter",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_CODEX_CLI_TIMEOUT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_FALLBACK_PATHS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_STATIC_MODELS",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/ai/test_codex_cli_adapter.py",
+          "tests/unit/ai/adapters/test_codex_cli_adapter.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 13838,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -14764,120 +14913,6 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 10768,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7b59e479b6fa0176175f02746ee0ab4da9944160ab751ea4d62b3bbfc059d505",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-INDEXER-PY-160B672BBD95",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/codemap/indexer.py",
-      "purpose": "Walk a repo, parse files, persist symbols into SQLite.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "RebuildStats",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "rebuild",
-            "signature": "repo_root: str | os.PathLike[str], *, since: str | None=None"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2832,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "751b512b55dba5a61b4d6c1412cfb1200e38abf6d257ed1d49d95052b2a15486",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-MCP-SERVER-PY-F4603B0A7AD3",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/codemap/mcp_server.py",
-      "purpose": "MCP server exposing the code map to external coding agents.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "main",
-            "signature": "argv: list[str] | None=None"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
         "validation_paths": []
       }
     }

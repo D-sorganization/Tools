@@ -3,6 +3,128 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 1309,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f33f728f1f97f6a2aa1cb53a511fb2e2b225c300c81e89887ceb366d675d9143",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONANALYSISPOLICY-TS-8805691C93FA",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/variationAnalysisPolicy.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "VariationAnalysisExecution",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "VariationAnalysisExecutionResult",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "VariationAnalysisExecutors",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "executeVariationAnalyses",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1128,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0e396d2baefa9363e9831f068dbaa34763148a3ca5668a8cd3044c8602cb2330",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONDEFAULTS-TS-2390329D675D",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/variationDefaults.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "defaultVariationPlan",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "defaultVariationSpec",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 8349,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -14835,155 +14957,6 @@
         ],
         "test_paths": [
           "tests/shared/python/ai/test_cli_provider_setup.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 11878,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b3ec336c6c8243bcb825641364321d1558a9f49999fdb4a8582c4bdf48a53c7b",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLINE-ADAPTER-PY-F0F36B57553B",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/ai/adapters/cline_adapter.py",
-      "purpose": "Cline adapter for local IDE-based AI agent communication.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "http://localhost:3000",
-          "http://localhost:3000."
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ClineAdapter",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_CLINE_HOST",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_CLINE_TIMEOUT",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/ai/tests/test_adapter_factory.py",
-          "tests/shared/python/ai/test_adapter_contract.py",
-          "tests/shared/python/ai/test_adapter_factory.py",
-          "tests/shared/python/ai/test_classify_error.py",
-          "tests/unit/ai/adapters/test_cline_adapter.py",
-          "tests/unit/chat/test_adapter_capabilities.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": [
-          "tests/shared/python/ai/test_adapter_contract.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 12233,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "954e48d9c21f7ecb1000d209d94d88f9358870bf351fc3b2143e2f38e4e24f4c",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CODEX-CLI-ADAPTER-PY-7AFE11EBF925",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/ai/adapters/codex_cli_adapter.py",
-      "purpose": "OpenAI Codex CLI adapter.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CodexCliAdapter",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_CODEX_CLI_TIMEOUT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_FALLBACK_PATHS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_STATIC_MODELS",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/ai/test_codex_cli_adapter.py",
-          "tests/unit/ai/adapters/test_codex_cli_adapter.py"
         ],
         "unit_mentions": [
           "g",

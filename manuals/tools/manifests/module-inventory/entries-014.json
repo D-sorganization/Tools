@@ -3,6 +3,133 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 4409,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4dbefebcf113e0010c69981082e2f8449582568b22cd2241b249eaba4fbffa44",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-ACCESS-POLICY-PY-1986FCEFCF49",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/agent/access_policy.py",
+      "purpose": "Access policy for SidekickActionService (epic #5967 / S6 / #5975).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PolicyDecision",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SidekickActionPolicy",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/ai/tests/test_access_policy.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6463,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a9e73fd7b6191937cd8d26cd368fbbb4c37f8fcf2c22e833bc3ef195facb247f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-ACTION-AUDIT-PY-DDE2937D201A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/agent/action_audit.py",
+      "purpose": "Audit sinks for SidekickActionService (epic #5967 / S6 / #5975).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "JsonlActionAudit",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MemoryActionAudit",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "redact_secrets",
+            "signature": "payload: Mapping[str, Any]"
+          }
+        ],
+        "test_paths": [
+          "tests/unit/sidekick/agent/test_action_audit.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2993,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -16941,1031 +17068,6 @@
           "tests/shared/python/utils/test_paths.py"
         ],
         "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 21107,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "bb461c0fa22b683fff78bef11b0a7d5e5d0e81a237fa60ea658a6e31ed4e6e88",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UTILS-STATE-MANAGER-PY-B9C9F4EFAF02",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/utils/state_manager.py",
-      "purpose": "# File: state_manager.py",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "StateManager",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "get_state_manager",
-            "signature": "base_directory: str='saved_states'"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/sidekick/tests/test_json_io_boundary_3333.py",
-          "src/shared/python/sidekick/tests/test_state_manager.py",
-          "src/shared/python/sidekick/tests/test_state_manager_atomic.py",
-          "src/shared/python/sidekick/tests/test_state_manager_side_effects.py",
-          "tests/shared/python/utils/test_state_manager.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 28481,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c630e3499ca0608f9b23b30c4723c9a6a060bf9ade8fbec5a896f08b61956140",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UTILS-UNIT-CONSTANTS-PY-EF9FD0AF9579",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/utils/unit_constants.py",
-      "purpose": "Unit Conversion Constants",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "ACRE_TO_SQ_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ANGSTROM_TO_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ATMOSPHERE_TO_PASCAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ATM_TO_KPA",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "AVOGADRO_NUMBER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "BAR_TO_KPA",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "BAR_TO_PASCAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "BOLTZMANN_CONSTANT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "BTU_PER_FOOT_HOUR_FAHRENHEIT_TO_W_PER_M_K",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "BTU_PER_HOUR_TO_WATT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "BTU_PER_LB_TO_J_PER_KG",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "BTU_PER_LB_TO_MJ_PER_KG",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "BTU_PER_POUND_FAHRENHEIT_TO_J_PER_KG_K",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "BTU_PER_SQ_FOOT_HOUR_FAHRENHEIT_TO_W_PER_M2_K",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "BTU_TO_JOULE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CALORIE_PER_SECOND_TO_WATT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CALORIE_TO_JOULE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CAL_PER_CM_SECOND_CELSIUS_TO_W_PER_M_K",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CAL_PER_GRAM_CELSIUS_TO_J_PER_KG_K",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CELSIUS_OFFSET",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CENTIMETER_TO_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CENTIPOISE_TO_PASCAL_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CENTISTOKE_TO_SQ_METER_PER_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CM_H2O_TO_PASCAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CP_WATER_LIQUID",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CP_WATER_VAPOR",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CU_CENTIMETER_TO_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CU_FOOT_TO_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CU_INCH_TO_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CU_METER_TO_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CU_MILLIMETER_TO_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DAY_TO_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DENSITY_STP_AIR",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DENSITY_STP_CO2",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DENSITY_STP_CO",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DENSITY_STP_HYDROGEN",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DENSITY_STP_METHANE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DENSITY_STP_NITROGEN",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DENSITY_STP_OXYGEN",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DENSITY_STP_WATER_VAPOR",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DENSITY_WATER_STD",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ELECTRON_VOLT_TO_JOULE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ERG_TO_JOULE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "FOOT_H2O_TO_PASCAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "FOOT_POUND_PER_SECOND_TO_WATT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "FOOT_POUND_TO_JOULE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "FOOT_POUND_TO_NEWTON_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "FOOT_TO_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GIGAJOULE_TO_JOULE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GIGAPASCAL_TO_PASCAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GIGAWATT_TO_WATT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GRAIN_TO_KILOGRAM",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GRAM_PER_CU_CM_TO_KG_PER_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GRAM_PER_LITER_TO_KG_PER_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GRAM_PER_SECOND_TO_KG_PER_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GRAM_TO_KILOGRAM",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "HECTARE_TO_SQ_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "HORSEPOWER_TO_WATT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "HOURS_PER_DAY",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "HOUR_TO_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "H_VAP_WATER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "IMPERIAL_GALLON_TO_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "INCH_H2O_TO_PASCAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "INCH_HG_TO_PASCAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "INCH_TO_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "JOULE_PER_KG_KELVIN",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "JOULE_TO_JOULE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KCAL_PER_HOUR_TO_WATT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KG_PER_CU_METER_TO_KG_PER_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KG_PER_HOUR_TO_KG_PER_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KG_PER_MINUTE_TO_KG_PER_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KG_PER_SECOND_TO_KG_PER_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KG_TO_LB",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KILOCALORIE_TO_JOULE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KILOGRAM_TO_KILOGRAM",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KILOJOULE_TO_JOULE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KILOMETER_TO_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KILOPASCAL_TO_PASCAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KILOWATT_HOUR_TO_JOULE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KILOWATT_TO_WATT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "LB_TO_G",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "LB_TO_KG",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "LITER_TO_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "LONG_TON_TO_KILOGRAM",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MEGAJOULE_TO_JOULE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MEGAPASCAL_TO_PASCAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MEGAWATT_HOUR_TO_JOULE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MEGAWATT_TO_WATT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "METER_TO_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "METRIC_HORSEPOWER_TO_WATT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "METRIC_TON_TO_KILOGRAM",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MICROMETER_TO_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MILE_TO_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MILLIBAR_TO_PASCAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MILLIGRAM_TO_KILOGRAM",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MILLILITER_TO_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MILLIMETER_TO_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MIL_TO_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MINUTE_TO_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MIN_BASIS_MOLES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MMBTU_PER_HOUR_TO_WATT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MMHG_TO_PASCAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MOLAR_VOLUME_STP",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MOLAR_VOLUME_STP_OLD",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_AIR",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_AMMONIA",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_CARBON_DIOXIDE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_CARBON_MONOXIDE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_HYDROGEN",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_HYDROGEN_SULFIDE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_METHANE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_NITROGEN",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_OXYGEN",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_WATER_VAPOR",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "NANOMETER_TO_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "NTP_PRESSURE_PA",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "NTP_TEMPERATURE_K",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "OUNCE_TO_KILOGRAM",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PASCAL_SECOND_TO_PASCAL_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PASCAL_TO_PASCAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "POISE_TO_PASCAL_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "POUND_FORCE_INCH_TO_NEWTON_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "POUND_PER_CU_FOOT_TO_KG_PER_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "POUND_PER_FOOT_SECOND_TO_PASCAL_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "POUND_PER_GALLON_TO_KG_PER_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "POUND_PER_HOUR_TO_KG_PER_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "POUND_PER_MINUTE_TO_KG_PER_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "POUND_PER_SECOND_TO_KG_PER_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "POUND_TO_KILOGRAM",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PSI_TO_KPA",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PSI_TO_PASCAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "RANKINE_RATIO",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "R_UNIVERSAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "R_UNIVERSAL_KMOL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SATP_PRESSURE_PA",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SATP_TEMPERATURE_K",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SCFM_60F_TEMPERATURE_K",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SCFM_70F_TEMPERATURE_K",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SCFM_PRESSURE_PA",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SCFM_TO_CU_METER_PER_HOUR_AT_60F",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SECOND_TO_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SHORT_TON_TO_KILOGRAM",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SLUG_TO_KILOGRAM",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SQ_CENTIMETER_TO_SQ_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SQ_FOOT_PER_SECOND_TO_SQ_METER_PER_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SQ_FOOT_TO_SQ_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SQ_INCH_TO_SQ_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SQ_KILOMETER_TO_SQ_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SQ_METER_PER_SECOND_TO_SQ_METER_PER_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SQ_METER_TO_SQ_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SQ_MILLIMETER_TO_SQ_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SQ_YARD_TO_SQ_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "STANDARD_GRAVITY",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "STOKE_TO_SQ_METER_PER_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "STP_OLD_PRESSURE_PA",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "STP_PRESSURE_PA",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "STP_TEMPERATURE_K",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "THERM_TO_JOULE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "TORR_TO_PASCAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "TPD_TO_LB",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "UNIT_ALIASES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "UNIT_LABEL_BTU_LB",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "UNIT_LABEL_KG_HR",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "UNIT_LABEL_LB_HR",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "UNIT_LABEL_MG_KG",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "UNIT_LABEL_MJ_KG",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "UNIT_LABEL_SCFM",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "UNIT_LABEL_WT_PERCENT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "US_BARREL_TO_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "US_FLUID_OUNCE_TO_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "US_GALLON_TO_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "US_PINT_TO_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "US_QUART_TO_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "VALIDATION_RANGES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "WATT_HOUR_TO_JOULE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "WATT_PER_METER_KELVIN",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "WATT_PER_SQ_METER_KELVIN",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "WATT_TO_WATT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "YARD_TO_METER",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/pendulum_simulator/tests/test_unit_converter.py",
-          "src/shared/python/sidekick/tests/process_calculators/test_mmhg_constant_unified_3676.py",
-          "tests/shared/python/utils/test_unit_constants.py"
-        ],
-        "unit_mentions": [
-          "J",
-          "MPa",
-          "Nm",
-          "Pa",
-          "W",
-          "bar",
-          "cm",
-          "g",
-          "kPa",
-          "kg",
-          "m/s",
-          "mm",
           "s"
         ],
         "validation_paths": []

@@ -13,6 +13,22 @@ motion are re-derived here.
 See ``docs/specs/SWING_OBJECTIVE_COMPARISON.md``. Epic #4766.
 """
 
+from double_pendulum_golf.swing_objectives.objectives import (
+    CENTRIFUGAL,
+    CLUBHEAD_SPEED,
+    CORIOLIS,
+    ENERGY_TRANSFER,
+    IMPULSE_TRANSFER,
+    SWING_OBJECTIVES,
+    SwingObjective,
+    evaluate_all,
+    get_objective,
+)
+from double_pendulum_golf.swing_objectives.signals import (
+    SwingSignals,
+    build_swing_signals,
+    generalized_accelerations,
+)
 from double_pendulum_golf.swing_objectives.velocity_terms import (
     VelocityTerms,
     centrifugal_vector,
@@ -22,9 +38,24 @@ from double_pendulum_golf.swing_objectives.velocity_terms import (
 )
 
 __all__ = [
+    # Velocity-term decomposition (#4767)
     "VelocityTerms",
     "centrifugal_vector",
     "coriolis_only_vector",
     "coupling_constant",
     "decompose_velocity_terms",
+    # Trajectory signals (#4768)
+    "SwingSignals",
+    "build_swing_signals",
+    "generalized_accelerations",
+    # Objectives (#4768)
+    "SwingObjective",
+    "SWING_OBJECTIVES",
+    "get_objective",
+    "evaluate_all",
+    "CLUBHEAD_SPEED",
+    "CENTRIFUGAL",
+    "CORIOLIS",
+    "ENERGY_TRANSFER",
+    "IMPULSE_TRANSFER",
 ]

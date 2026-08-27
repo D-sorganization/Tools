@@ -12924,6 +12924,7 @@
           "src/pendulum_simulator/tests/test_optimization_widget.py",
           "src/pendulum_simulator/tests/test_panel_builders.py",
           "src/pendulum_simulator/tests/test_simulation_panel.py",
+          "src/pendulum_simulator/tests/test_swing_signals.py",
           "src/pendulum_simulator/tests/test_toolstrip_elements.py",
           "src/shared/python/plot_engine/tests/test_specs.py",
           "src/shared/python/signal_toolkit/tests/__init__.py",
