@@ -448,6 +448,7 @@
           }
         ],
         "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/noise_response_test_support.py",
           "src/shared/python/swing_sim/variation/tests/test_engine.py",
           "src/shared/python/swing_sim/variation/tests/test_execution_metadata.py",
           "tests/rate_of_closure/test_variation_ensemble_io_reader.py"
@@ -649,6 +650,7 @@
           }
         ],
         "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/noise_response_test_support.py",
           "tests/rate_of_closure/test_variation_ensemble_io_reader.py"
         ],
         "unit_mentions": [
@@ -820,6 +822,7 @@
           }
         ],
         "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/noise_response_test_support.py",
           "src/shared/python/swing_sim/variation/tests/test_execution_metadata.py",
           "tests/rate_of_closure/test_workspace_document.py"
         ],
@@ -1001,7 +1004,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "not-applicable",
         "validation": "not-applicable"
       },
@@ -1027,7 +1030,10 @@
             "signature": null
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_noise_response_falsification.py",
+          "src/shared/python/swing_sim/variation/tests/test_noise_response_field.py"
+        ],
         "unit_mentions": [],
         "validation_paths": []
       }
@@ -1337,6 +1343,439 @@
         "test_paths": [
           "src/shared/python/swing_sim/variation/tests/test_morris_observation_io.py"
         ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 14777,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b2e736894d85b5efdcb397b56fcfc333907d580c2bd8c69a1ba5568210d24329",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-NOISE-RESPONSE-PY-1BC93E5A7C1E",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/noise_response.py",
+      "purpose": "Streaming declared-scale response and denominator-matched scatter analysis.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ResponseFieldAccumulator",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_RESPONSE_ACCUMULATOR_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "compute_position_noise_response_field",
+            "signature": "inputs: tuple[ResponseFieldInput, ...], chunk_size: int | None=None"
+          },
+          {
+            "kind": "re-export",
+            "name": "ADEQUACY_ESTIMABLE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ADEQUACY_INSUFFICIENT_PAIRS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ADEQUACY_UNSUPPORTED_BOUNDED",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ADEQUACY_UNSUPPORTED_CORRELATED",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ADEQUACY_UNSUPPORTED_DISCRETE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ADEQUACY_ZERO_PERTURBATION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "POSITION_NOISE_RESPONSE_FIELD_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "POSITION_NOISE_RESPONSE_FIELD_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PositionNoiseResponseField",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ResponseAccumulatorSnapshot",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ResponseFieldInput",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "response_field_fingerprint",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/noise_response_test_support.py",
+          "src/shared/python/swing_sim/variation/tests/test_noise_response_falsification.py",
+          "src/shared/python/swing_sim/variation/tests/test_noise_response_field.py",
+          "tests/rate_of_closure/test_variation_noise_response.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4031,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e5edfe88380f3994a5eb20afea0087cd084e9f8586db7cccfdfe78bb917d5649",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-NOISE-RESPONSE-FINGERPRINT-PY-BA2AC3293EC2",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/noise_response_fingerprint.py",
+      "purpose": "Deterministic identities for response inputs, state, and final fields.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "input_contract_fingerprint",
+            "signature": "inputs: tuple[ResponseFieldInput, ...]"
+          },
+          {
+            "kind": "function",
+            "name": "response_field_fingerprint",
+            "signature": "field: PositionNoiseResponseField"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3244,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9267bf0e67d38e61c22217abfa98b3dd55cb4f95e70181e595e15c95fac0dbdb",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-NOISE-RESPONSE-PLOT-PY-99822510C6F5",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/noise_response_plot.py",
+      "purpose": "Row-oriented plotting boundary for governed geometric response fields.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PositionNoiseResponsePlotRow",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "iter_position_noise_response_plot_rows",
+            "signature": "field: PositionNoiseResponseField"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_variation_noise_response.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8884,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f80ec4a3b3974b51780fccf9801ef40ae346521f9cbd38cd72316fc0ac366fa6",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-NOISE-RESPONSE-RECORD-PY-3DA6469F42E6",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/noise_response_record.py",
+      "purpose": "Immutable plot-ready record for geometric noise-response evidence.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PositionNoiseResponseField",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_noise_response_falsification.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9616,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "65b2170cd5dcd70c68998d0f06782c2fcccf5fc83e909796a1c2f6788d9e7995",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-NOISE-RESPONSE-TYPES-PY-DB357A113AB5",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/noise_response_types.py",
+      "purpose": "Input and resumable-state contracts for geometric response fields.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ResponseAccumulatorSnapshot",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ResponseFieldInput",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ADEQUACY_ESTIMABLE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ADEQUACY_INSUFFICIENT_PAIRS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ADEQUACY_STATES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ADEQUACY_UNSUPPORTED_BOUNDED",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ADEQUACY_UNSUPPORTED_CORRELATED",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ADEQUACY_UNSUPPORTED_DISCRETE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ADEQUACY_ZERO_PERTURBATION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DECLARED_SCALE_NORMALIZATION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "METRIC_IDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "METRIC_UNITS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PAIRED_OAT_RESPONSE_METHOD",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "POSITION_NOISE_RESPONSE_FIELD_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "POSITION_NOISE_RESPONSE_FIELD_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCIENTIFIC_BOUNDARY",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "require_sha256",
+            "signature": "value: str, name: str"
+          }
+        ],
+        "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []
       }
@@ -1711,6 +2150,7 @@
         "test_paths": [
           "src/shared/python/swing_sim/conventions/tests/test_registry.py",
           "src/shared/python/swing_sim/flight/tests/test_registry.py",
+          "src/shared/python/swing_sim/variation/tests/noise_response_test_support.py",
           "tests/rate_of_closure/conftest.py",
           "tests/rate_of_closure/test_variation_ensemble_io_reader.py",
           "tests/shared/python/gui_launcher/test_registry.py",
@@ -2023,8 +2463,11 @@
           }
         ],
         "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/noise_response_test_support.py",
           "src/shared/python/swing_sim/variation/tests/test_dataset_io.py",
           "src/shared/python/swing_sim/variation/tests/test_grouped_sampling.py",
+          "src/shared/python/swing_sim/variation/tests/test_noise_response_falsification.py",
+          "src/shared/python/swing_sim/variation/tests/test_noise_response_field.py",
           "src/shared/python/swing_sim/variation/tests/test_spec.py",
           "tests/rate_of_closure/test_variation_plot_data.py"
         ],
@@ -2093,6 +2536,8 @@
           }
         ],
         "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/noise_response_test_support.py",
+          "src/shared/python/swing_sim/variation/tests/test_noise_response_falsification.py",
           "src/shared/python/swing_sim/variation/tests/test_trace_resampling.py",
           "tests/rate_of_closure/test_variation_trace_resampling.py"
         ],
@@ -13659,317 +14104,6 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2357,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d1d4bd1c82dd6279ab66278544b625c7848d389704f2fd5237f38ec8b47179c6",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-GUI-MATERIAL-SUMMARY-TABLE-PY-FD210B26ADD4",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/python/vessel_drafter/gui/material_summary_table.py",
-      "purpose": "Read-only material summary table for the vessel drafter GUI.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "MaterialSummaryTable",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "W"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5174,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "1ea02342c1a6864b700f44d80f80fa105b4758e0e32a5e3830fbbe77d27f5016",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-GUI-VESSEL-DRAFTER-PORT-PANEL-PY-8C3E590A4AE1",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/python/vessel_drafter/gui/vessel_drafter_port_panel.py",
-      "purpose": "Reusable port editing widgets for the vessel drafter GUI.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "PortFieldSpec",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PortTableSection",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PortValueDialog",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "make_double_spin",
-            "signature": "value: float, minimum: float, maximum: float"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 8241,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "08b2f092c4383e75d6a62c5a66247877ce242475962113153065561bb7e2a78c",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-GUI-VESSEL-DRAFTER-RENDERING-PY-35948F879491",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/python/vessel_drafter/gui/vessel_drafter_rendering.py",
-      "purpose": "Scene renderers for the vessel drafter previews.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "PREVIEW_MARGIN",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PREVIEW_SCALE",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "render_cross_section",
-            "signature": "scene: QGraphicsScene, preview: CrossSectionPreview"
-          },
-          {
-            "kind": "function",
-            "name": "render_plan",
-            "signature": "scene: QGraphicsScene, preview: PlanPreview"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5443,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ee0e6d7be9a688145082c1431ef329dbe5326ef4a26f33f8c105ee53989e0bd7",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-GUI-VESSEL-DRAFTER-THREE-D-CANVAS-PY-2AD05FC3C311",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/python/vessel_drafter/gui/vessel_drafter_three_d_canvas.py",
-      "purpose": "Matplotlib-backed 3D canvas for vessel drafter previews.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "VesselDrafterThreeDCanvas",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_VIEW",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SECTION_VIEW_AZIMUTH_OFFSET_DEGREES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SECTION_VIEW_ELEVATION",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 22064,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0745fbdb534c3abac4a87908e9dcf93722c785927ad01e8548d43eb404b5cac6",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-GUI-VESSEL-DRAFTER-WINDOW-PY-35D0135E7FDF",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/python/vessel_drafter/gui/vessel_drafter_window.py",
-      "purpose": "PyQt6 GUI for the vessel drafter tool.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "VesselDrafterWindow",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "launch",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "src/vessel_drafter/tests/test_vessel_drafter_gui.py"
-        ],
-        "unit_mentions": [
-          "deg"
-        ],
         "validation_paths": []
       }
     }

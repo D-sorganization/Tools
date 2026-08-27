@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — Rate_of_Closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-26
+> Last updated: 2026-08-27
 > **Current state only**, capped at 150 lines; history lives in git and in [`docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md`](../../docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md).
 > Do not append dated entries — that is how it reached 2,205 lines.
 
@@ -44,29 +44,22 @@ merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}
 see the two contracts under `docs/specs/`.
 
 #4142 remains Python-authoritative; PyQt6 and React do not reimplement physics.
-PR #4755 protected-merged R10.4 as `9fe87f0eec9f341fdfc50fc2a116c601b94781d5`.
-PR #4757 protected-merged #4756/R10.3 as
-`5b3f585e3754fd77cc506631d55b163f50caf04d`: one packaged authority
-classifies all 31 known inputs by exact adapter, whole-run or required half-open
-window/topological point semantics, or explicit unsupported reason. Python and
-TypeScript consume the same JSON and fail closed on registry drift, malformed
-records, forbidden loci, inexact control joints, and out-of-run windows. The
-ledger is 24 verified / 7 partial. A clean commit-qualified wheel loaded all 31
-packaged capabilities and verified 76 immutable web assets. R14.6 and six other
-gaps keep #4142 open. This verifies execution semantics, not anatomy, human
-validity, or coaching. The visual co-change guard excludes test-only TSX
-modules but remains fail-closed for shipped React surfaces. The standalone
-public mirror consumes a byte-identical governed vendored authority.
-PR #4762/R11.1 protected-merged as `66b1cb4d`; issue #4758 is closed. Typed
-records, bounded schema-v3 write/read/resume, array identities, corruption and
-legacy-v2 gates, exact serial/chunk/resume fingerprints, scaling evidence, and
-the 3-source by 4-adapter boundary passed Python 3.11/3.12, wheel, browser, and
-governance CI. PR #4764 for issue #4763/R11.3 is active on
-`feat/4763-trace-resampling`: policy `swing-trace-time-linear-contiguous/v1`
-rejects extrapolation and gap bridging, preserves stable point/frame/trial
-identity and typed unavailability, and retains approximate impact-marker error.
-Identity/subset equivalence passes for all three spatial layouts; the inherited
-adapter matrix remains two verified / ten explicitly unavailable. The exact CI repair retains UpstreamDrift's BunkerShot/pendulum package paths, isolates the public RustSec fetch, and remediates the exposed PyO3/h2 advisories with PyO3/NumPy 0.29, Reqwest 0.12, and Rust 1.83. Formatting, warning-denied Clippy, 351 passing Rust tests plus one explicitly ignored benchmark, audit, and isolated wheel import pass. The ledger is 26 verified / 5 partial. Protected CI and remote-main proof remain.
+R10.3, R10.4, R11.1, and R11.3 are protected-merged through
+`4ddec9175814451fdc3d1a94b45f1190e7503bca`. The complete-trial authority and
+`swing-trace-time-linear-contiguous/v1` preserve stable trial/point/frame
+identity, missing intervals, outcomes, failure semantics, and approximate
+impact-marker error. The inherited 3-source by 4-adapter matrix has two verified
+double-pendulum cells and ten explicitly unavailable cells.
+
+#4765/R12.3 is active on `feat/4142-noise-response`. The immutable response
+field reports signed and magnitude paired-OAT position response per declared
+distribution standard deviation beside matched-cohort and all-eligible RMS
+scatter. It retains counts, typed adequacy and NaNs, method and policy IDs,
+provenance, bounded resumable statistics, deterministic fingerprints, and
+row-oriented plot data. Affine, metamorphic, nonlinear-countermodel,
+missingness, unsupported-design, drift, and serial/chunk/resume gates pass. The
+branch ledger is 27 verified / 4 partial. These are model-scenario software
+results, not causal anatomy, governed human validation, or coaching authority.
 
 PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
 the initial React/PyQt visibility, accessibility, performance, and baseline

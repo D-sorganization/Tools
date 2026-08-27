@@ -27,10 +27,25 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.43                                    |
-| **Last Spec Update**    | 2026-08-26                                 |
+| **Spec Version**        | 1.18.44                                    |
+| **Last Spec Update**    | 2026-08-27                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-27 Governed Geometric Noise-Response Fields (#4765 / #4142 R12.3)
+
+Version 1.18.44 adds an immutable, fingerprinted field that reports signed and
+magnitude paired-OAT positional response per declared distribution standard
+deviation beside absolute RMS scatter from the same eligible cohort. It also
+retains all-eligible scatter and both denominators so missingness cannot be
+mistaken for geometric robustness. The field consumes the qualified contiguous
+trace-resampling policy and fails closed on identity, frame, registry, policy,
+resume, discrete-input, bounded-input, correlated-design, and zero-perturbation
+conditions. Bounded streaming sufficient statistics avoid duplicating source
+trace tensors, while row-oriented plot records expose method, units, adequacy,
+provenance, and scientific limits. Analytical, metamorphic, countermodel, and
+missingness tests qualify model-scenario geometry only; they do not establish
+causal anatomy, human validity, energy transfer, joint work, or coaching advice.
 
 ### 2026-08-26 RustSec Dependency Remediation (#4764)
 
@@ -5467,6 +5482,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-27 | 1.18.44 | feat/test/docs(variation, #4765 / #4142 R12.3): qualify the immutable geometric noise-response field, paired declared-scale response estimator, matched and all-eligible absolute scatter, exact adequacy and denominators, bounded resumable moments, fingerprinted plot rows, exhaustive source/adapter capability matrix, and neutral interpretation and falsification guidance. |
 | 2026-08-26 | 1.18.43 | fix/test(rust, #4764): remediate the newly exposed PyO3 and h2 RustSec advisories by migrating the workspace to PyO3/NumPy 0.29, Reqwest 0.12, and Rust 1.83; preserve Python binding behavior through the official attachment, detachment, object, and conversion APIs; add dependency-floor regressions and verify formatting, warning-denied Clippy, 351 passing Rust tests plus one explicitly ignored benchmark, RustSec audit, and an isolated wheel import. |
 | 2026-08-26 | 1.18.42 | fix/test(ci, #4764): isolate the public RustSec fetch from runner-global and system Git credential rewrites as well as checkout-local credentials; prohibit interactive prompting and retain fail-closed `cargo audit` semantics. |
 | 2026-08-26 | 1.18.41 | fix(ci, #4764): include UpstreamDrift's `src/bunkershot3d`, double-pendulum engine, and parent package markers in the shallow downstream sparse checkout; isolate public RustSec advisory fetches from repository-scoped checkout credentials. |

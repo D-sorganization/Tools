@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — Tools (Monorepo Root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-26
+> Last updated: 2026-08-27
 
 > **Current state only**, capped at 150 lines by `CLAUDE.md`; history lives in
 > git and in [`docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md`](docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md).
@@ -28,7 +28,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                           |
 | #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                                    |
 | #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                            |
-| #4142 | Ensemble variation, quiet zones, sensitivity attribution. PR #4762/R11.1 merged as `66b1cb4d`; PR #4764/#4763 R11.3 qualifies stable-point time-grid alignment and advances the branch ledger to 26 verified / 5 partial.             |
+| #4142 | Ensemble variation and falsifiable sensitivity. R11.1 and R11.3 are protected-merged through `4ddec9175`; #4765/R12.3 is active with a governed response/scatter field and a branch ledger of 27 verified / 4 partial.                |
 | #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                                |
 | #4433 | Visual-first tab visibility and visualization-led UX. Open. V0.1, strict cross-runtime parity, and V5.2 are merged through PR #4738; the audit is 8 verified / 23 partial obligations with seven gaps and two human actions retained. |
 | #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                        |
@@ -67,10 +67,12 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   PR #4762/R11.1 protected-merged as
   `66b1cb4d16d8ea36fa7c3f4eb0c4f3725ae03734`; issue #4758 is closed and the
   corrected Python 3.11/3.12, exact-wheel, browser, and governance gates passed.
-  PR #4764 for issue #4763/R11.3 is active on `feat/4763-trace-resampling`: the versioned time-grid authority rejects extrapolation and gap bridging, preserves
-  frame/point/trial identities and typed unavailability, reports approximate
-  impact-marker alignment error, and qualifies all three spatial layouts plus
-  the inherited fail-closed 3-source by 4-adapter matrix. Focused local gates pass; the exact CI repair retains UpstreamDrift's BunkerShot/pendulum package paths, isolates the public RustSec fetch, and remediates the exposed PyO3/h2 advisories with PyO3/NumPy 0.29, Reqwest 0.12, and Rust 1.83. Formatting, warning-denied Clippy, 351 passing Rust tests plus one explicitly ignored benchmark, audit, and isolated wheel import pass. Protected CI and remote-main evidence remain.
+  PR #4764/R11.3 protected-squash-merged as `4ddec9175814451fdc3d1a94b45f1190e7503bca`.
+  #4765/R12.3 is active on `feat/4142-noise-response`: its immutable field puts
+  paired declared-scale Cartesian response beside matched and all-eligible RMS
+  scatter with exact counts, adequacy, provenance, bounded resume state, and
+  plot rows. The 3-source by 4-adapter matrix remains two verified / ten
+  unavailable. Synthetic analytical tests are software evidence, not human validation.
 
 ## Must-Read Architecture Pointers
 
@@ -138,11 +140,9 @@ Note: `ruff format --check` reports four pre-existing failures under
 
 ## Short-Term Roadmap (Ordered)
 
-1. Complete #4758/R11.1 durable trial retention and protected qualification.
-2. Deliver main-rooted TOOLS-D4 #4720 through the ordinary protected flow, then
-   reconcile D5--D9 without rewriting remote history.
-3. **Sidekick Unified Integration**: implement the S1–S5 plan in
-   `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`.
+1. Complete #4765/R12.3 noise-response qualification through protected merge.
+2. Deliver main-rooted TOOLS-D4 #4720, then reconcile D5--D9 without rewriting remote history.
+3. Implement the Sidekick S1–S5 plan in `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`.
 4. Restore the isolated advisory benchmark lane through #4582.
 5. **Land the camera-cluster epic #4571** so #4466 can finally close.
 6. Advance #4433 without promoting initial-state evidence; manual actions stay human.

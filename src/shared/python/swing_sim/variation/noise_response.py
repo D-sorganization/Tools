@@ -1,178 +1,369 @@
-"""Denominator-matched absolute scatter and standardized input-noise response."""
+"""Streaming declared-scale response and denominator-matched scatter analysis."""
 
 from __future__ import annotations
 
-import math
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 import numpy as np
 
 from shared.python.contracts import require
 
-from .ensemble_geometry import compute_position_dispersion
-from .ensemble_types import (
-    EnsemblePositionTraces,
-    immutable_array,
-    require_coordinate_frame_id,
-    require_point_ids,
-    validated_sample_times,
+from .noise_response_fingerprint import (
+    input_contract_fingerprint,
+    response_field_fingerprint,
 )
-from .spec import NoiseSpec
+from .noise_response_record import PositionNoiseResponseField
+from .noise_response_types import (
+    ADEQUACY_ESTIMABLE,
+    ADEQUACY_INSUFFICIENT_PAIRS,
+    ADEQUACY_UNSUPPORTED_BOUNDED,
+    ADEQUACY_UNSUPPORTED_CORRELATED,
+    ADEQUACY_UNSUPPORTED_DISCRETE,
+    ADEQUACY_ZERO_PERTURBATION,
+    POSITION_NOISE_RESPONSE_FIELD_SCHEMA_ID,
+    POSITION_NOISE_RESPONSE_FIELD_SCHEMA_VERSION,
+    ResponseAccumulatorSnapshot,
+    ResponseFieldInput,
+)
 
-POSITION_NOISE_RESPONSE_METHOD = "empirical-centered-declared-distribution-sd-rms/v1"
-_DISTRIBUTION_SD_DIVISOR = {
-    "normal": 1.0,
-    "uniform": math.sqrt(3.0),
-    "triangular": math.sqrt(6.0),
-}
-
-
-def _declared_standard_deviation(spec: NoiseSpec) -> float:
-    """Return the untruncated standard deviation declared by one noise spec."""
-    divisor = _DISTRIBUTION_SD_DIVISOR[spec.distribution]
-    return spec.scale / divisor
-
-
-def _validate_nonnegative_finite_or_nan(name: str, values: np.ndarray) -> None:
-    """Require every available magnitude to be finite and non-negative."""
-    available = np.isfinite(values)
-    require(
-        bool(np.all(np.isnan(values) | available)),
-        f"{name} must contain only finite values or NaN",
-    )
-    require(
-        bool(np.all(values[available] >= 0.0)),
-        f"{name} available values must be non-negative",
-    )
+MAX_RESPONSE_ACCUMULATOR_BYTES = 256_000_000
+_DENOMINATOR_EPSILON = 64.0 * np.finfo(float).eps
+_SNAPSHOT_ARRAY_COUNT = 8
 
 
 @dataclass(frozen=True)
-class PositionNoiseResponse:
-    """Per-sample, per-point scatter and aggregate standardized-input gain.
-
-    ``response_gain_m`` is absolute RMS positional scatter divided by the
-    empirical RMS of the same valid rows' centered inputs after scaling each
-    input by its declared distribution standard deviation. It is a
-    model-conditional aggregate amplification, not causal attribution.
-    """
-
-    sample_times_s: np.ndarray = field(repr=False)
-    coordinate_frame: str
-    point_ids: tuple[str, ...]
-    input_spec_ids: tuple[str, ...]
-    count: np.ndarray = field(repr=False)
-    absolute_rms_radius_m: np.ndarray = field(repr=False)
-    standardized_input_rms: np.ndarray = field(repr=False)
-    response_gain_m: np.ndarray = field(repr=False)
-    normalization_method: str = POSITION_NOISE_RESPONSE_METHOD
-
-    def __post_init__(self) -> None:
-        times = validated_sample_times(self.sample_times_s)
-        require_coordinate_frame_id(self.coordinate_frame)
-        points = tuple(self.point_ids)
-        require_point_ids(points)
-        specs = tuple(self.input_spec_ids)
-        require_point_ids(specs)
-        shape = (times.size, len(points))
-        arrays = {
-            "count": np.asarray(self.count),
-            "absolute_rms_radius_m": np.asarray(self.absolute_rms_radius_m),
-            "standardized_input_rms": np.asarray(self.standardized_input_rms),
-            "response_gain_m": np.asarray(self.response_gain_m),
-        }
-        for name, values in arrays.items():
-            require(values.shape == shape, f"{name} has invalid shape", values.shape)
-        require(
-            bool(np.all(arrays["count"] >= 0)),
-            "count must be non-negative",
-            arrays["count"],
-        )
-        require(
-            bool(np.all(arrays["count"] == np.floor(arrays["count"]))),
-            "count must contain integer values",
-            arrays["count"],
-        )
-        for name in arrays.keys() - {"count"}:
-            _validate_nonnegative_finite_or_nan(name, arrays[name])
-        require(
-            self.normalization_method == POSITION_NOISE_RESPONSE_METHOD,
-            "normalization_method is unsupported",
-            self.normalization_method,
-        )
-        object.__setattr__(self, "sample_times_s", immutable_array(times, float))
-        object.__setattr__(self, "point_ids", points)
-        object.__setattr__(self, "input_spec_ids", specs)
-        object.__setattr__(self, "count", immutable_array(arrays["count"], int))
-        for name in arrays.keys() - {"count"}:
-            object.__setattr__(self, name, immutable_array(arrays[name], float))
+class _PositionMomentBatch:
+    positions: np.ndarray
+    paired_valid: np.ndarray
+    all_valid: np.ndarray
 
 
-def _standardized_input_rms(traces: EnsemblePositionTraces) -> np.ndarray:
-    """Compute denominator-matched aggregate input RMS without a 3-D tensor."""
-    variation = traces.variation
-    specs = variation.plan.noise
-    expected_names = tuple(spec.variable_key for spec in specs)
+@dataclass(frozen=True)
+class _FrozenMetrics:
+    adequacy: np.ndarray
+    signed: np.ndarray
+    magnitude: np.ndarray
+    matched: np.ndarray
+    all_scatter: np.ndarray
+
+
+def _validate_field_inputs(
+    values: tuple[ResponseFieldInput, ...],
+) -> tuple[ResponseFieldInput, ...]:
+    require(bool(values), "at least one response input is required")
     require(
-        variation.input_names == expected_names,
-        "variation input_names must match plan noise order",
-        variation.input_names,
+        all(isinstance(item, ResponseFieldInput) for item in values), "invalid input"
     )
-    scales = np.asarray(
-        [_declared_standard_deviation(spec) for spec in specs], dtype=float
+    first = values[0]
+    plan = first.baseline.traces.variation.plan
+    expected_ids = tuple(str(spec.spec_id) for spec in plan.noise)
+    require(
+        tuple(item.spec_id for item in values) == expected_ids,
+        "incomplete input design",
     )
-    resolved_base = variation.plan.resolved_base()
-    bases = np.asarray([resolved_base[spec.variable_key] for spec in specs])
-    standardized = (np.asarray(variation.inputs, dtype=float) - bases) / scales
-    valid = np.asarray(traces.sample_valid, dtype=float)
-    counts = np.sum(valid, axis=0)
-    sums = valid.T @ standardized
-    means = np.zeros_like(sums)
-    np.divide(sums, counts[:, None], out=means, where=counts[:, None] > 0.0)
-    sum_squares = valid.T @ np.square(standardized)
-    centered_sum_squares = sum_squares - counts[:, None] * np.square(means)
-    total_centered = np.sum(np.maximum(centered_sum_squares, 0.0), axis=1)
-    result = np.full(counts.shape, np.nan, dtype=float)
-    eligible = counts >= 2.0
-    np.divide(total_centered, counts, out=result, where=eligible)
-    np.sqrt(result, out=result, where=eligible)
+    for item in values[1:]:
+        require(item.trial_ids == first.trial_ids, "trial identity drift")
+        require(
+            item.baseline.traces.point_ids == first.baseline.traces.point_ids,
+            "point drift",
+        )
+        require(
+            item.baseline.traces.coordinate_frame
+            == first.baseline.traces.coordinate_frame,
+            "frame drift",
+        )
+        require(
+            np.array_equal(
+                item.baseline.traces.sample_times_s,
+                first.baseline.traces.sample_times_s,
+            ),
+            "time-grid drift",
+        )
+        require(
+            item.execution_metadata.plan_sha256 == first.execution_metadata.plan_sha256,
+            "plan drift",
+        )
+        require(
+            item.execution_metadata.registry_sha256
+            == first.execution_metadata.registry_sha256,
+            "registry drift",
+        )
+    return values
+
+
+def _estimated_accumulator_bytes(input_count: int, samples: int, points: int) -> int:
+    scalar_cells = input_count * samples
+    point_cells = scalar_cells * points
+    return 8 * (4 * scalar_cells + 4 * point_cells + 2 * point_cells * 3)
+
+
+class ResponseFieldAccumulator:
+    """Bounded streaming sufficient statistics for one complete paired design."""
+
+    def __init__(self, inputs: tuple[ResponseFieldInput, ...]) -> None:
+        self._inputs = _validate_field_inputs(tuple(inputs))
+        traces = self._inputs[0].baseline.traces
+        shape = (len(self._inputs), traces.sample_times_s.size, len(traces.point_ids))
+        require(
+            _estimated_accumulator_bytes(*shape) <= MAX_RESPONSE_ACCUMULATOR_BYTES,
+            "response accumulator memory budget exceeded",
+        )
+        scalar_shape = shape[:2]
+        vector_shape = shape + (3,)
+        self._contract_sha256 = input_contract_fingerprint(self._inputs)
+        self._accepted_trials = 0
+        self._paired_count = np.zeros(scalar_shape, dtype=np.int64)
+        self._all_count = np.zeros(scalar_shape, dtype=np.int64)
+        self._normalized_input_square_sum = np.zeros(scalar_shape)
+        self._input_displacement_cross_sum = np.zeros(vector_shape)
+        self._paired_position_sum = np.zeros(vector_shape)
+        self._paired_position_square_sum = np.zeros(shape)
+        self._all_position_sum = np.zeros(vector_shape)
+        self._all_position_square_sum = np.zeros(shape)
+
+    @property
+    def accepted_trials(self) -> int:
+        """Return the contiguous trial prefix incorporated so far."""
+        return self._accepted_trials
+
+    def accept_trial_slice(self, start: int, stop: int) -> None:
+        """Accept one nonempty contiguous trial slice exactly once."""
+        total = len(self._inputs[0].trial_ids)
+        require(
+            type(start) is int and type(stop) is int, "slice bounds must be integers"
+        )
+        require(start == self._accepted_trials, "trial slices must be contiguous")
+        require(start < stop <= total, "trial slice is empty or out of range")
+        for input_index, field_input in enumerate(self._inputs):
+            self._accept_input_slice(input_index, field_input, slice(start, stop))
+        self._accepted_trials = stop
+
+    def _accept_input_slice(
+        self, input_index: int, field_input: ResponseFieldInput, trial_slice: slice
+    ) -> None:
+        baseline = field_input.baseline.traces
+        perturbed = field_input.perturbed.traces
+        baseline_positions = baseline.positions_m[trial_slice]
+        perturbed_positions = perturbed.positions_m[trial_slice]
+        paired_valid = (
+            baseline.sample_valid[trial_slice] & perturbed.sample_valid[trial_slice]
+        )
+        all_valid = perturbed.sample_valid[trial_slice]
+        normalized_input = (
+            field_input.input_delta[trial_slice] / field_input.normalization_scale
+        )
+        self._paired_count[input_index] += np.count_nonzero(paired_valid, axis=0)
+        self._all_count[input_index] += np.count_nonzero(all_valid, axis=0)
+        self._normalized_input_square_sum[input_index] += np.einsum(
+            "t,ts->s", np.square(normalized_input), paired_valid
+        )
+        displacement = np.where(
+            paired_valid[:, :, None, None],
+            perturbed_positions - baseline_positions,
+            0.0,
+        )
+        self._input_displacement_cross_sum[input_index] += np.einsum(
+            "t,tspc->spc", normalized_input, displacement
+        )
+        self._accept_position_moments(
+            input_index,
+            _PositionMomentBatch(perturbed_positions, paired_valid, all_valid),
+        )
+
+    def _accept_position_moments(
+        self,
+        input_index: int,
+        batch: _PositionMomentBatch,
+    ) -> None:
+        paired = np.where(batch.paired_valid[:, :, None, None], batch.positions, 0.0)
+        eligible = np.where(batch.all_valid[:, :, None, None], batch.positions, 0.0)
+        self._paired_position_sum[input_index] += np.sum(paired, axis=0)
+        self._all_position_sum[input_index] += np.sum(eligible, axis=0)
+        self._paired_position_square_sum[input_index] += np.sum(
+            np.einsum("tspc,tspc->tsp", paired, paired), axis=0
+        )
+        self._all_position_square_sum[input_index] += np.sum(
+            np.einsum("tspc,tspc->tsp", eligible, eligible), axis=0
+        )
+
+    def snapshot(self) -> ResponseAccumulatorSnapshot:
+        """Return immutable resumable sufficient statistics for this prefix."""
+        return ResponseAccumulatorSnapshot(
+            contract_sha256=self._contract_sha256,
+            accepted_trials=self._accepted_trials,
+            arrays=self._snapshot_arrays(),
+        )
+
+    def _snapshot_arrays(self) -> tuple[np.ndarray, ...]:
+        return (
+            self._paired_count,
+            self._all_count,
+            self._normalized_input_square_sum,
+            self._input_displacement_cross_sum,
+            self._paired_position_sum,
+            self._paired_position_square_sum,
+            self._all_position_sum,
+            self._all_position_square_sum,
+        )
+
+    @classmethod
+    def from_snapshot(
+        cls,
+        inputs: tuple[ResponseFieldInput, ...],
+        snapshot: ResponseAccumulatorSnapshot,
+    ) -> ResponseFieldAccumulator:
+        """Restore a prefix only when its full source contract still matches."""
+        require(isinstance(snapshot, ResponseAccumulatorSnapshot), "invalid snapshot")
+        result = cls(inputs)
+        require(
+            snapshot.contract_sha256 == result._contract_sha256,
+            "snapshot contract drift",
+        )
+        require(len(snapshot.arrays) == _SNAPSHOT_ARRAY_COUNT, "snapshot array drift")
+        for target, source in zip(
+            result._snapshot_arrays(), snapshot.arrays, strict=True
+        ):
+            require(target.shape == source.shape, "snapshot shape drift")
+            target[...] = source
+        result._accepted_trials = snapshot.accepted_trials
+        require(
+            result._accepted_trials <= len(result._inputs[0].trial_ids),
+            "snapshot overflow",
+        )
+        return result
+
+    def freeze(self) -> PositionNoiseResponseField:
+        """Return the immutable field after every declared trial is accepted."""
+        require(
+            self._accepted_trials == len(self._inputs[0].trial_ids),
+            "cannot freeze an incomplete response field",
+        )
+        adequacy = self._adequacy()
+        signed = self._signed_response(adequacy)
+        magnitude = np.linalg.norm(signed, axis=-1)
+        magnitude[adequacy != ADEQUACY_ESTIMABLE] = np.nan
+        matched = _rms_scatter(
+            self._paired_count,
+            self._paired_position_sum,
+            self._paired_position_square_sum,
+        )
+        all_scatter = _rms_scatter(
+            self._all_count,
+            self._all_position_sum,
+            self._all_position_square_sum,
+        )
+        return self._build_field(
+            _FrozenMetrics(adequacy, signed, magnitude, matched, all_scatter)
+        )
+
+    def _adequacy(self) -> np.ndarray:
+        shape = self._paired_position_square_sum.shape
+        result = np.full(shape, ADEQUACY_INSUFFICIENT_PAIRS, dtype="<U32")
+        for input_index, field_input in enumerate(self._inputs):
+            if field_input.support_status != ADEQUACY_ESTIMABLE:
+                result[input_index] = field_input.support_status
+                continue
+            cell_shape = result[input_index].shape
+            enough = np.broadcast_to(
+                self._paired_count[input_index, :, None] >= 2, cell_shape
+            )
+            nonzero = np.broadcast_to(
+                self._normalized_input_square_sum[input_index, :, None]
+                > _DENOMINATOR_EPSILON,
+                cell_shape,
+            )
+            result[input_index][enough] = ADEQUACY_ZERO_PERTURBATION
+            result[input_index][enough & nonzero] = ADEQUACY_ESTIMABLE
+        return result
+
+    def _signed_response(self, adequacy: np.ndarray) -> np.ndarray:
+        result = np.full(self._input_displacement_cross_sum.shape, np.nan)
+        denominators = self._normalized_input_square_sum[:, :, None, None]
+        estimable = adequacy == ADEQUACY_ESTIMABLE
+        np.divide(
+            self._input_displacement_cross_sum,
+            denominators,
+            out=result,
+            where=estimable[:, :, :, None],
+        )
+        return result
+
+    def _build_field(self, metrics: _FrozenMetrics) -> PositionNoiseResponseField:
+        inputs = self._inputs
+        first = inputs[0]
+        metadata = tuple(item.execution_metadata for item in inputs)
+        shape = self._paired_position_square_sum.shape
+        return PositionNoiseResponseField(
+            sample_times_s=first.baseline.traces.sample_times_s,
+            coordinate_frame=first.baseline.traces.coordinate_frame,
+            point_ids=first.baseline.traces.point_ids,
+            trial_ids=first.trial_ids,
+            input_ids=tuple(item.spec_id for item in inputs),
+            input_units=tuple(item.input_unit for item in inputs),
+            input_declared_scales=np.array([item.spec.scale for item in inputs]),
+            input_normalization_scales=np.array(
+                [item.normalization_scale for item in inputs]
+            ),
+            source_layout_ids=tuple(item.source_layout_id for item in inputs),
+            adapter_ids=tuple(item.adapter_id for item in inputs),
+            source_sha256=tuple(item.source_sha256 for item in inputs),
+            plan_sha256=tuple(item.plan_sha256 for item in metadata),
+            registry_sha256=tuple(item.registry_sha256 for item in metadata),
+            execution_provenance_sha256=tuple(
+                item.provenance_sha256 for item in metadata
+            ),
+            availability_count=np.broadcast_to(self._paired_count[:, :, None], shape),
+            all_eligible_count=np.broadcast_to(self._all_count[:, :, None], shape),
+            adequacy=metrics.adequacy,
+            signed_response_m_per_declared_scale=metrics.signed,
+            response_magnitude_m_per_declared_scale=metrics.magnitude,
+            matched_absolute_rms_scatter_m=metrics.matched,
+            all_eligible_absolute_rms_scatter_m=metrics.all_scatter,
+        )
+
+
+def _rms_scatter(
+    counts: np.ndarray, position_sum: np.ndarray, position_square_sum: np.ndarray
+) -> np.ndarray:
+    divisor = counts[:, :, None]
+    centered = position_square_sum.copy()
+    correction = np.sum(np.square(position_sum), axis=-1)
+    np.divide(correction, divisor, out=correction, where=divisor > 0)
+    centered -= correction
+    result = np.full(position_square_sum.shape, np.nan)
+    np.divide(np.maximum(centered, 0.0), divisor, out=result, where=divisor > 0)
+    np.sqrt(result, out=result, where=divisor > 0)
     return result
 
 
-def compute_position_noise_response(
-    traces: EnsemblePositionTraces,
-) -> PositionNoiseResponse:
-    """Return absolute scatter and same-row standardized input-noise gain."""
-    require(
-        isinstance(traces, EnsemblePositionTraces),
-        "traces must be EnsemblePositionTraces",
-        type(traces).__name__,
-    )
-    dispersion = compute_position_dispersion(traces)
-    sample_input_rms = _standardized_input_rms(traces)
-    shape = dispersion.rms_radius_m.shape
-    input_rms = np.broadcast_to(sample_input_rms[:, None], shape).copy()
-    gain = np.full(shape, np.nan, dtype=float)
-    eligible = (dispersion.count >= 2) & (input_rms > 0.0)
-    np.divide(
-        dispersion.rms_radius_m,
-        input_rms,
-        out=gain,
-        where=eligible,
-    )
-    return PositionNoiseResponse(
-        sample_times_s=dispersion.sample_times_s,
-        coordinate_frame=dispersion.coordinate_frame,
-        point_ids=dispersion.point_ids,
-        input_spec_ids=tuple(str(spec.spec_id) for spec in traces.variation.plan.noise),
-        count=dispersion.count,
-        absolute_rms_radius_m=dispersion.rms_radius_m,
-        standardized_input_rms=input_rms,
-        response_gain_m=gain,
-    )
+def compute_position_noise_response_field(
+    inputs: tuple[ResponseFieldInput, ...], chunk_size: int | None = None
+) -> PositionNoiseResponseField:
+    """Compute one complete immutable field with bounded streaming moments."""
+    values = tuple(inputs)
+    accumulator = ResponseFieldAccumulator(values)
+    trial_count = len(values[0].trial_ids)
+    size = trial_count if chunk_size is None else chunk_size
+    require(type(size) is int and size >= 1, "chunk_size must be a positive integer")
+    for start in range(0, trial_count, size):
+        accumulator.accept_trial_slice(start, min(start + size, trial_count))
+    return accumulator.freeze()
 
 
 __all__ = [
-    "POSITION_NOISE_RESPONSE_METHOD",
-    "PositionNoiseResponse",
-    "compute_position_noise_response",
+    "ADEQUACY_ESTIMABLE",
+    "ADEQUACY_INSUFFICIENT_PAIRS",
+    "ADEQUACY_UNSUPPORTED_BOUNDED",
+    "ADEQUACY_UNSUPPORTED_CORRELATED",
+    "ADEQUACY_UNSUPPORTED_DISCRETE",
+    "ADEQUACY_ZERO_PERTURBATION",
+    "MAX_RESPONSE_ACCUMULATOR_BYTES",
+    "POSITION_NOISE_RESPONSE_FIELD_SCHEMA_ID",
+    "POSITION_NOISE_RESPONSE_FIELD_SCHEMA_VERSION",
+    "PositionNoiseResponseField",
+    "ResponseAccumulatorSnapshot",
+    "ResponseFieldAccumulator",
+    "ResponseFieldInput",
+    "compute_position_noise_response_field",
+    "response_field_fingerprint",
 ]
