@@ -28,12 +28,11 @@ candidate against current main and preserve main-owned tests.
 
 ## Active Epics — Golf Epics Merged
 
-Launch-monitor #4583 Release A merged (explicit-identity projects, bounded
-private-authority loading, source-backed expected-strokes). No private rows or
-baseline data are bundled. Release B open — **do not claim vendor emulation or
-paired-device validation without real paired observations.** #4584/#4599 merged
-strokes-gained v2 into both clients; #4600 owns the PyQt reference,
-#4602/#4608/#4610/#4613 the isolated rendered gates.
+Launch-monitor #4583 Release A merged; no private rows or baseline data are
+bundled. Release B open — **do not claim vendor emulation or paired-device
+validation without real paired observations.** #4584/#4599 merged strokes-gained
+v2 into both clients; #4600 owns the PyQt reference, #4602/#4608/#4610/#4613 the
+isolated rendered gates.
 
 Club Fitting #4549, Heavy Hit #4562, packaging #4579 complete; physics is
 shared-first in `shared/python/{golf_club,swing_sim}` (contracts `docs/specs/`).
@@ -53,36 +52,20 @@ hosel pins did not move. Gates cover all 16 clubs in both twins. **G4**
 (camera-golden + visual-baseline regeneration) and **G5** (profile-view
 acceptance) remain open.
 
-#4142 remains Python-authoritative; PyQt6 and React do not reimplement physics.
-R10.3, R10.4, R11.1, and R11.3 are protected-merged through
-`4ddec9175814451fdc3d1a94b45f1190e7503bca`. The complete-trial authority and
-`swing-trace-time-linear-contiguous/v1` preserve stable trial/point/frame
-identity, missing intervals, outcomes, failure semantics, and approximate
-impact-marker error. The inherited 3-source by 4-adapter matrix has two verified
-double-pendulum cells and ten explicitly unavailable cells.
+**#4142 is Python-authoritative — PyQt6 and React must not reimplement
+physics.** R10.3-R14.3 are protected-merged (SHAs in git log); the wires
+`swing-trace-time-linear-contiguous/v1` and `morris-target-selection/v1`
+preserve trial/point/frame identity, missing intervals, failure semantics, and
+exact all-input or selected-source views. The 3-source x 4-adapter matrix has
+two verified double-pendulum cells and ten explicitly unavailable ones; the
+R14.3 parity ledger is 30 verified / 1 partial. **All of it remains
+model-scenario screening — not global main effects, causal anatomy, governed
+human validation, or coaching authority. Do not claim otherwise.**
 
-R12.3 protected-squash-merged via PR #4782 as `a1b00db14`; R13.3 PR #4784
-protected-squash-merged as `d6c8a0a67`. Its paired-attribution schema binds one
-independently estimable source and optional exact locus to state, impact, and
-shot scalars with ten unsupported cells preserved. R13.5 protected-squash-
-merged through PR #4794 as `35853199b`; `morris-target-selection` v1 binds
-kind/name/unit/point/time/frame and exact all-input or selected-source views.
-R14.3 issue #4792 is replayed from that protected base. Its
-governed matrix proves PyQt/React parity from authoring through export,
-including `all_together`, `individual`, and `both` execution, dataset-free
-individual results, aggregate progress, cancellation, and 1--4096 durable
-chunks. The ledger is 30 verified / 1 partial. All remain model-scenario
-screening views, not global main effects, causal anatomy, governed human
-validation, or coaching authority. Hosted visual review found and fixed an
-unlabeled PyQt policy selector; exact Linux candidate `1f3f6ca7` is proposed
-without widening its calibrated renderer envelope.
-
-PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
-the initial React/PyQt visibility, accessibility, performance, and baseline
-tier. PR #4733 merged V0.1 with purpose, prerequisites, and reciprocal
-counterparts; PR #4736 merged strict TypeScript-reader parity as `34a809d9`.
-PR #4738 merged V5.2's fail-closed changed-path governance as `4b4aec421`.
-The audit is 8 verified / 23 partial; seven blockers and two human actions remain.
+#4433: all 31 obligations are mapped (#4705); the trusted run proves **only**
+the initial visibility/accessibility/performance/baseline tier — do not promote
+it further. Audit stands at 8 verified / 23 partial, with seven blockers and two
+human actions open.
 
 ### Adding a Tab: The Four-Manifest Lockstep (Read Before Starting C6/C7/H4)
 
