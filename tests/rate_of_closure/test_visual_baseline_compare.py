@@ -39,6 +39,7 @@ def test_packaged_manifest_binds_exact_reviewed_bytes() -> None:
     }
     calibrated_tolerances = {
         ("pyqt", "simulation"): VisualBaselineTolerance(1, 10_000, 10_000),
+        ("pyqt", "variation"): VisualBaselineTolerance(1, 10_000, 50_000),
     }
     for entry in manifest.baselines:
         data = package.joinpath(

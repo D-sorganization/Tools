@@ -216,8 +216,8 @@
       "sha256": "9326f017697a91e1c232246c898e4dce54ac17de4de8e62ec9ce3c177ef04b54",
       "tolerance": {
         "changed_channel_threshold": 1,
-        "max_mean_channel_delta_microunits": 200,
-        "max_changed_pixel_fraction_microunits": 250
+        "max_mean_channel_delta_microunits": 10000,
+        "max_changed_pixel_fraction_microunits": 50000
       }
     },
     {

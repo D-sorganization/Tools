@@ -101,3 +101,11 @@ def test_tab_is_explicitly_unavailable_without_local_authority(qtbot) -> None:  
 
     assert not widget._run_button.isEnabled()
     assert "unavailable" in widget._status.text().lower()
+
+
+def test_chunk_size_editor_matches_shared_authority_contract(qtbot) -> None:  # type: ignore[no-untyped-def]
+    widget = DurableEnsembleTab(None, _plan)
+    qtbot.addWidget(widget)
+
+    assert widget._chunk_size.minimum() == 1
+    assert widget._chunk_size.maximum() == 4096

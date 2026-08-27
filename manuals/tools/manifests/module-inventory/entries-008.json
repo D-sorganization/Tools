@@ -597,10 +597,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 12164,
+      "bytes_lf": 12826,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "814e9146b6b6bdefce8b0f73c49272199e35a500411c5f52cfa29268f235919a",
+      "content_sha256_lf": "1974be4873b2790ef8b8577ad21cdab5f5ba27eb24b86558e993c80ddfff77b9",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VARIATION-TAB-PY-E55E1EF75B8B",
       "language": "python",
@@ -649,6 +649,7 @@
         "test_paths": [
           "tests/rate_of_closure/pyqt_variation_visual_state_probe.py",
           "tests/rate_of_closure/test_morris_pyqt_workflow.py",
+          "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py",
           "tests/rate_of_closure/test_variation_gui.py",
           "tests/rate_of_closure/test_variation_gui_execution.py",
           "tests/rate_of_closure/test_variation_gui_roundtrip.py"
@@ -765,10 +766,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9482,
+      "bytes_lf": 11257,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "12d2e73f4cf04abae82d9f2c22ec778f924b89554c8e0a88a6c357df9460fe1c",
+      "content_sha256_lf": "bcd10725d5b8870e29b4e1bb922519edbd47d352cafe746a70862b2c08199ecd",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VARIATION-TAB-RESULTS-PY-29451F49303B",
       "language": "python",
@@ -827,6 +828,11 @@
             "kind": "function",
             "name": "prepare_result_views",
             "signature": "dataset: VariationDataset, sensitivity: SensitivityResult | None"
+          },
+          {
+            "kind": "function",
+            "name": "prepare_sensitivity_view",
+            "signature": "plan: VariationPlan, sensitivity: SensitivityResult"
           }
         ],
         "test_paths": [
@@ -840,10 +846,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 15226,
+      "bytes_lf": 16641,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2cc71312b7e735f466a90a7334a5ddb8422867a90659c3a93d774b982040b377",
+      "content_sha256_lf": "b11eca15c49a55270051f48549942f983696da3b1d5bc845e5f3875b873438a7",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VARIATION-TAB-RUN-PY-5491D38CC8EF",
       "language": "python",
@@ -1017,10 +1023,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 7245,
+      "bytes_lf": 9857,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3c181c40eabd6cd308402e8ef3a94f167089c7485e615785605f42206baf06dc",
+      "content_sha256_lf": "da362215e3afa9866133244376593e7e5655f1392b4ec36081438385e3d74d7b",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VARIATION-WORKER-PY-2B0A70E58FAB",
       "language": "python",
@@ -1071,7 +1077,6 @@
           "tests/rate_of_closure/test_variation_gui_execution.py"
         ],
         "unit_mentions": [
-          "bar",
           "s"
         ],
         "validation_paths": []
@@ -3187,6 +3192,77 @@
             "kind": "function",
             "name": "validate_trials",
             "signature": "request: StrategyAnalysisRequest, analysis: WindStrategyAnalysis"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1841,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e8b517dd18c4a72af9c9517bb45649248c36ac62ab34caf9fc629761e3be327e",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-VARIATION-ANALYSIS-POLICY-PY-20AE4A0A9EAD",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/variation/analysis_policy.py",
+      "purpose": "UI-neutral execution policy for variation analyses.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "ANALYSIS_EXECUTIONS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "planned_analysis_runs",
+            "signature": "n_runs: int, noise_count: int, value: AnalysisExecution"
+          },
+          {
+            "kind": "function",
+            "name": "runs_individual_analysis",
+            "signature": "value: AnalysisExecution"
+          },
+          {
+            "kind": "function",
+            "name": "runs_joint_analysis",
+            "signature": "value: AnalysisExecution"
+          },
+          {
+            "kind": "function",
+            "name": "validate_analysis_execution",
+            "signature": "value: object"
           }
         ],
         "test_paths": [],
@@ -6421,10 +6497,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6237,
+      "bytes_lf": 6305,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "bd9d5ef1b9db6b464edf90b11f8a413a83786032c0856d2793412685b2dfb538",
+      "content_sha256_lf": "06909bc0b28d48ec38ba9d98f5a3605d1658f10380684a4ac6e5f72ec4fd56dc",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-VARIATION-VISUAL-STATE-PY-D81D2E439850",
       "language": "python",
@@ -6492,7 +6568,7 @@
           {
             "kind": "function",
             "name": "simulation_authority_identity",
-            "signature": "plan: VariationPlan, config: SimulationConfig, compute_sensitivity: bool"
+            "signature": "plan: VariationPlan, config: SimulationConfig, analysis_execution: AnalysisExecution"
           },
           {
             "kind": "function",
@@ -12384,51 +12460,6 @@
         "unit_mentions": [
           "cm",
           "g",
-          "m/s",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2989,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6e0da5c094224e4bd868cc1906392856545ef6fdc2a162eb698c0bdbf6a128b5",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-PUTTINGVISUALS-TEST-TSX-C93FBB587F60",
-      "language": "typescript-react",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/components/PuttingVisuals.test.tsx",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [
           "m/s",
           "s"
         ],

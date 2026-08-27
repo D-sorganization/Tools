@@ -28,7 +28,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                           |
 | #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                                    |
 | #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                            |
-| #4142 | Ensemble variation and falsifiable sensitivity. R13.3 protected-merged as `d6c8a0a67`; R13.5 provenance-complete result selection is in protected PR #4794 through implementation commit `f102ce59a`, with a combined 29 verified / 2 partial ledger. |
+| #4142 | Ensemble variation and falsifiable sensitivity. R13.3 and R13.5 protected-merged as `d6c8a0a67` and `35853199b`; R14.3 cross-surface workflow parity is active as #4792 with a 30 verified / 1 partial ledger.                        |
 | #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                                |
 | #4433 | Visual-first tab visibility and visualization-led UX. Open. V0.1, strict cross-runtime parity, and V5.2 are merged through PR #4738; the audit is 8 verified / 23 partial obligations with seven gaps and two human actions retained. |
 | #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                        |
@@ -64,13 +64,15 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   protected review and artifact-identity or complete rendered-page evidence.
 - #4142 R12.3 protected-squash-merged via PR #4782 as `a1b00db14`. R13.3 PR
   #4784 protected-squash-merged as `d6c8a0a67`; its required gates passed and
-  optional fleet-only backlog was not redundantly rerun. #4791/R13.5 is active
-  in PR #4794 through implementation commit `f102ce59a` from that protected base; #4793 was
-  superseded without force-push after visual governance required matched
-  evidence. Exact point/time/frame target identity plus all-input or selected-
-  source views are present in PyQt and React. The combined ledger is 29 verified /
-  2 partial; outputs remain model-scenario evidence without human causal,
-  anatomical, or coaching authority.
+  optional fleet-only backlog was not redundantly rerun. R13.5 protected-
+  squash-merged through PR #4794 as `35853199b`. It binds exact point/time/frame
+  target identity and all-input or selected-source views in PyQt and React.
+  R14.3 issue #4792 is replayed from that protected base and proves authoring-
+  through-export parity for `all_together`, `individual`, and `both`, including
+  dataset-free individual results, aggregate progress, cancellation, and
+  1--4096 durable chunks. Its ledger is 30 verified / 1 partial. Outputs remain
+  model-scenario evidence without human causal, anatomical, or coaching authority.
+  Hosted review fixed an unlabeled PyQt selector; approve only a corrected Linux candidate.
 
 ## Must-Read Architecture Pointers
 
@@ -138,7 +140,7 @@ Note: `ruff format --check` reports four pre-existing failures under
 
 ## Short-Term Roadmap (Ordered)
 
-1. Protect-merge #4791/R13.5, then publish #4792/R14.3 from the new main.
+1. Validate and protect-merge #4792/R14.3 from the R13.5 protected mainline.
 2. Deliver main-rooted TOOLS-D4 #4720, then reconcile D5--D9 without rewriting remote history.
 3. Implement the Sidekick S1–S5 plan in `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`.
 4. Restore the isolated advisory benchmark lane through #4582.

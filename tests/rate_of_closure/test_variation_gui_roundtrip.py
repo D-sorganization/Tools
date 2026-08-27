@@ -52,7 +52,11 @@ class TestPlanRoundTrip:
     ) -> None:
         plan = _fast_launch_plan(4)
         tab.load_plan(plan)
+        tab._analysis_combo.setCurrentIndex(
+            tab._analysis_combo.findData("all_together")
+        )
         tab._active_plan = plan
+        tab._active_analysis_execution = "all_together"
         tab._active_authority_identity = tab._current_authority_identity(plan)
         tab._on_succeeded(run_variation(plan, n_workers=1), None)
         tab._set_running(False)
