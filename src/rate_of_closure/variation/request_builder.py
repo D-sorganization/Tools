@@ -15,6 +15,10 @@ from rate_of_closure.variation.ensemble_source import (
     LazySimulationEnsembleSource,
     SimulationEnsembleSource,
 )
+from rate_of_closure.variation.locus_execution_capabilities import (
+    LocusExecutionCapability,
+    load_locus_execution_contract,
+)
 from shared.python.contracts import require
 from shared.python.swing_sim.integration_grid import effective_rk4_duration
 from shared.python.swing_sim.run_config import (
@@ -26,7 +30,7 @@ from shared.python.swing_sim.variation import (
     CATEGORY_CLUB,
     CATEGORY_DELIVERY,
     CATEGORY_SWING,
-    LOCALIZED_TORQUE_VARIABLE_JOINTS,
+    NoiseSpec,
     VariationPlan,
 )
 
@@ -47,24 +51,28 @@ _HEAD_MASS = _key(CATEGORY_CLUB, "head_mass_kg")
 _HEAD_MOI = _key(CATEGORY_CLUB, "head_moi_kg_m2")
 _TEE_HEIGHT = _key(CATEGORY_BALL_SETUP, "tee_height_m")
 
+_LOCUS_CONTRACT = load_locus_execution_contract()
+_CAPABILITIES = _LOCUS_CONTRACT.capabilities
+
 GLOBAL_TRACE_VARIABLE_KEYS = frozenset(
+    key
+    for key, capability in _CAPABILITIES.items()
+    if capability.adapter_id == "global_simulation_value/v1"
+)
+
+LOCALIZED_TORQUE_VARIABLE_JOINTS = MappingProxyType(
     {
-        _YAW,
-        _SIDE_TILT,
-        _FORWARD_TILT,
-        _IMPACT_TIME_OFFSET,
-        _DAMPING_SHOULDER,
-        _DAMPING_WRIST,
-        _TOE_OFFSET,
-        _HIGH_OFFSET,
-        _HEAD_MASS,
-        _HEAD_MOI,
-        _TEE_HEIGHT,
+        key: capability.point_ids[0]
+        for key, capability in _CAPABILITIES.items()
+        if capability.adapter_id == "localized_joint_torque_offset/v1"
     }
 )
 
 TRACE_CAPABLE_VARIABLE_KEYS = frozenset(
-    GLOBAL_TRACE_VARIABLE_KEYS | set(LOCALIZED_TORQUE_VARIABLE_JOINTS)
+    key
+    for key, capability in _CAPABILITIES.items()
+    if capability.adapter_id
+    in {"global_simulation_value/v1", "localized_joint_torque_offset/v1"}
 )
 
 
@@ -95,7 +103,18 @@ def build_simulation_ensemble_request(
     )
     requested = {spec.variable_key for spec in plan.noise} | set(plan.base_variables)
     unsupported = sorted(requested - TRACE_CAPABLE_VARIABLE_KEYS)
-    require(not unsupported, "variables are not trace-capable", unsupported)
+    unsupported_details = {
+        key: (
+            _CAPABILITIES[key].unsupported_reason
+            or f"owned by {_CAPABILITIES[key].adapter_id}"
+        )
+        for key in unsupported
+    }
+    require(
+        not unsupported_details,
+        "variables are not trace-capable",
+        unsupported_details,
+    )
     _validate_noise_loci(plan, base_config)
     return LazySimulationEnsembleSource(
         plan,
@@ -140,7 +159,7 @@ def _apply_row(
 
 
 def _validate_noise_loci(plan: VariationPlan, base_config: SimulationConfig) -> None:
-    """Validate global variables and exact localized torque loci."""
+    """Validate each request against its declared execution capability."""
     localized_specs = {
         spec.variable_key: spec
         for spec in plan.noise
@@ -160,32 +179,43 @@ def _validate_noise_loci(plan: VariationPlan, base_config: SimulationConfig) -> 
         sorted(base_only),
     )
     for spec in plan.noise:
-        expected_joint = LOCALIZED_TORQUE_VARIABLE_JOINTS.get(spec.variable_key)
-        if expected_joint is None:
+        capability = _CAPABILITIES[spec.variable_key]
+        if capability.whole_run:
             require(
                 spec.is_global,
-                "localized perturbation is unsupported for this variable",
+                "localized perturbation metadata is forbidden for this "
+                "whole-run variable",
                 spec.spec_id,
             )
             continue
-        window = spec.time_window_s
-        require(
-            window is not None,
-            "localized torque perturbation requires time_window_s",
-            spec.spec_id,
-        )
-        require(
-            spec.point_ids == (expected_joint,),
-            "localized torque perturbation requires its exact topological joint point",
-            (spec.point_ids, expected_joint),
-        )
-        assert window is not None
-        start_s, end_s = window
-        require(
-            0.0 <= start_s < end_s <= effective_duration_s,
-            "localized torque time window must lie within the effective RK4 duration",
-            (window, effective_duration_s),
-        )
+        _validate_localized_locus(spec, capability, effective_duration_s)
+
+
+def _validate_localized_locus(
+    spec: NoiseSpec,
+    capability: LocusExecutionCapability,
+    effective_duration_s: float,
+) -> None:
+    """Require one exact topological joint and an in-run half-open window."""
+    expected_joint = capability.point_ids[0]
+    window = spec.time_window_s
+    require(
+        window is not None,
+        "localized torque perturbation requires time_window_s",
+        spec.spec_id,
+    )
+    require(
+        spec.point_ids == (expected_joint,),
+        "localized torque perturbation requires its exact topological joint point",
+        (spec.point_ids, expected_joint),
+    )
+    assert window is not None
+    start_s, end_s = window
+    require(
+        0.0 <= start_s < end_s <= effective_duration_s,
+        "localized torque time window must lie within the effective RK4 duration",
+        (window, effective_duration_s),
+    )
 
 
 def apply_global_simulation_values(
@@ -294,8 +324,10 @@ def _apply_tee(
 
 TRACE_CAPABILITIES = MappingProxyType(
     {
+        "schema_version": _LOCUS_CONTRACT.schema_version,
         "mode": "swing",
         "source_kind": "double_pendulum",
+        "point_id_semantics": _LOCUS_CONTRACT.point_id_semantics,
         "localized_torque_offsets": tuple(LOCALIZED_TORQUE_VARIABLE_JOINTS.items()),
     }
 )

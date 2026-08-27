@@ -1,0 +1,156 @@
+{
+  "schema_version": "tools-r12.3-noise-response-capabilities/v1",
+  "requirement_id": "R12.3",
+  "qualified_base_revision": "4ddec9175814451fdc3d1a94b45f1190e7503bca",
+  "implementation_issue": 4765,
+  "field_schema": {
+    "schema_id": "swing-sim/position-noise-response-field",
+    "schema_version": 1
+  },
+  "resampling_policy_id": "swing-trace-time-linear-contiguous/v1",
+  "estimator": {
+    "method_id": "paired-oat-linear-through-origin/v1",
+    "normalization_id": "declared-distribution-standard-deviation/v1"
+  },
+  "source_layouts": ["manual", "double_pendulum", "triple_pendulum"],
+  "adapter_cells": [
+    {
+      "source_kind": "manual",
+      "adapter_id": "global_simulation_value/v1",
+      "status": "explicitly_unavailable"
+    },
+    {
+      "source_kind": "manual",
+      "adapter_id": "localized_joint_torque_offset/v1",
+      "status": "explicitly_unavailable"
+    },
+    {
+      "source_kind": "manual",
+      "adapter_id": "regional_ground_value/v1",
+      "status": "explicitly_unavailable"
+    },
+    {
+      "source_kind": "manual",
+      "adapter_id": "turf_profile_value/v1",
+      "status": "explicitly_unavailable"
+    },
+    {
+      "source_kind": "double_pendulum",
+      "adapter_id": "global_simulation_value/v1",
+      "status": "verified"
+    },
+    {
+      "source_kind": "double_pendulum",
+      "adapter_id": "localized_joint_torque_offset/v1",
+      "status": "verified"
+    },
+    {
+      "source_kind": "double_pendulum",
+      "adapter_id": "regional_ground_value/v1",
+      "status": "explicitly_unavailable"
+    },
+    {
+      "source_kind": "double_pendulum",
+      "adapter_id": "turf_profile_value/v1",
+      "status": "explicitly_unavailable"
+    },
+    {
+      "source_kind": "triple_pendulum",
+      "adapter_id": "global_simulation_value/v1",
+      "status": "explicitly_unavailable"
+    },
+    {
+      "source_kind": "triple_pendulum",
+      "adapter_id": "localized_joint_torque_offset/v1",
+      "status": "explicitly_unavailable"
+    },
+    {
+      "source_kind": "triple_pendulum",
+      "adapter_id": "regional_ground_value/v1",
+      "status": "explicitly_unavailable"
+    },
+    {
+      "source_kind": "triple_pendulum",
+      "adapter_id": "turf_profile_value/v1",
+      "status": "explicitly_unavailable"
+    }
+  ],
+  "adapter_status_counts": {
+    "verified": 2,
+    "explicitly_unavailable": 10
+  },
+  "input_designs": [
+    {
+      "design": "paired_oat_continuous_unbounded_independent",
+      "status": "verified",
+      "reason": null
+    },
+    {
+      "design": "bounded_input",
+      "status": "explicitly_unsupported",
+      "reason": "The v1 normalization does not infer an equivalent local perturbation at an active bound."
+    },
+    {
+      "design": "discrete_input",
+      "status": "explicitly_unsupported",
+      "reason": "A discrete intervention has no declared continuous standard-deviation derivative interpretation."
+    },
+    {
+      "design": "correlated_or_grouped_input",
+      "status": "explicitly_unsupported",
+      "reason": "Independent attribution is not identifiable without a declared grouped estimator."
+    },
+    {
+      "design": "simultaneous_nonlinear_interaction",
+      "status": "explicitly_unsupported",
+      "reason": "A paired OAT slope does not identify a simultaneous-design interaction response."
+    }
+  ],
+  "metrics": [
+    {
+      "metric_id": "signed-cartesian-response",
+      "unit": "m/(declared-standard-deviation)"
+    },
+    {
+      "metric_id": "response-magnitude",
+      "unit": "m/(declared-standard-deviation)"
+    },
+    { "metric_id": "matched-absolute-rms-scatter", "unit": "m" },
+    { "metric_id": "all-eligible-absolute-rms-scatter", "unit": "m" }
+  ],
+  "adverse_cases": [
+    "exact_grid_identity",
+    "exact_grid_subset",
+    "off_grid_affine_interpolation",
+    "leading_missing",
+    "trailing_missing",
+    "interior_gap",
+    "single_sample_island",
+    "all_invalid_failure",
+    "no_impact",
+    "impact_lower_tie",
+    "impact_without_valid_target",
+    "outside_domain",
+    "invalid_target_grid",
+    "immutability_and_aliasing",
+    "serial_chunk_equivalence",
+    "source_layout_registry_drift",
+    "adapter_matrix_drift",
+    "rigid_translation",
+    "rotation_covariance",
+    "position_unit_scaling",
+    "zero_perturbation",
+    "affine_analytical_golden",
+    "nonlinear_interaction_countermodel",
+    "equal_scatter_different_declared_scale",
+    "equal_response_different_exogenous_scatter",
+    "cell_specific_missingness",
+    "correlated_input_rejection",
+    "trial_order_drift",
+    "frame_drift",
+    "registry_drift",
+    "snapshot_contract_drift",
+    "serial_chunk_resume_fingerprint_identity"
+  ],
+  "scientific_boundary": "Model-scenario geometry only: normalized response is not causal anatomy, human validation, joint work, energy transfer, or coaching authority."
+}

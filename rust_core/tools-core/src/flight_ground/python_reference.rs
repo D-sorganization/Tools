@@ -19,14 +19,11 @@ pub fn py_run_ground_reference_v1(
     is_cancelled: Option<Py<PyAny>>,
 ) -> PyResult<String> {
     if let Some(callback) = is_cancelled {
-        return py.allow_threads(move || {
-            run_with_callback(&request_json, execution_json.as_deref(), callback)
-        });
+        return py
+            .detach(move || run_with_callback(&request_json, execution_json.as_deref(), callback));
     }
-    py.allow_threads(|| {
-        run_ground_reference_v1_json(&request_json, execution_json.as_deref(), || false)
-    })
-    .map_err(boundary_error)
+    py.detach(|| run_ground_reference_v1_json(&request_json, execution_json.as_deref(), || false))
+        .map_err(boundary_error)
 }
 
 fn run_with_callback(
@@ -36,7 +33,7 @@ fn run_with_callback(
 ) -> PyResult<String> {
     let callback_error = RefCell::new(None);
     let result = run_ground_reference_v1_json(request_json, execution_json, || {
-        let polled = Python::with_gil(|py| {
+        let polled = Python::attach(|py| {
             callback
                 .call0(py)
                 .and_then(|value| value.extract::<bool>(py))

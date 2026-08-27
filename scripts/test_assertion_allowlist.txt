@@ -39,6 +39,9 @@ src/shared/python/swing_sim/ground/tests/_support.py
 # Shared pipeline request/result constructors for the flight ground tests;
 # the assertions about what they build live in the consuming modules.
 src/shared/python/swing_sim/flight/tests/_regional_ground_pipeline_support.py
+# Deterministic R12.3 request/trace constructors; field and falsification
+# assertions live in the two noise-response test modules that consume them.
+src/shared/python/swing_sim/variation/tests/noise_response_test_support.py
 # Shared constructors consumed by the strict variation plot-definition tests.
 tests/rate_of_closure/_variation_plot_definition_support.py
 # Subprocess entrypoint; semantic assertions live in the owning rendered test.

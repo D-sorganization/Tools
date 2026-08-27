@@ -3,6 +3,2673 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 6426,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0dd53e4c6da9163ad9244630db252bc127af119b6f2ba08038bdf69313d97bd2",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-TERMINAL-PROVIDERS-PY-52C29CF821CD",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/terminal_providers.py",
+      "purpose": "Default terminal-agent provider descriptors for shared chat integrations.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_PROVIDER_DEFINITIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_REDACTED_VALUE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SENSITIVE_KEY_PARTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SENSITIVE_OPTION_NAMES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SHELL_DEFINITIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SUPPORTED_SHELL_IDS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_default_terminal_provider_registry",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "default_terminal_agent_providers",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "default_terminal_shells",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "provider_probe_commands",
+            "signature": "provider_id: str"
+          },
+          {
+            "kind": "function",
+            "name": "redact_terminal_command",
+            "signature": "command: Sequence[str]"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/chat/test_cli_agent_adapters.py",
+          "tests/shared/python/chat/test_terminal_providers.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9423,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6ecb3a06e4eb705dafd71842105585c676c94dc6986b37dc8795b6763bc2b3e3",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-TERMINAL-RUNTIME-PY-A48438705A6E",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/terminal_runtime.py",
+      "purpose": "Project-scoped runtime for terminal-backed chat agent sessions.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ProcessLaunchRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TerminalProcessAdapter",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TerminalRuntimeError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TerminalSessionRuntime",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_BASH_IDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_POWERSHELL_IDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SESSION_ENV_ALLOWLIST",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SESSION_ENV_SENSITIVE_PATTERNS",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/chat/test_cli_agent_adapters.py",
+          "tests/shared/python/chat/test_terminal_runtime.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6326,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8a6697123e536f4a98affb14a8b56d6979eff4b7d9dd14521dc06f672f40bfee",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-VOICE-INPUT-MANAGER-PY-63D8D26C9675",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/voice_input_manager.py",
+      "purpose": "Voice-to-text input manager for ChatDockWidget.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "VoiceInputManager",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/chat/tests/test_voice_input.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7050,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "97315713e7dee36d856e87a64ab960bf17515c8d5492693cf54e5612ac46bd63",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-WEBSOCKET-PROTOCOL-PY-31C30ECBE0BA",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/websocket_protocol.py",
+      "purpose": "Shared chat WebSocket protocol loop.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ChatWebSocketState",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DisconnectLogConfig",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "run_chat_websocket_protocol",
+            "signature": "websocket: WebSocket, session_id: str='new', *, authorize_fn: AuthorizeFn | None=None, chat_service_getter: ChatServiceGetter=_default_chat_service_getter, before_send: BeforeSendHook | None=None, action_handlers: Mapping[str, ActionHandler] | None=None, message_context_getter: MessageContextGetter=_default_message_context, session_info_extra: SessionInfoExtraFn | None=None, log: logging.Logger=logger, disconnect_log: DisconnectLogConfig=_DEFAULT_DISCONNECT_LOG"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/chat/test_public_contract.py",
+          "tests/shared/python/chat/test_websocket_protocol.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/shared/python/chat/test_public_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7145,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "52f21d7f0d0cf46d9e420f08815c8adcbc2fcff220c0e6afe8c77744656118f9",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-WORKSPACE-COMMAND-HANDLER-PY-27C7FE6A8CE0",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/workspace_command_handler.py",
+      "purpose": "Headless workspace / plot slash-command controller (ADR-0022, issue #6119).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "WorkspaceCommandHandler",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_workspace_context_block",
+            "signature": "provider: Any"
+          }
+        ],
+        "test_paths": [
+          "tests/unit/chat/test_workspace_command_handler.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 781,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7ba01a1daa9add84e70f2deb98af2da42246a9966b31348009c8767078a28b56",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-CONTRACTS-INIT-PY-D0A7026CA495",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat_contracts/__init__.py",
+      "purpose": "Dependency-free contracts shared by chat and AI packages.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "ArchivedConversationContext",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ArchivedMessage",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CredentialManager",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_RESPONSE_STYLE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RESPONSE_STYLE_PROMPTS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ResponseStyle",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ThinkingCapabilities",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ThinkingLevel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ThinkingLevelName",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "make_full_thinking_capabilities",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "make_none_only_capabilities",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "style_prompt",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 980,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "dde644428711ff7929638c012d39238f6cd6c0a59c08e6fa090089e5b9dbcbe5",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-CONTRACTS-CONVERSATION-PY-A302CBD2E1C7",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat_contracts/conversation.py",
+      "purpose": "Conversation snapshots shared across chat and memory services.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ArchivedConversationContext",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ArchivedMessage",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5021,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d3be3a8952e66a944d96dc78f908769258b64778acf4f9ce61b85071551e0de9",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-CONTRACTS-CREDENTIALS-PY-0660E618B1B5",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat_contracts/credentials.py",
+      "purpose": "Shared credential manager used by chat and AI packages.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CredentialManager",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SUPPORTED_PROVIDERS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ENV_KEY_MAP",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/ai/tests/test_adapter_factory.py",
+          "src/shared/python/chat/tests/test_credentials.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4642,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "711cef028ad5b40815d95cda5817eb1552e6876532a1afb86df285241fc59472",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-CONTRACTS-MODELS-PY-6940D19F0F4A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat_contracts/models.py",
+      "purpose": "Shared chat capability and response-style contracts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ThinkingCapabilities",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ThinkingLevel",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_RESPONSE_STYLE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "RESPONSE_STYLE_PROMPTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_VALID_THINKING_NAMES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "make_full_thinking_capabilities",
+            "signature": "provider: str, *, low_budget: int=1024, medium_budget: int=4096, high_budget: int=16384, default_level_name: ThinkingLevelName='none'"
+          },
+          {
+            "kind": "function",
+            "name": "make_none_only_capabilities",
+            "signature": "provider: str"
+          },
+          {
+            "kind": "function",
+            "name": "style_prompt",
+            "signature": "style: ResponseStyle | str | None"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/chat/test_ai_memory_manager.py",
+          "tests/unit/chat/test_adapter_capabilities.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 762,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1a43688a3f4968831275a3f3a64e016156d684ec1ee8624a59e0a74032a3e7ea",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-INIT-PY-0A98E5D8FDCA",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/codemap/__init__.py",
+      "purpose": "Repo-aware code map — tree-sitter symbol index + SQLite FTS5.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "Hit",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RebuildStats",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RepoStats",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Symbol",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "discover_repo_root",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_symbol",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "imports_of",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "neighbors",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "rebuild",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "repo_summary",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "search_code",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "who_calls",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5430,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6a7c1659fe361635e5800e50dae1d45cd7859a6e23c2f5767bc1b1faa0924210",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-LANG-JS-PY-B1E1247AE7F5",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/codemap/_lang_js.py",
+      "purpose": "JavaScript / TypeScript / TSX tree-sitter extractors.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "extract_javascript",
+            "signature": "path: str, source: str | bytes"
+          },
+          {
+            "kind": "function",
+            "name": "extract_typescript",
+            "signature": "path: str, source: str | bytes"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1516,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "157ae7e18ea256b932b74ecc4675876ae253b4f01ab0264658264d5538210384",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-LANG-MARKDOWN-PY-A4C97209A644",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/codemap/_lang_markdown.py",
+      "purpose": "Markdown tree-sitter extractor — emits headings as symbols.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "extract",
+            "signature": "path: str, source: str | bytes"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4447,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a9f406e02762861dd672c96378820f1cf14a4823cc992092e60cbfe91ffe127d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-LANG-PYTHON-PY-1C073364BACD",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/codemap/_lang_python.py",
+      "purpose": "Python tree-sitter extractor.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "extract",
+            "signature": "path: str, source: str | bytes"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3220,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "851cae0858c9e3ef21d99edf303531c3bf7a12c37f6d254fb48400480eaf5959",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-LANG-RUST-PY-F34DDB6B3B21",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/codemap/_lang_rust.py",
+      "purpose": "Rust tree-sitter extractor.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "extract",
+            "signature": "path: str, source: str | bytes"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3693,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b9fbbe84b74bc327cec31a56b502772a2ce7ea9b8a7ec97ab821090759c689f1",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-TS-COMMON-PY-8D4B5231DCF3",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/codemap/_ts_common.py",
+      "purpose": "Shared tree-sitter helpers used by every per-language parser module.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ParseResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ParsedSymbol",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LANG_MODULES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "first_child",
+            "signature": "node: Any, type_name: str"
+          },
+          {
+            "kind": "function",
+            "name": "get_parser",
+            "signature": "lang_id: str"
+          },
+          {
+            "kind": "function",
+            "name": "line_range",
+            "signature": "node: Any"
+          },
+          {
+            "kind": "function",
+            "name": "text_of",
+            "signature": "node: Any, source: bytes"
+          },
+          {
+            "kind": "function",
+            "name": "to_bytes",
+            "signature": "source: str | bytes"
+          }
+        ],
+        "test_paths": [
+          "tests/unit/codemap/test_codemap_indexer.py",
+          "tests/unit/codemap/test_codemap_js_parser.py",
+          "tests/unit/codemap/test_codemap_markdown_parser.py",
+          "tests/unit/codemap/test_codemap_parsers.py",
+          "tests/unit/codemap/test_codemap_python_parser.py",
+          "tests/unit/codemap/test_codemap_rust_parser.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10522,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e575f15d128c1385b9009d49914698e9018776ce3a4e3f4e3a0bd93ca4acbe8e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-API-PY-9260BAE7DFB4",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/codemap/api.py",
+      "purpose": "Public query API for the code map.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Hit",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RepoStats",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Symbol",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "discover_repo_root",
+            "signature": "start: str | os.PathLike[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "get_symbol",
+            "signature": "qualified_name: str, *, repo_root: str | os.PathLike[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "imports_of",
+            "signature": "path: str, *, repo_root: str | os.PathLike[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "neighbors",
+            "signature": "qualified_name: str, *, hops: int=1, repo_root: str | os.PathLike[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "repo_summary",
+            "signature": "*, repo_root: str | os.PathLike[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "search_code",
+            "signature": "query: str, *, k: int=20, kind: str | None=None, repo_root: str | os.PathLike[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "who_calls",
+            "signature": "qualified_name: str, *, repo_root: str | os.PathLike[str] | None=None"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4938,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cb01a9019a810555b3c8ae134366166f874ef2a80f96ece7fa250976fc3ed7bb",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-CLI-PY-0C84314EA300",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/codemap/cli.py",
+      "purpose": "``codemap`` command-line interface.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "build_parser",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/unit/test_project_metadata_contracts.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "bar",
+          "g",
+          "s"
+        ],
+        "validation_paths": [
+          "tests/unit/test_project_metadata_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6245,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e7683a5801c4a56c2a929ffe793911fd0dcc39b426dd45fd532e68a94b95e445",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-DB-PY-0C80D420428B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/codemap/db.py",
+      "purpose": "SQLite schema + open/init helpers for the code map index.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "DB_DIR_NAME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DB_FILE_NAME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MANIFEST_FILE_NAME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "db_path",
+            "signature": "repo_root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "get_schema_version",
+            "signature": "conn: sqlite3.Connection"
+          },
+          {
+            "kind": "function",
+            "name": "init_schema",
+            "signature": "conn: sqlite3.Connection"
+          },
+          {
+            "kind": "function",
+            "name": "manifest_path",
+            "signature": "repo_root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "open_db",
+            "signature": "repo_root: Path"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 912,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "12c7d07714154ee066667e17fffb0444ee7d18162203209abfe37622efc2cd63",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-EMBEDDINGS-PY-084A8F4DE0DE",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/codemap/embeddings.py",
+      "purpose": "Optional embedding layer — placeholder.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://github.com/D-sorganization/Gasification_Model/issues/3442:",
+          "https://github.com/D-sorganization/UpstreamDrift/issues/5171"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "EMBED_DIM",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10768,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7b59e479b6fa0176175f02746ee0ab4da9944160ab751ea4d62b3bbfc059d505",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-INDEXER-PY-160B672BBD95",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/codemap/indexer.py",
+      "purpose": "Walk a repo, parse files, persist symbols into SQLite.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "RebuildStats",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "rebuild",
+            "signature": "repo_root: str | os.PathLike[str], *, since: str | None=None"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2832,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "751b512b55dba5a61b4d6c1412cfb1200e38abf6d257ed1d49d95052b2a15486",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-MCP-SERVER-PY-F4603B0A7AD3",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/codemap/mcp_server.py",
+      "purpose": "MCP server exposing the code map to external coding agents.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2533,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c1602c57036887e7867b64549bf522433466815914c36ca13244ac7a25a06a65",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-PARSERS-PY-057A23AC0258",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/codemap/parsers.py",
+      "purpose": "Tree-sitter parsers for Python, Rust, TypeScript, JavaScript, Markdown.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "EXT_TO_LANG",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "dispatch",
+            "signature": "path: str | Path, source: str | bytes"
+          },
+          {
+            "kind": "function",
+            "name": "language_for",
+            "signature": "path: str | Path"
+          },
+          {
+            "kind": "re-export",
+            "name": "ParseResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ParsedSymbol",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4941,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "909ec59b96a72e5d3bad0b00c5497fc9d2ea553117c49df19ca64d9bc1ef4f4b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-WATCHER-PY-4F4B7DB49EC5",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/codemap/watcher.py",
+      "purpose": "``codemap-watch`` daemon — incremental re-index on file save.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "DEBOUNCE_S",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "run",
+            "signature": "repo_root: str | None=None, *, debounce: float=DEBOUNCE_S"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "ms",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 612,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6a2d60b598da6af64b256cfd6d27b091d56120b562926ca89e7e60cb19c5877e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-COMPATIBILITY-PY-9E911063217F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/compatibility.py",
+      "purpose": "Shared Python-version compatibility helpers for shared modules.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_scipy_dependency_contract.py",
+          "src/p1am_control_system/backend/tests/test_safety_state_machine.py",
+          "src/p1am_control_system/backend/tests/test_strenum_compat.py",
+          "src/python/src/utils/test_utils.py",
+          "src/shared/python/ai/tests/test_adapter_factory.py",
+          "src/shared/python/sidekick/tests/test_json_io_boundary_3333.py",
+          "src/shared/python/sidekick/tests/test_unit_converter_widget.py",
+          "src/shared/python/swing_sim/ground/tests/test_contract.py",
+          "src/shared/python/swing_sim/ground/tests/test_ground_result_composer.py",
+          "tests/architecture/test_compatibility_imports_3316.py",
+          "tests/architecture/test_shared_import_aliases_3316.py",
+          "tests/data_processor_io/test_rust_engine_contract.py",
+          "tests/python/utils/test_compatibility.py",
+          "tests/rate_of_closure/test_primary_navigation.py",
+          "tests/rate_of_closure/test_python_310_datetime_boundaries.py",
+          "tests/rate_of_closure/test_python_compatibility.py",
+          "tests/rate_of_closure/test_variation_module_importability.py",
+          "tests/rotation_converter/test_rigid_transform.py",
+          "tests/scripts/test_generate_tools_json.py",
+          "tests/shared/python/chat/test_terminal_runtime.py",
+          "tests/shared/python/test_compatibility.py",
+          "tests/test_compatibility.py",
+          "tests/test_cross_repo_import_compatibility.py",
+          "tests/test_waves_2_3_imports.py",
+          "tests/tools/test_mypy_autofix_agent.py",
+          "tests/unit/rust/test_movement_optimizer_maturin_workflow.py",
+          "tests/unit/sidekick/test_python_repl_cancel_namespace_3715.py",
+          "tests/unit/sidekick/test_standalone_canonical_package.py",
+          "tests/unit/sidekick/test_standard_response_import.py",
+          "tests/unit/test_project_metadata_contracts.py",
+          "tests/unit/test_sidekick_import_deprecation.py",
+          "tests/vessel_drafter/test_contracts_unified.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "src/movement_optimizer/tests/test_scipy_dependency_contract.py",
+          "src/shared/python/swing_sim/ground/tests/test_contract.py",
+          "tests/data_processor_io/test_rust_engine_contract.py",
+          "tests/unit/test_project_metadata_contracts.py",
+          "tests/vessel_drafter/test_contracts_unified.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 269,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "98fc7f6f365e087ee017494252290fb26d6e1446b7f7d230038104077c7abb10",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CONFIG-INIT-PY-164207F71D94",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/config/__init__.py",
+      "purpose": "Shared configuration helpers.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "EnvironmentError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_env",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_env_bool",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_env_float",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_env_int",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3490,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8cf487df26d39cdd033f23eb92f387d8b6a559b240ef9d39e76027b36470c88e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CONFIG-ENVIRONMENT-PY-6A1979F29846",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/config/environment.py",
+      "purpose": "Environment variable helpers for shared Tools modules.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "EnvironmentError",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_env",
+            "signature": "name: str, default: str | None=None, *, required: bool=False, strip: bool=True"
+          },
+          {
+            "kind": "function",
+            "name": "get_env_bool",
+            "signature": "name: str, default: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "get_env_float",
+            "signature": "name: str, default: float | None=None, *, min_value: float | None=None, max_value: float | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "get_env_int",
+            "signature": "name: str, default: int | None=None, *, min_value: int | None=None, max_value: int | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/conftest.py",
+          "tests/shared/python/ai/test_shared_dependency_imports.py",
+          "tests/shared/python/chat/test_adapter_lifecycle.py",
+          "tests/shared/python/chat/test_assistant_panel_inline_controls.py",
+          "tests/shared/python/chat/test_assistant_panel_memory_sync.py",
+          "tests/shared/python/chat/test_indexing_controller.py",
+          "tests/shared/python/chat/test_message_display.py",
+          "tests/shared/python/chat/test_panel_header.py",
+          "tests/shared/python/config/test_environment.py",
+          "tests/unit/ai/test_peer_review.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 24980,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "373a2b805098fe74bbf63afea6700f3c3f49fc9964f9a589e6f9c626ce60613d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CONTRACTS-PY-7B33D8E20A4B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/contracts.py",
+      "purpose": "Design by Contract (DbC) enforcement for the Tools platform.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ContractChecker",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ContractLevel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ContractViolationError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "InvariantError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PostconditionError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PostconditionEvaluationError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PreconditionError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PreconditionEvaluationError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StateError",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CONTRACTS_ENABLED",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DBC_LEVEL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "F",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_VIOLATION_CLASSES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "check_non_negative",
+            "signature": "value: float, name: str='value'"
+          },
+          {
+            "kind": "function",
+            "name": "check_positive",
+            "signature": "value: float, name: str='value'"
+          },
+          {
+            "kind": "function",
+            "name": "check_pressure",
+            "signature": "value: float, name: str='pressure'"
+          },
+          {
+            "kind": "function",
+            "name": "check_range",
+            "signature": "value: float, low: float, high: float, name: str='value'"
+          },
+          {
+            "kind": "function",
+            "name": "check_temperature",
+            "signature": "value: float, name: str='temperature'"
+          },
+          {
+            "kind": "function",
+            "name": "class_invariant",
+            "signature": "condition: Callable[[Any], bool], message: str='Invariant violated'"
+          },
+          {
+            "kind": "function",
+            "name": "contract",
+            "signature": "pre: Callable[..., bool] | None=None, post: Callable[[Any], bool] | None=None, pre_msg: str='Precondition violated', post_msg: str='Postcondition violated'"
+          },
+          {
+            "kind": "function",
+            "name": "ensure",
+            "signature": "condition: bool, message: str, value: Any=None"
+          },
+          {
+            "kind": "function",
+            "name": "ensure_valid_result",
+            "signature": "result: Any"
+          },
+          {
+            "kind": "function",
+            "name": "get_contract_level",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "has_finite_elements",
+            "signature": "array: Any"
+          },
+          {
+            "kind": "function",
+            "name": "invariant",
+            "signature": "condition: bool, message: str, value: Any=None"
+          },
+          {
+            "kind": "function",
+            "name": "invariant_checked",
+            "signature": "func: F"
+          },
+          {
+            "kind": "function",
+            "name": "is_non_negative",
+            "signature": "value: float"
+          },
+          {
+            "kind": "function",
+            "name": "is_positive",
+            "signature": "value: float"
+          },
+          {
+            "kind": "function",
+            "name": "is_valid_result",
+            "signature": "result: Any"
+          },
+          {
+            "kind": "function",
+            "name": "postcondition",
+            "signature": "condition: Callable[[Any], bool], message: str='Postcondition failed'"
+          },
+          {
+            "kind": "function",
+            "name": "precondition",
+            "signature": "condition: Callable[..., bool], message: str='Precondition failed'"
+          },
+          {
+            "kind": "function",
+            "name": "require",
+            "signature": "condition: bool, message: str, value: Any=None"
+          },
+          {
+            "kind": "function",
+            "name": "require_finite",
+            "signature": "array: Any, name: str='array'"
+          },
+          {
+            "kind": "function",
+            "name": "require_positive",
+            "signature": "value: float, name: str='value'"
+          },
+          {
+            "kind": "function",
+            "name": "require_unit_vector",
+            "signature": "vector: Any, name: str='vector', tol: float=1e-06"
+          },
+          {
+            "kind": "function",
+            "name": "set_contract_level",
+            "signature": "level: ContractLevel"
+          },
+          {
+            "kind": "function",
+            "name": "set_contracts_enabled",
+            "signature": "enabled: bool"
+          }
+        ],
+        "test_paths": [
+          "src/data_processing/data_processor/python/tests/test_advanced_analysis.py",
+          "src/p1am_control_system/backend/tests/test_units_contract.py",
+          "src/pendulum_simulator/tests/test_companion_dialog.py",
+          "src/pendulum_simulator/tests/test_rotating_base_panel.py",
+          "src/pendulum_simulator/tests/test_transfer_strategy_panel.py",
+          "src/shared/python/calc_backend/tests/test_calc_backend.py",
+          "src/shared/python/calc_backend/tests/test_calc_backend_gaps.py",
+          "src/shared/python/data_processing/tests/test_processor.py",
+          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
+          "src/shared/python/model_generation/tests/test_contracts.py",
+          "src/shared/python/sidekick/tests/test_baghouse_calculator.py",
+          "src/shared/python/sidekick/tests/test_data_io.py",
+          "src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py",
+          "src/shared/python/swing_sim/delivery_interchange/tests/test_delivery_interchange.py",
+          "src/shared/python/swing_sim/flight/tests/test_capability_optimizer.py",
+          "src/shared/python/swing_sim/flight/tests/test_surface_flight_cancellation.py",
+          "src/shared/python/swing_sim/ground/tests/test_reference_execution_contract.py",
+          "src/shared/python/swing_sim/ground/tests/test_regional_plan_wire.py",
+          "src/shared/python/swing_sim/ground/tests/test_regional_surfaces.py",
+          "src/shared/python/swing_sim/model_interchange/tests/test_model_interchange.py",
+          "src/shared/python/swing_sim/solver/tests/test_goals.py",
+          "src/shared/python/swing_sim/solver/tests/test_solve.py",
+          "src/shared/python/swing_sim/solver/tests/test_spatial_targets.py",
+          "src/shared/python/swing_sim/solver/tests/test_targets.py",
+          "src/shared/python/swing_sim/tests/test_force_attribution.py",
+          "src/shared/python/swing_sim/tests/test_localized_torque.py",
+          "src/shared/python/swing_sim/tests/test_prescribed_run.py",
+          "src/shared/python/swing_sim/tests/test_torque_library_export.py",
+          "src/shared/python/swing_sim/tests/test_torque_profiles.py",
+          "src/shared/python/swing_sim/variation/tests/test_analysis.py",
+          "src/shared/python/swing_sim/variation/tests/test_dataset_io.py",
+          "src/shared/python/swing_sim/variation/tests/test_dispersion_metrics.py",
+          "src/shared/python/swing_sim/variation/tests/test_engine.py",
+          "src/shared/python/swing_sim/variation/tests/test_ensemble_geometry.py",
+          "src/shared/python/swing_sim/variation/tests/test_execution_metadata.py",
+          "src/shared/python/swing_sim/variation/tests/test_global_sensitivity.py",
+          "src/shared/python/swing_sim/variation/tests/test_grouped_sampling.py",
+          "src/shared/python/swing_sim/variation/tests/test_morris_execution.py",
+          "src/shared/python/swing_sim/variation/tests/test_morris_observation_io.py",
+          "src/shared/python/swing_sim/variation/tests/test_noise_response_falsification.py",
+          "src/shared/python/swing_sim/variation/tests/test_noise_response_field.py",
+          "src/shared/python/swing_sim/variation/tests/test_propagation.py",
+          "src/shared/python/swing_sim/variation/tests/test_spec.py",
+          "src/shared/python/swing_sim/variation/tests/test_trace_resampling.py",
+          "src/shared/python/swing_sim/variation/tests/test_wire_identity.py",
+          "src/shared/python/tests/test_contracts_shared.py",
+          "src/shared/python/tests/test_cors.py",
+          "src/urdf_builder_gui/tests/test_urdf_builder_gui.py",
+          "tests/_import_contract_bootstrap.py",
+          "tests/architecture/test_ai_adapter_imports_3316.py",
+          "tests/architecture/test_design_manual_governance_contract.py",
+          "tests/architecture/test_layer_boundaries.py",
+          "tests/architecture/test_no_source_assert_contracts.py",
+          "tests/architecture/test_tools_exemplar_manuals_contract.py",
+          "tests/architecture/test_tools_manual_renderer_contract.py",
+          "tests/architecture/test_tools_module_inventory_contract.py",
+          "tests/architecture/test_tools_textbook_chapter_contract.py",
+          "tests/calc_backend/test_wgs_reactor_headless_import_3317.py",
+          "tests/contract/test_calc_backend_contract_surface.py",
+          "tests/heavy_integration/test_tools_contracts.py",
+          "tests/integration/sidekick/test_standalone_wheel.py",
+          "tests/integration/test_cross_repo_contracts.py",
+          "tests/ops/test_pre_push_mypy_scope.py",
+          "tests/ops/test_rate_web_playwright_workflow.py",
+          "tests/ops/test_rust_security_dependency_floors.py",
+          "tests/rate_of_closure/test_ball_setup.py",
+          "tests/rate_of_closure/test_ball_setup_gui.py",
+          "tests/rate_of_closure/test_ball_setup_parity.py",
+          "tests/rate_of_closure/test_camera_preferences.py",
+          "tests/rate_of_closure/test_capability_observation_adapter.py",
+          "tests/rate_of_closure/test_chip_forgiveness_analysis.py",
+          "tests/rate_of_closure/test_club_mesh_inertia.py",
+          "tests/rate_of_closure/test_confidence_ellipsoid_mesh.py",
+          "tests/rate_of_closure/test_contracts.py",
+          "tests/rate_of_closure/test_fixed_ball_gui.py",
+          "tests/rate_of_closure/test_ground_playback.py",
+          "tests/rate_of_closure/test_ground_study_scalar_adapter.py",
+          "tests/rate_of_closure/test_impact_scene.py",
+          "tests/rate_of_closure/test_launch_monitor_analysis.py",
+          "tests/rate_of_closure/test_launch_monitor_conformance_golden.py",
+          "tests/rate_of_closure/test_launch_monitor_workspace_v3.py",
+          "tests/rate_of_closure/test_localized_torque_variation.py",
+          "tests/rate_of_closure/test_locus_execution_capabilities.py",
+          "tests/rate_of_closure/test_morris_authority_contracts.py",
+          "tests/rate_of_closure/test_morris_rate_adapter.py",
+          "tests/rate_of_closure/test_python_compatibility.py",
+          "tests/rate_of_closure/test_regional_ground_execution_controller.py",
+          "tests/rate_of_closure/test_regional_ground_execution_files.py",
+          "tests/rate_of_closure/test_regional_ground_loopback_submitter.py",
+          "tests/rate_of_closure/test_regional_ground_study_adapter.py",
+          "tests/rate_of_closure/test_regional_ground_target_projection.py",
+          "tests/rate_of_closure/test_regional_ground_variation_persistence.py",
+          "tests/rate_of_closure/test_scalar_ensemble_contract.py",
+          "tests/rate_of_closure/test_screw_analysis.py",
+          "tests/rate_of_closure/test_simulation_trial_outcome_scalar_contract.py",
+          "tests/rate_of_closure/test_torque_profile_ui.py",
+          "tests/rate_of_closure/test_torque_run_history.py",
+          "tests/rate_of_closure/test_variation_complete_trial_record.py",
+          "tests/rate_of_closure/test_variation_durable_ensemble_chunks.py",
+          "tests/rate_of_closure/test_variation_durable_ensemble_evidence.py",
+          "tests/rate_of_closure/test_variation_ensemble_chunk_domains.py",
+          "tests/rate_of_closure/test_variation_ensemble_chunks.py",
+          "tests/rate_of_closure/test_variation_ensemble_io_reader.py",
+          "tests/rate_of_closure/test_variation_geometry_properties.py",
+          "tests/rate_of_closure/test_variation_gui_roundtrip.py",
+          "tests/rate_of_closure/test_variation_noise_response.py",
+          "tests/rate_of_closure/test_variation_plot_data.py",
+          "tests/rate_of_closure/test_variation_plot_definition.py",
+          "tests/rate_of_closure/test_variation_plot_definition_domain.py",
+          "tests/rate_of_closure/test_variation_simulation_adapter.py",
+          "tests/rate_of_closure/test_variation_simulation_request.py",
+          "tests/rate_of_closure/test_variation_streaming_ensemble_analysis.py",
+          "tests/rate_of_closure/test_web_companion_contracts.py",
+          "tests/rate_of_closure/test_wind_strategy_plot_adapter.py",
+          "tests/rate_of_closure/test_workspace_torque_session.py",
+          "tests/rate_of_closure/test_workspace_variation_session.py",
+          "tests/rotation_converter/test_modern_robotics.py",
+          "tests/rotation_converter/test_modern_robotics_public_surface_3689.py",
+          "tests/rotation_converter/test_rotation_core.py",
+          "tests/scripts/test_check_tools_manifest_workflow.py",
+          "tests/shared/python/ai/test_codex_cli_adapter.py",
+          "tests/shared/python/ai/test_gemini_cli_adapter.py",
+          "tests/shared/python/chat/test_cli_agent_adapters.py",
+          "tests/shared/python/chat/test_ollama_latency_tuning.py",
+          "tests/shared/python/chat/test_terminal_contracts.py",
+          "tests/shared/python/data_processing/test_processor.py",
+          "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/golf_club/test_impact_coupling.py",
+          "tests/shared/python/golf_club/test_shaft_serialization.py",
+          "tests/shared/python/gui_launcher/test_registry.py",
+          "tests/shared/python/process_calculators/test_scrubber_calculator.py",
+          "tests/shared/python/process_calculators/test_syngas_water_calculator_edge_cases.py",
+          "tests/shared/python/test_contracts.py",
+          "tests/shared/python/test_cors.py",
+          "tests/test_body_parameters_strict_validation.py",
+          "tests/test_cross_repo_import_compatibility.py",
+          "tests/test_launch_utils.py",
+          "tests/test_launcher_factory.py",
+          "tests/test_phase1_quick_wins.py",
+          "tests/test_properties.py",
+          "tests/test_signal_core_coverage.py",
+          "tests/tools/test_config_loader.py",
+          "tests/tools/test_icon_utils.py",
+          "tests/tools/test_launch_utils.py",
+          "tests/tools/test_matlab_quality_utils.py",
+          "tests/tools/test_quality_utils.py",
+          "tests/tools/test_scientific_auditor.py",
+          "tests/tools/test_ui_utils.py",
+          "tests/unit/ai/adapters/test_cline_adapter.py",
+          "tests/unit/ai/mcp/test_contracts.py",
+          "tests/unit/ai/mcp/test_mcp_gui_integration.py",
+          "tests/unit/ai/peer_review/test_contracts.py",
+          "tests/unit/ai/skills/test_contracts.py",
+          "tests/unit/chat/test_adapter_capabilities.py",
+          "tests/unit/sidekick/agent/test_action_service.py",
+          "tests/unit/sidekick/test_standalone_canonical_package.py",
+          "tests/unit/test_contracts.py",
+          "tests/vessel_drafter/test_contracts_fallback.py",
+          "tests/vessel_drafter/test_contracts_unified.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": [
+          "src/p1am_control_system/backend/tests/test_units_contract.py",
+          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
+          "src/shared/python/model_generation/tests/test_contracts.py",
+          "src/shared/python/swing_sim/ground/tests/test_reference_execution_contract.py",
+          "src/shared/python/tests/test_contracts_shared.py",
+          "tests/_import_contract_bootstrap.py",
+          "tests/architecture/test_design_manual_governance_contract.py",
+          "tests/architecture/test_no_source_assert_contracts.py",
+          "tests/architecture/test_tools_exemplar_manuals_contract.py",
+          "tests/architecture/test_tools_manual_renderer_contract.py",
+          "tests/architecture/test_tools_module_inventory_contract.py",
+          "tests/architecture/test_tools_textbook_chapter_contract.py",
+          "tests/contract/test_calc_backend_contract_surface.py",
+          "tests/heavy_integration/test_tools_contracts.py",
+          "tests/integration/test_cross_repo_contracts.py",
+          "tests/rate_of_closure/test_contracts.py",
+          "tests/rate_of_closure/test_morris_authority_contracts.py",
+          "tests/rate_of_closure/test_scalar_ensemble_contract.py",
+          "tests/rate_of_closure/test_simulation_trial_outcome_scalar_contract.py",
+          "tests/rate_of_closure/test_web_companion_contracts.py",
+          "tests/shared/python/chat/test_terminal_contracts.py",
+          "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/test_contracts.py",
+          "tests/test_body_parameters_strict_validation.py",
+          "tests/tools/test_scientific_auditor.py",
+          "tests/unit/ai/mcp/test_contracts.py",
+          "tests/unit/ai/peer_review/test_contracts.py",
+          "tests/unit/ai/skills/test_contracts.py",
+          "tests/unit/test_contracts.py",
+          "tests/vessel_drafter/test_contracts_fallback.py",
+          "tests/vessel_drafter/test_contracts_unified.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4332,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d306d9161d5e9930e7aa370c7c6733f150f128d64dd90e34d20ddefd8e084b34",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CORS-PY-5CCF78631155",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/cors.py",
+      "purpose": "Shared CORS configuration factory for FastAPI applications.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://127.0.0.1:3000",
+          "http://127.0.0.1:5173",
+          "http://localhost:3000",
+          "http://localhost:5173"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "DEFAULT_ALLOW_HEADERS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_ALLOW_METHODS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_ORIGINS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "add_cors_middleware",
+            "signature": "app: FastAPI, *, origins: list[str] | None=None, allow_credentials: bool=False, allow_methods: list[str] | None=None, allow_headers: list[str] | None=None, **kwargs: Any"
+          }
+        ],
+        "test_paths": [
+          "src/media_processing/video_processor/python/tests_video_processor/test_api.py",
+          "src/shared/python/tests/test_cors.py",
+          "src/web_applications/urdf_viewer/tests/conftest.py",
+          "src/web_applications/urdf_viewer/tests/test_urdf_viewer.py",
+          "tests/rate_of_closure/test_morris_authority_host.py",
+          "tests/rate_of_closure/test_web_companion_app.py",
+          "tests/rate_of_closure/test_web_companion_contracts.py",
+          "tests/rate_of_closure/test_web_companion_runtime.py",
+          "tests/shared/python/test_cors.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "tests/rate_of_closure/test_web_companion_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 747,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2590d7fea9e5d12e6c9569ce1811271239483e1f1aded9ad468a84a72ef8e4d7",
+      "family": "data-processing-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-DATA-PROCESSING-INIT-PY-455E512F58A1",
+      "language": "python",
+      "maintainer": "Data processing maintainers",
+      "path": "src/shared/python/data_processing/__init__.py",
+      "purpose": "Shared data processing module extracted from Data_Processor_Integrated.py.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "DataProcessor",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 22175,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "82622eaab5e29425e356fc8d803ddb5956eb236df1ab43f043ba29b5c5fe4522",
+      "family": "data-processing-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-DATA-PROCESSING-PROCESSOR-PY-98361D22A003",
+      "language": "python",
+      "maintainer": "Data processing maintainers",
+      "path": "src/shared/python/data_processing/processor.py",
+      "purpose": "DataProcessor facade -- clean API over the extracted core modules.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DataProcessor",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DatasetInfo",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SUPPORTED_FILTER_TYPES",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/data_processing/tests/test_processor.py",
+          "tests/data_processor_io/test_rust_engine_contract.py",
+          "tests/shared/python/data_processing/test_data_processing_contract.py",
+          "tests/shared/python/data_processing/test_processor.py",
+          "tests/shared/python/test_safe_pandas_eval.py"
+        ],
+        "unit_mentions": [
+          "Hz",
+          "s"
+        ],
+        "validation_paths": [
+          "tests/data_processor_io/test_rust_engine_contract.py",
+          "tests/shared/python/data_processing/test_data_processing_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 901,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "26d5e04a95b09b3ba279852b0b8be6b270606fd3ac8f80b736957c1ea440d55c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-DATA-PROCESSOR-IO-INIT-PY-F39B0C83C2C1",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/data_processor_io/__init__.py",
+      "purpose": "Bulk-I/O engine package for the Data Processor (issue #2989).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "CancellationToken",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ConversionReport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DataProcessorRustError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "OperationCancelled",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RustBulkDataEngine",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SchemaInfo",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "cancel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "convert",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "filter_export",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "inspect",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "preview",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "scan_batch",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 4955,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -14222,2547 +16889,6 @@
         ],
         "unit_mentions": [
           "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3528,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ec9f81246c8b84a4023a9e895e9f6a9837f3db77fdf366f1c20210cdbb916491",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-PROFILES-PY-6D1A66A1B144",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/programmatic_pid/profiles.py",
-      "purpose": "Layout profile presets for controlling visual density.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "PROFILE_PRESETS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "apply_profile",
-            "signature": "spec: dict[str, Any], profile: str | None"
-          }
-        ],
-        "test_paths": [
-          "tests/programmatic_pid/test_profiles.py",
-          "tests/programmatic_pid/test_profiles_extra.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 10637,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "335ab6bf16f0eeaec0944f8c86e6d8aa84203b6fc9233334900314ba10a5b4b2",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-RENDERING-PY-7ED158C0CC02",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/programmatic_pid/rendering.py",
-      "purpose": "Low-level DXF rendering primitives.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "add_arrow",
-            "signature": "msp: Any, s: Sequence[float], e: Sequence[float], layer: str, color: int | None=None, arrow_size: float=1.6"
-          },
-          {
-            "kind": "function",
-            "name": "add_arrow_head",
-            "signature": "msp: Any, s: Sequence[float], e: Sequence[float], layer: str, color: int | None=None, arrow_size: float=1.6"
-          },
-          {
-            "kind": "function",
-            "name": "add_box",
-            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
-          },
-          {
-            "kind": "function",
-            "name": "add_poly_arrow",
-            "signature": "msp: Any, verts: Sequence[Sequence[float]], layer: str, color: int | None=None, arrow_size: float=1.6"
-          },
-          {
-            "kind": "function",
-            "name": "add_text",
-            "signature": "msp: Any, text: str, x: float, y: float, h: float, layer: str='TEXT', align: str='MIDDLE_CENTER'"
-          },
-          {
-            "kind": "function",
-            "name": "add_text_panel",
-            "signature": "msp: Any, x: float, y: float, w: float, h: float, title: str, lines: Sequence[str | None], text_h: float, text_layer: str, border_layer: str, max_chars: int=42"
-          },
-          {
-            "kind": "function",
-            "name": "ensure_layer",
-            "signature": "doc: Any, name: str, color: int=7, linetype: str='CONTINUOUS'"
-          },
-          {
-            "kind": "function",
-            "name": "ensure_layers",
-            "signature": "doc: Any, spec: dict[str, Any]"
-          },
-          {
-            "kind": "function",
-            "name": "export_svg_from_dxf",
-            "signature": "spec: dict[str, Any], dxf_path: str | Path, svg_path: str | Path | None, fallback_extent: tuple[float, float, float, float]"
-          },
-          {
-            "kind": "function",
-            "name": "layer_name",
-            "signature": "layer_index: dict[str, str], *candidates: str, default: str='0'"
-          },
-          {
-            "kind": "function",
-            "name": "parse_alignment",
-            "signature": "align: Any"
-          },
-          {
-            "kind": "function",
-            "name": "wrap_text_lines",
-            "signature": "text: str, width: int"
-          }
-        ],
-        "test_paths": [
-          "src/movement_optimizer/tests/test_rendering.py",
-          "tests/programmatic_pid/test_controls.py",
-          "tests/programmatic_pid/test_instruments.py",
-          "tests/programmatic_pid/test_rendering.py",
-          "tests/programmatic_pid/test_streams.py",
-          "tests/programmatic_pid/test_title_block.py"
-        ],
-        "unit_mentions": [
-          "cm",
-          "mm",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 10143,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0076685d96593ab21d37d7649b20553204b6ef6340d734551c944decc91cd1b8",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-SPEC-LOADER-PY-1451DECDC011",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/programmatic_pid/spec_loader.py",
-      "purpose": "Spec loading, accessor utilities, and configuration extraction.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SpecAccessor",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "ensure_drawing",
-            "signature": "spec: SpecDict"
-          },
-          {
-            "kind": "function",
-            "name": "get_drawing",
-            "signature": "spec: SpecDict"
-          },
-          {
-            "kind": "function",
-            "name": "get_layer_config",
-            "signature": "spec: SpecDict"
-          },
-          {
-            "kind": "function",
-            "name": "get_layout_config",
-            "signature": "spec: SpecDict"
-          },
-          {
-            "kind": "function",
-            "name": "get_project",
-            "signature": "spec: SpecDict"
-          },
-          {
-            "kind": "function",
-            "name": "get_text_config",
-            "signature": "spec: SpecDict"
-          },
-          {
-            "kind": "function",
-            "name": "load_spec",
-            "signature": "path: str | Path"
-          },
-          {
-            "kind": "function",
-            "name": "prepare_spec",
-            "signature": "spec_path: str | Path, profile: str | None"
-          }
-        ],
-        "test_paths": [
-          "tests/programmatic_pid/test_profiles.py",
-          "tests/programmatic_pid/test_spec_loader.py"
-        ],
-        "unit_mentions": [
-          "g"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5348,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c9959bf64a08fa281ebfdff460dc578dda1237284bc73e5f86dcd17a20b5d7b1",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-STREAMS-PY-79086A024825",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/programmatic_pid/streams.py",
-      "purpose": "Stream (pipe / flow path) rendering.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "add_stream",
-            "signature": "msp: Any, stream: dict[str, Any], text_h: float, text_layer: str, equipment_by_id: dict[str, dict[str, Any]], arrow_size: float, label_scale: float=0.82, label_placer: Any | None=None, draw_label_leader: bool=False, leader_layer: str='LEADERS'"
-          },
-          {
-            "kind": "function",
-            "name": "resolve_endpoint",
-            "signature": "endpoint: dict[str, Any] | None, equipment_by_id: dict[str, dict[str, Any]]"
-          }
-        ],
-        "test_paths": [
-          "tests/programmatic_pid/test_streams.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 7521,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ee806999cf28b41781ea71d773320edd4175172853bb6b40f9fccde541b9f7e2",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-TITLE-BLOCK-PY-0EB02D220B6B",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/programmatic_pid/title_block.py",
-      "purpose": "Title block, notes panels, and mass balance display.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "add_notes",
-            "signature": "msp: Any, spec: dict[str, Any], text_cfg: dict[str, float], text_layer: str, notes_layer: str, layout_regions: dict[str, Any]"
-          },
-          {
-            "kind": "function",
-            "name": "add_title_block",
-            "signature": "msp: Any, spec: dict[str, Any], text_cfg: dict[str, float], text_layer: str, notes_layer: str, title_box: tuple[float, float, float, float]"
-          },
-          {
-            "kind": "function",
-            "name": "get_mass_balance_values",
-            "signature": "spec: dict[str, Any]"
-          }
-        ],
-        "test_paths": [
-          "tests/programmatic_pid/test_title_block.py"
-        ],
-        "unit_mentions": [
-          "kg"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2922,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "cbcca41ea3c124563445e68568ac09855aa2f196ab764a5de60e789177d1465c",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-TYPES-PY-DCA6E8146841",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/programmatic_pid/types.py",
-      "purpose": "Core types, exceptions, and constants for programmatic-pid.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "BBox",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "LayoutRegions",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "Point",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SpecValidationError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TextConfig",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ValidationIssue",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/programmatic_pid/tests/test_edge_cases.py",
-          "src/shared/python/programmatic_pid/tests/test_geometry.py",
-          "src/shared/python/programmatic_pid/tests/test_pipeline_e2e.py",
-          "src/shared/python/programmatic_pid/tests/test_types.py",
-          "src/shared/python/programmatic_pid/tests/test_validation.py",
-          "tests/programmatic_pid/test_document.py",
-          "tests/programmatic_pid/test_geometry.py",
-          "tests/programmatic_pid/test_geometry_extra.py",
-          "tests/programmatic_pid/test_types.py",
-          "tests/programmatic_pid/test_validation.py"
-        ],
-        "unit_mentions": [
-          "g"
-        ],
-        "validation_paths": [
-          "src/shared/python/programmatic_pid/tests/test_validation.py",
-          "tests/programmatic_pid/test_validation.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6623,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "eb04e6b08b5928689240f24cc79556fee1df727a4eeffeea409d78c1c7f73ea4",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-VALIDATION-PY-6E9C82C8DB2A",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/programmatic_pid/validation.py",
-      "purpose": "Specification validation with structured error output.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "_SCHEMA",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "collect_issues",
-            "signature": "spec: Any"
-          },
-          {
-            "kind": "function",
-            "name": "validate_spec",
-            "signature": "spec: Any"
-          },
-          {
-            "kind": "function",
-            "name": "validate_spec_json",
-            "signature": "spec: Any"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/programmatic_pid/tests/test_edge_cases.py",
-          "src/shared/python/programmatic_pid/tests/test_validation.py",
-          "tests/programmatic_pid/test_validation.py",
-          "tests/python/utils/test_validation.py",
-          "tests/shared/python/model_generation/test_validation.py",
-          "tests/test_validation.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "src/shared/python/programmatic_pid/tests/test_validation.py",
-          "tests/programmatic_pid/test_validation.py",
-          "tests/python/utils/test_validation.py",
-          "tests/shared/python/model_generation/test_validation.py",
-          "tests/test_validation.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 108,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "84854aa601c51c1db485baa2a6e9e1217e3fbe316205a2da9cb7e3214627df4b",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-REPORTING-INIT-PY-AD36A601BBDC",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/reporting/__init__.py",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "InsightsProvider",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ReportGenerator",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1419,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3fe53694da37bcffb05a2f48084592df8ed6a88914dc41e8e648e55d7010a452",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-REPORTING-GENERATOR-PY-E2C474562674",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/reporting/generator.py",
-      "purpose": "Shared utility for generating reports with agentic insights.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "InsightsProvider",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ReportGenerator",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 794,
-      "classification": "calculation",
-      "classification_basis": "path-marker:rotation",
-      "content_sha256_lf": "e51c2f13e02bc4b44c68d0a83fd5c91c9b9a9205f6b0def235fe3d1e83c8f12a",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-ROTATION-TRANSFORMS-INIT-PY-913AAA810A67",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/rotation_transforms/__init__.py",
-      "purpose": "Shared rotation and reference-frame primitives.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "OperationName",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ReferenceFrameResult",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "Rotation",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "compute_homogeneous_transform",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "compute_reference_frame_operation",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "compute_so3_so3_maps",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "compute_twist_frame_conversion",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 7066,
-      "classification": "calculation",
-      "classification_basis": "path-marker:rotation",
-      "content_sha256_lf": "7022e14f40a6695b433f5e71485cda392cf18dc9ef71ec412263630b4f9a478a",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-ROTATION-TRANSFORMS-REFERENCE-FRAME-OPERATIONS-PY-E26E63259408",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/rotation_transforms/reference_frame_operations.py",
-      "purpose": "Reference-frame conversion operations shared across tools and APIs.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ReferenceFrameResult",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "compute_homogeneous_transform",
-            "signature": "rotation_matrix: Any, translation: Any"
-          },
-          {
-            "kind": "function",
-            "name": "compute_reference_frame_operation",
-            "signature": "operation: OperationName, *, transform: Any | None=None, twist: Any | None=None, rotation_matrix: Any | None=None, translation: Any | None=None, so3_vector: Any | None=None, so3_matrix: Any | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "compute_so3_so3_maps",
-            "signature": "so3_vector: Any | None=None, so3_matrix: Any | None=None, rotation_matrix: Any | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "compute_twist_frame_conversion",
-            "signature": "transform: Any, twist: Any"
-          }
-        ],
-        "test_paths": [
-          "tests/rotation_converter/test_reference_frame_operations.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 6128,
-      "classification": "calculation",
-      "classification_basis": "path-marker:rotation",
-      "content_sha256_lf": "0bc9b44427f75150cccacdc2c2b951e3bcf5741b9fe81ed1a367ac51c0ac09d6",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-ROTATION-TRANSFORMS-ROTATION-PY-5645E5EA82C8",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/rotation_transforms/rotation.py",
-      "purpose": "Shared rotation representation conversions.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "Rotation",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 15127,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "69d053b9eef08342b57f611f4d4f2b4fdceb5a6a3487dbb6a8b0b63898aa6807",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SAFE-EVAL-PY-17BBC425A821",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/safe_eval.py",
-      "purpose": "Safe mathematical expression evaluator.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "NUMPY_MATH_NAMESPACE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SCALAR_MATH_NAMESPACE",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "safe_eval",
-            "signature": "expression: str, namespace: dict[str, Any], *, allowed_names: set[str] | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "safe_eval_math",
-            "signature": "expression: str, variables: dict[str, Any] | None=None, *, use_numpy: bool=True"
-          },
-          {
-            "kind": "function",
-            "name": "validate_expression",
-            "signature": "expression: str, allowed_names: set[str] | None=None"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/sidekick/tests/test_calculator_plotting.py",
-          "tests/shared/python/test_safe_eval.py"
-        ],
-        "unit_mentions": [
-          "g"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3964,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6a86c84d31bb80e8d224442a696a65fa72b11878aa60eff8b00199e3fb54e83d",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SAFE-PANDAS-EVAL-PY-26F350F93F93",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/safe_pandas_eval.py",
-      "purpose": "Validation wrapper for pandas formula expressions.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "MAX_FORMULA_LENGTH",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MAX_FORMULA_NODES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MAX_POWER_EXPONENT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_ALLOWED_NODES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_ALLOWED_OPERATORS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_BLOCKED_PATTERNS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "log_formula_rejected",
-            "signature": "expression: str, reason: Exception"
-          },
-          {
-            "kind": "function",
-            "name": "validate_pandas_formula",
-            "signature": "expression: str, *, allowed_columns: Collection[str]"
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/test_safe_pandas_eval.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 26,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "53237b105d100495fed0906ac5687dded8f883c62998815cf8feae8d79b04fc0",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SCRIPTING-INIT-PY-8A59ABED3F54",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/scripting/__init__.py",
-      "purpose": "Package: scripting.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 28878,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "5d921e97f10ba8b5b717f8d26eba92cdb6364791ca6c018cffbdc0954e03e573",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SCRIPTING-SCRIPTING-ENV-PY-E75AF63DF03D",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/scripting/scripting_env.py",
-      "purpose": "Python scripting environment (MATLAB-like backend).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ConsoleEnvironment",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SecurityError",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "USER_CODE_ERROR_TYPES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_BLOCKED_BUILTINS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_BLOCKED_IMPORT_MODULES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_CPU_HARD_LIMIT_S",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_CPU_SOFT_LIMIT_S",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_DEFAULT_MAX_EXECUTION_TIME",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_INTROSPECTION_GADGETS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_MEM_LIMIT_BYTES",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "apply_process_resource_limits",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "tests/rotation_converter/test_scripting_env.py",
-          "tests/shared/python/scripting/test_scripting_env.py",
-          "tests/shared/python/scripting/test_scripting_env_import_side_effects.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1284,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7adcdc556c3d68f00d3bc0a00ee65223acbd30b8ad8ac271508f8c11eec332dd",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-INIT-PY-094C6D69DA1A",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/__init__.py",
-      "purpose": "UpstreamDrift Shared Tools Library",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "CalculationResult",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "Calculator",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "DataTransformer",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "InputValidator",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ProcessCalculator",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "StateSerializable",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "UnitConverter",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ValidationResult",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 7477,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "16c4792de241878414997db425498169fb0a960b01cb0ff9cedb7dd57926967c",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-MAIN-PY-A81E3316FBF5",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/__main__.py",
-      "purpose": "CLI entry point for launching and dispatching standalone Sidekick flows.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SidekickArgumentParser",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_parser",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "launch_gui",
-            "signature": "args: argparse.Namespace"
-          },
-          {
-            "kind": "function",
-            "name": "main",
-            "signature": "argv: list[str] | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "parse_cli_args",
-            "signature": "argv: list[str] | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "run_headless",
-            "signature": "args: argparse.Namespace"
-          }
-        ],
-        "test_paths": [
-          "tests/architecture/test_shared_import_aliases_3316.py",
-          "tests/unit/sidekick/test_standalone_canonical_package.py",
-          "tests/unit/sidekick/test_standalone_runtime.py",
-          "tests/unit/test_project_metadata_contracts.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "tests/unit/test_project_metadata_contracts.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2845,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c1b9f186e1fed892019f73077f0c892d2a9b43413821698bc8734dcb62e5d226",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-INIT-PY-36711854C8D6",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/agent/__init__.py",
-      "purpose": "Sidekick agent layer (epic #5967).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "ActionChipModel",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ActionChipState",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ActionDescriptor",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ActionDispatcher",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ActionResult",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CANONICAL_ACTION_IDS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CalculatorRun",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CanonicalActionPort",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CanonicalOperationResult",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CanonicalToolAdapter",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ChatActionEnvelope",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "FeatureEntry",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "FeatureKind",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "HostActionPort",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "HostAdapter",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "HostCapability",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "HostInvocationResult",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "JsonlActionAudit",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "MemoryActionAudit",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PendingUserDecision",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PlannedStep",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PlannerError",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PolicyDecision",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SidekickActionHandler",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SidekickActionPolicy",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SidekickActionService",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SidekickAgentPlanner",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SidekickWorkflow",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "StateError",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "StateProfile",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SubtabActionPort",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SubtabAdapter",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ToolCall",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WorkflowOutcome",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WorkflowStep",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WorkflowStepResult",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WorkflowStepStatus",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WorkspaceSnapshot",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "action_step",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "build_chip",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "build_feature_catalog",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "build_sidekick_system_prompt",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "lookup_feature",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "redact_secrets",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "run_sidekick_workflow",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "search_features",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "serialize_envelope",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4409,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4dbefebcf113e0010c69981082e2f8449582568b22cd2241b249eaba4fbffa44",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-ACCESS-POLICY-PY-1986FCEFCF49",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/agent/access_policy.py",
-      "purpose": "Access policy for SidekickActionService (epic #5967 / S6 / #5975).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "PolicyDecision",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SidekickActionPolicy",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/ai/tests/test_access_policy.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6463,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a9e73fd7b6191937cd8d26cd368fbbb4c37f8fcf2c22e833bc3ef195facb247f",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-ACTION-AUDIT-PY-DDE2937D201A",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/agent/action_audit.py",
-      "purpose": "Audit sinks for SidekickActionService (epic #5967 / S6 / #5975).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "JsonlActionAudit",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "MemoryActionAudit",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "redact_secrets",
-            "signature": "payload: Mapping[str, Any]"
-          }
-        ],
-        "test_paths": [
-          "tests/unit/sidekick/agent/test_action_audit.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2993,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "238982130876e0363b6b552701133ee32ccedcefe900bcfc45d6454fbb830269",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-ACTION-CONTRACTS-PY-9EDF125BE9B1",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/agent/action_contracts.py",
-      "purpose": "Action-layer contracts for Sidekick agent dispatch.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ActionDescriptor",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ActionResult",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RecordedCall",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SidekickActionHandler",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_VALID_SIDE_EFFECTS",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 18030,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "de4bbb39e3f6a7574b312aac274d381b4820b3ad9cd4517f72922d8a03727d3c",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-ACTION-SERVICE-PY-12C0FCEDAA75",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/agent/action_service.py",
-      "purpose": "Audited action-dispatch service for the Sidekick agent layer.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-001-monorepo-workspaces.md",
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SidekickActionService",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ActionDescriptor",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ActionDispatcher",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ActionResult",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "AuditSink",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "RecordedCall",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SideEffect",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SidekickActionHandler",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "StateError",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/unit/sidekick/agent/test_action_audit.py",
-          "tests/unit/sidekick/agent/test_action_service.py",
-          "tests/unit/sidekick/agent/test_planner.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 8441,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "5e4012fa2ac917e1078d8737f42124f979e1c27d937f17a91b2e8de482a5e396",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-CANONICAL-TOOLS-PY-1FE729CA5DD3",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/agent/canonical_tools.py",
-      "purpose": "Canonical-core tool adapter for Sidekick's agentic action layer.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CanonicalActionPort",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CanonicalOperationResult",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CanonicalToolAdapter",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CANONICAL_ACTION_IDS",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6366,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c972e5bc8918dbd9b9101f629d9df5e115516d16db522589ba93840cbe7d12a3",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-CHAT-SURFACE-PY-44896433A2C5",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/agent/chat_surface.py",
-      "purpose": "Chat-side surface for the Sidekick agent layer (epic #5967 / S8 / #5977).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ActionChipModel",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ActionChipState",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ChatActionEnvelope",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_chip",
-            "signature": "*, step: PlannedStep, service: SidekickActionService"
-          },
-          {
-            "kind": "function",
-            "name": "serialize_envelope",
-            "signature": "envelope: ChatActionEnvelope"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 7681,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ca4e327291880871ba605a250dddeb5981f365ead326f818c1f47254df246529",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-FEATURE-CATALOG-PY-B093918D89BF",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/agent/feature_catalog.py",
-      "purpose": "Feature catalog — Sidekick's machine-readable self-knowledge index.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "build_feature_catalog",
-            "signature": "*, force_refresh: bool=False"
-          },
-          {
-            "kind": "function",
-            "name": "lookup_feature",
-            "signature": "feature_id: str"
-          },
-          {
-            "kind": "function",
-            "name": "search_features",
-            "signature": "query: str, *, limit: int=5"
-          },
-          {
-            "kind": "re-export",
-            "name": "FeatureEntry",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "FeatureKind",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/unit/sidekick/agent/test_feature_catalog.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 8001,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a6cfd611e1db527d1f500427343ebbc4660d75fb1e30e614c8a5c2ba03c65f2e",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-FEATURE-DISCOVERY-PY-20530B957A91",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/agent/feature_discovery.py",
-      "purpose": "Discovery sources for the Sidekick feature catalog.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "discover_sources",
-            "signature": ""
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1963,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "21fdc6d488bb290c0eb8d17a26b0523e92ac53653a67be0fcb8da469208b51d4",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-FEATURE-TYPES-PY-AC530F186404",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/agent/feature_types.py",
-      "purpose": "Feature catalog value types.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "FeatureEntry",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "FeatureKind",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_NAMESPACE_PREFIX",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_VALID_KIND_VALUES",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/data_processing/data_processor/python/tests/test_feature_types.py",
-          "tests/unit/sidekick/agent/test_feature_catalog.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 9150,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3f112ce9e1e6fb174b47e904846e87a75dc9eb316203b3cace21288bf9c24e42",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-HOST-ADAPTER-PY-5B94AEC578BA",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/agent/host_adapter.py",
-      "purpose": "Host action adapter — lets Sidekick request scoped actions from its host.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "HostActionPort",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "HostAdapter",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "HostCapability",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "HostInvocationResult",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/unit/sidekick/agent/test_host_adapter.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 12350,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0c91a5a555ed38cc28ed9e3c4faa8e18bb26387bdea5ac90990e1e8ad97edc62",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-PLANNER-PY-862D0D31B950",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/agent/planner.py",
-      "purpose": "Sidekick agent planner — validates LLM tool calls into actionable steps.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "PlannedStep",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PlannerError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SidekickAgentPlanner",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ToolCall",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_sidekick_system_prompt",
-            "signature": "*, service: SidekickActionService"
-          }
-        ],
-        "test_paths": [
-          "tests/unit/sidekick/agent/test_planner.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 15920,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ebcdb0759e951e155638ee867986b7866a95ebb914a444f8f4b6917058d3d390",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-SUBTAB-ADAPTER-PY-E432D6D1CB9F",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/agent/subtab_adapter.py",
-      "purpose": "Subtab action adapter — bridges SidekickActionService to tools_sidebar.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CalculatorRun",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "StateProfile",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SubtabActionPort",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SubtabAdapter",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "WorkspaceSnapshot",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/unit/sidekick/agent/test_subtab_adapter.py"
-        ],
-        "unit_mentions": [
-          "g"
         ],
         "validation_paths": []
       }

@@ -16,6 +16,7 @@ from shared.python.swing_sim.variation.ensemble_types import (
     require_coordinate_frame_id,
     require_point_ids,
 )
+from shared.python.swing_sim.variation.execution_metadata import make_execution_metadata
 from shared.python.swing_sim.variation.sampling import sample_input_block
 from shared.python.swing_sim.variation.spec import VariationPlan
 
@@ -24,6 +25,7 @@ from ._ensemble_limits import (
     require_ensemble_shape_limits,
     require_ensemble_stream_shape_limits,
 )
+from .complete_trial_record import CompleteTrialRecord
 from .simulation_types import (
     ALL_OUTPUT_NAMES,
     APP_FRAME_ID,
@@ -144,6 +146,7 @@ class SimulationResultChunk:
     positions_m: np.ndarray = field(repr=False)
     sample_valid: np.ndarray = field(repr=False)
     impact_sample_indices: np.ndarray = field(repr=False)
+    complete_records: tuple[CompleteTrialRecord, ...] = field(default=(), repr=False)
 
     def __post_init__(self) -> None:
         outcomes = tuple(self.outcomes)
@@ -162,6 +165,26 @@ class SimulationResultChunk:
         raw_positions = np.asarray(self.positions_m)
         raw_valid = np.asarray(self.sample_valid)
         raw_impacts = np.asarray(self.impact_sample_indices)
+        complete_records = tuple(self.complete_records)
+        require(
+            not complete_records or len(complete_records) == rows,
+            "complete records must be empty or align to chunk outcomes",
+        )
+        for row, record in enumerate(complete_records):
+            require(
+                isinstance(record, CompleteTrialRecord),
+                "complete_records must contain CompleteTrialRecord values",
+            )
+            outcome = outcomes[row]
+            require(
+                record.trial_index == outcome.trial_index
+                and record.status is outcome.status,
+                "complete record identity must match its typed outcome",
+            )
+            require(
+                np.array_equal(record.sampled_inputs, raw_inputs[row]),
+                "complete record sampled inputs must match its chunk row",
+            )
         require(
             raw_inputs.ndim == 2 and raw_inputs.shape[0] == rows,
             "invalid chunk inputs",
@@ -241,6 +264,7 @@ class SimulationResultChunk:
         object.__setattr__(self, "positions_m", positions)
         object.__setattr__(self, "sample_valid", valid)
         object.__setattr__(self, "impact_sample_indices", impacts)
+        object.__setattr__(self, "complete_records", complete_records)
 
 
 TCommit_co = TypeVar("TCommit_co", covariant=True)
@@ -319,6 +343,20 @@ def require_chunk_matches_header(
         == (header.sample_times_s.size, len(header.point_ids)),
         "chunk trace layout does not match header",
     )
+    for record in chunk.complete_records:
+        require(
+            record.plan_sha256 == make_execution_metadata(header.plan).plan_sha256,
+            "complete record plan identity does not match header",
+        )
+        require(
+            record.stream_configuration_sha256 == header.configuration_sha256,
+            "complete record configuration stream does not match header",
+        )
+        require(
+            record.coordinate_frame == header.coordinate_frame
+            and record.spatial_point_ids == header.point_ids,
+            "complete record spatial layout does not match header",
+        )
     for row, outcome in enumerate(chunk.outcomes):
         impact_index = int(chunk.impact_sample_indices[row])
         if outcome.status is not EVALUATED_HIT:

@@ -199,7 +199,7 @@ pub fn polynomial(times: &[f64], coefficients: &[f64]) -> Vec<f64> {
 ///   the Python reference uses, so per-sample outputs match to within
 ///   floating-point rounding tolerance (`< 1e-12` typical).
 /// - Single-pass and allocation-free in the hot loop. The PyO3 wrapper
-///   releases the GIL via `py.allow_threads`, so callers can drive the
+///   detaches from Python via `py.detach`, so callers can drive the
 ///   filter from worker threads without serialising on Python.
 pub fn bilateral_filter(
     values: &[f64],
@@ -621,7 +621,7 @@ pub mod py_bindings {
     ///
     /// Mirrors the `apply_bilateral_filter` signature in
     /// `signal_toolkit.filters` so the eventual Python facade can be a
-    /// one-line swap. The compute is run inside `py.allow_threads` so
+    /// one-line swap. The compute is run inside `py.detach` so
     /// long signals do not block Python worker threads.
     #[pyfunction]
     #[pyo3(name = "bilateral_filter")]
@@ -646,10 +646,10 @@ pub mod py_bindings {
             ));
         }
         // Copy the input so the GIL-free section owns its data — the
-        // `PyReadonlyArray1` borrow cannot cross `allow_threads`.
+        // `PyReadonlyArray1` borrow cannot cross `detach`.
         let v = values.as_slice().unwrap().to_vec();
-        let result = py
-            .allow_threads(move || bilateral_filter(&v, window_size, sigma_space, sigma_intensity));
+        let result =
+            py.detach(move || bilateral_filter(&v, window_size, sigma_space, sigma_intensity));
         Ok(PyArray1::from_vec(py, result))
     }
 
@@ -667,7 +667,7 @@ pub mod py_bindings {
             ));
         }
         let v = values.as_slice().unwrap().to_vec();
-        let result = py.allow_threads(move || moving_average(&v, window_size));
+        let result = py.detach(move || moving_average(&v, window_size));
         Ok(PyArray1::from_vec(py, result))
     }
 
@@ -685,7 +685,7 @@ pub mod py_bindings {
             ));
         }
         let v = values.as_slice().unwrap().to_vec();
-        let result = py.allow_threads(move || exponential_smoothing(&v, alpha));
+        let result = py.detach(move || exponential_smoothing(&v, alpha));
         Ok(PyArray1::from_vec(py, result))
     }
 
@@ -726,7 +726,7 @@ pub mod py_bindings {
                 "signal and reference must have the same length",
             ));
         }
-        let (y, e) = py.allow_threads(move || lms_filter(&x, &d, order, step_size));
+        let (y, e) = py.detach(move || lms_filter(&x, &d, order, step_size));
         Ok((PyArray1::from_vec(py, y), PyArray1::from_vec(py, e)))
     }
 
@@ -774,7 +774,7 @@ pub mod py_bindings {
                 "signal and reference must have the same length",
             ));
         }
-        let (y, e) = py.allow_threads(move || rls_filter(&x, &d, order, forgetting_factor, delta));
+        let (y, e) = py.detach(move || rls_filter(&x, &d, order, forgetting_factor, delta));
         Ok((PyArray1::from_vec(py, y), PyArray1::from_vec(py, e)))
     }
 } // end pub mod py_bindings

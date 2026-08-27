@@ -3,6 +3,2663 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 2375,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2694ace6887e710d5da1b3345dfdf0d7472cbc138870ba93513a97e0da0c07da",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VERIFICATION-VERIFY-A11Y-PY-8066B4665CA5",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/verification/verify_a11y.py",
+      "purpose": "Accessibility verification script for Gas Density and Custom Unit inputs.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "mapped",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://localhost:8080"
+        ],
+        "equation_refs": [],
+        "public_routes": [
+          "verification/verification.png"
+        ],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "verify_a11y",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/verification/test_verification_lod.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2034,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a5df859a3118994f125273b07b40008ffb8b54bf4fef753c713b1d0fd8d86194",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VERIFICATION-VERIFY-PALETTE-PY-D6395AE10222",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/verification/verify_palette.py",
+      "purpose": "Verification script for Unit Converter accessibility and shortcut hints.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "mapped",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [
+          "verification/shortcut_hint.png"
+        ],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "run",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/verification/test_verification_lod.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2186,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8a1559c38160ef3581aa29a74beafb3ef4c677b0645add0d35dfb772f90bdb59",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VERIFICATION-VERIFY-PALETTE-FINAL-PY-50AFFCD19145",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/verification/verify_palette_final.py",
+      "purpose": "Final verification script for Unit Converter accessibility attributes and keyboard shortcuts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "mapped",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [
+          "verification/shortcut_hint_final.png"
+        ],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "run",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/verification/test_verification_lod.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 35,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b06b7ecedf3e25f1bef07c71a4c6e25480fccf5c0b35d8963c09f0eeb901b73e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-INIT-PY-1834C083E26D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/__init__.py",
+      "purpose": "Vessel Drafter tool package.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 733,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5a799734f3307ea3c807d4492dec748722f87862429bd89a5625ceebd59d5b2b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-GUI-REGISTRATION-PY-BEBAF913049C",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/gui_registration.py",
+      "purpose": "GUI registration for Vessel Drafter.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "GUI_INFO",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_gui_info",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_gui_registration.py",
+          "tests/rate_of_closure/test_gui_registration.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 349,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "423556feae5eaa6734e1151f1a40f5761613ee068781fa466bf9421a6072a4dd",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-LAUNCH-PYQT6-PY-F82E8AFE828F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/launch_pyqt6.py",
+      "purpose": "Standalone PyQt6 launcher for Vessel Drafter.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/folder_tool/test_launch_pyqt6.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 121,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "822fe7de8a7765d36c50b01903bf0b3bb8265a5a939df9b1c06a88fa1a889d9c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-INIT-PY-FCFD9D4C05B9",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/__init__.py",
+      "purpose": "Programmatic drafting utilities for STEP-based geometry exports.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 317,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e6940e962a39f86413978cc4c7cd9fae8ab449f983477688a2059f38442bdfb4",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-ANALYSIS-INIT-PY-3A22E2D7288A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/analysis/__init__.py",
+      "purpose": "Analysis helpers for vessel drafter models.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "ComponentMaterialMetric",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MaterialMetricsReport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_material_metrics_report",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2948,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "92d6e6bd34e577f477144ff8388ba64b6749f27182d2968722ca5edb63666059",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-ANALYSIS-VESSEL-DRAFTER-METRICS-PY-7202C191021B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/analysis/vessel_drafter_metrics.py",
+      "purpose": "Volume and mass metrics for the vessel drafter model.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ComponentMaterialMetric",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MaterialMetricsReport",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CUBIC_INCHES_PER_CUBIC_FOOT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SQUARE_INCHES_PER_SQUARE_FOOT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_material_metrics_report",
+            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT"
+          }
+        ],
+        "test_paths": [
+          "src/vessel_drafter/tests/test_vessel_drafter_metrics.py",
+          "tests/vessel_drafter/test_dbc_lod.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3572,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "924080c97f986851758506d1ae087d9173d3de0f9ee1d6f15f145db21382f6f9",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-CLI-PY-027B4F271BCD",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/cli.py",
+      "purpose": "CLI for generating drafting artifacts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "build_parser",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7544,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "26c2ad8145c0467a3094621f343e80d30f91bf1e889ddcf71428fd787696b712",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-CONTRACTS-PY-8E54CE083966",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/contracts.py",
+      "purpose": "Design by Contract helpers for the vessel_drafter package.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "require_finite",
+            "signature": "name: str, value: float"
+          },
+          {
+            "kind": "function",
+            "name": "require_fraction",
+            "signature": "name: str, value: float"
+          },
+          {
+            "kind": "function",
+            "name": "require_integer_at_least",
+            "signature": "name: str, value: int, minimum: int"
+          },
+          {
+            "kind": "function",
+            "name": "require_less_or_equal",
+            "signature": "name: str, value: float, maximum: float"
+          },
+          {
+            "kind": "function",
+            "name": "require_nonnegative",
+            "signature": "name: str, value: float"
+          },
+          {
+            "kind": "function",
+            "name": "require_positive",
+            "signature": "name: str | float, value: float | str"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
+          "src/shared/python/model_generation/tests/test_contracts.py",
+          "tests/rate_of_closure/test_contracts.py",
+          "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/test_contracts.py",
+          "tests/unit/ai/mcp/test_contracts.py",
+          "tests/unit/ai/peer_review/test_contracts.py",
+          "tests/unit/ai/skills/test_contracts.py",
+          "tests/unit/test_contracts.py",
+          "tests/vessel_drafter/test_contracts_unified.py",
+          "tests/vessel_drafter/test_vessel_drafter_contracts.py"
+        ],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": [
+          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
+          "src/shared/python/model_generation/tests/test_contracts.py",
+          "tests/rate_of_closure/test_contracts.py",
+          "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/test_contracts.py",
+          "tests/unit/ai/mcp/test_contracts.py",
+          "tests/unit/ai/peer_review/test_contracts.py",
+          "tests/unit/ai/skills/test_contracts.py",
+          "tests/unit/test_contracts.py",
+          "tests/vessel_drafter/test_contracts_unified.py",
+          "tests/vessel_drafter/test_vessel_drafter_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 336,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8dbf56d4198102f7efa846dfb05e5ea5b36c8a7edd8c4df4474984f62b5f19f0",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-EXPORTERS-INIT-PY-66D2E9F45E33",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/exporters/__init__.py",
+      "purpose": "Export helpers for vessel drafter artifacts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "export_vessel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "export_vessel_brep",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "export_vessel_gltf",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "export_vessel_step",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "export_vessel_stl",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4608,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "11770176336aa575ca5b5a8574fede688cc56ece6af6521f12b497b9b1e8f0ce",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-EXPORTERS-STEP-EXPORT-PY-FB1AFB686E7F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/exporters/step_export.py",
+      "purpose": "STEP export utilities.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "export_cylindrical_bath_layout_step",
+            "signature": "output_path: Path, manifest_path: Path | None=None, layout: CylindricalBathLayout=DEFAULT_CYLINDRICAL_BATH_LAYOUT"
+          },
+          {
+            "kind": "function",
+            "name": "export_default_layout_step",
+            "signature": "output_path: Path, manifest_path: Path | None=None, layout: ElectrodeAdvisorLayout=DEFAULT_ELECTRODE_ADVISOR_LAYOUT"
+          },
+          {
+            "kind": "function",
+            "name": "export_vessel_drafter_default_step",
+            "signature": "output_path: Path, manifest_path: Path | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "export_vessel_drafter_step",
+            "signature": "output_path: Path, manifest_path: Path | None=None, layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT"
+          }
+        ],
+        "test_paths": [
+          "src/vessel_drafter/tests/test_step_export.py",
+          "tests/vessel_drafter/test_dbc_lod.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3958,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8702ed0245c71d0b27d7164193b746d12b5e45b48534e46b687e20d030f61ce2",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-EXPORTERS-VESSEL-EXPORT-PY-60D76352295C",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/exporters/vessel_export.py",
+      "purpose": "Multi-format export for vessel drafter layouts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_SUPPORTED_FORMATS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "export_vessel",
+            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT, output_dir: os.PathLike | str='.', stem: str='vessel_drafter', formats: Sequence[str]=('step',)"
+          },
+          {
+            "kind": "function",
+            "name": "export_vessel_brep",
+            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT, output_dir: os.PathLike | str='.', stem: str='vessel_drafter'"
+          },
+          {
+            "kind": "function",
+            "name": "export_vessel_gltf",
+            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT, output_dir: os.PathLike | str='.', stem: str='vessel_drafter'"
+          },
+          {
+            "kind": "function",
+            "name": "export_vessel_step",
+            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT, output_dir: os.PathLike | str='.', stem: str='vessel_drafter'"
+          },
+          {
+            "kind": "function",
+            "name": "export_vessel_stl",
+            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT, output_dir: os.PathLike | str='.', stem: str='vessel_drafter'"
+          }
+        ],
+        "test_paths": [
+          "src/vessel_drafter/tests/test_vessel_drafter_export.py",
+          "tests/vessel_drafter/test_dbc_lod.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 147,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "602ecf35f25383d253b28f2caac1fba829f39c648562fe9f0ca21687ad8bbe34",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-GUI-INIT-PY-58887B8423F7",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/gui/__init__.py",
+      "purpose": "PyQt-based drafting interfaces.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "VesselDrafterWindow",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "launch",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2357,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d1d4bd1c82dd6279ab66278544b625c7848d389704f2fd5237f38ec8b47179c6",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-GUI-MATERIAL-SUMMARY-TABLE-PY-FD210B26ADD4",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/gui/material_summary_table.py",
+      "purpose": "Read-only material summary table for the vessel drafter GUI.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MaterialSummaryTable",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "W"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5174,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1ea02342c1a6864b700f44d80f80fa105b4758e0e32a5e3830fbbe77d27f5016",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-GUI-VESSEL-DRAFTER-PORT-PANEL-PY-8C3E590A4AE1",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/gui/vessel_drafter_port_panel.py",
+      "purpose": "Reusable port editing widgets for the vessel drafter GUI.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PortFieldSpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PortTableSection",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PortValueDialog",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "make_double_spin",
+            "signature": "value: float, minimum: float, maximum: float"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8241,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "08b2f092c4383e75d6a62c5a66247877ce242475962113153065561bb7e2a78c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-GUI-VESSEL-DRAFTER-RENDERING-PY-35948F879491",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/gui/vessel_drafter_rendering.py",
+      "purpose": "Scene renderers for the vessel drafter previews.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "PREVIEW_MARGIN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PREVIEW_SCALE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "render_cross_section",
+            "signature": "scene: QGraphicsScene, preview: CrossSectionPreview"
+          },
+          {
+            "kind": "function",
+            "name": "render_plan",
+            "signature": "scene: QGraphicsScene, preview: PlanPreview"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5443,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ee0e6d7be9a688145082c1431ef329dbe5326ef4a26f33f8c105ee53989e0bd7",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-GUI-VESSEL-DRAFTER-THREE-D-CANVAS-PY-2AD05FC3C311",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/gui/vessel_drafter_three_d_canvas.py",
+      "purpose": "Matplotlib-backed 3D canvas for vessel drafter previews.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "VesselDrafterThreeDCanvas",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_VIEW",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SECTION_VIEW_AZIMUTH_OFFSET_DEGREES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SECTION_VIEW_ELEVATION",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 22064,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0745fbdb534c3abac4a87908e9dcf93722c785927ad01e8548d43eb404b5cac6",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-GUI-VESSEL-DRAFTER-WINDOW-PY-35D0135E7FDF",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/gui/vessel_drafter_window.py",
+      "purpose": "PyQt6 GUI for the vessel drafter tool.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "VesselDrafterWindow",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "launch",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/vessel_drafter/tests/test_vessel_drafter_gui.py"
+        ],
+        "unit_mentions": [
+          "deg"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2780,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3401d1723bcec569083e9ffa7a9f1c44ed4279e2f9e13f8cbc720037bc7201eb",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-GUI-ZOOMABLE-GRAPHICS-VIEW-PY-5E27FD3D9154",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/gui/zoomable_graphics_view.py",
+      "purpose": "Zoom-aware graphics view helpers for drafting previews.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ZoomableGraphicsView",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 293,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f24372d27866fa1d62a4690782cdc3ce72f965b14fa23c5415b8fd1f920ad036",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-MODELS-INIT-PY-12D97C00E1B1",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/models/__init__.py",
+      "purpose": "Source-of-truth drafting models.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_VESSEL_DRAFTER_LAYOUT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "VesselDrafterLayout",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "VesselLidPort",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "VesselSidePort",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6288,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "00ede32be1cb700db94e3a449bf68d8cbc10590c8723a039c39569ede04ea2ce",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-MODELS-CYLINDRICAL-BATH-PY-141732815A07",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/models/cylindrical_bath.py",
+      "purpose": "Cylindrical bath drafting defaults for radial electrode layouts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CylindricalBathDefaults",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CylindricalBathLayout",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CylindricalElectrodeDefaults",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RadialElectrodePlacement",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_CYLINDRICAL_BATH_LAYOUT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MM_PER_INCH",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_default_cylindrical_bath_layout",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/vessel_drafter/tests/test_cylindrical_bath_layout.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7174,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "07a1142477f3f2652631b91a7a30ff33c7b1ff2cff5e8d422ac92c334636b170",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-MODELS-ELECTRODE-ADVISOR-PY-24A7A13ACA7B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/models/electrode_advisor.py",
+      "purpose": "Default electrode advisor drafting inputs mirrored from the current UI.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "BathDefaults",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DraftingEnvelope",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ElectrodeAdvisorLayout",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ElectrodeDefaults",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ElectrodePlacement",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_ELECTRODE_ADVISOR_LAYOUT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MM_PER_M",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_default_electrode_advisor_layout",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/vessel_drafter/tests/test_electrode_advisor_defaults.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1483,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "196e719978f0d53a40039d7d61a39e19560ff0432752770621e2e8b3b255787a",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-MODELS-RUST-KERNEL-PY-91BE0C026A21",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/models/rust_kernel.py",
+      "purpose": "Rust-backed electrode advisor interface.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_BACKEND_ENV",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_DEFAULT_BACKEND",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_REQUESTED_BACKEND",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_RUST_AVAILABLE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_VALID_BACKENDS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_default_electrode_advisor_layout",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "is_rust_available",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 15036,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e1b82a971b5c2834ae88b5bcd3911d77561a5001e677f79529e46dba9d1ec3c4",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-MODELS-VESSEL-DRAFTER-PY-5E96FD90F494",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/models/vessel_drafter.py",
+      "purpose": "Validated defaults and geometry helpers for the vessel drafter tool.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MaterialLayer",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RadialBand",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "VesselDrafterLayout",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "VesselElectrodePlacement",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "VesselLidPort",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "VesselSidePort",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_VESSEL_DRAFTER_LAYOUT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MM_PER_INCH",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/vessel_drafter/tests/test_vessel_drafter_defaults.py",
+          "src/vessel_drafter/tests/test_vessel_drafter_export.py",
+          "src/vessel_drafter/tests/test_vessel_drafter_geometry.py",
+          "src/vessel_drafter/tests/test_vessel_drafter_gui.py",
+          "src/vessel_drafter/tests/test_vessel_drafter_metrics.py",
+          "src/vessel_drafter/tests/test_vessel_drafter_preview.py",
+          "tests/vessel_drafter/test_dbc_lod.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2998,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "916bcb8fc3f6b25da9ff218e78a1510cb6b828fee14c1ec763c3468dba45a8b6",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-MODELS-VESSEL-MATERIALS-PY-3F90CB727438",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/models/vessel_materials.py",
+      "purpose": "Shared vessel drafter material defaults and validations.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MaterialProperties",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_VESSEL_MATERIALS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_VESSEL_MATERIALS_BY_NAME",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 198,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c4bdd311dc0835356286026a4faac94fb0dff17548d2f40f91984c65dab00836",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-PREVIEW-INIT-PY-9A8775FAE39C",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/preview/__init__.py",
+      "purpose": "Preview helpers for vessel drafter tools.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "build_cross_section_preview",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_plan_preview",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6205,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5263884025210c4dc171c0b0a7b333a384f463b4cc5dd647ca6d774fc5cc6bcf",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-PREVIEW-VESSEL-DRAFTER-PREVIEW-PY-EE4D5621F5DB",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/preview/vessel_drafter_preview.py",
+      "purpose": "Preview data builders for the vessel drafter GUI.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CrossSectionBandPolygon",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CrossSectionPreview",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CrossSectionRadialFeature",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlanCircularFeature",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlanPreview",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlanRadialFeature",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ProjectedSidePort",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_cross_section_preview",
+            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT"
+          },
+          {
+            "kind": "function",
+            "name": "build_plan_preview",
+            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT"
+          }
+        ],
+        "test_paths": [
+          "src/vessel_drafter/tests/test_vessel_drafter_preview.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 24048,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "77f142e8f93a91aab8fb96f5ca924c72016b9d9c5cd6b1c3a4f2bb8814c07fe5",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-PREVIEW-VESSEL-DRAFTER-SCENE-PY-82E121407C93",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/preview/vessel_drafter_scene.py",
+      "purpose": "3D preview scene builders for the vessel drafter GUI.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Vessel3DScene",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "VesselSceneMesh",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "AXIS_EPSILON_IN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_ANGULAR_SEGMENTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_ELECTRODE_SEGMENTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_HEAD_SAMPLE_COUNT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_VIEW_OPTIONS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_vessel_3d_scene",
+            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT, *, visible_labels: set[str] | None=None, view_options: Vessel3DViewOptions=DEFAULT_VIEW_OPTIONS"
+          }
+        ],
+        "test_paths": [
+          "src/vessel_drafter/tests/test_vessel_drafter_metrics.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 691,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e52076fa944c999fa3f1b2ea44e4f58714f2f986901388f7551ac68356b82561",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-PREVIEW-VESSEL-DRAFTER-VIEW-OPTIONS-PY-48CB5F6B4F6D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/preview/vessel_drafter_view_options.py",
+      "purpose": "Validated 3D view options for vessel preview rendering.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Vessel3DViewOptions",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/vessel_drafter/tests/test_vessel_drafter_metrics.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 322,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "be07431b69d969d48f3c150f85ebe0a9962941970e38e6149eed105e5f5f533d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-PROJECTS-INIT-PY-C3BE9E3EF2DA",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/projects/__init__.py",
+      "purpose": "Vessel drafter project builders.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "build_vessel_drafter_shape",
+            "signature": "*args: Any, **kwargs: Any"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2385,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ecc947a911416dda6ddfbc11cca1d9a1520c106582b00c0328833b08551fd8bf",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-PROJECTS-CYLINDRICAL-BATH-LAYOUT-PY-AF33D66F79A1",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/projects/cylindrical_bath_layout.py",
+      "purpose": "STEP-ready geometry for a cylindrical bath with radial electrodes.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "build_cylindrical_bath_layout_shape",
+            "signature": "layout: CylindricalBathLayout=DEFAULT_CYLINDRICAL_BATH_LAYOUT"
+          }
+        ],
+        "test_paths": [
+          "src/vessel_drafter/tests/test_cylindrical_bath_layout.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3328,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f71b77f205f0f3601a7d17ad3327a46336b65d84cfd9c658cd6287006f2cf407",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-PROJECTS-ELECTRODE-ADVISOR-DEFAULT-LAYOUT-PY-8810929EBD5A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/projects/electrode_advisor_default_layout.py",
+      "purpose": "STEP-ready geometry for the default electrode advisor layout.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "build_default_layout_shape",
+            "signature": "layout: ElectrodeAdvisorLayout=DEFAULT_ELECTRODE_ADVISOR_LAYOUT"
+          }
+        ],
+        "test_paths": [
+          "src/vessel_drafter/tests/test_electrode_advisor_defaults.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9579,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8d2a50005d0e36acd33602bcba7ef2bdc469c140175ac8ad549b3357c087cefb",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-PROJECTS-VESSEL-DRAFTER-LAYOUT-PY-8CEB673949E6",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/projects/vessel_drafter_layout.py",
+      "purpose": "STEP-ready geometry for the vessel drafter tool.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "VesselComponent",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_vessel_drafter_components",
+            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT"
+          },
+          {
+            "kind": "function",
+            "name": "build_vessel_drafter_shape",
+            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT"
+          }
+        ],
+        "test_paths": [
+          "src/vessel_drafter/tests/test_vessel_drafter_geometry.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5793,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2f766f510a00898e53d9fd750844c54a4ff3517d7bcd5a388f725b698286d094",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-PROJECTS-VESSEL-DRAFTER-PROFILES-PY-2B58BD02C25D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/projects/vessel_drafter_profiles.py",
+      "purpose": "Shared vessel head profile helpers used by preview and STEP generation.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ProfilePoint",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ShellBandProfile",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "HEAD_SAMPLE_COUNT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_band_boundary_loops",
+            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT"
+          },
+          {
+            "kind": "function",
+            "name": "build_bottom_head_curve",
+            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT, offset_in: float=0.0, sample_count: int=HEAD_SAMPLE_COUNT"
+          },
+          {
+            "kind": "function",
+            "name": "build_cavity_boundary_half",
+            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT"
+          },
+          {
+            "kind": "function",
+            "name": "build_full_boundary_loop",
+            "signature": "half_boundary: tuple[ProfilePoint, ...]"
+          },
+          {
+            "kind": "function",
+            "name": "build_glass_boundary_half",
+            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT"
+          },
+          {
+            "kind": "function",
+            "name": "build_plenum_boundary_half",
+            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT"
+          },
+          {
+            "kind": "function",
+            "name": "build_shell_band_profiles",
+            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT"
+          },
+          {
+            "kind": "function",
+            "name": "build_shell_boundary_half",
+            "signature": "layout: VesselDrafterLayout, offset_in: float"
+          },
+          {
+            "kind": "function",
+            "name": "build_top_head_curve",
+            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT, offset_in: float=0.0, sample_count: int=HEAD_SAMPLE_COUNT"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2688,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c8aa5c52aad3043f1a20d8642f5a3b11c82a9468269af8920f929b6881de3b46",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VIDEO-ANALYZER-INIT-PY-A174A0E726AD",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/video_analyzer/__init__.py",
+      "purpose": "Video Analyzer for Golf Swing Analysis.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "BalanceMetrics",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BodyAngles",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SwingAnalysis",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SwingPhase",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SwingScores",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TempoMetrics",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2604,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b083308a68d33becb117c46da2f55d3bba7a1301fe1e7c835e358c93ed15f3d4",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VIDEO-ANALYZER-CONTRACTS-PY-96DA196056B3",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/video_analyzer/_contracts.py",
+      "purpose": "Design by Contract shim for ``video_analyzer``.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 27742,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c543ba86846fc1016fd5580f137c19dedaadb220fb821d17b7dc89e144c1c440",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VIDEO-ANALYZER-ANALYZER-PY-FD1D03F3DEE7",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/video_analyzer/analyzer.py",
+      "purpose": "Golf Swing Analyzer.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SwingAnalyzer",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/video_analyzer/test_swing_score_derivation.py",
+          "tests/video_analyzer/test_video_analyzer_packaging.py"
+        ],
+        "unit_mentions": [
+          "cm",
+          "deg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 616,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d366218f730f76fcf7f36e30a00fbac7bab75142c020672249aaa98cc2a9b178",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VIDEO-ANALYZER-GUI-REGISTRATION-PY-0B2E87A27809",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/video_analyzer/gui_registration.py",
+      "purpose": "GUI registration for Video Analyzer.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "GUI_INFO",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_gui_info",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_gui_registration.py",
+          "tests/rate_of_closure/test_gui_registration.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 337,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cd0be6d4072e3176b306bdfa728dc443b5cfee7fb48c03a352a3810ed9ffb5cd",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VIDEO-ANALYZER-LAUNCH-PYQT6-PY-5DB6D8CF6B9A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/video_analyzer/launch_pyqt6.py",
+      "purpose": "Standalone PyQt6 launcher for Video Analyzer.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/folder_tool/test_launch_pyqt6.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 1971,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",

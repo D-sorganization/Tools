@@ -47,9 +47,9 @@ const importedPlan = (): VariationPlanTs => ({
       scale: 2,
       lower: null,
       upper: null,
-      specId: "localized-speed",
-      timeWindowS: [0.7, 0.8],
-      pointIds: ["swing.clubhead"],
+      specId: "speed",
+      timeWindowS: null,
+      pointIds: [],
     },
     {
       variableKey: ANGLE,
@@ -65,7 +65,7 @@ const importedPlan = (): VariationPlanTs => ({
   groups: [
     {
       groupId: "launch-group",
-      specIds: ["localized-speed", "angle"],
+      specIds: ["speed", "angle"],
       matrixKind: "correlation",
       matrix: [
         [1, 0.4],
@@ -320,7 +320,6 @@ describe("VariationPanel v2 plan persistence", () => {
 
     await user.upload(screen.getByLabelText("Import variation plan JSON"), file);
     expect(await screen.findByText(/contains 1 grouped correlation/i)).toBeInTheDocument();
-    expect(screen.getByText(/cannot yet execute.*scalar browser path/i)).toBeInTheDocument();
     await user.type(screen.getByRole("textbox", { name: "Plan name" }), "Imported V2");
     await user.click(screen.getByRole("button", { name: "Save Named Plan" }));
 
@@ -332,9 +331,6 @@ describe("VariationPanel v2 plan persistence", () => {
     ).plan).toEqual(
       planFromJson(planToJson(importedPlan())),
     );
-    await user.click(screen.getByRole("button", { name: "Run Variation Study" }));
-    expect(screen.getByRole("alert", { name: "Variation status" }))
-      .toHaveTextContent(/global perturbations/i);
   });
 
   it("supports loading, duplicating, and deleting named plans", async () => {

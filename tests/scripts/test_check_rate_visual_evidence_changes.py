@@ -65,6 +65,14 @@ def test_test_only_change_does_not_create_recursive_evidence_requirement() -> No
     assert validate_visual_evidence_changes([REACT_FIRST_VIEWPORT_TEST]) == ()
 
 
+def test_react_test_modules_do_not_claim_the_shipped_visual_surface_changed() -> None:
+    for path in (
+        "src/rate_of_closure/web/src/components/VariationPanel.test.tsx",
+        "src/rate_of_closure/web/src/components/VariationPanel.spec.tsx",
+    ):
+        assert validate_visual_evidence_changes([path]) == ()
+
+
 def test_cli_changed_file_fixture_fails_closed_on_incomplete_evidence(tmp_path) -> None:
     changed = tmp_path / "changed.txt"
     changed.write_text(

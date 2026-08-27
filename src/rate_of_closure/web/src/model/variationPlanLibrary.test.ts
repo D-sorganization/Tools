@@ -35,8 +35,8 @@ const fullPlan = (): VariationPlanTs => ({
       lower: 150,
       upper: 170,
       specId: "speed-at-impact",
-      timeWindowS: [0.72, 0.78],
-      pointIds: ["swing.clubhead"],
+      timeWindowS: null,
+      pointIds: [],
     },
     {
       variableKey: ANGLE,

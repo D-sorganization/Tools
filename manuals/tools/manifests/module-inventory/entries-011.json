@@ -2,6 +2,2109 @@
   "authority": "D-sorganization/Tools",
   "entries": [
     {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3243,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "92ef9efeda58574c82c12cec96cdf6afc8711649a777ad92f89fb448a7b9a553",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-STRICTJSONOBJECT-TS-23866C81F459",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/strictJsonObject.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "parseStrictJson",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3305,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "59ad5aa1f7d4986fc3beee5a9e5f8c058c95d9e81dd81837ff0c037bc610c27e",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-TARGETS-TEST-TS-0D557F7D2E03",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/targets.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5346,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "86ee7b5885b6c35ff33a43a0cb9ab92e227c6e38e48503f4a3364049ce7aaf9b",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-TARGETS-TS-220022B36515",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/targets.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "CENTERING_WEIGHT",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "DEFAULT_TARGET",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "TargetKind",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "TargetRegionTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "contains",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "holdStats",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "residualM",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "signedDistance",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "spatialTargetFromRegion",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "spatialTargetToRegion",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/solver/tests/test_targets.py",
+          "tests/rate_of_closure/test_targets.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1726,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5325bf7e8dfea6d4f9664d08c331010b0d64ec021f7b5d3a4fd9d43f8b9fa028",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-THEME-TS-05A3A7BED6C3",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/theme.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "CHART_COLORS",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "blend",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "getChartColor",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "withAlpha",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/pendulum_simulator/tests/test_theme.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 2518,
+      "classification": "calculation",
+      "classification_basis": "path-marker:torque",
+      "content_sha256_lf": "33a5b61b2c077347f90b9f69de3d7d83c3696d35d8d629471c219ecbb91c220b",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-TORQUEPROFILEEDITOR-TEST-TS-27597FCEE922",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/torqueProfileEditor.test.ts",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 9428,
+      "classification": "calculation",
+      "classification_basis": "path-marker:torque",
+      "content_sha256_lf": "7d8f373072f26b3c671ecd9a0d9ae2a5723fe5db2bef750fffcf9e2c553822d4",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-TORQUEPROFILEEDITOR-TS-B9FD42D4F358",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/torqueProfileEditor.ts",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "TORQUE_PROFILE_STORAGE_KEY",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "TorqueFit",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "TorqueSampleRow",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "fitTorqueRows",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "loadTorqueProfileLibrary",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "parseCoefficientText",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "parseTorqueSampleRows",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "saveTorqueProfileLibrary",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "starterTorqueProfile",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 7249,
+      "classification": "calculation",
+      "classification_basis": "path-marker:torque",
+      "content_sha256_lf": "7f6bbce0586884de0f67014537ccabf6e7b0cdbf558d18eba4afaa429ed3bcbb",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-TORQUEPROFILES-TEST-TS-E5A31BE50BAB",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/torqueProfiles.test.ts",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "N*m",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 13920,
+      "classification": "calculation",
+      "classification_basis": "path-marker:torque",
+      "content_sha256_lf": "cf6cf0964fc20b9f58b618f5227dd3a70200e5646848c5a7ad661cbc91285bba",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-TORQUEPROFILES-TS-C45DE737FE6C",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/torqueProfiles.ts",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "COEFFICIENT_ORDER",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "FitMetadata",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "FitMetadataInput",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "JointTorqueAssignment",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "PrescribedTorqueProfile",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "PrescribedTorqueProfileInput",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "TORQUE_PROFILE_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "TORQUE_UNIT",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "TorquePolynomial",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "TorqueProfileSource",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "evaluateAscendingPolynomial",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N*m"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 676,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "5c27a2cf27a75ec0e7311ec325c858975bc80173dc1c284d8300dc4477ccbbdb",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-TRIPLEPENDULUM-TEST-TS-A2FCE4657F2A",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/triplePendulum.test.ts",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "ms"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 4532,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "cc79e096dec8c6ecc9d5b65051e44a97f80ee54329ae12f13e401b728e7aaced",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-TRIPLEPENDULUM-TS-DC6151822DF8",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/triplePendulum.ts",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "TripleState",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "golfTripleParameters",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "simulateTriplePendulum",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2123,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c3ccc1ae29a87ba1190c3f9acb8a7b914f8af2d10e06a6f0bab5375d8105f92b",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-TURFCONTACT-TEST-TS-D0F6F6D3BE39",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/turfContact.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8077,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "83b08e1d8f4705910efef2fe664bf00e7c173d9d719d7b165c5b853b4729ac1a",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-TURFCONTACT-TS-99AAC59D8F9C",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/turfContact.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "FIRM_FAIRWAY_TURF",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ReducedTurfContactResultTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ReducedTurfStatus",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "TurfContactProfileTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "simulateReducedTurfContact",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 614,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a5f3f7eab1ae839173c66cbffea53e7c4e68d16a1e71bfb884b8be580013e2ef",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-UNICODESCALAR-TS-22DC1A648443",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/unicodeScalar.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "hasUnpairedSurrogate",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4107,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "70e2d4ba220c477f30b88d96967d272c2d21c1ee2545834adabef599b29d8e67",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-UNITS-TEST-TS-79AEC8CEC5EC",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/units.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "m/s",
+          "rpm"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10706,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0aa5311af90ce910f59ab8736078550bbf2536eaa4e605d9e54a05cdb1e571da",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-UNITS-TS-83597472B71E",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/units.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "DISTANCE_UNITS",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "FIELD_GUIDANCE",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "LENGTH_UNITS",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "QUANTITY_UNITS",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "Quantity",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ROTATION_UNITS",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "SPEED_UNITS",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "formatDistanceM",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "fromCanonical",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "toCanonical",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_units.py"
+        ],
+        "unit_mentions": [
+          "cm",
+          "deg",
+          "m/s",
+          "mm",
+          "rad/s",
+          "rpm",
+          "s",
+          "µs"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11154,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1fff671201748dd59f958abe91e81a3843f4e31e9659a2dcd504b3aad16acbec",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATION-TEST-TS-0A1977E982D1",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/variation.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7692,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0be6986fadf97785fd9400cdf7254f71b8f8f48c25fa5e8ac72c6dd156966697",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATION-TS-FBC7739B98C3",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/variation.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "DELIVERY_OUTPUTS",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "FLIGHT_OUTPUTS",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "LAUNCH_OUTPUTS",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "VariationDatasetTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "evaluateRun",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "outputsForMode",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "runVariation",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9798,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b544db7dbfd81a9ff4ac3563b2b6df1c7589e3fe36b6857950f6d3f9182cf5fb",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONANALYSIS-TS-43E8526ACE16",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/variationAnalysis.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "DispersionEllipseTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "LandingPointTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "OutputStatsTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "SensitivityResultTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "datasetToCsv",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "datasetToJson",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "dispersionEllipse",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "normalizeSensitivityMatrix",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "oneAtATimeSensitivity",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "pairedLandingPoints",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "spearmanMatrix",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "summaryStats",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2049,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "20747704a366a9b65b45d8ce06564503c0f673da66a17ae96529c0144aedf4a9",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONANALYSISPOLICY-TEST-TS-320280DEFF86",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/variationAnalysisPolicy.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1309,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f33f728f1f97f6a2aa1cb53a511fb2e2b225c300c81e89887ceb366d675d9143",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONANALYSISPOLICY-TS-8805691C93FA",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/variationAnalysisPolicy.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "VariationAnalysisExecution",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "VariationAnalysisExecutionResult",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "VariationAnalysisExecutors",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "executeVariationAnalyses",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1128,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0e396d2baefa9363e9831f068dbaa34763148a3ca5668a8cd3044c8602cb2330",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONDEFAULTS-TS-2390329D675D",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/variationDefaults.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "defaultVariationPlan",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "defaultVariationSpec",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8349,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d513f72b5af08267233a83c41dc2cc70d9a6ab059eaba5753b36e9500373d2af",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONDISPERSIONMATH-TS-70491E9969B6",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/variationDispersionMath.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "SampleDispersionTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "confidenceRadiusScale",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "sampleDispersion",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 853,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "edc53a21776e34a712b14b7de919c5e6e21c2202db54aed9f394b3ccf29329c1",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONEXECUTION-WORKER-TS-A82A6E3F6C52",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/variationExecution.worker.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11939,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "099457c99e32a3c1a7723e72fde0c3880074957d1f25fd103bd6251f7c10f451",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONEXECUTIONMETADATA-TEST-TS-7DAD7DF79AEF",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/variationExecutionMetadata.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "deg",
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 20959,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "dc204bcf5bfebf3a45e8558fc1413e48b2f0d8106cc9a7beb65ff2bb7951ea1f",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONEXECUTIONMETADATA-TS-AEA1D65621DD",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/variationExecutionMetadata.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "EXECUTION_DOCUMENT_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "EXECUTION_DOCUMENT_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "EXECUTION_METADATA_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "EXECUTION_METADATA_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ExecutionImplementationIdentityTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "LEGACY_CURRENT_REGISTRY_WARNING",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "LEGACY_EXECUTION_DOCUMENT_MIGRATION_ERROR",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ParsedVariationExecutionDocumentTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ResolvedVariableSnapshotTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "RngExecutionIdentityTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "VARIABLE_REGISTRY_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "VARIABLE_REGISTRY_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "VariationExecutionMetadataTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "VariationExecutionResolutionTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "makeVariationExecutionMetadata",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "parseVariationExecutionDocument",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "resolveVariationExecutionMetadata",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "validateVariationExecutionMetadata",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "variationExecutionDocument",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "variationExecutionDocumentJson",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "variationPlanSha256",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5324,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d657f04b1a7a21683dbd4f6f62a50a9715efab33b7ecdaa1f9cbd787f41aed57",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONEXECUTIONPROVENANCE-TS-B334E33F5D9F",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/variationExecutionProvenance.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "PRODUCER_PROVENANCE_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "PRODUCER_PROVENANCE_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "PlanProducerProvenanceInput",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "PlanProducerProvenanceTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "PlanProducerProvenanceWire",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "REACT_DEFAULT_PROVENANCE",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "makePlanProducerProvenance",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "provenanceFromWire",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "provenanceSha256",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "provenanceToWire",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7852,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c1fcd33ef0d5872fdabc691aa1e88fd140c96d7a969640a5e93b49d34262100f",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONEXECUTIONSERVICE-TEST-TS-2BACC2CD08C9",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/variationExecutionService.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8506,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a7169ba890098446cafe1d81626a6e7ad2c35f21af5644fe789c95521bfe0e05",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONEXECUTIONSERVICE-TS-C9EE95FD12AA",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/variationExecutionService.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "VariationExecutionControls",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "VariationExecutionPhase",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "VariationExecutionProgress",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "VariationExecutionRequest",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "VariationExecutionResult",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "VariationExecutionService",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "VariationWorkerFactory",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "VariationWorkerResponse",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "createVariationExecutionService",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "executeVariationWork",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "plannedVariationRuns",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9295,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "df4d8410d91e4987af9846eed78074d2cb301954bef594a764e2b0353648fcd7",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONEXECUTIONVALIDATION-TS-AD017BB5F1D1",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/variationExecutionValidation.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "MAX_WORKER_ERROR_LENGTH",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "failProtocol",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "isRecord",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "validateExecutionRequest",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "validateResult",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "workerError",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 1350,
+      "classification": "calculation",
+      "classification_basis": "path-marker:geometry",
+      "content_sha256_lf": "0e713b64198cdc390cdecb8be4b0164c2cbfc7a9ecb3c3b7426db6ee59445697",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONGEOMETRY-PERFORMANCE-TEST-TS-C63BD5FB7CFA",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/variationGeometry.performance.test.ts",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 5614,
+      "classification": "calculation",
+      "classification_basis": "path-marker:geometry",
+      "content_sha256_lf": "43f1e4417446d0fe95b05d4ac8ecab799bf260b012909ee3f16e5b554a8423f9",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONGEOMETRY-TEST-TS-33A93623FD58",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/variationGeometry.test.ts",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "provisional",
       "bytes_lf": 12064,
       "classification": "calculation",
@@ -358,10 +2461,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5484,
+      "bytes_lf": 5460,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c54cc30eb1b7841698b3c2891946d869a93c7b12490b7bdedafeda31e38f1d9c",
+      "content_sha256_lf": "6a09648e372603a99bbd162601fb7f184222c4688ae4b3053666dcf89a12f373",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONPLANLIBRARY-TEST-TS-D6C83234DF18",
       "language": "typescript",
@@ -796,10 +2899,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9919,
+      "bytes_lf": 10245,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "445f7dc95a1eaf9f6a0466a663e3772987bc7783c0d306a19870adf73b0a38c3",
+      "content_sha256_lf": "529e8244230de1abe47abf6e2756a567f3ca557bb1752e64515b52b2f258dafd",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONREGISTRY-TS-611EFD1E259C",
       "language": "typescript",
@@ -998,10 +3101,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 12308,
+      "bytes_lf": 11634,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ff15cfbc1a69ac202dca302ec7312b6f2c86efc1057453d7922c4f97be5c1c38",
+      "content_sha256_lf": "54adbf338fa4980841ccd43e2e7215d907d9a9a3120c1b9286b50683e7a7384f",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONSCHEMA-TS-AF4920A966E8",
       "language": "typescript",
@@ -1022,7 +3125,7 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "not-applicable",
-        "units": "mapped",
+        "units": "not-applicable",
         "validation": "not-applicable"
       },
       "traceability": {
@@ -1098,9 +3201,7 @@
           }
         ],
         "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
+        "unit_mentions": [],
         "validation_paths": []
       }
     },
@@ -1431,10 +3532,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 14603,
+      "bytes_lf": 14057,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "50716e9b24ee5f09d5318b3202367bb2c23013aba10de5d7517f88532fa545d9",
+      "content_sha256_lf": "b3c255e41b785664bf9ff61c00e6219d3d5067df63b3faab3f9fa00697d286c9",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONV2-TEST-TS-39FF1D6DC078",
       "language": "typescript",
@@ -12397,2840 +14498,6 @@
           }
         ],
         "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4728,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "945a0e7e688032f1dfe59c3ba57b496670a49423ea82d6db8fa1614945ff3c49",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-VISUALIZATION-PLOTRRT-MOVING-M-20B319E22A07",
-      "language": "matlab",
-      "maintainer": "Tools module maintainers",
-      "path": "src/rrt_path_planner/matlab/src/visualization/plotRRT_Moving.m",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "plotRRT_Moving",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5503,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "88a9f365061caaab8701cbd7bfa635c949138e20f90f44d01d2426720690b817",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-VISUALIZATION-PLOTRRT-MOVING-IMPROVED-M-3CC59F2F907B",
-      "language": "matlab",
-      "maintainer": "Tools module maintainers",
-      "path": "src/rrt_path_planner/matlab/src/visualization/plotRRT_Moving_Improved.m",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "createSimpleShip",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "createSimpleShipFaces",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "drawObstacles",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "plotRRT_Moving_Improved",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2065,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c118380a6f53053b308679e52261b9199b40b91c14ee31facd1ab578cc56b9c9",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-VISUALIZATION-PLOTRRT-STATIC-M-F2F0049F444D",
-      "language": "matlab",
-      "maintainer": "Tools module maintainers",
-      "path": "src/rrt_path_planner/matlab/src/visualization/plotRRT_Static.m",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "plotRRT_Static",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "g"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 23,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "610c79c11e6c9432d3a7585cbf8945c24007c3edd838ef749a270e2b2b09ebe4",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-PYTHON-INIT-PY-3D2DC99ACBC5",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/rrt_path_planner/python/__init__.py",
-      "purpose": "Package: python.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [
-          "src/data_processing/data_processor/python/tests/test_data_loader_contracts.py",
-          "src/data_processing/data_processor/python/tests/test_nn_training_worker.py",
-          "src/data_processing/data_processor/python/tests/test_undo_redo.py",
-          "src/data_processing/data_processor/python/tests/test_vectorized_filter_engine_contracts.py",
-          "src/document_processing/pdf_renamer/tests/test_cache.py",
-          "src/financial_calculator/tests/test_financial_calculator_gui.py",
-          "src/financial_calculator/tests/test_financial_calculator_gui_contracts.py",
-          "src/function_generator/tests/test_function_generator_gui.py",
-          "src/inertia_calculator/tests/test_inertia_calculator_gui.py",
-          "src/movement_optimizer/tests/test_cli.py",
-          "src/movement_optimizer/tests/test_commands.py",
-          "src/movement_optimizer/tests/test_main_window.py",
-          "src/movement_optimizer/tests/test_session_state.py",
-          "src/movement_optimizer/tests/test_thread_safety.py",
-          "src/movement_optimizer/tests/test_undo_redo_menu.py",
-          "src/p1am_control_system/backend/tests/test_alarm_ack_engine.py",
-          "src/p1am_control_system/backend/tests/test_alarm_processing.py",
-          "src/p1am_control_system/backend/tests/test_backend_p1am_safety.py",
-          "src/p1am_control_system/backend/tests/test_data_capture_core.py",
-          "src/p1am_control_system/backend/tests/test_estop_reconnect.py",
-          "src/p1am_control_system/backend/tests/test_estop_shutdown_safe_state.py",
-          "src/p1am_control_system/backend/tests/test_estop_write_seams.py",
-          "src/p1am_control_system/backend/tests/test_historian_writer.py",
-          "src/p1am_control_system/backend/tests/test_modbus_client.py",
-          "src/p1am_control_system/backend/tests/test_modbus_estop.py",
-          "src/p1am_control_system/backend/tests/test_passthrough.py",
-          "src/p1am_control_system/backend/tests/test_poll_data_quality.py",
-          "src/p1am_control_system/backend/tests/test_poll_loop_cadence.py",
-          "src/p1am_control_system/backend/tests/test_poll_once.py",
-          "src/p1am_control_system/backend/tests/test_power_supply_integration.py",
-          "src/p1am_control_system/backend/tests/test_power_supply_persistence.py",
-          "src/p1am_control_system/backend/tests/test_safety_state_machine.py",
-          "src/p1am_control_system/backend/tests/test_scan_scheduler.py",
-          "src/p1am_control_system/backend/tests/test_temperature_integration.py",
-          "src/p1am_control_system/backend/tests/test_temperature_persistence.py",
-          "src/p1am_control_system/backend/tests/test_validation_guards_3745.py",
-          "src/p1am_control_system/backend/tests/test_ws_backpressure.py",
-          "src/pendulum_simulator/signal_test.py",
-          "src/pendulum_simulator/tests/test_controls_utils.py",
-          "src/pendulum_simulator/tests/test_controls_widget.py",
-          "src/pendulum_simulator/tests/test_controls_widget_base.py",
-          "src/pendulum_simulator/tests/test_controls_widget_golfer.py",
-          "src/pendulum_simulator/tests/test_controls_widget_triple.py",
-          "src/pendulum_simulator/tests/test_issue_fixes.py",
-          "src/pendulum_simulator/tests/test_main_window.py",
-          "src/pendulum_simulator/tests/test_overlay_state_sync.py",
-          "src/pendulum_simulator/tests/test_panel_builders.py",
-          "src/pendulum_simulator/tests/test_simulation_golfer_gpu.py",
-          "src/pendulum_simulator/tests/test_simulation_panel.py",
-          "src/pendulum_simulator/tests/test_simulation_result_base.py",
-          "src/pendulum_simulator/tests/test_torque_widgets.py",
-          "src/pid_generator/tests/test_pid_generator_gui.py",
-          "src/shared/python/ai/tests/test_access_policy.py",
-          "src/shared/python/chat/tests/test_chat.py",
-          "src/shared/python/chat/tests/test_chat_routing_lifecycle.py",
-          "src/shared/python/chat/tests/test_service_base.py",
-          "src/shared/python/chat/tests/test_workspace_bridge.py",
-          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
-          "src/shared/python/humanoid_character_builder/tests/test_inertia_calculator.py",
-          "src/shared/python/model_generation/tests/test_api_adapters.py",
-          "src/shared/python/model_generation/tests/test_contracts.py",
-          "src/shared/python/plot_theme/tests/test_plot_theme.py",
-          "src/shared/python/sidekick/tests/process_calculators/test_acid_gas_dewpoint_calculator.py",
-          "src/shared/python/sidekick/tests/process_calculators/test_multi_param_analysis.py",
-          "src/shared/python/sidekick/tests/process_calculators/test_psa_gui.py",
-          "src/shared/python/sidekick/tests/process_calculators/test_syngas_compression_engine.py",
-          "src/shared/python/sidekick/tests/process_calculators/test_wgs_reactor_calculator.py",
-          "src/shared/python/sidekick/tests/test_base_calculator_mixin.py",
-          "src/shared/python/sidekick/tests/test_calculator_state_mixin.py",
-          "src/shared/python/sidekick/tests/test_data_processor_engine_errors.py",
-          "src/shared/python/sidekick/tests/test_ode_solver.py",
-          "src/shared/python/sidekick/tests/test_selected_tab_panel.py",
-          "src/shared/python/sidekick/tests/test_state_manager.py",
-          "src/shared/python/sidekick/tests/test_tab_context_menu.py",
-          "src/shared/python/tests/test_contracts_shared.py",
-          "src/web_applications/calculator/tests/test_security_validation.py",
-          "tests/architecture/test_import_resolvability.py",
-          "tests/architecture/test_sidekick_external_imports_3316.py",
-          "tests/data_processing/data_processor/test_background_thread_errors.py",
-          "tests/data_processing/data_processor/test_ui_thread_workers.py",
-          "tests/document_processing/test_pdf_renamer_config_security.py",
-          "tests/folder_packer_pro/test_operations.py",
-          "tests/folder_tool/test_archive_ops.py",
-          "tests/folder_tool/test_backup_copy.py",
-          "tests/folder_tool/test_file_validation.py",
-          "tests/folder_tool/test_folder_ops.py",
-          "tests/folder_tool/test_folder_tool_analysis.py",
-          "tests/folder_tool/test_folder_tool_archive.py",
-          "tests/folder_tool/test_folder_tool_processing.py",
-          "tests/folder_tool/test_folder_tool_ui.py",
-          "tests/folder_tool/test_folder_tool_ui_processing.py",
-          "tests/p1am_control_system/test_calibrate_safe_shutdown.py",
-          "tests/p1am_control_system/test_desktop.py",
-          "tests/p1am_control_system/test_desktop_alarm_state.py",
-          "tests/p1am_control_system/test_desktop_hmi_annunciation.py",
-          "tests/p1am_control_system/test_desktop_tab_labels.py",
-          "tests/p1am_control_system/test_event_logger_filter_error_logging.py",
-          "tests/p1am_control_system/test_plc_write_confirmation.py",
-          "tests/project_packer_fixes/test_folder_packer_gui_lod.py",
-          "tests/python/test_performance_utils.py",
-          "tests/rate_of_closure/pyqt_flight_sample_inspector_probe.py",
-          "tests/rate_of_closure/pyqt_plot_point_inspector_probe.py",
-          "tests/rate_of_closure/pyqt_putting_sample_inspector_probe.py",
-          "tests/rate_of_closure/pyqt_simulation_scrub_probe.py",
-          "tests/rate_of_closure/pyqt_variation_visual_state_probe.py",
-          "tests/rate_of_closure/pyqt_visualization_tab_probe.py",
-          "tests/rate_of_closure/test_authority_state_security.py",
-          "tests/rate_of_closure/test_browser_companion_harness.py",
-          "tests/rate_of_closure/test_confidence_ellipsoid_mesh.py",
-          "tests/rate_of_closure/test_durable_ensemble_pyqt_workflow.py",
-          "tests/rate_of_closure/test_morris_authority_child.py",
-          "tests/rate_of_closure/test_morris_authority_host.py",
-          "tests/rate_of_closure/test_morris_authority_router.py",
-          "tests/rate_of_closure/test_morris_authority_runtime.py",
-          "tests/rate_of_closure/test_morris_pyqt_workflow.py",
-          "tests/rate_of_closure/test_morris_pyqt_workspace.py",
-          "tests/rate_of_closure/test_morris_ui_client.py",
-          "tests/rate_of_closure/test_pyqt_variation_probe_lifecycle.py",
-          "tests/rate_of_closure/test_rate_launch_pyqt_authority.py",
-          "tests/rate_of_closure/test_rate_launch_web_authority.py",
-          "tests/rate_of_closure/test_regional_ground_authority_transport.py",
-          "tests/rate_of_closure/test_regional_ground_loopback_submitter.py",
-          "tests/rate_of_closure/test_regional_ground_variation_request_io.py",
-          "tests/rate_of_closure/test_variation_ensemble_chunks.py",
-          "tests/rate_of_closure/test_variation_gui_execution.py",
-          "tests/rate_of_closure/test_variation_module_importability.py",
-          "tests/rate_of_closure/test_visual_layout_gui.py",
-          "tests/rate_of_closure/test_visual_layout_preferences.py",
-          "tests/rate_of_closure/test_web_companion_app.py",
-          "tests/shared/python/ai/test_ai_hardening_3179.py",
-          "tests/shared/python/ai/test_bitnet_adapter.py",
-          "tests/shared/python/ai/test_provider_config_registry.py",
-          "tests/shared/python/ai/test_rust_adapter.py",
-          "tests/shared/python/chat/test_chat_agent_label.py",
-          "tests/shared/python/chat/test_chat_import_boundaries.py",
-          "tests/shared/python/chat/test_export.py",
-          "tests/shared/python/chat/test_ollama_latency_tuning.py",
-          "tests/shared/python/chat/test_quick_bar.py",
-          "tests/shared/python/chat/test_quick_bar_widget.py",
-          "tests/shared/python/chat/test_router_error_logging.py",
-          "tests/shared/python/chat/test_router_factory.py",
-          "tests/shared/python/chat/test_terminal_protocol.py",
-          "tests/shared/python/chat/test_terminal_runtime.py",
-          "tests/shared/python/chat/test_websocket_protocol.py",
-          "tests/shared/python/file_watcher/test_file_watcher.py",
-          "tests/shared/python/logging_pkg/test_logging_pkg.py",
-          "tests/shared/python/model_generation/test_cli_main.py",
-          "tests/shared/python/model_generation/test_mesh_upload_hardening.py",
-          "tests/shared/python/model_generation/test_rate_limiter.py",
-          "tests/shared/python/model_generation/test_repository.py",
-          "tests/shared/python/model_generation/test_rest_api_routes.py",
-          "tests/shared/python/notes/test_integration.py",
-          "tests/shared/python/plot_engine/test_matplotlib_renderer.py",
-          "tests/shared/python/plot_engine/test_protocols.py",
-          "tests/shared/python/plot_engine/test_pyqt6_widget.py",
-          "tests/shared/python/process_calculators/test_analysis_utils.py",
-          "tests/shared/python/sidekick/ui/test_tools_sidebar_runtime_tabs.py",
-          "tests/shared/python/test_contracts.py",
-          "tests/shared/python/theme/test_api.py",
-          "tests/shared/python/theme/test_colors.py",
-          "tests/shared/python/theme/test_icon_utils.py",
-          "tests/shared/python/theme/test_theme_manager.py",
-          "tests/shared/python/theme/test_typography.py",
-          "tests/shared/python/theme/test_zoom.py",
-          "tests/shared/python/ui/test_window_icon.py",
-          "tests/test_data_processor_tab_export.py",
-          "tests/test_folder_packer_pro.py",
-          "tests/test_gui_launcher_web.py",
-          "tests/test_launch_cli_output.py",
-          "tests/test_sidekick_public_api_stability.py",
-          "tests/test_src_package_import_contract.py",
-          "tests/tools/test_matlab_quality_utils.py",
-          "tests/unit/ai/integrations/github_mcp/test_integration.py",
-          "tests/unit/ai/mcp/test_client.py",
-          "tests/unit/ai/mcp/test_pool.py",
-          "tests/unit/ai/mcp/test_tool_registry_refresh.py",
-          "tests/unit/ai/peer_review/test_chat_integration.py",
-          "tests/unit/ai/peer_review/test_coordinator.py",
-          "tests/unit/ai/test_gemini_adapter.py",
-          "tests/unit/ai/test_peer_review.py",
-          "tests/unit/chat/export/test_copy_clipboard.py",
-          "tests/unit/chat/test_ai_settings_controller.py",
-          "tests/unit/chat/test_dock_widget_dropdowns.py",
-          "tests/unit/chat/test_mid_thread_switch.py",
-          "tests/unit/chat/test_workspace_command_handler.py",
-          "tests/unit/codemap/test_codemap_js_parser.py",
-          "tests/unit/codemap/test_codemap_markdown_parser.py",
-          "tests/unit/codemap/test_codemap_mcp_server.py",
-          "tests/unit/codemap/test_codemap_python_parser.py",
-          "tests/unit/codemap/test_codemap_rust_parser.py",
-          "tests/unit/codemap/test_codemap_ts_common.py",
-          "tests/unit/codemap/test_codemap_watcher.py",
-          "tests/unit/sidekick/agent/test_action_service.py",
-          "tests/unit/sidekick/agent/test_host_adapter.py",
-          "tests/unit/sidekick/agent/test_subtab_adapter.py",
-          "tests/unit/sidekick/conftest.py",
-          "tests/unit/sidekick/test_chat_settings.py",
-          "tests/unit/sidekick/test_notes_tab.py",
-          "tests/unit/sidekick/test_os_terminal_widget.py",
-          "tests/unit/sidekick/test_python_repl_cancel_namespace_3715.py",
-          "tests/unit/sidekick/test_python_repl_widget.py",
-          "tests/unit/sidekick/test_reporting_tab_context_gathering.py",
-          "tests/unit/sidekick/test_runtime_split_coverage.py",
-          "tests/unit/sidekick/test_runtime_tab_settings.py",
-          "tests/unit/sidekick/test_sidekick_ux_hardening.py",
-          "tests/unit/test_contracts.py",
-          "tests/vessel_drafter/test_dbc_lod.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "src/data_processing/data_processor/python/tests/test_data_loader_contracts.py",
-          "src/data_processing/data_processor/python/tests/test_vectorized_filter_engine_contracts.py",
-          "src/financial_calculator/tests/test_financial_calculator_gui_contracts.py",
-          "src/p1am_control_system/backend/tests/test_validation_guards_3745.py",
-          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
-          "src/shared/python/model_generation/tests/test_contracts.py",
-          "src/shared/python/tests/test_contracts_shared.py",
-          "src/web_applications/calculator/tests/test_security_validation.py",
-          "tests/folder_tool/test_file_validation.py",
-          "tests/shared/python/test_contracts.py",
-          "tests/test_src_package_import_contract.py",
-          "tests/unit/test_contracts.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2595,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9b3f0281ece8e41cc7b2371ae29358fe6fc1718297799340eaae27a217757d4a",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-PYTHON-SETUP-PY-AB2D40B84F8D",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/rrt_path_planner/python/setup.py",
-      "purpose": "Setup script for Star Wars RRT Path Planner - Python Version",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "https://github.com/your-repo/star-wars-rrt-planner"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "read_readme",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "read_requirements",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "benchmarks/test_data_processor_baseline.py",
-          "src/data_processing/data_processor/python/tests/conftest.py",
-          "src/document_processing/pdf_renamer/tests/conftest.py",
-          "src/media_processing/video_processor/apps/web/test/setup.ts",
-          "src/movement_optimizer/tests/conftest.py",
-          "src/p1am_control_system/backend/tests/_power_supply_helpers.py",
-          "src/p1am_control_system/backend/tests/test_database.py",
-          "src/p1am_control_system/backend/tests/test_read_auth.py",
-          "src/p1am_control_system/backend/tests/test_temperature_controller.py",
-          "src/p1am_control_system/backend/tests/test_temperature_models.py",
-          "src/p1am_control_system/frontend/src/test/setup.ts",
-          "src/pendulum_simulator/tests/test_side_panel_tabs.py",
-          "src/rate_of_closure/web/src/test/setup.ts",
-          "src/rotation_converter/web/src/test/setup.ts",
-          "src/rrt_path_planner/matlab/tests/test_system.m",
-          "src/shared/python/plot_theme/tests/test_plot_theme.py",
-          "src/shared/python/programmatic_pid/tests/test_pipeline_e2e.py",
-          "src/shared/python/sidekick/tests/conftest.py",
-          "src/shared/python/sidekick/tests/test_launcher_factory.py",
-          "src/shared/python/swing_sim/flight/tests/test_ground_transfer.py",
-          "src/shared/python/swing_sim/flight/tests/test_parity_rust_flight.py",
-          "src/web_applications/urdf_viewer/tests/conftest.py",
-          "src/web_applications/urdf_viewer/tests/test_urdf_viewer.py",
-          "tests/data_processor_io/test_rust_engine_contract.py",
-          "tests/ops/test_release_workflow.py",
-          "tests/programmatic_pid/test_controls.py",
-          "tests/programmatic_pid/test_equipment.py",
-          "tests/programmatic_pid/test_instruments.py",
-          "tests/programmatic_pid/test_streams.py",
-          "tests/programmatic_pid/test_title_block.py",
-          "tests/rate_of_closure/pyqt_flight_sample_inspector_probe.py",
-          "tests/rate_of_closure/pyqt_plot_point_inspector_probe.py",
-          "tests/rate_of_closure/pyqt_putting_sample_inspector_probe.py",
-          "tests/rate_of_closure/pyqt_simulation_scrub_probe.py",
-          "tests/rate_of_closure/test_ball_setup.py",
-          "tests/rate_of_closure/test_ball_setup_parity.py",
-          "tests/rate_of_closure/test_morris_authority_child.py",
-          "tests/rate_of_closure/test_morris_pyqt_workspace.py",
-          "tests/rate_of_closure/test_morris_workspace.py",
-          "tests/rate_of_closure/test_visualization_tab_manifest.py",
-          "tests/scientific_modeling/test_star_wars_rrt_perf.py",
-          "tests/shared/python/ai/test_onnx_preflight.py",
-          "tests/shared/python/process_calculators/test_acid_gas_dewpoint_edge_cases.py",
-          "tests/shared/python/process_calculators/test_financial_calculator_edge_cases.py",
-          "tests/shared/python/process_calculators/test_syngas_compression_edge_cases.py",
-          "tests/shared/python/process_calculators/test_syngas_water_calculator_edge_cases.py",
-          "tests/shared/python/process_calculators/test_syngas_water_overflow.py",
-          "tests/shared/python/signal_toolkit/test_widget_mixins.py",
-          "tests/test_debug_utils.py",
-          "tests/test_dry_compliance.py",
-          "tests/test_integration_test_helpers.py",
-          "tests/test_path_setup.py",
-          "tests/test_test_utils.py",
-          "tests/unit/sidekick/test_sidekick_f4_collaborators.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "tests/data_processor_io/test_rust_engine_contract.py",
-          "tests/scientific_modeling/test_star_wars_rrt_perf.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 20,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b14c7ad8b03711b2eaa7f57c2d9b7415926e5def55d0595bca657635ba36468e",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-PYTHON-SRC-INIT-PY-0A2867ECAA55",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/rrt_path_planner/python/src/__init__.py",
-      "purpose": "Package: src.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 33902,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "5446392c6b4a82d677922792d2164992833eeb80211bb0493665ee855c0b7f98",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-PYTHON-SRC-STAR-WARS-RRT-PY-DC467F6778ED",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/rrt_path_planner/python/src/star_wars_rrt.py",
-      "purpose": "Asteroid-field RRT path planner with optional 3D visualization.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "Obstacle",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PathMetrics",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PursuitAI",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RRTPlanner",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "Ship",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "StarWarsRRTApp",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "StarWarsRenderer",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "distance_to_obstacle_surface",
-            "signature": "point: npt.NDArray[np.float64], obstacle: Obstacle"
-          },
-          {
-            "kind": "function",
-            "name": "generate_asteroid_field",
-            "signature": "bounds: npt.NDArray[np.float64], num_obstacles: int, *, rng: np.random.Generator | None=None, reserved_points: list[npt.NDArray[np.float64]] | None=None, clearance: float=0.0"
-          },
-          {
-            "kind": "function",
-            "name": "main",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "src/rrt_path_planner/python/tests/test_star_wars_rrt.py"
-        ],
-        "unit_mentions": [
-          "N",
-          "bar",
-          "deg",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "32c4858e22cc2c967b42150fa550562a2c839c2cebcaab91cabdf6f4da020022",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-INIT-PY-BAB65DBAB467",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/__init__.py",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1588,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e6d455b7aa83a9bac0b8411c2bc8759159694420f1582c14a772837afd82e50b",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-INIT-PY-D78C9FB94171",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/__init__.py",
-      "purpose": "Python-specific shared utilities and libraries.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "ai",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/data_processing/data_processor/python/tests/test_data_loader_contracts.py",
-          "src/data_processing/data_processor/python/tests/test_nn_training_worker.py",
-          "src/data_processing/data_processor/python/tests/test_undo_redo.py",
-          "src/data_processing/data_processor/python/tests/test_vectorized_filter_engine_contracts.py",
-          "src/document_processing/pdf_renamer/tests/test_cache.py",
-          "src/financial_calculator/tests/test_financial_calculator_gui.py",
-          "src/financial_calculator/tests/test_financial_calculator_gui_contracts.py",
-          "src/function_generator/tests/test_function_generator_gui.py",
-          "src/inertia_calculator/tests/test_inertia_calculator_gui.py",
-          "src/movement_optimizer/tests/test_cli.py",
-          "src/movement_optimizer/tests/test_commands.py",
-          "src/movement_optimizer/tests/test_main_window.py",
-          "src/movement_optimizer/tests/test_session_state.py",
-          "src/movement_optimizer/tests/test_thread_safety.py",
-          "src/movement_optimizer/tests/test_undo_redo_menu.py",
-          "src/p1am_control_system/backend/tests/test_alarm_ack_engine.py",
-          "src/p1am_control_system/backend/tests/test_alarm_processing.py",
-          "src/p1am_control_system/backend/tests/test_backend_p1am_safety.py",
-          "src/p1am_control_system/backend/tests/test_data_capture_core.py",
-          "src/p1am_control_system/backend/tests/test_estop_reconnect.py",
-          "src/p1am_control_system/backend/tests/test_estop_shutdown_safe_state.py",
-          "src/p1am_control_system/backend/tests/test_estop_write_seams.py",
-          "src/p1am_control_system/backend/tests/test_historian_writer.py",
-          "src/p1am_control_system/backend/tests/test_modbus_client.py",
-          "src/p1am_control_system/backend/tests/test_modbus_estop.py",
-          "src/p1am_control_system/backend/tests/test_passthrough.py",
-          "src/p1am_control_system/backend/tests/test_poll_data_quality.py",
-          "src/p1am_control_system/backend/tests/test_poll_loop_cadence.py",
-          "src/p1am_control_system/backend/tests/test_poll_once.py",
-          "src/p1am_control_system/backend/tests/test_power_supply_integration.py",
-          "src/p1am_control_system/backend/tests/test_power_supply_persistence.py",
-          "src/p1am_control_system/backend/tests/test_safety_state_machine.py",
-          "src/p1am_control_system/backend/tests/test_scan_scheduler.py",
-          "src/p1am_control_system/backend/tests/test_temperature_integration.py",
-          "src/p1am_control_system/backend/tests/test_temperature_persistence.py",
-          "src/p1am_control_system/backend/tests/test_validation_guards_3745.py",
-          "src/p1am_control_system/backend/tests/test_ws_backpressure.py",
-          "src/pendulum_simulator/signal_test.py",
-          "src/pendulum_simulator/tests/test_controls_utils.py",
-          "src/pendulum_simulator/tests/test_controls_widget.py",
-          "src/pendulum_simulator/tests/test_controls_widget_base.py",
-          "src/pendulum_simulator/tests/test_controls_widget_golfer.py",
-          "src/pendulum_simulator/tests/test_controls_widget_triple.py",
-          "src/pendulum_simulator/tests/test_issue_fixes.py",
-          "src/pendulum_simulator/tests/test_main_window.py",
-          "src/pendulum_simulator/tests/test_overlay_state_sync.py",
-          "src/pendulum_simulator/tests/test_panel_builders.py",
-          "src/pendulum_simulator/tests/test_simulation_golfer_gpu.py",
-          "src/pendulum_simulator/tests/test_simulation_panel.py",
-          "src/pendulum_simulator/tests/test_simulation_result_base.py",
-          "src/pendulum_simulator/tests/test_torque_widgets.py",
-          "src/pid_generator/tests/test_pid_generator_gui.py",
-          "src/shared/python/ai/tests/test_access_policy.py",
-          "src/shared/python/chat/tests/test_chat.py",
-          "src/shared/python/chat/tests/test_chat_routing_lifecycle.py",
-          "src/shared/python/chat/tests/test_service_base.py",
-          "src/shared/python/chat/tests/test_workspace_bridge.py",
-          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
-          "src/shared/python/humanoid_character_builder/tests/test_inertia_calculator.py",
-          "src/shared/python/model_generation/tests/test_api_adapters.py",
-          "src/shared/python/model_generation/tests/test_contracts.py",
-          "src/shared/python/plot_theme/tests/test_plot_theme.py",
-          "src/shared/python/sidekick/tests/process_calculators/test_acid_gas_dewpoint_calculator.py",
-          "src/shared/python/sidekick/tests/process_calculators/test_multi_param_analysis.py",
-          "src/shared/python/sidekick/tests/process_calculators/test_psa_gui.py",
-          "src/shared/python/sidekick/tests/process_calculators/test_syngas_compression_engine.py",
-          "src/shared/python/sidekick/tests/process_calculators/test_wgs_reactor_calculator.py",
-          "src/shared/python/sidekick/tests/test_base_calculator_mixin.py",
-          "src/shared/python/sidekick/tests/test_calculator_state_mixin.py",
-          "src/shared/python/sidekick/tests/test_data_processor_engine_errors.py",
-          "src/shared/python/sidekick/tests/test_ode_solver.py",
-          "src/shared/python/sidekick/tests/test_selected_tab_panel.py",
-          "src/shared/python/sidekick/tests/test_state_manager.py",
-          "src/shared/python/sidekick/tests/test_tab_context_menu.py",
-          "src/shared/python/tests/test_contracts_shared.py",
-          "src/web_applications/calculator/tests/test_security_validation.py",
-          "tests/architecture/test_import_resolvability.py",
-          "tests/architecture/test_sidekick_external_imports_3316.py",
-          "tests/data_processing/data_processor/test_background_thread_errors.py",
-          "tests/data_processing/data_processor/test_ui_thread_workers.py",
-          "tests/document_processing/test_pdf_renamer_config_security.py",
-          "tests/folder_packer_pro/test_operations.py",
-          "tests/folder_tool/test_archive_ops.py",
-          "tests/folder_tool/test_backup_copy.py",
-          "tests/folder_tool/test_file_validation.py",
-          "tests/folder_tool/test_folder_ops.py",
-          "tests/folder_tool/test_folder_tool_analysis.py",
-          "tests/folder_tool/test_folder_tool_archive.py",
-          "tests/folder_tool/test_folder_tool_processing.py",
-          "tests/folder_tool/test_folder_tool_ui.py",
-          "tests/folder_tool/test_folder_tool_ui_processing.py",
-          "tests/p1am_control_system/test_calibrate_safe_shutdown.py",
-          "tests/p1am_control_system/test_desktop.py",
-          "tests/p1am_control_system/test_desktop_alarm_state.py",
-          "tests/p1am_control_system/test_desktop_hmi_annunciation.py",
-          "tests/p1am_control_system/test_desktop_tab_labels.py",
-          "tests/p1am_control_system/test_event_logger_filter_error_logging.py",
-          "tests/p1am_control_system/test_plc_write_confirmation.py",
-          "tests/project_packer_fixes/test_folder_packer_gui_lod.py",
-          "tests/python/test_performance_utils.py",
-          "tests/rate_of_closure/pyqt_flight_sample_inspector_probe.py",
-          "tests/rate_of_closure/pyqt_plot_point_inspector_probe.py",
-          "tests/rate_of_closure/pyqt_putting_sample_inspector_probe.py",
-          "tests/rate_of_closure/pyqt_simulation_scrub_probe.py",
-          "tests/rate_of_closure/pyqt_variation_visual_state_probe.py",
-          "tests/rate_of_closure/pyqt_visualization_tab_probe.py",
-          "tests/rate_of_closure/test_authority_state_security.py",
-          "tests/rate_of_closure/test_browser_companion_harness.py",
-          "tests/rate_of_closure/test_confidence_ellipsoid_mesh.py",
-          "tests/rate_of_closure/test_durable_ensemble_pyqt_workflow.py",
-          "tests/rate_of_closure/test_morris_authority_child.py",
-          "tests/rate_of_closure/test_morris_authority_host.py",
-          "tests/rate_of_closure/test_morris_authority_router.py",
-          "tests/rate_of_closure/test_morris_authority_runtime.py",
-          "tests/rate_of_closure/test_morris_pyqt_workflow.py",
-          "tests/rate_of_closure/test_morris_pyqt_workspace.py",
-          "tests/rate_of_closure/test_morris_ui_client.py",
-          "tests/rate_of_closure/test_pyqt_variation_probe_lifecycle.py",
-          "tests/rate_of_closure/test_rate_launch_pyqt_authority.py",
-          "tests/rate_of_closure/test_rate_launch_web_authority.py",
-          "tests/rate_of_closure/test_regional_ground_authority_transport.py",
-          "tests/rate_of_closure/test_regional_ground_loopback_submitter.py",
-          "tests/rate_of_closure/test_regional_ground_variation_request_io.py",
-          "tests/rate_of_closure/test_variation_ensemble_chunks.py",
-          "tests/rate_of_closure/test_variation_gui_execution.py",
-          "tests/rate_of_closure/test_variation_module_importability.py",
-          "tests/rate_of_closure/test_visual_layout_gui.py",
-          "tests/rate_of_closure/test_visual_layout_preferences.py",
-          "tests/rate_of_closure/test_web_companion_app.py",
-          "tests/shared/python/ai/test_ai_hardening_3179.py",
-          "tests/shared/python/ai/test_bitnet_adapter.py",
-          "tests/shared/python/ai/test_provider_config_registry.py",
-          "tests/shared/python/ai/test_rust_adapter.py",
-          "tests/shared/python/chat/test_chat_agent_label.py",
-          "tests/shared/python/chat/test_chat_import_boundaries.py",
-          "tests/shared/python/chat/test_export.py",
-          "tests/shared/python/chat/test_ollama_latency_tuning.py",
-          "tests/shared/python/chat/test_quick_bar.py",
-          "tests/shared/python/chat/test_quick_bar_widget.py",
-          "tests/shared/python/chat/test_router_error_logging.py",
-          "tests/shared/python/chat/test_router_factory.py",
-          "tests/shared/python/chat/test_terminal_protocol.py",
-          "tests/shared/python/chat/test_terminal_runtime.py",
-          "tests/shared/python/chat/test_websocket_protocol.py",
-          "tests/shared/python/file_watcher/test_file_watcher.py",
-          "tests/shared/python/logging_pkg/test_logging_pkg.py",
-          "tests/shared/python/model_generation/test_cli_main.py",
-          "tests/shared/python/model_generation/test_mesh_upload_hardening.py",
-          "tests/shared/python/model_generation/test_rate_limiter.py",
-          "tests/shared/python/model_generation/test_repository.py",
-          "tests/shared/python/model_generation/test_rest_api_routes.py",
-          "tests/shared/python/notes/test_integration.py",
-          "tests/shared/python/plot_engine/test_matplotlib_renderer.py",
-          "tests/shared/python/plot_engine/test_protocols.py",
-          "tests/shared/python/plot_engine/test_pyqt6_widget.py",
-          "tests/shared/python/process_calculators/test_analysis_utils.py",
-          "tests/shared/python/sidekick/ui/test_tools_sidebar_runtime_tabs.py",
-          "tests/shared/python/test_contracts.py",
-          "tests/shared/python/theme/test_api.py",
-          "tests/shared/python/theme/test_colors.py",
-          "tests/shared/python/theme/test_icon_utils.py",
-          "tests/shared/python/theme/test_theme_manager.py",
-          "tests/shared/python/theme/test_typography.py",
-          "tests/shared/python/theme/test_zoom.py",
-          "tests/shared/python/ui/test_window_icon.py",
-          "tests/test_data_processor_tab_export.py",
-          "tests/test_folder_packer_pro.py",
-          "tests/test_gui_launcher_web.py",
-          "tests/test_launch_cli_output.py",
-          "tests/test_sidekick_public_api_stability.py",
-          "tests/test_src_package_import_contract.py",
-          "tests/tools/test_matlab_quality_utils.py",
-          "tests/unit/ai/integrations/github_mcp/test_integration.py",
-          "tests/unit/ai/mcp/test_client.py",
-          "tests/unit/ai/mcp/test_pool.py",
-          "tests/unit/ai/mcp/test_tool_registry_refresh.py",
-          "tests/unit/ai/peer_review/test_chat_integration.py",
-          "tests/unit/ai/peer_review/test_coordinator.py",
-          "tests/unit/ai/test_gemini_adapter.py",
-          "tests/unit/ai/test_peer_review.py",
-          "tests/unit/chat/export/test_copy_clipboard.py",
-          "tests/unit/chat/test_ai_settings_controller.py",
-          "tests/unit/chat/test_dock_widget_dropdowns.py",
-          "tests/unit/chat/test_mid_thread_switch.py",
-          "tests/unit/chat/test_workspace_command_handler.py",
-          "tests/unit/codemap/test_codemap_js_parser.py",
-          "tests/unit/codemap/test_codemap_markdown_parser.py",
-          "tests/unit/codemap/test_codemap_mcp_server.py",
-          "tests/unit/codemap/test_codemap_python_parser.py",
-          "tests/unit/codemap/test_codemap_rust_parser.py",
-          "tests/unit/codemap/test_codemap_ts_common.py",
-          "tests/unit/codemap/test_codemap_watcher.py",
-          "tests/unit/sidekick/agent/test_action_service.py",
-          "tests/unit/sidekick/agent/test_host_adapter.py",
-          "tests/unit/sidekick/agent/test_subtab_adapter.py",
-          "tests/unit/sidekick/conftest.py",
-          "tests/unit/sidekick/test_chat_settings.py",
-          "tests/unit/sidekick/test_notes_tab.py",
-          "tests/unit/sidekick/test_os_terminal_widget.py",
-          "tests/unit/sidekick/test_python_repl_cancel_namespace_3715.py",
-          "tests/unit/sidekick/test_python_repl_widget.py",
-          "tests/unit/sidekick/test_reporting_tab_context_gathering.py",
-          "tests/unit/sidekick/test_runtime_split_coverage.py",
-          "tests/unit/sidekick/test_runtime_tab_settings.py",
-          "tests/unit/sidekick/test_sidekick_ux_hardening.py",
-          "tests/unit/test_contracts.py",
-          "tests/vessel_drafter/test_dbc_lod.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "src/data_processing/data_processor/python/tests/test_data_loader_contracts.py",
-          "src/data_processing/data_processor/python/tests/test_vectorized_filter_engine_contracts.py",
-          "src/financial_calculator/tests/test_financial_calculator_gui_contracts.py",
-          "src/p1am_control_system/backend/tests/test_validation_guards_3745.py",
-          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
-          "src/shared/python/model_generation/tests/test_contracts.py",
-          "src/shared/python/tests/test_contracts_shared.py",
-          "src/web_applications/calculator/tests/test_security_validation.py",
-          "tests/folder_tool/test_file_validation.py",
-          "tests/shared/python/test_contracts.py",
-          "tests/test_src_package_import_contract.py",
-          "tests/unit/test_contracts.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5406,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d6af1675742657928fc0dac4735a669d797be4a385c4bbc1b86d1e568d9dae47",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-INIT-PY-CE66AF77D5E7",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/ai/__init__.py",
-      "purpose": "AI Assistant Integration Layer for Golf Modeling Suite.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4358,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "eb01c0b1540ae4ed518c774d1cba88e328fd7aad3f1d8d200af7fbc475b856b7",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ONNX-PREFLIGHT-PY-E14E1E2E8B30",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/ai/_onnx_preflight.py",
-      "purpose": "Preflight check for the ONNX Runtime shared library.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "https://github.com/microsoft/onnxruntime/releases"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "_ENV_VAR",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_RELEASES_URL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_SETUP_GUIDE",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "check_ort_loadable",
-            "signature": "dylib_path: str | None=None"
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/ai/test_onnx_preflight.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 7935,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "75930dfede4a4b1d673928c0a6caa2e384b55d420ce986a509b421bf0eab3132",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-SETTINGS-MODEL-PY-F30343737703",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/ai/_settings_model.py",
-      "purpose": "``AISettings`` dataclass and persistence (extracted from gui/settings_dialog).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "AISettings",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/ai/test_ai_settings_model.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2912,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2cf644175e410c739798d1d6218f435d6a5f961a0f398c981633d894d3449ecb",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ACCESS-POLICY-PY-9B0FACA566E9",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/ai/access_policy.py",
-      "purpose": "Access-mode policy for AI chat tool exposure.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ChatAccessMode",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "READ_ONLY_REPO_TOOL_NAMES",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "allowed_tools_for_access_mode",
-            "signature": "registry: ToolRegistry, access_mode: str | ChatAccessMode, *, rag_enabled: bool=True, max_expertise: int=4"
-          },
-          {
-            "kind": "function",
-            "name": "coerce_access_mode",
-            "signature": "value: str | ChatAccessMode | None"
-          },
-          {
-            "kind": "function",
-            "name": "tool_declarations_for_access_mode",
-            "signature": "registry: ToolRegistry, access_mode: str | ChatAccessMode, *, provider_format: str='openai', rag_enabled: bool=True, max_expertise: int=4"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/ai/tests/test_access_policy.py",
-          "tests/shared/python/ai/test_ai_settings_model.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1818,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ae4a0276e68bdc6a375c242f4326e979ad97cad8de77a070d7b79b68849e52aa",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-INIT-PY-0775935D6BE9",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/ai/adapters/__init__.py",
-      "purpose": "AI Provider Adapters for the shared AI infrastructure.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "AdapterFactory",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "AnthropicAdapter",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "BaseAgentAdapter",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ClaudeCodeAdapter",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ClineAdapter",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CodexCliAdapter",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "GeminiCliAdapter",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "OllamaAdapter",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "OpenAIAdapter",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ToolDeclaration",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 20054,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8bc436b49683b4cb3c41b3ba0e06bd5e0a83f244cca2e1db534de15855b95746",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-ANTHROPIC-ADAPTER-PY-F076B5BB0A32",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/ai/adapters/anthropic_adapter.py",
-      "purpose": "Anthropic adapter for Claude 3.x models.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "AnthropicAdapter",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ANTHROPIC_DEFAULT_MODEL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ANTHROPIC_DEFAULT_TIMEOUT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ANTHROPIC_MAX_TOKENS",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/ai/test_adapter_contract.py",
-          "tests/shared/python/ai/test_ai_hardening_3179.py",
-          "tests/shared/python/ai/test_classify_error.py",
-          "tests/unit/chat/test_adapter_capabilities.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": [
-          "tests/shared/python/ai/test_adapter_contract.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 16163,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ab9ac27110d2ae98e7c91f63f7b7e0ba11c943ee5f5022185631e3481e8c40da",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-BASE-PY-6790C2CBD52B",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/ai/adapters/base.py",
-      "purpose": "Base adapter protocol for AI providers.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "BaseAgentAdapter",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ToolDeclaration",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/ai/test_adapter_contract.py",
-          "tests/shared/python/ai/test_rust_adapter_extended.py",
-          "tests/shared/python/chat/test_ai_memory_manager.py",
-          "tests/shared/python/chat/test_ollama_latency_tuning.py",
-          "tests/unit/ai/test_gemini_adapter.py",
-          "tests/unit/chat/test_adapter_capabilities.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": [
-          "tests/shared/python/ai/test_adapter_contract.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 13173,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f59587f5b2f8199ecc2d9b235c976b0af53403ee7b7ea3a24ae355ebfa1e8779",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-BITNET-ADAPTER-PY-35C5AC4E879F",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/ai/adapters/bitnet_adapter.py",
-      "purpose": "BitNet local adapter using direct subprocess execution.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "BitnetAdapter",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_BITNET_TIMEOUT",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/ai/test_adapter_contract.py",
-          "tests/shared/python/ai/test_adapter_factory.py",
-          "tests/shared/python/ai/test_bitnet_adapter.py",
-          "tests/unit/ai/test_bitnet_adapter.py",
-          "tests/unit/chat/test_adapter_capabilities.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": [
-          "tests/shared/python/ai/test_adapter_contract.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 11973,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "aeb16cab573e2da44209f90bb3a3e5d8d11c48851ab88648448d479fc843819a",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLAUDE-CODE-ADAPTER-PY-7E66ECB121E5",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/ai/adapters/claude_code_adapter.py",
-      "purpose": "Claude Code CLI adapter.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "https://claude.com/claude-code"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ClaudeCodeAdapter",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_CLAUDE_CODE_TIMEOUT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_FALLBACK_PATHS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_STATIC_MODELS",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/ai/test_claude_code_adapter.py",
-          "tests/unit/ai/adapters/test_claude_code_adapter.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 9817,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "45fb3f2024c6a17621c4f08b83afa0d310dcfbe157e07fb328bec4631f49784e",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLI-PROVIDER-SETUP-PY-C79DFEFB6F41",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/ai/adapters/cli_provider_setup.py",
-      "purpose": "CLI-provider installation + authentication guide.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "https://aistudio.google.com/apikey",
-          "https://claude.ai/install.sh",
-          "https://cline.bot/",
-          "https://docs.claude.com/en/docs/claude-code/quickstart",
-          "https://github.com/google-gemini/gemini-cli",
-          "https://github.com/openai/codex"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CliSetupStatus",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CLI_PROVIDERS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "get_all_cli_setup_statuses",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "get_cli_setup_status",
-            "signature": "provider: str"
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/ai/test_cli_provider_setup.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 11878,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b3ec336c6c8243bcb825641364321d1558a9f49999fdb4a8582c4bdf48a53c7b",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLINE-ADAPTER-PY-F0F36B57553B",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/ai/adapters/cline_adapter.py",
-      "purpose": "Cline adapter for local IDE-based AI agent communication.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "http://localhost:3000",
-          "http://localhost:3000."
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ClineAdapter",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_CLINE_HOST",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_CLINE_TIMEOUT",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/ai/tests/test_adapter_factory.py",
-          "tests/shared/python/ai/test_adapter_contract.py",
-          "tests/shared/python/ai/test_adapter_factory.py",
-          "tests/shared/python/ai/test_classify_error.py",
-          "tests/unit/ai/adapters/test_cline_adapter.py",
-          "tests/unit/chat/test_adapter_capabilities.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": [
-          "tests/shared/python/ai/test_adapter_contract.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 12233,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "954e48d9c21f7ecb1000d209d94d88f9358870bf351fc3b2143e2f38e4e24f4c",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CODEX-CLI-ADAPTER-PY-7AFE11EBF925",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/ai/adapters/codex_cli_adapter.py",
-      "purpose": "OpenAI Codex CLI adapter.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CodexCliAdapter",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_CODEX_CLI_TIMEOUT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_FALLBACK_PATHS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_STATIC_MODELS",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/ai/test_codex_cli_adapter.py",
-          "tests/unit/ai/adapters/test_codex_cli_adapter.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 13838,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2ba74e91f9ff89ac41bc0fe72255d7308040aae981a5dd62114ad590e3d534d6",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-FACTORY-PY-DD109CF427F5",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/ai/adapters/factory.py",
-      "purpose": "Unified adapter factory for AI provider resolution.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "AdapterFactory",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_CLOUD_FIRST_ORDER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_LOCAL_FIRST_ORDER",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/ai/tests/test_adapter_factory.py",
-          "tests/shared/python/ai/test_adapter_factory.py",
-          "tests/shared/python/ai/test_shared_dependency_imports.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 14732,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f0a4febd49ca152e6cf45913e478dabe4c4a0adeeb7de50ead8665524e43ac15",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-GEMINI-ADAPTER-PY-6870A0DF6EBF",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/ai/adapters/gemini_adapter.py",
-      "purpose": "Google Gemini API Adapter.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "https://github.com/D-sorganization/Tools/issues/2764",
-          "https://github.com/D-sorganization/Tools/issues/2764."
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "GeminiAdapter",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_CONFIGURE_LOCK",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/ai/test_adapter_contract.py",
-          "tests/shared/python/ai/test_ai_hardening_3179.py",
-          "tests/unit/ai/test_gemini_adapter.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": [
-          "tests/shared/python/ai/test_adapter_contract.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 10955,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "1f6c8467792cc39e90efe6c2e593918a91d307c90785b473529768cd58c70e35",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-GEMINI-CLI-ADAPTER-PY-68DBE34F3E89",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/ai/adapters/gemini_cli_adapter.py",
-      "purpose": "Google Gemini CLI adapter.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "GeminiCliAdapter",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_GEMINI_CLI_TIMEOUT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_FALLBACK_PATHS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_STATIC_MODELS",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/ai/test_gemini_cli_adapter.py",
-          "tests/unit/ai/adapters/test_gemini_cli_adapter.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 18529,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4950432a765673081cc415cdc188106d1802130f06cede212bcf62b33fd38ae6",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-GITHUB-CLI-PROVIDER-PY-037FDEDC5B48",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/ai/adapters/github_cli_provider.py",
-      "purpose": "GitHub CLI agent provider — wraps ``gh`` as a chat-level CLI agent.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "https://cli.github.com/"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "GhIntent",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GitHubCliProvider",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GitHubCliResult",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_TIMEOUT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GH_EXECUTABLE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SUPPORTED_INTENTS_HELP",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_HASH_NUMBER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_REPO_REF",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_TITLE_QUOTED",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "detect_gh_intent",
-            "signature": "message: str"
-          }
-        ],
-        "test_paths": [
-          "tests/unit/ai/adapters/test_github_cli_provider.py"
-        ],
-        "unit_mentions": [
-          "N",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 24594,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "db1a56b5738797746f61f2934db8700f4732dd4de2ee1bdddbb8551be3a7dd9c",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-OLLAMA-ADAPTER-PY-9CEFE7C107C2",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/ai/adapters/ollama_adapter.py",
-      "purpose": "Ollama adapter for local LLM inference.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "http://``",
-          "http://localhost:11434",
-          "http://{host",
-          "https://ollama.ai"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "OllamaAdapter",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "OLLAMA_DEFAULT_HOST",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "OLLAMA_DEFAULT_MODEL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "OLLAMA_DEFAULT_TIMEOUT",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/ai/test_adapter_contract.py",
-          "tests/shared/python/ai/test_adapter_factory.py",
-          "tests/shared/python/ai/test_ollama_adapter.py",
-          "tests/shared/python/ai/test_ollama_adapter_extended.py",
-          "tests/shared/python/chat/test_ollama_latency_tuning.py",
-          "tests/unit/chat/test_adapter_capabilities.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": [
-          "tests/shared/python/ai/test_adapter_contract.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 19412,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b46b2e4fc071a8d390279dee36ae04455f37e3b3a423c8c67b655554e88358cd",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-OPENAI-ADAPTER-PY-EE84C7DCAA6E",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/ai/adapters/openai_adapter.py",
-      "purpose": "OpenAI adapter for GPT-4 and GPT-4 Turbo models.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "OpenAIAdapter",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "OPENAI_DEFAULT_MODEL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "OPENAI_DEFAULT_TIMEOUT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "OPENAI_MAX_TOKENS",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/ai/test_adapter_contract.py",
-          "tests/shared/python/ai/test_ai_hardening_3179.py",
-          "tests/shared/python/ai/test_classify_error.py",
-          "tests/unit/chat/test_adapter_capabilities.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": [
-          "tests/shared/python/ai/test_adapter_contract.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 18953,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "79347b0073b5b5459e92cb09c5f127b33bd206b92d9dcd5f52093fe827717032",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-RUST-ADAPTER-PY-7F6BCE79DC5D",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/ai/adapters/rust_adapter.py",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "https://api.openai.com/v1``"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "RustAgentAdapter",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RustBackendUnavailableError",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_STREAM_THREAD_TIMEOUT_S",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_WHEEL_MISSING_HINT",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "ai_backend_available",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/ai/test_adapter_contract.py",
-          "tests/shared/python/ai/test_ai_hardening_3179.py",
-          "tests/shared/python/ai/test_rust_adapter.py",
-          "tests/shared/python/ai/test_rust_adapter_extended.py",
-          "tests/shared/python/ai/test_rust_adapter_fallback.py",
-          "tests/shared/python/ai/test_rust_adapter_wheel_smoke.py",
-          "tests/unit/chat/test_adapter_capabilities.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": [
-          "tests/shared/python/ai/test_adapter_contract.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 364,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "45887645846342e4bb5b4881b1a22292e7922dd03154fb7499ab1beb423e158d",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-AUTH-INIT-PY-BCD703F732E0",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/ai/auth/__init__.py",
-      "purpose": "Authentication and authorization module for AI features.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "AuthManager",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "AuthToken",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "FeatureGate",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SubscriptionTier",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "UserProfile",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "get_auth_manager",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 19361,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f9faaf744d32857f0b9af5cd8c33eb655dee9121aaf885a9dbcaf9bc1a626d4e",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-AUTH-AUTHENTICATION-PY-143A7EB4A237",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/ai/auth/authentication.py",
-      "purpose": "Authentication and Subscription Management for AI Features.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "AuthManager",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "AuthToken",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "FeatureGate",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SubscriptionTier",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "UserProfile",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_P",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_R",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "get_auth_manager",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/ai/test_authentication.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 9773,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ead7b488af932f986619ea19659ccb4da2d999bc8cf327def26c963d7ec3edc1",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-CONFIG-PY-168BF66542B7",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/ai/config.py",
-      "purpose": "AI configuration with environment variable support.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "http://localhost:11434"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "DEFAULT_ANTHROPIC_MAX_TOKENS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_ANTHROPIC_MODEL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_ANTHROPIC_TIMEOUT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_GEMINI_MODEL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_OLLAMA_HOST",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_OLLAMA_MODEL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_OLLAMA_TIMEOUT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_OPENAI_MAX_TOKENS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_OPENAI_MODEL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_OPENAI_TIMEOUT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ENV_ANTHROPIC_API_KEY",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ENV_ANTHROPIC_MODEL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ENV_ANTHROPIC_TIMEOUT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ENV_GEMINI_API_KEY",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ENV_GEMINI_MODEL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ENV_OLLAMA_HOST",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ENV_OLLAMA_MODEL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ENV_OLLAMA_TIMEOUT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ENV_OPENAI_API_KEY",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ENV_OPENAI_MODEL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ENV_OPENAI_ORGANIZATION",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ENV_OPENAI_TIMEOUT",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "get_anthropic_api_key",
-            "signature": "*, required: bool=False"
-          },
-          {
-            "kind": "function",
-            "name": "get_anthropic_model",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "get_anthropic_timeout",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "get_gemini_api_key",
-            "signature": "*, required: bool=False"
-          },
-          {
-            "kind": "function",
-            "name": "get_gemini_model",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "get_ollama_host",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "get_ollama_model",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "get_ollama_timeout",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "get_openai_api_key",
-            "signature": "*, required: bool=False"
-          },
-          {
-            "kind": "function",
-            "name": "get_openai_model",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "get_openai_organization",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "get_openai_timeout",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/ai/test_shared_dependency_imports.py",
-          "tests/unit/ai/test_peer_review.py"
-        ],
         "unit_mentions": [
           "s"
         ],
