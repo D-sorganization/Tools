@@ -1075,7 +1075,7 @@ jobs:
   rust-quality-gate:
     needs: pick-runner
     runs-on: d-sorg-fleet
-    timeout-minutes: 15
+    timeout-minutes: 30
     env:
       CARGO_HOME: ${{ github.workspace }}/.cargo-home
       CARGO_BUILD_JOBS: "1"

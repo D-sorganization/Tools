@@ -8,6 +8,15 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 CI_STANDARD = REPO_ROOT / ".github" / "workflows" / "ci-standard.yml"
 
 
+def test_serialized_rust_gate_has_bounded_cold_cache_budget() -> None:
+    """The complete serialized gate must survive a legitimate cold-cache run."""
+    workflow = yaml.safe_load(CI_STANDARD.read_text(encoding="utf-8"))
+    rust_job = workflow["jobs"]["rust-quality-gate"]
+
+    assert rust_job["timeout-minutes"] == 30
+    assert rust_job["env"]["CARGO_BUILD_JOBS"] == "1"
+
+
 def test_rust_audit_checkout_does_not_persist_repository_credentials() -> None:
     """Public RustSec fetches must not inherit repo-scoped checkout auth."""
     workflow = yaml.safe_load(CI_STANDARD.read_text(encoding="utf-8"))
