@@ -3,6 +3,443 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 4728,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "945a0e7e688032f1dfe59c3ba57b496670a49423ea82d6db8fa1614945ff3c49",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-VISUALIZATION-PLOTRRT-MOVING-M-20B319E22A07",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/visualization/plotRRT_Moving.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "plotRRT_Moving",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5503,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "88a9f365061caaab8701cbd7bfa635c949138e20f90f44d01d2426720690b817",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-VISUALIZATION-PLOTRRT-MOVING-IMPROVED-M-3CC59F2F907B",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/visualization/plotRRT_Moving_Improved.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "createSimpleShip",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "createSimpleShipFaces",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "drawObstacles",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "plotRRT_Moving_Improved",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2065,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c118380a6f53053b308679e52261b9199b40b91c14ee31facd1ab578cc56b9c9",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-VISUALIZATION-PLOTRRT-STATIC-M-F2F0049F444D",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/visualization/plotRRT_Static.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "plotRRT_Static",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 23,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "610c79c11e6c9432d3a7585cbf8945c24007c3edd838ef749a270e2b2b09ebe4",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-PYTHON-INIT-PY-3D2DC99ACBC5",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/python/__init__.py",
+      "purpose": "Package: python.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "src/data_processing/data_processor/python/tests/test_data_loader_contracts.py",
+          "src/data_processing/data_processor/python/tests/test_nn_training_worker.py",
+          "src/data_processing/data_processor/python/tests/test_undo_redo.py",
+          "src/data_processing/data_processor/python/tests/test_vectorized_filter_engine_contracts.py",
+          "src/document_processing/pdf_renamer/tests/test_cache.py",
+          "src/financial_calculator/tests/test_financial_calculator_gui.py",
+          "src/financial_calculator/tests/test_financial_calculator_gui_contracts.py",
+          "src/function_generator/tests/test_function_generator_gui.py",
+          "src/inertia_calculator/tests/test_inertia_calculator_gui.py",
+          "src/movement_optimizer/tests/test_cli.py",
+          "src/movement_optimizer/tests/test_commands.py",
+          "src/movement_optimizer/tests/test_main_window.py",
+          "src/movement_optimizer/tests/test_session_state.py",
+          "src/movement_optimizer/tests/test_thread_safety.py",
+          "src/movement_optimizer/tests/test_undo_redo_menu.py",
+          "src/p1am_control_system/backend/tests/test_alarm_ack_engine.py",
+          "src/p1am_control_system/backend/tests/test_alarm_processing.py",
+          "src/p1am_control_system/backend/tests/test_backend_p1am_safety.py",
+          "src/p1am_control_system/backend/tests/test_data_capture_core.py",
+          "src/p1am_control_system/backend/tests/test_estop_reconnect.py",
+          "src/p1am_control_system/backend/tests/test_estop_shutdown_safe_state.py",
+          "src/p1am_control_system/backend/tests/test_estop_write_seams.py",
+          "src/p1am_control_system/backend/tests/test_historian_writer.py",
+          "src/p1am_control_system/backend/tests/test_modbus_client.py",
+          "src/p1am_control_system/backend/tests/test_modbus_estop.py",
+          "src/p1am_control_system/backend/tests/test_passthrough.py",
+          "src/p1am_control_system/backend/tests/test_poll_data_quality.py",
+          "src/p1am_control_system/backend/tests/test_poll_loop_cadence.py",
+          "src/p1am_control_system/backend/tests/test_poll_once.py",
+          "src/p1am_control_system/backend/tests/test_power_supply_integration.py",
+          "src/p1am_control_system/backend/tests/test_power_supply_persistence.py",
+          "src/p1am_control_system/backend/tests/test_safety_state_machine.py",
+          "src/p1am_control_system/backend/tests/test_scan_scheduler.py",
+          "src/p1am_control_system/backend/tests/test_temperature_integration.py",
+          "src/p1am_control_system/backend/tests/test_temperature_persistence.py",
+          "src/p1am_control_system/backend/tests/test_validation_guards_3745.py",
+          "src/p1am_control_system/backend/tests/test_ws_backpressure.py",
+          "src/pendulum_simulator/signal_test.py",
+          "src/pendulum_simulator/tests/test_controls_utils.py",
+          "src/pendulum_simulator/tests/test_controls_widget.py",
+          "src/pendulum_simulator/tests/test_controls_widget_base.py",
+          "src/pendulum_simulator/tests/test_controls_widget_golfer.py",
+          "src/pendulum_simulator/tests/test_controls_widget_triple.py",
+          "src/pendulum_simulator/tests/test_issue_fixes.py",
+          "src/pendulum_simulator/tests/test_main_window.py",
+          "src/pendulum_simulator/tests/test_overlay_state_sync.py",
+          "src/pendulum_simulator/tests/test_panel_builders.py",
+          "src/pendulum_simulator/tests/test_simulation_golfer_gpu.py",
+          "src/pendulum_simulator/tests/test_simulation_panel.py",
+          "src/pendulum_simulator/tests/test_simulation_result_base.py",
+          "src/pendulum_simulator/tests/test_torque_widgets.py",
+          "src/pid_generator/tests/test_pid_generator_gui.py",
+          "src/shared/python/ai/tests/test_access_policy.py",
+          "src/shared/python/chat/tests/test_chat.py",
+          "src/shared/python/chat/tests/test_chat_routing_lifecycle.py",
+          "src/shared/python/chat/tests/test_service_base.py",
+          "src/shared/python/chat/tests/test_workspace_bridge.py",
+          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
+          "src/shared/python/humanoid_character_builder/tests/test_inertia_calculator.py",
+          "src/shared/python/model_generation/tests/test_api_adapters.py",
+          "src/shared/python/model_generation/tests/test_contracts.py",
+          "src/shared/python/plot_theme/tests/test_plot_theme.py",
+          "src/shared/python/sidekick/tests/process_calculators/test_acid_gas_dewpoint_calculator.py",
+          "src/shared/python/sidekick/tests/process_calculators/test_multi_param_analysis.py",
+          "src/shared/python/sidekick/tests/process_calculators/test_psa_gui.py",
+          "src/shared/python/sidekick/tests/process_calculators/test_syngas_compression_engine.py",
+          "src/shared/python/sidekick/tests/process_calculators/test_wgs_reactor_calculator.py",
+          "src/shared/python/sidekick/tests/test_base_calculator_mixin.py",
+          "src/shared/python/sidekick/tests/test_calculator_state_mixin.py",
+          "src/shared/python/sidekick/tests/test_data_processor_engine_errors.py",
+          "src/shared/python/sidekick/tests/test_ode_solver.py",
+          "src/shared/python/sidekick/tests/test_selected_tab_panel.py",
+          "src/shared/python/sidekick/tests/test_state_manager.py",
+          "src/shared/python/sidekick/tests/test_tab_context_menu.py",
+          "src/shared/python/tests/test_contracts_shared.py",
+          "src/web_applications/calculator/tests/test_security_validation.py",
+          "tests/architecture/test_import_resolvability.py",
+          "tests/architecture/test_sidekick_external_imports_3316.py",
+          "tests/data_processing/data_processor/test_background_thread_errors.py",
+          "tests/data_processing/data_processor/test_ui_thread_workers.py",
+          "tests/document_processing/test_pdf_renamer_config_security.py",
+          "tests/folder_packer_pro/test_operations.py",
+          "tests/folder_tool/test_archive_ops.py",
+          "tests/folder_tool/test_backup_copy.py",
+          "tests/folder_tool/test_file_validation.py",
+          "tests/folder_tool/test_folder_ops.py",
+          "tests/folder_tool/test_folder_tool_analysis.py",
+          "tests/folder_tool/test_folder_tool_archive.py",
+          "tests/folder_tool/test_folder_tool_processing.py",
+          "tests/folder_tool/test_folder_tool_ui.py",
+          "tests/folder_tool/test_folder_tool_ui_processing.py",
+          "tests/p1am_control_system/test_calibrate_safe_shutdown.py",
+          "tests/p1am_control_system/test_desktop.py",
+          "tests/p1am_control_system/test_desktop_alarm_state.py",
+          "tests/p1am_control_system/test_desktop_hmi_annunciation.py",
+          "tests/p1am_control_system/test_desktop_tab_labels.py",
+          "tests/p1am_control_system/test_event_logger_filter_error_logging.py",
+          "tests/p1am_control_system/test_plc_write_confirmation.py",
+          "tests/project_packer_fixes/test_folder_packer_gui_lod.py",
+          "tests/python/test_performance_utils.py",
+          "tests/rate_of_closure/pyqt_flight_sample_inspector_probe.py",
+          "tests/rate_of_closure/pyqt_plot_point_inspector_probe.py",
+          "tests/rate_of_closure/pyqt_putting_sample_inspector_probe.py",
+          "tests/rate_of_closure/pyqt_simulation_scrub_probe.py",
+          "tests/rate_of_closure/pyqt_variation_visual_state_probe.py",
+          "tests/rate_of_closure/pyqt_visualization_tab_probe.py",
+          "tests/rate_of_closure/test_authority_state_security.py",
+          "tests/rate_of_closure/test_browser_companion_harness.py",
+          "tests/rate_of_closure/test_confidence_ellipsoid_mesh.py",
+          "tests/rate_of_closure/test_durable_ensemble_pyqt_workflow.py",
+          "tests/rate_of_closure/test_morris_authority_child.py",
+          "tests/rate_of_closure/test_morris_authority_host.py",
+          "tests/rate_of_closure/test_morris_authority_router.py",
+          "tests/rate_of_closure/test_morris_authority_runtime.py",
+          "tests/rate_of_closure/test_morris_pyqt_workflow.py",
+          "tests/rate_of_closure/test_morris_pyqt_workspace.py",
+          "tests/rate_of_closure/test_morris_ui_client.py",
+          "tests/rate_of_closure/test_pyqt_variation_probe_lifecycle.py",
+          "tests/rate_of_closure/test_rate_launch_pyqt_authority.py",
+          "tests/rate_of_closure/test_rate_launch_web_authority.py",
+          "tests/rate_of_closure/test_regional_ground_authority_transport.py",
+          "tests/rate_of_closure/test_regional_ground_loopback_submitter.py",
+          "tests/rate_of_closure/test_regional_ground_variation_request_io.py",
+          "tests/rate_of_closure/test_variation_complete_trial_record.py",
+          "tests/rate_of_closure/test_variation_ensemble_chunks.py",
+          "tests/rate_of_closure/test_variation_gui_execution.py",
+          "tests/rate_of_closure/test_variation_module_importability.py",
+          "tests/rate_of_closure/test_visual_layout_gui.py",
+          "tests/rate_of_closure/test_visual_layout_preferences.py",
+          "tests/rate_of_closure/test_web_companion_app.py",
+          "tests/shared/python/ai/test_ai_hardening_3179.py",
+          "tests/shared/python/ai/test_bitnet_adapter.py",
+          "tests/shared/python/ai/test_provider_config_registry.py",
+          "tests/shared/python/ai/test_rust_adapter.py",
+          "tests/shared/python/chat/test_chat_agent_label.py",
+          "tests/shared/python/chat/test_chat_import_boundaries.py",
+          "tests/shared/python/chat/test_export.py",
+          "tests/shared/python/chat/test_ollama_latency_tuning.py",
+          "tests/shared/python/chat/test_quick_bar.py",
+          "tests/shared/python/chat/test_quick_bar_widget.py",
+          "tests/shared/python/chat/test_router_error_logging.py",
+          "tests/shared/python/chat/test_router_factory.py",
+          "tests/shared/python/chat/test_terminal_protocol.py",
+          "tests/shared/python/chat/test_terminal_runtime.py",
+          "tests/shared/python/chat/test_websocket_protocol.py",
+          "tests/shared/python/file_watcher/test_file_watcher.py",
+          "tests/shared/python/logging_pkg/test_logging_pkg.py",
+          "tests/shared/python/model_generation/test_cli_main.py",
+          "tests/shared/python/model_generation/test_mesh_upload_hardening.py",
+          "tests/shared/python/model_generation/test_rate_limiter.py",
+          "tests/shared/python/model_generation/test_repository.py",
+          "tests/shared/python/model_generation/test_rest_api_routes.py",
+          "tests/shared/python/notes/test_integration.py",
+          "tests/shared/python/plot_engine/test_matplotlib_renderer.py",
+          "tests/shared/python/plot_engine/test_protocols.py",
+          "tests/shared/python/plot_engine/test_pyqt6_widget.py",
+          "tests/shared/python/process_calculators/test_analysis_utils.py",
+          "tests/shared/python/sidekick/ui/test_tools_sidebar_runtime_tabs.py",
+          "tests/shared/python/test_contracts.py",
+          "tests/shared/python/theme/test_api.py",
+          "tests/shared/python/theme/test_colors.py",
+          "tests/shared/python/theme/test_icon_utils.py",
+          "tests/shared/python/theme/test_theme_manager.py",
+          "tests/shared/python/theme/test_typography.py",
+          "tests/shared/python/theme/test_zoom.py",
+          "tests/shared/python/ui/test_window_icon.py",
+          "tests/test_data_processor_tab_export.py",
+          "tests/test_folder_packer_pro.py",
+          "tests/test_gui_launcher_web.py",
+          "tests/test_launch_cli_output.py",
+          "tests/test_sidekick_public_api_stability.py",
+          "tests/test_src_package_import_contract.py",
+          "tests/tools/test_matlab_quality_utils.py",
+          "tests/unit/ai/integrations/github_mcp/test_integration.py",
+          "tests/unit/ai/mcp/test_client.py",
+          "tests/unit/ai/mcp/test_pool.py",
+          "tests/unit/ai/mcp/test_tool_registry_refresh.py",
+          "tests/unit/ai/peer_review/test_chat_integration.py",
+          "tests/unit/ai/peer_review/test_coordinator.py",
+          "tests/unit/ai/test_gemini_adapter.py",
+          "tests/unit/ai/test_peer_review.py",
+          "tests/unit/chat/export/test_copy_clipboard.py",
+          "tests/unit/chat/test_ai_settings_controller.py",
+          "tests/unit/chat/test_dock_widget_dropdowns.py",
+          "tests/unit/chat/test_mid_thread_switch.py",
+          "tests/unit/chat/test_workspace_command_handler.py",
+          "tests/unit/codemap/test_codemap_js_parser.py",
+          "tests/unit/codemap/test_codemap_markdown_parser.py",
+          "tests/unit/codemap/test_codemap_mcp_server.py",
+          "tests/unit/codemap/test_codemap_python_parser.py",
+          "tests/unit/codemap/test_codemap_rust_parser.py",
+          "tests/unit/codemap/test_codemap_ts_common.py",
+          "tests/unit/codemap/test_codemap_watcher.py",
+          "tests/unit/sidekick/agent/test_action_service.py",
+          "tests/unit/sidekick/agent/test_host_adapter.py",
+          "tests/unit/sidekick/agent/test_subtab_adapter.py",
+          "tests/unit/sidekick/conftest.py",
+          "tests/unit/sidekick/test_chat_settings.py",
+          "tests/unit/sidekick/test_notes_tab.py",
+          "tests/unit/sidekick/test_os_terminal_widget.py",
+          "tests/unit/sidekick/test_python_repl_cancel_namespace_3715.py",
+          "tests/unit/sidekick/test_python_repl_widget.py",
+          "tests/unit/sidekick/test_reporting_tab_context_gathering.py",
+          "tests/unit/sidekick/test_runtime_split_coverage.py",
+          "tests/unit/sidekick/test_runtime_tab_settings.py",
+          "tests/unit/sidekick/test_sidekick_ux_hardening.py",
+          "tests/unit/test_contracts.py",
+          "tests/vessel_drafter/test_dbc_lod.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "src/data_processing/data_processor/python/tests/test_data_loader_contracts.py",
+          "src/data_processing/data_processor/python/tests/test_vectorized_filter_engine_contracts.py",
+          "src/financial_calculator/tests/test_financial_calculator_gui_contracts.py",
+          "src/p1am_control_system/backend/tests/test_validation_guards_3745.py",
+          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
+          "src/shared/python/model_generation/tests/test_contracts.py",
+          "src/shared/python/tests/test_contracts_shared.py",
+          "src/web_applications/calculator/tests/test_security_validation.py",
+          "tests/folder_tool/test_file_validation.py",
+          "tests/shared/python/test_contracts.py",
+          "tests/test_src_package_import_contract.py",
+          "tests/unit/test_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2595,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -14775,326 +15212,6 @@
         "unit_mentions": [],
         "validation_paths": [
           "tests/shared/python/chat/test_terminal_contracts.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6426,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0dd53e4c6da9163ad9244630db252bc127af119b6f2ba08038bdf69313d97bd2",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-TERMINAL-PROVIDERS-PY-52C29CF821CD",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/terminal_providers.py",
-      "purpose": "Default terminal-agent provider descriptors for shared chat integrations.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "_PROVIDER_DEFINITIONS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_REDACTED_VALUE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_SENSITIVE_KEY_PARTS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_SENSITIVE_OPTION_NAMES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_SHELL_DEFINITIONS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_SUPPORTED_SHELL_IDS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_default_terminal_provider_registry",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "default_terminal_agent_providers",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "default_terminal_shells",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "provider_probe_commands",
-            "signature": "provider_id: str"
-          },
-          {
-            "kind": "function",
-            "name": "redact_terminal_command",
-            "signature": "command: Sequence[str]"
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/chat/test_cli_agent_adapters.py",
-          "tests/shared/python/chat/test_terminal_providers.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 9423,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6ecb3a06e4eb705dafd71842105585c676c94dc6986b37dc8795b6763bc2b3e3",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-TERMINAL-RUNTIME-PY-A48438705A6E",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/terminal_runtime.py",
-      "purpose": "Project-scoped runtime for terminal-backed chat agent sessions.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ProcessLaunchRequest",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TerminalProcessAdapter",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TerminalRuntimeError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TerminalSessionRuntime",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_BASH_IDS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_POWERSHELL_IDS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_SESSION_ENV_ALLOWLIST",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_SESSION_ENV_SENSITIVE_PATTERNS",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/chat/test_cli_agent_adapters.py",
-          "tests/shared/python/chat/test_terminal_runtime.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6326,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8a6697123e536f4a98affb14a8b56d6979eff4b7d9dd14521dc06f672f40bfee",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-VOICE-INPUT-MANAGER-PY-63D8D26C9675",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/voice_input_manager.py",
-      "purpose": "Voice-to-text input manager for ChatDockWidget.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "VoiceInputManager",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/chat/tests/test_voice_input.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 7050,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "97315713e7dee36d856e87a64ab960bf17515c8d5492693cf54e5612ac46bd63",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-WEBSOCKET-PROTOCOL-PY-31C30ECBE0BA",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/websocket_protocol.py",
-      "purpose": "Shared chat WebSocket protocol loop.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ChatWebSocketState",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "DisconnectLogConfig",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "run_chat_websocket_protocol",
-            "signature": "websocket: WebSocket, session_id: str='new', *, authorize_fn: AuthorizeFn | None=None, chat_service_getter: ChatServiceGetter=_default_chat_service_getter, before_send: BeforeSendHook | None=None, action_handlers: Mapping[str, ActionHandler] | None=None, message_context_getter: MessageContextGetter=_default_message_context, session_info_extra: SessionInfoExtraFn | None=None, log: logging.Logger=logger, disconnect_log: DisconnectLogConfig=_DEFAULT_DISCONNECT_LOG"
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/chat/test_public_contract.py",
-          "tests/shared/python/chat/test_websocket_protocol.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "tests/shared/python/chat/test_public_contract.py"
         ]
       }
     }

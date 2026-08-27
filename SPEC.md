@@ -27,10 +27,25 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.58                                    |
+| **Spec Version**        | 1.18.59                                    |
 | **Last Spec Update**    | 2026-08-27                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-27 Provenance-Complete Attribution Selection (#4791 / #4142 R13.5)
+
+Version 1.18.59 replaces name-only Morris result selection with the versioned
+`rate-of-closure/morris-target-selection` v1 identity. Target kind, name, unit,
+point, time or phase, and coordinate frame remain inseparable, so observations
+with the same scalar name cannot be conflated across geometry or time. PyQt and
+React enumerate the same deterministic options from an immutable parsed report
+and expose either its global factor ranking or one selected source while
+retaining that source's global rank, typed no-impact/failure/nonfinite counts,
+availability, and adequacy. A shared fixture covers state-point, impact, and
+shot targets. Selection imports no simulation, execution service, or
+sensitivity-analysis authority; it is reviewer-side projection of serialized
+model-scenario evidence and does not establish anatomical causality, human
+validity, or coaching advice.
 
 ### 2026-08-27 Rust Artifact-Finalization Runtime Budget
 
@@ -5527,6 +5542,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-27 | 1.18.59 | feat(rate-of-closure, #4791/#4142 R13.5): add provenance-complete Morris target and source selection across PyQt and React, preserve global ranking and typed denominators, fail closed on ambiguous same-name targets, and pin state/impact/shot parity without invoking simulation or sensitivity recomputation. |
 | 2026-08-27 | 1.18.58 | fix(ci): raise the single-worker Rust gate timeout from 30 to 45 minutes after an exact-head run passed all quality and benchmark phases but was cancelled while `actions/upload-artifact` finalized the benchmark result; retain the artifact, one job, one Cargo worker, and every existing check. |
 | 2026-08-27 | 1.18.57 | fix(ci): raise the serialized Rust quality gate timeout from 15 to 30 minutes after two exact-head runs reached the security-audit/cache tail and were cancelled by the prior bound; retain one build job, one Cargo build worker, and every existing quality phase. |
 | 2026-08-27 | 1.18.56 | fix(tools-core): migrate the SCADA embedded-Python unit test to `Python::initialize` for PyO3 0.29 compatibility, repairing the workspace Rust test gate without changing runtime or scientific semantics. |

@@ -1,28 +1,66 @@
 import { useMemo, useState } from "react";
 
 import type { MorrisReport } from "../model/morrisGlobalSensitivityContract";
-import { presentMorrisReport } from "../model/morrisPresentation";
+import {
+  listMorrisSourceOptions,
+  listMorrisTargetOptions,
+  selectMorrisReport,
+} from "../model/morrisSelectorContract";
 import { INPUT_CLASS, PANEL_CLASS } from "./variationUi";
 
 const metric = (value: number | null): string => value === null ? "—" : value.toFixed(4);
 
 export function MorrisResults({ report }: { readonly report: MorrisReport }) {
-  const targets = useMemo(() => [...new Set(report.estimates.map((estimate) => estimate.target.name))], [report]);
-  const [targetName, setTargetName] = useState(targets[0]);
-  const presentation = presentMorrisReport(report, targetName);
+  const targets = useMemo(() => listMorrisTargetOptions(report), [report]);
+  const [selection, setSelection] = useState<{
+    readonly report: MorrisReport;
+    readonly targetIndex: number;
+    readonly sourceSpecId: string | null;
+  } | null>(null);
+  const selectedIndex = selection?.report === report
+    && selection.targetIndex >= 0 && selection.targetIndex < targets.length
+    ? selection.targetIndex : 0;
+  const selectedTarget = targets[selectedIndex].identity;
+  const sources = useMemo(
+    () => listMorrisSourceOptions(report, selectedTarget),
+    [report, selectedTarget],
+  );
+  const selectedSource = selection?.report === report
+    && sources.some((source) => source.specId === selection.sourceSpecId)
+    ? selection.sourceSpecId : null;
+  const presentation = useMemo(() => selectMorrisReport(report, {
+    target: selectedTarget,
+    sourceSpecId: selectedSource,
+  }), [report, selectedSource, selectedTarget]);
   return (
     <section aria-label="Morris screening results" className={`${PANEL_CLASS} min-w-0 space-y-4`}>
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div><h3 className="text-lg font-semibold">{presentation.target.label} Ranking</h3>
           <p className="text-xs text-slate-400">{presentation.target.unit} · {presentation.target.kind}
+            {presentation.target.pointId ? ` · ${presentation.target.pointId}` : ""}
+            {presentation.target.timeS === null ? "" : ` · t=${presentation.target.timeS} s`}
             {presentation.target.coordinateFrame ? ` · ${presentation.target.coordinateFrame}` : ""}</p></div>
+        <div className="flex flex-wrap gap-3">
         <label className="text-xs text-slate-300">Output target
-          <select className={`${INPUT_CLASS} mt-1 min-w-56`} value={targetName}
+          <select className={`${INPUT_CLASS} mt-1 min-w-56`} value={selectedIndex}
             title="Choose the output whose factor effects are ranked"
-            onChange={(event) => setTargetName(event.target.value)}>
-            {targets.map((target) => <option key={target} value={target}>{presentMorrisReport(report, target).target.label}</option>)}
+            onChange={(event) => setSelection({
+              report, targetIndex: Number(event.target.value), sourceSpecId: null,
+            })}>
+            {targets.map((target, index) => <option key={JSON.stringify(target.identity)} value={index}>{target.label}</option>)}
           </select>
         </label>
+        <label className="text-xs text-slate-300">Input source
+          <select className={`${INPUT_CLASS} mt-1 min-w-56`} value={selectedSource ?? ""}
+            title="Show all ranked inputs or retain one selected input and its global rank"
+            onChange={(event) => setSelection({
+              report, targetIndex: selectedIndex, sourceSpecId: event.target.value || null,
+            })}>
+            <option value="">All Inputs</option>
+            {sources.map((source) => <option key={source.specId} value={source.specId}>{source.label}</option>)}
+          </select>
+        </label>
+        </div>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full min-w-[920px] text-left text-xs">
