@@ -18400,10 +18400,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6835,
+      "bytes_lf": 7853,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "806e9c5aa8184d4d5f828266ab11afc05590b361480b99afe9ec1307f8e2d774",
+      "content_sha256_lf": "259e171461d149141d192d940c114bd6c1f93f2a97c1d21527af70974b8e5313",
       "family": "swing-simulation-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-INIT-PY-5F95F06C7E85",
       "language": "python",
@@ -18716,6 +18716,16 @@
           },
           {
             "kind": "re-export",
+            "name": "POSITION_NOISE_RESPONSE_FIELD_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "POSITION_NOISE_RESPONSE_FIELD_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "PairedIntervention",
             "signature": null
           },
@@ -18732,6 +18742,16 @@
           {
             "kind": "re-export",
             "name": "PositionDispersionAccumulator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PositionNoiseResponseField",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PositionNoiseResponsePlotRow",
             "signature": null
           },
           {
@@ -18757,6 +18777,21 @@
           {
             "kind": "re-export",
             "name": "RankedLowVariabilityInterval",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ResponseAccumulatorSnapshot",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ResponseFieldAccumulator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ResponseFieldInput",
             "signature": null
           },
           {
@@ -18831,6 +18866,11 @@
           },
           {
             "kind": "re-export",
+            "name": "compute_position_noise_response_field",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "dispersion_ellipse",
             "signature": null
           },
@@ -18867,6 +18907,11 @@
           {
             "kind": "re-export",
             "name": "generate_morris_design",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "iter_position_noise_response_plot_rows",
             "signature": null
           },
           {
@@ -18927,6 +18972,11 @@
           {
             "kind": "re-export",
             "name": "resample_position_traces",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "response_field_fingerprint",
             "signature": null
           },
           {

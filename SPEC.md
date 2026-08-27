@@ -27,10 +27,28 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.43                                    |
-| **Last Spec Update**    | 2026-08-26                                 |
+| **Spec Version**        | 1.18.53                                    |
+| **Last Spec Update**    | 2026-08-27                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-27 Governed Geometric Noise-Response Fields (#4765 / #4142 R12.3)
+
+Version 1.18.44 adds an immutable, fingerprinted field that reports signed and
+magnitude paired-OAT positional response per declared distribution standard
+deviation beside absolute RMS scatter from the same eligible cohort. It also
+retains all-eligible scatter and both denominators so missingness cannot be
+mistaken for geometric robustness. The field consumes the qualified contiguous
+trace-resampling policy and fails closed on identity, frame, registry, policy,
+resume, discrete-input, bounded-input, correlated-design, and zero-perturbation
+conditions. Bounded streaming sufficient statistics avoid duplicating source
+trace tensors, while row-oriented plot records expose method, units, adequacy,
+provenance, and scientific limits. Analytical, metamorphic, countermodel, and
+missingness tests qualify model-scenario geometry only; they do not establish
+causal anatomy, human validity, energy transfer, joint work, or coaching advice.
+The public record contract has exactly three index axes—input, point, and time—
+and reduces NumPy predicates to scalar booleans before enforcing invariants, so
+static typing and runtime validation express the same fail-closed boundary.
 
 ### 2026-08-26 RustSec Dependency Remediation (#4764)
 
@@ -5467,16 +5485,14 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-08-27 | 1.18.51 | feat(pendulum-simulator, #4780 / epic #4775): add the objective realism ranking. In the only near-realistic regime the model can reach, the five objectives land within 0.6% of each other while every one has just 1 of 6 observables inside its measured band, so `is_discriminating` reports False and the ordering must not be quoted as a finding about golf. The objective is not what makes these swings unrealistic. |
+| 2026-08-27 | 1.18.53 | fix/test(variation, #4765 / #4142 R12.3): make the three-axis response-field invariant and NumPy-to-scalar contract boundary explicit, preserve the protected-base provenance digest with a reviewed secret-scan allowlist, and leave estimator, schema, and scientific interpretation unchanged. |
 | 2026-08-27 | 1.18.52 | docs(pendulum-simulator, epic #4775): publish `SWING_ACTUATION_AND_REALISM` with hyperlinked literature. Records the impact-optimality theorem, the measured reference bands and their sources, the model-variant study, the feasibility frontier, and the ranked next steps. Every DOI was resolved before publication; the Jorgensen 1970 DOI was corrected from 10.1119/1.1976433 (which resolves to a different AJP article) to 10.1119/1.1976419. |
-| 2026-08-27 | 1.18.39 | feat(pendulum-simulator, #4776 / epic #4775): pin the impact-optimality coefficient `L1*[I2 - m2*r2*(L2-r2)]`, which is identically zero for the shipped point-mass clubhead and negative for a real driver. This establishes that the optimizer stops the hands because doing so is the exact optimum of the model, and that distributed club inertia cannot be the fix. |
-| 2026-08-27 | 1.18.40 | feat(pendulum-simulator, #4777 / epic #4775): add Hill-type joint actuation limits — torque capacity falling with joint angular velocity, plus concentric/eccentric asymmetry so braking the arms is not as cheap as driving them — wired into the downswing optimizer as optional inequality constraints alongside a hand-speed floor. |
-| 2026-08-27 | 1.18.41 | feat(pendulum-simulator, #4778 / epic #4775): add measured golfer reference bands and a realism score. Every band carries a source and a resolvable link and is enforced to do so by test; deviations are reported in half-widths so observables in different units stay comparable; observables a model cannot produce are reported missing rather than scored as zero. |
-| 2026-08-27 | 1.18.42 | feat(pendulum-simulator, #4779 / epic #4775): add the model-adequacy measurement. `hand_speed_frontier` sweeps a floor on hand speed at impact and records the price: raising it monotonically costs clubhead speed, and the measured 6-9 m/s golfer band is unreachable at any price. Records the mechanism — hub torque drives the wrist open through the off-diagonal mass term, so the only way this model releases the club is to reverse hub torque and decelerate the arms. Releasing the club and stopping the hands are the same act in a two-link fixed-hub model; a moving hub is required, and is explicitly out of scope rather than approximated. |
-| 2026-08-27 | 1.18.45 | feat(pendulum-simulator, #4776 / epic #4775): pin the impact-optimality coefficient `L1*[I2 - m2*r2*(L2-r2)]`, which is identically zero for the shipped point-mass clubhead and negative for a real driver. This establishes that the optimizer stops the hands because doing so is the exact optimum of the model, and that distributed club inertia cannot be the fix. |
-| 2026-08-27 | 1.18.46 | feat(pendulum-simulator, #4777 / epic #4775): add Hill-type joint actuation limits — torque capacity falling with joint angular velocity, plus concentric/eccentric asymmetry so braking the arms is not as cheap as driving them — wired into the downswing optimizer as optional inequality constraints alongside a hand-speed floor. |
-| 2026-08-27 | 1.18.47 | feat(pendulum-simulator, #4778 / epic #4775): add measured golfer reference bands and a realism score. Every band carries a source and a resolvable link and is enforced to do so by test; deviations are reported in half-widths so observables in different units stay comparable; observables a model cannot produce are reported missing rather than scored as zero. |
+| 2026-08-27 | 1.18.51 | feat(pendulum-simulator, #4780 / epic #4775): add the objective realism ranking. In the only near-realistic regime the model can reach, the five objectives land within 0.6% of each other while every one has just 1 of 6 observables inside its measured band, so `is_discriminating` reports False and the ordering must not be quoted as a finding about golf. The objective is not what makes these swings unrealistic. |
 | 2026-08-27 | 1.18.48 | feat(pendulum-simulator, #4779 / epic #4775): add the model-adequacy measurement. `hand_speed_frontier` sweeps a floor on hand speed at impact and records the price: raising it monotonically costs clubhead speed, and the measured 6-9 m/s golfer band is unreachable at any price. Records the mechanism — hub torque drives the wrist open through the off-diagonal mass term, so the only way this model releases the club is to reverse hub torque and decelerate the arms. Releasing the club and stopping the hands are the same act in a two-link fixed-hub model; a moving hub is required, and is explicitly out of scope rather than approximated. |
+| 2026-08-27 | 1.18.47 | feat(pendulum-simulator, #4778 / epic #4775): add measured golfer reference bands and a realism score. Every band carries a source and a resolvable link and is enforced to do so by test; deviations are reported in half-widths so observables in different units stay comparable; observables a model cannot produce are reported missing rather than scored as zero. |
+| 2026-08-27 | 1.18.46 | feat(pendulum-simulator, #4777 / epic #4775): add Hill-type joint actuation limits — torque capacity falling with joint angular velocity, plus concentric/eccentric asymmetry so braking the arms is not as cheap as driving them — wired into the downswing optimizer as optional inequality constraints alongside a hand-speed floor. |
+| 2026-08-27 | 1.18.45 | feat(pendulum-simulator, #4776 / epic #4775): pin the impact-optimality coefficient `L1*[I2 - m2*r2*(L2-r2)]`, which is identically zero for the shipped point-mass clubhead and negative for a real driver. This establishes that the optimizer stops the hands because doing so is the exact optimum of the model, and that distributed club inertia cannot be the fix. |
+| 2026-08-27 | 1.18.44 | feat/test/docs(variation, #4765 / #4142 R12.3): qualify the immutable geometric noise-response field, paired declared-scale response estimator, matched and all-eligible absolute scatter, exact adequacy and denominators, bounded resumable moments, fingerprinted plot rows, exhaustive source/adapter capability matrix, and neutral interpretation and falsification guidance. |
 | 2026-08-26 | 1.18.43 | fix/test(rust, #4764): remediate the newly exposed PyO3 and h2 RustSec advisories by migrating the workspace to PyO3/NumPy 0.29, Reqwest 0.12, and Rust 1.83; preserve Python binding behavior through the official attachment, detachment, object, and conversion APIs; add dependency-floor regressions and verify formatting, warning-denied Clippy, 351 passing Rust tests plus one explicitly ignored benchmark, RustSec audit, and an isolated wheel import. |
 | 2026-08-26 | 1.18.39 | refactor(pendulum-simulator, epic #4766): bring the swing-objective modules under the AGENTS.md function-size and signature budgets. Extract the mass-matrix, velocity-product and gravity blocks out of `generalized_accelerations`; group the shared effort budget into a `SwingBudget` value object so `build_config` takes two arguments instead of five; split the Lab control panel builder. Behaviour is unchanged and all 68 feature tests still pass. |
 | 2026-08-26 | 1.18.38 | docs(pendulum-simulator, #4773 / epic #4766): publish the `SWING_OBJECTIVE_COMPARISON` design contract and update the tool README, FEATURES inventory, and both handoff documents. The contract records the coordinate conventions, the exact `P_coriolis = -2 * P_centrifugal` identity that forces the centrifugal objective to be an angular impulse, the three load-bearing solver settings, and the two failure modes the feature reports rather than hides: a downswing the torque budget provably cannot deliver, and a degenerate comparison whose all-100% matrix is a configuration artifact rather than mechanism agreement. It also states the planar two-link scientific boundary and records that the research prototype is an independent cross-check, not a dependency. |

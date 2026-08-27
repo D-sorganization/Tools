@@ -203,7 +203,7 @@
   },
   "shards": [
     {
-      "content_sha256_lf": "c3bb67b8227aac627f04fb941047f065d44f9e8fedb2453eeadb52adba900243",
+      "content_sha256_lf": "4737fe5fd0a0618478735d5299576b4b1681fc48ccd98c2b115fa7a79b9e793a",
       "entry_count": 200,
       "first_path": ".docker/entrypoint.sh",
       "last_path": "scripts/check_minimum_test_contract.py",
@@ -211,7 +211,7 @@
       "shard_index": 0
     },
     {
-      "content_sha256_lf": "adb29de1dcc89236dd975156c8d18ff5c3e6ac63df2b06f3d87cc8e0912823d6",
+      "content_sha256_lf": "a66bcb71cefc8a94b886a9b502cdff0eec25fae5314b2de3dd0943465083eeb7",
       "entry_count": 200,
       "first_path": "scripts/check_mirror_freshness.py",
       "last_path": "src/data_processing/data_processor/web/src/App.tsx",
@@ -267,7 +267,7 @@
       "shard_index": 7
     },
     {
-      "content_sha256_lf": "fe68840e962d3af0344775db89722d9abd0076cbf849e994ba1bcdbc108e9bc5",
+      "content_sha256_lf": "e006ff13fbd8ae5a2ba673f92b8b4a34e85c8da9258f0f34bc107bb4a939b6da",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/ui/pyqt6/variation_locus_editor.py",
       "last_path": "src/rate_of_closure/web/src/components/RegionalExecutionLedgerTables.tsx",
@@ -307,7 +307,7 @@
       "shard_index": 12
     },
     {
-      "content_sha256_lf": "f99738d06147d3c6c8896b8fd3b9cfcb6226ad791e430129fd5ca609e836533d",
+      "content_sha256_lf": "738a2c6aa68ee1666e6eebc155b352611eb171db4ef5b0e0f27cfc8012839bc2",
       "entry_count": 200,
       "first_path": "src/shared/python/chat_contracts/conversation.py",
       "last_path": "src/shared/python/programmatic_pid/types.py",
@@ -323,7 +323,7 @@
       "shard_index": 14
     },
     {
-      "content_sha256_lf": "db6f298b5ebfd3dcc70be35469fe3dd4bddb70a65d600a8e97c995b0d1373030",
+      "content_sha256_lf": "a412f17fdd64928f4d3beef5d16a6f04963b18d3b95049f096b1d6a0516437b4",
       "entry_count": 200,
       "first_path": "src/shared/python/sidekick/ui/tools_sidebar/workspace_persistence.py",
       "last_path": "src/shared/python/swing_sim/variation/_execution_digest.py",
@@ -331,34 +331,34 @@
       "shard_index": 15
     },
     {
-      "content_sha256_lf": "8edbc5eafd0d277111cdf5b117783f3222082d43899de125a896d52ef62d161f",
+      "content_sha256_lf": "9e615718b9af3c56259327187135f8c0a998f9321029238ded71606faaa1e5bd",
       "entry_count": 200,
       "first_path": "src/shared/python/swing_sim/variation/_execution_metadata_schema.py",
-      "last_path": "src/vessel_drafter/python/vessel_drafter/gui/__init__.py",
+      "last_path": "src/vessel_drafter/python/vessel_drafter/cli.py",
       "path": "manuals/tools/manifests/module-inventory/entries-016.json",
       "shard_index": 16
     },
     {
-      "content_sha256_lf": "f585e1ff4c7dfca6ea3c7cbb1760c9e28e32f4935b94a1e00de35365480b714f",
-      "entry_count": 65,
-      "first_path": "src/vessel_drafter/python/vessel_drafter/gui/material_summary_table.py",
+      "content_sha256_lf": "c95b34822b2ffa160ffde5931bb2aa226aa414beb751ec818da83d59fa5d8ad5",
+      "entry_count": 70,
+      "first_path": "src/vessel_drafter/python/vessel_drafter/contracts.py",
       "last_path": "wave_solver.py",
       "path": "manuals/tools/manifests/module-inventory/entries-017.json",
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "7c74ba8579c59edd4e78de3664caa85d67773110198b23d0d2cf97a93cd0f906",
+  "source_tree_sha256": "b598e5f025590208571249155a8df46ca6eac7dec3235b4026ce5e8a85aab04c",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
-      "not-applicable": 2638,
+      "not-applicable": 2643,
       "provisional": 826
     },
     "blocked_count": 1,
     "calculation_count": 826,
     "classification_counts": {
       "calculation": 826,
-      "non-calculation": 2639
+      "non-calculation": 2644
     },
     "family_counts": {
       "control-systems-calculation": 6,
@@ -380,14 +380,14 @@
       "shared-tools-non-calculation": 1021,
       "signal-processing-calculation": 28,
       "swing-simulation-calculation": 58,
-      "swing-simulation-non-calculation": 136
+      "swing-simulation-non-calculation": 141
     },
-    "module_count": 3465,
-    "non_calculation_count": 2639,
+    "module_count": 3470,
+    "non_calculation_count": 2644,
     "provisional_count": 826,
     "review_status_counts": {
       "blocked": 1,
-      "inventory-baseline": 2638,
+      "inventory-baseline": 2643,
       "review-required": 826
     }
   }

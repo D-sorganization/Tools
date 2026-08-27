@@ -5707,6 +5707,7 @@
           "tests/rate_of_closure/test_variation_durable_ensemble_chunks.py",
           "tests/rate_of_closure/test_variation_ensemble_chunk_domains.py",
           "tests/rate_of_closure/test_variation_ensemble_chunks.py",
+          "tests/rate_of_closure/test_variation_noise_response.py",
           "tests/rate_of_closure/test_variation_simulation_adapter.py",
           "tests/rate_of_closure/test_variation_simulation_request.py",
           "tests/rate_of_closure/test_variation_streaming_ensemble_analysis.py",

@@ -22,6 +22,9 @@ R11_1_CAPABILITY_AUDIT = (
 R11_3_CAPABILITY_AUDIT = (
     ROOT / "docs/audits/rate_of_closure_r11_3_trace_resampling_capabilities.v1.json"
 )
+R12_3_CAPABILITY_AUDIT = (
+    ROOT / "docs/audits/rate_of_closure_r12_3_noise_response_capabilities.v1.json"
+)
 PUBLIC_GUIDE = ROOT / "docs/rate_of_closure/variation_ensemble_reproducibility_guide.md"
 EXPECTED_REQUIREMENTS = tuple(
     [f"R10.{index}" for index in range(1, 7)]
@@ -123,8 +126,8 @@ def test_r10_4_is_verified_by_revision_bound_current_main_requalification() -> N
     )
 
     assert evidence["status_counts"] == {
-        "verified": 26,
-        "partial": 5,
+        "verified": 27,
+        "partial": 4,
         "unverified": 0,
         "external_blocked": 0,
     }
@@ -182,8 +185,8 @@ def test_r10_3_is_verified_by_exhaustive_cross_runtime_capabilities() -> None:
     )
 
     assert evidence["status_counts"] == {
-        "verified": 26,
-        "partial": 5,
+        "verified": 27,
+        "partial": 4,
         "unverified": 0,
         "external_blocked": 0,
     }
@@ -354,6 +357,34 @@ def test_r11_3_resampling_matrix_and_adverse_cases_are_exhaustive() -> None:
         "it does not validate anatomical force attribution, a human swing "
         "mechanism, or universal coaching advice."
     )
+
+
+def test_r12_3_noise_response_evidence_is_verified_and_fail_closed() -> None:
+    """R12.3 must bind its field, capability matrix, tests, and neutral guide."""
+    requirements = {item["requirement_id"]: item for item in _load()["requirements"]}
+    requirement = requirements["R12.3"]
+    audit = cast(
+        dict[str, Any], json.loads(R12_3_CAPABILITY_AUDIT.read_text(encoding="utf-8"))
+    )
+    relative = str(R12_3_CAPABILITY_AUDIT.relative_to(ROOT)).replace("\\", "/")
+
+    assert requirement["status"] == "verified"
+    assert requirement["gaps"] == []
+    assert relative in requirement["evidence_files"]
+    assert (
+        "docs/specs/GEOMETRIC_NOISE_RESPONSE_FIELD.md" in requirement["evidence_files"]
+    )
+    assert (
+        "https://github.com/D-sorganization/Tools/issues/4765"
+        in requirement["remote_evidence"]
+    )
+    assert audit["requirement_id"] == "R12.3"
+    assert len(audit["adapter_cells"]) == 12
+    assert audit["adapter_status_counts"] == {
+        "verified": 2,
+        "explicitly_unavailable": 10,
+    }
+    assert audit["scientific_boundary"].startswith("Model-scenario geometry only")
 
 
 def test_r15_upstream_consumption_evidence_is_verified_and_revision_bound() -> None:

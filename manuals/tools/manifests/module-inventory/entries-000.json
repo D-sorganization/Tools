@@ -1582,6 +1582,7 @@
           "src/shared/python/swing_sim/impact/tests/test_models.py",
           "src/shared/python/swing_sim/putting/tests/test_green.py",
           "src/shared/python/swing_sim/putting/tests/test_impact.py",
+          "src/shared/python/swing_sim/variation/tests/noise_response_test_support.py",
           "src/shared/python/swing_sim/variation/tests/test_analysis.py",
           "src/shared/python/swing_sim/variation/tests/test_dataset_io.py",
           "src/shared/python/swing_sim/variation/tests/test_engine.py",
@@ -6513,6 +6514,9 @@
           "src/shared/python/sidekick/tests/calculators/test_electrical_model.py",
           "src/shared/python/swing_sim/flight/tests/test_capability_flight_evaluator.py",
           "src/shared/python/swing_sim/tests/test_prescribed_run.py",
+          "src/shared/python/swing_sim/variation/tests/noise_response_test_support.py",
+          "src/shared/python/swing_sim/variation/tests/test_noise_response_falsification.py",
+          "src/shared/python/swing_sim/variation/tests/test_noise_response_field.py",
           "src/urdf_builder_gui/tests/test_urdf_builder_gui.py",
           "tests/architecture/test_design_manual_governance_contract.py",
           "tests/architecture/test_shared_import_aliases_3316.py",
@@ -7745,6 +7749,7 @@
           "tests/rate_of_closure/test_epic_4142_requirement_evidence.py",
           "tests/rate_of_closure/test_morris_authority_runtime.py",
           "tests/rate_of_closure/test_variation_complete_trial_scaling_evidence.py",
+          "tests/rate_of_closure/test_variation_noise_response.py",
           "tests/rotation_converter/test_modern_robotics_public_surface_3689.py",
           "tests/rotation_converter/test_mr_kinematics_contracts_3736.py",
           "tests/rust_bindings/_tools_core_import.py",
@@ -8170,11 +8175,13 @@
           "tests/rate_of_closure/pyqt_variation_visual_state_probe.py",
           "tests/rate_of_closure/pyqt_visualization_tab_probe.py",
           "tests/rate_of_closure/test_club_mesh_source.py",
+          "tests/rate_of_closure/test_epic_4142_requirement_evidence.py",
           "tests/rate_of_closure/test_kinetics.py",
           "tests/rate_of_closure/test_launch_monitor_linked_scatter_layout.py",
           "tests/rate_of_closure/test_manual_delivery_gui.py",
           "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py",
           "tests/rate_of_closure/test_variation_geometry_properties.py",
+          "tests/rate_of_closure/test_variation_noise_response.py",
           "tests/rate_of_closure/test_variation_streaming_ensemble_geometry.py",
           "tests/rate_of_closure/test_visualization_tab_audit.py",
           "tests/rotation_converter/test_screw_visualization.py",
@@ -8638,6 +8645,7 @@
           "src/shared/python/swing_sim/ground/tests/test_upstream_terrain_adapter.py",
           "src/shared/python/swing_sim/impact/tests/test_dplane.py",
           "src/shared/python/swing_sim/tests/test_swing_source.py",
+          "src/shared/python/swing_sim/variation/tests/test_noise_response_falsification.py",
           "tests/benchmarks/conftest.py",
           "tests/benchmarks/test_rotation_converter_perf.py",
           "tests/calc_backend/test_rotation_converter_api.py",
@@ -13776,7 +13784,8 @@
           }
         ],
         "test_paths": [
-          "tests/architecture/test_tools_module_inventory_contract.py"
+          "tests/architecture/test_tools_module_inventory_contract.py",
+          "tests/rate_of_closure/test_variation_noise_response.py"
         ],
         "unit_mentions": [
           "Hz",
@@ -14393,7 +14402,8 @@
           }
         ],
         "test_paths": [
-          "tests/architecture/test_design_manual_governance_contract.py"
+          "tests/architecture/test_design_manual_governance_contract.py",
+          "tests/rate_of_closure/test_variation_noise_response.py"
         ],
         "unit_mentions": [],
         "validation_paths": [

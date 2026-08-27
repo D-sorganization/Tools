@@ -6,8 +6,8 @@
   "audit_scope": "Requirement-level implementation and evidence audit. A verified status is repository evidence, not validation of a human golf-swing mechanism.",
   "epic_closeable": false,
   "status_counts": {
-    "verified": 26,
-    "partial": 5,
+    "verified": 27,
+    "partial": 4,
     "unverified": 0,
     "external_blocked": 0
   },
@@ -261,20 +261,26 @@
     {
       "requirement_id": "R12.3",
       "requirement": "Separate responsiveness to input noise from absolute scatter without causal labeling.",
-      "status": "partial",
-      "rationale": "OAT and pairwise-finite rank attribution are distinct from absolute dispersion metrics and user copy avoids causal claims.",
+      "status": "verified",
+      "rationale": "Issue #4765 adds a versioned immutable point/time/input field that reports paired declared-scale Cartesian response and magnitude beside matched-cohort and all-eligible absolute RMS scatter. Exact counts, typed adequacy, NaN preservation, method and normalization identities, trace-resampling policy, provenance, row-oriented plot data, bounded streaming snapshots, and a 3-source by 4-adapter capability matrix are explicit. Analytical, metamorphic, nonlinear-countermodel, missingness, drift, and serial/chunk/resume tests qualify model-scenario geometry only; they do not establish causal anatomy, human validity, joint work, energy transfer, or coaching authority.",
       "evidence_files": [
-        "src/shared/python/swing_sim/variation/analysis.py",
-        "src/shared/python/swing_sim/variation/dispersion_metrics.py",
-        "tests/rate_of_closure/test_variation_plot_data.py"
+        "src/shared/python/swing_sim/variation/noise_response.py",
+        "src/shared/python/swing_sim/variation/noise_response_record.py",
+        "src/shared/python/swing_sim/variation/noise_response_plot.py",
+        "docs/specs/GEOMETRIC_NOISE_RESPONSE_FIELD.md",
+        "docs/audits/rate_of_closure_r12_3_noise_response_capabilities.v1.json",
+        "src/shared/python/swing_sim/variation/tests/test_noise_response_falsification.py",
+        "tests/rate_of_closure/test_variation_noise_response.py"
       ],
       "validation_commands": [
-        "python -m pytest src/shared/python/swing_sim/variation/tests/test_analysis.py src/shared/python/swing_sim/variation/tests/test_dispersion_metrics.py tests/rate_of_closure/test_variation_plot_data.py -q"
+        "python -m pytest src/shared/python/swing_sim/variation/tests -k \"response or dispersion or resampling\" -n 0 -q",
+        "python -m pytest tests/rate_of_closure -k \"response or dispersion or variation_geometry\" -n 0 -q"
       ],
-      "remote_evidence": [],
-      "gaps": [
-        "No unified normalized noise-response field is qualified for every modeled point and time alongside absolute scatter under the same missing-data denominator."
-      ]
+      "remote_evidence": [
+        "https://github.com/D-sorganization/Tools/issues/4765",
+        "https://github.com/D-sorganization/Tools/pull/4782"
+      ],
+      "gaps": []
     },
     {
       "requirement_id": "R12.4",
