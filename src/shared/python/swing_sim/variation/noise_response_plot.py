@@ -81,8 +81,10 @@ def iter_position_noise_response_plot_rows(
     require(isinstance(field, PositionNoiseResponseField), "invalid response field")
     field_sha256 = response_field_fingerprint(field)
     shape = field.response_magnitude_m_per_declared_scale.shape
+    require(len(shape) == 3, "response field must have input, point, and time axes")
     for cell in np.ndindex(shape):
-        yield _plot_row(field, field_sha256, cell)
+        typed_cell = (int(cell[0]), int(cell[1]), int(cell[2]))
+        yield _plot_row(field, field_sha256, typed_cell)
 
 
 __all__ = [

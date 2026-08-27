@@ -70,9 +70,9 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   PR #4764/R11.3 protected-squash-merged as `4ddec9175814451fdc3d1a94b45f1190e7503bca`.
   PR #4782/#4765 R12.3 is active on `feat/4142-noise-response`: its immutable field puts
   paired declared-scale Cartesian response beside matched and all-eligible RMS
-  scatter with exact counts, adequacy, provenance, bounded resume state, and
-  plot rows. The 3-source by 4-adapter matrix remains two verified / ten
-  unavailable. Synthetic analytical tests are software evidence, not human validation.
+  scatter, counts, adequacy, provenance, bounded resume state, and plot rows; the
+  matrix remains two verified / ten unavailable. The repair passes CI-pinned MyPy
+  and detect-secrets. SPEC 1.18.45 behavior/schemas are unchanged; tests are not human validation.
 
 ## Must-Read Architecture Pointers
 

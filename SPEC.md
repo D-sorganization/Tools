@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.44                                    |
+| **Spec Version**        | 1.18.45                                    |
 | **Last Spec Update**    | 2026-08-27                                 |
 
 ## 2. Purpose & Mission
@@ -46,6 +46,9 @@ trace tensors, while row-oriented plot records expose method, units, adequacy,
 provenance, and scientific limits. Analytical, metamorphic, countermodel, and
 missingness tests qualify model-scenario geometry only; they do not establish
 causal anatomy, human validity, energy transfer, joint work, or coaching advice.
+The public record contract has exactly three index axes—input, point, and time—
+and reduces NumPy predicates to scalar booleans before enforcing invariants, so
+static typing and runtime validation express the same fail-closed boundary.
 
 ### 2026-08-26 RustSec Dependency Remediation (#4764)
 
@@ -5482,6 +5485,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-27 | 1.18.45 | fix/test(variation, #4765 / #4142 R12.3): make the three-axis response-field invariant and NumPy-to-scalar contract boundary explicit, preserve the protected-base provenance digest with a reviewed secret-scan allowlist, and leave estimator, schema, and scientific interpretation unchanged. |
 | 2026-08-27 | 1.18.44 | feat/test/docs(variation, #4765 / #4142 R12.3): qualify the immutable geometric noise-response field, paired declared-scale response estimator, matched and all-eligible absolute scatter, exact adequacy and denominators, bounded resumable moments, fingerprinted plot rows, exhaustive source/adapter capability matrix, and neutral interpretation and falsification guidance. |
 | 2026-08-26 | 1.18.43 | fix/test(rust, #4764): remediate the newly exposed PyO3 and h2 RustSec advisories by migrating the workspace to PyO3/NumPy 0.29, Reqwest 0.12, and Rust 1.83; preserve Python binding behavior through the official attachment, detachment, object, and conversion APIs; add dependency-floor regressions and verify formatting, warning-denied Clippy, 351 passing Rust tests plus one explicitly ignored benchmark, RustSec audit, and an isolated wheel import. |
 | 2026-08-26 | 1.18.42 | fix/test(ci, #4764): isolate the public RustSec fetch from runner-global and system Git credential rewrites as well as checkout-local credentials; prohibit interactive prompting and retain fail-closed `cargo audit` semantics. |

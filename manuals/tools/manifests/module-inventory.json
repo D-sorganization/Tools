@@ -331,7 +331,7 @@
       "shard_index": 15
     },
     {
-      "content_sha256_lf": "401461e7474905c13468ada3a33878dc206bacad50261c66585c37533bbdc3f5",
+      "content_sha256_lf": "9650e0a0210fdb3958314b4b15feaf8802f079ccc2e30c16f886a098a10581ec",
       "entry_count": 200,
       "first_path": "src/shared/python/swing_sim/variation/contextual_registry.py",
       "last_path": "src/vessel_drafter/python/vessel_drafter/gui/__init__.py",
@@ -347,7 +347,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "586bae183d3c194066aae5d11ea2cdf1b532d4a9e4ab33f20809d9d00e706601",
+  "source_tree_sha256": "73cb36e6b8f02ead337dfd11854b7662c5958411d0474fd6bf8c8f60d2617656",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,

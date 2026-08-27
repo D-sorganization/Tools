@@ -27,6 +27,9 @@ R11_3_AUDIT = (
     ROOT / "docs/audits/rate_of_closure_r11_3_trace_resampling_capabilities.v1.json"
 )
 GUIDE = ROOT / "docs/specs/GEOMETRIC_NOISE_RESPONSE_FIELD.md"
+EXPECTED_PROTECTED_BASE_SHA = (
+    "4ddec9175814451fdc3d1a94b45f1190e7503bca"  # pragma: allowlist secret
+)
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -67,9 +70,7 @@ def test_capability_manifest_is_exhaustive_and_inherits_resampling_policy() -> N
 
     assert audit["schema_version"] == "tools-r12.3-noise-response-capabilities/v1"
     assert audit["requirement_id"] == "R12.3"
-    assert audit["qualified_base_revision"] == (
-        "4ddec9175814451fdc3d1a94b45f1190e7503bca"
-    )
+    assert audit["qualified_base_revision"] == EXPECTED_PROTECTED_BASE_SHA
     assert audit["implementation_issue"] == 4765
     assert audit["resampling_policy_id"] == resampling["policy_id"]
     assert tuple(audit["source_layouts"]) == tuple(layouts)

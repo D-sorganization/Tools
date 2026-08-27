@@ -158,9 +158,12 @@ class PositionNoiseResponseField:
         require(
             np.issubdtype(all_counts.dtype, np.integer), "all counts must be integers"
         )
-        require(np.all(counts >= 0) and np.all(all_counts >= counts), "invalid counts")
+        require(
+            bool(np.all(counts >= 0)) and bool(np.all(all_counts >= counts)),
+            "invalid counts",
+        )
         adequacy = np.asarray(self.adequacy)
-        require(np.all(np.isin(adequacy, ADEQUACY_STATES)), "invalid adequacy")
+        require(bool(np.all(np.isin(adequacy, ADEQUACY_STATES))), "invalid adequacy")
         self._validate_response_values(adequacy)
         self._validate_scatter_values(shape, counts, all_counts)
 
@@ -171,17 +174,20 @@ class PositionNoiseResponseField:
         )
         estimable = adequacy == ADEQUACY_ESTIMABLE
         require(
-            np.all(np.isfinite(signed[estimable])), "estimable response must be finite"
+            bool(np.all(np.isfinite(signed[estimable]))),
+            "estimable response must be finite",
         )
         require(
-            np.all(np.isnan(signed[~estimable])), "unavailable response must be NaN"
+            bool(np.all(np.isnan(signed[~estimable]))),
+            "unavailable response must be NaN",
         )
         require(
-            np.all(np.isfinite(magnitude[estimable])),
+            bool(np.all(np.isfinite(magnitude[estimable]))),
             "estimable magnitude must be finite",
         )
         require(
-            np.all(np.isnan(magnitude[~estimable])), "unavailable magnitude must be NaN"
+            bool(np.all(np.isnan(magnitude[~estimable]))),
+            "unavailable magnitude must be NaN",
         )
         require(
             np.allclose(
@@ -201,12 +207,16 @@ class PositionNoiseResponseField:
             array = np.asarray(values, dtype=float)
             require(array.shape == shape, "scatter shape drift")
             require(
-                np.all(np.isfinite(array[available])),
+                bool(np.all(np.isfinite(array[available]))),
                 "available scatter must be finite",
             )
-            require(np.all(array[available] >= 0.0), "scatter must be non-negative")
             require(
-                np.all(np.isnan(array[~available])), "unavailable scatter must be NaN"
+                bool(np.all(array[available] >= 0.0)),
+                "scatter must be non-negative",
+            )
+            require(
+                bool(np.all(np.isnan(array[~available]))),
+                "unavailable scatter must be NaN",
             )
 
     def _freeze_arrays(self) -> None:
