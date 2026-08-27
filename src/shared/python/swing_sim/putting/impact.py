@@ -92,10 +92,11 @@ cross-coupling terms are second order):
       M_eff = 1 / (1/M + r^2 / I)
 
   with ``r`` the in-face offset magnitude and ``I`` the head MOI about
-  its CG. ``head_moi_kg_m2`` is the explicit P3 hook: epic #4800 P3
-  will supply mesh-derived MOI tensors via ``golf_club``; until then
-  the documented catalogue default :data:`DEFAULT_PUTTER_MOI_KG_M2`
-  applies. Gear-effect face twist also arrives with P3.
+  its CG. ``head_moi_kg_m2`` is the explicit P3 hook, filled by
+  ``golf_club.putter_head`` (#4800 P3): ``head_moi_for_strike``
+  collapses a mesh-derived tensor to this scalar, and the quasi-static
+  face-twist diagnostic lives there too; ``None`` keeps the documented
+  catalogue default :data:`DEFAULT_PUTTER_MOI_KG_M2`.
 """
 
 from __future__ import annotations
@@ -145,11 +146,14 @@ _MM_TO_M = 1e-3
 class PutterSpec:
     """Minimal putter description for the putting vertical.
 
-    NOTE (H1 reconciliation, epic #4125): this is a deliberately
-    minimal H3-local spec. The H1 club-library putters
-    (``rate_of_closure.club.library``) carry the full geometry; UIs
-    should build a ``PutterSpec`` from a library ``ClubSpec`` when one
-    is available and fall back to :data:`MINIMAL_PUTTERS` otherwise.
+    RECONCILED (epic #4800 P3): this v1 spec stays as-is; the v2
+    superset lives in ``shared.python.golf_club.putter_head``
+    (``PutterHeadDocument`` — CG, full inertia tensor, provenance).
+    ``putter_head_from_library`` wraps the H1 club-library putters
+    (``rate_of_closure.club.library``) as the no-mesh fallback, and
+    ``putter_spec`` recovers this v1 record from any v2 document; UIs
+    should build heads through that module and fall back to
+    :data:`MINIMAL_PUTTERS` only when neither source is available.
 
     Attributes:
         name: Display name.
@@ -181,9 +185,9 @@ class PutterSpec:
         require(0.0 < self.cor < 1.0, "COR must be in (0, 1)", self.cor)
 
 
-#: H3-local minimal putter specs — marked for reconciliation with the
-#: H1 club-library putters (see :class:`PutterSpec` docstring). Head
-#: masses and lofts are typical published catalogue values.
+#: H3-local minimal putter specs — reconciled with the H1 club-library
+#: putters via ``golf_club.putter_head`` (see :class:`PutterSpec`
+#: docstring). Head masses and lofts are typical catalogue values.
 MINIMAL_PUTTERS: dict[str, PutterSpec] = {
     spec.name: spec
     for spec in (

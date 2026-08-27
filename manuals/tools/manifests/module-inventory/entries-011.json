@@ -3,6 +3,184 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 9134,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8746a1287202c9aa7c7c1d7d184944bde3b4c9098fdb5e669c067ddda1ed4c94",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-SPATIALTARGETSERIALIZATION-TS-C0F683A16601",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/spatialTargetSerialization.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "LEGACY_GROUND_SOURCE",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "SPATIAL_TARGET_SCHEMA",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "SPATIAL_TARGET_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "spatialTargetFromJson",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "spatialTargetToJson",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 1549,
+      "classification": "calculation",
+      "classification_basis": "path-marker:trajectory",
+      "content_sha256_lf": "7faa335f070cba92e21d84847ae6f88c3dd1c39b8808944b365dafd97a0b1207",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-SPATIALTARGETTRAJECTORY-TEST-TS-0B935C158869",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/spatialTargetTrajectory.test.ts",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 5507,
+      "classification": "calculation",
+      "classification_basis": "path-marker:trajectory",
+      "content_sha256_lf": "e3929ab53becba44ce3055cac266617229fb735711fbb7d3937b9f54541657dd",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-SPATIALTARGETTRAJECTORY-TS-21B74695EE39",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/spatialTargetTrajectory.ts",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "SpatialTrajectoryAssessment",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "assessSpatialTargetTrajectory",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 1427,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -4942,10 +5120,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3702,
+      "bytes_lf": 6671,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d5a247b60a1897218f4a4c5c722dfc8026aea3bbb0f4b9842842915941a4a579",
+      "content_sha256_lf": "99353ebf499d4c19ff17f4f9e1780113f59fc0e6066805aa3d6f87f73777d40c",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VOLUMETRICS-TS-21D62D591DE3",
       "language": "typescript",
@@ -4992,12 +5170,22 @@
           },
           {
             "kind": "export",
+            "name": "MeshInertiaReport",
+            "signature": null
+          },
+          {
+            "kind": "export",
             "name": "headCog",
             "signature": null
           },
           {
             "kind": "export",
             "name": "isWatertight",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "meshInertia",
             "signature": null
           },
           {
@@ -14173,312 +14361,6 @@
         "unit_mentions": [
           "g"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3666,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a4ee0e6da4070f2c384503db61eabe11255a5e8cfc7ffa15751463dd4eaafef3",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-ENVIRONMENT-OBSTACLEMANAGER-M-7EF3669C402C",
-      "language": "matlab",
-      "maintainer": "Tools module maintainers",
-      "path": "src/rrt_path_planner/matlab/src/environment/ObstacleManager.m",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "ObstacleManager",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "createRandomObstacles",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "generateCustom",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "generatePreset",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "getObstacles",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "setObstacles",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 29972,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ac977483c9c85e5d0a8610200d28461ea3d0b3d7ec9a7c6828520a9029baf824",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-GUI-STARWARSPATHPLANNERGUI-M-B703C04805A7",
-      "language": "matlab",
-      "maintainer": "Tools module maintainers",
-      "path": "src/rrt_path_planner/matlab/src/gui/starWarsPathPlannerGUI.m",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "animateCallback",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "animatePursuit",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "animateSingleShip",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "cameraChangeCallback",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "createControlElements",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "createSimpleShip",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "createSimpleShipFaces",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "displayOptionCallback",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "drawObstacles",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "drawStarfield",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "generateObstaclesCallback",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "generateRandomObstacles",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "initializeVisualization",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "loadDefaultObstacles",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "loadObstaclesCallback",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "modeChangeCallback",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "planPathCallback",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "resetCallback",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "savePursuitVideo",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "saveSingleShipVideo",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "saveVideoCallback",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "setupCallbacks",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "speedChangeCallback",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "starWarsPathPlannerGUI",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "updateCameraView",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "updateStatus",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "visualizePath",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "visualizePursuit",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "g"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 401,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d966fbf929f845cc6ef2f9f8b10f20f8d47219b9b16610d6c1673d657344957d",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-MAIN-CINEMATIC-M-342B70521003",
-      "language": "matlab",
-      "maintainer": "Tools module maintainers",
-      "path": "src/rrt_path_planner/matlab/src/main_cinematic.m",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }
