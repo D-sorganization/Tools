@@ -16454,7 +16454,8 @@
           }
         ],
         "test_paths": [
-          "src/shared/python/swing_sim/putting/tests/test_roll.py"
+          "src/shared/python/swing_sim/putting/tests/test_roll.py",
+          "src/shared/python/swing_sim/putting/tests/test_ud_adapter.py"
         ],
         "unit_mentions": [
           "deg",
@@ -16546,6 +16547,74 @@
           "deg",
           "g",
           "m/s^2",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 14995,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e052f7b03daa3c47fe5299b8ad4ed9840c207d9db658e7971f9e677248ba5168",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-UD-ADAPTER-PY-2E70242571A2",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/putting/ud_adapter.py",
+      "purpose": "UpstreamDrift ``putting_green`` topography adapter (#4800 P9).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "UdGreenTopography",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "green_surface_from_ud_json",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "green_surface_to_ud_json",
+            "signature": "surface: GreenSurface, *, hole_position_m: tuple[float, float] | None=None, extent_m: tuple[float, float] | None=None, spacing_m: float | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/putting/tests/test_ud_adapter.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "m/s",
           "s"
         ],
         "validation_paths": []
@@ -18249,96 +18318,6 @@
         "unit_mentions": [
           "deg",
           "m/s",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 13522,
-      "classification": "calculation",
-      "classification_basis": "path-marker:solver",
-      "content_sha256_lf": "bcb39c941e13f7fadcf4e0dc80509d29a742f298542644e26f8814a923e3f270",
-      "family": "swing-simulation-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-SOLVER-SOLVE-PY-93C4D910E22A",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/solver/solve.py",
-      "purpose": "Robust multi-start driver for the impact-parameter solver (#4103, #4109).",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CancelledError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ProgressReport",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SolverResult",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "StartSummary",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "detect_stall",
-            "signature": "history: list[float]"
-          },
-          {
-            "kind": "function",
-            "name": "solve",
-            "signature": "goal: ImpactGoal, partition: VariablePartition, config: EvaluationConfig | None=None, n_starts: int=DEFAULT_N_STARTS, seed: int=0, x0: np.ndarray | None=None, max_nfev_per_start: int=DEFAULT_MAX_NFEV_PER_START, n_workers: int | None=None, progress_cb: ProgressCallback | None=None, cancel_event: threading.Event | None=None"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/solver/tests/test_solve.py",
-          "tests/rate_of_closure/test_durable_ensemble_authority_service.py",
-          "tests/rate_of_closure/test_localized_torque_variation.py",
-          "tests/rate_of_closure/test_solver_gui.py",
-          "tests/rate_of_closure/test_variation_durable_ensemble_chunks.py",
-          "tests/rate_of_closure/test_variation_ensemble_chunks.py",
-          "tests/rate_of_closure/test_variation_streaming_ensemble_analysis.py"
-        ],
-        "unit_mentions": [
           "s"
         ],
         "validation_paths": []

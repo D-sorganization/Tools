@@ -12306,6 +12306,7 @@
           "src/shared/python/swing_sim/impact/tests/test_dplane.py",
           "src/shared/python/swing_sim/putting/tests/test_impact.py",
           "src/shared/python/swing_sim/putting/tests/test_surface.py",
+          "src/shared/python/swing_sim/putting/tests/test_ud_adapter.py",
           "src/shared/python/swing_sim/solver/tests/test_spatial_targets.py",
           "src/shared/python/swing_sim/solver/tests/test_targets.py",
           "src/shared/python/swing_sim/tests/test_torque_profiles.py",
