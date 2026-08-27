@@ -6,8 +6,8 @@
   "audit_scope": "Requirement-level implementation and evidence audit. A verified status is repository evidence, not validation of a human golf-swing mechanism.",
   "epic_closeable": false,
   "status_counts": {
-    "verified": 28,
-    "partial": 3,
+    "verified": 29,
+    "partial": 2,
     "unverified": 0,
     "external_blocked": 0
   },
@@ -392,20 +392,27 @@
     {
       "requirement_id": "R13.5",
       "requirement": "Inspect global or selected-input, point, phase, impact, or shot attribution without unrelated presentation recomputation.",
-      "status": "partial",
-      "rationale": "Both surfaces consume serialized analysis records and expose multiple selectors rather than reimplementing the numerical methods.",
+      "status": "verified",
+      "rationale": "Issue #4791 replaces name-only Morris target selection with a versioned provenance-complete identity over target class, name, unit, point, time or phase, and coordinate frame. Both surfaces enumerate exact targets and all-input or one-source views from the immutable parsed report. A selected source retains its global rank and every typed availability denominator. Same-name point and phase counterexamples, unknown and ambiguous selections, nonmutation, and an exact Python/TypeScript fixture covering state, impact, and shot targets fail closed. This is presentation of serialized model-scenario screening, not simulation, sensitivity recomputation, anatomical attribution, human validation, or coaching authority.",
       "evidence_files": [
-        "src/rate_of_closure/ui/pyqt6/variation_results.py",
-        "src/rate_of_closure/web/src/components/VariationResults.tsx",
-        "tests/rate_of_closure/test_variation_visualization_widgets.py"
+        "src/rate_of_closure/application/morris/selector.py",
+        "src/rate_of_closure/application/morris/presentation.py",
+        "src/rate_of_closure/ui/pyqt6/morris_tab.py",
+        "src/rate_of_closure/web/src/model/morrisSelectorContract.ts",
+        "src/rate_of_closure/web/src/components/MorrisResults.tsx",
+        "src/rate_of_closure/web/src/model/__fixtures__/morris_selector_parity_v1.json",
+        "tests/rate_of_closure/test_morris_selector_contract.py",
+        "tests/rate_of_closure/test_morris_pyqt_workflow.py",
+        "docs/audits/rate_of_closure_r13_5_attribution_selector_capabilities.v1.json"
       ],
       "validation_commands": [
-        "python -m pytest tests/rate_of_closure/test_variation_visualization_widgets.py tests/rate_of_closure/test_morris_ui_contract.py -q"
+        "python -m pytest tests/rate_of_closure/test_morris_selector_contract.py tests/rate_of_closure/test_morris_ui_contract.py tests/rate_of_closure/test_morris_pyqt_workflow.py -n 0 -q",
+        "cd src/rate_of_closure/web && npm test -- --run src/model/morrisSelectorContract.test.ts src/model/morrisPresentation.test.ts src/model/morrisUiParity.test.ts src/components/MorrisResults.test.tsx"
       ],
-      "remote_evidence": [],
-      "gaps": [
-        "No end-to-end contract proves all selector dimensions are present on both surfaces or that changing one selector avoids every unrelated analysis recomputation."
-      ]
+      "remote_evidence": [
+        "https://github.com/D-sorganization/Tools/issues/4791"
+      ],
+      "gaps": []
     },
     {
       "requirement_id": "R14.1",

@@ -7889,10 +7889,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9310,
+      "bytes_lf": 9960,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "af8e67ba68037b9101e54b9168aa47626fbe8052ec01ecdbc8426513c6975ac3",
+      "content_sha256_lf": "06511d83c6540e90fe05c62023a03bd20ae584d6829059d5cd2b86cc329ddfea",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-APPLICATION-MORRIS-PRESENTATION-PY-8B16C432709E",
       "language": "python",
@@ -7966,14 +7966,21 @@
             "kind": "function",
             "name": "present_morris_report",
             "signature": "report: MorrisResponseReport | None, target_name: str"
+          },
+          {
+            "kind": "function",
+            "name": "present_morris_target",
+            "signature": "report: MorrisResponseReport, target: MorrisTarget"
           }
         ],
         "test_paths": [
+          "tests/rate_of_closure/test_morris_selector_contract.py",
           "tests/rate_of_closure/test_morris_ui_client.py",
           "tests/rate_of_closure/test_morris_ui_contract.py"
         ],
         "unit_mentions": [],
         "validation_paths": [
+          "tests/rate_of_closure/test_morris_selector_contract.py",
           "tests/rate_of_closure/test_morris_ui_contract.py"
         ]
       }
@@ -8062,10 +8069,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 15404,
+      "bytes_lf": 15130,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f772fdfae5587759093b7f143cc6cdb4c99de8dd577d651b8eb47ea4a215ec1c",
+      "content_sha256_lf": "8fcb15b9b43efb354df1ec074fe4fac0af007125007a50a44dc1de61cf4116a3",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-APPLICATION-MORRIS-RESPONSE-CONTRACT-PY-1CB1F189064F",
       "language": "python",
@@ -8157,6 +8164,7 @@
           }
         ],
         "test_paths": [
+          "tests/rate_of_closure/test_morris_selector_contract.py",
           "tests/rate_of_closure/test_morris_ui_client.py",
           "tests/rate_of_closure/test_morris_ui_contract.py"
         ],
@@ -8164,6 +8172,7 @@
           "s"
         ],
         "validation_paths": [
+          "tests/rate_of_closure/test_morris_selector_contract.py",
           "tests/rate_of_closure/test_morris_ui_contract.py"
         ]
       }
@@ -8294,6 +8303,104 @@
           "s"
         ],
         "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5454,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "018b7163e4e6fb5034bb8e7dabef88703e676bdbb7c09184af23add25230ed93",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-APPLICATION-MORRIS-SELECTOR-PY-739DBF8068F1",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/application/morris/selector.py",
+      "purpose": "Provenance-complete selection over immutable Morris reports.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MorrisReportSelection",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MorrisSourceOption",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MorrisTargetIdentity",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MorrisTargetOption",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TARGET_SELECTION_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TARGET_SELECTION_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "list_morris_source_options",
+            "signature": "report: MorrisResponseReport, target: MorrisTargetIdentity"
+          },
+          {
+            "kind": "function",
+            "name": "list_morris_target_options",
+            "signature": "report: MorrisResponseReport"
+          },
+          {
+            "kind": "function",
+            "name": "select_morris_report",
+            "signature": "report: MorrisResponseReport, selection: MorrisReportSelection"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_morris_selector_contract.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": [
+          "tests/rate_of_closure/test_morris_selector_contract.py"
+        ]
       }
     },
     {
@@ -14962,62 +15069,6 @@
             "kind": "re-export",
             "name": "write_plot_json",
             "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1218,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ceae76929580d9094b8b0dc821014f92b45a6e3b181f996f8053e00464a16ff1",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-PLOTTING-CATALOG-ENTRIES-PY-0DA593C1F9ED",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/plotting/_catalog_entries.py",
-      "purpose": "Private ordered composition of plotting catalog rows.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "_GROUPS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_entries",
-            "signature": ""
           }
         ],
         "test_paths": [],

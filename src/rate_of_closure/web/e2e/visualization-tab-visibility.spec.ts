@@ -136,6 +136,13 @@ test("every registered React tab exposes its primary visual in the initial viewp
       expect.soft(audited.visibleIntersection.height, `${label} visible height`)
         .toBeGreaterThanOrEqual(requiredHeight);
       expect.soft(audited.horizontalOverflowPx, `${label} document overflow`).toBe(0);
+      if (entry.tabId === "variation") {
+        // Initial-state evidence must not imply computed Morris results.  The
+        // qualified target/source controls are introduced only with a parsed,
+        // completed report and are exercised in MorrisResults.test.tsx.
+        await expect(page.getByRole("region", { name: "Morris screening results" }))
+          .toHaveCount(0);
+      }
       if (viewport.width < 1280 && entry.landmarkKind === "visual") {
         const controlSelector = reference.responsiveControlLocators[entry.tabId];
         if (controlSelector !== undefined) {
