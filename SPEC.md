@@ -27,10 +27,52 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.53                                    |
+| **Spec Version**        | 1.18.58                                    |
 | **Last Spec Update**    | 2026-08-27                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-27 Rust Artifact-Finalization Runtime Budget
+
+Version 1.18.58 raises the same single-worker Rust gate's bound from 30 to 45
+minutes after an exact-head run passed formatting, warning-denied Clippy,
+tests, security audit, wheel and WASM builds, and Criterion benchmarks, then
+GitHub cancelled it at 35 minutes while `actions/upload-artifact` was still
+finalizing the benchmark result. The change preserves every phase, the
+benchmark artifact, one gate job, and `CARGO_BUILD_JOBS=1`.
+
+### 2026-08-27 Rust Quality-Gate Runtime Budget
+
+Version 1.18.57 raises only the Rust quality gate's job timeout from 15 to 30
+minutes. Two exact-head attempts completed formatting, warning-denied Clippy,
+and Rust tests before GitHub cancelled the job during the security-audit/cache
+tail. The larger bound accommodates the existing serialized, resource-capped
+gate without increasing runner concurrency or weakening any check.
+
+### 2026-08-27 PyO3 0.29 Embedded-Test Initialization Compatibility
+
+Version 1.18.56 migrates the SCADA Rust unit test from the removed
+`pyo3::prepare_freethreaded_python` function to `Python::initialize`, the PyO3
+0.29 API with the same embedded-interpreter purpose. This repairs the optional
+workspace Rust gate exposed during #4783 qualification without changing SCADA
+runtime behavior or the paired-attribution scientific contract.
+
+### 2026-08-27 Paired Localized Source-To-Downstream Attribution (#4783 / #4142 R13.3)
+
+Version 1.18.54 adds a versioned immutable record for exact paired model
+interventions. It binds one independently estimable source parameter and its
+optional control point and time window to governed state-point, impact, and
+shot scalars. Exact model, adapter, frame, grid, plan, registry, execution, and
+source identities fail closed, as do bounded, discrete, grouped, correlated,
+or zero-delta source designs. Missing, nonfinite, unsupported, no-impact, and
+solver-failure observations remain typed unavailable values. Bounded
+serial/chunk/resume snapshots, deterministic fingerprints, selectors, and
+precision-preserving JSON/CSV rows support independent review. The complete
+capability authority enumerates all 17 Rate target metrics and preserves ten
+unavailable source/adapter cells rather than fabricating coverage. Analytical
+and countermodel tests qualify paired model-scenario response only; they do not
+establish global main effects, causal anatomy, human validity, or coaching
+authority.
 
 ### 2026-08-27 Governed Geometric Noise-Response Fields (#4765 / #4142 R12.3)
 
@@ -5485,8 +5527,11 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-27 | 1.18.58 | fix(ci): raise the single-worker Rust gate timeout from 30 to 45 minutes after an exact-head run passed all quality and benchmark phases but was cancelled while `actions/upload-artifact` finalized the benchmark result; retain the artifact, one job, one Cargo worker, and every existing check. |
+| 2026-08-27 | 1.18.57 | fix(ci): raise the serialized Rust quality gate timeout from 15 to 30 minutes after two exact-head runs reached the security-audit/cache tail and were cancelled by the prior bound; retain one build job, one Cargo build worker, and every existing quality phase. |
+| 2026-08-27 | 1.18.56 | fix(tools-core): migrate the SCADA embedded-Python unit test to `Python::initialize` for PyO3 0.29 compatibility, repairing the workspace Rust test gate without changing runtime or scientific semantics. |
 | 2026-08-27 | 1.18.55 | fix(pendulum-simulator, #4785 / epic #4775): **correct a published conclusion.** The golfer preset lumped 0.50 kg at the tip of a 1.10 m shaft; a real driver is 0.310 kg with its COM 76% down, so the preset overstated the club's inertia about the wrist — and the arm/club coupling that fights the release — by 2.1x. That, not the model's structure, forced the optimizer to reverse hub torque hard enough to stop the hands, and the artifact was published as a structural limit. Adds `club_equivalence` for inertia-matched clubs and corrects the preset to `me = 0.238 kg`. The same model now reaches 49.7 m/s clubhead with 7.26 m/s hand speed and a 3.46 club/arm ratio — five of six measured observables inside their bands, with no hand-speed floor. The objective ranking becomes discriminating: clubhead speed, Coriolis, energy and impulse transfer tie, while centrifugal release impulse costs about 1 m/s. The impact-optimality theorem (#4776) is unaffected. Tests now pin both the artifact and the corrected behaviour. |
-| 2026-08-27 | 1.18.51 | feat(pendulum-simulator, #4780 / epic #4775): add the objective realism ranking. In the only near-realistic regime the model can reach, the five objectives land within 0.6% of each other while every one has just 1 of 6 observables inside its measured band, so `is_discriminating` reports False and the ordering must not be quoted as a finding about golf. The objective is not what makes these swings unrealistic. |
+| 2026-08-27 | 1.18.54 | feat/test/docs(variation, #4783 / #4142 R13.3): add immutable paired localized source-to-downstream attribution across exact state, impact, and shot scalars; bind source and execution identity; retain typed unavailable outcomes; reject confounded source designs; provide bounded deterministic replay and reviewer exports; and qualify the exhaustive capability and target matrix without making human causal or coaching claims. |
 | 2026-08-27 | 1.18.53 | fix/test(variation, #4765 / #4142 R12.3): make the three-axis response-field invariant and NumPy-to-scalar contract boundary explicit, preserve the protected-base provenance digest with a reviewed secret-scan allowlist, and leave estimator, schema, and scientific interpretation unchanged. |
 | 2026-08-27 | 1.18.52 | docs(pendulum-simulator, epic #4775): publish `SWING_ACTUATION_AND_REALISM` with hyperlinked literature. Records the impact-optimality theorem, the measured reference bands and their sources, the model-variant study, the feasibility frontier, and the ranked next steps. Every DOI was resolved before publication; the Jorgensen 1970 DOI was corrected from 10.1119/1.1976433 (which resolves to a different AJP article) to 10.1119/1.1976419. |
 | 2026-08-27 | 1.18.51 | feat(pendulum-simulator, #4780 / epic #4775): add the objective realism ranking. In the only near-realistic regime the model can reach, the five objectives land within 0.6% of each other while every one has just 1 of 6 observables inside its measured band, so `is_discriminating` reports False and the ordering must not be quoted as a finding about golf. The objective is not what makes these swings unrealistic. |

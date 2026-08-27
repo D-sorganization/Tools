@@ -6,6 +6,9 @@ import json
 from pathlib import Path
 from typing import Any, cast
 
+from rate_of_closure.variation.paired_attribution_adapter import (
+    rate_attribution_target_registry,
+)
 from rate_of_closure.variation.simulation_adapter import spatial_source_layouts
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -24,6 +27,9 @@ R11_3_CAPABILITY_AUDIT = (
 )
 R12_3_CAPABILITY_AUDIT = (
     ROOT / "docs/audits/rate_of_closure_r12_3_noise_response_capabilities.v1.json"
+)
+R13_3_CAPABILITY_AUDIT = (
+    ROOT / "docs/audits/rate_of_closure_r13_3_paired_attribution_capabilities.v1.json"
 )
 PUBLIC_GUIDE = ROOT / "docs/rate_of_closure/variation_ensemble_reproducibility_guide.md"
 EXPECTED_REQUIREMENTS = tuple(
@@ -126,8 +132,8 @@ def test_r10_4_is_verified_by_revision_bound_current_main_requalification() -> N
     )
 
     assert evidence["status_counts"] == {
-        "verified": 27,
-        "partial": 4,
+        "verified": 28,
+        "partial": 3,
         "unverified": 0,
         "external_blocked": 0,
     }
@@ -185,8 +191,8 @@ def test_r10_3_is_verified_by_exhaustive_cross_runtime_capabilities() -> None:
     )
 
     assert evidence["status_counts"] == {
-        "verified": 27,
-        "partial": 4,
+        "verified": 28,
+        "partial": 3,
         "unverified": 0,
         "external_blocked": 0,
     }
@@ -385,6 +391,45 @@ def test_r12_3_noise_response_evidence_is_verified_and_fail_closed() -> None:
         "explicitly_unavailable": 10,
     }
     assert audit["scientific_boundary"].startswith("Model-scenario geometry only")
+
+
+def test_r13_3_paired_attribution_matrix_and_targets_are_exhaustive() -> None:
+    """R13.3 must inherit every source cell and enumerate every scalar target."""
+    requirements = {item["requirement_id"]: item for item in _load()["requirements"]}
+    requirement = requirements["R13.3"]
+    audit = cast(
+        dict[str, Any], json.loads(R13_3_CAPABILITY_AUDIT.read_text(encoding="utf-8"))
+    )
+    r12_3 = cast(
+        dict[str, Any], json.loads(R12_3_CAPABILITY_AUDIT.read_text(encoding="utf-8"))
+    )
+    relative = str(R13_3_CAPABILITY_AUDIT.relative_to(ROOT)).replace("\\", "/")
+
+    assert requirement["status"] == "verified"
+    assert requirement["gaps"] == []
+    assert relative in requirement["evidence_files"]
+    assert "docs/specs/PAIRED_LOCALIZED_ATTRIBUTION.md" in requirement["evidence_files"]
+    assert audit["schema_version"] == "tools-r13.3-paired-attribution-capabilities/v1"
+    assert audit["requirement_id"] == "R13.3"
+    assert audit["implementation_issue"] == 4783
+    assert audit["adapter_cells"] == r12_3["adapter_cells"]
+    assert audit["adapter_status_counts"] == r12_3["adapter_status_counts"]
+    assert audit["source_layouts"] == r12_3["source_layouts"]
+    assert [
+        (item["metric_id"], item["kind"], item["unit"])
+        for item in audit["target_metrics"]
+    ] == list(rate_attribution_target_registry())
+    assert set(audit["availability_states"]) == {
+        "available",
+        "no-impact-unavailable",
+        "numerical-failure",
+        "missing-unavailable",
+        "nonfinite-unavailable",
+        "unsupported",
+    }
+    assert audit["scientific_boundary"].startswith(
+        "Model-scenario paired intervention response only"
+    )
 
 
 def test_r15_upstream_consumption_evidence_is_verified_and_revision_bound() -> None:

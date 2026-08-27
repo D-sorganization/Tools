@@ -3,6 +3,53 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 2518,
+      "classification": "calculation",
+      "classification_basis": "path-marker:torque",
+      "content_sha256_lf": "33a5b61b2c077347f90b9f69de3d7d83c3696d35d8d629471c219ecbb91c220b",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-TORQUEPROFILEEDITOR-TEST-TS-27597FCEE922",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/torqueProfileEditor.test.ts",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 9428,
       "classification": "calculation",
       "classification_basis": "path-marker:torque",
@@ -14629,122 +14676,6 @@
           "tests/shared/python/test_contracts.py",
           "tests/test_src_package_import_contract.py",
           "tests/unit/test_contracts.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2595,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9b3f0281ece8e41cc7b2371ae29358fe6fc1718297799340eaae27a217757d4a",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-PYTHON-SETUP-PY-AB2D40B84F8D",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/rrt_path_planner/python/setup.py",
-      "purpose": "Setup script for Star Wars RRT Path Planner - Python Version",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "https://github.com/your-repo/star-wars-rrt-planner"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "read_readme",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "read_requirements",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "benchmarks/test_data_processor_baseline.py",
-          "src/data_processing/data_processor/python/tests/conftest.py",
-          "src/document_processing/pdf_renamer/tests/conftest.py",
-          "src/media_processing/video_processor/apps/web/test/setup.ts",
-          "src/movement_optimizer/tests/conftest.py",
-          "src/p1am_control_system/backend/tests/_power_supply_helpers.py",
-          "src/p1am_control_system/backend/tests/test_database.py",
-          "src/p1am_control_system/backend/tests/test_read_auth.py",
-          "src/p1am_control_system/backend/tests/test_temperature_controller.py",
-          "src/p1am_control_system/backend/tests/test_temperature_models.py",
-          "src/p1am_control_system/frontend/src/test/setup.ts",
-          "src/pendulum_simulator/tests/test_side_panel_tabs.py",
-          "src/rate_of_closure/web/src/test/setup.ts",
-          "src/rotation_converter/web/src/test/setup.ts",
-          "src/rrt_path_planner/matlab/tests/test_system.m",
-          "src/shared/python/plot_theme/tests/test_plot_theme.py",
-          "src/shared/python/programmatic_pid/tests/test_pipeline_e2e.py",
-          "src/shared/python/sidekick/tests/conftest.py",
-          "src/shared/python/sidekick/tests/test_launcher_factory.py",
-          "src/shared/python/swing_sim/flight/tests/test_ground_transfer.py",
-          "src/shared/python/swing_sim/flight/tests/test_parity_rust_flight.py",
-          "src/web_applications/urdf_viewer/tests/conftest.py",
-          "src/web_applications/urdf_viewer/tests/test_urdf_viewer.py",
-          "tests/data_processor_io/test_rust_engine_contract.py",
-          "tests/ops/test_release_workflow.py",
-          "tests/programmatic_pid/test_controls.py",
-          "tests/programmatic_pid/test_equipment.py",
-          "tests/programmatic_pid/test_instruments.py",
-          "tests/programmatic_pid/test_streams.py",
-          "tests/programmatic_pid/test_title_block.py",
-          "tests/rate_of_closure/pyqt_flight_sample_inspector_probe.py",
-          "tests/rate_of_closure/pyqt_plot_point_inspector_probe.py",
-          "tests/rate_of_closure/pyqt_putting_sample_inspector_probe.py",
-          "tests/rate_of_closure/pyqt_simulation_scrub_probe.py",
-          "tests/rate_of_closure/test_ball_setup.py",
-          "tests/rate_of_closure/test_ball_setup_parity.py",
-          "tests/rate_of_closure/test_morris_authority_child.py",
-          "tests/rate_of_closure/test_morris_pyqt_workspace.py",
-          "tests/rate_of_closure/test_morris_workspace.py",
-          "tests/rate_of_closure/test_visualization_tab_manifest.py",
-          "tests/scientific_modeling/test_star_wars_rrt_perf.py",
-          "tests/shared/python/ai/test_onnx_preflight.py",
-          "tests/shared/python/process_calculators/test_acid_gas_dewpoint_edge_cases.py",
-          "tests/shared/python/process_calculators/test_financial_calculator_edge_cases.py",
-          "tests/shared/python/process_calculators/test_syngas_compression_edge_cases.py",
-          "tests/shared/python/process_calculators/test_syngas_water_calculator_edge_cases.py",
-          "tests/shared/python/process_calculators/test_syngas_water_overflow.py",
-          "tests/shared/python/signal_toolkit/test_widget_mixins.py",
-          "tests/test_debug_utils.py",
-          "tests/test_dry_compliance.py",
-          "tests/test_integration_test_helpers.py",
-          "tests/test_path_setup.py",
-          "tests/test_test_utils.py",
-          "tests/unit/sidekick/test_sidekick_f4_collaborators.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "tests/data_processor_io/test_rust_engine_contract.py",
-          "tests/scientific_modeling/test_star_wars_rrt_perf.py"
         ]
       }
     }
