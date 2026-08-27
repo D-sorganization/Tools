@@ -3,6 +3,434 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 13195,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d59532593896bfc5a51e4af503ea3997bd181146767150d61373b8b3644da415",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-REPORTING-TAB-PY-134FDFD55363",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/reporting_tab.py",
+      "purpose": "Agentic Reporting and Summarization Engine tab for Sidekick.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://github.com/D-sorganization/Tools/issues/2743"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SidekickReportingWidget",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_reporting_tab",
+            "signature": "sidebar: Any"
+          }
+        ],
+        "test_paths": [
+          "tests/unit/sidekick/test_reporting_tab_context_gathering.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 19283,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "493a7cf92fc77777f9df2e71e02adfa4f8b95c06e880351d3464468200418c6d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-RUNTIME-TAB-SETTINGS-PY-30D3FA2ECAB3",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/runtime_tab_settings.py",
+      "purpose": "Settings descriptors + panels for the Terminal, Python REPL, Workspace tabs.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AppearanceSettingsPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PythonReplSettingsPanel",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PYTHON_REPL_TAB_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PYTHON_REPL_TAB_SETTINGS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TERMINAL_TAB_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TERMINAL_TAB_SETTINGS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "WORKSPACE_TAB_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "WORKSPACE_TAB_SETTINGS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "apply_appearance_to_tab",
+            "signature": "sidebar: Any, tab_id: str, appearance: PanelAppearance"
+          },
+          {
+            "kind": "function",
+            "name": "build_python_repl_settings_panel",
+            "signature": "sidebar: Any, tab_id: str"
+          },
+          {
+            "kind": "function",
+            "name": "build_terminal_settings_panel",
+            "signature": "sidebar: Any, tab_id: str"
+          },
+          {
+            "kind": "function",
+            "name": "build_workspace_settings_panel",
+            "signature": "sidebar: Any, tab_id: str"
+          },
+          {
+            "kind": "function",
+            "name": "parse_startup_rows",
+            "signature": "rows: Sequence[tuple[str, str, bool]]"
+          }
+        ],
+        "test_paths": [
+          "tests/unit/sidekick/test_runtime_tab_settings.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5592,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2f5bdc2f8a5323f9374df8a087beccbc923e4aea97964f6d7010f0f0eac23133",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-RUNTIME-TABS-PY-C7BD5A67C4AD",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/runtime_tabs.py",
+      "purpose": "Embedded Sidekick runtime tab builders.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "build_calculator_tab",
+            "signature": "sidebar: Any"
+          },
+          {
+            "kind": "function",
+            "name": "build_chat_tab",
+            "signature": "sidebar: Any"
+          },
+          {
+            "kind": "function",
+            "name": "build_notes_tab",
+            "signature": "sidebar: Any"
+          },
+          {
+            "kind": "function",
+            "name": "build_python_repl_tab",
+            "signature": "sidebar: Any"
+          },
+          {
+            "kind": "function",
+            "name": "build_terminal_tab",
+            "signature": "sidebar: Any"
+          },
+          {
+            "kind": "re-export",
+            "name": "PythonReplWidget",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SIDEKICK_CHAT_RUNTIME_OBJECT_NAME",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SIDEKICK_CHAT_STATUS_OBJECT_NAME",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SIDEKICK_NOTES_OBJECT_NAME",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SIDEKICK_PYTHON_REPL_OBJECT_NAME",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SIDEKICK_TERMINAL_OBJECT_NAME",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SetVariable",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SidekickNotesWidget",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SidekickPythonReplWidget",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6152,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "50ffc458fb1b022572ef6ae9643498d61821bba360fca5af340b433701167c35",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-SETTINGS-PY-0FC81A1E0772",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/settings.py",
+      "purpose": "Backend contracts for per-tab Sidekick settings.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SidebarTabSettingsDescriptor",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SidebarTabSettingsSchema",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SidebarTabSettingsStore",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TabSettingsDefinition",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/p1am_control_system/backend/tests/test_settings.py",
+          "tests/unit/sidekick/test_chat_settings.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5524,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7c0cbdbaeda54d76ce82fcb9c3bd860c016f07725d4666148179b286730c94b2",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-SHELL-DISCOVERY-PY-0081732DBC80",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/shell_discovery.py",
+      "purpose": "Shell discovery helpers for the Sidekick OS Terminal (UpstreamDrift #5617).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ShellDescriptor",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "discover_shells",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/unit/sidekick/test_shell_discovery.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 31488,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -16497,6 +16925,101 @@
       }
     },
     {
+      "authority_status": "provisional",
+      "bytes_lf": 14114,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "46ba9dd61eafabd075a91bd53d59eac93a1a0affa790376f99720e41054adf19",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-DISPERSION-PY-AA9FBB7AC22A",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/putting/dispersion.py",
+      "purpose": "Putt dispersion outcomes, summary, and wire (epic #4800, P5).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PuttDispersionReport",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PuttDispersionSummary",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PuttOutcome",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PuttVariableDeclaration",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PUTT_DISPERSION_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "putt_dispersion_from_json",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "putt_dispersion_to_json",
+            "signature": "report: PuttDispersionReport"
+          },
+          {
+            "kind": "function",
+            "name": "summarize_putt_outcomes",
+            "signature": "outcomes: tuple[PuttOutcome, ...]"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/putting/tests/test_variation.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "not-applicable",
       "bytes_lf": 16756,
       "classification": "non-calculation",
@@ -16681,6 +17204,110 @@
           "mm",
           "ms",
           "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 22152,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "34681d1119d2253fc666ba3761cb12e294a2fc060f4b0556c3f27235fcbf297e",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-RESULT-WIRE-PY-532851184369",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/putting/result_wire.py",
+      "purpose": "Putt result wire ``swing_sim.putting_result/2`` (epic #4800, P5).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PuttingResultDocument",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PuttingResultProvenance",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PuttingResultV1Archive",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PUTTING_RESULT_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PUTTING_RESULT_FORMAT_V1",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PUTTING_RESULT_KERNEL",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "putting_result_document",
+            "signature": "launch: PuttLaunch, result: PuttResult, provenance: PuttingResultProvenance, *, hole_distance_m: float"
+          },
+          {
+            "kind": "function",
+            "name": "putting_result_from_json",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "putting_result_to_json",
+            "signature": "document: PuttingResultDocument"
+          },
+          {
+            "kind": "function",
+            "name": "putting_result_v1_archive_from_json",
+            "signature": "text: str"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/putting/tests/test_result_wire.py"
+        ],
+        "unit_mentions": [
           "s"
         ],
         "validation_paths": []
@@ -16935,6 +17562,126 @@
         "unit_mentions": [
           "g",
           "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 17119,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b10c57c787852355bbfd1b592fd13c4368eb84d173f3a4ba8b3f77da8601d983",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-VARIATION-PY-A747D00331DE",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/putting/variation.py",
+      "purpose": "Monte-Carlo putting dispersion over stroke + green reading (P5, #4800).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PuttScenario",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PuttStroke",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PuttVariationPlan",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CATEGORY_PUTTING",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PUTT_AIM_KEY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PUTT_FACE_KEY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PUTT_PATH_KEY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PUTT_SPEED_KEY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PUTT_STRIKE_TOE_KEY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PUTT_VARIABLE_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "evaluate_putt",
+            "signature": "scenario: PuttScenario"
+          },
+          {
+            "kind": "function",
+            "name": "putt_outcome",
+            "signature": "document: PuttingResultDocument"
+          },
+          {
+            "kind": "function",
+            "name": "run_putt_dispersion",
+            "signature": "scenario: PuttScenario, plan: PuttVariationPlan"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/putting/tests/test_variation.py",
+          "tests/shared/python/golf_club/test_putter_fitting.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "m/s",
+          "mm",
           "s"
         ],
         "validation_paths": []
@@ -17533,656 +18280,6 @@
         "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 11718,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6df71a8ae08966ac066cab416a650a8c0ca6be49c91c9ba1b2df89938f0c0da3",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-ROTATING-BASE-CONTRACT-PY-2260CD84D343",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/rotating_base/contract.py",
-      "purpose": "Fail-closed wire contract for the qualified rotating-base study.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "RotatingBaseCase",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RotatingBaseCaseMetrics",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RotatingBaseProviderResult",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RotatingBaseStudy",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SameStateKillswitch",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "EXPECTED_UPSTREAM_SOURCE_REVISION",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KILLSWITCH_CHANNELS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MATCHING_RULES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MODEL_TIER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SCHEMA_ID",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SCHEMA_VERSION",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_contract.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_contract.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 8008,
-      "classification": "calculation",
-      "classification_basis": "path-marker:dynamics",
-      "content_sha256_lf": "e5a9d455e499df478bac95999eceba165b678a08d628514d722a005dd9b98288",
-      "family": "swing-simulation-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-ROTATING-BASE-DYNAMICS-PY-E1A402D88CFB",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/rotating_base/dynamics.py",
-      "purpose": "Constrained mechanics for the rotating-base, two-hand club tier.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "control_generalized_force",
-            "signature": "control: TorsoTwoHandControl"
-          },
-          {
-            "kind": "function",
-            "name": "distal_segment_kinetic_energy",
-            "signature": "state: RotatingBaseState, params: RotatingBaseParams"
-          },
-          {
-            "kind": "function",
-            "name": "mass_matrix",
-            "signature": "q: object, params: RotatingBaseParams"
-          },
-          {
-            "kind": "function",
-            "name": "mechanical_energy",
-            "signature": "state: RotatingBaseState, params: RotatingBaseParams"
-          },
-          {
-            "kind": "function",
-            "name": "potential_energy",
-            "signature": "q: object, params: RotatingBaseParams"
-          },
-          {
-            "kind": "function",
-            "name": "solve_constrained_dynamics",
-            "signature": "state: RotatingBaseState, control: TorsoTwoHandControl, params: RotatingBaseParams"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 8862,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e4ebbbe4fb8592c2810911b98e350bd0bc8b45752147995528cd208ba7eed1cd",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-ROTATING-BASE-INTEGRATION-PY-B62F45689787",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/rotating_base/integration.py",
-      "purpose": "Constraint-projected integration for the rotating-base tier.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "initial_state",
-            "signature": "params: RotatingBaseParams, *, torso_angle_rad: float=0.0, torso_rate_rad_s: float=0.0, club_rate_rad_s: float=0.0"
-          },
-          {
-            "kind": "function",
-            "name": "rollout",
-            "signature": "initial: RotatingBaseState, control_law: ControlLaw, params: RotatingBaseParams, config: RotatingBaseConfig"
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/notes/test_integration.py",
-          "tests/shared/python/plot_theme/test_integration.py",
-          "tests/unit/ai/integrations/github_mcp/test_integration.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 4702,
-      "classification": "calculation",
-      "classification_basis": "path-marker:kinematic",
-      "content_sha256_lf": "df728d7d44e7acee8da4b6f7c1102932f839f6f6f840b4549147c8b0dacbbff0",
-      "family": "swing-simulation-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-ROTATING-BASE-KINEMATICS-PY-7ABB3E75E6DD",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/rotating_base/kinematics.py",
-      "purpose": "Planar bilateral-loop kinematics for the rotating-base tier.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "constraint_jacobian",
-            "signature": "q: object, params: RotatingBaseParams"
-          },
-          {
-            "kind": "function",
-            "name": "constraint_vector",
-            "signature": "q: object, params: RotatingBaseParams"
-          },
-          {
-            "kind": "function",
-            "name": "kinematics",
-            "signature": "q: object, params: RotatingBaseParams"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2097,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0fce261d157e34365937d57c0ea5cff2c62c7839fc21a0d59dc7fb3d741199aa",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-ROTATING-BASE-LOADER-PY-D6AFC7663F4E",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/rotating_base/loader.py",
-      "purpose": "Qualified loading for the source-pinned rotating-base study.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "EXPECTED_STUDY_SHA256",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "QUALIFIED_STUDY_RESOURCE_NAME",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "load_embedded_qualified_study",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "load_qualified_study",
-            "signature": "path: str | Path"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 13584,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "1ef76d4a5b18397c481d3aca0bb52fd660dc0382f3347db1dac864570b420dd1",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-ROTATING-BASE-PROVIDER-PY-5FC5CBFAAC88",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/rotating_base/provider.py",
-      "purpose": "Registered execution provider for rotating-base transfer diagnostics.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "RotatingBaseRunRequest",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RotatingBaseRunResult",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RotatingBaseRunTrace",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "REGISTERED_TORSO_RATES_RAD_S",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "RUN_SCHEMA_ID",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "RUN_SCHEMA_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "registered_run_json",
-            "signature": "result: RotatingBaseRunResult"
-          },
-          {
-            "kind": "function",
-            "name": "registered_run_mapping",
-            "signature": "result: RotatingBaseRunResult"
-          },
-          {
-            "kind": "function",
-            "name": "run_registered_case",
-            "signature": "request: RotatingBaseRunRequest"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6404,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c1ecd848f589d06533d4fdc106ec97e4488db0f784f7cd86de047a74d40a74e3",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-ROTATING-BASE-TYPES-PY-0FAC16A61553",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/rotating_base/types.py",
-      "purpose": "Typed state and result contracts for rotating-base dynamics.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "DynamicsSolution",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RotatingBaseConfig",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RotatingBaseParams",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RotatingBaseState",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RotatingBaseTrace",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TorsoTwoHandControl",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5199,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "95c7476379c97b1f8bc83b17e9d32fbdaa91ba1f55076094882357f599b3ff49",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-RUN-CONFIG-PY-D06DFE34D505",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/run_config.py",
-      "purpose": "Typed run configuration and stable IDs for shared swing dynamics.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "DoublePendulumRunConfig",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "JointLockConfig",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SwingRunMode",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DOUBLE_PENDULUM_MODEL_ID",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "DOUBLE_PENDULUM_JOINT_IDS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "LocalizedTorqueOffset",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SHOULDER_JOINT_ID",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WRIST_JOINT_ID",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/tests/test_localized_torque.py",
-          "src/shared/python/swing_sim/tests/test_prescribed_run.py",
-          "src/shared/python/swing_sim/tests/test_torque_library_export.py",
-          "tests/rate_of_closure/test_localized_torque_variation.py",
-          "tests/rate_of_closure/test_morris_authority_contracts.py",
-          "tests/rate_of_closure/test_prescribed_kinetics_presentation.py",
-          "tests/rate_of_closure/test_torque_profile_ui.py",
-          "tests/rate_of_closure/test_torque_run_history.py",
-          "tests/rate_of_closure/test_variation_complete_trial_record.py",
-          "tests/rate_of_closure/test_workspace_torque_session.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "tests/rate_of_closure/test_morris_authority_contracts.py"
-        ]
       }
     }
   ],

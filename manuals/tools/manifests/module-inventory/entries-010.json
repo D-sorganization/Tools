@@ -9532,6 +9532,149 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 6232,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5f8095cf6dde23410e7e1bf750c0ad2e4c2cb5de5b74012ff2fb2e4119c20758",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-PUTTINGDISPERSION-TEST-TS-382C37A08052",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/puttingDispersion.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13094,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b0bd494a77e3db39b0e09cd31f4d2145b566f0b295798607a8318cccb762606c",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-PUTTINGDISPERSION-TS-C4427761A344",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/puttingDispersion.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "PUTT_DISPERSION_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "PuttDispersionReport",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "PuttDispersionSummary",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "PuttOutcome",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "PuttVariableDeclaration",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "finiteSampleStandardDeviation",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "percentile",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "puttDispersionFromJson",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "puttDispersionToJson",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "summarizePuttOutcomes",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "deg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 15429,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -9796,6 +9939,174 @@
         "unit_mentions": [
           "s"
         ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10646,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3d91d522c19304151c51d44a4a5c8f619f70e2ce9c3d95b1ce4554ec776330ed",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-PUTTINGRESULTWIRE-TEST-TS-D5B8B3D280D6",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/puttingResultWire.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 19732,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "94659f7e7e119d789cfc7579a357d0f747a0331853a0147992aa0f99fd081fbb",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-PUTTINGRESULTWIRE-TS-451F6C887B41",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/puttingResultWire.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "PUTTER_SOURCES",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "PUTTING_RESULT_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "PUTTING_RESULT_FORMAT_V1",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "PUTTING_RESULT_KERNEL",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "PutterSource",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "PuttingResultDocument",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "PuttingResultProvenance",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "PuttingResultV1Archive",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "STROKE_SOURCES",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "StrokeSource",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "puttingResultDocument",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "puttingResultFromJson",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "puttingResultProvenance",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "puttingResultToJson",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "puttingResultV1ArchiveFromJson",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "requirePuttingResultDocument",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
         "validation_paths": []
       }
     },
@@ -13513,388 +13824,6 @@
           {
             "kind": "export",
             "name": "WebSourceKind",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 3934,
-      "classification": "calculation",
-      "classification_basis": "path-marker:solver",
-      "content_sha256_lf": "b96e3b9dcbe11197f46ea72a3898e8bb2c20a7528b1596c52068ebb8827be2b8",
-      "family": "rate-of-closure-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-SOLVER-TEST-TS-8EB637D0FF43",
-      "language": "typescript",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/model/solver.test.ts",
-      "purpose": null,
-      "review_status": "review-required",
-      "risk_tags": [
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [
-          "m/s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 12694,
-      "classification": "calculation",
-      "classification_basis": "path-marker:solver",
-      "content_sha256_lf": "97a6310ae6276d8fb03826569ee497b5437b17fe424fca79fd9f9d454cb924e4",
-      "family": "rate-of-closure-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-SOLVER-TS-ED2BBEBD1385",
-      "language": "typescript",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/model/solver.ts",
-      "purpose": null,
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "AchievedTs",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "GoalTermTs",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "SOLVER_GOAL_KEYS",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "SOLVER_VARIABLE_KEYS",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "SolverGoalKey",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "SolverGoalTs",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "SolverResultTs",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "SolverVariableKey",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "VARIABLE_DEFAULTS",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "VariablePartitionTs",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "achievedQuantities",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "assembleVariables",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "solveGoals",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "validateInputs",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/impact/tests/test_solver.py"
-        ],
-        "unit_mentions": [
-          "m/s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6001,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3363dff0c8a527af44d8e593a6cab33695f2f3deb77ed8aac3ae57aaac5f6a26",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-SPATIALTARGET-TEST-TS-1318FBFF6389",
-      "language": "typescript",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/model/spatialTarget.test.ts",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 11860,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "53b9ec38ea3737eb6d2e1d8e050fb79ced7c682466f3b377314b86595fe355bd",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-SPATIALTARGET-TS-744DF21E60AB",
-      "language": "typescript",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/model/spatialTarget.ts",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "AcceptanceGeometryTs",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "BoxToleranceTs",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "ElevationSource",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "SpatialTargetInput",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "SpatialTargetKind",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "SpatialTargetMissTs",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "SpatialTargetTs",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "SphereToleranceTs",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "SurfaceCircleToleranceTs",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "SurfaceCorridorToleranceTs",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "TargetFrame",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "TargetPointTs",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "Vector3",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "boxTolerance",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "createSpatialTarget",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "spatialTargetHalfExtents",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "spatialTargetMiss",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "spatialTargetMissFromFrame",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "sphereTolerance",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "surfaceCircleTolerance",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "surfaceCorridorTolerance",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "targetPointFromCanonicalApp",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "targetPointFromFrame",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "targetPointInFrame",
             "signature": null
           }
         ],
