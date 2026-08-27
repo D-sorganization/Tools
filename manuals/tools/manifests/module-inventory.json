@@ -203,7 +203,7 @@
   },
   "shards": [
     {
-      "content_sha256_lf": "4559b806db56508a5aa3c14efc569ce5379945afb1b9269743f5d7b6188b93fc",
+      "content_sha256_lf": "ccabed15f9c13b71920ca34fa9cb95db8a144ee4d9941bfd8e1ad1e2eb84039f",
       "entry_count": 200,
       "first_path": ".docker/entrypoint.sh",
       "last_path": "scripts/check_minimum_test_contract.py",
@@ -323,42 +323,42 @@
       "shard_index": 14
     },
     {
-      "content_sha256_lf": "37247efbf7fc23aa3ce9b841ce4cf97330a727ad13d095b50086bbc523f11509",
+      "content_sha256_lf": "d211df4b9ed654fb01a388077002fe74986b20bac25932b1f2954a29caa4fbf7",
       "entry_count": 200,
       "first_path": "src/shared/python/sidekick/ui/tools_sidebar/sidebar.py",
-      "last_path": "src/shared/python/swing_sim/solver/__init__.py",
+      "last_path": "src/shared/python/swing_sim/run_config.py",
       "path": "manuals/tools/manifests/module-inventory/entries-015.json",
       "shard_index": 15
     },
     {
-      "content_sha256_lf": "80369c3ae430496d86efd81859e93cc3a40a00c34ef1018e24bb7cdca067a54a",
+      "content_sha256_lf": "13aa516a11273e1c4b5c6f5d91907563f619670d08b07803871a862784081112",
       "entry_count": 200,
-      "first_path": "src/shared/python/swing_sim/solver/_target_validation.py",
-      "last_path": "src/urdf_builder_gui/gui_registration.py",
+      "first_path": "src/shared/python/swing_sim/solver/__init__.py",
+      "last_path": "src/urdf_builder_gui/conftest.py",
       "path": "manuals/tools/manifests/module-inventory/entries-016.json",
       "shard_index": 16
     },
     {
-      "content_sha256_lf": "6111f06cb514603e67ec00f77a859818302076412ab9b1e393efc5ce80840242",
-      "entry_count": 90,
-      "first_path": "src/urdf_builder_gui/launch_pyqt6.py",
+      "content_sha256_lf": "26dfc359956510304ef3f7939c15ddcec46a63471cf9fa166f58d7d2b21dade3",
+      "entry_count": 91,
+      "first_path": "src/urdf_builder_gui/gui_registration.py",
       "last_path": "wave_solver.py",
       "path": "manuals/tools/manifests/module-inventory/entries-017.json",
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "d5678a29608617b7709c3a378991159d2afb729eb5851a2870658b0434ddae47",
+  "source_tree_sha256": "3526688a5cfe4ecfca314975e460c9b5c170a887c77d9eb058f197bd8c7abaef",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
-      "not-applicable": 2659,
+      "not-applicable": 2660,
       "provisional": 830
     },
     "blocked_count": 1,
     "calculation_count": 830,
     "classification_counts": {
       "calculation": 830,
-      "non-calculation": 2660
+      "non-calculation": 2661
     },
     "family_counts": {
       "control-systems-calculation": 6,
@@ -380,14 +380,14 @@
       "shared-tools-non-calculation": 1021,
       "signal-processing-calculation": 28,
       "swing-simulation-calculation": 60,
-      "swing-simulation-non-calculation": 145
+      "swing-simulation-non-calculation": 146
     },
-    "module_count": 3490,
-    "non_calculation_count": 2660,
+    "module_count": 3491,
+    "non_calculation_count": 2661,
     "provisional_count": 830,
     "review_status_counts": {
       "blocked": 1,
-      "inventory-baseline": 2659,
+      "inventory-baseline": 2660,
       "review-required": 830
     }
   }

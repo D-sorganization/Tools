@@ -3,6 +3,244 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 2980,
+      "classification": "calculation",
+      "classification_basis": "path-marker:solver",
+      "content_sha256_lf": "41c562d796330489b3f3220ff01a485bc9bb71e60c4abd5079544a87b7a32bee",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-SOLVER-INIT-PY-D9956C1464AB",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/solver/__init__.py",
+      "purpose": "Impact-parameter solver subpackage of ``swing_sim`` (epic #4103, #4109).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "AcceptanceGeometry",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BoxTolerance",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CancelledError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DELIVERY_VARIABLE_DEFAULTS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ElevationSource",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "EvaluationConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GOAL_QUANTITIES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GoalTerm",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactGoal",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LEGACY_GROUND_SOURCE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ProgressCallback",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ProgressReport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SPATIAL_TARGET_SCHEMA",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SPATIAL_TARGET_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SWING_DERIVED_VARIABLES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SWING_VARIABLE_DEFAULTS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SolverResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SpatialTarget",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SphereTolerance",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StartSummary",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SurfaceCircleTolerance",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SurfaceCorridorTolerance",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TargetFrame",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TargetKind",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TargetMiss",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TargetPoint",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TargetRegion",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "VariablePartition",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "achieved_quantities",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "detect_stall",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "evaluate_candidate",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "residuals",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "solve",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "spatial_target_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "spatial_target_from_json_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "spatial_target_to_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "spatial_target_to_json_dict",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 2620,
       "classification": "calculation",
       "classification_basis": "path-marker:solver",
@@ -15393,65 +15631,6 @@
           "tests/unit/lower_body_model/conftest.py",
           "tests/unit/sidekick/conftest.py",
           "tests/vessel_drafter/conftest.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 963,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "24d257d203f7480d7fa5fc1b060082d38703b0b7da505c7e58a1297ddfcb2ac1",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-URDF-BUILDER-GUI-GUI-REGISTRATION-PY-541C21950445",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/urdf_builder_gui/gui_registration.py",
-      "purpose": "GUI registration for Parametric URDF Builder.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "GUI_INFO",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "get_gui_info",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "tests/folder_tool/test_gui_registration.py",
-          "tests/rate_of_closure/test_gui_registration.py"
         ],
         "unit_mentions": [],
         "validation_paths": []

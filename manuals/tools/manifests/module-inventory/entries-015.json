@@ -16178,10 +16178,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3017,
+      "bytes_lf": 3345,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b72ec31cad338dbe978db3312c6d5e5414fd5097c33204b8e4994daf33fe0a88",
+      "content_sha256_lf": "d136fb95b692da37e1ccdea314ae17da8098cec8d0ef445c65941739abe13de0",
       "family": "swing-simulation-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-INIT-PY-3763F6A25399",
       "language": "python",
@@ -16299,6 +16299,11 @@
           },
           {
             "kind": "re-export",
+            "name": "UdGreenTopography",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "capture_speed_mps",
             "signature": null
           },
@@ -16319,7 +16324,17 @@
           },
           {
             "kind": "re-export",
+            "name": "green_surface_from_ud_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "green_surface_to_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "green_surface_to_ud_json",
             "signature": null
           },
           {
@@ -16709,7 +16724,8 @@
           }
         ],
         "test_paths": [
-          "src/shared/python/swing_sim/putting/tests/test_roll.py"
+          "src/shared/python/swing_sim/putting/tests/test_roll.py",
+          "src/shared/python/swing_sim/putting/tests/test_ud_adapter.py"
         ],
         "unit_mentions": [
           "deg",
@@ -16801,6 +16817,74 @@
           "deg",
           "g",
           "m/s^2",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 14995,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e052f7b03daa3c47fe5299b8ad4ed9840c207d9db658e7971f9e677248ba5168",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-UD-ADAPTER-PY-2E70242571A2",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/putting/ud_adapter.py",
+      "purpose": "UpstreamDrift ``putting_green`` topography adapter (#4800 P9).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "UdGreenTopography",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "green_surface_from_ud_json",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "green_surface_to_ud_json",
+            "signature": "surface: GreenSurface, *, hole_position_m: tuple[float, float] | None=None, extent_m: tuple[float, float] | None=None, spacing_m: float | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/putting/tests/test_ud_adapter.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "m/s",
           "s"
         ],
         "validation_paths": []
@@ -18049,244 +18133,6 @@
         "validation_paths": [
           "tests/rate_of_closure/test_morris_authority_contracts.py"
         ]
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 2980,
-      "classification": "calculation",
-      "classification_basis": "path-marker:solver",
-      "content_sha256_lf": "41c562d796330489b3f3220ff01a485bc9bb71e60c4abd5079544a87b7a32bee",
-      "family": "swing-simulation-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-SOLVER-INIT-PY-D9956C1464AB",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/solver/__init__.py",
-      "purpose": "Impact-parameter solver subpackage of ``swing_sim`` (epic #4103, #4109).",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "AcceptanceGeometry",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "BoxTolerance",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CancelledError",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "DELIVERY_VARIABLE_DEFAULTS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ElevationSource",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "EvaluationConfig",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "GOAL_QUANTITIES",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "GoalTerm",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ImpactGoal",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "LEGACY_GROUND_SOURCE",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ProgressCallback",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ProgressReport",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SPATIAL_TARGET_SCHEMA",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SPATIAL_TARGET_SCHEMA_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SWING_DERIVED_VARIABLES",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SWING_VARIABLE_DEFAULTS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SolverResult",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SpatialTarget",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SphereTolerance",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "StartSummary",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SurfaceCircleTolerance",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SurfaceCorridorTolerance",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TargetFrame",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TargetKind",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TargetMiss",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TargetPoint",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TargetRegion",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "VariablePartition",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "achieved_quantities",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "detect_stall",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "evaluate_candidate",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "residuals",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "solve",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "spatial_target_from_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "spatial_target_from_json_dict",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "spatial_target_to_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "spatial_target_to_json_dict",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
       }
     }
   ],
