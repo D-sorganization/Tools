@@ -72,7 +72,7 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   PR #4782/#4765 R12.3 is active on `feat/4142-noise-response`: its immutable field puts
   paired declared-scale Cartesian response beside matched and all-eligible RMS
   scatter, counts, adequacy, provenance, bounded resume state, and plot rows; the
-  matrix remains two verified / ten unavailable. The repair passes CI-pinned MyPy and detect-secrets; SPEC 1.18.53 is unchanged scientifically and tests are not human validation.
+  matrix remains two verified / ten unavailable. The repair passes MyPy, secrets, and assertion gates; SPEC 1.18.53 is unchanged scientifically and tests are not human validation.
 
 ## Must-Read Architecture Pointers
 
