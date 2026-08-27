@@ -2735,6 +2735,7 @@
           "src/shared/python/swing_sim/ground/tests/test_regional_plan_wire.py",
           "src/shared/python/swing_sim/ground/tests/test_regional_surfaces.py",
           "src/shared/python/swing_sim/model_interchange/tests/test_model_interchange.py",
+          "src/shared/python/swing_sim/putting/tests/test_stroke_interchange.py",
           "src/shared/python/swing_sim/solver/tests/test_goals.py",
           "src/shared/python/swing_sim/solver/tests/test_solve.py",
           "src/shared/python/swing_sim/solver/tests/test_spatial_targets.py",

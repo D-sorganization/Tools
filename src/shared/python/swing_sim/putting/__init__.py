@@ -22,7 +22,10 @@ SLIDING/ROLLING mode machine follows ``ball_roll_physics.py``. All
 derivations here are re-done from first principles in the module
 docstrings (this package shares no code with UpstreamDrift).
 :mod:`.ud_adapter` (#4800 P9) is the runtime-free interchange seam
-with UpstreamDrift's ``putting_green`` topography files.
+with UpstreamDrift's ``putting_green`` topography files, and
+:mod:`.stroke_interchange` + :mod:`.stroke_adapters` (#4800 P4) are the
+``delivery_interchange`` sibling that turns a recorded putter-head
+stroke into the impact solve's inputs.
 
 Putter specs: :data:`~.impact.MINIMAL_PUTTERS` are deliberately
 minimal H3-local specs. The reconciliation with the H1 club-library
@@ -64,6 +67,24 @@ from .roll import (
     solve_skid,
     stimp_to_rolling_mu,
 )
+from .stroke_adapters import (
+    putting_stroke_from_drake_json,
+    putting_stroke_from_mujoco_json,
+    putting_stroke_from_opensim_sto,
+)
+from .stroke_interchange import (
+    PUTTING_STROKE_FORMAT,
+    PuttingStroke,
+    StrokePutt,
+    StrokeSample,
+    StrokeStrike,
+    impact_sample_index,
+    putt_from_stroke,
+    putting_stroke_from_json,
+    putting_stroke_to_json,
+    strike_from_stroke,
+    strike_parameters,
+)
 from .surface import (
     GREEN_SURFACE_FORMAT,
     GreenSurface,
@@ -85,6 +106,7 @@ __all__ = [
     "GREEN_SURFACE_FORMAT",
     "HOLE_RADIUS_M",
     "MINIMAL_PUTTERS",
+    "PUTTING_STROKE_FORMAT",
     "STIMP_RELEASE_SPEED_MPS",
     "CaptureModel",
     "GreenConditions",
@@ -94,7 +116,11 @@ __all__ = [
     "PuttLaunch",
     "PuttResult",
     "PutterSpec",
+    "PuttingStroke",
     "SkidSolution",
+    "StrokePutt",
+    "StrokeSample",
+    "StrokeStrike",
     "UdGreenTopography",
     "capture_speed_mps",
     "clubhead_speed_from_backstroke",
@@ -103,6 +129,13 @@ __all__ = [
     "green_surface_from_ud_json",
     "green_surface_to_json",
     "green_surface_to_ud_json",
+    "impact_sample_index",
+    "putt_from_stroke",
+    "putting_stroke_from_drake_json",
+    "putting_stroke_from_json",
+    "putting_stroke_from_mujoco_json",
+    "putting_stroke_from_opensim_sto",
+    "putting_stroke_to_json",
     "roll_out_distance",
     "roll_time_s",
     "rolling_mu_to_stimp",
@@ -110,4 +143,6 @@ __all__ = [
     "simulate_putt_on_surface",
     "solve_skid",
     "stimp_to_rolling_mu",
+    "strike_from_stroke",
+    "strike_parameters",
 ]
