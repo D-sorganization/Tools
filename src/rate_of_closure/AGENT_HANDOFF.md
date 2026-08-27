@@ -67,7 +67,8 @@ ledger is 24 verified / 7 partial. A clean commit-qualified wheel loaded all 31
 packaged capabilities and verified 76 immutable web assets. R14.6 and six other
 gaps keep #4142 open. This verifies execution semantics, not anatomy, human
 validity, or coaching. The visual co-change guard excludes test-only TSX
-modules but remains fail-closed for shipped React surfaces.
+modules but remains fail-closed for shipped React surfaces. The standalone
+public mirror consumes a byte-identical governed vendored authority.
 
 PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
 the initial React/PyQt visibility, accessibility, performance, and baseline

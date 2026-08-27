@@ -48,19 +48,22 @@
       "requirement_id": "R10.3",
       "requirement": "Target a whole run or a supported time or spatial window.",
       "status": "verified",
-      "rationale": "Issue #4756 replaces implicit locus inference with one packaged, cross-runtime execution-capability authority covering all 31 known shared and Rate extension variables. Nineteen inputs bind named whole-run or localized adapters; twelve retain explicit unsupported reasons. Python and TypeScript reject registry drift, malformed records, undeclared or forbidden loci, inexact topological joint IDs, and out-of-run windows. The two localized torque inputs execute required half-open windows at exact control joints, while spatial swing trace IDs remain distinct and no unsupported anatomical interpretation is implied.",
+      "rationale": "Issue #4756 replaces implicit locus inference with one packaged, cross-runtime execution-capability authority covering all 31 known shared and Rate extension variables. Nineteen inputs bind named whole-run or localized adapters; twelve retain explicit unsupported reasons. Python and TypeScript reject registry drift, malformed records, undeclared or forbidden loci, inexact topological joint IDs, and out-of-run windows. The standalone web mirror consumes a byte-identical governed copy without importing above its root. The two localized torque inputs execute required half-open windows at exact control joints, while spatial swing trace IDs remain distinct and no unsupported anatomical interpretation is implied.",
       "evidence_files": [
         "src/rate_of_closure/locus_execution_capabilities.v1.json",
         "src/rate_of_closure/variation/locus_execution_capabilities.py",
         "src/rate_of_closure/variation/request_builder.py",
         "src/rate_of_closure/web/src/model/locusExecutionCapabilities.ts",
+        "src/rate_of_closure/web/src/vendored/locus_execution_capabilities.v1.json",
+        "src/rate_of_closure/web/src/vendored/vendoredSync.test.ts",
         "tests/rate_of_closure/test_locus_execution_capabilities.py",
         "tests/rate_of_closure/test_localized_torque_variation.py",
+        "tests/rate_of_closure/test_web_vendored_sync.py",
         "docs/audits/rate_of_closure_r10_3_execution_capabilities.v1.json"
       ],
       "validation_commands": [
-        "python -m pytest -n 0 -q tests/rate_of_closure/test_locus_execution_capabilities.py tests/rate_of_closure/test_localized_torque_variation.py tests/rate_of_closure/test_variation_simulation_request.py tests/rate_of_closure/test_epic_4142_requirement_evidence.py",
-        "cd src/rate_of_closure/web && npm test -- --run locusExecutionCapabilities variationV2 variationSwingEnsemble regionalGroundVariationWorkspace"
+        "python -m pytest -n 0 -q tests/rate_of_closure/test_locus_execution_capabilities.py tests/rate_of_closure/test_localized_torque_variation.py tests/rate_of_closure/test_variation_simulation_request.py tests/rate_of_closure/test_web_vendored_sync.py tests/rate_of_closure/test_epic_4142_requirement_evidence.py",
+        "cd src/rate_of_closure/web && npm test"
       ],
       "remote_evidence": [
         "https://github.com/D-sorganization/Tools/issues/4756"

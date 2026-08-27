@@ -1,6 +1,6 @@
 /** Strict browser consumer of the packaged locus-execution authority. */
 
-import rawContract from "../../../locus_execution_capabilities.v1.json";
+import rawContract from "../vendored/locus_execution_capabilities.v1.json";
 
 export type TimeWindowPolicy = "forbidden" | "required_half_open_seconds";
 export type PointLocusPolicy = "forbidden" | "required_exact_topological";

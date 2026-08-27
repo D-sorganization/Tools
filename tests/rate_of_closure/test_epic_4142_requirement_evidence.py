@@ -193,6 +193,13 @@ def test_r10_3_is_verified_by_exhaustive_cross_runtime_capabilities() -> None:
         ),
         "implementation_issue": 4756,
         "authority": "src/rate_of_closure/locus_execution_capabilities.v1.json",
+        "standalone_web_mirror": (
+            "src/rate_of_closure/web/src/vendored/locus_execution_capabilities.v1.json"
+        ),
+        "mirror_drift_gates": [
+            "src/rate_of_closure/web/src/vendored/vendoredSync.test.ts",
+            "tests/rate_of_closure/test_web_vendored_sync.py",
+        ],
         "registered_variable_count": 31,
         "supported_by_adapter": {
             "global_simulation_value/v1": 11,

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import rawContract from "../../../locus_execution_capabilities.v1.json";
+import rawContract from "../vendored/locus_execution_capabilities.v1.json";
 import {
   capabilityFor,
   parseLocusExecutionContract,

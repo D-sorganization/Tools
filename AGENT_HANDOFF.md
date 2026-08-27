@@ -70,7 +70,8 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   and verified 76 immutable web assets; execution semantics are not scientific
   or coaching approval. The visual co-change guard now excludes test-only TSX
   modules while retaining fail-closed evidence requirements for shipped React
-  surfaces.
+  surfaces. The standalone public mirror consumes a byte-identical governed
+  vendored copy rather than importing above `web/`.
 
 ## Must-Read Architecture Pointers
 
