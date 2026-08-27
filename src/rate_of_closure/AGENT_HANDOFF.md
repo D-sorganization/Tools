@@ -51,7 +51,7 @@ identity, missing intervals, outcomes, failure semantics, and approximate
 impact-marker error. The inherited 3-source by 4-adapter matrix has two verified
 double-pendulum cells and ten explicitly unavailable cells.
 
-#4765/R12.3 is active on `feat/4142-noise-response`. The immutable response
+PR #4782/#4765 R12.3 is active on `feat/4142-noise-response`. The immutable response
 field reports signed and magnitude paired-OAT position response per declared
 distribution standard deviation beside matched-cohort and all-eligible RMS
 scatter. It retains counts, typed adequacy and NaNs, method and policy IDs,

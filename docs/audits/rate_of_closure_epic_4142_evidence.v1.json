@@ -277,7 +277,8 @@
         "python -m pytest tests/rate_of_closure -k \"response or dispersion or variation_geometry\" -n 0 -q"
       ],
       "remote_evidence": [
-        "https://github.com/D-sorganization/Tools/issues/4765"
+        "https://github.com/D-sorganization/Tools/issues/4765",
+        "https://github.com/D-sorganization/Tools/pull/4782"
       ],
       "gaps": []
     },
