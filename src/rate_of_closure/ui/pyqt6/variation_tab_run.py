@@ -1,17 +1,24 @@
 """Generation- and worker-bound lifecycle for the PyQt Variation tab."""
 
-from PyQt6.QtWidgets import QCheckBox, QLabel, QProgressBar, QPushButton
+from PyQt6.QtWidgets import QComboBox, QLabel, QProgressBar, QPushButton
 
 from rate_of_closure.simulation import SimulationConfig
 from rate_of_closure.ui.pyqt6.variation_tab_results import (
     PreparedResultViews,
     prepare_result_views,
+    prepare_sensitivity_view,
 )
 from rate_of_closure.ui.pyqt6.variation_worker import (
     MAX_WORKER_ERROR_LENGTH,
     VariationWorker,
 )
 from rate_of_closure.ui.pyqt6.visual_state_frame import VisualStateFrame
+from rate_of_closure.variation.analysis_policy import (
+    AnalysisExecution,
+    runs_individual_analysis,
+    runs_joint_analysis,
+    validate_analysis_execution,
+)
 from rate_of_closure.variation.plot_data import (
     EnsemblePlotDataset,
     build_ensemble_plot_dataset,
@@ -42,11 +49,11 @@ class VariationTabRunMixin:
     _accepted_authority_identity: object | None
     _active_authority_identity: object | None
     _active_plan: VariationPlan | None
-    _active_compute_sensitivity: bool
+    _active_analysis_execution: AnalysisExecution
     _accepted_result_views: PreparedResultViews | None
     _accepted_plot_dataset: EnsemblePlotDataset | None
     _base_simulation_config: SimulationConfig
-    _sens_check: QCheckBox
+    _analysis_combo: QComboBox
     _run_button: QPushButton
     _cancel_button: QPushButton
     _export_csv: QPushButton
@@ -82,13 +89,14 @@ class VariationTabRunMixin:
         self._pending_ensemble_result = None
         self._active_authority_identity = authority_identity
         self._active_plan = plan
-        self._active_compute_sensitivity = self._sens_check.isChecked()
+        policy = self._analysis_execution()
+        self._active_analysis_execution = policy
         self._generation += 1
         generation = self._generation
         self._set_running(True)
         worker = VariationWorker(
             plan,
-            compute_sensitivity=self._sens_check.isChecked(),
+            analysis_execution=policy,
             base_simulation_config=self._base_simulation_config,
         )
         worker.progressed.connect(
@@ -190,9 +198,12 @@ class VariationTabRunMixin:
     ) -> None:
         if not self._accepts_worker_event(generation, owner):
             return
-        if not isinstance(dataset, VariationDataset):
+        expects_dataset = runs_joint_analysis(self._active_analysis_execution)
+        if expects_dataset != isinstance(dataset, VariationDataset):
             owner.cancel()
-            self._on_failed("Internal worker returned an invalid variation dataset.")
+            self._on_failed(
+                "Internal worker returned unexpected joint-analysis availability."
+            )
             return
         self._on_succeeded(dataset, sensitivity)
 
@@ -234,26 +245,31 @@ class VariationTabRunMixin:
         )
 
     def _on_phase(self, phase: str) -> None:
-        if phase.startswith("Sensitivity"):
-            self._progress.setRange(0, 0)
         self._status.setText(phase)
 
-    def _on_succeeded(self, dataset: VariationDataset, sensitivity: object) -> None:
+    def _on_succeeded(
+        self, dataset: VariationDataset | None, sensitivity: object
+    ) -> None:
         active_plan = self._active_plan
         if self._active_authority_identity is None or active_plan is None:
             return
-        if dataset.plan != active_plan:
+        if dataset is not None and dataset.plan != active_plan:
             self._on_failed("Result plan does not match the active variation request.")
             return
-        if self._active_compute_sensitivity != isinstance(
-            sensitivity, SensitivityResult
-        ):
+        expects_dataset = runs_joint_analysis(self._active_analysis_execution)
+        expects_sensitivity = runs_individual_analysis(self._active_analysis_execution)
+        if expects_dataset != (dataset is not None):
+            self._on_failed(
+                "Joint-analysis result availability does not match request."
+            )
+            return
+        if expects_sensitivity != isinstance(sensitivity, SensitivityResult):
             self._on_failed(
                 "Sensitivity result availability does not match the active request."
             )
             return
         pending_ensemble = self._pending_ensemble_result
-        if active_plan.mode == "swing":
+        if active_plan.mode == "swing" and expects_dataset:
             if (
                 pending_ensemble is None
                 or pending_ensemble.variation.plan != active_plan
@@ -270,13 +286,19 @@ class VariationTabRunMixin:
             sensitivity if isinstance(sensitivity, SensitivityResult) else None
         )
         try:
-            prepared_views = prepare_result_views(dataset, candidate_sensitivity)
+            if dataset is not None:
+                prepared_views = prepare_result_views(dataset, candidate_sensitivity)
+            else:
+                assert candidate_sensitivity is not None
+                prepared_views = prepare_sensitivity_view(
+                    active_plan, candidate_sensitivity
+                )
             plot_dataset = (
                 build_ensemble_plot_dataset(pending_ensemble)
                 if pending_ensemble is not None
                 else None
             )
-            if pending_ensemble is None:
+            if dataset is not None and pending_ensemble is None:
                 scalar_plot_variables(dataset)
         except Exception as exc:
             self._on_failed(f"Could not prepare accepted result visuals: {exc}")
@@ -301,16 +323,23 @@ class VariationTabRunMixin:
         self._accepted_result_views = prepared_views
         self._accepted_plot_dataset = plot_dataset
         self._pending_ensemble_result = None
-        failures = dataset.plan.n_runs - dataset.n_success
-        note = f" ({failures} runs failed)" if failures else ""
-        self._status.setText(
-            f"Done: {dataset.n_success}/{dataset.plan.n_runs} runs in "
-            f"{dataset.elapsed_s:.1f} s{note}."
-        )
+        if dataset is None:
+            self._status.setText(
+                "Done: individual one-at-a-time sensitivity completed without "
+                "a joint dataset."
+            )
+        else:
+            failures = dataset.plan.n_runs - dataset.n_success
+            note = f" ({failures} runs failed)" if failures else ""
+            self._status.setText(
+                f"Done: {dataset.n_success}/{dataset.plan.n_runs} runs in "
+                f"{dataset.elapsed_s:.1f} s{note}."
+            )
         self._accepted_authority_identity = self._active_authority_identity
         self._clear_active_authority()
         self._set_visual_event(VariationVisualEvent.SUCCEED, self._status.text())
-        self.studyCompleted.emit(dataset)  # type: ignore[attr-defined]
+        if dataset is not None:
+            self.studyCompleted.emit(dataset)  # type: ignore[attr-defined]
 
     def _on_ensemble_succeeded(self, result: SimulationEnsembleResult) -> None:
         self._pending_ensemble_result = result
@@ -371,13 +400,16 @@ class VariationTabRunMixin:
 
     def _current_authority_identity(self, plan: VariationPlan) -> object:
         return simulation_authority_identity(
-            plan, self._base_simulation_config, self._sens_check.isChecked()
+            plan, self._base_simulation_config, self._analysis_execution()
         )
+
+    def _analysis_execution(self) -> AnalysisExecution:
+        return validate_analysis_execution(self._analysis_combo.currentData())
 
     def _clear_active_authority(self) -> None:
         self._active_authority_identity = None
         self._active_plan = None
-        self._active_compute_sensitivity = False
+        self._active_analysis_execution = "both"
 
     def _clear_accepted_result(self) -> None:
         self._dataset = None

@@ -153,8 +153,8 @@ def test_r10_4_is_verified_by_revision_bound_current_main_requalification() -> N
     )
 
     assert evidence["status_counts"] == {
-        "verified": 28,
-        "partial": 3,
+        "verified": 29,
+        "partial": 2,
         "unverified": 0,
         "external_blocked": 0,
     }
@@ -212,8 +212,8 @@ def test_r10_3_is_verified_by_exhaustive_cross_runtime_capabilities() -> None:
     )
 
     assert evidence["status_counts"] == {
-        "verified": 28,
-        "partial": 3,
+        "verified": 29,
+        "partial": 2,
         "unverified": 0,
         "external_blocked": 0,
     }

@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
-    QCheckBox,
     QComboBox,
     QFormLayout,
     QFrame,
@@ -31,6 +30,7 @@ from rate_of_closure.ui.pyqt6.variation_tab_io import VariationTabIoMixin
 from rate_of_closure.ui.pyqt6.variation_tab_results import VariationTabResultsMixin
 from rate_of_closure.ui.pyqt6.variation_tab_run import VariationTabRunMixin
 from rate_of_closure.ui.pyqt6.variation_worker import VariationWorker
+from rate_of_closure.variation.analysis_policy import ANALYSIS_EXECUTIONS
 from rate_of_closure.variation.simulation_types import SimulationEnsembleResult
 from shared.python.swing_sim.flight.registry import FlightModelType
 from shared.python.swing_sim.variation import (
@@ -73,7 +73,7 @@ class VariationTab(
         self._accepted_plot_dataset = None
         self._active_authority_identity: object | None = None
         self._active_plan: VariationPlan | None = None
-        self._active_compute_sensitivity = False
+        self._active_analysis_execution = "both"
         self._base_simulation_config = SimulationConfig(
             scenario=self._scenario,
             club=get_club("Driver 10.5°"),
@@ -180,16 +180,22 @@ class VariationTab(
     def _build_run_box(self) -> QGroupBox:
         box = QGroupBox("Run")
         layout = QVBoxLayout(box)
-        self._sens_check = QCheckBox("Compute One-at-a-Time Sensitivity")
-        self._sens_check.setChecked(True)
-        self._sens_check.setToolTip(
-            "After the main batch, rerun the study once per noise row with "
-            "only that row active (paired draws) to attribute each "
-            "output's spread to its inputs. Multiplies runtime by the "
-            "number of rows + 1."
+        self._analysis_combo = QComboBox()
+        labels = {
+            "all_together": "All Enabled Together",
+            "individual": "Each Enabled Individually (OAT)",
+            "both": "Both",
+        }
+        for policy in ANALYSIS_EXECUTIONS:
+            self._analysis_combo.addItem(labels[policy], policy)
+        self._analysis_combo.setCurrentIndex(self._analysis_combo.findData("both"))
+        self._analysis_combo.setToolTip(
+            "Choose the joint Monte Carlo batch, paired one-at-a-time "
+            "interventions, or both. This execution policy is not stored "
+            "in the physical variation plan."
         )
-        self._sens_check.toggled.connect(self._invalidate_current_study)
-        layout.addWidget(self._sens_check)
+        self._analysis_combo.currentIndexChanged.connect(self._invalidate_current_study)
+        layout.addWidget(self._analysis_combo)
         row = QHBoxLayout()
         self._run_button = QPushButton("Run Variation Study")
         self._run_button.setToolTip(

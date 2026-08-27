@@ -6849,3 +6849,20 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 2026-08-25: Coordinate-Explicit Pendulum Force Attribution (#4698)
 
 - **2026-08-25**: feat(swing_sim, movement_optimizer, pendulum_simulator, #4698) — Add provider schema `force-attribution/v1` and a typed, DbC-validated Christoffel/monomial attribution layer. In frozen relative-angle coordinates it separates cross-speed Coriolis and squared-speed terms, independently checks their sum against the model velocity bias, retains gravity, damping, applied control, and residual, and requires generalized-force and acceleration closure. The trajectory contract reports signed/absolute generalized and hand-path impulse, generalized/endpoint power and work, cancellation, tangent valid/total duration, mapping rank, and unreconstructed generalized residual. Zero-speed endpoints remain undefined; integration uses only intervals with two defined tangents. Force-only virtual-work mapping fails visibly when a joint couple cannot be represented. Movement Optimizer exposes an adapter and minimizer-compatible Coriolis hand-path impulse objective; the provider manifests advertise the schema and capabilities. Analytical, zero-velocity, rank/residual, integral, API, manifest, and invalid-input tests pin the downstream contract. Triple- and golfer-pendulum attribution remains fail-closed until a provider declares mass-matrix derivatives and endpoint semantics.
+
+## 2026-08-27: Cross-Surface Variation Workflow Parity (#4792)
+
+- PyQt and React expose the same three analysis-execution policies:
+  `all_together`, `individual`, and `both`. The policy controls computation,
+  not the persisted physical experiment plan.
+- Individual-only execution publishes one-at-a-time sensitivity results without
+  fabricating a joint ensemble dataset. Progress and cancellation cover the
+  exact planned joint and per-noise study count.
+- Durable execution shares the governed 1--4096 chunk-size bound, resumable
+  record authority, terminal status, and export semantics across both surfaces.
+- `rate_of_closure_r14_3_surface_parity.v1.json` is the requirement-level
+  interaction matrix. It distinguishes equivalent scientific capabilities
+  from declared surface conveniences and pins disabled and error behavior.
+- All variation outputs are model-scenario evidence. Cross-surface agreement
+  does not establish causal anatomy, validate a human transfer mechanism, or
+  authorize coaching advice.

@@ -259,7 +259,7 @@
       "shard_index": 6
     },
     {
-      "content_sha256_lf": "e372faa6722dd8da81a19b25d1f857d7f3fa4ff4edb2e0f43c5eba4c67bf43fb",
+      "content_sha256_lf": "8861e2e6b438adcf153099c39d5cf804efaca9b8813d4646deb4f22f41794a4d",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/plotting/_catalog_entries.py",
       "last_path": "src/rate_of_closure/ui/pyqt6/variation_editor_widgets.py",
@@ -267,7 +267,7 @@
       "shard_index": 7
     },
     {
-      "content_sha256_lf": "7abef39672e043135d56e268b31a5bc6959a4cb44e630442166a38e2a759c6b5",
+      "content_sha256_lf": "7d319c570806fed5f1a721edb9e1e52a8823319a0e8810ebfd654e67261c9ad9",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/ui/pyqt6/variation_forgiveness_view.py",
       "last_path": "src/rate_of_closure/web/src/components/PuttingVisuals.tsx",
@@ -331,7 +331,7 @@
       "shard_index": 15
     },
     {
-      "content_sha256_lf": "a040b4187acda07b6a02bde2c610544ef68578932877adebc5c7d481ef859ec4",
+      "content_sha256_lf": "23615b41a086edeaca156d60224cf33c6d2376880102a0934a795e88462f0f54",
       "entry_count": 200,
       "first_path": "src/shared/python/swing_sim/torque_library.py",
       "last_path": "src/vessel_drafter/gui_registration.py",
@@ -347,7 +347,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "228a2afbde7c9c3bc32b12a3eb9801b293d70cb9d5d13f9778ce8f4bc978b723",
+  "source_tree_sha256": "e160e6992037ad13c2a8b56c646c9eb04a0cd3c8cc12749470c634cd884f41e5",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,

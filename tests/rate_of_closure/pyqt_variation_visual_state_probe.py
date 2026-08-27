@@ -136,7 +136,7 @@ def main() -> int:
     index = window.primary_tab_ids().index("variation")
     window._tabs.setCurrentIndex(index)
     tab = window._variation_tab
-    tab._sens_check.setChecked(False)
+    tab._analysis_combo.setCurrentIndex(tab._analysis_combo.findData("all_together"))
     evidence = [_capture(window, tab, args.output, "empty")]
 
     original_run = variation_worker.run_variation

@@ -28,7 +28,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                           |
 | #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                                    |
 | #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                            |
-| #4142 | Ensemble variation and falsifiable sensitivity. R12.3 is protected-merged through `a1b00db14`; R13.3 is PR #4784, and R13.5 provenance-complete result selection is active as #4791.                                                  |
+| #4142 | Ensemble variation and falsifiable sensitivity. R12.3 is merged; R13.3 is PR #4784; R13.5 is pushed as `feat/4785-selector-contract`; R14.3 parity is active as #4792.                                                                |
 | #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                                |
 | #4433 | Visual-first tab visibility and visualization-led UX. Open. V0.1, strict cross-runtime parity, and V5.2 are merged through PR #4738; the audit is 8 verified / 23 partial obligations with seven gaps and two human actions retained. |
 | #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                        |
@@ -67,10 +67,12 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   R13.3 PR #4784 is exact-head `100a50e58`: required `quality-gate` and
   `tests (3.11)` passed, while fleet-only optional gates remain queued because
   OGLaptop's WSL VHDX cannot mount. Do not rerun or merge through that gap.
-  #4791/R13.5 is being implemented from current `main`: exact point/time/frame
-  target identity plus all-input or selected-source views in PyQt and React.
-  Its branch ledger is 28 verified / 3 partial until R13.3 is reconciled; after
-  both slices merge, recalculate the ledger rather than choosing either count.
+  #4791/R13.5 is pushed at `e2c1cbd1`; it binds exact point/time/frame target
+  identity and all-input or selected-source views in PyQt and React. R14.3
+  issue #4792 is stacked on it and proves plan-through-export parity with a
+  governed interaction matrix. Serial evidence: 97 Python and 107 React tests,
+  type/lint, inventory, and manual governance pass. Its branch ledger is 29
+  verified / 2 partial; recalculate after each dependency merge.
 
 ## Must-Read Architecture Pointers
 
@@ -138,8 +140,8 @@ Note: `ruff format --check` reports four pre-existing failures under
 
 ## Short-Term Roadmap (Ordered)
 
-1. Restore a healthy fleet runner, complete exact-head #4784/R13.3 gates, and merge normally.
-2. Reconcile and protect-merge #4791/R13.5, then recalculate the #4142 ledger.
+1. Restore healthy fleet capacity, complete exact-head #4784/R13.3 gates, and merge normally.
+2. Open and protect-merge #4791/R13.5, then publish #4792/R14.3 and recalculate the #4142 ledger.
 3. Deliver main-rooted TOOLS-D4 #4720, then reconcile D5--D9 without rewriting remote history.
 4. Implement the Sidekick S1–S5 plan in `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`.
 5. Restore the isolated advisory benchmark lane through #4582.

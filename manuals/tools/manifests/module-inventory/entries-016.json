@@ -1377,10 +1377,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13296,
+      "bytes_lf": 14540,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a4d8ee2164acd38a79c730ce719b731076ee85cd4505cab18e1113cd36d512b0",
+      "content_sha256_lf": "25c6b70121df512cfb076a7b98d5c0e3e873c7b2d0b3956aa2f24c75735e2f8f",
       "family": "swing-simulation-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-ANALYSIS-PY-8DEB08B53946",
       "language": "python",
@@ -1444,7 +1444,7 @@
           {
             "kind": "function",
             "name": "one_at_a_time_sensitivity",
-            "signature": "plan: VariationPlan, config: EvaluationConfig | None=None, n_workers: int=4, cancel_event: threading.Event | None=None"
+            "signature": "plan: VariationPlan, config: EvaluationConfig | None=None, n_workers: int=4, cancel_event: threading.Event | None=None, progress_cb: ProgressCallback | None=None"
           },
           {
             "kind": "function",
