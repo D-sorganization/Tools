@@ -14,6 +14,9 @@ R10_4_REQUALIFICATION = (
 R10_3_CAPABILITY_AUDIT = (
     ROOT / "docs/audits/rate_of_closure_r10_3_execution_capabilities.v1.json"
 )
+R11_1_CAPABILITY_AUDIT = (
+    ROOT / "docs/audits/rate_of_closure_r11_1_complete_trial_capabilities.v1.json"
+)
 PUBLIC_GUIDE = ROOT / "docs/rate_of_closure/variation_ensemble_reproducibility_guide.md"
 EXPECTED_REQUIREMENTS = tuple(
     [f"R10.{index}" for index in range(1, 7)]
@@ -115,8 +118,8 @@ def test_r10_4_is_verified_by_revision_bound_current_main_requalification() -> N
     )
 
     assert evidence["status_counts"] == {
-        "verified": 24,
-        "partial": 7,
+        "verified": 25,
+        "partial": 6,
         "unverified": 0,
         "external_blocked": 0,
     }
@@ -174,8 +177,8 @@ def test_r10_3_is_verified_by_exhaustive_cross_runtime_capabilities() -> None:
     )
 
     assert evidence["status_counts"] == {
-        "verified": 24,
-        "partial": 7,
+        "verified": 25,
+        "partial": 6,
         "unverified": 0,
         "external_blocked": 0,
     }
@@ -224,6 +227,53 @@ def test_r10_3_is_verified_by_exhaustive_cross_runtime_capabilities() -> None:
             "swing mechanism, or support universal coaching advice."
         ),
     }
+
+
+def test_r11_1_capability_matrix_is_exhaustive_and_fail_closed() -> None:
+    """Every current source/adapter cell must be verified or unavailable."""
+    requirements = {item["requirement_id"]: item for item in _load()["requirements"]}
+    r11_1 = requirements["R11.1"]
+    audit = cast(
+        dict[str, Any], json.loads(R11_1_CAPABILITY_AUDIT.read_text(encoding="utf-8"))
+    )
+    sources = tuple(audit["source_kinds"])
+    adapters = tuple(audit["adapter_ids"])
+    cells = audit["cells"]
+
+    assert audit["schema_version"] == "tools-r11.1-complete-trial-capabilities/v1"
+    assert audit["requirement_id"] == "R11.1"
+    assert audit["qualified_base_revision"] == (
+        "55805fe4de1b0afc3710efce4ed516d59e685717"  # pragma: allowlist secret
+    )
+    assert audit["implementation_issue"] == 4758
+    assert audit["record_schema"] == "rate-complete-trial/v1"
+    assert audit["durable_schema_version"] == 3
+    assert r11_1["status"] == "verified"
+    assert r11_1["gaps"] == []
+    assert (
+        "https://github.com/D-sorganization/Tools/pull/4762" in r11_1["remote_evidence"]
+    )
+    assert (
+        str(R11_1_CAPABILITY_AUDIT.relative_to(ROOT)).replace("\\", "/")
+        in r11_1["evidence_files"]
+    )
+    assert len(cells) == len(sources) * len(adapters) == 12
+    assert {(cell["source_kind"], cell["adapter_id"]) for cell in cells} == {
+        (source, adapter) for source in sources for adapter in adapters
+    }
+    assert {cell["status"] for cell in cells} == {
+        "verified",
+        "explicitly_unavailable",
+    }
+    assert sum(cell["status"] == "verified" for cell in cells) == 2
+    assert sum(cell["status"] == "explicitly_unavailable" for cell in cells) == 10
+    assert audit["status_counts"] == {
+        "verified": 2,
+        "explicitly_unavailable": 10,
+    }
+    for cell in cells:
+        assert (ROOT / cell["evidence"]).is_file()
+        assert (cell["reason"] is None) == (cell["status"] == "verified")
 
 
 def test_r15_upstream_consumption_evidence_is_verified_and_revision_bound() -> None:

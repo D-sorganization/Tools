@@ -1,0 +1,43 @@
+{
+  "schema_version": "tools-complete-trial-retention-scaling/v1",
+  "source_revision": "dc1cf1d4f447a11ae5fb1483f80aaaf9a173bf75",
+  "record_schema": "rate-complete-trial/v1",
+  "durable_schema_version": 3,
+  "measurement_command": "python -m scripts.measure_complete_trial_retention_scaling",
+  "environment": {
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "implementation": "CPython"
+  },
+  "scenarios": [
+    {
+      "trial_count": 16,
+      "chunk_size": 4,
+      "chunk_count": 4,
+      "archive_bytes": 159131,
+      "max_chunk_bytes": 37540,
+      "peak_python_bytes": 1770986,
+      "elapsed_s": 1.166876
+    },
+    {
+      "trial_count": 64,
+      "chunk_size": 4,
+      "chunk_count": 16,
+      "archive_bytes": 626248,
+      "max_chunk_bytes": 37593,
+      "peak_python_bytes": 2104637,
+      "elapsed_s": 4.885108
+    }
+  ],
+  "observed": {
+    "peak_python_ratio_64_to_16": 1.188398,
+    "artifact_bytes_per_trial_ratio_64_to_16": 0.983856
+  },
+  "declared_bounds": {
+    "max_chunk_file_bytes": 16000000,
+    "max_chunk_uncompressed_bytes": 32000000,
+    "peak_python_ratio_64_to_16_max": 2.0,
+    "artifact_bytes_per_trial_ratio_64_to_16_max": 1.25
+  },
+  "scientific_boundary": "This is software resource-scaling evidence for deterministic model records; it is not human-swing validation or coaching evidence."
+}

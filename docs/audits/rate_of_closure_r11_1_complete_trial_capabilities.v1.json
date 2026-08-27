@@ -1,0 +1,103 @@
+{
+  "schema_version": "tools-r11.1-complete-trial-capabilities/v1",
+  "requirement_id": "R11.1",
+  "qualified_base_revision": "55805fe4de1b0afc3710efce4ed516d59e685717",
+  "implementation_issue": 4758,
+  "record_schema": "rate-complete-trial/v1",
+  "durable_schema_version": 3,
+  "source_kinds": ["manual", "double_pendulum", "triple_pendulum"],
+  "adapter_ids": [
+    "global_simulation_value/v1",
+    "localized_joint_torque_offset/v1",
+    "regional_ground_value/v1",
+    "turf_profile_value/v1"
+  ],
+  "cells": [
+    {
+      "source_kind": "manual",
+      "adapter_id": "global_simulation_value/v1",
+      "status": "explicitly_unavailable",
+      "reason": "The governed trace-ensemble request builder currently requires the double_pendulum source; direct manual runs serialize, but are not qualified variation-adapter executions.",
+      "evidence": "tests/rate_of_closure/test_variation_complete_trial_record.py"
+    },
+    {
+      "source_kind": "manual",
+      "adapter_id": "localized_joint_torque_offset/v1",
+      "status": "explicitly_unavailable",
+      "reason": "The manual source has no modeled shoulder/wrist commanded-torque history or topological torque joints.",
+      "evidence": "tests/rate_of_closure/test_variation_complete_trial_record.py"
+    },
+    {
+      "source_kind": "manual",
+      "adapter_id": "regional_ground_value/v1",
+      "status": "explicitly_unavailable",
+      "reason": "Regional ground values belong to the post-launch regional analysis path and do not produce a swing SimulationRun complete-trial record.",
+      "evidence": "tests/rate_of_closure/test_locus_execution_capabilities.py"
+    },
+    {
+      "source_kind": "manual",
+      "adapter_id": "turf_profile_value/v1",
+      "status": "explicitly_unavailable",
+      "reason": "Turf profile values belong to the turf interaction path and are not accepted by the governed swing trace-ensemble request builder.",
+      "evidence": "tests/rate_of_closure/test_locus_execution_capabilities.py"
+    },
+    {
+      "source_kind": "double_pendulum",
+      "adapter_id": "global_simulation_value/v1",
+      "status": "verified",
+      "reason": null,
+      "evidence": "tests/rate_of_closure/test_variation_complete_trial_record.py"
+    },
+    {
+      "source_kind": "double_pendulum",
+      "adapter_id": "localized_joint_torque_offset/v1",
+      "status": "verified",
+      "reason": null,
+      "evidence": "tests/rate_of_closure/test_localized_torque_variation.py"
+    },
+    {
+      "source_kind": "double_pendulum",
+      "adapter_id": "regional_ground_value/v1",
+      "status": "explicitly_unavailable",
+      "reason": "Regional ground values are retained by a separate post-launch regional authority and are not swing trace inputs.",
+      "evidence": "tests/rate_of_closure/test_locus_execution_capabilities.py"
+    },
+    {
+      "source_kind": "double_pendulum",
+      "adapter_id": "turf_profile_value/v1",
+      "status": "explicitly_unavailable",
+      "reason": "Turf profile values execute in the turf interaction authority, not the current complete swing-trial adapter.",
+      "evidence": "tests/rate_of_closure/test_locus_execution_capabilities.py"
+    },
+    {
+      "source_kind": "triple_pendulum",
+      "adapter_id": "global_simulation_value/v1",
+      "status": "explicitly_unavailable",
+      "reason": "The governed trace-ensemble request builder currently requires the double_pendulum source; direct triple-pendulum runs serialize but adapter execution is not qualified.",
+      "evidence": "tests/rate_of_closure/test_variation_complete_trial_record.py"
+    },
+    {
+      "source_kind": "triple_pendulum",
+      "adapter_id": "localized_joint_torque_offset/v1",
+      "status": "explicitly_unavailable",
+      "reason": "The triple-pendulum source does not expose the double-pendulum shoulder/wrist commanded-torque offset contract.",
+      "evidence": "tests/rate_of_closure/test_variation_complete_trial_record.py"
+    },
+    {
+      "source_kind": "triple_pendulum",
+      "adapter_id": "regional_ground_value/v1",
+      "status": "explicitly_unavailable",
+      "reason": "Regional ground values belong to the post-launch regional analysis path and do not produce a swing SimulationRun complete-trial record.",
+      "evidence": "tests/rate_of_closure/test_locus_execution_capabilities.py"
+    },
+    {
+      "source_kind": "triple_pendulum",
+      "adapter_id": "turf_profile_value/v1",
+      "status": "explicitly_unavailable",
+      "reason": "Turf profile values belong to the turf interaction path and are not accepted by the governed swing trace-ensemble request builder.",
+      "evidence": "tests/rate_of_closure/test_locus_execution_capabilities.py"
+    }
+  ],
+  "status_counts": { "verified": 2, "explicitly_unavailable": 10 },
+  "scientific_boundary": "Complete model-record retention and adapter execution coverage do not validate anatomical force attribution, a human swing mechanism, or coaching recommendations."
+}

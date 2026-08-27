@@ -3,6 +3,76 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 3067,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2a422eee2dc8363646c84b1a90f328161be3e889ead562a59affa3bf6db1568d",
+      "family": "control-systems-non-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-LIB-DATAAGE-TS-9B9DF5AC92A7",
+      "language": "typescript",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/frontend/src/lib/dataAge.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "DATA_STALE_MS",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "DataFreshness",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "dataFreshness",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "formatDataAge",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "Hz",
+          "bar",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2497,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -3021,6 +3091,7 @@
           "tests/rate_of_closure/test_regional_ground_authority_transport.py",
           "tests/rate_of_closure/test_regional_ground_loopback_submitter.py",
           "tests/rate_of_closure/test_regional_ground_variation_request_io.py",
+          "tests/rate_of_closure/test_variation_complete_trial_record.py",
           "tests/rate_of_closure/test_variation_ensemble_chunks.py",
           "tests/rate_of_closure/test_variation_gui_execution.py",
           "tests/rate_of_closure/test_variation_module_importability.py",
@@ -15009,6 +15080,7 @@
           "tests/rate_of_closure/test_regional_ground_authority_transport.py",
           "tests/rate_of_closure/test_regional_ground_loopback_submitter.py",
           "tests/rate_of_closure/test_regional_ground_variation_request_io.py",
+          "tests/rate_of_closure/test_variation_complete_trial_record.py",
           "tests/rate_of_closure/test_variation_ensemble_chunks.py",
           "tests/rate_of_closure/test_variation_gui_execution.py",
           "tests/rate_of_closure/test_variation_module_importability.py",
@@ -15109,76 +15181,6 @@
           "tests/test_src_package_import_contract.py",
           "tests/unit/test_contracts.py"
         ]
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 381,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "2b83d9104eb7798e60ba304b1e971a9ca4b230fbef138bc268591f1facee3676",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-PYTHON-PRESSURE-DROP-CALCULATOR-INIT-PY-8322CAAA3521",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/pressure_drop_calculator/python/pressure_drop_calculator/__init__.py",
-      "purpose": "Pressure Drop Calculator Python Package.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "PressureDropCalculationEngine",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PressureDropInputs",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PressureDropResults",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "calculate_pressure_drop",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
       }
     }
   ],

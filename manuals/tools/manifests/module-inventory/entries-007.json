@@ -3,6 +3,76 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 5177,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "c7ed88c364576fe4a8ce1e63925356c47ce32fea0ec9f9b339a8981ac4e577da",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-KINETICS-SERIES-PY-E94A627991E9",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/_kinetics_series.py",
+      "purpose": "Immutable output contract for double-pendulum swing kinetics.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "KineticsSeries",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CLUBHEAD_MASS_KG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "KINETIC_JOINT_NAMES",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_kinetics.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "kg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 7851,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
@@ -12434,57 +12504,6 @@
           {
             "kind": "class",
             "name": "ViewCompositor",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2777,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3be487d1ae3bd2ffacb462b852a7f19efa7abb16109af68a4ceb3690f23fcd3c",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VISUAL-STATE-FRAME-PY-4047ABD10B8B",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/visual_state_frame.py",
-      "purpose": "Non-displacing accessible state overlay around a persistent visual widget.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "VisualStateFrame",
             "signature": null
           }
         ],

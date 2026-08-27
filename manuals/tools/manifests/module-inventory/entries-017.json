@@ -3,6 +3,351 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 3328,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f71b77f205f0f3601a7d17ad3327a46336b65d84cfd9c658cd6287006f2cf407",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-PROJECTS-ELECTRODE-ADVISOR-DEFAULT-LAYOUT-PY-8810929EBD5A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/projects/electrode_advisor_default_layout.py",
+      "purpose": "STEP-ready geometry for the default electrode advisor layout.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "build_default_layout_shape",
+            "signature": "layout: ElectrodeAdvisorLayout=DEFAULT_ELECTRODE_ADVISOR_LAYOUT"
+          }
+        ],
+        "test_paths": [
+          "src/vessel_drafter/tests/test_electrode_advisor_defaults.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9579,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8d2a50005d0e36acd33602bcba7ef2bdc469c140175ac8ad549b3357c087cefb",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-PROJECTS-VESSEL-DRAFTER-LAYOUT-PY-8CEB673949E6",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/projects/vessel_drafter_layout.py",
+      "purpose": "STEP-ready geometry for the vessel drafter tool.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "VesselComponent",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_vessel_drafter_components",
+            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT"
+          },
+          {
+            "kind": "function",
+            "name": "build_vessel_drafter_shape",
+            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT"
+          }
+        ],
+        "test_paths": [
+          "src/vessel_drafter/tests/test_vessel_drafter_geometry.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5793,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2f766f510a00898e53d9fd750844c54a4ff3517d7bcd5a388f725b698286d094",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-PROJECTS-VESSEL-DRAFTER-PROFILES-PY-2B58BD02C25D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/projects/vessel_drafter_profiles.py",
+      "purpose": "Shared vessel head profile helpers used by preview and STEP generation.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ProfilePoint",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ShellBandProfile",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "HEAD_SAMPLE_COUNT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_band_boundary_loops",
+            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT"
+          },
+          {
+            "kind": "function",
+            "name": "build_bottom_head_curve",
+            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT, offset_in: float=0.0, sample_count: int=HEAD_SAMPLE_COUNT"
+          },
+          {
+            "kind": "function",
+            "name": "build_cavity_boundary_half",
+            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT"
+          },
+          {
+            "kind": "function",
+            "name": "build_full_boundary_loop",
+            "signature": "half_boundary: tuple[ProfilePoint, ...]"
+          },
+          {
+            "kind": "function",
+            "name": "build_glass_boundary_half",
+            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT"
+          },
+          {
+            "kind": "function",
+            "name": "build_plenum_boundary_half",
+            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT"
+          },
+          {
+            "kind": "function",
+            "name": "build_shell_band_profiles",
+            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT"
+          },
+          {
+            "kind": "function",
+            "name": "build_shell_boundary_half",
+            "signature": "layout: VesselDrafterLayout, offset_in: float"
+          },
+          {
+            "kind": "function",
+            "name": "build_top_head_curve",
+            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT, offset_in: float=0.0, sample_count: int=HEAD_SAMPLE_COUNT"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2688,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c8aa5c52aad3043f1a20d8642f5a3b11c82a9468269af8920f929b6881de3b46",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VIDEO-ANALYZER-INIT-PY-A174A0E726AD",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/video_analyzer/__init__.py",
+      "purpose": "Video Analyzer for Golf Swing Analysis.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "BalanceMetrics",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BodyAngles",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SwingAnalysis",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SwingPhase",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SwingScores",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TempoMetrics",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2604,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b083308a68d33becb117c46da2f55d3bba7a1301fe1e7c835e358c93ed15f3d4",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VIDEO-ANALYZER-CONTRACTS-PY-96DA196056B3",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/video_analyzer/_contracts.py",
+      "purpose": "Design by Contract shim for ``video_analyzer``.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 27742,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",

@@ -27,10 +27,55 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.27                                    |
+| **Spec Version**        | 1.18.32                                    |
 | **Last Spec Update**    | 2026-08-26                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-26 R11.1 Hosted Qualification Portability (#4758 / PR #4762)
+
+Version 1.18.32 makes the installed-wheel proof independent of undeclared
+base-interpreter packages: an isolated child environment receives only the
+already-qualified CI environment's dependency site, while assertions require
+the project module itself to resolve from the exact installed wheel outside the
+checkout. The durable writer also records the NumPy stub boundary for its
+validated dynamic named-array map. These changes repair hosted Python 3.11/3.12
+qualification without changing archive bytes or scientific interpretation.
+
+### 2026-08-26 R11.1 Requirement-Ledger Qualification (#4758 / PR #4762)
+
+Version 1.18.31 advances R11.1 from partial to verified in the branch ledger,
+with immutable PR evidence and executable links to the typed record, durable
+reader, capability matrix, scaling artifact, and installed-wheel gate. The
+parent epic remains open at 25 verified and 6 partial requirements.
+
+### 2026-08-26 Complete-Trial Qualification Evidence (#4758 / #4142 R11.1)
+
+Version 1.18.30 publishes the neutral reproducibility guide, executable scaling
+measurement, revision-bound 16/64-trial evidence, and an isolated installed-
+wheel round-trip for the public complete-trial reader. At fixed four-trial
+chunks, traced peak Python allocation grew 1.188 times while retained bytes per
+trial stayed effectively flat. These are software qualification results, not
+human biomechanics evidence.
+
+### 2026-08-26 Durable Complete-Trial Retention (#4758 / #4142 R11.1)
+
+Version 1.18.29 persists complete trial records through bounded schema-v3 NPZ
+chunks. Every array is bound by shape, dtype, digest, trial range, units, frame,
+source, and execution provenance. Strict readers reconstruct immutable records,
+reject corrupt payloads, and expose schema-v2 archives as read-only legacy
+evidence. Serial, chunked, and resumed executions have canonical record parity;
+the source/adapter matrix records two verified and ten explicitly unavailable
+cells without promoting model retention to human validation.
+
+### 2026-08-26 Complete Per-Trial Model Evidence Contract (#4758 / #4142 R11.1)
+
+Version 1.18.28 introduces the typed, immutable complete-trial record used by
+bounded Rate ensemble execution. It binds sampled inputs and execution/config
+identities to full swing kinematics, stable spatial and torque identifiers,
+contact/event timing, impact/delivery/post-impact/launch/flight state, and
+explicit hit, no-impact, or numerical-failure availability. This first slice
+does not yet qualify durable round-trip or promote R11.1 to verified.
 
 ### 2026-08-26 Deterministic Club-View Render Work Budget (#4759)
 
@@ -5376,6 +5421,11 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-26 | 1.18.32 | fix/test(rate-of-closure, #4758 / PR #4762 / #4142 R11.1): make the exact-wheel proof portable across hosted Python 3.11/3.12 by explicitly reusing only the qualified parent dependency site while requiring project imports to resolve from the isolated installed wheel; document the NumPy dynamic named-array stub boundary without changing archive behavior. |
+| 2026-08-26 | 1.18.31 | docs/test(rate-of-closure, #4758 / PR #4762 / #4142 R11.1): bind the complete-trial qualification to its protected pull request, advance the fail-closed epic ledger to 25 verified / 6 partial, and require the source/adapter matrix, durable/scaling evidence, installed-wheel proof, and scientific boundary to remain locally traceable. |
+| 2026-08-26 | 1.18.30 | docs/test(rate-of-closure, #4758 / #4142 R11.1): publish revision-bound complete-trial scaling evidence and its deterministic generator, document schema-v3 retention and the exhaustive source/adapter boundary in the public reproducibility guide, export the typed public record contract, and prove an exact built wheel can create, persist, install, read, and reconstruct complete records outside the checkout. |
+| 2026-08-26 | 1.18.29 | feat(rate-of-closure, #4758 / #4142 R11.1): add bounded schema-v3 complete-trial persistence with exact array identities, immutable strict-JSON reconstruction, hit/miss/failure nullability, corruption rejection, schema-v2 read-only compatibility, and serial/chunk/resume digest parity. Bind explicit units and publish the exhaustive 3-source by 4-adapter capability matrix with unsupported cells retained rather than fabricated. |
+| 2026-08-26 | 1.18.28 | feat(rate-of-closure, #4758 / #4142 R11.1): add a typed immutable per-trial evidence record that binds sampled inputs and execution/configuration identities to complete swing, event, impact, delivery, post-impact, launch, and flight state. Preserve explicit absence for misses/failures and source-specific manual/double/triple layouts; deliver records to sinks through the existing bounded chunk executor without claiming durable qualification or human validation. |
 | 2026-08-26 | 1.18.27 | test(rate-of-closure, #4759): measure the worst-library-mesh draw's bounded CPU work with a monotonic process clock so parallel hosted-runner scheduling cannot masquerade as a rendering regression. Preserve the 200 ms playback cadence and 0.5 s work ceiling. |
 | 2026-08-26 | 1.18.26 | fix(rate-of-closure, #4756 / #4142 R10.3): reconcile the packaged locus-execution authority with the fail-closed visualization package-data governance exposed by both hosted Python matrices. Explicitly classify the named JSON as legitimate feature-owned, non-visualization package data while continuing to reject undeclared entries; retain exact-wheel, Python/TypeScript parity, and scientific-boundary requirements. |
 | 2026-08-26 | 1.18.25 | feat(rate-of-closure, #4756 / #4142 R10.3): replace implicit global/localized locus inference with one packaged, typed execution-capability authority for all 31 known registry inputs. Bind Python and TypeScript to exact whole-run, half-open temporal, topological-point, adapter, and unsupported semantics; fail closed on registry drift or undeclared loci; retain topological control joints as distinct from spatial traces. Supply the standalone web mirror through the governed byte-identical vendoring map instead of an import above `web/`. Keep matched visual-evidence governance fail-closed for shipped React surfaces while excluding test-only `.test.tsx` and `.spec.tsx` modules that cannot alter the rendered product. Advance the epic ledger to 24 verified / 7 partial without implying anatomical attribution, human validation, or coaching authority. |

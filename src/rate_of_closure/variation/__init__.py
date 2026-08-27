@@ -3,6 +3,11 @@
 from __future__ import annotations
 
 from .chip_forgiveness import ChipStudySummary, ChipTrialCohort
+from .complete_trial_record import (
+    COMPLETE_TRIAL_SCHEMA,
+    CompleteTrialRecord,
+    CompleteTrialRecordSource,
+)
 from .durable_ensemble_chunks import (
     DurableEnsembleArchive,
     DurableEnsembleChunkSink,
@@ -84,6 +89,9 @@ __all__ = [
     "ChipStudySummary",
     "ChipTrialCohort",
     "CollectingEnsembleSink",
+    "COMPLETE_TRIAL_SCHEMA",
+    "CompleteTrialRecord",
+    "CompleteTrialRecordSource",
     "DurableEnsembleArchive",
     "DurableAnalysisEvidence",
     "DurableArchiveEvidence",
