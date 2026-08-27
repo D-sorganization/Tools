@@ -74,6 +74,45 @@ def _validated_trajectory(
     return time_array, state_array, torque_array
 
 
+def _mass_matrix_entries(
+    phi: FloatArray, params: PendulumParams
+) -> tuple[FloatArray, FloatArray, float]:
+    """Return ``(M11, M12, M22)`` for a batch of wrist angles, matching physics."""
+    effective_distal_mass = params.m2 + params.mClub
+    coupling = coupling_constant(params)
+    cos_phi = np.cos(phi)
+    distal_inertia = effective_distal_mass * params.L2**2
+    mass_11 = (
+        (params.m1 + effective_distal_mass) * params.L1**2
+        + distal_inertia
+        + 2.0 * coupling * cos_phi
+    )
+    return mass_11, distal_inertia + coupling * cos_phi, distal_inertia
+
+
+def _velocity_product(
+    states: FloatArray, params: PendulumParams
+) -> tuple[FloatArray, FloatArray]:
+    """Return the combined ``C(q, q̇) q̇`` entries for a batch of states."""
+    phi, dtheta1, dphi = states[:, 1], states[:, 2], states[:, 3]
+    coupling_sine = -coupling_constant(params) * np.sin(phi)
+    return (
+        coupling_sine * (2.0 * dtheta1 * dphi + dphi**2),
+        -coupling_sine * dtheta1**2,
+    )
+
+
+def _gravity_terms(
+    states: FloatArray, params: PendulumParams
+) -> tuple[FloatArray, FloatArray]:
+    """Return the gravitational generalized forces for a batch of states."""
+    theta1, phi = states[:, 0], states[:, 1]
+    effective_distal_mass = params.m2 + params.mClub
+    wrist = effective_distal_mass * params.g * params.L2 * np.sin(theta1 + phi)
+    hub = (params.m1 + effective_distal_mass) * params.g * params.L1 * np.sin(theta1) + wrist
+    return hub, wrist
+
+
 def generalized_accelerations(
     states: FloatArray, torques: FloatArray, params: PendulumParams
 ) -> FloatArray:
@@ -90,30 +129,9 @@ def generalized_accelerations(
     Pre: arrays are finite and correctly shaped.
     Post: result is finite.
     """
-    theta1, phi = states[:, 0], states[:, 1]
-    dtheta1, dphi = states[:, 2], states[:, 3]
-
-    effective_distal_mass = params.m2 + params.mClub
-    coupling = coupling_constant(params)
-    cos_phi, sin_phi = np.cos(phi), np.sin(phi)
-
-    distal_inertia = effective_distal_mass * params.L2**2
-    mass_11 = (
-        (params.m1 + effective_distal_mass) * params.L1**2
-        + distal_inertia
-        + 2.0 * coupling * cos_phi
-    )
-    mass_12 = distal_inertia + coupling * cos_phi
-
-    coupling_sine = -coupling * sin_phi
-    velocity_hub = coupling_sine * (2.0 * dtheta1 * dphi + dphi**2)
-    velocity_wrist = -coupling_sine * dtheta1**2
-
-    gravity_scale = params.g * params.L1
-    gravity_hub = (params.m1 + effective_distal_mass) * gravity_scale * np.sin(
-        theta1
-    ) + effective_distal_mass * params.g * params.L2 * np.sin(theta1 + phi)
-    gravity_wrist = effective_distal_mass * params.g * params.L2 * np.sin(theta1 + phi)
+    mass_11, mass_12, distal_inertia = _mass_matrix_entries(states[:, 1], params)
+    velocity_hub, velocity_wrist = _velocity_product(states, params)
+    gravity_hub, gravity_wrist = _gravity_terms(states, params)
 
     rhs_hub = torques[:, 0] - velocity_hub - gravity_hub
     rhs_wrist = torques[:, 1] - velocity_wrist - gravity_wrist

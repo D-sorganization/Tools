@@ -41,6 +41,7 @@ from double_pendulum_golf.swing_objectives.comparison import (
 from double_pendulum_golf.swing_objectives.objectives import SWING_OBJECTIVES
 from double_pendulum_golf.swing_objectives.presets import (
     DEFAULT_PRESET,
+    SwingBudget,
     build_config,
 )
 
@@ -143,6 +144,21 @@ class SwingObjectiveLabWidget(QWidget):
             item.setSelected(True)
         form.addRow("Objectives", self.objective_list)
 
+        self._add_budget_rows(form)
+
+        self.run_button = QPushButton("Run comparison")
+        self.run_button.clicked.connect(self.run_comparison)
+        form.addRow(self.run_button)
+
+        self.progress = QProgressBar()
+        self.progress.setRange(0, 0)
+        self.progress.setVisible(False)
+        form.addRow(self.progress)
+        form.addRow(self._status)
+        return panel
+
+    def _add_budget_rows(self, form: QFormLayout) -> None:
+        """Add the shared effort-budget inputs held identical across objectives."""
         self.duration_spin = QDoubleSpinBox()
         self.duration_spin.setRange(0.20, 0.80)
         self.duration_spin.setSingleStep(0.01)
@@ -170,17 +186,6 @@ class SwingObjectiveLabWidget(QWidget):
         self.node_spin.setSingleStep(2)
         self.node_spin.setValue(DEFAULT_PRESET.node_count)
         form.addRow("Collocation nodes", self.node_spin)
-
-        self.run_button = QPushButton("Run comparison")
-        self.run_button.clicked.connect(self.run_comparison)
-        form.addRow(self.run_button)
-
-        self.progress = QProgressBar()
-        self.progress.setRange(0, 0)
-        self.progress.setVisible(False)
-        form.addRow(self.progress)
-        form.addRow(self._status)
-        return panel
 
     def _build_results(self) -> QWidget:
         """Build the per-objective metric table and the cross-evaluation table."""
@@ -230,10 +235,12 @@ class SwingObjectiveLabWidget(QWidget):
             return
         try:
             config = build_config(
-                duration_s=self.duration_spin.value(),
-                hub_torque_nm=self.hub_torque_spin.value(),
-                wrist_torque_nm=self.wrist_torque_spin.value(),
-                node_count=self.node_spin.value(),
+                SwingBudget(
+                    duration_s=self.duration_spin.value(),
+                    hub_torque_nm=self.hub_torque_spin.value(),
+                    wrist_torque_nm=self.wrist_torque_spin.value(),
+                    node_count=self.node_spin.value(),
+                )
             )
         except ValueError as error:
             self._status.setText(str(error))

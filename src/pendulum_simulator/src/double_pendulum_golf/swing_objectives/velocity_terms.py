@@ -189,22 +189,26 @@ def decompose_velocity_terms(
         centrifugal=centrifugal_vector(phi, dtheta1, dphi, params),
         coriolis=coriolis_only_vector(phi, dtheta1, dphi, params),
     )
-    _ensure_partition_closes(terms, phi, dtheta1, dphi, params)
+    _ensure_partition_closes(terms, (phi, dtheta1, dphi), params)
     return terms
 
 
 def _ensure_partition_closes(
     terms: VelocityTerms,
-    phi: float,
-    dtheta1: float,
-    dphi: float,
+    kinematics: tuple[float, float, float],
     params: PendulumParams,
 ) -> None:
     """Verify the split still reproduces the shipped combined vector.
 
     Guards against the physics kernel and this decomposition diverging — for
     instance if the native Rust backend changed its convention.
+
+    Args:
+        terms: The candidate partition.
+        kinematics: ``(phi, dtheta1, dphi)`` the partition was built from.
+        params: Double pendulum physical parameters.
     """
+    phi, dtheta1, dphi = kinematics
     combined = coriolis_vector(phi, dtheta1, dphi, params)
     if not np.allclose(terms.total, combined, atol=_CLOSURE_ATOL):
         raise ValueError(

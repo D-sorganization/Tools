@@ -40,6 +40,7 @@ from double_pendulum_golf.swing_objectives.objectives import (
 from double_pendulum_golf.swing_objectives.presets import (
     DEFAULT_PRESET,
     GolferPreset,
+    SwingBudget,
     build_config,
 )
 from double_pendulum_golf.swing_objectives.signals import (
@@ -89,6 +90,7 @@ __all__ = [
     "COMPARISON_SCHEMA_VERSION",
     # Presets (#4771)
     "GolferPreset",
+    "SwingBudget",
     "DEFAULT_PRESET",
     "build_config",
 ]

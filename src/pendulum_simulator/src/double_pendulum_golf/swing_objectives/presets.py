@@ -19,7 +19,7 @@ import numpy as np
 from double_pendulum_golf.physics import JointLimits, PendulumParams, TorqueClamp
 from double_pendulum_golf.swing_objectives.downswing_config import DownswingConfig
 
-__all__ = ["GolferPreset", "DEFAULT_PRESET", "build_config"]
+__all__ = ["GolferPreset", "SwingBudget", "DEFAULT_PRESET", "build_config"]
 
 #: Anatomical wrist range: the wrists cannot uncock far past straight, and
 #: anatomy caps how far they can cock.
@@ -77,21 +77,35 @@ class GolferPreset:
 DEFAULT_PRESET = GolferPreset(name="Tour driver (comparison default)")
 
 
+@dataclass(frozen=True, slots=True)
+class SwingBudget:
+    """The shared effort budget a comparison runs under.
+
+    Grouped into one object so callers pass a single meaningful argument rather
+    than four positional numbers.
+
+    Attributes:
+        duration_s: Downswing duration in s.
+        hub_torque_nm: Peak hub torque in N·m.
+        wrist_torque_nm: Peak wrist torque in N·m.
+        node_count: Collocation node count.
+    """
+
+    duration_s: float = DEFAULT_PRESET.duration_s
+    hub_torque_nm: float = DEFAULT_PRESET.hub_torque_nm
+    wrist_torque_nm: float = DEFAULT_PRESET.wrist_torque_nm
+    node_count: int = DEFAULT_PRESET.node_count
+
+
 def build_config(
-    duration_s: float | None = None,
-    hub_torque_nm: float | None = None,
-    wrist_torque_nm: float | None = None,
-    node_count: int | None = None,
+    budget: SwingBudget | None = None,
     preset: GolferPreset = DEFAULT_PRESET,
 ) -> DownswingConfig:
-    """Build a downswing configuration from the preset with optional overrides.
+    """Build a downswing configuration from a preset and a shared effort budget.
 
     Args:
-        duration_s: Downswing duration override, in s.
-        hub_torque_nm: Hub torque limit override, in N·m.
-        wrist_torque_nm: Wrist torque limit override, in N·m.
-        node_count: Collocation node count override.
-        preset: Base preset.
+        budget: Duration, torque limits and node count. Defaults to the preset's.
+        preset: Base golfer preset.
 
     Returns:
         A validated configuration.
@@ -100,20 +114,19 @@ def build_config(
         ValueError: If the resulting downswing is one the golfer's torque budget
             provably cannot deliver; the message states the required minimum.
     """
+    settings = budget if budget is not None else SwingBudget()
     return DownswingConfig(
         params=preset.to_params(),
-        node_count=node_count if node_count is not None else preset.node_count,
-        duration_s=duration_s if duration_s is not None else preset.duration_s,
+        node_count=settings.node_count,
+        duration_s=settings.duration_s,
         initial_state=np.array(
             [preset.top_arm_angle_rad, preset.top_wrist_cock_rad, 0.0, 0.0],
             dtype=np.float64,
         ),
         impact_theta1_rad=0.0,
         torque_clamp=TorqueClamp(
-            max_torque1=(hub_torque_nm if hub_torque_nm is not None else preset.hub_torque_nm),
-            max_torque2=(
-                wrist_torque_nm if wrist_torque_nm is not None else preset.wrist_torque_nm
-            ),
+            max_torque1=settings.hub_torque_nm,
+            max_torque2=settings.wrist_torque_nm,
         ),
         joint_limits=JointLimits(
             phi_min=_WRIST_MIN_RAD,
