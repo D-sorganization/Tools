@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.61                                    |
+| **Spec Version**        | 1.18.64                                    |
 | **Last Spec Update**    | 2026-08-27                                 |
 
 ## 2. Purpose & Mission
@@ -5560,6 +5560,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-27 | 1.18.64 | feat(putting, #4800 P2): green-surface heightfield (`PlanarGreenSurface` parametric plane + `GridGreenSurface` bilinear grid) with the versioned fail-closed `swing_sim.green_surface/1` wire (delivery_interchange posture: sorted keys, no non-finite values, unknown fields refused, byte-identical round-trips), 2-D skid→roll integration on the surface (in-plane gravity from the local gradient, stimp-derived rolling resistance reused from `roll.py`), and published hole-capture physics — the Holmes (1991)/Penner (2002) effective radius `R_eff(v) = R·sqrt(1 − (v/v_capture)²)` with the geometric `capture_speed_mps` bound pinned as the limiting case. The legacy planar `simulate_putt` delegates to the surface integrator with the historic speed-threshold capture and stays bit-identical (regression-gated against the #4125 reference pins). TypeScript twins `puttingGreen.ts`/`puttingGreenWire.ts` mirror surface, integration, capture, and wire test-for-test (39 new vitest + 39 new pytest gates). |
 | 2026-08-27 | 1.18.61 | chore(release): bump version to v1.10.0 (#4761). |
 | 2026-08-27 | 1.18.60 | feat(rate-of-closure, #4792/#4142 R14.3): unify PyQt and React variation execution policies, progress, cancellation, durable chunk bounds, resume, publication, persistence, and export under Python-owned contracts; visibly label the PyQt execution selector after hosted visual review; publish a governed interaction matrix, advance the fail-closed ledger to 30 verified / 1 partial, and retain the model-scenario, human-validation, causal, coaching, and R14.6 human-approval boundaries. |
 | 2026-08-27 | 1.18.59 | feat(rate-of-closure, #4791/#4142 R13.5): add provenance-complete Morris target and source selection across PyQt and React, preserve global ranking and typed denominators, fail closed on ambiguous same-name targets, and pin state/impact/shot parity without invoking simulation or sensitivity recomputation. |

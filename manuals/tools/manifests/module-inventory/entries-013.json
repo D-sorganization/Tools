@@ -3,6 +3,211 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 13957,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d96a6de25190d368aaa78ac3849b2ca6ebb0db67e187e489bceba651d6ce6d4c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-ROUTER-FACTORY-PY-C4FB1F1A4282",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/router_factory.py",
+      "purpose": "Shared WebSocket router factory for AI chat streaming.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "mapped",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [
+          "/chat/sessions",
+          "/chat/sessions/{session_id}/history"
+        ],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "create_chat_router",
+            "signature": "prefix: str='', authorize_fn: Any=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/chat/tests/test_chat_routing_lifecycle.py",
+          "src/shared/python/chat/tests/test_chat_ws_error_handling.py",
+          "tests/shared/python/chat/test_router_error_logging.py",
+          "tests/shared/python/chat/test_router_factory.py",
+          "tests/shared/python/chat/test_router_rest.py",
+          "tests/shared/python/chat/test_terminal_protocol.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 17688,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4f3e03bb12e22c16460a656e7fa8f3fda9c910e855095886874e8dbbdaee9abc",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-SERVICE-BASE-PY-A209D33ED55E",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/service_base.py",
+      "purpose": "Shared base class for AI chat session management.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ChatMessage",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ChatServiceBase",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ChatSession",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/chat/tests/test_chat_routing_lifecycle.py",
+          "src/shared/python/chat/tests/test_service_base.py",
+          "tests/contracts/test_chat_service_conformance.py",
+          "tests/shared/python/chat/test_export.py",
+          "tests/shared/python/chat/test_router_factory.py",
+          "tests/unit/chat/condensation/test_condenser.py",
+          "tests/unit/chat/condensation/test_strategy.py",
+          "tests/unit/chat/export/test_copy_clipboard.py",
+          "tests/unit/chat/export/test_html_exporter.py",
+          "tests/unit/chat/export/test_markdown_exporter.py",
+          "tests/unit/chat/export/test_secret_redactor.py",
+          "tests/unit/chat/export/test_text_exporter.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": [
+          "tests/contracts/test_chat_service_conformance.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4663,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4b5f57862c78dc1d449579bde8e30c4ce2bbf91fb57b47bd60083e2465714cc6",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-SKILLS-MANAGER-PY-F0E3A2C22AD8",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/skills_manager.py",
+      "purpose": "Agentic skills and workflows manager.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SkillDefinition",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SkillsManager",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/chat/test_skills_manager.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 7134,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -16712,203 +16917,6 @@
         "unit_mentions": [
           "bar"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2790,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2b7cdeded7fc612481028364f8722c8ef6ae36a9be63425959726de2e7371a08",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-GENERATOR-PY-3FC12D46BC0A",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/programmatic_pid/generator.py",
-      "purpose": "P&ID generator — backward-compatible shim module.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [
-          "src/shared/python/programmatic_pid/tests/test_pipeline_e2e.py",
-          "tests/programmatic_pid/test_cli.py",
-          "tests/programmatic_pid/test_pid_integration.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 4176,
-      "classification": "calculation",
-      "classification_basis": "path-marker:geometry",
-      "content_sha256_lf": "202e25b9606f43016381b81f0244c43ffcd3d6b8f4ffb3763a98af954f149f69",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-GEOMETRY-PY-445FF6118AE2",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/programmatic_pid/geometry.py",
-      "purpose": "Geometry utilities for coordinate math, bounding boxes, and collision detection.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "clamp",
-            "signature": "value: float, lo: float, hi: float"
-          },
-          {
-            "kind": "function",
-            "name": "closest_point_on_rect",
-            "signature": "point: tuple[float, float], rect: tuple[float, float, float, float]"
-          },
-          {
-            "kind": "function",
-            "name": "dedupe_points",
-            "signature": "points: Sequence[tuple[float, float]]"
-          },
-          {
-            "kind": "function",
-            "name": "distance",
-            "signature": "a: tuple[float, float], b: tuple[float, float]"
-          },
-          {
-            "kind": "function",
-            "name": "find_free_region",
-            "signature": "occupied: list[BBox], width: float, height: float, search_origin: Point | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "rects_overlap",
-            "signature": "a: tuple[float, float, float, float], b: tuple[float, float, float, float], pad: float=0.0"
-          },
-          {
-            "kind": "function",
-            "name": "text_box",
-            "signature": "text: str, x: float, y: float, h: float, align: str='MIDDLE_CENTER'"
-          },
-          {
-            "kind": "function",
-            "name": "to_float",
-            "signature": "value: object, default: float=0.0"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/programmatic_pid/tests/test_edge_cases.py",
-          "src/shared/python/programmatic_pid/tests/test_geometry.py",
-          "tests/programmatic_pid/test_geometry.py",
-          "tests/programmatic_pid/test_geometry_extra.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1933,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b275bc4b6251505ad083363e40b05f67f586eb1df446f81bf1ed1d2580f63800",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-INSTRUMENTS-PY-6BD5CE757E57",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/programmatic_pid/instruments.py",
-      "purpose": "Instrument (bubble tag) rendering.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "add_instrument",
-            "signature": "msp: Any, instrument: dict[str, Any], text_h: float, text_layer: str, default_layer: str, radius: float, show_number_suffix: bool=False, label_placer: Any | None=None"
-          }
-        ],
-        "test_paths": [
-          "tests/programmatic_pid/test_instruments.py"
-        ],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }
