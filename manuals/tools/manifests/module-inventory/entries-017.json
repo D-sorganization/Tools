@@ -3,6 +3,352 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 963,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "24d257d203f7480d7fa5fc1b060082d38703b0b7da505c7e58a1297ddfcb2ac1",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-URDF-BUILDER-GUI-GUI-REGISTRATION-PY-541C21950445",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/urdf_builder_gui/gui_registration.py",
+      "purpose": "GUI registration for Parametric URDF Builder.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "GUI_INFO",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_gui_info",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_gui_registration.py",
+          "tests/rate_of_closure/test_gui_registration.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 360,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cee7218aa0445b80ff6fd88bd0dfd87b17aacbea94d7ed75cc0fde25c6e3e21d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-URDF-BUILDER-GUI-LAUNCH-PYQT6-PY-93CBDA0BBBE4",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/urdf_builder_gui/launch_pyqt6.py",
+      "purpose": "Standalone PyQt6 launcher for Parametric URDF Builder.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/folder_tool/test_launch_pyqt6.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 102,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8b10e8ba250626c81fc629aea7fc8b4d5dbc2fd3f9a69ba45f9abe8f010d199f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-URDF-BUILDER-GUI-PYTHON-URDF-BUILDER-GUI-INIT-PY-F873B1906886",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/urdf_builder_gui/python/urdf_builder_gui/__init__.py",
+      "purpose": "PyQt6 GUI for Parametric URDF Builder.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7953,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c68da0df57ce306d2339f7b65b9c278cb1a41b71ee20fd4c8a4c2ab37482a2b5",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-URDF-BUILDER-GUI-PYTHON-URDF-BUILDER-GUI-ANTHROPOMETRIC-MODEL-PY-D6EA2216B0C1",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/urdf_builder_gui/python/urdf_builder_gui/anthropometric_model.py",
+      "purpose": "Anthropometric body model — shared constants for URDF generation.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SegmentDimensions",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "URDFConfig",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TEMPLATE_SEGMENTS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "compute_box_inertia",
+            "signature": "mass: float, width: float, height: float, depth: float"
+          },
+          {
+            "kind": "function",
+            "name": "compute_cylinder_inertia",
+            "signature": "mass: float, radius: float, length: float"
+          },
+          {
+            "kind": "function",
+            "name": "compute_segment_length",
+            "signature": "total_height: float, segment_key: str, proportion_factor: float=1.0"
+          },
+          {
+            "kind": "function",
+            "name": "compute_segment_mass",
+            "signature": "total_mass: float, segment_key: str, count: int=1"
+          },
+          {
+            "kind": "function",
+            "name": "compute_sphere_inertia",
+            "signature": "mass: float, radius: float"
+          },
+          {
+            "kind": "function",
+            "name": "get_template_segments",
+            "signature": "template_name: str"
+          },
+          {
+            "kind": "function",
+            "name": "interpolate_gender_factor",
+            "signature": "factor: float, female_val: float, male_val: float"
+          },
+          {
+            "kind": "re-export",
+            "name": "HEIGHT_RATIOS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MASS_RATIOS",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/urdf_builder_gui/tests/test_urdf_builder_gui.py",
+          "tests/test_anthropometry_parity.py",
+          "tests/unit/test_anthropometry_parity.py"
+        ],
+        "unit_mentions": [
+          "J",
+          "kg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 509,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "42ae113ffd5aea62500be50d5dadca8633ea21c077b950520d0b070d559df414",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-URDF-BUILDER-GUI-PYTHON-URDF-BUILDER-GUI-CONTRACTS-PY-0EBF61547DD9",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/urdf_builder_gui/python/urdf_builder_gui/contracts.py",
+      "purpose": "Design by Contract support for urdf_builder_gui.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "PostconditionError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PreconditionError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ensure",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "require",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
+          "src/shared/python/model_generation/tests/test_contracts.py",
+          "src/urdf_builder_gui/tests/test_urdf_builder_gui.py",
+          "tests/rate_of_closure/test_contracts.py",
+          "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/test_contracts.py",
+          "tests/unit/ai/mcp/test_contracts.py",
+          "tests/unit/ai/peer_review/test_contracts.py",
+          "tests/unit/ai/skills/test_contracts.py",
+          "tests/unit/test_contracts.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
+          "src/shared/python/model_generation/tests/test_contracts.py",
+          "tests/rate_of_closure/test_contracts.py",
+          "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/test_contracts.py",
+          "tests/unit/ai/mcp/test_contracts.py",
+          "tests/unit/ai/peer_review/test_contracts.py",
+          "tests/unit/ai/skills/test_contracts.py",
+          "tests/unit/test_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2880,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",

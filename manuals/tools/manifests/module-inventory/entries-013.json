@@ -3,6 +3,269 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 5673,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d637e81d11204f2a01c77e815d2dd8aefc68033ab6e96a0e23739cf379a90c4f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-MODELS-PY-7C5DBF9AF688",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/models.py",
+      "purpose": "Chat API contract models.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ChatChunkResponse",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ChatHistoryResponse",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ChatIndexStatusResponse",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ChatMessageRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ChatModelInfo",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ChatModelListResponse",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ChatSessionInfo",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_RESPONSE_STYLE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RESPONSE_STYLE_PROMPTS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ResponseStyle",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ThinkingCapabilities",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ThinkingLevel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ThinkingLevelName",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "make_full_thinking_capabilities",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "make_none_only_capabilities",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "style_prompt",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/chat/tests/test_chat.py",
+          "src/shared/python/chat/tests/test_chat_routing_lifecycle.py",
+          "tests/shared/python/chat/test_models.py",
+          "tests/test_waves_2_3_imports.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2092,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "34f16a8a74cf8c0148ee03562641dc210f1932235b8c655104934fbb336c60c4",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-QT-DIAGNOSTICS-PY-1FE050C75ED7",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/qt_diagnostics.py",
+      "purpose": "Import-safe diagnostics for the optional PyQt6 chat dock runtime.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ChatQtDiagnostic",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "diagnose_chat_qt_runtime",
+            "signature": "*, python_executable: str | None=None, timeout_seconds: float=10.0"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/chat/tests/test_chat.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 14879,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "af1c27760e6171df24945819bebd9c2f4dc724602209d884203f28779646a59f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-QUICK-BAR-PY-18859D97AADF",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/quick_bar.py",
+      "purpose": "Quick-action chat bar for toolbar integration.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ChatLauncherMixin",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ChatQuickBar",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ThemeProviderProtocol",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/chat/test_quick_bar.py",
+          "tests/shared/python/chat/test_quick_bar_widget.py"
+        ],
+        "unit_mentions": [
+          "bar",
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 13957,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -2580,6 +2843,7 @@
           "tests/shared/python/data_processing/test_processor.py",
           "tests/shared/python/golf_club/test_contracts.py",
           "tests/shared/python/golf_club/test_impact_coupling.py",
+          "tests/shared/python/golf_club/test_putter_head.py",
           "tests/shared/python/golf_club/test_shaft_serialization.py",
           "tests/shared/python/gui_launcher/test_registry.py",
           "tests/shared/python/process_calculators/test_scrubber_calculator.py",
@@ -4709,6 +4973,136 @@
           "tests/rate_of_closure/test_club_mesh_inertia.py"
         ],
         "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 19048,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9dc55d2d7f50ae60bd74e80218dd73fb9c0993a8a13108bf0fecb2f4bfd79e3f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-PUTTER-HEAD-PY-BA09710A9B26",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/putter_head.py",
+      "purpose": "Putter-head import: mesh mass properties -> PutterSpec v2 (epic #4800, P3).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PutterHeadDocument",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PutterHeadProvenance",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PutterStrikeResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PutterTwist",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PUTTER_CONTACT_TIME_S",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PUTTER_HEAD_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "head_moi_for_strike",
+            "signature": "document: PutterHeadDocument, strike_offset_toe_mm: float=0.0, strike_offset_high_mm: float=0.0"
+          },
+          {
+            "kind": "function",
+            "name": "putter_head_from_json",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "putter_head_from_library",
+            "signature": "library_name: str, *, head_mass_kg: float, loft_deg: float, cor: float=DEFAULT_PUTTER_COR"
+          },
+          {
+            "kind": "function",
+            "name": "putter_head_from_mesh",
+            "signature": "name: str, triangles: np.ndarray, *, mesh_sha256: str, loft_deg: float, cor: float=DEFAULT_PUTTER_COR, density_kg_m3: float | None=None, target_mass_kg: float | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "putter_head_from_stl",
+            "signature": "name: str, stl_path: Path | str, *, loft_deg: float, cor: float=DEFAULT_PUTTER_COR, density_kg_m3: float | None=None, target_mass_kg: float | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "putter_head_to_json",
+            "signature": "document: PutterHeadDocument"
+          },
+          {
+            "kind": "function",
+            "name": "putter_spec",
+            "signature": "document: PutterHeadDocument"
+          },
+          {
+            "kind": "function",
+            "name": "strike_with_head",
+            "signature": "document: PutterHeadDocument, clubhead_speed_mps: float, shaft_lean_deg: float=0.0, *, aim_deg: float=0.0, face_angle_deg: float=0.0, path_angle_deg: float=0.0, attack_angle_deg: float=0.0, strike_offset_toe_mm: float=0.0, strike_offset_high_mm: float=0.0"
+          },
+          {
+            "kind": "function",
+            "name": "twist_response",
+            "signature": "document: PutterHeadDocument, clubhead_speed_mps: float, *, shaft_lean_deg: float=0.0, attack_angle_deg: float=0.0, strike_offset_toe_mm: float=0.0, strike_offset_high_mm: float=0.0"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_putter_head.py"
+        ],
+        "unit_mentions": [
+          "J",
+          "deg",
+          "m/s",
+          "ms",
           "s"
         ],
         "validation_paths": []
@@ -16615,388 +17009,6 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 25805,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "37b1df8d77643259acc46fe5da05d48075ee34bf54cbd7b8be97b3ebebf01aab",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-CLI-PY-532429F292A6",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/programmatic_pid/cli.py",
-      "purpose": "Command-line interface and sheet generation orchestration.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "mapped",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [
-          "out.svg"
-        ],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "add_equipment",
-            "signature": "msp: Any, eq: dict[str, Any], text_h: float, text_layer: str, notes_layer: str, show_inline_notes: bool=False"
-          },
-          {
-            "kind": "function",
-            "name": "derive_related_path",
-            "signature": "path: str | Path, suffix: str"
-          },
-          {
-            "kind": "function",
-            "name": "generate",
-            "signature": "spec_path: str | Path, out_path: str | Path, svg_path: str | Path | None=None, sheet_set: str='two', controls_out: str | Path | None=None, controls_svg: str | Path | None=None, profile: str='presentation'"
-          },
-          {
-            "kind": "function",
-            "name": "generate_controls_sheet",
-            "signature": "spec_path: str | Path, out_path: str | Path, svg_path: str | Path | None=None, profile: str | None='presentation', prepared_spec: dict[str, Any] | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "generate_process_sheet",
-            "signature": "spec_path: str | Path, out_path: str | Path, svg_path: str | Path | None=None, profile: str | None='presentation', prepared_spec: dict[str, Any] | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "main",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "tests/programmatic_pid/test_cli.py",
-          "tests/programmatic_pid/test_pid_generation.py",
-          "tests/unit/test_project_metadata_contracts.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": [
-          "tests/unit/test_project_metadata_contracts.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6148,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2d92b37078f1a34110cd055ebf282c7db7925d979712da7c8225e7f48246fcbe",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-CONTROLS-PY-7C9625E82CCE",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/programmatic_pid/controls.py",
-      "purpose": "Control loop rendering and signal line routing.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "add_control_loops",
-            "signature": "msp: Any, spec: dict[str, Any], text_h: float, text_layer: str, equipment_by_id: dict[str, dict[str, Any]], instrument_by_id: dict[str, dict[str, Any]], stream_points: dict[str, tuple[float, float]], process_bbox: tuple[float, float, float, float] | None=None, show_loop_tags: bool=False"
-          },
-          {
-            "kind": "function",
-            "name": "orthogonal_control_route",
-            "signature": "start: tuple[float, float], end: tuple[float, float], route_index: int=0, spread: float=4.0, corridor_y: float | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "resolve_reference_point",
-            "signature": "ref_id: str, equipment_by_id: dict[str, dict[str, Any]], instrument_by_id: dict[str, dict[str, Any]], stream_points: dict[str, tuple[float, float]]"
-          }
-        ],
-        "test_paths": [
-          "tests/programmatic_pid/test_controls.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 9499,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "601a59b7a0586757f9dca6cead1520d38ba8f974ad08522b1fa3cc8e19d89c59",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-DOCUMENT-PY-7BC6028C5AC0",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/programmatic_pid/document.py",
-      "purpose": "PIDDocument — the primary public API for programmatic-pid.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "PIDDocument",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/programmatic_pid/tests/test_pipeline_e2e.py",
-          "tests/programmatic_pid/test_document.py",
-          "tests/programmatic_pid/test_pid_generation.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 15218,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3a1839b2c5234b16a0762a6c8caae7598eed31e0d427d0881fa93d1c387e0805",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-EQUIPMENT-PY-FE69D371C2ED",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/programmatic_pid/equipment.py",
-      "purpose": "Equipment symbol rendering with extensible registry pattern.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "EQUIPMENT_RENDERERS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "draw_equipment_symbol",
-            "signature": "msp: Any, eq: dict[str, Any], layer: str"
-          },
-          {
-            "kind": "function",
-            "name": "equipment_anchor",
-            "signature": "eq: dict[str, Any], side: str | None, offset: float=0.0"
-          },
-          {
-            "kind": "function",
-            "name": "equipment_center",
-            "signature": "eq: dict[str, Any]"
-          },
-          {
-            "kind": "function",
-            "name": "equipment_dims",
-            "signature": "eq: dict[str, Any]"
-          },
-          {
-            "kind": "function",
-            "name": "equipment_side_anchors",
-            "signature": "eq: dict[str, Any]"
-          },
-          {
-            "kind": "function",
-            "name": "nearest_equipment_anchor",
-            "signature": "eq: dict[str, Any], source: tuple[float, float]"
-          },
-          {
-            "kind": "function",
-            "name": "register_equipment",
-            "signature": "type_name: str"
-          },
-          {
-            "kind": "function",
-            "name": "render_ball_valve",
-            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
-          },
-          {
-            "kind": "function",
-            "name": "render_bin",
-            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
-          },
-          {
-            "kind": "function",
-            "name": "render_box",
-            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
-          },
-          {
-            "kind": "function",
-            "name": "render_burner",
-            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
-          },
-          {
-            "kind": "function",
-            "name": "render_check_valve",
-            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
-          },
-          {
-            "kind": "function",
-            "name": "render_control_valve",
-            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
-          },
-          {
-            "kind": "function",
-            "name": "render_fan",
-            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
-          },
-          {
-            "kind": "function",
-            "name": "render_gate_valve",
-            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
-          },
-          {
-            "kind": "function",
-            "name": "render_globe_valve",
-            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
-          },
-          {
-            "kind": "function",
-            "name": "render_heat_exchanger",
-            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
-          },
-          {
-            "kind": "function",
-            "name": "render_hopper",
-            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
-          },
-          {
-            "kind": "function",
-            "name": "render_pump",
-            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
-          },
-          {
-            "kind": "function",
-            "name": "render_relief_valve",
-            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
-          },
-          {
-            "kind": "function",
-            "name": "render_rotary_valve",
-            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
-          },
-          {
-            "kind": "function",
-            "name": "render_rupture_disk",
-            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
-          },
-          {
-            "kind": "function",
-            "name": "render_tank",
-            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
-          }
-        ],
-        "test_paths": [
-          "tests/programmatic_pid/test_equipment.py"
-        ],
-        "unit_mentions": [
-          "bar"
-        ],
         "validation_paths": []
       }
     }

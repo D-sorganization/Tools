@@ -21,6 +21,8 @@ and ``rust_core/upstream-physics/src/contact.rs``; the explicit
 SLIDING/ROLLING mode machine follows ``ball_roll_physics.py``. All
 derivations here are re-done from first principles in the module
 docstrings (this package shares no code with UpstreamDrift).
+:mod:`.ud_adapter` (#4800 P9) is the runtime-free interchange seam
+with UpstreamDrift's ``putting_green`` topography files.
 
 Putter specs: :data:`~.impact.MINIMAL_PUTTERS` are deliberately
 minimal H3-local specs. The reconciliation with the H1 club-library
@@ -70,6 +72,11 @@ from .surface import (
     green_surface_from_json,
     green_surface_to_json,
 )
+from .ud_adapter import (
+    UdGreenTopography,
+    green_surface_from_ud_json,
+    green_surface_to_ud_json,
+)
 
 __all__ = [
     "DEFAULT_PUTTER_COR",
@@ -88,11 +95,14 @@ __all__ = [
     "PuttResult",
     "PutterSpec",
     "SkidSolution",
+    "UdGreenTopography",
     "capture_speed_mps",
     "clubhead_speed_from_backstroke",
     "effective_hole_radius_m",
     "green_surface_from_json",
+    "green_surface_from_ud_json",
     "green_surface_to_json",
+    "green_surface_to_ud_json",
     "roll_out_distance",
     "roll_time_s",
     "rolling_mu_to_stimp",
