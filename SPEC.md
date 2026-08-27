@@ -42,7 +42,8 @@ durable execution shares the governed 1--4096 chunk bound, resume status, and
 export semantics. A requirement-level interaction matrix distinguishes shared
 scientific capabilities from declared surface conveniences. These outputs are
 model-scenario evidence, not human validation, anatomical causality, or
-coaching authority.
+coaching authority. The fail-closed epic ledger is 30 verified requirements
+and one partial R14.6 visual-first requirement.
 
 ### 2026-08-27 Provenance-Complete Attribution Selection (#4791 / #4142 R13.5)
 
@@ -5554,7 +5555,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-08-27 | 1.18.60 | feat(rate-of-closure, #4792/#4142 R14.3): unify PyQt and React variation execution policies, progress, cancellation, durable chunk bounds, resume, publication, persistence, and export under Python-owned contracts; publish a governed interaction matrix and retain the model-scenario, human-validation, causal, and coaching boundaries. |
+| 2026-08-27 | 1.18.60 | feat(rate-of-closure, #4792/#4142 R14.3): unify PyQt and React variation execution policies, progress, cancellation, durable chunk bounds, resume, publication, persistence, and export under Python-owned contracts; publish a governed interaction matrix, advance the fail-closed ledger to 30 verified / 1 partial, and retain the model-scenario, human-validation, causal, and coaching boundaries. |
 | 2026-08-27 | 1.18.59 | feat(rate-of-closure, #4791/#4142 R13.5): add provenance-complete Morris target and source selection across PyQt and React, preserve global ranking and typed denominators, fail closed on ambiguous same-name targets, and pin state/impact/shot parity without invoking simulation or sensitivity recomputation. |
 | 2026-08-27 | 1.18.58 | fix(ci): raise the single-worker Rust gate timeout from 30 to 45 minutes after an exact-head run passed all quality and benchmark phases but was cancelled while `actions/upload-artifact` finalized the benchmark result; retain the artifact, one job, one Cargo worker, and every existing check. |
 | 2026-08-27 | 1.18.57 | fix(ci): raise the serialized Rust quality gate timeout from 15 to 30 minutes after two exact-head runs reached the security-audit/cache tail and were cancelled by the prior bound; retain one build job, one Cargo build worker, and every existing quality phase. |
