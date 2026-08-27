@@ -28,7 +28,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                           |
 | #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                                    |
 | #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                            |
-| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. Merged PR #4703 advances R15.4 and the ledger to 22 verified / 9 partial; R14.6 and eight other explicit gaps remain.                                                 |
+| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. #4754 requalifies R10.4 on protected main and advances the ledger to 23 verified / 8 partial; R14.6 and seven other explicit gaps remain.                             |
 | #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                                |
 | #4433 | Visual-first tab visibility and visualization-led UX. Open. V0.1, strict cross-runtime parity, and V5.2 are merged through PR #4738; the audit is 8 verified / 23 partial obligations with seven gaps and two human actions retained. |
 | #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                        |
@@ -60,7 +60,14 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   gates. The prior local artifacts had all 10 native PDF and 14 Word-rendered
   DOCX pages visually reviewed; this reconciled exact head still requires fresh
   protected review and artifact-identity or complete rendered-page evidence.
-- #4142 remains open; model-data evidence is not human or scientific approval.
+- #4142 issue #4754 is delivered on branch
+  `fix/4754-r10-4-requalification` at implementation commit
+  `5cbd6388f62a510e7d1aa5dedfe363275b4f72e8` in open PR #4755. At protected
+  base `cff2909f1585273e10fa49165bfab8521e889da1`, 138 Python, 270 web, and
+  three current-Upstream provider contracts pass. PR #4669's auxiliary
+  failures remain classified as apt-lock provisioning contention and a
+  superseded Upstream consumer-isolation defect. The proposed ledger is 23
+  verified / 8 partial; model-data provenance is not scientific approval.
 
 ## Must-Read Architecture Pointers
 

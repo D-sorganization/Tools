@@ -8,6 +8,9 @@ from typing import Any, cast
 
 ROOT = Path(__file__).resolve().parents[2]
 EVIDENCE = ROOT / "docs/audits/rate_of_closure_epic_4142_evidence.v1.json"
+R10_4_REQUALIFICATION = (
+    ROOT / "docs/audits/rate_of_closure_r10_4_requalification.v1.json"
+)
 PUBLIC_GUIDE = ROOT / "docs/rate_of_closure/variation_ensemble_reproducibility_guide.md"
 EXPECTED_REQUIREMENTS = tuple(
     [f"R10.{index}" for index in range(1, 7)]
@@ -96,6 +99,65 @@ def test_epic_4142_remote_evidence_is_immutable_and_reviewable() -> None:
                 "/actions/runs/" in remote or "/pull/" in remote or "/issues/" in remote
             )
             assert "/main/" not in remote
+
+
+def test_r10_4_is_verified_by_revision_bound_current_main_requalification() -> None:
+    """R10.4 requires current behavior and adjudicated historical failures."""
+    evidence = _load()
+    requirements = {item["requirement_id"]: item for item in evidence["requirements"]}
+    r10_4 = requirements["R10.4"]
+    audit = cast(
+        dict[str, Any],
+        json.loads(R10_4_REQUALIFICATION.read_text(encoding="utf-8")),
+    )
+
+    assert evidence["status_counts"] == {
+        "verified": 23,
+        "partial": 8,
+        "unverified": 0,
+        "external_blocked": 0,
+    }
+    assert r10_4["status"] == "verified"
+    assert r10_4["gaps"] == []
+    assert (
+        str(R10_4_REQUALIFICATION.relative_to(ROOT)).replace("\\", "/")
+        in (r10_4["evidence_files"])
+    )
+
+    assert audit["schema_version"] == "tools-r10.4-requalification/v1"
+    assert audit["requirement_id"] == "R10.4"
+    assert audit["qualified_base_revision"] == (
+        "cff2909f1585273e10fa49165bfab8521e889da1"  # pragma: allowlist secret
+    )
+    assert audit["implementation_pull_request"] == 4669
+    assert audit["implementation_head_revision"] == (
+        "36f4b1add2bc72cea87bd9f87d36b232db76d50b"  # pragma: allowlist secret
+    )
+    assert audit["implementation_merge_revision"] == (
+        "f9730033fd279ba8b4abe03bab2aadd950400b47"  # pragma: allowlist secret
+    )
+    assert audit["current_main_results"] == {
+        "python_tests_passed": 138,
+        "web_tests_passed": 270,
+        "upstream_provider_contracts_passed": 3,
+    }
+    assert audit["historical_failures"] == [
+        {
+            "job": "ground-tee-playwright",
+            "classification": "runner_provisioning_contention",
+            "behavioral_test_execution": False,
+        },
+        {
+            "job": "upstream-downstream-consumer-contract",
+            "classification": "superseded_consumer_isolation_defect",
+            "behavioral_test_execution": True,
+        },
+    ]
+    assert audit["scientific_boundary"] == (
+        "Repository verification of execution-document provenance and "
+        "persistence does not validate a human swing mechanism, identify a "
+        "participant, or support universal coaching advice."
+    )
 
 
 def test_r15_upstream_consumption_evidence_is_verified_and_revision_bound() -> None:
