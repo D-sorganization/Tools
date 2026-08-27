@@ -44,14 +44,17 @@ shared-first in `shared/python/{golf_club,swing_sim}` (contracts in `docs/specs/
 Putting #4800 P2 landed green-surface heightfields, the `swing_sim.green_surface/1`
 wire, and Holmes/Penner capture with TS twins; planar APIs delegate bit-identically.
 
-Clubhead-realism epic #4799: G1/G2 landed — loft is a **leading-edge lean**
+Clubhead-realism epic #4799: G1-G3 landed. Loft is a **leading-edge lean**
 (head built unlofted, sheared about `y = y_le`; `head_profiles.lean_point` =
-`clubHeads.leanPoint`, shared by the mesh, `face_center_point`, `hosel_point`)
-and hosel anchors are loft-aware (blades `x_le - offset` at 0.58 slant height,
-offset never onset; others the leaned authored anchor). Gates cover all 16
-clubs in both twins. G3 (silhouettes), G4 (camera-golden/visual-baseline
-regeneration), G5 (profile-view acceptance) remain open; the driver sidecar
-STL digest was repinned with G1/G2 since CI's source-keyed lane runs it.
+`clubHeads.leanPoint`, shared by the mesh, `face_center_point`, `hosel_point`);
+hosel anchors are loft-aware (blades `x_le - offset` at 0.58 slant height,
+offset never onset; others the leaned authored anchor); blade silhouettes are
+real — iron soles flat on `y = y_le` (~21 mm at reference, cavity kept),
+wedges muscle-back (~29 mm sole, rear-sole bias, 0.3-0.8 mm bounce dip below
+the LE), face sections untouched so strike-view extents and hosel pins are
+unchanged. Gates cover all 16 clubs in both twins. G4 (camera-golden/visual-
+baseline regeneration) and G5 (profile-view acceptance) remain open; the
+driver sidecar STL digest was repinned with G1/G2 (CI runs it source-keyed).
 
 #4142 remains Python-authoritative; PyQt6 and React do not reimplement physics.
 R10.3, R10.4, R11.1, and R11.3 are protected-merged through

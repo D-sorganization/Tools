@@ -8177,6 +8177,7 @@
           "tests/programmatic_pid/test_geometry.py",
           "tests/rate_of_closure/pyqt_variation_visual_state_probe.py",
           "tests/rate_of_closure/pyqt_visualization_tab_probe.py",
+          "tests/rate_of_closure/test_club_heads.py",
           "tests/rate_of_closure/test_club_mesh_source.py",
           "tests/rate_of_closure/test_epic_4142_requirement_evidence.py",
           "tests/rate_of_closure/test_kinetics.py",

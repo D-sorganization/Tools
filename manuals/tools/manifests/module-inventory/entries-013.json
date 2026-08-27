@@ -4980,10 +4980,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 19048,
+      "bytes_lf": 19180,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9dc55d2d7f50ae60bd74e80218dd73fb9c0993a8a13108bf0fecb2f4bfd79e3f",
+      "content_sha256_lf": "317e1f4a54f6da3ddb724df309e33f33defc40d34dfd9314d641aba5e5bd7d07",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-PUTTER-HEAD-PY-BA09710A9B26",
       "language": "python",
