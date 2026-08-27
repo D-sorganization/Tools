@@ -3,6 +3,437 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 4239,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "d4a62fc17c0a24d8b5d034f9e16394a4de8e72ca376c8975492e6b159fae0520",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-INIT-PY-7BC8891DC6A1",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/__init__.py",
+      "purpose": "Simulation session for the Rate of Closure explorer (epic #4103).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "AppFrameSwing",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BALL_POSITION_M",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BallSetup",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BallSupportMode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ContactMode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_DRIVER_TEE_HEIGHT_M",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "EXPLORER_METRIC_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FlightExploration",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "IMPACT_SCENE_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactKinematicSnapshot",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactOutcome",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactScene",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactSceneMetric",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactSceneVector",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactStatus",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "KINETIC_JOINT_NAMES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "KineticsSeries",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ManualDeliveryConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ManualSwingSource",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlaybackFrame",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RunGroundClearanceSnapshot",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RunTurfInteractionSnapshot",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SCREW_CSV_COLUMNS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SOURCE_KINDS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ShaftAxisDatum",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SimulationConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SimulationRun",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TARGET_CSV_COLUMNS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TimedTrajectory",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TriplePendulumParameters",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TriplePendulumSwing",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WindComparison",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ball_setup_from_json_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compare_wind",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compute_kinetics",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "delivery_at",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "explore_flight",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "explore_with_optional_wind",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "fit_run_torque_profile",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ground_clearance_for_run",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "impact_kinematics_for_run",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "impact_scene_for_run",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "inverse_dynamics",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "kinetics_for_run",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "launch_from_delivery",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "launch_from_direct",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "make_source",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "manual_delivery_from_json_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "representative_wedge_parameters_for_club",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "run_simulation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "run_to_json_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "screw_axis_samples",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "screw_series_rows",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "simulate_forced",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "spatial_target_from_simulation_document",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "turf_interaction_for_run",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "write_csv",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "write_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "write_screw_csv",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "write_torque_csv",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "zero_torque_counterfactual",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 7456,
+      "classification": "calculation",
+      "classification_basis": "path-marker:dynamics",
+      "content_sha256_lf": "337488b0b9daabf067bc4b78fe4e8c7ffc28b7b7d10cd0bec429d4395910919d",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-KINETICS-DYNAMICS-PY-498BF77C7035",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/_kinetics_dynamics.py",
+      "purpose": "Pure double-pendulum dynamics used by the swing-kinetics façade.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "inverse_dynamics",
+            "signature": "p: PendulumParameters, states: np.ndarray, g_inplane: tuple[float, float], dt: float"
+          },
+          {
+            "kind": "function",
+            "name": "reaction_forces",
+            "signature": "p: PendulumParameters, theta: np.ndarray, omega: np.ndarray, alpha: np.ndarray, g_inplane: tuple[float, float], clubhead_mass_kg: float"
+          },
+          {
+            "kind": "function",
+            "name": "simulate_forced",
+            "signature": "p: PendulumParameters, initial: PendulumState, g_inplane: tuple[float, float], dt: float, n_steps: int, torque_fn: Callable[[float], tuple[float, float]]"
+          },
+          {
+            "kind": "function",
+            "name": "zero_torque_counterfactual",
+            "signature": "p: PendulumParameters, states: np.ndarray, g_inplane: tuple[float, float], *, locked: tuple[bool, bool]=(False, False)"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_kinetics.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 5177,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
@@ -12405,110 +12836,6 @@
           "bar",
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1769,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c1c72db699425d0c76a4552692e6c97ad46ae68b1638e7fd1e40a95cb12869c1",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VARIATION-WORKSPACE-PY-278EFE538E48",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/variation_workspace.py",
-      "purpose": "Sibling workflow container for variation analysis surfaces.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "VariationWorkspace",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/test_morris_pyqt_workflow.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 12318,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "41dfbf10cfc7e4965e7a2ee915a646db70bf8bf7ce605da06092b6521e0663be",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VIEW-COMPOSITOR-PY-4F98398FFC32",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/view_compositor.py",
-      "purpose": "Responsive PyQt host for synchronized Impact, Swing, and Flight views.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ViewCompositor",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

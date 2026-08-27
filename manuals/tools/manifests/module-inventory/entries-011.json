@@ -3,6 +3,109 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 8349,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d513f72b5af08267233a83c41dc2cc70d9a6ab059eaba5753b36e9500373d2af",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONDISPERSIONMATH-TS-70491E9969B6",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/variationDispersionMath.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "SampleDispersionTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "confidenceRadiusScale",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "sampleDispersion",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 853,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "edc53a21776e34a712b14b7de919c5e6e21c2202db54aed9f394b3ccf29329c1",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONEXECUTION-WORKER-TS-A82A6E3F6C52",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/variationExecution.worker.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 11939,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -14887,144 +14990,6 @@
           "s"
         ],
         "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 13838,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2ba74e91f9ff89ac41bc0fe72255d7308040aae981a5dd62114ad590e3d534d6",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-FACTORY-PY-DD109CF427F5",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/ai/adapters/factory.py",
-      "purpose": "Unified adapter factory for AI provider resolution.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "AdapterFactory",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_CLOUD_FIRST_ORDER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_LOCAL_FIRST_ORDER",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/ai/tests/test_adapter_factory.py",
-          "tests/shared/python/ai/test_adapter_factory.py",
-          "tests/shared/python/ai/test_shared_dependency_imports.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 14732,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f0a4febd49ca152e6cf45913e478dabe4c4a0adeeb7de50ead8665524e43ac15",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-GEMINI-ADAPTER-PY-6870A0DF6EBF",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/ai/adapters/gemini_adapter.py",
-      "purpose": "Google Gemini API Adapter.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "https://github.com/D-sorganization/Tools/issues/2764",
-          "https://github.com/D-sorganization/Tools/issues/2764."
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "GeminiAdapter",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_CONFIGURE_LOCK",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/ai/test_adapter_contract.py",
-          "tests/shared/python/ai/test_ai_hardening_3179.py",
-          "tests/unit/ai/test_gemini_adapter.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": [
-          "tests/shared/python/ai/test_adapter_contract.py"
-        ]
       }
     }
   ],

@@ -3,6 +3,340 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 7183,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "af0cfd19fe88a3a23b53463db2e73053f76d083b3e7c4227fae49dc9d03f9baa",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-MODELS-PY-80A3F3AE8848",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/pressure_drop_calculator/models.py",
+      "purpose": "Pydantic data models for Pressure Drop Calculator API.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PressureDropInput",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PressureDropOutput",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "Pa",
+          "bar",
+          "kg",
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 24,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "7b3c9b3153c1ece16e535c78e20d189cb0e95159e75f9f06b4933775f9a1c3a3",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-PYTHON-INIT-PY-E7A1EAAD944F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/pressure_drop_calculator/python/__init__.py",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "src/data_processing/data_processor/python/tests/test_data_loader_contracts.py",
+          "src/data_processing/data_processor/python/tests/test_nn_training_worker.py",
+          "src/data_processing/data_processor/python/tests/test_undo_redo.py",
+          "src/data_processing/data_processor/python/tests/test_vectorized_filter_engine_contracts.py",
+          "src/document_processing/pdf_renamer/tests/test_cache.py",
+          "src/financial_calculator/tests/test_financial_calculator_gui.py",
+          "src/financial_calculator/tests/test_financial_calculator_gui_contracts.py",
+          "src/function_generator/tests/test_function_generator_gui.py",
+          "src/inertia_calculator/tests/test_inertia_calculator_gui.py",
+          "src/movement_optimizer/tests/test_cli.py",
+          "src/movement_optimizer/tests/test_commands.py",
+          "src/movement_optimizer/tests/test_main_window.py",
+          "src/movement_optimizer/tests/test_session_state.py",
+          "src/movement_optimizer/tests/test_thread_safety.py",
+          "src/movement_optimizer/tests/test_undo_redo_menu.py",
+          "src/p1am_control_system/backend/tests/test_alarm_ack_engine.py",
+          "src/p1am_control_system/backend/tests/test_alarm_processing.py",
+          "src/p1am_control_system/backend/tests/test_backend_p1am_safety.py",
+          "src/p1am_control_system/backend/tests/test_data_capture_core.py",
+          "src/p1am_control_system/backend/tests/test_estop_reconnect.py",
+          "src/p1am_control_system/backend/tests/test_estop_shutdown_safe_state.py",
+          "src/p1am_control_system/backend/tests/test_estop_write_seams.py",
+          "src/p1am_control_system/backend/tests/test_historian_writer.py",
+          "src/p1am_control_system/backend/tests/test_modbus_client.py",
+          "src/p1am_control_system/backend/tests/test_modbus_estop.py",
+          "src/p1am_control_system/backend/tests/test_passthrough.py",
+          "src/p1am_control_system/backend/tests/test_poll_data_quality.py",
+          "src/p1am_control_system/backend/tests/test_poll_loop_cadence.py",
+          "src/p1am_control_system/backend/tests/test_poll_once.py",
+          "src/p1am_control_system/backend/tests/test_power_supply_integration.py",
+          "src/p1am_control_system/backend/tests/test_power_supply_persistence.py",
+          "src/p1am_control_system/backend/tests/test_safety_state_machine.py",
+          "src/p1am_control_system/backend/tests/test_scan_scheduler.py",
+          "src/p1am_control_system/backend/tests/test_temperature_integration.py",
+          "src/p1am_control_system/backend/tests/test_temperature_persistence.py",
+          "src/p1am_control_system/backend/tests/test_validation_guards_3745.py",
+          "src/p1am_control_system/backend/tests/test_ws_backpressure.py",
+          "src/pendulum_simulator/signal_test.py",
+          "src/pendulum_simulator/tests/test_controls_utils.py",
+          "src/pendulum_simulator/tests/test_controls_widget.py",
+          "src/pendulum_simulator/tests/test_controls_widget_base.py",
+          "src/pendulum_simulator/tests/test_controls_widget_golfer.py",
+          "src/pendulum_simulator/tests/test_controls_widget_triple.py",
+          "src/pendulum_simulator/tests/test_issue_fixes.py",
+          "src/pendulum_simulator/tests/test_main_window.py",
+          "src/pendulum_simulator/tests/test_overlay_state_sync.py",
+          "src/pendulum_simulator/tests/test_panel_builders.py",
+          "src/pendulum_simulator/tests/test_simulation_golfer_gpu.py",
+          "src/pendulum_simulator/tests/test_simulation_panel.py",
+          "src/pendulum_simulator/tests/test_simulation_result_base.py",
+          "src/pendulum_simulator/tests/test_torque_widgets.py",
+          "src/pid_generator/tests/test_pid_generator_gui.py",
+          "src/shared/python/ai/tests/test_access_policy.py",
+          "src/shared/python/chat/tests/test_chat.py",
+          "src/shared/python/chat/tests/test_chat_routing_lifecycle.py",
+          "src/shared/python/chat/tests/test_service_base.py",
+          "src/shared/python/chat/tests/test_workspace_bridge.py",
+          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
+          "src/shared/python/humanoid_character_builder/tests/test_inertia_calculator.py",
+          "src/shared/python/model_generation/tests/test_api_adapters.py",
+          "src/shared/python/model_generation/tests/test_contracts.py",
+          "src/shared/python/plot_theme/tests/test_plot_theme.py",
+          "src/shared/python/sidekick/tests/process_calculators/test_acid_gas_dewpoint_calculator.py",
+          "src/shared/python/sidekick/tests/process_calculators/test_multi_param_analysis.py",
+          "src/shared/python/sidekick/tests/process_calculators/test_psa_gui.py",
+          "src/shared/python/sidekick/tests/process_calculators/test_syngas_compression_engine.py",
+          "src/shared/python/sidekick/tests/process_calculators/test_wgs_reactor_calculator.py",
+          "src/shared/python/sidekick/tests/test_base_calculator_mixin.py",
+          "src/shared/python/sidekick/tests/test_calculator_state_mixin.py",
+          "src/shared/python/sidekick/tests/test_data_processor_engine_errors.py",
+          "src/shared/python/sidekick/tests/test_ode_solver.py",
+          "src/shared/python/sidekick/tests/test_selected_tab_panel.py",
+          "src/shared/python/sidekick/tests/test_state_manager.py",
+          "src/shared/python/sidekick/tests/test_tab_context_menu.py",
+          "src/shared/python/tests/test_contracts_shared.py",
+          "src/web_applications/calculator/tests/test_security_validation.py",
+          "tests/architecture/test_import_resolvability.py",
+          "tests/architecture/test_sidekick_external_imports_3316.py",
+          "tests/data_processing/data_processor/test_background_thread_errors.py",
+          "tests/data_processing/data_processor/test_ui_thread_workers.py",
+          "tests/document_processing/test_pdf_renamer_config_security.py",
+          "tests/folder_packer_pro/test_operations.py",
+          "tests/folder_tool/test_archive_ops.py",
+          "tests/folder_tool/test_backup_copy.py",
+          "tests/folder_tool/test_file_validation.py",
+          "tests/folder_tool/test_folder_ops.py",
+          "tests/folder_tool/test_folder_tool_analysis.py",
+          "tests/folder_tool/test_folder_tool_archive.py",
+          "tests/folder_tool/test_folder_tool_processing.py",
+          "tests/folder_tool/test_folder_tool_ui.py",
+          "tests/folder_tool/test_folder_tool_ui_processing.py",
+          "tests/p1am_control_system/test_calibrate_safe_shutdown.py",
+          "tests/p1am_control_system/test_desktop.py",
+          "tests/p1am_control_system/test_desktop_alarm_state.py",
+          "tests/p1am_control_system/test_desktop_hmi_annunciation.py",
+          "tests/p1am_control_system/test_desktop_tab_labels.py",
+          "tests/p1am_control_system/test_event_logger_filter_error_logging.py",
+          "tests/p1am_control_system/test_plc_write_confirmation.py",
+          "tests/project_packer_fixes/test_folder_packer_gui_lod.py",
+          "tests/python/test_performance_utils.py",
+          "tests/rate_of_closure/pyqt_flight_sample_inspector_probe.py",
+          "tests/rate_of_closure/pyqt_plot_point_inspector_probe.py",
+          "tests/rate_of_closure/pyqt_putting_sample_inspector_probe.py",
+          "tests/rate_of_closure/pyqt_simulation_scrub_probe.py",
+          "tests/rate_of_closure/pyqt_variation_visual_state_probe.py",
+          "tests/rate_of_closure/pyqt_visualization_tab_probe.py",
+          "tests/rate_of_closure/test_authority_state_security.py",
+          "tests/rate_of_closure/test_browser_companion_harness.py",
+          "tests/rate_of_closure/test_confidence_ellipsoid_mesh.py",
+          "tests/rate_of_closure/test_durable_ensemble_pyqt_workflow.py",
+          "tests/rate_of_closure/test_morris_authority_child.py",
+          "tests/rate_of_closure/test_morris_authority_host.py",
+          "tests/rate_of_closure/test_morris_authority_router.py",
+          "tests/rate_of_closure/test_morris_authority_runtime.py",
+          "tests/rate_of_closure/test_morris_pyqt_workflow.py",
+          "tests/rate_of_closure/test_morris_pyqt_workspace.py",
+          "tests/rate_of_closure/test_morris_ui_client.py",
+          "tests/rate_of_closure/test_pyqt_variation_probe_lifecycle.py",
+          "tests/rate_of_closure/test_rate_launch_pyqt_authority.py",
+          "tests/rate_of_closure/test_rate_launch_web_authority.py",
+          "tests/rate_of_closure/test_regional_ground_authority_transport.py",
+          "tests/rate_of_closure/test_regional_ground_loopback_submitter.py",
+          "tests/rate_of_closure/test_regional_ground_variation_request_io.py",
+          "tests/rate_of_closure/test_variation_complete_trial_record.py",
+          "tests/rate_of_closure/test_variation_ensemble_chunks.py",
+          "tests/rate_of_closure/test_variation_gui_execution.py",
+          "tests/rate_of_closure/test_variation_module_importability.py",
+          "tests/rate_of_closure/test_visual_layout_gui.py",
+          "tests/rate_of_closure/test_visual_layout_preferences.py",
+          "tests/rate_of_closure/test_web_companion_app.py",
+          "tests/shared/python/ai/test_ai_hardening_3179.py",
+          "tests/shared/python/ai/test_bitnet_adapter.py",
+          "tests/shared/python/ai/test_provider_config_registry.py",
+          "tests/shared/python/ai/test_rust_adapter.py",
+          "tests/shared/python/chat/test_chat_agent_label.py",
+          "tests/shared/python/chat/test_chat_import_boundaries.py",
+          "tests/shared/python/chat/test_export.py",
+          "tests/shared/python/chat/test_ollama_latency_tuning.py",
+          "tests/shared/python/chat/test_quick_bar.py",
+          "tests/shared/python/chat/test_quick_bar_widget.py",
+          "tests/shared/python/chat/test_router_error_logging.py",
+          "tests/shared/python/chat/test_router_factory.py",
+          "tests/shared/python/chat/test_terminal_protocol.py",
+          "tests/shared/python/chat/test_terminal_runtime.py",
+          "tests/shared/python/chat/test_websocket_protocol.py",
+          "tests/shared/python/file_watcher/test_file_watcher.py",
+          "tests/shared/python/logging_pkg/test_logging_pkg.py",
+          "tests/shared/python/model_generation/test_cli_main.py",
+          "tests/shared/python/model_generation/test_mesh_upload_hardening.py",
+          "tests/shared/python/model_generation/test_rate_limiter.py",
+          "tests/shared/python/model_generation/test_repository.py",
+          "tests/shared/python/model_generation/test_rest_api_routes.py",
+          "tests/shared/python/notes/test_integration.py",
+          "tests/shared/python/plot_engine/test_matplotlib_renderer.py",
+          "tests/shared/python/plot_engine/test_protocols.py",
+          "tests/shared/python/plot_engine/test_pyqt6_widget.py",
+          "tests/shared/python/process_calculators/test_analysis_utils.py",
+          "tests/shared/python/sidekick/ui/test_tools_sidebar_runtime_tabs.py",
+          "tests/shared/python/test_contracts.py",
+          "tests/shared/python/theme/test_api.py",
+          "tests/shared/python/theme/test_colors.py",
+          "tests/shared/python/theme/test_icon_utils.py",
+          "tests/shared/python/theme/test_theme_manager.py",
+          "tests/shared/python/theme/test_typography.py",
+          "tests/shared/python/theme/test_zoom.py",
+          "tests/shared/python/ui/test_window_icon.py",
+          "tests/test_data_processor_tab_export.py",
+          "tests/test_folder_packer_pro.py",
+          "tests/test_gui_launcher_web.py",
+          "tests/test_launch_cli_output.py",
+          "tests/test_sidekick_public_api_stability.py",
+          "tests/test_src_package_import_contract.py",
+          "tests/tools/test_matlab_quality_utils.py",
+          "tests/unit/ai/integrations/github_mcp/test_integration.py",
+          "tests/unit/ai/mcp/test_client.py",
+          "tests/unit/ai/mcp/test_pool.py",
+          "tests/unit/ai/mcp/test_tool_registry_refresh.py",
+          "tests/unit/ai/peer_review/test_chat_integration.py",
+          "tests/unit/ai/peer_review/test_coordinator.py",
+          "tests/unit/ai/test_gemini_adapter.py",
+          "tests/unit/ai/test_peer_review.py",
+          "tests/unit/chat/export/test_copy_clipboard.py",
+          "tests/unit/chat/test_ai_settings_controller.py",
+          "tests/unit/chat/test_dock_widget_dropdowns.py",
+          "tests/unit/chat/test_mid_thread_switch.py",
+          "tests/unit/chat/test_workspace_command_handler.py",
+          "tests/unit/codemap/test_codemap_js_parser.py",
+          "tests/unit/codemap/test_codemap_markdown_parser.py",
+          "tests/unit/codemap/test_codemap_mcp_server.py",
+          "tests/unit/codemap/test_codemap_python_parser.py",
+          "tests/unit/codemap/test_codemap_rust_parser.py",
+          "tests/unit/codemap/test_codemap_ts_common.py",
+          "tests/unit/codemap/test_codemap_watcher.py",
+          "tests/unit/sidekick/agent/test_action_service.py",
+          "tests/unit/sidekick/agent/test_host_adapter.py",
+          "tests/unit/sidekick/agent/test_subtab_adapter.py",
+          "tests/unit/sidekick/conftest.py",
+          "tests/unit/sidekick/test_chat_settings.py",
+          "tests/unit/sidekick/test_notes_tab.py",
+          "tests/unit/sidekick/test_os_terminal_widget.py",
+          "tests/unit/sidekick/test_python_repl_cancel_namespace_3715.py",
+          "tests/unit/sidekick/test_python_repl_widget.py",
+          "tests/unit/sidekick/test_reporting_tab_context_gathering.py",
+          "tests/unit/sidekick/test_runtime_split_coverage.py",
+          "tests/unit/sidekick/test_runtime_tab_settings.py",
+          "tests/unit/sidekick/test_sidekick_ux_hardening.py",
+          "tests/unit/test_contracts.py",
+          "tests/vessel_drafter/test_dbc_lod.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "src/data_processing/data_processor/python/tests/test_data_loader_contracts.py",
+          "src/data_processing/data_processor/python/tests/test_vectorized_filter_engine_contracts.py",
+          "src/financial_calculator/tests/test_financial_calculator_gui_contracts.py",
+          "src/p1am_control_system/backend/tests/test_validation_guards_3745.py",
+          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
+          "src/shared/python/model_generation/tests/test_contracts.py",
+          "src/shared/python/tests/test_contracts_shared.py",
+          "src/web_applications/calculator/tests/test_security_validation.py",
+          "tests/folder_tool/test_file_validation.py",
+          "tests/shared/python/test_contracts.py",
+          "tests/test_src_package_import_contract.py",
+          "tests/unit/test_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 381,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
@@ -14980,437 +15314,6 @@
           "N",
           "g",
           "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 4239,
-      "classification": "calculation",
-      "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "d4a62fc17c0a24d8b5d034f9e16394a4de8e72ca376c8975492e6b159fae0520",
-      "family": "rate-of-closure-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-INIT-PY-7BC8891DC6A1",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/simulation/__init__.py",
-      "purpose": "Simulation session for the Rate of Closure explorer (epic #4103).",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "AppFrameSwing",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "BALL_POSITION_M",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "BallSetup",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "BallSupportMode",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ContactMode",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "DEFAULT_DRIVER_TEE_HEIGHT_M",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "EXPLORER_METRIC_KEYS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "FlightExploration",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "IMPACT_SCENE_FORMAT",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ImpactKinematicSnapshot",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ImpactOutcome",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ImpactScene",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ImpactSceneMetric",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ImpactSceneVector",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ImpactStatus",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "KINETIC_JOINT_NAMES",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "KineticsSeries",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ManualDeliveryConfig",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ManualSwingSource",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PlaybackFrame",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "RunGroundClearanceSnapshot",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "RunTurfInteractionSnapshot",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SCREW_CSV_COLUMNS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SOURCE_KINDS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ShaftAxisDatum",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SimulationConfig",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SimulationRun",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TARGET_CSV_COLUMNS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TimedTrajectory",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TriplePendulumParameters",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TriplePendulumSwing",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WindComparison",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ball_setup_from_json_dict",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "compare_wind",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "compute_kinetics",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "delivery_at",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "explore_flight",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "explore_with_optional_wind",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "fit_run_torque_profile",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ground_clearance_for_run",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "impact_kinematics_for_run",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "impact_scene_for_run",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "inverse_dynamics",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "kinetics_for_run",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "launch_from_delivery",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "launch_from_direct",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "make_source",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "manual_delivery_from_json_dict",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "representative_wedge_parameters_for_club",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "run_simulation",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "run_to_json_dict",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "screw_axis_samples",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "screw_series_rows",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "simulate_forced",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "spatial_target_from_simulation_document",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "turf_interaction_for_run",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "write_csv",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "write_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "write_screw_csv",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "write_torque_csv",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "zero_torque_counterfactual",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 7456,
-      "classification": "calculation",
-      "classification_basis": "path-marker:dynamics",
-      "content_sha256_lf": "337488b0b9daabf067bc4b78fe4e8c7ffc28b7b7d10cd0bec429d4395910919d",
-      "family": "rate-of-closure-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-KINETICS-DYNAMICS-PY-498BF77C7035",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/simulation/_kinetics_dynamics.py",
-      "purpose": "Pure double-pendulum dynamics used by the swing-kinetics façade.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "inverse_dynamics",
-            "signature": "p: PendulumParameters, states: np.ndarray, g_inplane: tuple[float, float], dt: float"
-          },
-          {
-            "kind": "function",
-            "name": "reaction_forces",
-            "signature": "p: PendulumParameters, theta: np.ndarray, omega: np.ndarray, alpha: np.ndarray, g_inplane: tuple[float, float], clubhead_mass_kg: float"
-          },
-          {
-            "kind": "function",
-            "name": "simulate_forced",
-            "signature": "p: PendulumParameters, initial: PendulumState, g_inplane: tuple[float, float], dt: float, n_steps: int, torque_fn: Callable[[float], tuple[float, float]]"
-          },
-          {
-            "kind": "function",
-            "name": "zero_torque_counterfactual",
-            "signature": "p: PendulumParameters, states: np.ndarray, g_inplane: tuple[float, float], *, locked: tuple[bool, bool]=(False, False)"
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/test_kinetics.py"
-        ],
-        "unit_mentions": [
-          "N",
-          "g"
         ],
         "validation_paths": []
       }

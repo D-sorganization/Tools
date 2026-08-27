@@ -3,6 +3,177 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 2993,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "238982130876e0363b6b552701133ee32ccedcefe900bcfc45d6454fbb830269",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-ACTION-CONTRACTS-PY-9EDF125BE9B1",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/agent/action_contracts.py",
+      "purpose": "Action-layer contracts for Sidekick agent dispatch.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ActionDescriptor",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ActionResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RecordedCall",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SidekickActionHandler",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_VALID_SIDE_EFFECTS",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 18030,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "de4bbb39e3f6a7574b312aac274d381b4820b3ad9cd4517f72922d8a03727d3c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-ACTION-SERVICE-PY-12C0FCEDAA75",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/agent/action_service.py",
+      "purpose": "Audited action-dispatch service for the Sidekick agent layer.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-001-monorepo-workspaces.md",
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SidekickActionService",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ActionDescriptor",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ActionDispatcher",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ActionResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AuditSink",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RecordedCall",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SideEffect",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SidekickActionHandler",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StateError",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/unit/sidekick/agent/test_action_audit.py",
+          "tests/unit/sidekick/agent/test_action_service.py",
+          "tests/unit/sidekick/agent/test_planner.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 8441,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17797,112 +17968,6 @@
           "mm",
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3628,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b450f4673c08c1fbb3e32dce1852d3b5f6ba30ea49265e615a63b42a9ea54af2",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-WORKSPACE-CONTRACT-PY-49EC6AF982EC",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/workspace_contract.py",
-      "purpose": "Formal Protocol contract for calculator-local workspace facades.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "WorkspaceContract",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/contracts/test_workspace_contract_conformance.py",
-          "tests/shared/python/sidekick/ui/test_tools_sidebar_calculator_workspace.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "tests/contracts/test_workspace_contract_conformance.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 2556,
-      "classification": "calculation",
-      "classification_basis": "path-marker:signal",
-      "content_sha256_lf": "cfb4c661ff7e3df66988eaa8411c79d54f355a7352396011338feda28b0e49e3",
-      "family": "signal-processing-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-INIT-PY-74FCAD42F570",
-      "language": "python",
-      "maintainer": "Signal processing maintainers",
-      "path": "src/shared/python/signal_toolkit/__init__.py",
-      "purpose": "Signal Processing Toolkit - Comprehensive Signal Analysis Library.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [
-          "tests/shared/python/signal_toolkit/test_signal_loader.py"
-        ],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

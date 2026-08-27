@@ -3,6 +3,144 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 13838,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2ba74e91f9ff89ac41bc0fe72255d7308040aae981a5dd62114ad590e3d534d6",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-FACTORY-PY-DD109CF427F5",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/adapters/factory.py",
+      "purpose": "Unified adapter factory for AI provider resolution.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AdapterFactory",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_CLOUD_FIRST_ORDER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_LOCAL_FIRST_ORDER",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/ai/tests/test_adapter_factory.py",
+          "tests/shared/python/ai/test_adapter_factory.py",
+          "tests/shared/python/ai/test_shared_dependency_imports.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 14732,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f0a4febd49ca152e6cf45913e478dabe4c4a0adeeb7de50ead8665524e43ac15",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-GEMINI-ADAPTER-PY-6870A0DF6EBF",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/adapters/gemini_adapter.py",
+      "purpose": "Google Gemini API Adapter.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://github.com/D-sorganization/Tools/issues/2764",
+          "https://github.com/D-sorganization/Tools/issues/2764."
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GeminiAdapter",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_CONFIGURE_LOCK",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/ai/test_adapter_contract.py",
+          "tests/shared/python/ai/test_ai_hardening_3179.py",
+          "tests/unit/ai/test_gemini_adapter.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": [
+          "tests/shared/python/ai/test_adapter_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 10955,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -14738,143 +14876,6 @@
         "test_paths": [],
         "unit_mentions": [
           "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2533,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c1602c57036887e7867b64549bf522433466815914c36ca13244ac7a25a06a65",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-PARSERS-PY-057A23AC0258",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/codemap/parsers.py",
-      "purpose": "Tree-sitter parsers for Python, Rust, TypeScript, JavaScript, Markdown.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "EXT_TO_LANG",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "dispatch",
-            "signature": "path: str | Path, source: str | bytes"
-          },
-          {
-            "kind": "function",
-            "name": "language_for",
-            "signature": "path: str | Path"
-          },
-          {
-            "kind": "re-export",
-            "name": "ParseResult",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ParsedSymbol",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4941,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "909ec59b96a72e5d3bad0b00c5497fc9d2ea553117c49df19ca64d9bc1ef4f4b",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-WATCHER-PY-4F4B7DB49EC5",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/codemap/watcher.py",
-      "purpose": "``codemap-watch`` daemon — incremental re-index on file save.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "DEBOUNCE_S",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "main",
-            "signature": "argv: list[str] | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "run",
-            "signature": "repo_root: str | None=None, *, debounce: float=DEBOUNCE_S"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "ms",
           "s"
         ],
         "validation_paths": []
