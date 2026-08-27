@@ -2,6 +2,67 @@
   "authority": "D-sorganization/Tools",
   "entries": [
     {
+      "authority_status": "provisional",
+      "bytes_lf": 1717,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "9cf173adb6882b483bf56afba9b26568e569d2186a12e2f9d71eb98c172bf995",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-EXECUTION-DIGEST-PY-0E12A445B251",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/_execution_digest.py",
+      "purpose": "Cross-runtime canonical numeric digests for variation documents.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "canonical_sha256",
+            "signature": "value: object"
+          },
+          {
+            "kind": "function",
+            "name": "normalized_float",
+            "signature": "value: float"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "not-applicable",
       "bytes_lf": 2377,
       "classification": "non-calculation",
@@ -14112,62 +14173,6 @@
           "src/vessel_drafter/tests/test_vessel_drafter_metrics.py",
           "tests/vessel_drafter/test_dbc_lod.py"
         ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3572,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "924080c97f986851758506d1ae087d9173d3de0f9ee1d6f15f145db21382f6f9",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-CLI-PY-027B4F271BCD",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/python/vessel_drafter/cli.py",
-      "purpose": "CLI for generating drafting artifacts.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "build_parser",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "main",
-            "signature": ""
-          }
-        ],
-        "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []
       }

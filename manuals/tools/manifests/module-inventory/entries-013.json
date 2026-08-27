@@ -3,6 +3,113 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 781,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7ba01a1daa9add84e70f2deb98af2da42246a9966b31348009c8767078a28b56",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-CONTRACTS-INIT-PY-D0A7026CA495",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat_contracts/__init__.py",
+      "purpose": "Dependency-free contracts shared by chat and AI packages.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "ArchivedConversationContext",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ArchivedMessage",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CredentialManager",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_RESPONSE_STYLE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RESPONSE_STYLE_PROMPTS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ResponseStyle",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ThinkingCapabilities",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ThinkingLevel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ThinkingLevelName",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "make_full_thinking_capabilities",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "make_none_only_capabilities",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "style_prompt",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 980,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -16803,99 +16910,6 @@
           "kg"
         ],
         "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2922,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "cbcca41ea3c124563445e68568ac09855aa2f196ab764a5de60e789177d1465c",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-TYPES-PY-DCA6E8146841",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/programmatic_pid/types.py",
-      "purpose": "Core types, exceptions, and constants for programmatic-pid.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "BBox",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "LayoutRegions",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "Point",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SpecValidationError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TextConfig",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ValidationIssue",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/programmatic_pid/tests/test_edge_cases.py",
-          "src/shared/python/programmatic_pid/tests/test_geometry.py",
-          "src/shared/python/programmatic_pid/tests/test_pipeline_e2e.py",
-          "src/shared/python/programmatic_pid/tests/test_types.py",
-          "src/shared/python/programmatic_pid/tests/test_validation.py",
-          "tests/programmatic_pid/test_document.py",
-          "tests/programmatic_pid/test_geometry.py",
-          "tests/programmatic_pid/test_geometry_extra.py",
-          "tests/programmatic_pid/test_types.py",
-          "tests/programmatic_pid/test_validation.py"
-        ],
-        "unit_mentions": [
-          "g"
-        ],
-        "validation_paths": [
-          "src/shared/python/programmatic_pid/tests/test_validation.py",
-          "tests/programmatic_pid/test_validation.py"
-        ]
       }
     }
   ],

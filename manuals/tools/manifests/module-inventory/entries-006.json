@@ -3,6 +3,48 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 134,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "53961372ee97f07020a6e91a248a610999e66dcdd181d045749bb800d9539114",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PID-GENERATOR-INIT-PY-816C36943785",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/pid_generator/__init__.py",
+      "purpose": "P&ID Generator tool package.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 689,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -14978,48 +15020,6 @@
             "signature": ""
           }
         ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 234,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0b2ad354f1faee80c23aced10974585865321a10d96b09d52abcb7c442f1132a",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-PLOTTING-CATALOG-ENTRY-TYPES-PY-28EB4754BD3F",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/plotting/_catalog_entry_types.py",
-      "purpose": "Private type aliases shared by plotting catalog data modules.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
         "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []

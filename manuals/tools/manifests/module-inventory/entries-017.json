@@ -3,6 +3,62 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 3572,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "924080c97f986851758506d1ae087d9173d3de0f9ee1d6f15f145db21382f6f9",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-CLI-PY-027B4F271BCD",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/cli.py",
+      "purpose": "CLI for generating drafting artifacts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "build_parser",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 7544,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",

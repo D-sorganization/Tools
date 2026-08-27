@@ -1,5 +1,27 @@
 # Why the optimizer stops the hands — and what would fix it
 
+> ## ⚠️ Correction (2026-08-27, issue [#4785](https://github.com/D-sorganization/Tools/issues/4785))
+>
+> **Sections 3–6 of the original version of this document were wrong**, and the
+> corrected results are folded in below. The cause was a mis-specified club, not
+> a limit of the model.
+>
+> The preset lumped **0.50 kg at the tip** of a 1.10 m shaft. A real driver is
+> **0.310 kg with its centre of mass 76% down the shaft**. In a point-mass-at-tip
+> model the quantity that matters is inertia about the wrist, and the preset
+> overstated it — and the arm/club coupling that fights the release — by **2.1×**.
+>
+> With an inertia-matched club (`me = 0.238 kg`) the _same_ model, optimizer and
+> objective produce **49.7 m/s clubhead, 7.26 m/s hand speed, club/arm 3.46** —
+> inside the measured bands, with **no hand-speed floor imposed**. The claim that
+> "the measured 6–9 m/s band is unreachable at any price" was an artifact.
+>
+> What survives unchanged: the impact-optimality theorem (§1), the fact that hub
+> reversal is the release mechanism, and the direction of the club-inertia
+> result. What changes: the _severity_ was a parameter error, a moving hub is
+> **not** required, and the objective comparison **does** discriminate once the
+> club is right.
+
 **Epic:** [#4775](https://github.com/D-sorganization/Tools/issues/4775)
 **Package:** `src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/`
 **Predecessor:** [`SWING_OBJECTIVE_COMPARISON.md`](SWING_OBJECTIVE_COMPARISON.md) (epic [#4766](https://github.com/D-sorganization/Tools/issues/4766))
@@ -60,6 +82,39 @@ produced: it rules out the intuitive fix before any of it gets built.
 Implementation: [`impact_optimality.py`](../../src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/impact_optimality.py).
 
 ---
+
+## 2a. The club correction (#4785)
+
+`physics.mass_matrix` treats segment 2 as a point mass at the tip. A real club is not
+that, so an equivalence is required — and the invariant to preserve is **inertia about
+the wrist**, because it sets both the wrist-row mass term and the coupling
+`mu = me * L1 * L2` that appears in every centrifugal and Coriolis term.
+
+|                         | Real driver     | Old preset      | Ratio     |
+| ----------------------- | --------------- | --------------- | --------- |
+| Club mass               | 0.310 kg        | 0.500 kg        | 1.61×     |
+| COM from wrist          | 0.867 m         | 1.100 m         | 1.27×     |
+| **Inertia about wrist** | **0.288 kg·m²** | **0.605 kg·m²** | **2.10×** |
+| **Coupling `mu`**       | **0.172 kg·m²** | **0.358 kg·m²** | **2.08×** |
+
+The preset was wrong twice over: the lumped mass was 61% above a real driver, and even
+a correct mass does not belong at the tip. Compounded, the optimizer saw 2.1× the
+coupling a real club produces.
+
+The inertia-matched equivalent is `me = delta_real / L2² = 0.238 kg`, implemented in
+[`club_equivalence.py`](../../src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/club_equivalence.py).
+
+### Effect, holding everything else fixed
+
+| Lumped tip mass            | Clubhead     | Hands        | Club/arm | Braking |
+| -------------------------- | ------------ | ------------ | -------- | ------- |
+| 0.500 kg (old preset)      | 36.4 m/s     | **0.36 m/s** | **59.4** | 33%     |
+| 0.320 kg                   | 45.3 m/s     | 6.01 m/s     | 3.86     | 24%     |
+| **0.238 kg (real driver)** | **50.8 m/s** | **7.95 m/s** | **3.18** | 24%     |
+
+All defects ≤ 2e-13. Independently corroborated by the `Double-Pendulum-Optimization`
+research repo, whose model carries distributed club inertia natively and reaches
+6.1–7.4 m/s hand speed robustly across arm-inertia, torque-budget and duration sweeps.
 
 ## 2. What the literature says a golfer actually does
 
@@ -147,12 +202,15 @@ it also drives the wrist _open_. In a free rollout at full drive the wrist cock 
 from 100° to **184°** — the club never releases at all; it just lags further.
 
 The only way this model brings the club through to `phi = 0` at impact is to cut, and
-then reverse, the hub torque — which necessarily decelerates the arms.
+then reverse, the hub torque, which does cost some hand speed. That mechanism is real
+and survives the correction — an inertia-matched club still spends about 24% of the
+downswing with hub torque opposing the arms.
 
-**Releasing the club and stopping the hands are the same act here.** They are not two
-independent choices the optimizer happened to combine.
+What does **not** survive is the severity. With the coupling at its correct value the
+cost is a few m/s of hand speed, not all of it.
 
-`hand_speed_frontier` measures the price directly (duration 0.36 s, ±250 N·m):
+`hand_speed_frontier` measured the price with the **mis-specified** club
+(duration 0.36 s, ±250 N·m):
 
 | Hand-speed floor          | Feasible | Clubhead speed | Club/arm ratio |
 | ------------------------- | -------- | -------------- | -------------- |
@@ -161,8 +219,11 @@ independent choices the optimizer happened to combine.
 | 5 m/s                     | marginal | 29.6 m/s       | 2.9            |
 | **6 m/s (measured band)** | **no**   | —              | —              |
 
-The measured golfer band is unreachable at any price. Implementation:
-[`model_adequacy.py`](../../src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/model_adequacy.py).
+With the **corrected** club the picture is entirely different: the unconstrained optimum
+already sits at 7.26 m/s, inside the measured band, and floors up to 8 m/s stay
+reachable. The table above characterises the artifact, not the model. Implementation:
+[`model_adequacy.py`](../../src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/model_adequacy.py);
+both regimes are pinned in `tests/test_model_adequacy.py`.
 
 ---
 
@@ -196,9 +257,10 @@ epic #4766 and is unaffected by this analysis.
 
 In priority order, with the evidence for each.
 
-1. **A moving hub — a torso segment.** The dominant missing physics. A real golfer's
-   hands keep moving because the torso keeps rotating, not because the arm joint is
-   driven harder. This repository already carries a three-segment model in
+0. **Correct the club first.** Done (#4785), and it was the dominant term. Everything
+   below is now an improvement rather than a prerequisite.
+1. **A moving hub — a torso segment.** Still the largest remaining physics gap, and the
+   most likely route to fixing the late release. A real golfer's
    [`physics_triple.py`](../../src/pendulum_simulator/src/double_pendulum_golf/physics_triple.py);
    the work is to give it the objective and actuation layers built here.
    [Nesbit (2005)](https://www.jssm.org/jssm-04-499.xml.xml) and [MacKenzie & Sprigings
@@ -211,7 +273,10 @@ In priority order, with the evidence for each.
 3. **Hill actuation, retained.** Already built and tested. It is necessary — it removes
    the impossible braking — and becomes sufficient only once (1) makes the release
    achievable without reversing the hub.
-4. **Not** distributed club inertia. Ruled out analytically in §1.
+4. **Not** distributed club inertia _as a route to forward hand speed_ — ruled out
+   analytically in §1. Note the distinction from §2a: what matters is matching the real
+   club's inertia about the wrist, which the corrected preset now does. The §1 result is
+   about the unconstrained ideal; §2a is about the constrained optimum actually reached.
 
 ### Scientific boundary
 

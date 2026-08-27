@@ -1,11 +1,17 @@
 """Contract tests for the model-adequacy measurement.
 
-These pin the central negative result of epic #4775: the two-link fixed-hub
-model cannot be asked to release the club *and* keep the hands moving at
-measured golfer speeds. If that ever stops being true, the model changed and the
-conclusions built on it need re-deriving.
+Two regimes are pinned here, and the distinction matters.
 
-Closes #4779.
+With a **mis-specified club** — the 0.50 kg lumped at the tip that the preset
+originally used — the optimizer stops the hands and the measured golfer band is
+unreachable. That was published as a structural limit of the model before being
+traced to the club (#4785); it is kept as a characterisation of the artifact so
+the failure mode stays recognisable.
+
+With an **inertia-matched club**, the same model reaches the measured band with
+no hand-speed floor at all. That is the model's real capability.
+
+Closes #4779, #4785.
 """
 
 from __future__ import annotations
@@ -27,7 +33,11 @@ _PARAMS = PendulumParams(m1=5.0, m2=0.30, L1=0.65, L2=1.10, mClub=0.20)
 
 
 def _config() -> DownswingConfig:
-    """The feasible baseline the frontier is measured from."""
+    """Baseline with the **mis-specified** club, kept to characterise the artifact.
+
+    0.50 kg lumped at the tip gives 2.1x a real driver's inertia about the wrist
+    and 2.1x the arm/club coupling that fights the release. See #4785.
+    """
     return DownswingConfig(
         params=_PARAMS,
         node_count=17,
@@ -47,16 +57,17 @@ def frontier():
     return hand_speed_frontier(_config(), floors_ms=[0.0, 3.0, 6.0])
 
 
-def test_unconstrained_optimum_stops_the_hands(frontier) -> None:
-    """The finding that started the epic, as a regression pin."""
+def test_a_mis_specified_club_makes_the_optimum_stop_the_hands(frontier) -> None:
+    """The finding that started the epic — now known to be a club artifact."""
     unconstrained = frontier.points[0]
     assert unconstrained.reachable
     assert unconstrained.hand_speed_ms < 1.0
     assert unconstrained.club_arm_rate_ratio > 20.0
 
 
-def test_the_unconstrained_optimum_brakes_the_arms(frontier) -> None:
-    """Hub torque reverses against the arms — the mechanism, not a side effect."""
+def test_a_mis_specified_club_forces_heavy_arm_braking(frontier) -> None:
+    """Hub torque reverses against the arms. The mechanism is real; this severity
+    is not — an inertia-matched club still brakes, but far less."""
     unconstrained = frontier.points[0]
     assert unconstrained.braking_fraction > 0.20
     assert unconstrained.peak_braking_torque_nm > 100.0
@@ -70,15 +81,32 @@ def test_raising_the_floor_costs_clubhead_speed(frontier) -> None:
     assert all(b <= a + 1e-6 for a, b in zip(speeds[:-1], speeds[1:], strict=True))
 
 
-def test_the_model_cannot_reach_measured_golfer_hand_speed(frontier) -> None:
-    """The central negative result.
+def test_a_mis_specified_club_cannot_reach_measured_hand_speed(frontier) -> None:
+    """With 2.1x the real coupling, the measured 6-9 m/s band is unreachable.
 
-    Real golfers arrive at 6-9 m/s. Asked for that, the two-link fixed-hub model
-    has no dynamically feasible answer, because releasing the club here *requires*
-    reversing the hub torque and so decelerating the arms.
+    This is the result that was published as a property of the model. It is a
+    property of the club that was handed to it — see the corrected-club test
+    below, which reaches the band with no floor at all.
     """
     assert not frontier.reaches_measured_hand_speed
     assert frontier.max_reachable_hand_speed_ms < 6.0
+
+
+def test_an_inertia_matched_club_reaches_measured_hand_speed_unaided() -> None:
+    """The correction (#4785): the model is capable, the club was not.
+
+    With the shipped preset's inertia-matched club the *unconstrained* optimum
+    already lands inside the measured 6-9 m/s band, with no hand-speed floor
+    imposed at all.
+    """
+    from double_pendulum_golf.swing_objectives.presets import build_config
+
+    corrected = hand_speed_frontier(build_config(), floors_ms=[0.0, 6.0])
+    assert corrected.reaches_measured_hand_speed
+    unconstrained = corrected.points[0]
+    assert unconstrained.reachable
+    assert 6.0 <= unconstrained.hand_speed_ms <= 9.0
+    assert 2.5 <= unconstrained.club_arm_rate_ratio <= 4.0
 
 
 def test_frontier_reports_one_point_per_floor_in_order() -> None:
