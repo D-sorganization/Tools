@@ -186,7 +186,8 @@
         "python -m pytest src/shared/python/swing_sim/variation/tests/test_ensemble_geometry.py src/shared/python/swing_sim/variation/tests/test_trace_resampling.py tests/rate_of_closure/test_variation_geometry_properties.py tests/rate_of_closure/test_variation_trace_resampling.py tests/rate_of_closure/test_epic_4142_requirement_evidence.py -n 0 -q"
       ],
       "remote_evidence": [
-        "https://github.com/D-sorganization/Tools/issues/4763"
+        "https://github.com/D-sorganization/Tools/issues/4763",
+        "https://github.com/D-sorganization/Tools/pull/4764"
       ],
       "gaps": []
     },

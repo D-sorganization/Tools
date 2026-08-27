@@ -28,7 +28,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                           |
 | #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                                    |
 | #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                            |
-| #4142 | Ensemble variation, quiet zones, sensitivity attribution. PR #4762/R11.1 merged as `66b1cb4d`; #4763/R11.3 now qualifies stable-point time-grid alignment and advances the branch ledger to 26 verified / 5 partial.                  |
+| #4142 | Ensemble variation, quiet zones, sensitivity attribution. PR #4762/R11.1 merged as `66b1cb4d`; PR #4764/#4763 R11.3 qualifies stable-point time-grid alignment and advances the branch ledger to 26 verified / 5 partial.             |
 | #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                                |
 | #4433 | Visual-first tab visibility and visualization-led UX. Open. V0.1, strict cross-runtime parity, and V5.2 are merged through PR #4738; the audit is 8 verified / 23 partial obligations with seven gaps and two human actions retained. |
 | #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                        |
@@ -66,11 +66,11 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   PR #4762/R11.1 protected-merged as
   `66b1cb4d16d8ea36fa7c3f4eb0c4f3725ae03734`; issue #4758 is closed and the
   corrected Python 3.11/3.12, exact-wheel, browser, and governance gates passed.
-  Issue #4763/R11.3 is active on `feat/4763-trace-resampling`: the versioned
+  PR #4764 for issue #4763/R11.3 is active on `feat/4763-trace-resampling`: the versioned
   time-grid authority rejects extrapolation and gap bridging, preserves
   frame/point/trial identities and typed unavailability, reports approximate
   impact-marker alignment error, and qualifies all three spatial layouts plus
-  the inherited fail-closed 3-source by 4-adapter matrix. Focused local gates pass; protected PR and remote-main evidence remain.
+  the inherited fail-closed 3-source by 4-adapter matrix. Focused local gates pass; protected CI and remote-main evidence remain.
 
 ## Must-Read Architecture Pointers
 

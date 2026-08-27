@@ -61,12 +61,12 @@ PR #4762/R11.1 protected-merged as `66b1cb4d`; issue #4758 is closed. Typed
 records, bounded schema-v3 write/read/resume, array identities, corruption and
 legacy-v2 gates, exact serial/chunk/resume fingerprints, scaling evidence, and
 the 3-source by 4-adapter boundary passed Python 3.11/3.12, wheel, browser, and
-governance CI. Issue #4763/R11.3 is active on
+governance CI. PR #4764 for issue #4763/R11.3 is active on
 `feat/4763-trace-resampling`: policy `swing-trace-time-linear-contiguous/v1`
 rejects extrapolation and gap bridging, preserves stable point/frame/trial
 identity and typed unavailability, and retains approximate impact-marker error.
 Identity/subset equivalence passes for all three spatial layouts; the inherited
-adapter matrix remains two verified / ten explicitly unavailable. The ledger is 26 verified / 5 partial. Protected PR and remote-main proof remain.
+adapter matrix remains two verified / ten explicitly unavailable. The ledger is 26 verified / 5 partial. Protected CI and remote-main proof remain.
 
 PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
 the initial React/PyQt visibility, accessibility, performance, and baseline
