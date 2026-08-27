@@ -39,6 +39,7 @@ from .green import (
 )
 from .impact import (
     DEFAULT_PUTTER_COR,
+    DEFAULT_PUTTER_MOI_KG_M2,
     MINIMAL_PUTTERS,
     PutterSpec,
     PuttLaunch,
@@ -58,6 +59,7 @@ from .roll import (
 
 __all__ = [
     "DEFAULT_PUTTER_COR",
+    "DEFAULT_PUTTER_MOI_KG_M2",
     "DEFAULT_SLIDING_MU",
     "HOLE_RADIUS_M",
     "MINIMAL_PUTTERS",
