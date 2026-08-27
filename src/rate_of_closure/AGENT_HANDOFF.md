@@ -57,13 +57,16 @@ see the two contracts under `docs/specs/`.
 
 #4142 remains Python-authoritative; PyQt6 and React do not reimplement physics.
 PR #4755 protected-merged R10.4 as `9fe87f0eec9f341fdfc50fc2a116c601b94781d5`.
-Issue #4756 owns R10.3 on `feat/4756-locus-capabilities`: one packaged authority
+PR #4757 carries #4756/R10.3 from implementation commit
+`d0061bd3e640451de80394453b4ee515acb19218`: one packaged authority
 classifies all 31 known inputs by exact adapter, whole-run or required half-open
 window/topological point semantics, or explicit unsupported reason. Python and
 TypeScript consume the same JSON and fail closed on registry drift, malformed
 records, forbidden loci, inexact control joints, and out-of-run windows. The
-ledger is 24 verified / 7 partial. R14.6 and six other gaps keep #4142 open.
-This verifies execution semantics, not anatomy, human validity, or coaching.
+ledger is 24 verified / 7 partial. A clean commit-qualified wheel loaded all 31
+packaged capabilities and verified 76 immutable web assets. R14.6 and six other
+gaps keep #4142 open. This verifies execution semantics, not anatomy, human
+validity, or coaching.
 
 PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
 the initial React/PyQt visibility, accessibility, performance, and baseline

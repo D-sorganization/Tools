@@ -28,7 +28,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                           |
 | #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                                    |
 | #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                            |
-| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. #4755 protected-merged R10.4; #4756 implements exhaustive whole-run/localized execution capabilities for R10.3 and advances the ledger to 24 verified / 7 partial.    |
+| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. #4755 protected-merged R10.4; PR #4757 carries exhaustive whole-run/localized execution capabilities for R10.3 and advances the ledger to 24 verified / 7 partial.    |
 | #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                                |
 | #4433 | Visual-first tab visibility and visualization-led UX. Open. V0.1, strict cross-runtime parity, and V5.2 are merged through PR #4738; the audit is 8 verified / 23 partial obligations with seven gaps and two human actions retained. |
 | #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                        |
@@ -61,11 +61,14 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   DOCX pages visually reviewed; this reconciled exact head still requires fresh
   protected review and artifact-identity or complete rendered-page evidence.
 - #4142 R10.4 protected-merged through PR #4755 as `9fe87f0eec9f341fdfc50fc2a116c601b94781d5`.
-  Issue #4756 now owns R10.3 on `feat/4756-locus-capabilities`: one packaged
+  PR #4757 now carries #4756/R10.3 from implementation commit
+  `d0061bd3e640451de80394453b4ee515acb19218`: one packaged
   authority classifies all 31 known inputs by whole-run/window/point semantics,
   exact adapter, or explicit unsupported reason. Python and TypeScript fail
   closed on registry drift and forbidden loci. The ledger is 24 verified / 7
-  partial; execution semantics are not scientific or coaching approval.
+  partial. A clean commit-qualified wheel loaded all 31 packaged capabilities
+  and verified 76 immutable web assets; execution semantics are not scientific
+  or coaching approval.
 
 ## Must-Read Architecture Pointers
 
