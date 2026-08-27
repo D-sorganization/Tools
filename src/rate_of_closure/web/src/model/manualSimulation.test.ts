@@ -144,9 +144,12 @@ describe("manual three-dimensional delivery", () => {
     expect(contactVelocity[1]).toBeCloseTo(-2.522013, 6);
     expect(contactVelocity[2]).toBeCloseTo(-0.410056, 6);
     expect(metrics.contactAoaDeg).toBeCloseTo(-10.847087, 6);
-    expect(metrics.withoutShaftAoaDeg).toBeCloseTo(-10.548272, 6);
-    expect(metrics.shaftAoaContributionDeg).toBeCloseTo(-0.298815, 6);
-    expect(metrics.shaftVerticalVelocityShare).toBeCloseTo(0.065050, 6);
+    // Shaft-counterfactual decomposition repinned for #4799 G2: the
+    // loft-aware wedge hosel moved the shaft axis to the leading edge,
+    // changing the lever arm. Total delivery and carry are unchanged.
+    expect(metrics.withoutShaftAoaDeg).toBeCloseTo(-11.270053, 6);
+    expect(metrics.shaftAoaContributionDeg).toBeCloseTo(0.422965, 6);
+    expect(metrics.shaftVerticalVelocityShare).toBeCloseTo(0.018553, 6);
     expect(requireLaunch(run).carryM).toBeCloseTo(22.45855, 4);
 
     const contactTargetRun = runSimulation({
@@ -161,7 +164,8 @@ describe("manual three-dimensional delivery", () => {
     });
     const contactTargetMetrics = impactKinematics(contactTargetRun, scenario, club);
     expect(contactTargetMetrics.contactAoaDeg).toBeCloseTo(-10, 8);
-    expect(contactTargetMetrics.shaftAoaContributionDeg).toBeCloseTo(-0.333108, 6);
+    // Repinned for #4799 G2 (see above): lever arm from the new hosel.
+    expect(contactTargetMetrics.shaftAoaContributionDeg).toBeCloseTo(0.373815, 6);
     expect(requireLaunch(contactTargetRun).carryM).toBeCloseTo(23.024061, 4);
   });
 });

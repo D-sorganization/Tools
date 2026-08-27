@@ -2655,10 +2655,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3154,
+      "bytes_lf": 10144,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b34f158d24bcc7ffdf4a698244f15fbce245541e53f1c6c62d09f4455a455931",
+      "content_sha256_lf": "c063e2def442d5f0638cbae4b2339b2e41412e78812e724da5083a2fbf31179a",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-HEADS-TEST-TS-E46A8F2D08A1",
       "language": "typescript",
@@ -2692,6 +2692,7 @@
         "public_surfaces": [],
         "test_paths": [],
         "unit_mentions": [
+          "mm",
           "s"
         ],
         "validation_paths": []
@@ -6541,10 +6542,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 6608,
+      "bytes_lf": 6890,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "822dd4c4bcb7aa62d82d4a76bdb13f310782132c04cb844890ee6d80fd770fcb",
+      "content_sha256_lf": "ddc897260b4c7f6eb2885b344f68880ad77b9aa3248f66967d0c4def3d357b4d",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-MANUALSIMULATION-TEST-TS-2EA42FA91AE1",
       "language": "typescript",
