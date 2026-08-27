@@ -323,7 +323,7 @@
       "shard_index": 14
     },
     {
-      "content_sha256_lf": "e1cbbca69499c7214c78ab1a77d9c6e41475ca35b4cc1a971abd8184ada46817",
+      "content_sha256_lf": "60d875b8b9ee282aa50b5de58160e5a37160cafbfbae9e03c01820137ca2e019",
       "entry_count": 200,
       "first_path": "src/shared/python/sidekick/ui/tools_sidebar/tab_collection.py",
       "last_path": "src/shared/python/swing_sim/solver/solve.py",
@@ -347,7 +347,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "3c9c50473e3fca4f1adbbbec5674796d79d5c0cb563d9085b5728425a8eb7cc5",
+  "source_tree_sha256": "4563e376cb73f700de9a929df0e0bab8b8a96ff5640d3a87cad186631a22f9d4",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,

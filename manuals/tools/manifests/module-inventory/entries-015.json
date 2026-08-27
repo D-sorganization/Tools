@@ -15908,10 +15908,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3017,
+      "bytes_lf": 3345,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b72ec31cad338dbe978db3312c6d5e5414fd5097c33204b8e4994daf33fe0a88",
+      "content_sha256_lf": "d136fb95b692da37e1ccdea314ae17da8098cec8d0ef445c65941739abe13de0",
       "family": "swing-simulation-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-INIT-PY-3763F6A25399",
       "language": "python",
@@ -16029,6 +16029,11 @@
           },
           {
             "kind": "re-export",
+            "name": "UdGreenTopography",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "capture_speed_mps",
             "signature": null
           },
@@ -16049,7 +16054,17 @@
           },
           {
             "kind": "re-export",
+            "name": "green_surface_from_ud_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "green_surface_to_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "green_surface_to_ud_json",
             "signature": null
           },
           {
