@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — shared golf_club
 
 > Update this file in every implementation commit that changes this package.
-> Last updated: 2026-08-18
+> Last updated: 2026-08-27
 
 ## Stack and Integration Position
 
@@ -66,6 +66,20 @@ stiffness, so an explicit override is the sanctioned supply path there.
 Bandit flags stdlib `ElementTree` (B405/B314) in the parsers; the repo's
 convention is `# nosec` with a written justification, not `defusedxml`.
 
+## Putting Epic #4800 — P3 putter head (this package's slice)
+
+`putter_head.py` owns `golf_club.putter_head/1`: PutterSpec **v2** = the P1
+v1 spec + CG + full inertia tensor + provenance, built from an STL through
+`mesh_mass_properties` (C1 is the only mesh pipeline;
+`stl_validation.read_binary_stl` is the promoted public reader) or from a
+club-library putter — resolving the `PutterSpec` reconciliation: a library
+head carries **no tensor** and strikes bit-identically to P1's
+`head_moi_kg_m2=None` default (exact-equality gate). Quasi-static twist
+`theta = J r tau_c/(2I)` per axis (toe→I_yy opens the face, high→I_zz adds
+loft, tau_c = 0.5 ms); `head_moi_for_strike` feeds P1's explicit hook. Head
+frame: x = target line, y = up, z = toe. TS twins: `putterHead.ts` +
+`putterHeadWire.ts` (P2 wire-split precedent) + `volumetrics.meshInertia`.
+
 ## Current CAD and Export Contract
 
 `wedge_parameters.py` and `wedge_serialization.py` own the immutable SI,
@@ -110,33 +124,27 @@ ruff format --check src\shared\python\golf_club tests\shared\python\golf_club
 mypy src\shared\python\golf_club --ignore-missing-imports
 ```
 
-The environment currently lacks some pytest plugins declared by root config;
-the focused command therefore disables plugin autoload and clears `addopts`.
-Unknown-config warnings are environment evidence, not test failures.
+The environment lacks some root-config pytest plugins, so the focused command
+disables plugin autoload and clears `addopts`; unknown-config warnings are
+environment evidence, not failures.
 
-Latest local evidence, 2026-08-18 (after the C1–C5 and H1–H3 merges):
-
-- `tests/shared/python/golf_club` plus
-  `src/shared/python/swing_sim/model_interchange`: **216 passed, 2 skipped**;
-- the two epics' physics gates are inside that run — the free-head/welded
-  limits, the τ² law, energy conservation, the sub-percent physiological band,
-  and the MJCF-file → `GripBoundary` → coupled-result end-to-end path.
-
-Older evidence (2026-08-09, pre-epic): 121 passed; Ruff check/format clean over
-31 files; mypy clean over 17 package files.
+Latest local evidence, 2026-08-27 (after the P3 putter-head merge):
+`tests/shared/python/golf_club` + `swing_sim/putting/tests`: **333 passed,
+2 skipped** (the pre-existing `test_turf_variation` seeded-plan failure is a
+local duplicate-module environment artifact, present on clean main). The C1/H1
+physics gates plus P3's box-inertia, twist, and fallback-equality gates are
+inside that run; ruff and the CI-faithful mypy batch (numpy < 2.4 — numpy 2.4+
+stubs crash mypy 1.13's cache serializer) are clean.
 
 ## Residual #4149 / #4146 Scope
 
-- Implement versioned Driver/Wood, Hybrid, Iron, Blade Putter, and Mallet
-  Putter family graphs; expand the wedge beyond its central foundation.
-- Add editable sections, camber/relief/grinds, cavity/back variants, scorelines,
-  transition radii, wall thickness, and weight ports with minimum-feature and
-  self-intersection validation.
-- Derive CG and full inertia from the exact solid and couple them to assembly
-  properties.
+- Implement versioned Driver/Wood, Hybrid, Iron, and Blade/Mallet Putter
+  family graphs; expand the wedge beyond its central foundation.
+- Add editable sections, camber/relief/grinds, cavity/back variants,
+  scorelines, wall thickness, and weight ports with feature validation.
+- Derive CG/full inertia from the exact solid and couple them to assemblies.
 - Add bound-constrained multistart shape optimization, infeasibility/tradeoff
-  reporting, professional preview contracts, golden/property tests, and visual
-  engineering QA.
+  reporting, preview contracts, golden/property tests, and visual QA.
 - Complete additional C4 formats (3MF, OBJ/PLY/glTF/GLB, DXF/SVG) only with
-  qualified readers and truthful round-trip evidence. Do not claim STEP beyond
-  the build123d/OpenCascade path already validated here.
+  qualified readers and truthful round-trip evidence; claim STEP only via the
+  validated build123d/OpenCascade path.
