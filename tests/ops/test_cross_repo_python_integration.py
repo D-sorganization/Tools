@@ -23,7 +23,10 @@ REQUIRED_SPARSE_PATHS = {
         "launch_upstream_drift.py",
         "pyproject.toml",
         "scripts",
+        "src/__init__.py",
         "src/bunkershot3d",
+        "src/engines/__init__.py",
+        "src/engines/pendulum_models/python/__init__.py",
         "src/engines/pendulum_models/python/double_pendulum_model",
         "src/shared",
         "tests/conftest.py",
@@ -87,7 +90,10 @@ def test_upstream_scope_includes_every_imported_contract_package_root() -> None:
     # checkout must preserve all three import roots without pulling all of `src`.
     assert {
         "src/shared",
+        "src/__init__.py",
         "src/bunkershot3d",
+        "src/engines/__init__.py",
+        "src/engines/pendulum_models/python/__init__.py",
         "src/engines/pendulum_models/python/double_pendulum_model",
     } <= scope
 
