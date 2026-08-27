@@ -9077,10 +9077,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6362,
+      "bytes_lf": 6615,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a0c6e79576147f54abbf4584a1cc481fc8e3cf6f03ffb11cb209a7bc537953de",
+      "content_sha256_lf": "248e1fad7c64995bef8aa9346143917a8ef3b701085aa4b9a1e190ac3572e8d5",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-CLUB-TEST-TS-73D748B15FE8",
       "language": "typescript",
@@ -9122,10 +9122,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 12879,
+      "bytes_lf": 13397,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "274a4d40e8615a68be9e311f1026a4899c686b7cc17401f2941cc7657567ba79",
+      "content_sha256_lf": "7eb6283015ba31e8e6a58dc18e5c31784fba7eae26cfb568b8f7f4c6bb57a504",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-CLUB-TS-4CCD9625AC0C",
       "language": "typescript",
@@ -9317,7 +9317,7 @@
       "bytes_lf": 6039,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "69b8a04e6df3bc9c9ab39163ab0ed1c37df4690a4f61b760af98f2ad70b2f53f",
+      "content_sha256_lf": "2f0df70f41dc3d6cb71ec4e0262f0d095de9caf63b523533458b70072cd503e9",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-CLUBASSEMBLYBINDING-TEST-TS-54004F120558",
       "language": "typescript",
@@ -9988,7 +9988,7 @@
       "bytes_lf": 5498,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "74c2eb857644f5743f1ab50e7b8787a9709a1a8ca6ab95520778ebdf7b1a75e7",
+      "content_sha256_lf": "b361037276ccb37a35018c8c7f88a15a96474a651f3f1ccd8238137c841f873b",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-CLUBENGINEERINGSIDECAR-TEST-TS-418092DD4622",
       "language": "typescript",
@@ -10387,10 +10387,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5629,
+      "bytes_lf": 8942,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "306cbc234c1ddea23e2a290aed86eaaa4ee1655dc8f25db0afba0dfd0c643628",
+      "content_sha256_lf": "aeca71d4444224c30ad85aaef4da9e828b46452543620939ad4cd31a1c2683a2",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-CLUBHEADS-TS-595D80DFCFB8",
       "language": "typescript",
@@ -10425,6 +10425,11 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "BLADE_HOSEL_HEIGHT_FRACTION",
+            "signature": null
+          },
           {
             "kind": "export",
             "name": "BLADE_PUTTER_PROFILE",
@@ -10483,6 +10488,16 @@
           {
             "kind": "export",
             "name": "hoselPoint",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "leadingEdgeHeight",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "leanPoint",
             "signature": null
           },
           {
