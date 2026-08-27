@@ -3,6 +3,93 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 509,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "42ae113ffd5aea62500be50d5dadca8633ea21c077b950520d0b070d559df414",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-URDF-BUILDER-GUI-PYTHON-URDF-BUILDER-GUI-CONTRACTS-PY-0EBF61547DD9",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/urdf_builder_gui/python/urdf_builder_gui/contracts.py",
+      "purpose": "Design by Contract support for urdf_builder_gui.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "PostconditionError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PreconditionError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ensure",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "require",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
+          "src/shared/python/model_generation/tests/test_contracts.py",
+          "src/urdf_builder_gui/tests/test_urdf_builder_gui.py",
+          "tests/rate_of_closure/test_contracts.py",
+          "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/test_contracts.py",
+          "tests/unit/ai/mcp/test_contracts.py",
+          "tests/unit/ai/peer_review/test_contracts.py",
+          "tests/unit/ai/skills/test_contracts.py",
+          "tests/unit/test_contracts.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
+          "src/shared/python/model_generation/tests/test_contracts.py",
+          "tests/rate_of_closure/test_contracts.py",
+          "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/test_contracts.py",
+          "tests/unit/ai/mcp/test_contracts.py",
+          "tests/unit/ai/peer_review/test_contracts.py",
+          "tests/unit/ai/skills/test_contracts.py",
+          "tests/unit/test_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2880,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
