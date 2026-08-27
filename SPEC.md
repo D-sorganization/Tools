@@ -27,10 +27,28 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.60                                    |
+| **Spec Version**        | 1.18.61                                    |
 | **Last Spec Update**    | 2026-08-27                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-27 Cross-Surface Variation Workflow Parity (#4792 / #4142 R14.3)
+
+Version 1.18.60 gives PyQt and React one Python-authoritative execution-policy
+contract for `all_together`, `individual`, and `both`. Individual-only studies
+publish sensitivity results without fabricating a joint ensemble dataset;
+aggregate progress and cancellation cover the exact planned study count; and
+durable execution shares the governed 1--4096 chunk bound, resume status, and
+export semantics. A requirement-level interaction matrix distinguishes shared
+scientific capabilities from declared surface conveniences. These outputs are
+model-scenario evidence, not human validation, anatomical causality, or
+coaching authority. The fail-closed epic ledger is 30 verified requirements
+and one partial R14.6 visual-first requirement. The PyQt policy selector has a
+visible, keyboard-associated `Analysis Policy` label in addition to its
+accessible name. Exact hosted Linux candidate `1f3f6ca7` was visually
+inspected and proposed as the new reference without widening the calibrated
+renderer envelope; approval remains contingent on protected merge and does not
+constitute R14.6 human approval.
 
 ### 2026-08-27 Provenance-Complete Attribution Selection (#4791 / #4142 R13.5)
 
@@ -5542,7 +5560,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-08-27 | 1.18.60 | chore(release): bump version to v1.10.0 (#4761). |
+| 2026-08-27 | 1.18.61 | chore(release): bump version to v1.10.0 (#4761). |
+| 2026-08-27 | 1.18.60 | feat(rate-of-closure, #4792/#4142 R14.3): unify PyQt and React variation execution policies, progress, cancellation, durable chunk bounds, resume, publication, persistence, and export under Python-owned contracts; visibly label the PyQt execution selector after hosted visual review; publish a governed interaction matrix, advance the fail-closed ledger to 30 verified / 1 partial, and retain the model-scenario, human-validation, causal, coaching, and R14.6 human-approval boundaries. |
 | 2026-08-27 | 1.18.59 | feat(rate-of-closure, #4791/#4142 R13.5): add provenance-complete Morris target and source selection across PyQt and React, preserve global ranking and typed denominators, fail closed on ambiguous same-name targets, and pin state/impact/shot parity without invoking simulation or sensitivity recomputation. |
 | 2026-08-27 | 1.18.58 | fix(ci): raise the single-worker Rust gate timeout from 30 to 45 minutes after an exact-head run passed all quality and benchmark phases but was cancelled while `actions/upload-artifact` finalized the benchmark result; retain the artifact, one job, one Cargo worker, and every existing check. |
 | 2026-08-27 | 1.18.57 | fix(ci): raise the serialized Rust quality gate timeout from 15 to 30 minutes after two exact-head runs reached the security-audit/cache tail and were cancelled by the prior bound; retain one build job, one Cargo build worker, and every existing quality phase. |
@@ -6895,3 +6914,20 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 2026-08-25: Coordinate-Explicit Pendulum Force Attribution (#4698)
 
 - **2026-08-25**: feat(swing_sim, movement_optimizer, pendulum_simulator, #4698) — Add provider schema `force-attribution/v1` and a typed, DbC-validated Christoffel/monomial attribution layer. In frozen relative-angle coordinates it separates cross-speed Coriolis and squared-speed terms, independently checks their sum against the model velocity bias, retains gravity, damping, applied control, and residual, and requires generalized-force and acceleration closure. The trajectory contract reports signed/absolute generalized and hand-path impulse, generalized/endpoint power and work, cancellation, tangent valid/total duration, mapping rank, and unreconstructed generalized residual. Zero-speed endpoints remain undefined; integration uses only intervals with two defined tangents. Force-only virtual-work mapping fails visibly when a joint couple cannot be represented. Movement Optimizer exposes an adapter and minimizer-compatible Coriolis hand-path impulse objective; the provider manifests advertise the schema and capabilities. Analytical, zero-velocity, rank/residual, integral, API, manifest, and invalid-input tests pin the downstream contract. Triple- and golfer-pendulum attribution remains fail-closed until a provider declares mass-matrix derivatives and endpoint semantics.
+
+## 2026-08-27: Cross-Surface Variation Workflow Parity (#4792)
+
+- PyQt and React expose the same three analysis-execution policies:
+  `all_together`, `individual`, and `both`. The policy controls computation,
+  not the persisted physical experiment plan.
+- Individual-only execution publishes one-at-a-time sensitivity results without
+  fabricating a joint ensemble dataset. Progress and cancellation cover the
+  exact planned joint and per-noise study count.
+- Durable execution shares the governed 1--4096 chunk-size bound, resumable
+  record authority, terminal status, and export semantics across both surfaces.
+- `rate_of_closure_r14_3_surface_parity.v1.json` is the requirement-level
+  interaction matrix. It distinguishes equivalent scientific capabilities
+  from declared surface conveniences and pins disabled and error behavior.
+- All variation outputs are model-scenario evidence. Cross-surface agreement
+  does not establish causal anatomy, validate a human transfer mechanism, or
+  authorize coaching advice.

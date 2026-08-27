@@ -65,8 +65,9 @@ def _fast_launch_plan(n_runs: int = 12) -> VariationPlan:
 
 
 def _install_accepted(tab: VariationTab, plan: VariationPlan) -> object:
+    tab._analysis_combo.setCurrentIndex(tab._analysis_combo.findData("all_together"))
     tab._active_plan = plan
-    tab._active_compute_sensitivity = False
+    tab._active_analysis_execution = "all_together"
     tab._active_authority_identity = tab._current_authority_identity(plan)
     tab._on_succeeded(run_variation(plan, n_workers=1), None)
     tab._set_running(False)
@@ -75,6 +76,17 @@ def _install_accepted(tab: VariationTab, plan: VariationPlan) -> object:
 
 
 class TestConstruction:
+    def test_analysis_execution_picker_exposes_exact_shared_policies(
+        self, tab: VariationTab
+    ) -> None:
+        policies = tuple(
+            tab._analysis_combo.itemData(index)
+            for index in range(tab._analysis_combo.count())
+        )
+
+        assert policies == ("all_together", "individual", "both")
+        assert tab._analysis_combo.currentData() == "both"
+
     def test_result_methods_resolve_to_results_mixin(self) -> None:
         assert (
             VariationTab._clear_result_widgets
@@ -176,23 +188,25 @@ class TestConstruction:
         plan = _fast_launch_plan(4)
         config_a = tab._base_simulation_config
         tab._active_plan = plan
+        tab._active_analysis_execution = "all_together"
         tab._active_authority_identity = simulation_authority_identity(
-            plan, config_a, False
+            plan, config_a, "all_together"
         )
         tab._on_succeeded(run_variation(plan, n_workers=1), None)
         accepted_identity = tab._accepted_authority_identity
         assert tab.dataset() is not None and accepted_identity is not None
         config_b = replace(config_a, impact_time_offset_s=0.001)
         worker_a = VariationWorker(
-            plan, compute_sensitivity=False, base_simulation_config=config_a
+            plan, analysis_execution="all_together", base_simulation_config=config_a
         )
         worker_b = VariationWorker(
-            plan, compute_sensitivity=False, base_simulation_config=config_b
+            plan, analysis_execution="all_together", base_simulation_config=config_b
         )
         assert worker_a.authority_identity == accepted_identity
         assert worker_b.authority_identity != accepted_identity
         tab._worker = worker_a
         tab._active_plan = plan
+        tab._active_analysis_execution = "all_together"
         tab._active_authority_identity = accepted_identity
         tab._set_running(True)
         dataset_b = run_variation(plan, n_workers=1)
@@ -207,6 +221,7 @@ class TestConstruction:
         tab._generation += 1
         tab._worker = worker_b
         tab._active_plan = plan
+        tab._active_analysis_execution = "all_together"
         tab._active_authority_identity = accepted_identity
         tab._set_running(True)
         tab._accept_succeeded(tab._generation, worker_b, dataset_b, None)
@@ -222,10 +237,11 @@ class TestConstruction:
         tab._generation += 1
         tab._worker = worker_a
         tab._active_plan = plan
+        tab._active_analysis_execution = "all_together"
         tab._active_authority_identity = worker_a.authority_identity
         tab._set_running(True)
         tab._accept_succeeded(tab._generation, worker_a, object(), None)
-        assert "invalid variation dataset" in tab._status.text()
+        assert "unexpected joint-analysis availability" in tab._status.text()
         assert not tab._export_json.isEnabled()
 
     @pytest.mark.parametrize(
@@ -235,7 +251,9 @@ class TestConstruction:
             lambda tab: tab._seed_spin.setValue(tab._seed_spin.value() + 1),
             lambda tab: tab._flight_combo.setCurrentIndex(1),
             lambda tab: tab._base_combo.setCurrentIndex(1),
-            lambda tab: tab._sens_check.setChecked(not tab._sens_check.isChecked()),
+            lambda tab: tab._analysis_combo.setCurrentIndex(
+                (tab._analysis_combo.currentIndex() + 1) % tab._analysis_combo.count()
+            ),
             lambda tab: tab._rows[0].scale.setValue(tab._rows[0].scale.value() + 1),
         ],
     )
@@ -258,7 +276,7 @@ class TestConstruction:
             tab._flight_combo,
             tab._runs_spin,
             tab._seed_spin,
-            tab._sens_check,
+            tab._analysis_combo,
             tab._run_button,
             tab._cancel_button,
             tab._export_csv,
@@ -361,7 +379,7 @@ class TestConstruction:
         expected_status = tab._status.text()
         stale_worker = VariationWorker(
             dataset.plan,
-            compute_sensitivity=False,
+            analysis_execution="all_together",
             base_simulation_config=tab._base_simulation_config,
         )
         tab._accept_succeeded(old_generation, stale_worker, dataset, None)
@@ -373,8 +391,12 @@ class TestConstruction:
     def test_old_finished_signal_cannot_unlock_a_new_worker(
         self, tab: VariationTab
     ) -> None:
-        old_worker = VariationWorker(_fast_launch_plan(4), compute_sensitivity=False)
-        new_worker = VariationWorker(_fast_launch_plan(4), compute_sensitivity=False)
+        old_worker = VariationWorker(
+            _fast_launch_plan(4), analysis_execution="all_together"
+        )
+        new_worker = VariationWorker(
+            _fast_launch_plan(4), analysis_execution="all_together"
+        )
         tab._generation = 2
         tab._worker = new_worker
         tab._set_running(True)

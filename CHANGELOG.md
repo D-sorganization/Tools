@@ -2056,6 +2056,7 @@
 
 ### Changes
 
+- fix(rate-of-closure): visibly label the PyQt variation analysis policy selector (#4792)
 - chore(release): bump version to v1.8.0 (#4664)
 - fix(codemap): hoist splitlines in per-symbol loop and narrow blake3 fallback (#4492) (#4665)
 - 🎨 Palette: [a11y] Map InterlocksPanel labels to form inputs (#4672)
