@@ -3,6 +3,1099 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 1236,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2ea9d812d93962d5492276f6bfae56c6e66f63ca6550285e1cd85bc78200234b",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-CONTEXTUAL-REGISTRY-PY-355E19D49F07",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/contextual_registry.py",
+      "purpose": "Built-in variables that require an execution-context adapter.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ContextualVariable",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LOCALIZED_TORQUE_VARIABLES",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N·m"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9534,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9bc6d68f018ba4657c7137c7011641ad053d2f7872f408c352e48c214335519e",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-DATASET-IO-PY-226D8D679CE3",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/dataset_io.py",
+      "purpose": "Variation-dataset export/import (CSV + JSON) — epic #4120, V3.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "DATASET_HDF5_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DATASET_HDF5_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DATASET_JSON_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "from_json_dict",
+            "signature": "data: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "read_csv",
+            "signature": "path: str | Path, plan: VariationPlan"
+          },
+          {
+            "kind": "function",
+            "name": "read_hdf5",
+            "signature": "path: str | Path"
+          },
+          {
+            "kind": "function",
+            "name": "read_json",
+            "signature": "path: str | Path"
+          },
+          {
+            "kind": "function",
+            "name": "to_json_dict",
+            "signature": "dataset: VariationDataset"
+          },
+          {
+            "kind": "function",
+            "name": "write_csv",
+            "signature": "dataset: VariationDataset, path: str | Path"
+          },
+          {
+            "kind": "function",
+            "name": "write_hdf5",
+            "signature": "dataset: VariationDataset, path: str | Path"
+          },
+          {
+            "kind": "function",
+            "name": "write_json",
+            "signature": "dataset: VariationDataset, path: str | Path"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_dataset_io.py",
+          "tests/rate_of_closure/test_variation_gui_execution.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 12703,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4012762fcd630a6fffc37c5568cc34a372f582f65e3f8edf274fe378fe9d67ed",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-DISPERSION-METRIC-TYPES-PY-4E5F8AE613C3",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/dispersion_metric_types.py",
+      "purpose": "Immutable contracts for selectable geometric dispersion metrics.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ConfidenceEllipsoidSeries",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DispersionMetricSeries",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LowVariabilityMetricCriteria",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RankedLowVariabilityInterval",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ELLIPSOID_VOLUME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ESTIMABLE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GAUSSIAN_POSITION_CONTENT_REGION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "INSUFFICIENT_SAMPLES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "INVALID_COVARIANCE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LARGEST_PRINCIPAL_SIGMA",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LOW_VARIABILITY_METRICS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MIN_CONFIDENCE_LEVEL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MIN_SAMPLES_FOR_FULL_3D_COVARIANCE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "RANK_DEFICIENT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "RMS_RADIUS",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_dispersion_metrics.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11371,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0ec19a4e45e937d76a2644807b2edeafbe7fc8194add67e5acd95554c1d65300",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-DISPERSION-METRICS-PY-AACAACD2451A",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/dispersion_metrics.py",
+      "purpose": "Confidence-scaled dispersion and ranked quiet-zone analysis.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "build_confidence_ellipsoids",
+            "signature": "dispersion: PositionDispersion, point_id: str, confidence_level: float=0.95"
+          },
+          {
+            "kind": "function",
+            "name": "build_dispersion_metric_series",
+            "signature": "dispersion: PositionDispersion, point_id: str, metric: str, confidence_level: float=0.95"
+          },
+          {
+            "kind": "function",
+            "name": "find_ranked_low_variability_intervals",
+            "signature": "dispersion: PositionDispersion, criteria: LowVariabilityMetricCriteria"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_dispersion_metrics.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11663,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5949a6cd69bd605cc779aa3a486146e33907fcd765b7cbcf213e7a91d5268584",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-ENGINE-PY-EBB81049EEFE",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/engine.py",
+      "purpose": "Seeded, parallel N-run variation executor (epic #4120, V3).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "VariationDataset",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "run_variation",
+            "signature": "plan: VariationPlan, config: EvaluationConfig | None=None, n_workers: int=4, progress_cb: ProgressCallback | None=None, cancel_event: threading.Event | None=None"
+          },
+          {
+            "kind": "re-export",
+            "name": "CancelledError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DELIVERY_OUTPUTS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FLIGHT_OUTPUTS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LAUNCH_OUTPUTS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ProgressReport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "evaluate_run",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "outputs_for_mode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "sample_inputs",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_engine.py",
+          "src/shared/python/swing_sim/variation/tests/test_execution_metadata.py",
+          "tests/rate_of_closure/test_variation_ensemble_io_reader.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 10274,
+      "classification": "calculation",
+      "classification_basis": "path-marker:geometry",
+      "content_sha256_lf": "d001686d00bfcb5e4f484c6830788cb1a07194ee7a1aefc214d5c65f443c67a2",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-ENSEMBLE-GEOMETRY-PY-A42876EE4753",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/ensemble_geometry.py",
+      "purpose": "Pure-data geometric analysis for multi-trial swing ensembles.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PositionDispersionAccumulator",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_DISPERSION_ACCUMULATOR_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "compute_position_dispersion",
+            "signature": "ensemble: EnsemblePositionTraces"
+          },
+          {
+            "kind": "function",
+            "name": "compute_position_dispersion_view",
+            "signature": "ensemble: EnsemblePositionTraces, trial_indices: np.ndarray | None=None, sample_count: int | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "find_low_variability_intervals",
+            "signature": "dispersion: PositionDispersion, criteria: LowVariabilityCriteria"
+          },
+          {
+            "kind": "re-export",
+            "name": "EnsemblePositionTraces",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LowVariabilityCriteria",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LowVariabilityInterval",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PositionDispersion",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_ensemble_geometry.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11786,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "50137a3781fc45a8080c8052bf4eac5730bb5c4c0d0379bf3b9f6c34afa677aa",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-ENSEMBLE-TYPES-PY-3DFBF7A4A643",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/ensemble_types.py",
+      "purpose": "Contracts and immutable value types for ensemble swing geometry.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "EnsemblePositionTraces",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LowVariabilityCriteria",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LowVariabilityInterval",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PositionDispersion",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CARTESIAN_DIMENSIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MIN_TRIALS_FOR_COVARIANCE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "immutable_array",
+            "signature": "value: np.ndarray, dtype: Any"
+          },
+          {
+            "kind": "function",
+            "name": "require_coordinate_frame_id",
+            "signature": "coordinate_frame: str"
+          },
+          {
+            "kind": "function",
+            "name": "require_point_ids",
+            "signature": "point_ids: tuple[str, ...]"
+          },
+          {
+            "kind": "function",
+            "name": "validated_sample_times",
+            "signature": "sample_times_s: np.ndarray"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_variation_ensemble_io_reader.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 18015,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2d386db078c338ea9e847735b86c038ceb91a4eb25aecd0f30e4a811bc96ee3c",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-EXECUTION-METADATA-PY-9F98D2D3E7D9",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/execution_metadata.py",
+      "purpose": "Strict resolved-base and registry identity for variation execution.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ExecutionImplementationIdentity",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ExecutionMetadataResolution",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ResolvedVariableSnapshot",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RngExecutionIdentity",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "VariationExecutionDocument",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "VariationExecutionMetadata",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PYTHON_PRODUCTION_IMPLEMENTATION_IDENTITY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PYTHON_TEST_INJECTED_IMPLEMENTATION_IDENTITY",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "execution_document_dumps",
+            "signature": "value: VariationPlan | VariationExecutionDocument, *, provenance: PlanProducerProvenance=PYTHON_DEFAULT_PROVENANCE"
+          },
+          {
+            "kind": "function",
+            "name": "execution_document_from_json_dict",
+            "signature": "value: object"
+          },
+          {
+            "kind": "function",
+            "name": "execution_document_to_json_dict",
+            "signature": "plan: VariationPlan, metadata: VariationExecutionMetadata | None=None, *, provenance: PlanProducerProvenance=PYTHON_DEFAULT_PROVENANCE"
+          },
+          {
+            "kind": "function",
+            "name": "make_execution_metadata",
+            "signature": "plan: VariationPlan, provenance: PlanProducerProvenance=PYTHON_DEFAULT_PROVENANCE"
+          },
+          {
+            "kind": "function",
+            "name": "resolve_execution_metadata",
+            "signature": "plan: VariationPlan, metadata: VariationExecutionMetadata | None, *, provenance: PlanProducerProvenance=PYTHON_DEFAULT_PROVENANCE"
+          },
+          {
+            "kind": "function",
+            "name": "validate_execution_metadata",
+            "signature": "plan: VariationPlan, metadata: VariationExecutionMetadata, *, provenance: PlanProducerProvenance=PYTHON_DEFAULT_PROVENANCE, expected_implementation_identity: ExecutionImplementationIdentity | None=None"
+          },
+          {
+            "kind": "re-export",
+            "name": "EXECUTION_DOCUMENT_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "EXECUTION_DOCUMENT_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "EXECUTION_METADATA_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "EXECUTION_METADATA_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LEGACY_CURRENT_REGISTRY_WARNING",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LEGACY_EXECUTION_DOCUMENT_MIGRATION_ERROR",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PYTHON_DEFAULT_PROVENANCE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlanProducerProvenance",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "VARIABLE_REGISTRY_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "VARIABLE_REGISTRY_SCHEMA_VERSION",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_execution_metadata.py",
+          "tests/rate_of_closure/test_workspace_document.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5296,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "185b701498b8bca69cbf860f0b6db9e03512f597fdd9e19d9bf08d831e0434e8",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-EXECUTION-PROVENANCE-PY-8D50FF055402",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/execution_provenance.py",
+      "purpose": "Explicit producer and source identity for persisted variation plans.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PlanProducerProvenance",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PRODUCER_PROVENANCE_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PRODUCER_PROVENANCE_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PYTHON_DEFAULT_PROVENANCE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "provenance_from_json_dict",
+            "signature": "value: object"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13286,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3a0e4a2354ccff7294f5ba7bb463fc638799bc70058e46649f613f1f10eb0964",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-GLOBAL-SENSITIVITY-PY-3BBF41F670BE",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/global_sensitivity.py",
+      "purpose": "Deterministic Morris screening with explicit scientific availability.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MorrisEstimate",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MorrisReport",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MORRIS_REPORT_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MORRIS_REPORT_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "analyze_morris",
+            "signature": "observations: MorrisObservations, minimum_effects: int=4"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_global_sensitivity.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5192,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "dffe3e502160551cf95c84fe14e7f913601a61e417000a883d430d39af0ee5f2",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-GROUP-SPEC-PY-AECC1C829EC7",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/group_spec.py",
+      "purpose": "Validated correlation/covariance group schema for perturbation plans.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PerturbationGroup",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MATRIX_KINDS",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1338,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1f7ead435feec49bc866aedfbd2fb3a7b51980fe4da7f107ea092525debdd313",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-IDENTITY-CONTRACTS-PY-7819116348C1",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/identity_contracts.py",
+      "purpose": "Strict control-free identity contracts for variation models and JSON wires.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "stable_id",
+            "signature": "value: object, name: str"
+          },
+          {
+            "kind": "function",
+            "name": "stable_id_array",
+            "signature": "value: object, name: str"
+          },
+          {
+            "kind": "function",
+            "name": "strict_string",
+            "signature": "value: object, name: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 16375,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -12860,873 +13953,6 @@
           }
         ],
         "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 293,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f24372d27866fa1d62a4690782cdc3ce72f965b14fa23c5415b8fd1f920ad036",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-MODELS-INIT-PY-12D97C00E1B1",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/python/vessel_drafter/models/__init__.py",
-      "purpose": "Source-of-truth drafting models.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "DEFAULT_VESSEL_DRAFTER_LAYOUT",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "VesselDrafterLayout",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "VesselLidPort",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "VesselSidePort",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6288,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "00ede32be1cb700db94e3a449bf68d8cbc10590c8723a039c39569ede04ea2ce",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-MODELS-CYLINDRICAL-BATH-PY-141732815A07",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/python/vessel_drafter/models/cylindrical_bath.py",
-      "purpose": "Cylindrical bath drafting defaults for radial electrode layouts.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CylindricalBathDefaults",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CylindricalBathLayout",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CylindricalElectrodeDefaults",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RadialElectrodePlacement",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_CYLINDRICAL_BATH_LAYOUT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MM_PER_INCH",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_default_cylindrical_bath_layout",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "src/vessel_drafter/tests/test_cylindrical_bath_layout.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 7174,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "07a1142477f3f2652631b91a7a30ff33c7b1ff2cff5e8d422ac92c334636b170",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-MODELS-ELECTRODE-ADVISOR-PY-24A7A13ACA7B",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/python/vessel_drafter/models/electrode_advisor.py",
-      "purpose": "Default electrode advisor drafting inputs mirrored from the current UI.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "BathDefaults",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "DraftingEnvelope",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ElectrodeAdvisorLayout",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ElectrodeDefaults",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ElectrodePlacement",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_ELECTRODE_ADVISOR_LAYOUT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MM_PER_M",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_default_electrode_advisor_layout",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "src/vessel_drafter/tests/test_electrode_advisor_defaults.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1483,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "196e719978f0d53a40039d7d61a39e19560ff0432752770621e2e8b3b255787a",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-MODELS-RUST-KERNEL-PY-91BE0C026A21",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/python/vessel_drafter/models/rust_kernel.py",
-      "purpose": "Rust-backed electrode advisor interface.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "_BACKEND_ENV",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_DEFAULT_BACKEND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_REQUESTED_BACKEND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_RUST_AVAILABLE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_VALID_BACKENDS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_default_electrode_advisor_layout",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "is_rust_available",
-            "signature": ""
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 15036,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e1b82a971b5c2834ae88b5bcd3911d77561a5001e677f79529e46dba9d1ec3c4",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-MODELS-VESSEL-DRAFTER-PY-5E96FD90F494",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/python/vessel_drafter/models/vessel_drafter.py",
-      "purpose": "Validated defaults and geometry helpers for the vessel drafter tool.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "MaterialLayer",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RadialBand",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "VesselDrafterLayout",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "VesselElectrodePlacement",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "VesselLidPort",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "VesselSidePort",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_VESSEL_DRAFTER_LAYOUT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MM_PER_INCH",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/vessel_drafter/tests/test_vessel_drafter_defaults.py",
-          "src/vessel_drafter/tests/test_vessel_drafter_export.py",
-          "src/vessel_drafter/tests/test_vessel_drafter_geometry.py",
-          "src/vessel_drafter/tests/test_vessel_drafter_gui.py",
-          "src/vessel_drafter/tests/test_vessel_drafter_metrics.py",
-          "src/vessel_drafter/tests/test_vessel_drafter_preview.py",
-          "tests/vessel_drafter/test_dbc_lod.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2998,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "916bcb8fc3f6b25da9ff218e78a1510cb6b828fee14c1ec763c3468dba45a8b6",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-MODELS-VESSEL-MATERIALS-PY-3F90CB727438",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/python/vessel_drafter/models/vessel_materials.py",
-      "purpose": "Shared vessel drafter material defaults and validations.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "MaterialProperties",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_VESSEL_MATERIALS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_VESSEL_MATERIALS_BY_NAME",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 198,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c4bdd311dc0835356286026a4faac94fb0dff17548d2f40f91984c65dab00836",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-PREVIEW-INIT-PY-9A8775FAE39C",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/python/vessel_drafter/preview/__init__.py",
-      "purpose": "Preview helpers for vessel drafter tools.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "build_cross_section_preview",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "build_plan_preview",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6205,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "5263884025210c4dc171c0b0a7b333a384f463b4cc5dd647ca6d774fc5cc6bcf",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-PREVIEW-VESSEL-DRAFTER-PREVIEW-PY-EE4D5621F5DB",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/python/vessel_drafter/preview/vessel_drafter_preview.py",
-      "purpose": "Preview data builders for the vessel drafter GUI.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CrossSectionBandPolygon",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CrossSectionPreview",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CrossSectionRadialFeature",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PlanCircularFeature",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PlanPreview",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PlanRadialFeature",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ProjectedSidePort",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_cross_section_preview",
-            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT"
-          },
-          {
-            "kind": "function",
-            "name": "build_plan_preview",
-            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT"
-          }
-        ],
-        "test_paths": [
-          "src/vessel_drafter/tests/test_vessel_drafter_preview.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 24048,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "77f142e8f93a91aab8fb96f5ca924c72016b9d9c5cd6b1c3a4f2bb8814c07fe5",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-PREVIEW-VESSEL-DRAFTER-SCENE-PY-82E121407C93",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/python/vessel_drafter/preview/vessel_drafter_scene.py",
-      "purpose": "3D preview scene builders for the vessel drafter GUI.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "Vessel3DScene",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "VesselSceneMesh",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "AXIS_EPSILON_IN",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_ANGULAR_SEGMENTS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_ELECTRODE_SEGMENTS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_HEAD_SAMPLE_COUNT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_VIEW_OPTIONS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_vessel_3d_scene",
-            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT, *, visible_labels: set[str] | None=None, view_options: Vessel3DViewOptions=DEFAULT_VIEW_OPTIONS"
-          }
-        ],
-        "test_paths": [
-          "src/vessel_drafter/tests/test_vessel_drafter_metrics.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 691,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e52076fa944c999fa3f1b2ea44e4f58714f2f986901388f7551ac68356b82561",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-PREVIEW-VESSEL-DRAFTER-VIEW-OPTIONS-PY-48CB5F6B4F6D",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/python/vessel_drafter/preview/vessel_drafter_view_options.py",
-      "purpose": "Validated 3D view options for vessel preview rendering.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "Vessel3DViewOptions",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/vessel_drafter/tests/test_vessel_drafter_metrics.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 322,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "be07431b69d969d48f3c150f85ebe0a9962941970e38e6149eed105e5f5f533d",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-PROJECTS-INIT-PY-C3BE9E3EF2DA",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/python/vessel_drafter/projects/__init__.py",
-      "purpose": "Vessel drafter project builders.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "build_vessel_drafter_shape",
-            "signature": "*args: Any, **kwargs: Any"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2385,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ecc947a911416dda6ddfbc11cca1d9a1520c106582b00c0328833b08551fd8bf",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-PROJECTS-CYLINDRICAL-BATH-LAYOUT-PY-AF33D66F79A1",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/python/vessel_drafter/projects/cylindrical_bath_layout.py",
-      "purpose": "STEP-ready geometry for a cylindrical bath with radial electrodes.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "build_cylindrical_bath_layout_shape",
-            "signature": "layout: CylindricalBathLayout=DEFAULT_CYLINDRICAL_BATH_LAYOUT"
-          }
-        ],
-        "test_paths": [
-          "src/vessel_drafter/tests/test_cylindrical_bath_layout.py"
-        ],
         "unit_mentions": [],
         "validation_paths": []
       }
