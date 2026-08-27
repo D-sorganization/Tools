@@ -43,6 +43,8 @@ _SHARED_ROOTS = frozenset(
         "model_generation",
         "notes",
         "plot_engine",
+        "plot_theme",
+        "plotting",
         "programmatic_pid",
         "rotation_transforms",
         "safe_eval",
