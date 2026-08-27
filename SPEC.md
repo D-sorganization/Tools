@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.61                                    |
+| **Spec Version**        | 1.18.64                                    |
 | **Last Spec Update**    | 2026-08-27                                 |
 
 ## 2. Purpose & Mission
@@ -5560,6 +5560,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-27 | 1.18.64 | feat(putting, #4800 P2): green-surface heightfield (`PlanarGreenSurface` parametric plane + `GridGreenSurface` bilinear grid) with the versioned fail-closed `swing_sim.green_surface/1` wire (delivery_interchange posture: sorted keys, no non-finite values, unknown fields refused, byte-identical round-trips), 2-D skid→roll integration on the surface (in-plane gravity from the local gradient, stimp-derived rolling resistance reused from `roll.py`), and published hole-capture physics — the Holmes (1991)/Penner (2002) effective radius `R_eff(v) = R·sqrt(1 − (v/v_capture)²)` with the geometric `capture_speed_mps` bound pinned as the limiting case. The legacy planar `simulate_putt` delegates to the surface integrator with the historic speed-threshold capture and stays bit-identical (regression-gated against the #4125 reference pins). TypeScript twins `puttingGreen.ts`/`puttingGreenWire.ts` mirror surface, integration, capture, and wire test-for-test (39 new vitest + 39 new pytest gates). |
 | 2026-08-27 | 1.18.63 | feat(putting, #4800 P1): extend the putter impact solve to the full delivered stroke — aim, face angle, path, attack angle, and toe/high strike location — reusing the `swing_sim.impact` sign conventions and 2/7 rolling cap verbatim; `PuttLaunch` gains `start_azimuth_deg` and `sidespin_rad_s`, off-center strikes lose ball speed via the scalar effective-mass reduction `1/(1/M + r^2/I)` with an explicit head-MOI hook for P3's mesh-derived tensors, analytic gates cover the square-stroke limit, the face-vs-path start-line split, offset monotonicity, and energy conservation, defaults remain bit-identical to the 1-D H3 model (exact-equality regression gate), and the web `putting.ts` twin mirrors the extension test-for-test. |
 | 2026-08-27 | 1.18.61 | chore(release): bump version to v1.10.0 (#4761). |
 | 2026-08-27 | 1.18.60 | feat(rate-of-closure, #4792/#4142 R14.3): unify PyQt and React variation execution policies, progress, cancellation, durable chunk bounds, resume, publication, persistence, and export under Python-owned contracts; visibly label the PyQt execution selector after hosted visual review; publish a governed interaction matrix, advance the fail-closed ledger to 30 verified / 1 partial, and retain the model-scenario, human-validation, causal, coaching, and R14.6 human-approval boundaries. |

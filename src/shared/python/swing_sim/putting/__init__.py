@@ -30,12 +30,17 @@ putters when present and fall back to these.
 
 from __future__ import annotations
 
-from .green import (
+from .capture import (
     HOLE_RADIUS_M,
+    capture_speed_mps,
+    effective_hole_radius_m,
+)
+from .green import (
+    CaptureModel,
     GreenConditions,
     PuttResult,
-    capture_speed_mps,
     simulate_putt,
+    simulate_putt_on_surface,
 )
 from .impact import (
     DEFAULT_PUTTER_COR,
@@ -56,25 +61,42 @@ from .roll import (
     solve_skid,
     stimp_to_rolling_mu,
 )
+from .surface import (
+    GREEN_SURFACE_FORMAT,
+    GreenSurface,
+    GridGreenSurface,
+    PlanarGreenSurface,
+    green_surface_from_json,
+    green_surface_to_json,
+)
 
 __all__ = [
     "DEFAULT_PUTTER_COR",
     "DEFAULT_PUTTER_MOI_KG_M2",
     "DEFAULT_SLIDING_MU",
+    "GREEN_SURFACE_FORMAT",
     "HOLE_RADIUS_M",
     "MINIMAL_PUTTERS",
     "STIMP_RELEASE_SPEED_MPS",
+    "CaptureModel",
     "GreenConditions",
+    "GreenSurface",
+    "GridGreenSurface",
+    "PlanarGreenSurface",
     "PuttLaunch",
     "PuttResult",
     "PutterSpec",
     "SkidSolution",
     "capture_speed_mps",
     "clubhead_speed_from_backstroke",
+    "effective_hole_radius_m",
+    "green_surface_from_json",
+    "green_surface_to_json",
     "roll_out_distance",
     "roll_time_s",
     "rolling_mu_to_stimp",
     "simulate_putt",
+    "simulate_putt_on_surface",
     "solve_skid",
     "stimp_to_rolling_mu",
 ]
