@@ -83,8 +83,9 @@ export function ReferenceFrameConverter() {
         {error && <div className="bg-red-900/40 border border-red-500 rounded p-3 text-red-200">{error}</div>}
 
         <div>
-          <label className="block text-sm text-slate-300 mb-1">Operation</label>
+          <label htmlFor="operation-select" className="block text-sm text-slate-300 mb-1">Operation</label>
           <select
+            id="operation-select"
             value={operation}
             onChange={(event) => setOperation(event.target.value as Operation)}
             className="w-full bg-slate-700 rounded px-3 py-2 border border-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
@@ -103,6 +104,7 @@ export function ReferenceFrameConverter() {
                 row.map((entry, j) => (
                   <input
                     key={`${i}-${j}`}
+                    aria-label={`Transform Row ${i + 1}, Column ${j + 1}`}
                     type="number"
                     value={entry}
                     onChange={(event) => updateMatrix(setTransform, transform, i, j, Number(event.target.value))}
@@ -116,6 +118,7 @@ export function ReferenceFrameConverter() {
               {twist.map((entry, i) => (
                 <input
                   key={i}
+                  aria-label={["ωx", "ωy", "ωz", "vx", "vy", "vz"][i]}
                   type="number"
                   value={entry}
                   onChange={(event) => {
@@ -138,6 +141,7 @@ export function ReferenceFrameConverter() {
                 row.map((entry, j) => (
                   <input
                     key={`${i}-${j}`}
+                    aria-label={`Rotation Matrix Row ${i + 1}, Column ${j + 1}`}
                     type="number"
                     value={entry}
                     onChange={(event) =>
@@ -153,6 +157,7 @@ export function ReferenceFrameConverter() {
               {translation.map((entry, i) => (
                 <input
                   key={i}
+                  aria-label={["x", "y", "z"][i]}
                   type="number"
                   value={entry}
                   onChange={(event) => {
@@ -174,6 +179,7 @@ export function ReferenceFrameConverter() {
               {so3Vector.map((entry, i) => (
                 <input
                   key={i}
+                  aria-label={["x", "y", "z"][i]}
                   type="number"
                   value={entry}
                   onChange={(event) => {
