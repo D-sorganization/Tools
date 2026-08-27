@@ -79,6 +79,41 @@ repos:
         pass_filenames: false
         always_run: true
 
+      - id: design-manual-governance
+        name: "engineering design-manual governance"
+        entry: python -m scripts.check_design_manual_governance
+        language: system
+        pass_filenames: false
+        files: ^(manuals/tools/|config/design_manual_governance\.json$|scripts/(check_design_manual_governance|design_manual_contract|tools_exemplar_contract|tools_module_inventory_contract|tools_textbook_chapter_contract|tools_textbook_chapter_lint)\.py$|AGENTS\.md$|CLAUDE\.md$|SPEC\.md$|AGENT_HANDOFF\.md$)
+
+      - id: tools-textbook-chapter-contract
+        name: "Tools textbook chapter contract"
+        entry: python -m scripts.lint_tools_textbook_chapters
+        language: system
+        pass_filenames: false
+        files: ^(manuals/tools/|config/design_manual_governance\.json$|scripts/(lint_tools_textbook_chapters|tools_textbook_chapter_contract|tools_textbook_chapter_lint)\.py$|tests/architecture/test_tools_textbook_chapter_contract\.py$)
+
+      - id: tools-module-inventory-freshness
+        name: "Tools module inventory freshness"
+        entry: python -m scripts.build_tools_module_inventory --check
+        language: system
+        pass_filenames: false
+        files: ^(src/|rust_core/|scripts/|shared_scripts/|schemas/|config/|manuals/tools/(manifests/module-inventory\.json|schemas/module-inventory\.schema\.json)$|tests/architecture/test_tools_module_inventory_contract\.py$)
+
+      - id: tools-exemplar-contract
+        name: "Tools governed exemplar traceability"
+        entry: python -m scripts.check_tools_exemplars
+        language: system
+        pass_filenames: false
+        files: ^(manuals/tools/|config/design_manual_governance\.json$|scripts/(check_tools_exemplars|tools_exemplar_contract)\.py$|tests/architecture/test_tools_exemplar_manuals_contract\.py$|src/shared/python/swing_sim/impact/dplane\.py$|src/rate_of_closure/simulation/impact_kinematics\.py$|tests/rate_of_closure/test_impact_kinematics\.py$)
+
+      - id: tools-manual-artifact-freshness
+        name: "Tools manual artifact freshness and semantics"
+        entry: python -m scripts.render_tools_design_manual --check
+        language: system
+        pass_filenames: false
+        files: ^(manuals/tools/|config/design_manual_governance\.json$|scripts/(render_tools_design_manual|tools_manual_artifacts|tools_manual_renderer_contract)\.py$|tests/architecture/test_tools_manual_renderer_contract\.py$)
+
       - id: tracked-text-normalization
         name: "tracked LF blob normalization"
         entry: python scripts/check_tracked_text_normalization.py
@@ -111,7 +146,9 @@ repos:
       - id: prettier
         name: "prettier (yaml/json/md)"
         types_or: [yaml, markdown, json]
-        exclude: '(\.py|\.m|package-lock\.json|\.ipynb)$'
+        # The module manifest has a deterministic Python serializer; another
+        # formatter would make the immediately preceding freshness gate stale.
+        exclude: '(\.py|\.m|\.qmd|package-lock\.json|\.ipynb|manuals/tools/manifests/module-inventory(?:\.json|/.*\.json))$'
 
   # -------------------------------------------------------------------------
   # Stage 4: Pre-push Hooks (Slower - PYTHON FILES ONLY)

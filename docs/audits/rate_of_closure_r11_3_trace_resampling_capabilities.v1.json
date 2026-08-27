@@ -1,0 +1,129 @@
+{
+  "schema_version": "tools-r11.3-trace-resampling-capabilities/v1",
+  "requirement_id": "R11.3",
+  "qualified_base_revision": "66b1cb4d16d8ea36fa7c3f4eb0c4f3725ae03734",
+  "implementation_issue": 4763,
+  "policy_id": "swing-trace-time-linear-contiguous/v1",
+  "coordinate_kind": "time",
+  "coordinate_unit": "s",
+  "position_method": "piecewise_linear_adjacent_valid_samples",
+  "outside_domain": "reject",
+  "invalid_gap": "preserve_unavailable",
+  "impact_marker_method": "nearest_valid_target_lower_tie",
+  "impact_marker_semantics": "Approximate display marker; absolute alignment error is retained per impacted trial and is not the exact physical event time.",
+  "adapter_cell_status_authority": "docs/audits/rate_of_closure_r11_1_complete_trial_capabilities.v1.json",
+  "source_layouts": [
+    {
+      "source_kind": "manual",
+      "point_count": 1,
+      "point_ids": ["swing.clubhead.reference"],
+      "status": "verified",
+      "evidence": "tests/rate_of_closure/test_variation_trace_resampling.py"
+    },
+    {
+      "source_kind": "double_pendulum",
+      "point_count": 3,
+      "point_ids": ["swing.pivot", "swing.wrist", "swing.clubhead.reference"],
+      "status": "verified",
+      "evidence": "tests/rate_of_closure/test_variation_trace_resampling.py"
+    },
+    {
+      "source_kind": "triple_pendulum",
+      "point_count": 4,
+      "point_ids": [
+        "swing.pivot",
+        "swing.elbow",
+        "swing.wrist",
+        "swing.clubhead.reference"
+      ],
+      "status": "verified",
+      "evidence": "tests/rate_of_closure/test_variation_trace_resampling.py"
+    }
+  ],
+  "adapter_cells": [
+    {
+      "source_kind": "manual",
+      "adapter_id": "global_simulation_value/v1",
+      "status": "explicitly_unavailable"
+    },
+    {
+      "source_kind": "manual",
+      "adapter_id": "localized_joint_torque_offset/v1",
+      "status": "explicitly_unavailable"
+    },
+    {
+      "source_kind": "manual",
+      "adapter_id": "regional_ground_value/v1",
+      "status": "explicitly_unavailable"
+    },
+    {
+      "source_kind": "manual",
+      "adapter_id": "turf_profile_value/v1",
+      "status": "explicitly_unavailable"
+    },
+    {
+      "source_kind": "double_pendulum",
+      "adapter_id": "global_simulation_value/v1",
+      "status": "verified"
+    },
+    {
+      "source_kind": "double_pendulum",
+      "adapter_id": "localized_joint_torque_offset/v1",
+      "status": "verified"
+    },
+    {
+      "source_kind": "double_pendulum",
+      "adapter_id": "regional_ground_value/v1",
+      "status": "explicitly_unavailable"
+    },
+    {
+      "source_kind": "double_pendulum",
+      "adapter_id": "turf_profile_value/v1",
+      "status": "explicitly_unavailable"
+    },
+    {
+      "source_kind": "triple_pendulum",
+      "adapter_id": "global_simulation_value/v1",
+      "status": "explicitly_unavailable"
+    },
+    {
+      "source_kind": "triple_pendulum",
+      "adapter_id": "localized_joint_torque_offset/v1",
+      "status": "explicitly_unavailable"
+    },
+    {
+      "source_kind": "triple_pendulum",
+      "adapter_id": "regional_ground_value/v1",
+      "status": "explicitly_unavailable"
+    },
+    {
+      "source_kind": "triple_pendulum",
+      "adapter_id": "turf_profile_value/v1",
+      "status": "explicitly_unavailable"
+    }
+  ],
+  "adapter_status_counts": {
+    "verified": 2,
+    "explicitly_unavailable": 10
+  },
+  "adverse_cases": [
+    "exact_grid_identity",
+    "exact_grid_subset",
+    "off_grid_affine_interpolation",
+    "leading_missing",
+    "trailing_missing",
+    "interior_gap",
+    "single_sample_island",
+    "all_invalid_failure",
+    "no_impact",
+    "impact_lower_tie",
+    "impact_without_valid_target",
+    "outside_domain",
+    "invalid_target_grid",
+    "immutability_and_aliasing",
+    "serial_chunk_equivalence",
+    "source_layout_registry_drift",
+    "adapter_matrix_drift"
+  ],
+  "scientific_boundary": "Trace-grid equivalence qualifies software alignment for model outputs; it does not validate anatomical force attribution, a human swing mechanism, or universal coaching advice."
+}

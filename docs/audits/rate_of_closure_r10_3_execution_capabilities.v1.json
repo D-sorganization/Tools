@@ -1,0 +1,31 @@
+{
+  "schema_version": "tools-r10.3-execution-capabilities/v1",
+  "requirement_id": "R10.3",
+  "qualified_base_revision": "9fe87f0eec9f341fdfc50fc2a116c601b94781d5",
+  "implementation_issue": 4756,
+  "authority": "src/rate_of_closure/locus_execution_capabilities.v1.json",
+  "standalone_web_mirror": "src/rate_of_closure/web/src/vendored/locus_execution_capabilities.v1.json",
+  "mirror_drift_gates": [
+    "src/rate_of_closure/web/src/vendored/vendoredSync.test.ts",
+    "tests/rate_of_closure/test_web_vendored_sync.py"
+  ],
+  "registered_variable_count": 31,
+  "supported_by_adapter": {
+    "global_simulation_value/v1": 11,
+    "localized_joint_torque_offset/v1": 2,
+    "regional_ground_value/v1": 2,
+    "turf_profile_value/v1": 4
+  },
+  "explicitly_unsupported_count": 12,
+  "time_window_semantics": "half_open_seconds",
+  "point_id_semantics": "topological_control_loci_not_spatial_trace_points",
+  "negative_gates": [
+    "registry_coverage_drift",
+    "duplicate_variable_key",
+    "malformed_capability_record",
+    "forbidden_locus_metadata",
+    "missing_or_inexact_topological_locus",
+    "out_of_run_time_window"
+  ],
+  "scientific_boundary": "Execution-locus coverage proves deterministic adapter semantics; it does not identify anatomical force sources, validate a human swing mechanism, or support universal coaching advice."
+}

@@ -115,6 +115,10 @@ silently.
 
 ## Variation Study Visualizations
 
+For the public mechanics, schema, method, performance, reproduction, and
+scientific-boundary treatment, see the
+[ensemble variation and sensitivity guide](../../docs/rate_of_closure/variation_ensemble_reproducibility_guide.md).
+
 The **Variation** view supports delivery, launch, and complete double-pendulum
 swing ensembles. Every run retains its sampled inputs and scalar outputs. A
 complete swing ensemble additionally retains the common-time-grid positions of
@@ -142,6 +146,14 @@ Spatial data use the stable application frame
 and z points right of target. Position and time units are metres and seconds.
 This is an application frame, not a camera frame; rotating the display does not
 change the data coordinates.
+
+The shared `resample_position_traces` authority can align traces to another
+time grid under policy `swing-trace-time-linear-contiguous/v1`. It copies exact
+samples and linearly interpolates only between adjacent valid samples. It
+rejects extrapolation, preserves invalid gaps and all-invalid failure rows, and
+reports the timing error of each approximate impact display marker. It never
+changes the stable point order or coordinate-frame ID. See the public guide and
+the R11.3 capability matrix before comparing ensembles on a different grid.
 
 Exports are intentionally split by purpose:
 
@@ -270,6 +282,9 @@ claims human validation or a coaching recommendation.
 Durable PyQt6 and React run/progress/cancel/resume/inspect state machines and
 rendered surfaces remain open R11.5 work under #4626 / #4142.
 
-Current scope: complete trace ensembles require the double-pendulum source and
-global perturbations. Local time-window or point-targeted perturbations are
-rejected before execution rather than being accepted without a modeled effect.
+Current qualified variation-adapter scope is double-pendulum global values and
+localized shoulder/wrist torque offsets. Manual and triple-pendulum spatial
+layouts have trace-grid identity/subset qualification but are not qualified
+variation-adapter executions. Regional-ground and turf-profile values remain
+in separate authorities. Unsupported cells fail closed rather than being
+accepted without a modeled effect.

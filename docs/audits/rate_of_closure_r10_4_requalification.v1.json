@@ -1,0 +1,51 @@
+{
+  "schema_version": "tools-r10.4-requalification/v1",
+  "repository": "D-sorganization/Tools",
+  "epic": 4142,
+  "issue": 4754,
+  "requirement_id": "R10.4",
+  "qualified_base_revision": "cff2909f1585273e10fa49165bfab8521e889da1",
+  "implementation_pull_request": 4669,
+  "implementation_head_revision": "36f4b1add2bc72cea87bd9f87d36b232db76d50b",
+  "implementation_merge_revision": "f9730033fd279ba8b4abe03bab2aadd950400b47",
+  "implementation_scope": [
+    "Canonical version-3 execution documents bind plan schema, resolved base values and units, registry and RNG identity, executor compatibility, and source provenance.",
+    "Strict Python and TypeScript readers reject substituted, crossed, incompatible, unknown-field, and legacy evidence rather than inventing provenance.",
+    "Named-plan, workspace, CSV, JSON, HDF5, scalar-ensemble, geometry-ensemble, durable-archive, forgiveness-export, and regional-result persistence retains the execution document or its canonical cross-runtime digest boundary."
+  ],
+  "current_main_results": {
+    "python_tests_passed": 138,
+    "web_tests_passed": 270,
+    "upstream_provider_contracts_passed": 3
+  },
+  "validation_commands": [
+    "python -m pytest -n 0 -q src/shared/python/swing_sim/variation/tests/test_execution_metadata.py src/shared/python/swing_sim/variation/tests/test_spec.py src/shared/python/swing_sim/variation/tests/test_dataset_io.py tests/rate_of_closure/test_variation_gui_roundtrip.py tests/rate_of_closure/test_workspace_variation_session.py tests/rate_of_closure/test_epic_4142_requirement_evidence.py",
+    "cd src/rate_of_closure/web && npm test -- --run variation",
+    "python -m pytest -n 0 -q tests/shared_contracts/test_tools_vendoring.py --timeout=60 --timeout-method=thread"
+  ],
+  "historical_run": "https://github.com/D-sorganization/Tools/actions/runs/32709751110",
+  "historical_failures": [
+    {
+      "job": "ground-tee-playwright",
+      "classification": "runner_provisioning_contention",
+      "behavioral_test_execution": false
+    },
+    {
+      "job": "upstream-downstream-consumer-contract",
+      "classification": "superseded_consumer_isolation_defect",
+      "behavioral_test_execution": true
+    }
+  ],
+  "failure_adjudication": [
+    "The ground/tee browser job stopped while Playwright provisioning contended for the host apt lock; no browser behavioral test ran.",
+    "The Upstream consumer job passed five contracts and failed three provider-mode path-isolation contracts on then-current Upstream main. UpstreamDrift PR #9022 repaired that consumer-owned isolation defect later on 2026-08-24; merge revision 76bf6ab1d1d524f172846052e227fa16aea75185 is an ancestor of current Upstream main, where all three formerly failing contracts now pass against this Tools base.",
+    "Neither historical auxiliary failure contradicts the execution-document content, strict parsing, persistence, or cross-runtime digest behavior requalified here."
+  ],
+  "remote_evidence": [
+    "https://github.com/D-sorganization/Tools/pull/4669",
+    "https://github.com/D-sorganization/Tools/actions/runs/32709751110",
+    "https://github.com/D-sorganization/Tools/issues/4754",
+    "https://github.com/D-sorganization/UpstreamDrift/pull/9022"
+  ],
+  "scientific_boundary": "Repository verification of execution-document provenance and persistence does not validate a human swing mechanism, identify a participant, or support universal coaching advice."
+}

@@ -30,9 +30,7 @@ class _WheelBlockFilter(QObject):
     range and the value survives across launches via QSettings.
     """
 
-    def eventFilter(
-        self, obj: QObject | None, event: QEvent | None
-    ) -> bool:  # noqa: N802
+    def eventFilter(self, obj: QObject | None, event: QEvent | None) -> bool:  # noqa: N802
         if event is not None and event.type() == QEvent.Type.Wheel:
             wheel: QWheelEvent = event  # type: ignore[assignment]
             # Ctrl+Wheel → font zoom (delegated to MainWindow for bounds + persist)

@@ -1,0 +1,32 @@
+---
+title: "Tools Engineering Design Manual"
+subtitle: "Governed Shared Calculations and Interchange Pathways"
+format:
+  html: default
+  pdf: default
+  docx: default
+---
+
+# Release Status
+
+This is the canonical editable QMD source for the Tools engineering design
+manual. It is a governance scaffold, not a released engineering manual. The
+file-level module inventory is complete for its declared tracked-source
+denominator. TOOLS-D4 registers one model-conditioned D-plane calculation and
+one swing/Rate-of-Closure textbook exemplar with exact source, consumer, test,
+fixture, equation, unit, and limitation traceability. The markerless-mocap
+exemplar remains explicitly blocked because its authority PR is unmerged and no
+markerless module exists on this exact source base. Release remains blocked by
+TOOLS-D5 through TOOLS-D9 and outstanding D4 approvals. Generated HTML, LaTeX,
+PDF, and DOCX artifacts are reproducible engineering records under TOOLS-D2,
+but none is approved for publication or engineering use.
+
+{{< include chapters/00-governance.qmd >}}
+
+{{< include chapters/01-module-inventory.qmd >}}
+
+{{< include chapters/02-reproducible-rendering.qmd >}}
+
+{{< include chapters/03-textbook-chapter-contract.qmd >}}
+
+{{< include chapters/04-swing-rate-of-closure-dplane.qmd >}}

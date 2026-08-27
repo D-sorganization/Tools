@@ -12,14 +12,19 @@ pendulum, triple pendulum, and an 8-DOF closed-loop golfer upper-body model.
 See `src/pendulum_simulator/README.md` for the model topology writeup and
 `src/pendulum_simulator/FEATURES.md` for the feature inventory.
 
-Transfer-diagnostics issue **#4406**, under UpstreamDrift epic **#8551**, is
-**closed**. It landed on main via consolidation **#4450** (`8f654b3a1`,
-2026-08-14). The branch `research/shoulder-velocity-drift-transfer` is spent —
-do not resume work on it.
+Epic **#4698** is the active source-attribution extension. It introduces the
+shared `force-attribution/v1` contract in `shared.python.swing_sim`, separating
+cross-speed Coriolis, squared-speed, gravity, damping, control, and residual
+terms with exact closure and rank-aware force-only hand-path mapping. The
+triple and golfer tiers remain unavailable until they supply compatible mass-
+matrix derivatives and endpoint semantics; do not synthesize those providers.
 
-What shipped: a model-neutral transfer contract, exact double-pendulum
-drift/control grip-force attribution, integrated braking/work/impulse metrics,
-Pareto ranking, and a PyQt **Drift Transfer** analysis tab.
+Transfer-diagnostics issue **#4406** (UpstreamDrift epic **#8551**) is **closed**,
+landed via consolidation **#4450**. It shipped the model-neutral transfer
+contract, exact double-pendulum drift/control grip-force attribution,
+braking/work/impulse metrics, Pareto ranking, and the PyQt **Drift Transfer**
+tab. The branch `research/shoulder-velocity-drift-transfer` is spent — do not
+resume it.
 
 Companion issue **#4430** is active on
 merged PR **#4618** (`87ff0ea8c`). Tools `main` now has the source-pinned
@@ -49,6 +54,32 @@ UpstreamDrift's `EnhancedBallFlightSimulator` and `movement_optimizer`'s
 parallel-start machinery) rather than reimplementing Monte Carlo sampling from
 scratch. If you're working in `swing_sim/variation/`, read this tool's
 perturbation analysis code first.
+
+## Active Epic — #4766 Swing Objective Comparison
+
+Mechanism-vs-outcome capability on this tool's existing physics: centrifugal/
+Coriolis split (#4767), five objectives (#4768), slew-limited collocation
+(#4769), cross-evaluation + wire (#4770), Lab surface (#4771), UpstreamDrift
+tile (#4772). Contract: `docs/specs/SWING_OBJECTIVE_COMPARISON.md`.
+
+**Nothing here re-derives physics.** `physics.py` already had the equations the
+research prototype `Double-Pendulum-Optimization` reached independently; that
+repo stays the notebook home and cross-check, not a vendored dependency.
+
+**Three regression-pinned findings that bind future work here:**
+
+1. `P_coriolis_hub = -2 * P_centrifugal_wrist` identically, so centrifugal and
+   Coriolis _work_ are one functional. The centrifugal objective is an angular
+   impulse; do not "simplify" it back to work.
+2. The NLP needs non-dimensional variables and a tight `ftol`. Unscaled it leaves
+   defects near 1e-1; at SciPy's default it returns the initial guess and reports
+   success.
+3. **A comparison can be degenerate.** Near the minimum downswing duration the
+   constraints pin the trajectory and every objective returns the same swing, so
+   the matrix fills with 100% entries that read as agreement but are a
+   configuration artifact. Check `SwingComparison.is_degenerate` first; the
+   preset (0.36 s, 250 N·m) carries slack for this. Whether the mechanism
+   objectives track clubhead speed is configuration-dependent, not a result.
 
 ## Recent Activity (grounding — `git log --oneline -15 -- src/pendulum_simulator`)
 

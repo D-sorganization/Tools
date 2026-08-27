@@ -360,7 +360,7 @@ def auto_discover_guis(search_paths: list[Path]) -> int:
             except (KeyboardInterrupt, SystemExit):
                 # Never swallow interpreter-level control-flow signals.
                 raise
-            except Exception:
+            except Exception:  # noqa: BLE001 - isolate arbitrary exceptions during dynamic plugin execution
                 # A single malformed gui_registration.py (SyntaxError, NameError,
                 # RuntimeError, a malformed GUI_INFO raising KeyError/TypeError,
                 # etc.) must not abort discovery for every other tool.

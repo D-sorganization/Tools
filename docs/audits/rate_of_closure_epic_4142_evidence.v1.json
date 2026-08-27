@@ -6,9 +6,9 @@
   "audit_scope": "Requirement-level implementation and evidence audit. A verified status is repository evidence, not validation of a human golf-swing mechanism.",
   "epic_closeable": false,
   "status_counts": {
-    "verified": 18,
-    "partial": 11,
-    "unverified": 2,
+    "verified": 26,
+    "partial": 5,
+    "unverified": 0,
     "external_blocked": 0
   },
   "requirements": [
@@ -47,26 +47,34 @@
     {
       "requirement_id": "R10.3",
       "requirement": "Target a whole run or a supported time or spatial window.",
-      "status": "partial",
-      "rationale": "The plan validates temporal and point loci, and localized joint-torque execution consumes a bounded window; the generic scalar executor intentionally rejects localized metadata.",
+      "status": "verified",
+      "rationale": "Issue #4756 replaces implicit locus inference with one packaged, cross-runtime execution-capability authority covering all 31 known shared and Rate extension variables. Nineteen inputs bind named whole-run or localized adapters; twelve retain explicit unsupported reasons. Python and TypeScript reject registry drift, malformed records, undeclared or forbidden loci, inexact topological joint IDs, and out-of-run windows. The standalone web mirror consumes a byte-identical governed copy without importing above its root. The two localized torque inputs execute required half-open windows at exact control joints, while spatial swing trace IDs remain distinct and no unsupported anatomical interpretation is implied.",
       "evidence_files": [
-        "src/shared/python/swing_sim/variation/spec.py",
-        "src/rate_of_closure/variation/simulation_adapter.py",
-        "tests/rate_of_closure/test_localized_torque_variation.py"
+        "src/rate_of_closure/locus_execution_capabilities.v1.json",
+        "src/rate_of_closure/variation/locus_execution_capabilities.py",
+        "src/rate_of_closure/variation/request_builder.py",
+        "src/rate_of_closure/web/src/model/locusExecutionCapabilities.ts",
+        "src/rate_of_closure/web/src/vendored/locus_execution_capabilities.v1.json",
+        "src/rate_of_closure/web/src/vendored/vendoredSync.test.ts",
+        "tests/rate_of_closure/test_locus_execution_capabilities.py",
+        "tests/rate_of_closure/test_localized_torque_variation.py",
+        "tests/rate_of_closure/test_web_vendored_sync.py",
+        "docs/audits/rate_of_closure_r10_3_execution_capabilities.v1.json"
       ],
       "validation_commands": [
-        "python -m pytest src/shared/python/swing_sim/variation/tests/test_grouped_sampling.py tests/rate_of_closure/test_localized_torque_variation.py -q"
+        "python -m pytest -n 0 -q tests/rate_of_closure/test_locus_execution_capabilities.py tests/rate_of_closure/test_localized_torque_variation.py tests/rate_of_closure/test_variation_simulation_request.py tests/rate_of_closure/test_web_vendored_sync.py tests/rate_of_closure/test_epic_4142_requirement_evidence.py",
+        "cd src/rate_of_closure/web && npm test"
       ],
-      "remote_evidence": [],
-      "gaps": [
-        "Only the localized joint-torque adapter executes locus metadata; other time-varying registered inputs lack a declared capability map and execution adapter."
-      ]
+      "remote_evidence": [
+        "https://github.com/D-sorganization/Tools/issues/4756"
+      ],
+      "gaps": []
     },
     {
       "requirement_id": "R10.4",
       "requirement": "Record schema, units, base state, distributions, groups, seed, compatibility, and provenance in every plan.",
-      "status": "partial",
-      "rationale": "Issue #4668 now composes the v2 plan with resolved units and bases, registry, RNG, implementation compatibility, and source provenance in one digest-cohesive version-3 execution document. Persistence surfaces either retain that document or bind the canonical cross-runtime plan digest without inventing a foreign executor identity.",
+      "status": "verified",
+      "rationale": "Protected PR #4669 merged the digest-cohesive version-3 execution document, and issue #4754 requalified it from protected base cff2909f1585273e10fa49165bfab8521e889da1. Current Python and TypeScript tests verify plan schema, resolved units and bases, distributions and groups, seed/RNG identity, registry and executor compatibility, source provenance, strict tamper rejection, and persistence through the supported plan, workspace, dataset, ensemble, durable, forgiveness, and regional boundaries. Historical auxiliary failures are separately adjudicated as runner provisioning contention and a subsequently repaired Upstream consumer-isolation defect; this is repository provenance verification, not human-mechanism validation.",
       "evidence_files": [
         "src/shared/python/swing_sim/variation/spec.py",
         "src/shared/python/swing_sim/variation/execution_metadata.py",
@@ -74,16 +82,21 @@
         "src/rate_of_closure/web/src/model/variationExecutionMetadata.ts",
         "src/rate_of_closure/web/src/model/variationPersistedPlan.ts",
         "docs/specs/VARIATION_PLAN_PERSISTENCE.md",
-        "tests/rate_of_closure/test_variation_gui_roundtrip.py"
+        "docs/audits/rate_of_closure_r10_4_requalification.v1.json",
+        "tests/rate_of_closure/test_variation_gui_roundtrip.py",
+        "tests/rate_of_closure/test_epic_4142_requirement_evidence.py"
       ],
       "validation_commands": [
-        "python -m pytest src/shared/python/swing_sim/variation/tests/test_execution_metadata.py src/shared/python/swing_sim/variation/tests/test_spec.py tests/rate_of_closure/test_variation_gui_roundtrip.py tests/rate_of_closure/test_workspace_variation_session.py -q",
+        "python -m pytest -n 0 -q src/shared/python/swing_sim/variation/tests/test_execution_metadata.py src/shared/python/swing_sim/variation/tests/test_spec.py src/shared/python/swing_sim/variation/tests/test_dataset_io.py tests/rate_of_closure/test_variation_gui_roundtrip.py tests/rate_of_closure/test_workspace_variation_session.py tests/rate_of_closure/test_epic_4142_requirement_evidence.py",
         "cd src/rate_of_closure/web && npm test -- --run variation"
       ],
-      "remote_evidence": [],
-      "gaps": [
-        "The implementation has focused local evidence but remains partial until the complete #4668 gates pass through protected CI and the exact merged revision is recorded here."
-      ]
+      "remote_evidence": [
+        "https://github.com/D-sorganization/Tools/pull/4669",
+        "https://github.com/D-sorganization/Tools/actions/runs/32709751110",
+        "https://github.com/D-sorganization/Tools/issues/4754",
+        "https://github.com/D-sorganization/UpstreamDrift/pull/9022"
+      ],
+      "gaps": []
     },
     {
       "requirement_id": "R10.5",
@@ -120,20 +133,24 @@
     {
       "requirement_id": "R11.1",
       "requirement": "Retain sampled inputs, typed outcomes, event and impact state, shot result, and complete pre-impact traces for every trial.",
-      "status": "partial",
-      "rationale": "Core ensemble and Rate adapters retain sampled inputs, status, typed outcome, scalar outputs, and bounded trace tensors, but not every supported adapter binds the full requested event, impact, shot, and pre-impact trace set in one lossless document.",
+      "status": "verified",
+      "rationale": "Issue #4758 and PR #4762 add one immutable complete-trial record and bounded durable schema-v3 authority for every hit, no-impact, and numerical-failure trial. Records bind sampled inputs, plan/execution/configuration/source identities, frame, explicit units, stable point/joint IDs, complete swing kinematics and applied torques, event/contact state, and available impact/delivery/post-impact/launch/flight phases. Array-level shape, dtype, digest, range, strict JSON, corruption, legacy-v2 read-only, serial/chunk/resume parity, 16/64-trial scaling, and isolated installed-wheel gates pass. The exhaustive 3-source by 4-adapter matrix verifies the two qualified double-pendulum adapters and records ten other cells as explicitly unavailable without fabrication. This is model-data retention, not human or coaching validation.",
       "evidence_files": [
-        "src/shared/python/swing_sim/variation/ensemble_types.py",
-        "src/rate_of_closure/variation/simulation_types.py",
-        "tests/rate_of_closure/test_variation_simulation_adapter.py"
+        "src/rate_of_closure/variation/complete_trial_record.py",
+        "src/rate_of_closure/variation/durable_ensemble_chunks.py",
+        "docs/audits/rate_of_closure_r11_1_complete_trial_capabilities.v1.json",
+        "docs/rate_of_closure/complete_trial_retention_scaling.v1.json",
+        "tests/rate_of_closure/test_variation_complete_trial_record.py",
+        "tests/rate_of_closure/test_variation_durable_ensemble_chunks.py",
+        "tests/rate_of_closure/test_complete_trial_standalone_wheel.py"
       ],
       "validation_commands": [
-        "python -m pytest src/shared/python/swing_sim/variation/tests/test_ensemble_geometry.py tests/rate_of_closure/test_variation_simulation_adapter.py -q"
+        "python -m pytest -n 0 -q tests/rate_of_closure/test_variation_complete_trial_record.py tests/rate_of_closure/test_variation_durable_ensemble_chunks.py tests/rate_of_closure/test_variation_complete_trial_scaling_evidence.py tests/rate_of_closure/test_epic_4142_requirement_evidence.py",
+        "python -m pytest -n 0 -q tests/rate_of_closure/test_complete_trial_standalone_wheel.py",
+        "python -m scripts.measure_complete_trial_retention_scaling"
       ],
-      "remote_evidence": [],
-      "gaps": [
-        "A requirement matrix must prove complete event, impact, shot, and pre-impact trace retention for every compatible model adapter, including failure and no-impact paths."
-      ]
+      "remote_evidence": ["https://github.com/D-sorganization/Tools/pull/4762"],
+      "gaps": []
     },
     {
       "requirement_id": "R11.2",
@@ -154,20 +171,25 @@
     {
       "requirement_id": "R11.3",
       "requirement": "Use stable modeled-point identifiers, explicit frames, common grids, and documented interpolation.",
-      "status": "partial",
-      "rationale": "Geometry tensors bind point names, frame, units, and common time or phase coordinates, and strict readers reject drift.",
+      "status": "verified",
+      "rationale": "The versioned time-grid authority preserves stable point/frame/trial identities, is exactly equivalent on identity and subset grids for manual, double-pendulum, and triple-pendulum spatial layouts, interpolates only between adjacent valid samples, rejects extrapolation, retains missing intervals, and reports approximate impact-marker alignment error. The exhaustive 3-source by 4-adapter matrix inherits the two qualified R11.1 cells and records ten cells as explicitly unavailable. This qualifies model-output alignment, not participant validity.",
       "evidence_files": [
         "src/shared/python/swing_sim/variation/ensemble_geometry.py",
         "src/shared/python/swing_sim/variation/ensemble_types.py",
-        "tests/rate_of_closure/test_variation_geometry_properties.py"
+        "src/shared/python/swing_sim/variation/trace_resampling.py",
+        "docs/audits/rate_of_closure_r11_3_trace_resampling_capabilities.v1.json",
+        "src/shared/python/swing_sim/variation/tests/test_trace_resampling.py",
+        "tests/rate_of_closure/test_variation_trace_resampling.py",
+        "tests/rate_of_closure/test_epic_4142_requirement_evidence.py"
       ],
       "validation_commands": [
-        "python -m pytest src/shared/python/swing_sim/variation/tests/test_ensemble_geometry.py tests/rate_of_closure/test_variation_geometry_properties.py -q"
+        "python -m pytest src/shared/python/swing_sim/variation/tests/test_ensemble_geometry.py src/shared/python/swing_sim/variation/tests/test_trace_resampling.py tests/rate_of_closure/test_variation_geometry_properties.py tests/rate_of_closure/test_variation_trace_resampling.py tests/rate_of_closure/test_epic_4142_requirement_evidence.py -n 0 -q"
       ],
-      "remote_evidence": [],
-      "gaps": [
-        "Interpolation and resampling equivalence is not qualified across every model adapter and missing-data pattern."
-      ]
+      "remote_evidence": [
+        "https://github.com/D-sorganization/Tools/issues/4763",
+        "https://github.com/D-sorganization/Tools/pull/4764"
+      ],
+      "gaps": []
     },
     {
       "requirement_id": "R11.4",
@@ -471,6 +493,7 @@
       "status": "partial",
       "rationale": "Current-main trusted React and PyQt visual evidence passes the registered initial-viewport manifests and states.",
       "evidence_files": [
+        "docs/audits/rate_of_closure_visual_first_epic_4433.v1.json",
         "src/rate_of_closure/visualization_tabs.v1.json",
         "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py",
         "tests/rate_of_closure/test_visual_baseline_compare.py"
@@ -483,52 +506,56 @@
         "https://github.com/D-sorganization/Tools/actions/runs/32689177846"
       ],
       "gaps": [
-        "Issue #4433 remains open and its exact acceptance checklist has not been adjudicated against the now-passing protected evidence."
+        "Matched state-by-state geometry evidence is incomplete outside the registered initial state and selected Variation, Putting, Explorer, Flight, and Launch Monitor interactions.",
+        "Approved baselines cover the initial React 1440x900 and PyQt 1.0-DPI states, not narrow React, PyQt 1.5 DPI, or representative loading, result, no-impact, failure, and stale states.",
+        "The manual assistive-technology protocol is ready but has not been executed and signed for React and PyQt.",
+        "A user-oriented rendered review has not been approved with exact build and image identities.",
+        "The per-tab acceptance matrix does not yet bind every state to frame, units, provenance, limitation placement, keyboard path, and nonvisual alternative evidence.",
+        "All-tab representative-dataset render and update latency, layout-shift, and deterministic-decimation evidence is incomplete.",
+        "The new-tab extension checklist and downstream cross-repository validation are not yet consolidated into protected completion evidence."
       ]
     },
     {
       "requirement_id": "R15.1",
       "requirement": "Cross-link an UpstreamDrift integration issue naming consuming surfaces and the exact Tools pin or adapter.",
-      "status": "partial",
-      "rationale": "UpstreamDrift #8557 names Tools #4142 as a dependency and records the ownership boundary, but does not yet bind the completed ensemble authority to a final immutable Tools revision and consumer adapter.",
+      "status": "verified",
+      "rationale": "UpstreamDrift PR #9039 merged on protected main as eb7076466152cbacd40a7f4d3fb9d92255d4ae43. Its #8358 consumer binds the exact immutable Tools revision 17474249b9267d0e73a779c1d72f231e7b8de39c and names the host-owned trial, engine, evidence-bundle, and cross-engine adapter surfaces while Tools retains the canonical analysis authority.",
       "evidence_files": [
-        "src/rate_of_closure/AGENT_HANDOFF.md",
-        "src/rate_of_closure/README.md"
+        "src/shared/python/swing_sim/variation/__init__.py",
+        "tests/rate_of_closure/test_morris_authority_contracts.py"
       ],
       "validation_commands": [
-        "git grep -n -e \"Tools#4142\" -e \"#4142\" -- src/rate_of_closure/AGENT_HANDOFF.md src/rate_of_closure/README.md"
+        "python -m pytest -n 0 -q tests/rate_of_closure/test_epic_4142_requirement_evidence.py tests/rate_of_closure/test_morris_authority_contracts.py"
       ],
       "remote_evidence": [
-        "https://github.com/D-sorganization/UpstreamDrift/issues/8557"
+        "https://github.com/D-sorganization/UpstreamDrift/pull/9039",
+        "https://github.com/D-sorganization/UpstreamDrift/actions/runs/32803140528"
       ],
-      "gaps": [
-        "The consuming UpstreamDrift surfaces and final exact Tools pin for the #4142 ensemble authority remain unregistered."
-      ]
+      "gaps": []
     },
     {
       "requirement_id": "R15.2",
       "requirement": "Consume canonical schemas and results in UpstreamDrift without duplicating algorithms.",
-      "status": "unverified",
-      "rationale": "Tools owns the canonical implementation, but no merged UpstreamDrift consumer of the complete #4142 ensemble, dispersion, and sensitivity authority is registered.",
+      "status": "verified",
+      "rationale": "Protected UpstreamDrift PR #9039 adds a thin, capability-checked Tools gateway and host-owned engine mappings. Deterministic sampling, canonical JSON/CSV/HDF5 persistence, scalar summaries, Spearman and OAT outputs, dispersion, and quiet-zone calculations remain delegated to the pinned Tools variation facade rather than copied into UpstreamDrift.",
       "evidence_files": [
-        "src/rate_of_closure/AGENT_HANDOFF.md",
-        "src/shared/python/swing_sim/variation/__init__.py"
+        "src/shared/python/swing_sim/variation/__init__.py",
+        "tests/rate_of_closure/test_morris_authority_contracts.py"
       ],
       "validation_commands": [
-        "python -m pytest -m contract tests/rate_of_closure/test_morris_authority_contracts.py -q"
+        "python -m pytest -n 0 -q tests/rate_of_closure/test_morris_authority_contracts.py tests/rate_of_closure/test_epic_4142_requirement_evidence.py"
       ],
       "remote_evidence": [
-        "https://github.com/D-sorganization/UpstreamDrift/issues/8557"
+        "https://github.com/D-sorganization/UpstreamDrift/pull/9039",
+        "https://github.com/D-sorganization/UpstreamDrift/actions/runs/32803140528"
       ],
-      "gaps": [
-        "Implement and protect-merge the thin UpstreamDrift consumer at an immutable Tools revision, then prove no copied analysis logic exists."
-      ]
+      "gaps": []
     },
     {
       "requirement_id": "R15.3",
       "requirement": "Pin cross-repository parity for seeded ensembles, no-impact cohorts, geometry, and attribution.",
-      "status": "unverified",
-      "rationale": "Tools has Python and TypeScript goldens, but no merged UpstreamDrift parity suite covers the complete representative #4142 dataset named by this requirement.",
+      "status": "verified",
+      "rationale": "UpstreamDrift PR #9039 pins the Tools authority and protects deterministic serial/batched canonical artifacts for hit, no-impact, numerical-failure, and partial traces; stable marker, frame, unit, topology, geometry, scalar attribution, and cross-engine mismatch contracts passed the protected provider and full unit gates. This verifies model-data parity, not participant validity.",
       "evidence_files": [
         "src/rate_of_closure/web/src/model/__fixtures__/durable_ensemble_evidence_golden_v1.json",
         "tests/rate_of_closure/test_variation_durable_ensemble_evidence.py"
@@ -537,30 +564,29 @@
         "python -m pytest tests/rate_of_closure/test_variation_durable_ensemble_evidence.py tests/rate_of_closure/test_dispersion_metrics_golden.py tests/rate_of_closure/test_morris_authority_contracts.py -q"
       ],
       "remote_evidence": [
-        "https://github.com/D-sorganization/UpstreamDrift/issues/8557"
+        "https://github.com/D-sorganization/UpstreamDrift/pull/9039",
+        "https://github.com/D-sorganization/UpstreamDrift/actions/runs/32803140528"
       ],
-      "gaps": [
-        "Add immutable UpstreamDrift parity fixtures for seeded inputs, typed no-impact rows, geometry metrics, and sensitivity records."
-      ]
+      "gaps": []
     },
     {
       "requirement_id": "R15.4",
       "requirement": "Publish theory, assumptions, limitations, quick start, schema, performance, and reproducibility documentation.",
-      "status": "partial",
-      "rationale": "The README, evidence manifests, handoffs, and the new reviewer-facing variation persistence contract document schemas, compatibility, provenance, limitations, artifact inventory, and reproducibility boundaries. One consolidated public guide still needs the complete theory, performance, and quick-start treatment.",
+      "status": "verified",
+      "rationale": "The consolidated public guide now unifies the mechanics and statistical interpretation, typed schema and persistence contracts, method assumptions, deterministic quick start, protected verification commands, bounded performance evidence, falsification workflow, and explicit human and coaching limitations.",
       "evidence_files": [
-        "src/rate_of_closure/README.md",
-        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/rate_of_closure/variation_ensemble_reproducibility_guide.md",
         "docs/specs/VARIATION_PLAN_PERSISTENCE.md",
-        "docs/rate_of_closure/variation_visualization_performance.md"
+        "docs/rate_of_closure/variation_visualization_performance.md",
+        "docs/rate_of_closure/ensemble_stream_scaling.v1.json",
+        "tests/rate_of_closure/test_epic_4142_requirement_evidence.py"
       ],
       "validation_commands": [
-        "python -m pytest tests/rate_of_closure/test_variation_durable_ensemble_evidence.py tests/rate_of_closure/test_variation_ensemble_scaling_evidence.py -q"
+        "python -m pytest tests/rate_of_closure/test_epic_4142_requirement_evidence.py tests/rate_of_closure/test_variation_durable_ensemble_evidence.py tests/rate_of_closure/test_variation_ensemble_scaling_evidence.py -q",
+        "python scripts/check_document_title_case.py docs/rate_of_closure/variation_ensemble_reproducibility_guide.md"
       ],
       "remote_evidence": [],
-      "gaps": [
-        "Consolidate the theory, schema, method assumptions, performance evidence, quick start, and reproduction commands into a stable public technical guide."
-      ]
+      "gaps": []
     }
   ]
 }

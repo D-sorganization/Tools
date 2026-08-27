@@ -22,6 +22,19 @@ from .analysis import (
     spearman_matrix,
     summary_stats,
 )
+from .dataset_io import (
+    DATASET_HDF5_SCHEMA_ID,
+    DATASET_HDF5_SCHEMA_VERSION,
+    DATASET_JSON_SCHEMA_VERSION,
+    from_json_dict,
+    read_csv,
+    read_hdf5,
+    read_json,
+    to_json_dict,
+    write_csv,
+    write_hdf5,
+    write_json,
+)
 from .dispersion_metric_types import (
     ELLIPSOID_VOLUME,
     ESTIMABLE,
@@ -133,6 +146,11 @@ from .spec import (
     variable_registry,
     variables_in_category,
 )
+from .trace_resampling import (
+    TRACE_RESAMPLING_POLICY_ID,
+    TraceResamplingResult,
+    resample_position_traces,
+)
 
 __all__ = [
     "CATEGORY_BALL_SETUP",
@@ -140,6 +158,9 @@ __all__ = [
     "CATEGORY_DELIVERY",
     "CATEGORY_LAUNCH",
     "CATEGORY_SWING",
+    "DATASET_HDF5_SCHEMA_ID",
+    "DATASET_HDF5_SCHEMA_VERSION",
+    "DATASET_JSON_SCHEMA_VERSION",
     "DELIVERY_OUTPUTS",
     "DISTRIBUTIONS",
     "FLIGHT_OUTPUTS",
@@ -203,6 +224,8 @@ __all__ = [
     "RMS_RADIUS",
     "PerturbationGroup",
     "SensitivityResult",
+    "TRACE_RESAMPLING_POLICY_ID",
+    "TraceResamplingResult",
     "VariableDef",
     "VariationDataset",
     "VariationPlan",
@@ -223,9 +246,14 @@ __all__ = [
     "find_ranked_low_variability_intervals",
     "finite_sample_standard_deviation",
     "generate_morris_design",
+    "from_json_dict",
     "one_at_a_time_sensitivity",
     "outputs_for_mode",
+    "read_csv",
+    "read_hdf5",
+    "read_json",
     "register_variable",
+    "resample_position_traces",
     "run_variation",
     "sensitivity_from_standard_deviations",
     "sample_inputs",
@@ -233,6 +261,10 @@ __all__ = [
     "sample_input_chunks",
     "spearman_matrix",
     "summary_stats",
+    "to_json_dict",
     "variable_registry",
     "variables_in_category",
+    "write_csv",
+    "write_hdf5",
+    "write_json",
 ]

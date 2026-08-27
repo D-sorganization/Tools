@@ -1,0 +1,63 @@
+{
+  "schema_version": "tools-exemplar-coverage/1.0.0",
+  "manual_id": "tools",
+  "release_status": "provisional",
+  "owner_subepic": 4720,
+  "entries": [
+    {
+      "exemplar_id": "tools.exemplar.markerless-mocap",
+      "title": "Markerless Motion-Capture Interchange",
+      "status": "blocked",
+      "chapter_id": null,
+      "calculation_ids": [],
+      "module_ids": [],
+      "source_paths": [],
+      "test_paths": [],
+      "consumer_paths": [],
+      "worked_examples": [],
+      "blockers": [
+        "TOOLS-M0 issue #4708 and PR #4734 are open; no markerless module is present on the exact D3 base."
+      ],
+      "dependency_evidence": [
+        "https://github.com/D-sorganization/Tools/issues/4708",
+        "https://github.com/D-sorganization/Tools/pull/4734"
+      ],
+      "owner": "Markerless mocap maintainers",
+      "review_owner": "TOOLS-M0 and TOOLS-D7 reviewers",
+      "approval_state": "blocked-pending-human-approval"
+    },
+    {
+      "exemplar_id": "tools.exemplar.swing-rate-of-closure-dplane",
+      "title": "Swing and Rate-of-Closure D-Plane Geometry",
+      "status": "verified-unapproved",
+      "chapter_id": "tools.textbook.swing-rate-of-closure-dplane",
+      "calculation_ids": ["TOOLS-DPLANE-GEOMETRY"],
+      "module_ids": [
+        "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-IMPACT-KINEMATICS-PY-7B1E029F3793",
+        "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-DPLANE-PY-2B75D87AF828"
+      ],
+      "source_paths": ["src/shared/python/swing_sim/impact/dplane.py"],
+      "test_paths": [
+        "src/shared/python/swing_sim/impact/tests/test_dplane.py::TestDPlaneAnalyticCases::test_matches_cross_client_golden_contract",
+        "src/shared/python/swing_sim/impact/tests/test_dplane.py::TestDPlaneSingularStates::test_invalid_frame_is_rejected",
+        "tests/rate_of_closure/test_impact_kinematics.py::test_face_center_dplane_uses_rigid_body_point_velocity"
+      ],
+      "consumer_paths": ["src/rate_of_closure/simulation/impact_kinematics.py"],
+      "worked_examples": [
+        {
+          "example_id": "square-descending",
+          "fixture_path": "src/rate_of_closure/web/src/model/__fixtures__/dplane_golden_v1.json",
+          "fixture_case_id": "square-descending"
+        }
+      ],
+      "blockers": [],
+      "dependency_evidence": [
+        "Exact D3 implementation base 916fb9f27f486486f0c071dcc6f15f81f68ecb18",
+        "dplane-golden-v1 cross-client fixture"
+      ],
+      "owner": "Swing simulation and Rate of Closure maintainers",
+      "review_owner": "TOOLS-D7 and TOOLS-D8 reviewers",
+      "approval_state": "blocked-pending-human-approval"
+    }
+  ]
+}

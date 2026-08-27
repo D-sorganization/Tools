@@ -1,11 +1,17 @@
 # AGENT_HANDOFF — Tools (Monorepo Root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-24
+> Last updated: 2026-08-26
 
 > **Current state only**, capped at 150 lines by `CLAUDE.md`; history lives in
 > git and in [`docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md`](docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md).
 > Do not append dated entries here again.
+
+## Merge Governance
+
+- Use feature-branch pull requests and ordinary protected merges; all configured status checks must pass on the exact head.
+- The live `main` rules require zero approving reviews. Do not require or request a named maintainer's approval; `@dieterolson` is not a standing release gate. Optional review remains available for risk, expertise, or unresolved feedback.
+- Never use admin bypass, force-push, check bypass, or protection changes to merge a failing or stale head.
 
 ## Where This Repo Is Headed
 
@@ -16,66 +22,55 @@ calculator into a swing → impact → ball-flight simulation platform. Since
 early August the delivery pattern has shifted from long stacked PRs to
 **scoped consolidations rebuilt directly onto current `main`**.
 
-| Epic  | Status (one line)                                                                                                                                                                                                                 |
-| ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| #4103 | Swing-Impact-Ball-Flight platform. Open. Stack PR #4119 closed; content landed in slices. Remaining: camera cluster (#4571) and Phase 7 (WASM web parity, Pages CI).                                                              |
-| #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                       |
-| #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                                |
-| #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                        |
-| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. PR #4685 carries immutable R15.1--R15.3 evidence; R15.4 is stacked locally; branch `feat/4142-noise-response` starts R12.3 without claiming qualification. |
-| #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                            |
-| #4433 | Visual-first tab visibility and visualization-led UX. Open. Core authority landed via **#4473** and trusted current-main React/PyQt evidence passes; requirement R14.6 remains partial until the issue checklist is adjudicated.  |
-| #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                    |
-| #4549 | Club Fitting Tester (OEM-grade). **COMPLETED** (#4557, #4577) — C1–C7 delivered (mesh inertia, shaft delivery, OEM doc, counterfactuals, PyQt6/React GUI tabs).                                                                   |
-| #4562 | Heavy Hit - hand/body coupling at impact. **COMPLETED** (#4568, #4577) — H1–H4 delivered (coupled mechanics, MJCF/URDF/.osim import, GUI readout).                                                                                |
-| #4583 | Professional launch-monitor program. Release A and source-backed SG are merged; #4603 adds canonical dataset/covariation consumers through the ordinary protected flow. Release B physical collection remains external and open.  |
+| Epic  | Status (one line)                                                                                                                                                                                                                     |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| #4103 | Swing-Impact-Ball-Flight platform. Open. Stack PR #4119 closed; content landed in slices. Remaining: camera cluster (#4571) and Phase 7 (WASM web parity, Pages CI).                                                                  |
+| #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                           |
+| #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                                    |
+| #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                            |
+| #4142 | Ensemble variation, quiet zones, sensitivity attribution. PR #4762/R11.1 merged as `66b1cb4d`; PR #4764/#4763 R11.3 qualifies stable-point time-grid alignment and advances the branch ledger to 26 verified / 5 partial.             |
+| #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                                |
+| #4433 | Visual-first tab visibility and visualization-led UX. Open. V0.1, strict cross-runtime parity, and V5.2 are merged through PR #4738; the audit is 8 verified / 23 partial obligations with seven gaps and two human actions retained. |
+| #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                        |
+| #4549 | Club Fitting Tester (OEM-grade). **COMPLETED** (#4557, #4577) — C1–C7 delivered (mesh inertia, shaft delivery, OEM doc, counterfactuals, PyQt6/React GUI tabs).                                                                       |
+| #4562 | Heavy Hit - hand/body coupling at impact. **COMPLETED** (#4568, #4577) — H1–H4 delivered (coupled mechanics, MJCF/URDF/.osim import, GUI readout).                                                                                    |
+| #4766 | Swing Objective Comparison. S1–S6 protected-merged through PR #4774; the planar two-link objective layer reports infeasible and degenerate comparisons rather than promoting them to mechanism agreement.                             |
+| #4583 | Professional launch-monitor program. Release A and source-backed SG are merged; #4603 adds canonical dataset/covariation consumers through the ordinary protected flow. Release B physical collection remains external and open.      |
+| #4698 | Coordinate-explicit pendulum force attribution and impulse optimization. Active on `feat/4698-force-attribution`; schema `force-attribution/v1` is the planned Upstream boundary.                                                     |
+| #4706 | Markerless mocap. M0/M1 PR #4734 is the schema authority; M2-M7/M9 remain local and unapproved pending protected dependency delivery.                                                                                                 |
+| #4707 | Engineering design manuals. D0--D3 are protected-merged. D4 is reconciled on a fresh main-rooted branch with reviewed local artifacts; D5--D9 remain local and unapproved.                                                            |
 
 Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator/AGENT_HANDOFF.md`, and `src/rotation_converter/AGENT_HANDOFF.md`.
 
-## Open PR Situation — Read Before Filing Anything
+## Active Delivery Boundaries
 
-No PR is a draft. The live golf queue includes Sidekick and remaining #4142 work; query `gh pr list` rather than trusting a count here.
-
-| PR    | Scope                                                                      |
-| ----- | -------------------------------------------------------------------------- |
-| #4585 | Sidekick Phase S1/S2 integration; active protected delivery                |
-| #4600 | Post-merge PyQt launch-monitor visual-baseline approval                    |
-| #4649 | Serialize trusted Playwright apt access; reconcile #4142/#4433 handoffs    |
-| #4466 | Rate of Closure remainder — **content-complete except the camera cluster** |
-| #4449 | P1AM plant historian + SCADA foundation (supersedes #4065, #4091)          |
-| #4447 | Variation / Morris sensitivity suite (consolidates 34 drafts)              |
-| #4446 | Ground study + rate-of-closure suites (supersedes #4409/#4410)             |
-
-**#4466 still cannot be merged by any strategy** — its merge-base predates
-`src/rate_of_closure/`, making 281 overlapping files both-added conflicts. Its
-content landed as 22 slices (#4517–#4547). **Only the camera-controls cluster
-remains, as a reimplementation**: wiring `CameraViewportMixin` passes 20 camera
-tests but regresses three main-owned tests and needs ~20 UI files that delete
-shipped work. #4571 owns this; do not slice it or close #4466 before it lands.
-
-**Current #4142 state.** PR #4685 is mergeable at
-`fa17ece0b8d906e15f196ac736a6b5f89ceb2f2d`, retains squash auto-merge, and
-has green substantive Python/browser/wheel gates; generic `d-sorg-fleet`
-auxiliary jobs remain queued with no runner assigned. Do not rerun them. Local
-R15.4 commits `306950c5b`/`4cc027b1c` add the public guide and current handoffs
-but must remain stacked until #4685 merges. Branch
-`feat/4142-noise-response` adds RED-first R12.3 contracts and a pure NumPy
-denominator-matched scatter/input-gain authority. Ruff and format pass; the
-public variation import stalls under current DeskComputer resource pressure and
-ControlTower SSH is not authorized, so no numerical qualification, push, or
-ledger promotion is yet allowed. #4142 remains open; none of this is human or
-causal evidence.
-The latest protected suite exposed one stale exact-manifest assertion and an
-UpstreamDrift provider-mode test that leaked `TOOLS_REPO_PATH`; focused local
-corrections pass 8/8 and 3/3 tests. The downstream correction must merge before
-rerunning that consumer gate; do not weaken the provider contract.
-**Known-red on `main`, already filed — do not re-diagnose:** #4582 (the Phase 0
-branch isolates the benchmark from inconsistent self-hosted pip), #4561 (browser
-qualification: companion readiness metadata + missing Firefox/WebKit binaries;
-the workflow is scoped to Chromium meanwhile), #4569 (two `1.17.40` SPEC rows
-glued onto one table line by a union merge), #4558/#4559/#4560 (cross-runtime
-fixture parity gaps). #4602/#4608/#4610 isolate trusted React/PyQt evidence;
-#4607 removes the blocking npm-cache post-hook, and #4613 owns deterministic Qt probe teardown after complete rendered evidence generation.
+- Query exact PR state before acting; this handoff is not a live queue.
+- Markerless M0/M1 PR #4734 is the only remote mocap contribution. Local
+  integration through M7/M9 is evidence, not merged authority.
+- TOOLS-D1 (#4711), TOOLS-D2 (#4712), and TOOLS-D3 (#4717) protected-squash-
+  merged normally as `395e11adce9081c38a9b436c3e76978e30d71fc9`,
+  `25c10cd6ca580d29185ead03808c313afac4ffb3`, and
+  `09d191fb8f6cf6e3ba76ee11375dcdcd65fd8d94`. Each merge tree exactly matches
+  its reviewed PR-head tree. The detached D3 post-merge run passed all 66
+  focused contracts; one xdist worker crashed during the deterministic inventory
+  test, and the exact test passed on an immediate serial rerun.
+- TOOLS-D4 (#4720) is reconciled on the fresh main-rooted branch
+  `docs/4720-exemplar-manuals-main`. It registers one verified-unapproved D-plane
+  exemplar and one fail-closed markerless row in
+  `manuals/tools/manifests/module-inventory.json` and preserves all later approval
+  gates. The prior local artifacts had all 10 native PDF and 14 Word-rendered
+  DOCX pages visually reviewed; this reconciled exact head still requires fresh
+  protected review and artifact-identity or complete rendered-page evidence.
+- #4142 R10.3 protected-merged through PR #4757 as
+  `5b3f585e3754fd77cc506631d55b163f50caf04d`: one packaged authority
+  classifies all 31 inputs by adapter and locus or explicit unavailability.
+  PR #4762/R11.1 protected-merged as
+  `66b1cb4d16d8ea36fa7c3f4eb0c4f3725ae03734`; issue #4758 is closed and the
+  corrected Python 3.11/3.12, exact-wheel, browser, and governance gates passed.
+  PR #4764 for issue #4763/R11.3 is active on `feat/4763-trace-resampling`: the versioned time-grid authority rejects extrapolation and gap bridging, preserves
+  frame/point/trial identities and typed unavailability, reports approximate
+  impact-marker alignment error, and qualifies all three spatial layouts plus
+  the inherited fail-closed 3-source by 4-adapter matrix. Focused local gates pass; the exact CI repair retains UpstreamDrift's BunkerShot/pendulum package paths, isolates the public RustSec fetch, and remediates the exposed PyO3/h2 advisories with PyO3/NumPy 0.29, Reqwest 0.12, and Rust 1.83. Formatting, warning-denied Clippy, 351 passing Rust tests plus one explicitly ignored benchmark, audit, and isolated wheel import pass. Protected CI and remote-main evidence remain.
 
 ## Must-Read Architecture Pointers
 
@@ -92,6 +87,11 @@ python3 -m ruff format --check .                  # format check (Ruff, NOT Blac
 python3 -m pytest -n auto --timeout=60            # full test suite
 python3 -m pytest -m contract                     # API contract tests (downstream-facing)
 python3 -m pytest -m integration --timeout=60     # cross-repo integration
+python3 -m scripts.check_design_manual_governance
+python3 -m scripts.build_tools_module_inventory --check
+python3 -m scripts.lint_tools_textbook_chapters
+python3 -m scripts.check_tools_exemplars
+python3 -m scripts.render_tools_design_manual --check
 ```
 
 SPEC freshness (CI job `spec-freshness` in `.github/workflows/spec-check.yml`):
@@ -138,11 +138,13 @@ Note: `ruff format --check` reports four pre-existing failures under
 
 ## Short-Term Roadmap (Ordered)
 
-1. **Sidekick Unified Integration**: implement the S1–S5 plan in
+1. Complete #4758/R11.1 durable trial retention and protected qualification.
+2. Deliver main-rooted TOOLS-D4 #4720 through the ordinary protected flow, then
+   reconcile D5--D9 without rewriting remote history.
+3. **Sidekick Unified Integration**: implement the S1–S5 plan in
    `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`.
-2. Restore the isolated advisory benchmark lane through #4582.
-3. **Land the camera-cluster epic #4571** so #4466 can finally close.
-4. Merge #4685, deliver R15.4, then execute and adversarially qualify the local R12.3 denominator-matched noise-response contract before any push.
-5. Phase 7 of #4103: WASM swap for the web mirror + real Pages CI deploy.
-6. #4125 H5: stand up the public release-management repo (cross-repo).
-7. Approve #4600's inspected post-merge PyQt launch-monitor visual reference.
+4. Restore the isolated advisory benchmark lane through #4582.
+5. **Land the camera-cluster epic #4571** so #4466 can finally close.
+6. Advance #4433 without promoting initial-state evidence; manual actions stay human.
+7. Phase 7 of #4103: WASM swap for the web mirror + real Pages CI deploy.
+8. #4125 H5: stand up the public release-management repo (cross-repo).

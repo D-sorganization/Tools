@@ -1,0 +1,396 @@
+{
+  "schema_id": "rate-of-closure/visual-first-epic-evidence",
+  "schema_version": 1,
+  "epic_url": "https://github.com/D-sorganization/Tools/issues/4433",
+  "audited_main_commit": "57b443201b402fc110ec5623885c7e310d6ad6d3",
+  "protected_run": "https://github.com/D-sorganization/Tools/actions/runs/32689177846",
+  "overall_status": "partial",
+  "status_counts": { "verified": 8, "partial": 23 },
+  "r14_6_blocking_gaps": [
+    "Matched state-by-state geometry evidence is incomplete outside the registered initial state and selected Variation, Putting, Explorer, Flight, and Launch Monitor interactions.",
+    "Approved baselines cover the initial React 1440x900 and PyQt 1.0-DPI states, not narrow React, PyQt 1.5 DPI, or representative loading, result, no-impact, failure, and stale states.",
+    "The manual assistive-technology protocol is ready but has not been executed and signed for React and PyQt.",
+    "A user-oriented rendered review has not been approved with exact build and image identities.",
+    "The per-tab acceptance matrix does not yet bind every state to frame, units, provenance, limitation placement, keyboard path, and nonvisual alternative evidence.",
+    "All-tab representative-dataset render and update latency, layout-shift, and deterministic-decimation evidence is incomplete.",
+    "The new-tab extension checklist and downstream cross-repository validation are not yet consolidated into protected completion evidence."
+  ],
+  "external_human_actions": [
+    "Execute and sign the manual assistive-technology protocol for both surfaces.",
+    "Approve the representative rendered review with exact build and image identities."
+  ],
+  "requirements": [
+    {
+      "requirement_id": "V0.1",
+      "requirement": "Inventory every React and PyQt workspace, purpose, visual, prerequisites, states, and counterpart.",
+      "status": "verified",
+      "rationale": "All 20 surfaces now carry bounded purpose and data-prerequisite fields plus an exact reciprocal React-to-PyQt counterpart enforced by the strict immutable reader.",
+      "evidence_files": [
+        "src/rate_of_closure/visualization_tabs.v1.json",
+        "src/rate_of_closure/visualization_tab_manifest.py",
+        "tests/rate_of_closure/test_visualization_tab_manifest.py"
+      ],
+      "gaps": []
+    },
+    {
+      "requirement_id": "V0.2",
+      "requirement": "Classify each tab and justify every nonvisual utility.",
+      "status": "verified",
+      "rationale": "The strict manifest classifies all 20 tabs and limits semantic-only landmarks to declared reference utilities.",
+      "evidence_files": [
+        "src/rate_of_closure/visualization_tabs.v1.json",
+        "tests/rate_of_closure/test_visualization_tab_manifest.py"
+      ],
+      "gaps": []
+    },
+    {
+      "requirement_id": "V0.3",
+      "requirement": "Record first-viewport images and geometry at desktop, narrow, and PyQt 100/150 percent DPI.",
+      "status": "partial",
+      "rationale": "Protected geometry covers all references and approved images cover initial desktop/1.0-DPI states only.",
+      "evidence_files": [
+        "src/rate_of_closure/visual_baselines.v1.json",
+        "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py"
+      ],
+      "gaps": [
+        "Approve narrow React and PyQt 1.5-DPI image identities or a reviewed representative subset policy."
+      ]
+    },
+    {
+      "requirement_id": "V0.4",
+      "requirement": "Record prose, control-stack, hidden-plot, scrolling, shift, and dead-space findings.",
+      "status": "partial",
+      "rationale": "Layout fixes and regression contracts exist, but there is no exhaustive current findings/adjudication register.",
+      "evidence_files": [
+        "src/rate_of_closure/visualization_tabs.v1.json",
+        "tests/rate_of_closure/test_visualization_tab_audit.py"
+      ],
+      "gaps": [
+        "Publish the all-tab findings register with disposition and evidence links."
+      ]
+    },
+    {
+      "requirement_id": "V1.1",
+      "requirement": "Keep every primary visual in the initial viewport without scrolling.",
+      "status": "verified",
+      "rationale": "Protected React and PyQt audits execute every registered initial-state landmark and enforce visible intersection.",
+      "evidence_files": [
+        "src/rate_of_closure/web/e2e/visualization-tab-visibility.spec.ts",
+        "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py"
+      ],
+      "gaps": []
+    },
+    {
+      "requirement_id": "V1.2",
+      "requirement": "Expose at least 240 vertical pixels at 1440x900 and 1280x720 desktop references.",
+      "status": "verified",
+      "rationale": "The shared manifest and cross-runtime audits enforce the declared 240-pixel desktop minimum.",
+      "evidence_files": [
+        "src/rate_of_closure/visualization_tabs.v1.json",
+        "tests/rate_of_closure/test_visualization_tab_manifest.py"
+      ],
+      "gaps": []
+    },
+    {
+      "requirement_id": "V1.3",
+      "requirement": "Place narrow-web visuals before prose/controls without overflow and provide expanded inspection.",
+      "status": "partial",
+      "rationale": "Narrow geometry, visual-before-control ordering, and overflow are tested; an expanded/full-screen path is not mapped for each applicable visual.",
+      "evidence_files": [
+        "src/rate_of_closure/web/e2e/visualization-tab-visibility.spec.ts"
+      ],
+      "gaps": [
+        "Adjudicate and test expanded inspection for each visual where 390x844 cannot support full review."
+      ]
+    },
+    {
+      "requirement_id": "V1.4",
+      "requirement": "Retain the landmark through loading, unavailable, no-impact, failure, and no-result states.",
+      "status": "partial",
+      "rationale": "All states are declared and Variation has matched lifecycle renders, but all-tab state geometry is absent.",
+      "evidence_files": [
+        "src/rate_of_closure/visualization_tabs.v1.json",
+        "src/rate_of_closure/web/e2e/variation-visual-state.spec.ts"
+      ],
+      "gaps": [
+        "Exercise every applicable state for every registered tab on both surfaces."
+      ]
+    },
+    {
+      "requirement_id": "V1.5",
+      "requirement": "Keep concise copy in flow and detailed theory/limits in accessible disclosure.",
+      "status": "partial",
+      "rationale": "Shared help/disclosure patterns exist, but no all-tab prose-length and disclosure audit proves this item.",
+      "evidence_files": [
+        "src/rate_of_closure/web/e2e/visual-layout-persistence.spec.ts"
+      ],
+      "gaps": [
+        "Add an all-tab progressive-disclosure audit with retained limitations and provenance."
+      ]
+    },
+    {
+      "requirement_id": "V2.1",
+      "requirement": "Order each tab around visual, frequent controls, status, analysis, then explanation.",
+      "status": "partial",
+      "rationale": "Primary visual ordering is governed, but the full five-role hierarchy is not registered for every tab.",
+      "evidence_files": ["src/rate_of_closure/visualization_tabs.v1.json"],
+      "gaps": ["Register and audit the complete role order for every tab."]
+    },
+    {
+      "requirement_id": "V2.2",
+      "requirement": "Move advanced controls into compact secondary surfaces instead of displacing visuals.",
+      "status": "partial",
+      "rationale": "Responsive layouts and sidebars exist, but advanced-control displacement is not exhaustively classified.",
+      "evidence_files": [
+        "src/rate_of_closure/ui/pyqt6/responsive_layout.py",
+        "src/rate_of_closure/web/e2e/visualization-tab-visibility.spec.ts"
+      ],
+      "gaps": [
+        "Classify every advanced control and prove it cannot displace the primary visual."
+      ]
+    },
+    {
+      "requirement_id": "V2.3",
+      "requirement": "Provide discoverable direct visual interaction where scientifically appropriate.",
+      "status": "partial",
+      "rationale": "Explorer, Putting, Flight, Launch Monitor, Plots, Simulation, and Variation have interaction contracts; applicability and parity are not adjudicated for all tabs.",
+      "evidence_files": [
+        "tests/rate_of_closure/test_pyqt_variation_rendered_interactions.py",
+        "tests/rate_of_closure/test_launch_monitor_linked_scatter_layout.py"
+      ],
+      "gaps": [
+        "Complete the per-tab interaction-applicability and matched-parity matrix."
+      ]
+    },
+    {
+      "requirement_id": "V2.4",
+      "requirement": "Label previews and schematics so they cannot be mistaken for computed evidence.",
+      "status": "partial",
+      "rationale": "Manifest state vocabulary distinguishes previews, but visible-label evidence is not complete for every synthetic schematic.",
+      "evidence_files": ["src/rate_of_closure/visualization_tabs.v1.json"],
+      "gaps": [
+        "Bind every preview/schematic state to an asserted visible non-evidence label."
+      ]
+    },
+    {
+      "requirement_id": "V2.5",
+      "requirement": "Preserve predictable visual focus through navigation and lifecycle transitions.",
+      "status": "partial",
+      "rationale": "Variation lifecycle and persisted-layout tests are strong, but equivalent transition coverage is not complete for all tabs.",
+      "evidence_files": [
+        "src/rate_of_closure/web/e2e/variation-visual-state.spec.ts",
+        "src/rate_of_closure/web/e2e/visual-layout-persistence.spec.ts"
+      ],
+      "gaps": ["Add matched transition/focus evidence for every stateful tab."]
+    },
+    {
+      "requirement_id": "V3.1",
+      "requirement": "Define shared semantic roles for visuals, toolbars, status, inspectors, empty states, limitations, and export.",
+      "status": "partial",
+      "rationale": "Landmark and accessibility roles are shared, but toolbar/inspector/limitation/export roles are not one complete authority.",
+      "evidence_files": [
+        "src/rate_of_closure/visualization_tabs.v1.json",
+        "src/rate_of_closure/visualization_accessibility.v1.json"
+      ],
+      "gaps": ["Extend the shared authority to every required semantic role."]
+    },
+    {
+      "requirement_id": "V3.2",
+      "requirement": "Standardize spacing, heights, panes, typography, contrast, focus, and resize rules.",
+      "status": "partial",
+      "rationale": "Minimum geometry, accessibility, and stability budgets exist; the complete cross-runtime design-token/rule mapping is absent.",
+      "evidence_files": [
+        "src/rate_of_closure/visualization_tabs.v1.json",
+        "src/rate_of_closure/visualization_accessibility.v1.json",
+        "src/rate_of_closure/visualization_performance.v1.json"
+      ],
+      "gaps": [
+        "Bind all design-system rules to shared tokens or explicit toolkit mappings."
+      ]
+    },
+    {
+      "requirement_id": "V3.3",
+      "requirement": "Keep frame, units, counts, cohorts, provenance, and missing-data treatment beside visuals.",
+      "status": "partial",
+      "rationale": "Individual scientific views expose these fields, but no all-tab evidence authority verifies every applicable field and placement.",
+      "evidence_files": ["src/rate_of_closure/visualization_tabs.v1.json"],
+      "gaps": [
+        "Add per-tab applicability and placement evidence for scientific context fields."
+      ]
+    },
+    {
+      "requirement_id": "V3.4",
+      "requirement": "Persist relevant layout choices and restore them without hiding the visual.",
+      "status": "verified",
+      "rationale": "Versioned fail-closed persistence covers selected tab, camera/zoom, help, and pane fraction with React narrow/desktop and PyQt 1.0/1.5 rendered restoration evidence.",
+      "evidence_files": [
+        "src/rate_of_closure/visual_layout_preferences.py",
+        "src/rate_of_closure/web/e2e/visual-layout-persistence.spec.ts",
+        "tests/rate_of_closure/test_pyqt_visual_layout_persistence_rendered.py"
+      ],
+      "gaps": []
+    },
+    {
+      "requirement_id": "V3.5",
+      "requirement": "Provide accessible names, keyboard use, focus, announcements, and nonvisual alternatives.",
+      "status": "partial",
+      "rationale": "Automated React and PyQt semantics are protected; manual AT and complete nonvisual alternatives remain unqualified.",
+      "evidence_files": [
+        "src/rate_of_closure/visualization_accessibility.v1.json",
+        "docs/development/rate-visualization-at-protocol.md"
+      ],
+      "gaps": [
+        "Execute manual AT review and complete per-tab nonvisual-alternative evidence."
+      ]
+    },
+    {
+      "requirement_id": "V4.1",
+      "requirement": "Maintain a versioned all-tab visibility audit manifest.",
+      "status": "verified",
+      "rationale": "The strict cross-runtime manifest covers all 20 primary tabs, states, environments, and locators.",
+      "evidence_files": [
+        "src/rate_of_closure/visualization_tabs.v1.json",
+        "tests/rate_of_closure/test_visualization_tab_manifest.py"
+      ],
+      "gaps": []
+    },
+    {
+      "requirement_id": "V4.2",
+      "requirement": "Use Playwright to verify every React tab, geometry, overflow, overlap, and supported states.",
+      "status": "partial",
+      "rationale": "Every initial tab and viewport is protected, but all supported state transitions are not exercised for every tab.",
+      "evidence_files": [
+        "src/rate_of_closure/web/e2e/visualization-tab-visibility.spec.ts"
+      ],
+      "gaps": [
+        "Expand the all-tab Playwright matrix across every applicable state."
+      ]
+    },
+    {
+      "requirement_id": "V4.3",
+      "requirement": "Use rendered PyQt tests for every tab at 100/150 percent scaling, overlap, keyboard, and resize.",
+      "status": "partial",
+      "rationale": "All initial tabs render at both scales with visibility and overlap checks; all-state and keyboard-path coverage is separate and incomplete.",
+      "evidence_files": [
+        "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py",
+        "tests/rate_of_closure/test_visualization_accessibility.py"
+      ],
+      "gaps": [
+        "Bind keyboard and every applicable state to rendered 1.0/1.5-DPI evidence."
+      ]
+    },
+    {
+      "requirement_id": "V4.4",
+      "requirement": "Commit approved deterministic screenshots or visual baselines for representative tabs and states.",
+      "status": "partial",
+      "rationale": "Twenty initial-state baselines are protected and calibrated; noninitial, narrow, and 1.5-DPI representative identities are not approved.",
+      "evidence_files": [
+        "src/rate_of_closure/visual_baselines.v1.json",
+        "src/rate_of_closure/visual_baseline_calibration.v1.json",
+        "tests/rate_of_closure/test_visual_baseline_compare.py"
+      ],
+      "gaps": [
+        "Approve a representative noninitial/narrow/high-DPI baseline set with exact identities."
+      ]
+    },
+    {
+      "requirement_id": "V4.5",
+      "requirement": "Fail governance for missing audit entries or visuals below the first viewport.",
+      "status": "verified",
+      "rationale": "Strict manifest parity and rendered geometry tests fail on missing entries, invalid bounds, clipping, and below-viewport regressions.",
+      "evidence_files": [
+        "tests/rate_of_closure/test_visualization_tab_manifest.py",
+        "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py"
+      ],
+      "gaps": []
+    },
+    {
+      "requirement_id": "V4.6",
+      "requirement": "Measure tab-open, update, layout-shift, and decimation performance on representative data.",
+      "status": "partial",
+      "rationale": "All-tab initial open/settle/shift budgets and selected workload decimation tests exist; representative result/update workloads are incomplete.",
+      "evidence_files": [
+        "src/rate_of_closure/visualization_performance.v1.json",
+        "src/rate_of_closure/web/e2e/visualization-performance.spec.ts",
+        "docs/rate_of_closure/variation_visualization_performance.md"
+      ],
+      "gaps": [
+        "Add result/update workloads and deterministic decimation evidence for every applicable tab."
+      ]
+    },
+    {
+      "requirement_id": "V5.1",
+      "requirement": "Publish inventory, hierarchy, sizes, accessibility, commands, and a new-tab checklist.",
+      "status": "partial",
+      "rationale": "Manifests and an AT protocol are published, but no consolidated reviewer guide contains the full extension checklist and commands.",
+      "evidence_files": [
+        "src/rate_of_closure/visualization_tabs.v1.json",
+        "docs/development/rate-visualization-at-protocol.md"
+      ],
+      "gaps": [
+        "Publish the consolidated visual-first extension and verification guide."
+      ]
+    },
+    {
+      "requirement_id": "V5.2",
+      "requirement": "Require changed tabs to update manifest, matched evidence, and first-viewport tests.",
+      "status": "verified",
+      "rationale": "A fail-closed pull-request control detects material React, PyQt, and shared visual-authority changes and requires the shared manifest, acceptance audit, and surface-specific first-viewport test to change together before expensive E2E execution without allocating a second hosted runner.",
+      "evidence_files": [
+        "scripts/check_rate_visual_evidence_changes.py",
+        ".github/workflows/rate-web-playwright.yml",
+        "tests/scripts/test_check_rate_visual_evidence_changes.py",
+        "tests/ops/test_rate_web_playwright_workflow.py"
+      ],
+      "gaps": []
+    },
+    {
+      "requirement_id": "V5.3",
+      "requirement": "Complete and record a user-oriented rendered review of all tabs.",
+      "status": "partial",
+      "rationale": "Automated calibrated baselines exist, but no human approval record binds exact build and image identities.",
+      "evidence_files": [
+        "src/rate_of_closure/visual_baselines.v1.json",
+        "src/rate_of_closure/visual_baseline_calibration.v1.json"
+      ],
+      "gaps": ["Obtain and record human rendered-review approval."]
+    },
+    {
+      "requirement_id": "V5.4",
+      "requirement": "Cross-link #4135, #4142, #4144, and Upstream consumers without duplicating algorithms.",
+      "status": "partial",
+      "rationale": "Current handoffs cross-link the variation and Upstream work, but one protected completion map for all three Tools parents and consumers is absent.",
+      "evidence_files": [
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "src/rate_of_closure/README.md"
+      ],
+      "gaps": [
+        "Publish and validate the complete parent/consumer traceability map."
+      ]
+    },
+    {
+      "requirement_id": "AM.1",
+      "requirement": "Bind every tab/state to identity, geometry, accessibility, scientific context, responsive result, and approved image evidence.",
+      "status": "partial",
+      "rationale": "Three strict 20-tab manifests cover initial geometry, automated accessibility, and initial performance, but state-level scientific and approved-image fields are not unified.",
+      "evidence_files": [
+        "src/rate_of_closure/visualization_tabs.v1.json",
+        "src/rate_of_closure/visualization_accessibility.v1.json",
+        "src/rate_of_closure/visualization_performance.v1.json"
+      ],
+      "gaps": ["Complete the per-tab/per-state acceptance evidence matrix."]
+    },
+    {
+      "requirement_id": "C.1",
+      "requirement": "Close only after all tabs, states, rendered review, accessibility, performance, governance, and protected merges pass.",
+      "status": "partial",
+      "rationale": "Protected initial-state evidence is green, but the explicit partial items and human actions above prevent completion.",
+      "evidence_files": [
+        "docs/audits/rate_of_closure_epic_4142_evidence.v1.json"
+      ],
+      "gaps": [
+        "Resolve every partial requirement and both external human actions before closing #4433 or R14.6."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "schema_version": "tools-manual-toolchain/1.0.0",
+  "canonical_source": "manuals/tools/index.qmd",
+  "bibliography": "manuals/tools/references.bib",
+  "semantic_contract": "manuals/tools/semantic-contract.json",
+  "reference_docx": "manuals/tools/styles/tools-reference.docx",
+  "style_files": [
+    "manuals/tools/styles/style-contract.json",
+    "manuals/tools/styles/tools-header.tex",
+    "manuals/tools/styles/tools.css"
+  ],
+  "figure_files": ["manuals/tools/figures/render-pipeline.png"],
+  "input_sha256": {
+    "manuals/tools/figures/render-pipeline.png": "5dcb307d3e04bb8d9b1a14b7c4f0b27dc25847b555c5d6342fa269fcf8da62a5",
+    "manuals/tools/references.bib": "aad81a9b7e2bea1e81f14562eefb16c5d51cbdc2747b35677d3c075a97c8e4b7",
+    "manuals/tools/semantic-contract.json": "8a10cb35a8cb8c921f2245816537e2c1fdbdd8c0d641c84dd2ddac6e5d0050e0",
+    "manuals/tools/styles/style-contract.json": "44a731e8ed0f9aa41edc27a66b0e96e02c30b418e2a4f11465439487cd64a048",
+    "manuals/tools/styles/tools-header.tex": "58536a268175276a94a98b12973c3e45b91c798b8442fdae9619272be64e1d36",
+    "manuals/tools/styles/tools-reference.docx": "cac6c0c614dcf763eacd177785a92a305dea64925bec0ec287ac104b7c70bae4",
+    "manuals/tools/styles/tools.css": "e19ee9487fc7e5221476e6011f34550c6337d04ce21a83cb31e8aeaca9068bee"
+  },
+  "source_date_epoch": 1787724102,
+  "commands": {
+    "pandoc": {
+      "executable": "pandoc",
+      "version_args": ["--version"],
+      "exact_version": "3.8.2.1",
+      "version_output": "pandoc 3.8.2.1"
+    },
+    "quarto": {
+      "executable": "quarto",
+      "version_args": ["--version"],
+      "exact_version": "1.8.26",
+      "version_output": "1.8.26"
+    },
+    "pdflatex": {
+      "executable": "pdflatex",
+      "version_args": ["--version"],
+      "exact_version": "MiKTeX-pdfTeX 4.23 (MiKTeX 25.12)",
+      "version_output": "MiKTeX-pdfTeX 4.23 (MiKTeX 25.12)"
+    }
+  }
+}

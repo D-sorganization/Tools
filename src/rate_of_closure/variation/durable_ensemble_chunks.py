@@ -12,6 +12,7 @@ from shared.python.contracts import require
 
 from ._durable_ensemble_io import (
     MANIFEST_NAME,
+    SCHEMA_VERSION,
 )
 from ._durable_ensemble_io import (
     chunk_record as _chunk_record,
@@ -65,6 +66,7 @@ class DurableEnsembleArchive:
     failed_count: int
     chunk_count: int
     elapsed_s: float | None
+    trial_record_schema: str | None = None
 
     def __post_init__(self) -> None:
         require(self.directory.is_absolute(), "archive directory must be absolute")
@@ -77,6 +79,11 @@ class DurableEnsembleArchive:
             self.elapsed_s is None
             or (math.isfinite(self.elapsed_s) and self.elapsed_s >= 0.0),
             "invalid archive elapsed time",
+        )
+        require(
+            self.trial_record_schema is None
+            or self.trial_record_schema == "rate-complete-trial/v1",
+            "invalid trial record schema",
         )
 
 
@@ -92,7 +99,7 @@ class DurableEnsembleChunkSink:
 
     def begin(self, header: EnsembleStreamHeader) -> None:
         """Create or verify an archive before any evaluation may resume."""
-        self._open(header)
+        self._open(header, allow_legacy=False)
         self._verify_prefix(cast(dict[str, Any], self._manifest))
 
     def scan(
@@ -114,7 +121,7 @@ class DurableEnsembleChunkSink:
 
         require(callable(visitor), "archive visitor must be callable")
         header = build_ensemble_stream_header(request)
-        self._open(header)
+        self._open(header, allow_legacy=True)
         try:
             manifest = self._require_active()
             for chunk in self._verified_prefix(manifest):
@@ -123,17 +130,25 @@ class DurableEnsembleChunkSink:
         finally:
             self.abort()
 
-    def _open(self, header: EnsembleStreamHeader) -> None:
+    def _open(self, header: EnsembleStreamHeader, *, allow_legacy: bool) -> None:
         """Open one exact archive lifecycle without scanning its prefix twice."""
         require(not self._active, "sink lifecycle has already begun")
         self._directory.mkdir(parents=True, exist_ok=True)
-        header_document = _header_document(header)
-        header_sha256 = _json_sha256(header_document)
         if self._manifest_path.exists():
             manifest = _read_manifest(self._manifest_path)
+            schema_version = cast(int, manifest["schema_version"])
         else:
+            schema_version = SCHEMA_VERSION
+            header_document = _header_document(header, schema_version)
+            header_sha256 = _json_sha256(header_document)
             manifest = _new_manifest(header_document, header_sha256)
             _write_json_atomic(self._manifest_path, manifest)
+        header_document = _header_document(header, schema_version)
+        header_sha256 = _json_sha256(header_document)
+        require(
+            schema_version == SCHEMA_VERSION or allow_legacy,
+            "legacy durable archives cannot resume complete-trial retention",
+        )
         _verify_header(manifest, header_document, header_sha256)
         self._header = header
         self._manifest = manifest
@@ -204,7 +219,8 @@ class DurableEnsembleChunkSink:
         from .simulation_adapter import build_ensemble_stream_header
 
         require(self._manifest_path.is_file(), "durable archive does not exist")
-        self.begin(build_ensemble_stream_header(request))
+        self._open(build_ensemble_stream_header(request), allow_legacy=True)
+        self._verify_prefix(cast(dict[str, Any], self._manifest))
         result = self._archive()
         self.abort()
         return result
@@ -213,7 +229,7 @@ class DurableEnsembleChunkSink:
         stop_index = chunk.start_index + len(chunk.outcomes)
         filename = f"chunk-{chunk.start_index:08d}-{stop_index:08d}.npz"
         destination = self._directory / filename
-        _write_chunk_atomic(destination, chunk)
+        arrays = _write_chunk_atomic(destination, chunk)
         return {
             "file": filename,
             "start_index": chunk.start_index,
@@ -222,6 +238,7 @@ class DurableEnsembleChunkSink:
             "failed_count": sum(
                 outcome.status is NUMERICAL_FAILURE for outcome in chunk.outcomes
             ),
+            "arrays": arrays,
         }
 
     def _verify_prefix(self, manifest: dict[str, Any]) -> None:
@@ -235,9 +252,14 @@ class DurableEnsembleChunkSink:
         header = cast(EnsembleStreamHeader, self._header)
         next_index = 0
         failed_count = 0
+        schema_version = cast(int, manifest["schema_version"])
         for raw_record in cast(list[object], manifest["chunks"]):
-            record = _chunk_record(raw_record, next_index, header.plan.n_runs)
-            chunk = _read_chunk(self._directory, record)
+            record = _chunk_record(
+                raw_record, next_index, header.plan.n_runs, schema_version
+            )
+            chunk = _read_chunk(
+                self._directory, record, cast(int, manifest["schema_version"])
+            )
             require_chunk_matches_header(header, chunk, next_index)
             actual_failed = sum(
                 outcome.status is NUMERICAL_FAILURE for outcome in chunk.outcomes
@@ -273,6 +295,11 @@ class DurableEnsembleChunkSink:
             failed_count=cast(int, manifest["failed_count"]),
             chunk_count=len(cast(list[object], manifest["chunks"])),
             elapsed_s=cast(float | None, manifest["elapsed_s"]),
+            trial_record_schema=(
+                "rate-complete-trial/v1"
+                if cast(int, manifest["schema_version"]) >= 3
+                else None
+            ),
         )
 
 

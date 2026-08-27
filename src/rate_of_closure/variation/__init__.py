@@ -3,6 +3,11 @@
 from __future__ import annotations
 
 from .chip_forgiveness import ChipStudySummary, ChipTrialCohort
+from .complete_trial_record import (
+    COMPLETE_TRIAL_SCHEMA,
+    CompleteTrialRecord,
+    CompleteTrialRecordSource,
+)
 from .durable_ensemble_chunks import (
     DurableEnsembleArchive,
     DurableEnsembleChunkSink,
@@ -61,6 +66,7 @@ from .simulation_adapter import (
     run_simulation_ensemble,
     run_simulation_ensemble_chunks,
     spatial_point_ids,
+    spatial_source_layouts,
 )
 from .streaming_ensemble_analysis import (
     AnalyzingDurableEnsembleSink,
@@ -84,6 +90,9 @@ __all__ = [
     "ChipStudySummary",
     "ChipTrialCohort",
     "CollectingEnsembleSink",
+    "COMPLETE_TRIAL_SCHEMA",
+    "CompleteTrialRecord",
+    "CompleteTrialRecordSource",
     "DurableEnsembleArchive",
     "DurableAnalysisEvidence",
     "DurableArchiveEvidence",
@@ -135,4 +144,5 @@ __all__ = [
     "run_simulation_ensemble",
     "run_simulation_ensemble_chunks",
     "spatial_point_ids",
+    "spatial_source_layouts",
 ]
