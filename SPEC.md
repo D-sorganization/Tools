@@ -27,10 +27,19 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.57                                    |
+| **Spec Version**        | 1.18.58                                    |
 | **Last Spec Update**    | 2026-08-27                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-27 Rust Artifact-Finalization Runtime Budget
+
+Version 1.18.58 raises the same single-worker Rust gate's bound from 30 to 45
+minutes after an exact-head run passed formatting, warning-denied Clippy,
+tests, security audit, wheel and WASM builds, and Criterion benchmarks, then
+GitHub cancelled it at 35 minutes while `actions/upload-artifact` was still
+finalizing the benchmark result. The change preserves every phase, the
+benchmark artifact, one gate job, and `CARGO_BUILD_JOBS=1`.
 
 ### 2026-08-27 Rust Quality-Gate Runtime Budget
 
@@ -5518,6 +5527,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-27 | 1.18.58 | fix(ci): raise the single-worker Rust gate timeout from 30 to 45 minutes after an exact-head run passed all quality and benchmark phases but was cancelled while `actions/upload-artifact` finalized the benchmark result; retain the artifact, one job, one Cargo worker, and every existing check. |
 | 2026-08-27 | 1.18.57 | fix(ci): raise the serialized Rust quality gate timeout from 15 to 30 minutes after two exact-head runs reached the security-audit/cache tail and were cancelled by the prior bound; retain one build job, one Cargo build worker, and every existing quality phase. |
 | 2026-08-27 | 1.18.56 | fix(tools-core): migrate the SCADA embedded-Python unit test to `Python::initialize` for PyO3 0.29 compatibility, repairing the workspace Rust test gate without changing runtime or scientific semantics. |
 | 2026-08-27 | 1.18.55 | fix(pendulum-simulator, #4785 / epic #4775): **correct a published conclusion.** The golfer preset lumped 0.50 kg at the tip of a 1.10 m shaft; a real driver is 0.310 kg with its COM 76% down, so the preset overstated the club's inertia about the wrist — and the arm/club coupling that fights the release — by 2.1x. That, not the model's structure, forced the optimizer to reverse hub torque hard enough to stop the hands, and the artifact was published as a structural limit. Adds `club_equivalence` for inertia-matched clubs and corrects the preset to `me = 0.238 kg`. The same model now reaches 49.7 m/s clubhead with 7.26 m/s hand speed and a 3.46 club/arm ratio — five of six measured observables inside their bands, with no hand-speed floor. The objective ranking becomes discriminating: clubhead speed, Coriolis, energy and impulse transfer tie, while centrifugal release impulse costs about 1 m/s. The impact-optimality theorem (#4776) is unaffected. Tests now pin both the artifact and the corrected behaviour. |

@@ -13,7 +13,7 @@ def test_serialized_rust_gate_has_bounded_cold_cache_budget() -> None:
     workflow = yaml.safe_load(CI_STANDARD.read_text(encoding="utf-8"))
     rust_job = workflow["jobs"]["rust-quality-gate"]
 
-    assert rust_job["timeout-minutes"] == 30
+    assert rust_job["timeout-minutes"] == 45
     assert rust_job["env"]["CARGO_BUILD_JOBS"] == "1"
 
 
