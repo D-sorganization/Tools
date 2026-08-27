@@ -28,7 +28,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                           |
 | #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                                    |
 | #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                            |
-| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. #4755 protected-merged R10.4; PR #4757 carries exhaustive whole-run/localized execution capabilities for R10.3 and advances the ledger to 24 verified / 7 partial.    |
+| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open at 24 verified / 7 partial. R10.3 is protected-merged; #4758 is the active R11.1 complete-trial retention dependency.                                                  |
 | #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                                |
 | #4433 | Visual-first tab visibility and visualization-led UX. Open. V0.1, strict cross-runtime parity, and V5.2 are merged through PR #4738; the audit is 8 verified / 23 partial obligations with seven gaps and two human actions retained. |
 | #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                        |
@@ -60,26 +60,15 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   gates. The prior local artifacts had all 10 native PDF and 14 Word-rendered
   DOCX pages visually reviewed; this reconciled exact head still requires fresh
   protected review and artifact-identity or complete rendered-page evidence.
-- #4142 R10.4 protected-merged through PR #4755 as `9fe87f0eec9f341fdfc50fc2a116c601b94781d5`.
-  PR #4757 now carries #4756/R10.3 from implementation commit
-  `d0061bd3e640451de80394453b4ee515acb19218`: one packaged
-  authority classifies all 31 known inputs by whole-run/window/point semantics,
-  exact adapter, or explicit unsupported reason. Python and TypeScript fail
-  closed on registry drift and forbidden loci. The ledger is 24 verified / 7
-  partial. A clean commit-qualified wheel loaded all 31 packaged capabilities
-  and verified 76 immutable web assets; execution semantics are not scientific
-  or coaching approval. The visual co-change guard now excludes test-only TSX
-  modules while retaining fail-closed evidence requirements for shipped React
-  surfaces. The standalone public mirror consumes a byte-identical governed
-  vendored copy rather than importing above `web/`. The first hosted 3.11/3.12
-  matrices exposed one packaging-governance mismatch: the visualization
-  manifest test rejected this legitimate non-visualization authority even
-  though the exact wheel gate passed. The PR now classifies that named file as
-  feature-owned package data while retaining rejection of undeclared entries.
-  The next hosted 3.12 matrix exposed an unrelated wall-clock-only club-view
-  performance flake under xdist contention; follow-up issue #4759 keeps the
-  fixed 0.5 s work budget but measures it with the process CPU clock while the
-  200 ms cadence remains unchanged.
+- #4142 R10.3 protected-merged through PR #4757 as
+  `5b3f585e3754fd77cc506631d55b163f50caf04d`: one packaged authority
+  classifies all 31 inputs by adapter and locus or explicit unavailability.
+  PR #4760 protected-merged the unrelated process-CPU-clock CI stabilization as
+  `55805fe4de1b0afc3710efce4ed516d59e685717`. Issue #4758 is now active on
+  `feat/4758-complete-trial-record`: the first local TDD slice retains full
+  hit/miss/failure state for manual, double-, and triple-pendulum sources and
+  passes 62 focused tests. Durable round-trip, corruption, resume/digest parity,
+  capability-matrix, memory, package, and protected gates remain required.
 
 ## Must-Read Architecture Pointers
 
@@ -147,13 +136,13 @@ Note: `ruff format --check` reports four pre-existing failures under
 
 ## Short-Term Roadmap (Ordered)
 
-1. Deliver main-rooted TOOLS-D4 #4720 through the ordinary protected flow, then
+1. Complete #4758/R11.1 durable trial retention and protected qualification.
+2. Deliver main-rooted TOOLS-D4 #4720 through the ordinary protected flow, then
    reconcile D5--D9 without rewriting remote history.
-2. **Sidekick Unified Integration**: implement the S1–S5 plan in
+3. **Sidekick Unified Integration**: implement the S1–S5 plan in
    `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`.
-3. Restore the isolated advisory benchmark lane through #4582.
-4. **Land the camera-cluster epic #4571** so #4466 can finally close.
-5. Advance #4433's 23 partial audit items without promoting initial-state evidence; manual AT and rendered-review approval remain human actions.
-6. Phase 7 of #4103: WASM swap for the web mirror + real Pages CI deploy.
-7. #4125 H5: stand up the public release-management repo (cross-repo).
-8. Approve #4600's inspected post-merge PyQt launch-monitor visual reference.
+4. Restore the isolated advisory benchmark lane through #4582.
+5. **Land the camera-cluster epic #4571** so #4466 can finally close.
+6. Advance #4433 without promoting initial-state evidence; manual actions stay human.
+7. Phase 7 of #4103: WASM swap for the web mirror + real Pages CI deploy.
+8. #4125 H5: stand up the public release-management repo (cross-repo).

@@ -3,6 +3,225 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 24860,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculus",
+      "content_sha256_lf": "16e0ab6b0c88a9c5aad0c659ddc70de43982515164fb6084d880dfd3fc710135",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-CALCULUS-PY-78480075D93D",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/shared/python/signal_toolkit/calculus.py",
+      "purpose": "Differentiation and integration utilities for signals.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DifferentiationMethod",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Differentiator",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "IntegralResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "IntegrationMethod",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Integrator",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TangentLine",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "compute_all_tangent_lines",
+            "signature": "signal: Signal, num_points: int=10, method: DifferentiationMethod=DifferentiationMethod.SAVGOL"
+          },
+          {
+            "kind": "function",
+            "name": "compute_arc_length",
+            "signature": "signal: Signal, method: DifferentiationMethod=DifferentiationMethod.SAVGOL"
+          },
+          {
+            "kind": "function",
+            "name": "compute_curvature",
+            "signature": "signal: Signal, method: DifferentiationMethod=DifferentiationMethod.SAVGOL"
+          },
+          {
+            "kind": "function",
+            "name": "compute_derivative",
+            "signature": "signal: Signal, order: int=1, method: DifferentiationMethod=DifferentiationMethod.SAVGOL, **kwargs: typing.Any"
+          },
+          {
+            "kind": "function",
+            "name": "compute_integral",
+            "signature": "signal: Signal, lower_bound: float | None=None, upper_bound: float | None=None, method: IntegrationMethod=IntegrationMethod.TRAPEZOID"
+          },
+          {
+            "kind": "function",
+            "name": "compute_tangent_line",
+            "signature": "signal: Signal, t_point: float, line_width: float | None=None, method: DifferentiationMethod=DifferentiationMethod.SAVGOL"
+          },
+          {
+            "kind": "function",
+            "name": "find_extrema",
+            "signature": "signal: Signal, method: DifferentiationMethod=DifferentiationMethod.SAVGOL"
+          },
+          {
+            "kind": "function",
+            "name": "find_inflection_points",
+            "signature": "signal: Signal, method: DifferentiationMethod=DifferentiationMethod.SAVGOL"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/signal_toolkit/tests/test_bound_validation_3182.py",
+          "src/shared/python/signal_toolkit/tests/test_signal_toolkit.py",
+          "src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py",
+          "tests/shared/python/signal_toolkit/test_calculus.py",
+          "tests/shared/python/signal_toolkit/test_widget_mixins.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": [
+          "src/shared/python/signal_toolkit/tests/test_bound_validation_3182.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 21685,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "39e948c145c56bd079324eee1f8af903860677b4264135f63f9cc4a90e751298",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-CORE-PY-EF5835A09E43",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/shared/python/signal_toolkit/core.py",
+      "purpose": "Core signal classes and utilities.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Signal",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SignalGenerator",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/signal_toolkit/tests/test_bilateral_rust_parity.py",
+          "src/shared/python/signal_toolkit/tests/test_bound_validation_3182.py",
+          "src/shared/python/signal_toolkit/tests/test_limits.py",
+          "src/shared/python/signal_toolkit/tests/test_noise.py",
+          "src/shared/python/signal_toolkit/tests/test_series.py",
+          "src/shared/python/signal_toolkit/tests/test_signal_toolkit.py",
+          "src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py",
+          "src/signal_processing_studio/tests/test_signal_processing_studio.py",
+          "tests/benchmarks/test_bilateral_rust_perf.py",
+          "tests/shared/python/signal_toolkit/test_adaptive_filter.py",
+          "tests/shared/python/signal_toolkit/test_calculus.py",
+          "tests/shared/python/signal_toolkit/test_filters.py",
+          "tests/shared/python/signal_toolkit/test_fitting.py",
+          "tests/shared/python/signal_toolkit/test_generators.py",
+          "tests/shared/python/signal_toolkit/test_limits.py",
+          "tests/shared/python/signal_toolkit/test_noise.py",
+          "tests/shared/python/signal_toolkit/test_signal_loader.py",
+          "tests/shared/python/signal_toolkit/test_widget_mixins.py",
+          "tests/test_signal_core_coverage.py",
+          "tests/test_signal_processing_expanded.py"
+        ],
+        "unit_mentions": [
+          "Hz",
+          "N*m",
+          "g",
+          "rad/s"
+        ],
+        "validation_paths": [
+          "src/shared/python/signal_toolkit/tests/test_bound_validation_3182.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 18646,
       "classification": "calculation",
       "classification_basis": "path-marker:filter",
@@ -18466,174 +18685,6 @@
           "src/shared/python/swing_sim/variation/tests/test_morris_observation_io.py"
         ],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 7447,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6b65b6da4a27f8d9a18388952d493c56baa1cca1feead18378f34e2e7c004587",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-PERSISTED-PLAN-IO-PY-75B36939DA7B",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/variation/persisted_plan_io.py",
-      "purpose": "Canonical and explicitly legacy variation-plan persistence.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "PersistedPlanResolution",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PLAN_BINDING_SCHEMA_ID",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PLAN_BINDING_SCHEMA_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "persisted_plan_binding_from_json_dict",
-            "signature": "value: object"
-          },
-          {
-            "kind": "function",
-            "name": "persisted_plan_binding_to_json_dict",
-            "signature": "value: VariationPlan | PersistedPlanResolution"
-          },
-          {
-            "kind": "function",
-            "name": "persisted_plan_dumps",
-            "signature": "plan: VariationPlan, *, provenance: PlanProducerProvenance=PYTHON_DEFAULT_PROVENANCE"
-          },
-          {
-            "kind": "function",
-            "name": "persisted_plan_loads",
-            "signature": "text: str"
-          },
-          {
-            "kind": "function",
-            "name": "write_persisted_plan",
-            "signature": "path: str | Path, plan: VariationPlan, *, provenance: PlanProducerProvenance=PYTHON_DEFAULT_PROVENANCE"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/variation/tests/test_execution_metadata.py",
-          "tests/rate_of_closure/test_variation_gui_roundtrip.py",
-          "tests/rate_of_closure/test_workspace_document.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 7310,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0cbdda7a96558e46c3cdd16537ebda0cc4f4a98a39c2f9b1da33f8996f1737ae",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-PIPELINE-PY-7497A65A820D",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/variation/pipeline.py",
-      "purpose": "Pipeline-slice evaluation for the variation engine (#4120 V3).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "DELIVERY_OUTPUTS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "FLIGHT_OUTPUTS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "LAUNCH_OUTPUTS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "evaluate_run",
-            "signature": "variables: Mapping[str, float], mode: str, config: EvaluationConfig"
-          },
-          {
-            "kind": "function",
-            "name": "outputs_for_mode",
-            "signature": "mode: str"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/flight/tests/test_pipeline.py"
-        ],
-        "unit_mentions": [
-          "deg",
-          "s"
-        ],
         "validation_paths": []
       }
     }

@@ -6547,6 +6547,7 @@
           "tests/rate_of_closure/test_rate_launch_pyqt_authority.py",
           "tests/rate_of_closure/test_simulation_gui.py",
           "tests/rate_of_closure/test_solver_gui.py",
+          "tests/rate_of_closure/test_variation_complete_trial_record.py",
           "tests/rate_of_closure/test_variation_durable_ensemble_chunks.py",
           "tests/rate_of_closure/test_variation_ensemble_chunks.py",
           "tests/rate_of_closure/test_variation_simulation_adapter.py",

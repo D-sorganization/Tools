@@ -1071,6 +1071,81 @@
       }
     },
     {
+      "authority_status": "provisional",
+      "bytes_lf": 3464,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "650ea78303f93b5272032b5d5283ffea5845ff5a2610837264d0084942c63ae3",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-VARIATION-COMPLETE-TRIAL-STATE-PY-3CDCF8C41B54",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/variation/_complete_trial_state.py",
+      "purpose": "Strict immutable state projections for complete trial records.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "DELIVERY_FIELDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "IMPACT_FIELDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LAUNCH_FIELDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "POST_IMPACT_FIELDS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "state_mapping",
+            "signature": "value: object, expected_fields: frozenset[str], name: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "not-applicable",
       "bytes_lf": 14154,
       "classification": "non-calculation",
@@ -1932,6 +2007,74 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 18588,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "224c6ebbf266f4ec66cdf12c029141a6dc9cb678bf85ecf513571f53b408fe24",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-VARIATION-COMPLETE-TRIAL-RECORD-PY-522A6D37A92F",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/variation/complete_trial_record.py",
+      "purpose": "Lossless, source-neutral records for one governed ensemble trial.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CompleteTrialRecord",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CompleteTrialRecordSource",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "COMPLETE_TRIAL_SCHEMA",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_complete_trial_record",
+            "signature": "source: CompleteTrialRecordSource, capture: TrialCapture, outcome: SimulationTrialOutcome, header: EnsembleStreamHeader"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_variation_complete_trial_record.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 11344,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -2194,10 +2337,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 16757,
+      "bytes_lf": 18562,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "926820ca06b404b804988734156e300fb9a367f83553e75cd61c5be0acb5f728",
+      "content_sha256_lf": "772461b7c5653823fd40a36ae426080eb79229ad0e23cd5205f8448a1be158f2",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-VARIATION-ENSEMBLE-CHUNKS-PY-5FDF13E19C2E",
       "language": "python",
@@ -4168,10 +4311,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 15140,
+      "bytes_lf": 15671,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "ef175a93f03db25ccfbc7f63c34302c6be88ca42bbc2a21845fdd97bdbb32d49",
+      "content_sha256_lf": "cb1e950a9746ece0d8718b1729648ad9547a8769f260c10c47e4d8d108fc46dc",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-VARIATION-SIMULATION-ADAPTER-PY-A2C9EC3993FA",
       "language": "python",
@@ -4303,6 +4446,7 @@
         "test_paths": [
           "tests/rate_of_closure/pyqt_variation_render_probe.py",
           "tests/rate_of_closure/test_localized_torque_variation.py",
+          "tests/rate_of_closure/test_variation_complete_trial_record.py",
           "tests/rate_of_closure/test_variation_durable_ensemble_chunks.py",
           "tests/rate_of_closure/test_variation_ensemble_chunk_domains.py",
           "tests/rate_of_closure/test_variation_ensemble_chunks.py",
@@ -4427,6 +4571,7 @@
           "tests/rate_of_closure/test_morris_authority_service.py",
           "tests/rate_of_closure/test_morris_rate_adapter.py",
           "tests/rate_of_closure/test_simulation_trial_outcome_scalar_contract.py",
+          "tests/rate_of_closure/test_variation_complete_trial_record.py",
           "tests/rate_of_closure/test_variation_durable_ensemble_chunks.py",
           "tests/rate_of_closure/test_variation_durable_ensemble_evidence.py",
           "tests/rate_of_closure/test_variation_ensemble_io_reader.py",
@@ -4662,7 +4807,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "not-applicable"
       },
@@ -4698,7 +4843,9 @@
             "signature": "index: int, capture: TrialCapture"
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/rate_of_closure/test_variation_complete_trial_record.py"
+        ],
         "unit_mentions": [
           "s"
         ],
@@ -11985,104 +12132,6 @@
         "unit_mentions": [
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 12349,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e7c7849fb7121e736c13988a9a5a87436ec50ba1d4d4bfa623474605bb81734d",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-SPATIALTARGETSECTION-TSX-F243C09BB023",
-      "language": "typescript-react",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/components/SpatialTargetSection.tsx",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "SpatialTargetSection",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 2836,
-      "classification": "calculation",
-      "classification_basis": "path-marker:solver",
-      "content_sha256_lf": "f3824d0e9d1b7c624b787ae7cdcfc44dbf143b3811669fd5069aced10a7242a2",
-      "family": "rate-of-closure-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-SPATIALTARGETSOLVERPANEL-TEST-TSX-D896ABCD3810",
-      "language": "typescript-react",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/components/SpatialTargetSolverPanel.test.tsx",
-      "purpose": null,
-      "review_status": "review-required",
-      "risk_tags": [
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

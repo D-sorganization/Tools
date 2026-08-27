@@ -3,6 +3,170 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 19412,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b46b2e4fc071a8d390279dee36ae04455f37e3b3a423c8c67b655554e88358cd",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-OPENAI-ADAPTER-PY-EE84C7DCAA6E",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/adapters/openai_adapter.py",
+      "purpose": "OpenAI adapter for GPT-4 and GPT-4 Turbo models.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "OpenAIAdapter",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "OPENAI_DEFAULT_MODEL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "OPENAI_DEFAULT_TIMEOUT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "OPENAI_MAX_TOKENS",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/ai/test_adapter_contract.py",
+          "tests/shared/python/ai/test_ai_hardening_3179.py",
+          "tests/shared/python/ai/test_classify_error.py",
+          "tests/unit/chat/test_adapter_capabilities.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": [
+          "tests/shared/python/ai/test_adapter_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 18953,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "79347b0073b5b5459e92cb09c5f127b33bd206b92d9dcd5f52093fe827717032",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-RUST-ADAPTER-PY-7F6BCE79DC5D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/adapters/rust_adapter.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://api.openai.com/v1``"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "RustAgentAdapter",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RustBackendUnavailableError",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_STREAM_THREAD_TIMEOUT_S",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_WHEEL_MISSING_HINT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "ai_backend_available",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/ai/test_adapter_contract.py",
+          "tests/shared/python/ai/test_ai_hardening_3179.py",
+          "tests/shared/python/ai/test_rust_adapter.py",
+          "tests/shared/python/ai/test_rust_adapter_extended.py",
+          "tests/shared/python/ai/test_rust_adapter_fallback.py",
+          "tests/shared/python/ai/test_rust_adapter_wheel_smoke.py",
+          "tests/unit/chat/test_adapter_capabilities.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": [
+          "tests/shared/python/ai/test_adapter_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 364,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -14691,513 +14855,6 @@
         ],
         "unit_mentions": [],
         "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 24980,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "373a2b805098fe74bbf63afea6700f3c3f49fc9964f9a589e6f9c626ce60613d",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CONTRACTS-PY-7B33D8E20A4B",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/contracts.py",
-      "purpose": "Design by Contract (DbC) enforcement for the Tools platform.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ContractChecker",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ContractLevel",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ContractViolationError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "InvariantError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PostconditionError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PostconditionEvaluationError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PreconditionError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PreconditionEvaluationError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "StateError",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CONTRACTS_ENABLED",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DBC_LEVEL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "F",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_VIOLATION_CLASSES",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "check_non_negative",
-            "signature": "value: float, name: str='value'"
-          },
-          {
-            "kind": "function",
-            "name": "check_positive",
-            "signature": "value: float, name: str='value'"
-          },
-          {
-            "kind": "function",
-            "name": "check_pressure",
-            "signature": "value: float, name: str='pressure'"
-          },
-          {
-            "kind": "function",
-            "name": "check_range",
-            "signature": "value: float, low: float, high: float, name: str='value'"
-          },
-          {
-            "kind": "function",
-            "name": "check_temperature",
-            "signature": "value: float, name: str='temperature'"
-          },
-          {
-            "kind": "function",
-            "name": "class_invariant",
-            "signature": "condition: Callable[[Any], bool], message: str='Invariant violated'"
-          },
-          {
-            "kind": "function",
-            "name": "contract",
-            "signature": "pre: Callable[..., bool] | None=None, post: Callable[[Any], bool] | None=None, pre_msg: str='Precondition violated', post_msg: str='Postcondition violated'"
-          },
-          {
-            "kind": "function",
-            "name": "ensure",
-            "signature": "condition: bool, message: str, value: Any=None"
-          },
-          {
-            "kind": "function",
-            "name": "ensure_valid_result",
-            "signature": "result: Any"
-          },
-          {
-            "kind": "function",
-            "name": "get_contract_level",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "has_finite_elements",
-            "signature": "array: Any"
-          },
-          {
-            "kind": "function",
-            "name": "invariant",
-            "signature": "condition: bool, message: str, value: Any=None"
-          },
-          {
-            "kind": "function",
-            "name": "invariant_checked",
-            "signature": "func: F"
-          },
-          {
-            "kind": "function",
-            "name": "is_non_negative",
-            "signature": "value: float"
-          },
-          {
-            "kind": "function",
-            "name": "is_positive",
-            "signature": "value: float"
-          },
-          {
-            "kind": "function",
-            "name": "is_valid_result",
-            "signature": "result: Any"
-          },
-          {
-            "kind": "function",
-            "name": "postcondition",
-            "signature": "condition: Callable[[Any], bool], message: str='Postcondition failed'"
-          },
-          {
-            "kind": "function",
-            "name": "precondition",
-            "signature": "condition: Callable[..., bool], message: str='Precondition failed'"
-          },
-          {
-            "kind": "function",
-            "name": "require",
-            "signature": "condition: bool, message: str, value: Any=None"
-          },
-          {
-            "kind": "function",
-            "name": "require_finite",
-            "signature": "array: Any, name: str='array'"
-          },
-          {
-            "kind": "function",
-            "name": "require_positive",
-            "signature": "value: float, name: str='value'"
-          },
-          {
-            "kind": "function",
-            "name": "require_unit_vector",
-            "signature": "vector: Any, name: str='vector', tol: float=1e-06"
-          },
-          {
-            "kind": "function",
-            "name": "set_contract_level",
-            "signature": "level: ContractLevel"
-          },
-          {
-            "kind": "function",
-            "name": "set_contracts_enabled",
-            "signature": "enabled: bool"
-          }
-        ],
-        "test_paths": [
-          "src/data_processing/data_processor/python/tests/test_advanced_analysis.py",
-          "src/p1am_control_system/backend/tests/test_units_contract.py",
-          "src/pendulum_simulator/tests/test_companion_dialog.py",
-          "src/pendulum_simulator/tests/test_rotating_base_panel.py",
-          "src/pendulum_simulator/tests/test_transfer_strategy_panel.py",
-          "src/shared/python/calc_backend/tests/test_calc_backend.py",
-          "src/shared/python/calc_backend/tests/test_calc_backend_gaps.py",
-          "src/shared/python/data_processing/tests/test_processor.py",
-          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
-          "src/shared/python/model_generation/tests/test_contracts.py",
-          "src/shared/python/sidekick/tests/test_baghouse_calculator.py",
-          "src/shared/python/sidekick/tests/test_data_io.py",
-          "src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py",
-          "src/shared/python/swing_sim/delivery_interchange/tests/test_delivery_interchange.py",
-          "src/shared/python/swing_sim/flight/tests/test_capability_optimizer.py",
-          "src/shared/python/swing_sim/flight/tests/test_surface_flight_cancellation.py",
-          "src/shared/python/swing_sim/ground/tests/test_reference_execution_contract.py",
-          "src/shared/python/swing_sim/ground/tests/test_regional_plan_wire.py",
-          "src/shared/python/swing_sim/ground/tests/test_regional_surfaces.py",
-          "src/shared/python/swing_sim/model_interchange/tests/test_model_interchange.py",
-          "src/shared/python/swing_sim/solver/tests/test_goals.py",
-          "src/shared/python/swing_sim/solver/tests/test_solve.py",
-          "src/shared/python/swing_sim/solver/tests/test_spatial_targets.py",
-          "src/shared/python/swing_sim/solver/tests/test_targets.py",
-          "src/shared/python/swing_sim/tests/test_force_attribution.py",
-          "src/shared/python/swing_sim/tests/test_localized_torque.py",
-          "src/shared/python/swing_sim/tests/test_prescribed_run.py",
-          "src/shared/python/swing_sim/tests/test_torque_library_export.py",
-          "src/shared/python/swing_sim/tests/test_torque_profiles.py",
-          "src/shared/python/swing_sim/variation/tests/test_analysis.py",
-          "src/shared/python/swing_sim/variation/tests/test_dataset_io.py",
-          "src/shared/python/swing_sim/variation/tests/test_dispersion_metrics.py",
-          "src/shared/python/swing_sim/variation/tests/test_engine.py",
-          "src/shared/python/swing_sim/variation/tests/test_ensemble_geometry.py",
-          "src/shared/python/swing_sim/variation/tests/test_execution_metadata.py",
-          "src/shared/python/swing_sim/variation/tests/test_global_sensitivity.py",
-          "src/shared/python/swing_sim/variation/tests/test_grouped_sampling.py",
-          "src/shared/python/swing_sim/variation/tests/test_morris_execution.py",
-          "src/shared/python/swing_sim/variation/tests/test_morris_observation_io.py",
-          "src/shared/python/swing_sim/variation/tests/test_propagation.py",
-          "src/shared/python/swing_sim/variation/tests/test_spec.py",
-          "src/shared/python/swing_sim/variation/tests/test_wire_identity.py",
-          "src/shared/python/tests/test_contracts_shared.py",
-          "src/shared/python/tests/test_cors.py",
-          "src/urdf_builder_gui/tests/test_urdf_builder_gui.py",
-          "tests/_import_contract_bootstrap.py",
-          "tests/architecture/test_ai_adapter_imports_3316.py",
-          "tests/architecture/test_design_manual_governance_contract.py",
-          "tests/architecture/test_layer_boundaries.py",
-          "tests/architecture/test_no_source_assert_contracts.py",
-          "tests/architecture/test_tools_exemplar_manuals_contract.py",
-          "tests/architecture/test_tools_manual_renderer_contract.py",
-          "tests/architecture/test_tools_module_inventory_contract.py",
-          "tests/architecture/test_tools_textbook_chapter_contract.py",
-          "tests/calc_backend/test_wgs_reactor_headless_import_3317.py",
-          "tests/contract/test_calc_backend_contract_surface.py",
-          "tests/heavy_integration/test_tools_contracts.py",
-          "tests/integration/sidekick/test_standalone_wheel.py",
-          "tests/integration/test_cross_repo_contracts.py",
-          "tests/ops/test_pre_push_mypy_scope.py",
-          "tests/ops/test_rate_web_playwright_workflow.py",
-          "tests/rate_of_closure/test_ball_setup.py",
-          "tests/rate_of_closure/test_ball_setup_gui.py",
-          "tests/rate_of_closure/test_ball_setup_parity.py",
-          "tests/rate_of_closure/test_camera_preferences.py",
-          "tests/rate_of_closure/test_capability_observation_adapter.py",
-          "tests/rate_of_closure/test_chip_forgiveness_analysis.py",
-          "tests/rate_of_closure/test_club_mesh_inertia.py",
-          "tests/rate_of_closure/test_confidence_ellipsoid_mesh.py",
-          "tests/rate_of_closure/test_contracts.py",
-          "tests/rate_of_closure/test_fixed_ball_gui.py",
-          "tests/rate_of_closure/test_ground_playback.py",
-          "tests/rate_of_closure/test_ground_study_scalar_adapter.py",
-          "tests/rate_of_closure/test_impact_scene.py",
-          "tests/rate_of_closure/test_launch_monitor_analysis.py",
-          "tests/rate_of_closure/test_launch_monitor_conformance_golden.py",
-          "tests/rate_of_closure/test_launch_monitor_workspace_v3.py",
-          "tests/rate_of_closure/test_localized_torque_variation.py",
-          "tests/rate_of_closure/test_locus_execution_capabilities.py",
-          "tests/rate_of_closure/test_morris_authority_contracts.py",
-          "tests/rate_of_closure/test_morris_rate_adapter.py",
-          "tests/rate_of_closure/test_python_compatibility.py",
-          "tests/rate_of_closure/test_regional_ground_execution_controller.py",
-          "tests/rate_of_closure/test_regional_ground_execution_files.py",
-          "tests/rate_of_closure/test_regional_ground_loopback_submitter.py",
-          "tests/rate_of_closure/test_regional_ground_study_adapter.py",
-          "tests/rate_of_closure/test_regional_ground_target_projection.py",
-          "tests/rate_of_closure/test_regional_ground_variation_persistence.py",
-          "tests/rate_of_closure/test_scalar_ensemble_contract.py",
-          "tests/rate_of_closure/test_screw_analysis.py",
-          "tests/rate_of_closure/test_simulation_trial_outcome_scalar_contract.py",
-          "tests/rate_of_closure/test_torque_profile_ui.py",
-          "tests/rate_of_closure/test_torque_run_history.py",
-          "tests/rate_of_closure/test_variation_durable_ensemble_chunks.py",
-          "tests/rate_of_closure/test_variation_durable_ensemble_evidence.py",
-          "tests/rate_of_closure/test_variation_ensemble_chunk_domains.py",
-          "tests/rate_of_closure/test_variation_ensemble_chunks.py",
-          "tests/rate_of_closure/test_variation_ensemble_io_reader.py",
-          "tests/rate_of_closure/test_variation_geometry_properties.py",
-          "tests/rate_of_closure/test_variation_gui_roundtrip.py",
-          "tests/rate_of_closure/test_variation_plot_data.py",
-          "tests/rate_of_closure/test_variation_plot_definition.py",
-          "tests/rate_of_closure/test_variation_plot_definition_domain.py",
-          "tests/rate_of_closure/test_variation_simulation_adapter.py",
-          "tests/rate_of_closure/test_variation_simulation_request.py",
-          "tests/rate_of_closure/test_variation_streaming_ensemble_analysis.py",
-          "tests/rate_of_closure/test_web_companion_contracts.py",
-          "tests/rate_of_closure/test_wind_strategy_plot_adapter.py",
-          "tests/rate_of_closure/test_workspace_torque_session.py",
-          "tests/rate_of_closure/test_workspace_variation_session.py",
-          "tests/rotation_converter/test_modern_robotics.py",
-          "tests/rotation_converter/test_modern_robotics_public_surface_3689.py",
-          "tests/rotation_converter/test_rotation_core.py",
-          "tests/scripts/test_check_tools_manifest_workflow.py",
-          "tests/shared/python/ai/test_codex_cli_adapter.py",
-          "tests/shared/python/ai/test_gemini_cli_adapter.py",
-          "tests/shared/python/chat/test_cli_agent_adapters.py",
-          "tests/shared/python/chat/test_ollama_latency_tuning.py",
-          "tests/shared/python/chat/test_terminal_contracts.py",
-          "tests/shared/python/data_processing/test_processor.py",
-          "tests/shared/python/golf_club/test_contracts.py",
-          "tests/shared/python/golf_club/test_impact_coupling.py",
-          "tests/shared/python/golf_club/test_shaft_serialization.py",
-          "tests/shared/python/gui_launcher/test_registry.py",
-          "tests/shared/python/process_calculators/test_scrubber_calculator.py",
-          "tests/shared/python/process_calculators/test_syngas_water_calculator_edge_cases.py",
-          "tests/shared/python/test_contracts.py",
-          "tests/shared/python/test_cors.py",
-          "tests/test_body_parameters_strict_validation.py",
-          "tests/test_cross_repo_import_compatibility.py",
-          "tests/test_launch_utils.py",
-          "tests/test_launcher_factory.py",
-          "tests/test_phase1_quick_wins.py",
-          "tests/test_properties.py",
-          "tests/test_signal_core_coverage.py",
-          "tests/tools/test_config_loader.py",
-          "tests/tools/test_icon_utils.py",
-          "tests/tools/test_launch_utils.py",
-          "tests/tools/test_matlab_quality_utils.py",
-          "tests/tools/test_quality_utils.py",
-          "tests/tools/test_scientific_auditor.py",
-          "tests/tools/test_ui_utils.py",
-          "tests/unit/ai/adapters/test_cline_adapter.py",
-          "tests/unit/ai/mcp/test_contracts.py",
-          "tests/unit/ai/mcp/test_mcp_gui_integration.py",
-          "tests/unit/ai/peer_review/test_contracts.py",
-          "tests/unit/ai/skills/test_contracts.py",
-          "tests/unit/chat/test_adapter_capabilities.py",
-          "tests/unit/sidekick/agent/test_action_service.py",
-          "tests/unit/sidekick/test_standalone_canonical_package.py",
-          "tests/unit/test_contracts.py",
-          "tests/vessel_drafter/test_contracts_fallback.py",
-          "tests/vessel_drafter/test_contracts_unified.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": [
-          "src/p1am_control_system/backend/tests/test_units_contract.py",
-          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
-          "src/shared/python/model_generation/tests/test_contracts.py",
-          "src/shared/python/swing_sim/ground/tests/test_reference_execution_contract.py",
-          "src/shared/python/tests/test_contracts_shared.py",
-          "tests/_import_contract_bootstrap.py",
-          "tests/architecture/test_design_manual_governance_contract.py",
-          "tests/architecture/test_no_source_assert_contracts.py",
-          "tests/architecture/test_tools_exemplar_manuals_contract.py",
-          "tests/architecture/test_tools_manual_renderer_contract.py",
-          "tests/architecture/test_tools_module_inventory_contract.py",
-          "tests/architecture/test_tools_textbook_chapter_contract.py",
-          "tests/contract/test_calc_backend_contract_surface.py",
-          "tests/heavy_integration/test_tools_contracts.py",
-          "tests/integration/test_cross_repo_contracts.py",
-          "tests/rate_of_closure/test_contracts.py",
-          "tests/rate_of_closure/test_morris_authority_contracts.py",
-          "tests/rate_of_closure/test_scalar_ensemble_contract.py",
-          "tests/rate_of_closure/test_simulation_trial_outcome_scalar_contract.py",
-          "tests/rate_of_closure/test_web_companion_contracts.py",
-          "tests/shared/python/chat/test_terminal_contracts.py",
-          "tests/shared/python/golf_club/test_contracts.py",
-          "tests/shared/python/test_contracts.py",
-          "tests/test_body_parameters_strict_validation.py",
-          "tests/tools/test_scientific_auditor.py",
-          "tests/unit/ai/mcp/test_contracts.py",
-          "tests/unit/ai/peer_review/test_contracts.py",
-          "tests/unit/ai/skills/test_contracts.py",
-          "tests/unit/test_contracts.py",
-          "tests/vessel_drafter/test_contracts_fallback.py",
-          "tests/vessel_drafter/test_contracts_unified.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4332,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d306d9161d5e9930e7aa370c7c6733f150f128d64dd90e34d20ddefd8e084b34",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CORS-PY-5CCF78631155",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/cors.py",
-      "purpose": "Shared CORS configuration factory for FastAPI applications.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "http://127.0.0.1:3000",
-          "http://127.0.0.1:5173",
-          "http://localhost:3000",
-          "http://localhost:5173"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "DEFAULT_ALLOW_HEADERS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_ALLOW_METHODS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_ORIGINS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "add_cors_middleware",
-            "signature": "app: FastAPI, *, origins: list[str] | None=None, allow_credentials: bool=False, allow_methods: list[str] | None=None, allow_headers: list[str] | None=None, **kwargs: Any"
-          }
-        ],
-        "test_paths": [
-          "src/media_processing/video_processor/python/tests_video_processor/test_api.py",
-          "src/shared/python/tests/test_cors.py",
-          "src/web_applications/urdf_viewer/tests/conftest.py",
-          "src/web_applications/urdf_viewer/tests/test_urdf_viewer.py",
-          "tests/rate_of_closure/test_morris_authority_host.py",
-          "tests/rate_of_closure/test_web_companion_app.py",
-          "tests/rate_of_closure/test_web_companion_contracts.py",
-          "tests/rate_of_closure/test_web_companion_runtime.py",
-          "tests/shared/python/test_cors.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": [
-          "tests/rate_of_closure/test_web_companion_contracts.py"
-        ]
       }
     }
   ],

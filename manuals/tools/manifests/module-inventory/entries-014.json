@@ -3,6 +3,128 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 8001,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a6cfd611e1db527d1f500427343ebbc4660d75fb1e30e614c8a5c2ba03c65f2e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-FEATURE-DISCOVERY-PY-20530B957A91",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/agent/feature_discovery.py",
+      "purpose": "Discovery sources for the Sidekick feature catalog.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "discover_sources",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1963,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "21fdc6d488bb290c0eb8d17a26b0523e92ac53653a67be0fcb8da469208b51d4",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-FEATURE-TYPES-PY-AC530F186404",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/agent/feature_types.py",
+      "purpose": "Feature catalog value types.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FeatureEntry",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FeatureKind",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_NAMESPACE_PREFIX",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_VALID_KIND_VALUES",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/data_processing/data_processor/python/tests/test_feature_types.py",
+          "tests/unit/sidekick/agent/test_feature_catalog.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 9150,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17736,225 +17858,6 @@
           "s"
         ],
         "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 24860,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculus",
-      "content_sha256_lf": "16e0ab6b0c88a9c5aad0c659ddc70de43982515164fb6084d880dfd3fc710135",
-      "family": "signal-processing-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-CALCULUS-PY-78480075D93D",
-      "language": "python",
-      "maintainer": "Signal processing maintainers",
-      "path": "src/shared/python/signal_toolkit/calculus.py",
-      "purpose": "Differentiation and integration utilities for signals.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "DifferentiationMethod",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "Differentiator",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "IntegralResult",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "IntegrationMethod",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "Integrator",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TangentLine",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "compute_all_tangent_lines",
-            "signature": "signal: Signal, num_points: int=10, method: DifferentiationMethod=DifferentiationMethod.SAVGOL"
-          },
-          {
-            "kind": "function",
-            "name": "compute_arc_length",
-            "signature": "signal: Signal, method: DifferentiationMethod=DifferentiationMethod.SAVGOL"
-          },
-          {
-            "kind": "function",
-            "name": "compute_curvature",
-            "signature": "signal: Signal, method: DifferentiationMethod=DifferentiationMethod.SAVGOL"
-          },
-          {
-            "kind": "function",
-            "name": "compute_derivative",
-            "signature": "signal: Signal, order: int=1, method: DifferentiationMethod=DifferentiationMethod.SAVGOL, **kwargs: typing.Any"
-          },
-          {
-            "kind": "function",
-            "name": "compute_integral",
-            "signature": "signal: Signal, lower_bound: float | None=None, upper_bound: float | None=None, method: IntegrationMethod=IntegrationMethod.TRAPEZOID"
-          },
-          {
-            "kind": "function",
-            "name": "compute_tangent_line",
-            "signature": "signal: Signal, t_point: float, line_width: float | None=None, method: DifferentiationMethod=DifferentiationMethod.SAVGOL"
-          },
-          {
-            "kind": "function",
-            "name": "find_extrema",
-            "signature": "signal: Signal, method: DifferentiationMethod=DifferentiationMethod.SAVGOL"
-          },
-          {
-            "kind": "function",
-            "name": "find_inflection_points",
-            "signature": "signal: Signal, method: DifferentiationMethod=DifferentiationMethod.SAVGOL"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/signal_toolkit/tests/test_bound_validation_3182.py",
-          "src/shared/python/signal_toolkit/tests/test_signal_toolkit.py",
-          "src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py",
-          "tests/shared/python/signal_toolkit/test_calculus.py",
-          "tests/shared/python/signal_toolkit/test_widget_mixins.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": [
-          "src/shared/python/signal_toolkit/tests/test_bound_validation_3182.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 21685,
-      "classification": "calculation",
-      "classification_basis": "path-marker:signal",
-      "content_sha256_lf": "39e948c145c56bd079324eee1f8af903860677b4264135f63f9cc4a90e751298",
-      "family": "signal-processing-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-CORE-PY-EF5835A09E43",
-      "language": "python",
-      "maintainer": "Signal processing maintainers",
-      "path": "src/shared/python/signal_toolkit/core.py",
-      "purpose": "Core signal classes and utilities.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "Signal",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SignalGenerator",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/signal_toolkit/tests/test_bilateral_rust_parity.py",
-          "src/shared/python/signal_toolkit/tests/test_bound_validation_3182.py",
-          "src/shared/python/signal_toolkit/tests/test_limits.py",
-          "src/shared/python/signal_toolkit/tests/test_noise.py",
-          "src/shared/python/signal_toolkit/tests/test_series.py",
-          "src/shared/python/signal_toolkit/tests/test_signal_toolkit.py",
-          "src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py",
-          "src/signal_processing_studio/tests/test_signal_processing_studio.py",
-          "tests/benchmarks/test_bilateral_rust_perf.py",
-          "tests/shared/python/signal_toolkit/test_adaptive_filter.py",
-          "tests/shared/python/signal_toolkit/test_calculus.py",
-          "tests/shared/python/signal_toolkit/test_filters.py",
-          "tests/shared/python/signal_toolkit/test_fitting.py",
-          "tests/shared/python/signal_toolkit/test_generators.py",
-          "tests/shared/python/signal_toolkit/test_limits.py",
-          "tests/shared/python/signal_toolkit/test_noise.py",
-          "tests/shared/python/signal_toolkit/test_signal_loader.py",
-          "tests/shared/python/signal_toolkit/test_widget_mixins.py",
-          "tests/test_signal_core_coverage.py",
-          "tests/test_signal_processing_expanded.py"
-        ],
-        "unit_mentions": [
-          "Hz",
-          "N*m",
-          "g",
-          "rad/s"
-        ],
-        "validation_paths": [
-          "src/shared/python/signal_toolkit/tests/test_bound_validation_3182.py"
-        ]
       }
     }
   ],

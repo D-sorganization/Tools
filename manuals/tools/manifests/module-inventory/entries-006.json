@@ -13158,6 +13158,7 @@
           "tests/rate_of_closure/test_torque_run_history.py",
           "tests/rate_of_closure/test_turf_interaction.py",
           "tests/rate_of_closure/test_units.py",
+          "tests/rate_of_closure/test_variation_complete_trial_record.py",
           "tests/rate_of_closure/test_variation_gui.py",
           "tests/rate_of_closure/test_variation_gui_execution.py",
           "tests/rate_of_closure/test_variation_simulation_adapter.py",

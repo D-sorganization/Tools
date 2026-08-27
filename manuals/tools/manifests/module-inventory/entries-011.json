@@ -3,6 +3,151 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 7852,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c1fcd33ef0d5872fdabc691aa1e88fd140c96d7a969640a5e93b49d34262100f",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONEXECUTIONSERVICE-TEST-TS-2BACC2CD08C9",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/variationExecutionService.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8506,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a7169ba890098446cafe1d81626a6e7ad2c35f21af5644fe789c95521bfe0e05",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONEXECUTIONSERVICE-TS-C9EE95FD12AA",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/variationExecutionService.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "VariationExecutionControls",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "VariationExecutionPhase",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "VariationExecutionProgress",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "VariationExecutionRequest",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "VariationExecutionResult",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "VariationExecutionService",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "VariationWorkerFactory",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "VariationWorkerResponse",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "createVariationExecutionService",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "executeVariationWork",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "plannedVariationRuns",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 9295,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -12905,6 +13050,7 @@
           "tests/rate_of_closure/test_regional_ground_authority_transport.py",
           "tests/rate_of_closure/test_regional_ground_loopback_submitter.py",
           "tests/rate_of_closure/test_regional_ground_variation_request_io.py",
+          "tests/rate_of_closure/test_variation_complete_trial_record.py",
           "tests/rate_of_closure/test_variation_ensemble_chunks.py",
           "tests/rate_of_closure/test_variation_gui_execution.py",
           "tests/rate_of_closure/test_variation_module_importability.py",
@@ -13483,6 +13629,7 @@
           "tests/rate_of_closure/test_regional_ground_authority_transport.py",
           "tests/rate_of_closure/test_regional_ground_loopback_submitter.py",
           "tests/rate_of_closure/test_regional_ground_variation_request_io.py",
+          "tests/rate_of_closure/test_variation_complete_trial_record.py",
           "tests/rate_of_closure/test_variation_ensemble_chunks.py",
           "tests/rate_of_closure/test_variation_gui_execution.py",
           "tests/rate_of_closure/test_variation_module_importability.py",
@@ -14837,170 +14984,6 @@
           "tests/shared/python/ai/test_ollama_adapter.py",
           "tests/shared/python/ai/test_ollama_adapter_extended.py",
           "tests/shared/python/chat/test_ollama_latency_tuning.py",
-          "tests/unit/chat/test_adapter_capabilities.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": [
-          "tests/shared/python/ai/test_adapter_contract.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 19412,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b46b2e4fc071a8d390279dee36ae04455f37e3b3a423c8c67b655554e88358cd",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-OPENAI-ADAPTER-PY-EE84C7DCAA6E",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/ai/adapters/openai_adapter.py",
-      "purpose": "OpenAI adapter for GPT-4 and GPT-4 Turbo models.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "OpenAIAdapter",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "OPENAI_DEFAULT_MODEL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "OPENAI_DEFAULT_TIMEOUT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "OPENAI_MAX_TOKENS",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/ai/test_adapter_contract.py",
-          "tests/shared/python/ai/test_ai_hardening_3179.py",
-          "tests/shared/python/ai/test_classify_error.py",
-          "tests/unit/chat/test_adapter_capabilities.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": [
-          "tests/shared/python/ai/test_adapter_contract.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 18953,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "79347b0073b5b5459e92cb09c5f127b33bd206b92d9dcd5f52093fe827717032",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-RUST-ADAPTER-PY-7F6BCE79DC5D",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/ai/adapters/rust_adapter.py",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "https://api.openai.com/v1``"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "RustAgentAdapter",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RustBackendUnavailableError",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_STREAM_THREAD_TIMEOUT_S",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_WHEEL_MISSING_HINT",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "ai_backend_available",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/ai/test_adapter_contract.py",
-          "tests/shared/python/ai/test_ai_hardening_3179.py",
-          "tests/shared/python/ai/test_rust_adapter.py",
-          "tests/shared/python/ai/test_rust_adapter_extended.py",
-          "tests/shared/python/ai/test_rust_adapter_fallback.py",
-          "tests/shared/python/ai/test_rust_adapter_wheel_smoke.py",
           "tests/unit/chat/test_adapter_capabilities.py"
         ],
         "unit_mentions": [

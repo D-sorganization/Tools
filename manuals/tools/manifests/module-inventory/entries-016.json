@@ -3,6 +3,174 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 7447,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6b65b6da4a27f8d9a18388952d493c56baa1cca1feead18378f34e2e7c004587",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-PERSISTED-PLAN-IO-PY-75B36939DA7B",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/persisted_plan_io.py",
+      "purpose": "Canonical and explicitly legacy variation-plan persistence.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PersistedPlanResolution",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PLAN_BINDING_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PLAN_BINDING_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "persisted_plan_binding_from_json_dict",
+            "signature": "value: object"
+          },
+          {
+            "kind": "function",
+            "name": "persisted_plan_binding_to_json_dict",
+            "signature": "value: VariationPlan | PersistedPlanResolution"
+          },
+          {
+            "kind": "function",
+            "name": "persisted_plan_dumps",
+            "signature": "plan: VariationPlan, *, provenance: PlanProducerProvenance=PYTHON_DEFAULT_PROVENANCE"
+          },
+          {
+            "kind": "function",
+            "name": "persisted_plan_loads",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "write_persisted_plan",
+            "signature": "path: str | Path, plan: VariationPlan, *, provenance: PlanProducerProvenance=PYTHON_DEFAULT_PROVENANCE"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_execution_metadata.py",
+          "tests/rate_of_closure/test_variation_gui_roundtrip.py",
+          "tests/rate_of_closure/test_workspace_document.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7310,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0cbdda7a96558e46c3cdd16537ebda0cc4f4a98a39c2f9b1da33f8996f1737ae",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-PIPELINE-PY-7497A65A820D",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/pipeline.py",
+      "purpose": "Pipeline-slice evaluation for the variation engine (#4120 V3).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "DELIVERY_OUTPUTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FLIGHT_OUTPUTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LAUNCH_OUTPUTS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "evaluate_run",
+            "signature": "variables: Mapping[str, float], mode: str, config: EvaluationConfig"
+          },
+          {
+            "kind": "function",
+            "name": "outputs_for_mode",
+            "signature": "mode: str"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_pipeline.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 10396,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -13535,129 +13703,6 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2688,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c8aa5c52aad3043f1a20d8642f5a3b11c82a9468269af8920f929b6881de3b46",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VIDEO-ANALYZER-INIT-PY-A174A0E726AD",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/video_analyzer/__init__.py",
-      "purpose": "Video Analyzer for Golf Swing Analysis.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "BalanceMetrics",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "BodyAngles",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SwingAnalysis",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SwingPhase",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SwingScores",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TempoMetrics",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2604,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b083308a68d33becb117c46da2f55d3bba7a1301fe1e7c835e358c93ed15f3d4",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VIDEO-ANALYZER-CONTRACTS-PY-96DA196056B3",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/video_analyzer/_contracts.py",
-      "purpose": "Design by Contract shim for ``video_analyzer``.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
         "validation_paths": []
       }
     }

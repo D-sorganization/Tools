@@ -22,30 +22,18 @@ fitting epics is the sibling `shared/python/golf_club/`.
 
 ## Delivery Pattern
 
-PR #4466 cannot be merged: its merge-base predates this package, leaving 281
-both-added conflicts. Twenty-two current-main slices landed as #4517–#4547.
-Only the camera cluster remains, owned by #4571. It is a reimplementation:
-wiring the mixin passes 20 camera tests but regresses three main-owned tests and
-requires about 20 more UI files. Do not merge/slice #4466 or close it before
-#4571. The old branch is not uniformly newer; diff every candidate and require
-main's existing suite to pass before adding new tests.
+PR #4466 predates this package and cannot merge. Twenty-two slices landed as
+#4517–#4547; #4571 owns the remaining camera reimplementation. Diff every
+candidate against current main and preserve main-owned tests.
 
 ## Active Epics — Golf Epics Merged
 
-Launch-monitor epic #4583 has merged consolidated Release A. PyQt6 and
-React now share explicit-identity projects, arbitrary-variable analysis,
-dispersion/target-error, attested session summaries, persistence/export, and a
-safe capability-driven Neural Model Lab. The desktop client can load all
-261,666 manifest-verified private-authority rows from an explicitly authorized
-local root while its plot stays bounded. #4603 adds parity clients for canonical
-dataset jobs/player covariation, a 20,000-row cap, and no private rows/paths in
-projects; embedded calculations remain labelled offline compatibility. The #4277 slice adds pooled, player-centered, between-player,
-per-player and random-effects covariation plus exploratory all-pairs scans to
-both clients, with unit-labelled plots and complete backing exports. The next
-performance slice adds hash-verified, user-authorized expected-strokes baseline
-artifacts and attested longitudinal player/population inference in both clients;
-no baseline data is bundled. Do not claim vendor emulation or paired-device
-validation: Release B remains open and has no real paired observations.
+Launch-monitor epic #4583 has merged Release A with explicit-identity projects,
+bounded private-authority loading, canonical dataset/covariation clients, and
+source-backed expected-strokes/longitudinal analysis. No private rows or paths
+enter project files and no baseline data is bundled. Release B remains open:
+do not claim vendor emulation or paired-device validation without real paired
+observations.
 
 #4584/#4599 merged source-backed strokes-gained v2 into both clients with exact
 strata, uncertainty, exclusions, and grouping attestations. #4600 owns the
@@ -57,8 +45,8 @@ see the two contracts under `docs/specs/`.
 
 #4142 remains Python-authoritative; PyQt6 and React do not reimplement physics.
 PR #4755 protected-merged R10.4 as `9fe87f0eec9f341fdfc50fc2a116c601b94781d5`.
-PR #4757 carries #4756/R10.3 from implementation commit
-`d0061bd3e640451de80394453b4ee515acb19218`: one packaged authority
+PR #4757 protected-merged #4756/R10.3 as
+`5b3f585e3754fd77cc506631d55b163f50caf04d`: one packaged authority
 classifies all 31 known inputs by exact adapter, whole-run or required half-open
 window/topological point semantics, or explicit unsupported reason. Python and
 TypeScript consume the same JSON and fail closed on registry drift, malformed
@@ -69,15 +57,15 @@ gaps keep #4142 open. This verifies execution semantics, not anatomy, human
 validity, or coaching. The visual co-change guard excludes test-only TSX
 modules but remains fail-closed for shipped React surfaces. The standalone
 public mirror consumes a byte-identical governed vendored authority.
-The first hosted 3.11/3.12 matrices exposed one packaging-governance mismatch:
-the visualization manifest test rejected this legitimate non-visualization
-authority although the exact wheel gate passed. PR #4757 now classifies the
-named file as feature-owned package data while retaining fail-closed rejection
-of undeclared package-data entries.
-The next hosted 3.12 matrix exposed an unrelated wall-clock-only club-view
-performance flake under xdist contention. Follow-up issue #4759 keeps the fixed
-0.5 s render-work budget but measures it with the process CPU clock, with the
-200 ms cadence unchanged.
+PR #4760 protected-merged the unrelated process-CPU-clock CI stabilization as
+`55805fe4de1b0afc3710efce4ed516d59e685717` without changing the 0.5 s
+work or 200 ms cadence limits. Issue #4758/R11.1 is active on
+`feat/4758-complete-trial-record`. Its first local TDD slice owns full swing,
+contact, impact, delivery, post-impact, launch, and flight state per bounded
+trial; misses/failures remain explicitly absent. Manual, double-, and
+triple-pendulum layouts and 62 focused tests pass. Durable round-trip,
+corruption, resume/digest parity, adapter matrix, memory, packaging, and
+protected CI are still required before R11.1 can become verified.
 
 PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
 the initial React/PyQt visibility, accessibility, performance, and baseline
