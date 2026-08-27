@@ -275,7 +275,7 @@
       "shard_index": 8
     },
     {
-      "content_sha256_lf": "3a6fa442a5a1e047c459a937917ab8819dfb614c4699d280d33123af4d86ee11",
+      "content_sha256_lf": "bdf55d79806c51b73abb15ce8b809f83106f5df19472132ce4268a8679d29cf7",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/web/src/components/PuttingVisuals.test.tsx",
       "last_path": "src/rate_of_closure/web/src/model/durableEnsembleEvidence.ts",
@@ -347,7 +347,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "813a9e99016b1e211117240871b389ac522881800e9e3078b9512d6c438539a3",
+  "source_tree_sha256": "9467ad87876f5cae4ed16289e983211ac540eb57f755e4e08890d7b1f6f0352b",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
