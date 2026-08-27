@@ -5352,10 +5352,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1208,
+      "bytes_lf": 1432,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "66b4acdb409ca79e5ca1835305d3c11d4715d46d6a6a872257489053d8eddf03",
+      "content_sha256_lf": "dfdffcf08e7910860c4fa6b8738a1efa45bee20c97bc10400fd7ec653da4e80d",
       "family": "swing-simulation-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-DELIVERY-INTERCHANGE-INIT-PY-B27593F6308E",
       "language": "python",
@@ -5423,6 +5423,16 @@
           },
           {
             "kind": "re-export",
+            "name": "body_export_envelope",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "body_kinematics_columns",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "delivery_trajectory_from_json",
             "signature": null
           },
@@ -5438,12 +5448,22 @@
           },
           {
             "kind": "re-export",
+            "name": "euler_xyz_deg_to_quaternion",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "grip_kinematics_at",
             "signature": null
           },
           {
             "kind": "re-export",
             "name": "head_state_at",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "read_sto_table",
             "signature": null
           },
           {
@@ -5469,10 +5489,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8442,
+      "bytes_lf": 9956,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "bbce1796da1e1b25fb2ac977b1ae7c9ba806c48836f9b144f23de46480315d0e",
+      "content_sha256_lf": "a357178112954cf9c3bf63626c5e6f184d565b6126840eecb94136539a4ecdc7",
       "family": "swing-simulation-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-DELIVERY-INTERCHANGE-ADAPTERS-PY-7A8AC8D30A36",
       "language": "python",
@@ -5517,6 +5537,26 @@
             "kind": "constant",
             "name": "MUJOCO_EXPORT_FORMAT",
             "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "body_export_envelope",
+            "signature": "text: str, *, expected_format: str, name_field: str"
+          },
+          {
+            "kind": "function",
+            "name": "body_kinematics_columns",
+            "signature": "body_name: str"
+          },
+          {
+            "kind": "function",
+            "name": "euler_xyz_deg_to_quaternion",
+            "signature": "rx_deg: float, ry_deg: float, rz_deg: float"
+          },
+          {
+            "kind": "function",
+            "name": "read_sto_table",
+            "signature": "text: str, *, columns: Sequence[str]"
           },
           {
             "kind": "function",
@@ -16178,10 +16218,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3411,
+      "bytes_lf": 4410,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "91938f370eb368cc754b4b356ea452c4eb2c5b2d9d63ffc02324dd1e722954a3",
+      "content_sha256_lf": "4adaab5f8aa310d173e95abaf58c8c45714bb8db984592cb235c9cd7b33e7745",
       "family": "swing-simulation-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-INIT-PY-3763F6A25399",
       "language": "python",
@@ -16269,6 +16309,11 @@
           },
           {
             "kind": "re-export",
+            "name": "PUTTING_STROKE_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "PlanarGreenSurface",
             "signature": null
           },
@@ -16289,12 +16334,32 @@
           },
           {
             "kind": "re-export",
+            "name": "PuttingStroke",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "STIMP_RELEASE_SPEED_MPS",
             "signature": null
           },
           {
             "kind": "re-export",
             "name": "SkidSolution",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StrokePutt",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StrokeSample",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StrokeStrike",
             "signature": null
           },
           {
@@ -16339,6 +16404,41 @@
           },
           {
             "kind": "re-export",
+            "name": "impact_sample_index",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putt_from_stroke",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putting_stroke_from_drake_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putting_stroke_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putting_stroke_from_mujoco_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putting_stroke_from_opensim_sto",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putting_stroke_to_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "roll_out_distance",
             "signature": null
           },
@@ -16370,6 +16470,16 @@
           {
             "kind": "re-export",
             "name": "stimp_to_rolling_mu",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "strike_from_stroke",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "strike_parameters",
             "signature": null
           }
         ],
@@ -16735,6 +16845,177 @@
           "mm",
           "rad",
           "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4256,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "989117dedd889802e93761a308a4c0e28766ab961ca3dc3b62a48602058c7981",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-STROKE-ADAPTERS-PY-FA0E015B9A63",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/putting/stroke_adapters.py",
+      "purpose": "Engine export adapters for the putting-stroke wire (#4800 P4).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "putting_stroke_from_drake_json",
+            "signature": "text: str, *, ball_position_m: tuple[float, float, float], aim_deg: float=0.0"
+          },
+          {
+            "kind": "function",
+            "name": "putting_stroke_from_mujoco_json",
+            "signature": "text: str, *, ball_position_m: tuple[float, float, float], aim_deg: float=0.0"
+          },
+          {
+            "kind": "function",
+            "name": "putting_stroke_from_opensim_sto",
+            "signature": "text: str, *, body_name: str, frame_id: str, ball_position_m: tuple[float, float, float], aim_deg: float=0.0"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 18879,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "925a6a3328d35f00346c281868417b2638b1fa767e9d94d305e9c39d63d46d09",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-STROKE-INTERCHANGE-PY-6FC8D525B444",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/putting/stroke_interchange.py",
+      "purpose": "Putting-stroke interchange: recorded strokes drive the impact solve (#4800 P4).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PuttingStroke",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StrokePutt",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StrokeSample",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StrokeStrike",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PUTTING_STROKE_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "impact_sample_index",
+            "signature": "stroke: PuttingStroke, *, body_to_face_m: float"
+          },
+          {
+            "kind": "function",
+            "name": "putt_from_stroke",
+            "signature": "stroke: PuttingStroke, putter: PutterSpec, surface: GreenSurface, *, body_to_face_m: float, stimp_ft: float, hole_distance_m: float, shaft_lean_deg: float | None=None, head_moi_kg_m2: float | None=None, mu_slide: float=DEFAULT_SLIDING_MU, capture_model: CaptureModel='effective_radius'"
+          },
+          {
+            "kind": "function",
+            "name": "putting_stroke_from_json",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "putting_stroke_to_json",
+            "signature": "stroke: PuttingStroke"
+          },
+          {
+            "kind": "function",
+            "name": "strike_from_stroke",
+            "signature": "stroke: PuttingStroke, putter: PutterSpec, *, body_to_face_m: float, shaft_lean_deg: float | None=None, head_moi_kg_m2: float | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "strike_parameters",
+            "signature": "stroke: PuttingStroke, *, body_to_face_m: float"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/putting/tests/test_stroke_interchange.py"
+        ],
+        "unit_mentions": [
+          "deg",
           "s"
         ],
         "validation_paths": []
@@ -17956,183 +18237,6 @@
         "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6404,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c1ecd848f589d06533d4fdc106ec97e4488db0f784f7cd86de047a74d40a74e3",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-ROTATING-BASE-TYPES-PY-0FAC16A61553",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/rotating_base/types.py",
-      "purpose": "Typed state and result contracts for rotating-base dynamics.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "DynamicsSolution",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RotatingBaseConfig",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RotatingBaseParams",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RotatingBaseState",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RotatingBaseTrace",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TorsoTwoHandControl",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5199,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "95c7476379c97b1f8bc83b17e9d32fbdaa91ba1f55076094882357f599b3ff49",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-RUN-CONFIG-PY-D06DFE34D505",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/run_config.py",
-      "purpose": "Typed run configuration and stable IDs for shared swing dynamics.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "DoublePendulumRunConfig",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "JointLockConfig",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SwingRunMode",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DOUBLE_PENDULUM_MODEL_ID",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "DOUBLE_PENDULUM_JOINT_IDS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "LocalizedTorqueOffset",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SHOULDER_JOINT_ID",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WRIST_JOINT_ID",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/tests/test_localized_torque.py",
-          "src/shared/python/swing_sim/tests/test_prescribed_run.py",
-          "src/shared/python/swing_sim/tests/test_torque_library_export.py",
-          "tests/rate_of_closure/test_localized_torque_variation.py",
-          "tests/rate_of_closure/test_morris_authority_contracts.py",
-          "tests/rate_of_closure/test_prescribed_kinetics_presentation.py",
-          "tests/rate_of_closure/test_torque_profile_ui.py",
-          "tests/rate_of_closure/test_torque_run_history.py",
-          "tests/rate_of_closure/test_variation_complete_trial_record.py",
-          "tests/rate_of_closure/test_workspace_torque_session.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "tests/rate_of_closure/test_morris_authority_contracts.py"
-        ]
       }
     }
   ],

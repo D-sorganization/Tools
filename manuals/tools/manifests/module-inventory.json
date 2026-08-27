@@ -203,7 +203,7 @@
   },
   "shards": [
     {
-      "content_sha256_lf": "f538d31067d0f0e2cabca3ae66f324842ab71831dbd4ea8302b264d477c5257a",
+      "content_sha256_lf": "1824d96dc3ec13a0a3962b55edaa1e1a2762fb44973075fb7a3de4c605289c64",
       "entry_count": 200,
       "first_path": ".docker/entrypoint.sh",
       "last_path": "scripts/check_minimum_test_contract.py",
@@ -307,7 +307,7 @@
       "shard_index": 12
     },
     {
-      "content_sha256_lf": "abecd2a31cf63eaf287207e087cbfb19c292f7bc4e4748e0bb6cc71679b1fcb6",
+      "content_sha256_lf": "70fc142081316a97daa58a6bf65fc07e1547c7ca80c155dc9ec503580383fd45",
       "entry_count": 200,
       "first_path": "src/shared/python/chat/models.py",
       "last_path": "src/shared/python/programmatic_pid/__init__.py",
@@ -323,42 +323,42 @@
       "shard_index": 14
     },
     {
-      "content_sha256_lf": "9d27d1f0b6afb9cd148bc9956c426128780b2f8acb8aa4be6f94c37338c4dca0",
+      "content_sha256_lf": "727f6676d4d557304b919f5e78039671257d808b2e25ecd54dc55d6ba2e7e9f8",
       "entry_count": 200,
       "first_path": "src/shared/python/sidekick/ui/tools_sidebar/sidebar.py",
-      "last_path": "src/shared/python/swing_sim/run_config.py",
+      "last_path": "src/shared/python/swing_sim/rotating_base/provider.py",
       "path": "manuals/tools/manifests/module-inventory/entries-015.json",
       "shard_index": 15
     },
     {
-      "content_sha256_lf": "aefdc4678fa3ddf11ec6118da28ba5878afa29e34f5f1f41af6b8dbb3aec49d6",
+      "content_sha256_lf": "0bf0b18af25e6a016e923a0bde1e855a762479fa4727160448759f4bdefdec6f",
       "entry_count": 200,
-      "first_path": "src/shared/python/swing_sim/solver/__init__.py",
-      "last_path": "src/urdf_builder_gui/conftest.py",
+      "first_path": "src/shared/python/swing_sim/rotating_base/types.py",
+      "last_path": "src/upstream_drift_tools/__init__.py",
       "path": "manuals/tools/manifests/module-inventory/entries-016.json",
       "shard_index": 16
     },
     {
-      "content_sha256_lf": "26dfc359956510304ef3f7939c15ddcec46a63471cf9fa166f58d7d2b21dade3",
-      "entry_count": 91,
-      "first_path": "src/urdf_builder_gui/gui_registration.py",
+      "content_sha256_lf": "43a8e82336290b382bd463e043fcea9372a002a847b05672ddf7a2b585eed5bc",
+      "entry_count": 93,
+      "first_path": "src/urdf_builder_gui/__init__.py",
       "last_path": "wave_solver.py",
       "path": "manuals/tools/manifests/module-inventory/entries-017.json",
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "ce83a521e816cbc159f0be566fb3d35757ee6c2a7b77e0d98d0e33792b852622",
+  "source_tree_sha256": "6c14861c9e05ce8ba42dfa66729102809a066e20a2c3da4a7f01fb732206404e",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
-      "not-applicable": 2661,
+      "not-applicable": 2663,
       "provisional": 829
     },
     "blocked_count": 1,
     "calculation_count": 829,
     "classification_counts": {
       "calculation": 829,
-      "non-calculation": 2662
+      "non-calculation": 2664
     },
     "family_counts": {
       "control-systems-calculation": 6,
@@ -380,14 +380,14 @@
       "shared-tools-non-calculation": 1022,
       "signal-processing-calculation": 28,
       "swing-simulation-calculation": 60,
-      "swing-simulation-non-calculation": 146
+      "swing-simulation-non-calculation": 148
     },
-    "module_count": 3491,
-    "non_calculation_count": 2662,
+    "module_count": 3493,
+    "non_calculation_count": 2664,
     "provisional_count": 829,
     "review_status_counts": {
       "blocked": 1,
-      "inventory-baseline": 2661,
+      "inventory-baseline": 2663,
       "review-required": 829
     }
   }
