@@ -58,9 +58,11 @@ shot scalars with ten unsupported cells preserved. #4791/R13.5 is active from
 that protected base. `morris-target-selection` v1 binds kind/name/unit/point/
 time/frame and exposes all-input or one-source views without analysis execution;
 PyQt and React share a state/impact/shot parity fixture, while selected rows
-retain global ranks and typed denominators. The combined ledger is 29 verified /
-2 partial. These remain model-scenario responses, not global main effects,
-causal anatomy, governed human validation, or coaching authority.
+retain global ranks and typed denominators. Protected PR #4794 contains
+implementation commit `f102ce59a`; #4793 was superseded without force-push after the matched visual
+manifest/audit/tests and vendored projection were added. The combined ledger is
+29 verified / 2 partial. These remain model-scenario responses, not global main
+effects, causal anatomy, governed human validation, or coaching authority.
 
 PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
 the initial React/PyQt visibility, accessibility, performance, and baseline

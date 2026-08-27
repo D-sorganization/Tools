@@ -28,7 +28,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                           |
 | #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                                    |
 | #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                            |
-| #4142 | Ensemble variation and falsifiable sensitivity. R13.3 protected-merged as `d6c8a0a67`; R13.5 provenance-complete result selection is active as #4791 with a combined 29 verified / 2 partial ledger.                         |
+| #4142 | Ensemble variation and falsifiable sensitivity. R13.3 protected-merged as `d6c8a0a67`; R13.5 provenance-complete result selection is in protected PR #4794 through implementation commit `f102ce59a`, with a combined 29 verified / 2 partial ledger. |
 | #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                                |
 | #4433 | Visual-first tab visibility and visualization-led UX. Open. V0.1, strict cross-runtime parity, and V5.2 are merged through PR #4738; the audit is 8 verified / 23 partial obligations with seven gaps and two human actions retained. |
 | #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                        |
@@ -65,10 +65,12 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
 - #4142 R12.3 protected-squash-merged via PR #4782 as `a1b00db14`. R13.3 PR
   #4784 protected-squash-merged as `d6c8a0a67`; its required gates passed and
   optional fleet-only backlog was not redundantly rerun. #4791/R13.5 is active
-  from that protected base: exact point/time/frame target identity plus
-  all-input or selected-source views in PyQt and React. The combined ledger is
-  29 verified / 2 partial; outputs remain model-scenario evidence without human
-  causal, anatomical, or coaching authority.
+  in PR #4794 through implementation commit `f102ce59a` from that protected base; #4793 was
+  superseded without force-push after visual governance required matched
+  evidence. Exact point/time/frame target identity plus all-input or selected-
+  source views are present in PyQt and React. The combined ledger is 29 verified /
+  2 partial; outputs remain model-scenario evidence without human causal,
+  anatomical, or coaching authority.
 
 ## Must-Read Architecture Pointers
 
