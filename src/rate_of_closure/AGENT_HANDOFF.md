@@ -39,9 +39,10 @@ observations.
 strata, uncertainty, exclusions, and grouping attestations. #4600 owns the
 post-merge PyQt reference; #4602/#4608/#4610/#4613 own isolated rendered gates.
 
-Club Fitting #4549, Heavy Hit #4562, and packaging #4579 are complete and
-merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}`;
-see the two contracts under `docs/specs/`.
+Club Fitting #4549, Heavy Hit #4562, and packaging #4579 are complete; physics
+shared-first in `shared/python/{golf_club,swing_sim}` (contracts in `docs/specs/`).
+Putting #4800 P2 landed green-surface heightfields, the `swing_sim.green_surface/1`
+wire, and Holmes/Penner capture with TS twins; planar APIs delegate bit-identically.
 
 #4142 remains Python-authoritative; PyQt6 and React do not reimplement physics.
 R10.3, R10.4, R11.1, and R11.3 are protected-merged through
