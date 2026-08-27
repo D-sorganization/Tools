@@ -10488,10 +10488,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8942,
+      "bytes_lf": 10029,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "aeca71d4444224c30ad85aaef4da9e828b46452543620939ad4cd31a1c2683a2",
+      "content_sha256_lf": "77ed9c645eb9a336ba04093eb913c781ce567846aba8945fe5fae5a8129ad3c0",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-CLUBHEADS-TS-595D80DFCFB8",
       "language": "typescript",

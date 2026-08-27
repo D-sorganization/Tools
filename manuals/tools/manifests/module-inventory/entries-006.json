@@ -11267,10 +11267,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11389,
+      "bytes_lf": 12542,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7532f7d867dcdec72544667a78836579d55c974600cc3a00d4c58daa4ecdca57",
+      "content_sha256_lf": "7017b8151f3f59a7d53b35f2a02103c454cdeb8b8c2f2ddf91fdbd8fd16e857e",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-CLUB-HEAD-PROFILES-PY-56C0CB8FD437",
       "language": "python",
