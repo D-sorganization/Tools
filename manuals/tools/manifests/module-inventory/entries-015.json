@@ -16916,10 +16916,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 18879,
+      "bytes_lf": 18909,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "925a6a3328d35f00346c281868417b2638b1fa767e9d94d305e9c39d63d46d09",
+      "content_sha256_lf": "2ef579510f0eed60664dd5b00bbe46af982ce8ea727d1905480f7d734e106aca",
       "family": "swing-simulation-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-STROKE-INTERCHANGE-PY-6FC8D525B444",
       "language": "python",

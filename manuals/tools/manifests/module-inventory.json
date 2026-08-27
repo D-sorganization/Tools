@@ -323,7 +323,7 @@
       "shard_index": 14
     },
     {
-      "content_sha256_lf": "727f6676d4d557304b919f5e78039671257d808b2e25ecd54dc55d6ba2e7e9f8",
+      "content_sha256_lf": "bfe06dc596ab5d8f5e08818aee0d6e5d9c5894a81c42d651c998a1c619b25eb8",
       "entry_count": 200,
       "first_path": "src/shared/python/sidekick/ui/tools_sidebar/sidebar.py",
       "last_path": "src/shared/python/swing_sim/rotating_base/provider.py",
@@ -347,7 +347,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "6c14861c9e05ce8ba42dfa66729102809a066e20a2c3da4a7f01fb732206404e",
+  "source_tree_sha256": "389d8b474bb83a07080c918daec3202ce4c3724b5c757ac9d8b76b2107fb26b8",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
