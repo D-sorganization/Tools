@@ -3,6 +3,303 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 2997,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "45228256772735acf9983bf16d0a7b5b5b0d4a75735f70b3b212381b1cfab5fd",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-ROTATING-BASE-INIT-PY-A2BA2837A94A",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/rotating_base/__init__.py",
+      "purpose": "Shared rotating-base provider contracts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "EXPECTED_RUN_CATALOG_SHA256",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "EXPECTED_STUDY_SHA256",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "EXPECTED_UPSTREAM_SOURCE_REVISION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "KILLSWITCH_CHANNELS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MATCHING_RULES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MODEL_TIER",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "QUALIFIED_STUDY_RESOURCE_NAME",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "REGISTERED_TORSO_RATES_RAD_S",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RUN_CATALOG_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RUN_CATALOG_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RUN_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RUN_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RotatingBaseCase",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RotatingBaseCaseMetrics",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RotatingBaseConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RotatingBaseParams",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RotatingBaseProviderResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RotatingBaseRunRequest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RotatingBaseRunResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RotatingBaseRunTrace",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RotatingBaseState",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RotatingBaseStudy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RotatingBaseTrace",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SameStateKillswitch",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TORSO_PROFILES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TorsoTwoHandControl",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "UPSTREAM_PHYSICS_SOURCE_SHA256",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "constraint_jacobian",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "constraint_vector",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "control_generalized_force",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "distal_segment_kinetic_energy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "generate_registered_run_catalog",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "initial_state",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "kinematics",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "load_embedded_qualified_study",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "load_qualified_study",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "mass_matrix",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "mechanical_energy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "potential_energy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "registered_metric_matches_authority",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "registered_requests",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "registered_run_catalog_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "registered_run_catalog_mapping",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "registered_run_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "registered_run_mapping",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "rollout",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "run_registered_case",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "solve_constrained_dynamics",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 1424,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -15567,140 +15864,6 @@
         "unit_mentions": [
           "N",
           "m/s",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 15023,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9b834da59372a0fdec5a1228ec6afaf4abbd79dac27ac2273b347999f3de4c0b",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-TOOLS-MATLAB-UTILITIES-QUALITY-EXPORTCODEISSUES-M-F180A1F97FFC",
-      "language": "matlab",
-      "maintainer": "Tools module maintainers",
-      "path": "src/tools/matlab_utilities/quality/exportCodeIssues.m",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "absPathIfPossible",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "collectFilesFromDir",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "defaultExcludeDirs",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "ensureField",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "escapeMd",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "exportCodeIssues",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "extractIdentifierFallback",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "getCharField",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "getNumericField",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "iscellstrlike",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "issuesTable",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "listFiles",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "matchName",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "num2strOrEmpty",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "relPath",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "stripTrailingFilesep",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "writeOutput",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "g",
           "s"
         ],
         "validation_paths": []

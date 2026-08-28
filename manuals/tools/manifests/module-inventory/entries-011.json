@@ -2575,10 +2575,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10941,
+      "bytes_lf": 10151,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d8e641950206fa7c7f4a1c0a5560a3312e8e623d98566080ebe7fe8c06eedbbc",
+      "content_sha256_lf": "c24003a9abb004a03019a5dc24661ab2568824135796cc7d4f2595ec415df058",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONEXECUTIONSERVICE-TEST-TS-2BACC2CD08C9",
       "language": "typescript",
