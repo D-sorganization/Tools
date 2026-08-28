@@ -203,7 +203,7 @@
   },
   "shards": [
     {
-      "content_sha256_lf": "d6cdad5f503f0b242951420a5950027f36ba0c4ce2bffc058822ee91c0c6ab91",
+      "content_sha256_lf": "e9304d0e38fb7a0501fe23d56788cb2b2d5fbe53bbf21beed3ddab0733d6b611",
       "entry_count": 200,
       "first_path": ".docker/entrypoint.sh",
       "last_path": "scripts/check_minimum_test_contract.py",
