@@ -181,7 +181,7 @@ class MorrisDesign:
         seed = _require_integer(self.seed, "seed", 0)
         arrays = _design_arrays(self)
         _validate_design_shapes(arrays, trajectories, len(factors))
-        _validate_design_paths(arrays, trajectories, len(factors))
+        _validate_design_paths(arrays, trajectories, len(factors), levels)
         object.__setattr__(self, "factors", factors)
         object.__setattr__(self, "trajectories", trajectories)
         object.__setattr__(self, "levels", levels)
@@ -247,27 +247,34 @@ def _validate_design_shapes(
 
 
 def _validate_design_paths(
-    arrays: _DesignArrays, trajectories: int, factor_count: int
+    arrays: _DesignArrays, trajectories: int, factor_count: int, levels: int
 ) -> None:
     """Require bounded one-factor-at-a-time trajectories and exact steps."""
     require(
-        np.all(np.isfinite(arrays.points))
-        and np.all((arrays.points >= 0.0) & (arrays.points <= 1.0)),
+        bool(np.all(np.isfinite(arrays.points)))
+        and bool(np.all((arrays.points >= 0.0) & (arrays.points <= 1.0))),
         "normalized Morris points must be finite and within [0, 1]",
     )
     require(
-        np.all(np.sort(arrays.changed, axis=1) == np.arange(factor_count)),
+        bool(np.all(np.sort(arrays.changed, axis=1) == np.arange(factor_count))),
         "each trajectory must change every factor exactly once",
     )
     differences = np.diff(arrays.points, axis=1)
     nonzero = np.count_nonzero(np.abs(differences) > CONSTANT_TOLERANCE, axis=2)
-    require(np.all(nonzero == 1), "each Morris step must change one factor")
+    require(bool(np.all(nonzero == 1)), "each Morris step must change one factor")
     rows = np.arange(trajectories)[:, np.newaxis]
     step_numbers = np.arange(factor_count)[np.newaxis, :]
     actual = differences[rows, step_numbers, arrays.changed]
     require(
         np.allclose(actual, arrays.steps, rtol=0.0, atol=CONSTANT_TOLERANCE),
         "signed_steps must match the changed normalized coordinates",
+    )
+    expected_step = levels / (2.0 * (levels - 1))
+    require(
+        np.allclose(
+            np.abs(arrays.steps), expected_step, rtol=0.0, atol=CONSTANT_TOLERANCE
+        ),
+        "signed_steps must lie on the declared k/(levels-1) normalized step lattice",
     )
 
 
@@ -355,13 +362,13 @@ class MorrisObservations:
             outcomes.shape,
         )
         require(
-            np.all(np.isin(outcomes, OUTCOMES)),
+            bool(np.all(np.isin(outcomes, OUTCOMES))),
             f"outcomes must be one of {OUTCOMES}",
             np.unique(outcomes),
         )
         failure = outcomes == NUMERICAL_FAILURE_VALUE
         require(
-            np.all(np.isnan(values[failure])),
+            bool(np.all(np.isnan(values[failure]))),
             "numerical-failure samples must not contain outputs",
         )
         _validate_noimpact_availability(outputs, values, outcomes)
@@ -377,7 +384,7 @@ class MorrisObservations:
         )
         nonfailure = outcomes != NUMERICAL_FAILURE_VALUE
         require(
-            np.all(failure_types[nonfailure] == None),  # noqa: E711
+            bool(np.all(failure_types[nonfailure] == None)),  # noqa: E711
             "only numerical failures may carry diagnostics",
         )
         object.__setattr__(self, "outputs", outputs)
@@ -423,7 +430,7 @@ def _validate_noimpact_availability(
     )
     if np.any(no_impact) and np.any(downstream):
         require(
-            np.all(np.isnan(values[no_impact][:, downstream])),
+            bool(np.all(np.isnan(values[no_impact][:, downstream]))),
             "no-impact samples must not contain impact or shot outputs",
         )
 
