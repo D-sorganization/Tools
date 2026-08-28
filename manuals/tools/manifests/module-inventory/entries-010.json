@@ -2058,10 +2058,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8685,
+      "bytes_lf": 9024,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "1fb5745a1248df03f59d64b4235ba5299a42f95e76c303391c9226db43632c0a",
+      "content_sha256_lf": "86ff760e04043782b4231f63c0558523442fadcb4e80d14ab3d74570cd5c2a4a",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-GROUNDPLAYBACKCOMPARISON-TS-A5DCA2ABACDE",
       "language": "typescript",
