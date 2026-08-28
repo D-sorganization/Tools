@@ -48,6 +48,14 @@ ledgers remain partial until state/case geometry, responsive, accessibility,
 performance, deterministic-decimation, approved-image, downstream, and human
 evidence genuinely complete.
 
+The same protected slice repairs the asynchronous variation cancellation
+contract exposed by the release build: cancelling clears `busy` and progress
+immediately while the generation guard continues to reject late results. Test
+services return the request's exact execution metadata and model the production
+abort signal. Obsolete assertions that treated extensible flight-model IDs as
+an execution-layer error are removed; registry and evaluator authorities retain
+responsibility for resolving those IDs.
+
 ### 2026-08-27 Cross-Surface Variation Workflow Parity (#4792 / #4142 R14.3)
 
 Version 1.18.60 gives PyQt and React one Python-authoritative execution-policy
