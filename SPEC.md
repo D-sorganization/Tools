@@ -27,10 +27,26 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.73                                    |
+| **Spec Version**        | 1.18.74                                    |
 | **Last Spec Update**    | 2026-08-27                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-27 Fail-Closed R14.6 Acceptance Authority (#4832 / #4433 / #4142)
+
+Version 1.18.74 adds `rate-of-closure/visualization-acceptance` v1 as the fifth
+cross-surface visualization authority. Its strict reader expands all 20 React
+and PyQt tabs over every lifecycle state already registered by the visibility
+authority and every supported desktop, narrow, or DPI reference case. Each tab
+is bound to declared frame, units, provenance, limitations, keyboard path, and
+nonvisual alternative without duplicating lifecycle definitions. The contract
+is registration evidence, not proof that every state/case has rendered or
+passed. Exact assistive-technology and user-oriented rendered-review protocols
+retain evaluator, build, dataset, image, findings, and signature requirements;
+automation cannot mark either human action approved. The #4433 and #4142
+ledgers remain partial until state/case geometry, responsive, accessibility,
+performance, deterministic-decimation, approved-image, downstream, and human
+evidence genuinely complete.
 
 ### 2026-08-27 Cross-Surface Variation Workflow Parity (#4792 / #4142 R14.3)
 

@@ -3,6 +3,60 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 4608,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "923bb243c2c4fdde6b3c435adb99195ee162d4581fafedfbe5b271b34cd98487",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-EXPORT-HTML-EXPORTER-PY-8BE70127E394",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/export/html_exporter.py",
+      "purpose": "Single-file HTML exporter (Tools issue #2735).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "HtmlExporter",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/unit/chat/export/test_html_exporter.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 3134,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -16673,66 +16727,6 @@
           "tests/shared/python/plot_engine/test_pyqt6_widget.py",
           "tests/shared/python/plot_engine/test_specs.py",
           "tests/test_waves_2_3_imports.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6322,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c89d799e31c01ff150cce72ea2a19fb9e16a671fbadd5bb0c9911f0db56dddbd",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-ENGINE-TRENDLINE-PY-B8DF87BE68EB",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/plot_engine/trendline.py",
-      "purpose": "Shared trendline computation module.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "TrendlineResult",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "compute_trendline",
-            "signature": "x: np.ndarray, y: np.ndarray, trend_type: Literal['linear', 'polynomial', 'exponential', 'power']='linear', degree: int=2, n_points: int=200"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/plot_engine/tests/test_trendline.py",
-          "tests/shared/python/plot_engine/test_trendline.py"
         ],
         "unit_mentions": [],
         "validation_paths": []

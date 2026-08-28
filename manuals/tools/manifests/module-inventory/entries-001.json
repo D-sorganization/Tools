@@ -306,10 +306,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5604,
+      "bytes_lf": 5882,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "5e4209f916dcd261af8a35933a879bdca4e4471ed802137e4b083400652aa430",
+      "content_sha256_lf": "28f799440024450d5a748371b8094dc8ed2bf88ca7e64a6d62753ba4a12d80c1",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CHECK-RATE-VISUAL-EVIDENCE-CHANGES-PY-8242FB71D4B6",
       "language": "python",
@@ -343,6 +343,11 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "ACCEPTANCE_MANIFEST",
+            "signature": null
+          },
           {
             "kind": "constant",
             "name": "LOGGER",

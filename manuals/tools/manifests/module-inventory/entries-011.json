@@ -3,6 +3,81 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 2568,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "c264fa143ab45777d295d2f9e30458e2bb67b6309fa56d027c878478d62135ba",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-SIMULATIONTYPES-TS-20BD62628309",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/simulationTypes.ts",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "SimulationInput",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "SimulationLaunchTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "SimulationRunTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "SwingSampleTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "WebSourceKind",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 3934,
       "classification": "calculation",
       "classification_basis": "path-marker:solver",
@@ -14485,57 +14560,6 @@
           {
             "kind": "function",
             "name": "setParameters",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 923,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "66691e6fb1f426625b4e946fd1b742f91e3743e7865d61cf46769a68a184735b",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-CORE-COLLISIONCHECK-M-2D612363C771",
-      "language": "matlab",
-      "maintainer": "Tools module maintainers",
-      "path": "src/rrt_path_planner/matlab/src/core/collisionCheck.m",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "collisionCheck",
             "signature": null
           }
         ],

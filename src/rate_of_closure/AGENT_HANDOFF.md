@@ -20,12 +20,6 @@ gear effect; #4130 extends `SpringDamperImpactModel` rather than duplicating
 it), `flight/`, `ground/`, `variation/`, `solver/`. Club physics for the
 fitting epics is the sibling `shared/python/golf_club/`.
 
-## Delivery Pattern
-
-PR #4466 predates this package and cannot merge. Twenty-two slices landed as
-#4517–#4547; #4571 owns the remaining camera reimplementation. Diff every
-candidate against current main and preserve main-owned tests.
-
 ## Active Epics — Golf Epics Merged
 
 Launch-monitor #4583 Release A merged (explicit-identity projects, bounded
@@ -35,28 +29,12 @@ paired-device validation without real paired observations.** #4584/#4599 merged
 strokes-gained v2 into both clients; #4600 owns the PyQt reference,
 #4602/#4608/#4610/#4613 the isolated rendered gates.
 
-Club Fitting #4549, Heavy Hit #4562, packaging #4579 complete; physics is
-shared-first in `shared/python/{golf_club,swing_sim}` (contracts `docs/specs/`).
-Putting #4800: P1-P3, P5, and P9 landed (2-D impact solve, green heightfields +
-`swing_sim.green_surface/1` + Holmes/Penner capture, `golf_club.putter_head/1`
-mesh-MOI import, UpstreamDrift topography adapter). Planar APIs delegate
-bit-identically. P5 added `swing_sim.putting_result/2` (`puttingResultWire.ts`),
-which **supersedes v1 with no silent migration** — the v2 reader refuses a v1
-payload and the v1 archive reader refuses v2, so never "upgrade" a retained
-record — plus `swing_sim.putt_dispersion/1` (`puttingDispersion.ts`). Monte-Carlo
-**execution** stays Python-authoritative (one canonical seeded sampler); the web
-consumes the wire, so do not port the sampler. P4, P6, P7, P8 remain.
-
-Clubhead-realism #4799: G1-G3 landed. Loft is a **leading-edge lean** — the
-head is built unlofted then sheared about `y = y_le`, so the leading edge stays
-at the hosel station and the face slopes back (`head_profiles.lean_point` =
-`clubHeads.leanPoint`, shared by the mesh, `face_center_point`, `hosel_point`).
-Hosels are loft-aware (blades `x_le - offset`, **offset never onset**); blade
-soles are real (iron ~21 mm flat on `y = y_le`, wedge ~29 mm muscle-back with a
-0.3-0.8 mm bounce dip). Face sections are untouched, so strike-view extents and
-hosel pins did not move. Gates cover all 16 clubs in both twins. **G4**
-(camera-golden + visual-baseline regeneration) and **G5** (profile-view
-acceptance) remain open.
+Club Fitting #4549, Heavy Hit #4562, and packaging #4579 are complete; physics
+is shared-first in `shared/python/{golf_club,swing_sim}`. Putting #4800 has
+P1-P3, P5, and P9; `putting_result/2` supersedes v1 without silent migration,
+and Python remains the sole Monte-Carlo authority. P4, P6-P8 remain.
+Clubhead-realism #4799 has G1-G3; leading-edge lean, offset hosels, real blade
+soles, and all 16 cross-runtime club gates are protected. G4-G5 remain.
 
 #4142 remains Python-authoritative; PyQt6 and React do not reimplement physics.
 R10.3, R10.4, R11.1, and R11.3 are protected-merged through
@@ -88,18 +66,23 @@ tier. PR #4733 merged V0.1 with purpose, prerequisites, and reciprocal
 counterparts; PR #4736 merged strict TypeScript-reader parity as `34a809d9`.
 PR #4738 merged V5.2's fail-closed changed-path governance as `4b4aec421`.
 The audit is 8 verified / 23 partial; seven blockers and two human actions remain.
+Issue #4832 is active from clean worktree `Tools-worktrees/4832-r14-6-evidence`
+on `feat/issue-4832-r14-6-evidence`. It adds the fifth manifest,
+`visualization_acceptance.v1.json`, whose strict reader expands all 20 tabs over
+registered states and reference cases and binds scientific/nonvisual context.
+It also owns the rendered-review packet and keeps both human actions pending.
 
-### Adding a Tab: The Four-Manifest Lockstep (Read Before Starting C6/C7/H4)
+### Adding a Tab: The Five-Manifest Lockstep (Read Before Starting C6/C7/H4)
 
-A new tab is **not** just a widget. Four packaged manifests declare the tab set,
+A new tab is **not** just a widget. Five packaged manifests declare the tab set,
 cross-checked by **order-strict tuple equality** on `(surface, tab_id)` against
-`visualization_tabs.v1.json`. Adding to three of four — or to all four in a
+`visualization_tabs.v1.json`. Adding to four of five — or to all five in a
 different order — fails with a message that does not name the offending file.
 
-All four live in `src/rate_of_closure/`: `visualization_tabs.v1.json` is the
+All five live in `src/rate_of_closure/`: `visualization_tabs.v1.json` is the
 authority (20 entries = 10 `pyqt` + 10 `react`); `visualization_accessibility.v1.json`,
-`visualization_performance.v1.json` and `visual_baselines.v1.json` must match it
-entry-for-entry, in order.
+`visualization_performance.v1.json`, `visual_baselines.v1.json`, and
+`visualization_acceptance.v1.json` must match it entry-for-entry, in order.
 
 - Surface strings are **`pyqt` and `react`** — _not_ `pyqt6`, despite the
   package being `ui/pyqt6`.

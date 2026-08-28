@@ -9079,6 +9079,7 @@
           "tests/rate_of_closure/test_rate_launch_pyqt_authority.py",
           "tests/rate_of_closure/test_scalar_ensemble_contract.py",
           "tests/rate_of_closure/test_variation_plot_data.py",
+          "tests/rate_of_closure/test_visualization_acceptance_manifest.py",
           "tests/rate_of_closure/test_visualization_performance_manifest.py",
           "tests/rate_of_closure/test_visualization_tab_manifest.py",
           "tests/rate_of_closure/test_web_companion_app.py",

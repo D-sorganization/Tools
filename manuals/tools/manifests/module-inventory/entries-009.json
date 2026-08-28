@@ -3,6 +3,62 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 15106,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "968462c170b81953ce71888588580d8ec5963101e9a49ffee0da44e10c6991b8",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-PUTTINGPANEL-TSX-EF05B4B04CD0",
+      "language": "typescript-react",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/components/PuttingPanel.tsx",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "PuttingPanel",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "cm",
+          "g",
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2989,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -11976,112 +12032,6 @@
         "public_surfaces": [],
         "test_paths": [],
         "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 9260,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e6f87fc7b06504ab55ed3cb80e2e5b0d870352d83fc149b4843d03b7666b64bc",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-DURABLEENSEMBLEEVIDENCE-TS-00EC526BF7CF",
-      "language": "typescript",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/model/durableEnsembleEvidence.ts",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "DURABLE_ENSEMBLE_ANALYSIS_METHOD",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "DURABLE_ENSEMBLE_EVIDENCE_SCHEMA",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "DURABLE_ENSEMBLE_FRAME",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "DURABLE_ENSEMBLE_LIMITATIONS",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "DURABLE_OUTPUTS",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "DurableAnalysisEvidence",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "DurableArchiveEvidence",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "DurableArchiveStatus",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "DurableEnsembleEvidence",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "DurableOutputMoments",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "parseDurableEnsembleEvidence",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "deg",
-          "m/s",
-          "rpm",
           "s"
         ],
         "validation_paths": []
