@@ -31,75 +31,75 @@ strokes-gained v2 into both clients; #4600 owns the PyQt reference and
 
 Club Fitting #4549, Heavy Hit #4562, and packaging #4579 are complete; physics
 is shared-first in `shared/python/{golf_club,swing_sim}`. Putting #4800 has
-P1-P5 and P9; `putting_result/2` supersedes v1 without silent migration, and
-Python remains the sole Monte-Carlo authority. P6-P8 remain.
+P1-P5, P7, and P9; `putting_result/2` supersedes v1 without silent migration,
+and Python remains the sole Monte-Carlo authority — the React twins mirror the
+outcome vocabulary and the deterministic single-putt evaluation only, never a
+second sampler, and the React Putting tab runs one chokepoint
+(`evaluatePuttWithTrajectory`). P6 (Qt tab) and P8 (shared 3D playback) remain;
+putt playback waits on P8's `playbackTransport.ts`/`TimedSample` seam and must
+not fork it.
 Clubhead-realism #4799 is complete (G1-G5): lean, offset hosels, real blade
 soles, 16 cross-runtime club gates, and toe-view acceptance gates over the
 **public** `parametric_head_mesh` (per-club tables plus a center-pivot
 counterfactual that reddens all 16 clubs if the lean is reverted). G4 rebuilt
 every regenerable consumer artifact through its own flow — all byte-identical —
-and gates the camera golden's `initial`/`limits`/`orbit_step_deg`/`zoom_step`
-in both twins. **Do not rebind the PyQt visual baselines to fix #4799**: all ten
-drift 924-2660 microunits against a 250 limit, including tabs with no clubhead,
-from glyph re-rasterization no repo change explains (#4844).
+and gates the camera golden's header block in both twins. **Do not rebind the
+PyQt visual baselines to fix #4799**: all ten drift 924-2660 microunits against
+a 250 limit, including tabs with no clubhead, from glyph re-rasterization no
+repo change explains (#4844).
 
 #4142 remains Python-authoritative; PyQt6 and React do not reimplement physics.
 R10.3, R10.4, R11.1 and R11.3 are protected-merged through `4ddec9175`. The
 complete-trial authority and `swing-trace-time-linear-contiguous/v1` preserve
 stable trial/point/frame identity, missing intervals, outcomes, failure
-semantics and approximate impact-marker error. The inherited 3-source by
+semantics and approximate impact-marker error; the inherited 3-source by
 4-adapter matrix has two verified double-pendulum cells and ten unavailable.
 
-R12.3 (PR #4782, `a1b00db14`) and R13.3 (PR #4784, `d6c8a0a67`) are
+R12.3 (#4782, `a1b00db14`) and R13.3 (#4784, `d6c8a0a67`) are
 protected-squash-merged; the paired-attribution schema binds one independently
 estimable source and optional exact locus to state, impact and shot scalars,
-preserving ten unsupported cells. R13.5 (PR #4794, `35853199b`) binds
-`morris-target-selection` v1 over kind/name/unit/point/time/frame and exact
-all-input or selected-source views. R14.3 issue #4792 replays from that base;
-its governed matrix proves PyQt/React parity from authoring through export —
-`all_together`, `individual` and `both` execution, dataset-free individual
-results, aggregate progress, cancellation, 1--4096 durable chunks. The ledger
-is 30 verified / 1 partial, all model-scenario screening views, not global main
-effects, causal anatomy, governed human validation or coaching authority. The
-`1f3f6ca7` PyQt variation baseline is shipped (#4797) without widening its
-calibrated renderer envelope.
+preserving ten unsupported cells. R13.5 (#4794, `35853199b`) binds
+`morris-target-selection` v1 over kind/name/unit/point/time/frame. R14.3 (#4792)
+replays from that base; its governed matrix proves PyQt/React parity from
+authoring through export. The ledger is 30 verified / 1 partial, all
+model-scenario screening views, not global main effects, causal anatomy,
+governed human validation or coaching authority.
 
 PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
-the initial React/PyQt visibility, accessibility, performance and baseline tier.
-PR #4733 merged V0.1 with purpose, prerequisites and reciprocal counterparts;
+the initial React/PyQt visibility, accessibility, performance and baseline
+tier. #4733 merged V0.1 with purpose, prerequisites and reciprocal counterparts;
 #4736 merged strict TypeScript-reader parity as `34a809d9` and #4738 merged
 V5.2's fail-closed changed-path governance as `4b4aec421`. PRs #4835/#4837 are
 protected-merged through `d7a95e2a4`; the fifth manifest expands all 20 tabs
 over registered states/reference cases and binds scientific/nonvisual context.
-PR #4838's extension checklist and immutable consumer map move the audit to 10
-verified / 21 partial. Executed render, performance, decimation,
-approved-image and human gaps remain; no pixel tolerance was loosened.
+PR #4838's checklist and immutable consumer map move the audit to 10 verified /
+21 partial; executed render, performance, decimation, approved-image and human
+gaps remain, and no pixel tolerance was loosened.
 
 ### Adding a Tab: The Five-Manifest Lockstep (Read Before Starting C6/C7/H4)
 
-A new tab is **not** just a widget. Five packaged manifests declare the tab set,
-cross-checked by **order-strict tuple equality** on `(surface, tab_id)` against
-`visualization_tabs.v1.json`. Adding to four of five — or to all five in a
-different order — fails with a message that does not name the offending file.
-All five live in `src/rate_of_closure/`: `visualization_tabs.v1.json` is the
-authority (20 entries = 10 `pyqt` + 10 `react`); `visualization_accessibility.v1.json`,
-`visualization_performance.v1.json`, `visual_baselines.v1.json` and
-`visualization_acceptance.v1.json` must match it entry-for-entry, in order.
+A new tab is **not** just a widget. Five packaged manifests in
+`src/rate_of_closure/` declare the tab set, cross-checked by **order-strict
+tuple equality** on `(surface, tab_id)`: `visualization_tabs.v1.json` is the
+authority (20 entries = 10 `pyqt` + 10 `react`) and `visualization_accessibility`,
+`visualization_performance`, `visual_baselines` and `visualization_acceptance`
+must match it entry-for-entry, in order. Adding to four of five — or to all five
+in a different order — fails without naming the offending file.
 
 - Surface strings are **`pyqt` and `react`**, _not_ `pyqt6`, despite `ui/pyqt6`.
 - PyQt6 registration: build the widget in `ui/pyqt6/main_window.py` (~line 127,
   beside `self._plots_tab = PlotsTab()`), then add a `PrimaryTabSpec`
-  `(module_id, widget, label)`; `create_primary_tabs` in `main_window_layout.py`
-  stores `module_id` via `setTabData`, which must equal the manifest `tab_id`.
+  `(module_id, widget, label)`; `create_primary_tabs` stores `module_id` via
+  `setTabData`, which must equal the manifest `tab_id`.
 - **Visual baselines cannot be produced locally.** Only the fleet workflows
   capture them (`RATE_VISUAL_BASELINE_CANDIDATE_DIR`); to inspect or approve
   one, download that run's `visual-baseline-candidates` artifact.
 - `visualization_tabs` demands a `primary_visual_locator` that resolves at
-  runtime — `pyqt_visualization_tab_probe.py` drives the real widget, so a
-  locator for a not-yet-rendered canvas fails there.
-- Gates (all in `tests/rate_of_closure/`): `test_visualization_tab_manifest.py`,
-  `test_visualization_accessibility.py`, `test_visualization_performance_manifest.py`,
-  `test_visual_baseline_compare.py`, `test_pyqt_visualization_tab_visibility.py`.
+  runtime — the probe drives the real widget, so a locator for a
+  not-yet-rendered canvas fails there.
+- Gates in `tests/rate_of_closure/`: the three `test_visualization_*_manifest`
+  /`accessibility` modules, `test_visual_baseline_compare.py` and
+  `test_pyqt_visualization_tab_visibility.py`.
 
 ## Must-Read Architecture Pointers
 
@@ -107,8 +107,8 @@ authority (20 entries = 10 `pyqt` + 10 `react`); `visualization_accessibility.v1
 2. `src/shared/python/swing_sim/impact/` — the contact-force law #4130 extends.
 3. `web/src/model/__fixtures__/` — golden fixtures pinning Python↔TS parity;
    changing one is a contract change on **both** sides, so land them together.
-4. `rust_core/swing-core/` — pendulum EOM + plane projection, pyo3 + wasm.
-5. `src/shared/python/golf_club/AGENT_HANDOFF.md` — fitting/heavy-hit physics.
+4. `rust_core/swing-core/` — pendulum EOM + plane projection, pyo3 + wasm; and
+   `src/shared/python/golf_club/AGENT_HANDOFF.md` — fitting/heavy-hit physics.
 
 ## Gate Commands (This Tool)
 
@@ -130,7 +130,7 @@ python3 -m ruff check src/rate_of_closure src/shared/python/swing_sim
 - Do not eagerly import `assembly_binding`, `engineering_sidecar` or
   `simulation_adapter` from `club/__init__.py`, nor `shared.python.golf_club` at
   module scope — both reach SciPy via `swing_sim.variation → solver → flight`,
-  breaking the Morris UI import contract. Use the lazy-export map.
+  breaking the Morris UI import contract; use the lazy-export map.
 
 ## Known Local-Environment Traps
 
