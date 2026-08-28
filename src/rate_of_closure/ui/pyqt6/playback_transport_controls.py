@@ -74,9 +74,7 @@ class PlaybackTransportControls(QWidget):
         self._subject_phrase = subject_phrase
         self._event_labels = tuple(event_labels)
         self._duration_s = 0.0
-        self._event_times_s: tuple[float, ...] = tuple(
-            0.0 for _ in self._event_labels
-        )
+        self._event_times_s: tuple[float, ...] = tuple(0.0 for _ in self._event_labels)
         self._current_time_s = 0.0
         self._speed = DEFAULT_SPEED
         self._elapsed = QElapsedTimer()
@@ -86,9 +84,7 @@ class PlaybackTransportControls(QWidget):
         self._timer.timeout.connect(self._advance)
         self._build_ui(scrub_tooltip, help_text, help_tooltip)
 
-    def _build_ui(
-        self, scrub_tooltip: str, help_text: str, help_tooltip: str
-    ) -> None:
+    def _build_ui(self, scrub_tooltip: str, help_text: str, help_tooltip: str) -> None:
         row = QHBoxLayout()
         row.setContentsMargins(4, 3, 4, 0)
         first_event = self._event_button(0)
@@ -96,8 +92,7 @@ class PlaybackTransportControls(QWidget):
         self.play_button.setAccessibleName(f"Play or Pause {self._subject_label}")
         self.restart_button = self._button("Restart", self.restart)
         later_events = tuple(
-            self._event_button(index)
-            for index in range(1, len(self._event_labels))
+            self._event_button(index) for index in range(1, len(self._event_labels))
         )
         self.event_buttons: tuple[QPushButton, ...] = (first_event, *later_events)
         for button in (

@@ -70,9 +70,7 @@ class TestGoldenParity:
             assert frame.lower_index == case["lower_index"]
             assert frame.fraction == pytest.approx(case["fraction"], abs=1e-12)
             assert frame.is_landing == case["is_landing"]
-            np.testing.assert_allclose(
-                frame.position_m, case["position_m"], atol=1e-12
-            )
+            np.testing.assert_allclose(frame.position_m, case["position_m"], atol=1e-12)
 
     def test_adjacent_sample_steps_reproduce_every_golden_step(
         self, golden: dict[str, Any], golden_trajectory: TimedTrajectory

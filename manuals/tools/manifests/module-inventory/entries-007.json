@@ -9224,10 +9224,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9896,
+      "bytes_lf": 9848,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9ea844be03df4605ede2c62fff5058528e02c50732494c63b43226da50db13e5",
+      "content_sha256_lf": "ff4150290ae91e2160f3bf330cd4f6f66ce800ea05bea67e0dae4276e7e2ed11",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-PLAYBACK-TRANSPORT-CONTROLS-PY-F9D4CC8C32D3",
       "language": "python",
