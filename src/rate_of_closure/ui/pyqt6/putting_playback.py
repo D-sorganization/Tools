@@ -5,21 +5,26 @@ rolling its break line across the 3-D green, replayed on the shared
 timeline. Two rules from P8 hold here verbatim.
 
 **Frames come from the recorded samples, never from re-simulation.**
-:func:`putt_playback_trajectory` lifts the retained
-:class:`~shared.python.swing_sim.putting.PuttResult` samples to the
-existing :class:`~rate_of_closure.simulation.flight_playback.TimedTrajectory`
-— the same sample-to-frame contract the flight views use — by reading
-each sample's elevation off the same
-:class:`~shared.python.swing_sim.putting.GreenSurface` the integrator
-ran on. Nothing is re-integrated and nothing is resampled.
+:func:`~rate_of_closure.simulation.putt_playback.putt_playback_trajectory`
+lifts the retained :class:`~shared.python.swing_sim.putting.PuttResult`
+samples to the existing
+:class:`~rate_of_closure.simulation.flight_playback.TimedTrajectory` —
+the same sample-to-frame contract the flight views use — by reading each
+sample's elevation off the same
+:class:`~shared.python.swing_sim.putting.GreenSurface` the integrator ran
+on. That lift lives in the runtime-neutral simulation layer beside the
+flight one, because it is the mapping P8 pins twin parity on; this module
+re-exports it for the callers P6 left pointing here.
 
 **Transport and camera state live elsewhere.** This widget takes a
 physical time through :meth:`PuttPlaybackView.set_time` and owns no
 timer, no speed, and no scrub: P8's subject-neutral
 ``PlaybackTransportControls`` drives it with "Putt" wording and
-Strike/Finish events. The camera is the Matplotlib 3-D axes' own orbit
-(drag to rotate), so named cameras arrive with #4571's
-``CameraViewportMixin`` without this module owning any camera state.
+Strike/Finish events through
+:class:`~rate_of_closure.ui.pyqt6.putt_playback_controls.PuttPlaybackPanel`.
+The camera is the Matplotlib 3-D axes' own orbit (drag to rotate), so
+named cameras arrive with #4571's ``CameraViewportMixin`` without this
+module owning any camera state.
 """
 
 from __future__ import annotations
@@ -31,10 +36,10 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QLabel, QVBoxLayout, QWidget
 
 from rate_of_closure.simulation.flight_playback import TimedTrajectory
+from rate_of_closure.simulation.putt_playback import putt_playback_trajectory
 from rate_of_closure.ui.pyqt6.figure_canvas import (
     LifecycleSafeFigureCanvas as FigureCanvas,
 )
-from shared.python.swing_sim.impact import GOLF_BALL_RADIUS_M
 from shared.python.swing_sim.putting import (
     HOLE_RADIUS_M,
     GreenSurface,
@@ -49,44 +54,6 @@ _MESH_NODES = 24
 
 #: Padding around the path/hole bounding box in the drawn green [m].
 _MESH_PAD_M = 0.35
-
-
-def putt_playback_trajectory(
-    result: PuttResult, surface: GreenSurface
-) -> TimedTrajectory:
-    """Lift one integrated putt to the shared playback trajectory.
-
-    Args:
-        result: The integrated putt whose retained samples are replayed.
-        surface: The exact green the putt was integrated on; elevations
-            are read from it so the ball rides the drawn surface.
-
-    Returns:
-        A :class:`TimedTrajectory` of ``(x, y, z)`` ball-centre
-        positions [m] at the recorded sample times, where ``x`` is the
-        target line, ``y`` is lateral (left positive) and ``z`` is
-        elevation.
-
-    Raises:
-        TypeError: If ``result`` is not a :class:`PuttResult`.
-        ValueError: If the retained samples are not a valid timeline.
-    """
-    if not isinstance(result, PuttResult):
-        raise TypeError("result must be a PuttResult")
-    heights = [
-        surface.height_m(x_m, y_m) + GOLF_BALL_RADIUS_M
-        for x_m, y_m in zip(result.path_x_m, result.path_y_m, strict=True)
-    ]
-    positions = np.column_stack(
-        (
-            np.asarray(result.path_x_m, dtype=float),
-            np.asarray(result.path_y_m, dtype=float),
-            np.asarray(heights, dtype=float),
-        )
-    )
-    return TimedTrajectory(
-        times_s=np.asarray(result.times_s, dtype=float), positions_m=positions
-    )
 
 
 class PuttPlaybackView(QWidget):

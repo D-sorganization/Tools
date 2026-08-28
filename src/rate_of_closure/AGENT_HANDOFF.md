@@ -30,18 +30,20 @@ strokes-gained v2 into both clients; #4600 owns the PyQt reference and
 #4602/#4608/#4610/#4613 the isolated rendered gates.
 
 Club Fitting #4549, Heavy Hit #4562, and packaging #4579 are complete; physics
-is shared-first in `shared/python/{golf_club,swing_sim}`. Putting #4800 has
-P1-P7 and P9; `putting_result/2` supersedes v1 without silent migration,
+is shared-first in `shared/python/{golf_club,swing_sim}`. Putting #4800 is
+complete (P1-P9); `putting_result/2` supersedes v1 without silent migration,
 and Python remains the sole Monte-Carlo authority — the React twins mirror the
 outcome vocabulary and the deterministic single-putt evaluation only, never a
 second sampler, and the React Putting tab runs one chokepoint
-(`evaluatePuttWithTrajectory`). P6 widened the **existing** Qt tab (no
-tab-identity change, so the four-manifest lockstep stayed shut) into
-`putting_{stroke,green}_controls` + `putting_playback`; its 3-D view takes a
-physical time and owns no timer/speed/scrub. Putt playback on either surface
-waits on P8's `playbackTransport.ts`/`TimedSample`/`PlaybackTransportControls`
-seam and must not fork it. The PyQt `putting` baseline is stale by construction
-too — P6 changed that tab's first viewport. P8 remains.
+(`evaluatePuttWithTrajectory`). P6 widened the **existing** Qt tab into
+`putting_{stroke,green}_controls` + `putting_playback`, whose 3-D view owns no
+transport; P8 bound it to the **one** shared transport — Qt
+`putt_playback_controls.PuttPlaybackPanel`, React `PlaybackTransportBar`
+(extracted out of `FlightPlayback3D`) — lifting samples through
+`simulation/putt_playback.py` + `model/puttPlayback.ts`, pinned by the `putt`
+block of the single `playback_transport_golden_v1.json`. **Never fork a second
+transport or golden.** That moved pyqt/putting 22 -> 29 controls; its PyQt
+baseline is stale by construction (P6/P8 both moved that first viewport).
 Clubhead-realism #4799 is complete (G1-G5): lean, offset hosels, real blade
 soles, 16 cross-runtime club gates, and toe-view acceptance gates over the
 **public** `parametric_head_mesh` (per-club tables plus a center-pivot

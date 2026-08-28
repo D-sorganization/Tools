@@ -1,4 +1,4 @@
-"""Putting tab — stroke, green, results, and 3-D playback (#4800 P6).
+"""Putting tab — stroke, green, results, and 3-D playback (#4800 P6 / P8).
 
 Left column: the delivered stroke
 (:mod:`~rate_of_closure.ui.pyqt6.putting_stroke_controls` — putter head,
@@ -8,7 +8,9 @@ grade and aspect or an imported heightfield, hole distance, capture
 model), then clickable result rows with explanations. Right column: the
 top-down green with the break trajectory and the hole-capture geometry
 over a speed-vs-distance plot, and the orbitable 3-D playback of the
-same recorded samples.
+same recorded samples on P8's shared transport (play/pause, restart,
+Strike/Finish jumps, scrub, speed) — one transport model, never a
+putting-specific copy.
 
 Every number on screen comes from one solve per recompute:
 ``strike_with_head`` (P1 impact through P3's head document) →
@@ -48,6 +50,10 @@ from rate_of_closure.putting_sample_inspector import (
     PuttingSamplePlan,
     PuttingSampleSeries,
     plan_putting_samples,
+)
+from rate_of_closure.ui.pyqt6.putt_playback_controls import (
+    PuttPlaybackControls,
+    PuttPlaybackPanel,
 )
 from rate_of_closure.ui.pyqt6.putting_green_controls import PuttingGreenControls
 from rate_of_closure.ui.pyqt6.putting_playback import PuttPlaybackView
@@ -129,11 +135,11 @@ class PuttingTab(QWidget):
 
         self._plot_view = PuttingPlotView()
         self._canvas = self._plot_view.canvas()
-        self._playback_view = PuttPlaybackView()
+        self._playback = PuttPlaybackPanel()
         visuals = QSplitter()
         visuals.setOrientation(Qt.Orientation.Vertical)
         visuals.addWidget(self._plot_view)
-        visuals.addWidget(self._playback_view)
+        visuals.addWidget(self._playback)
         visuals.setStretchFactor(0, 3)
         visuals.setStretchFactor(1, 2)
 
@@ -209,8 +215,12 @@ class PuttingTab(QWidget):
         return self._accepted_document
 
     def playback_view(self) -> PuttPlaybackView:
-        """The 3-D playback surface (transport and probe seam)."""
-        return self._playback_view
+        """The 3-D playback surface (probe seam)."""
+        return self._playback.view
+
+    def playback_controls(self) -> PuttPlaybackControls:
+        """The shared transport driving the 3-D playback (test seam)."""
+        return self._playback.controls
 
     def stroke_controls(self) -> PuttingStrokeControls:
         """The delivered-stroke control group (LoD seam for tests)."""
@@ -299,7 +309,7 @@ class PuttingTab(QWidget):
                 putting_document_values(document, solved.twist, self._format_m)
             )
             generation = object()
-            self._playback_view.set_putt(
+            self._playback.set_putt(
                 result, green.surface, hole_distance_m=green.hole_distance_m
             )
             self._plot_view.set_result(
@@ -317,7 +327,7 @@ class PuttingTab(QWidget):
             # The 2-D view is the retained-evidence authority and
             # restores itself; the derived playback is dropped so it
             # can never show a putt the tab has not accepted.
-            self._playback_view.clear()
+            self._playback.clear()
             self._plot_view.set_error(
                 f"Attempted configuration rejected ({context.label()}): {error}"
             )

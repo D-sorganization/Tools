@@ -1,4 +1,4 @@
-"""PyQt6 GUI smoke tests for the Putting tab (#4125 H3, #4800 P6).
+"""PyQt6 GUI smoke tests for the Putting tab (#4125 H3, #4800 P6/P8).
 
 Headless-safe; exercises the LoD seam — inputs go in through the
 public widgets, results come out through ``result()``/``document()``
@@ -18,6 +18,10 @@ pytest.importorskip("pytestqt")
 
 from PyQt6.QtCore import Qt  # noqa: E402
 
+from rate_of_closure.simulation.playback_transport import (  # noqa: E402
+    PLAYBACK_SPEEDS,
+    SCRUB_STEPS,
+)
 from rate_of_closure.ui.pyqt6.putting_tab import _ROWS, PuttingTab  # noqa: E402
 from shared.python.swing_sim.putting import (  # noqa: E402
     GridGreenSurface,
@@ -412,3 +416,66 @@ class TestPuttingPlayback:
         heights = trajectory.positions_m[:, 2]
         # Downhill straight ahead: elevation falls as the ball rolls out.
         assert heights[-1] < heights[0]
+
+    def test_transport_binds_the_view_without_a_second_transport(self, tab) -> None:  # type: ignore[no-untyped-def]
+        """P8's shared widget drives P6's view; nothing is re-implemented."""
+        from rate_of_closure.ui.pyqt6.playback_transport_controls import (
+            PlaybackTransportControls,
+        )
+
+        controls, view = tab.playback_controls(), tab.playback_view()
+        assert isinstance(controls, PlaybackTransportControls)
+        assert not hasattr(view, "timer")
+        assert controls.duration_s() == pytest.approx(view.duration_s())
+        assert controls.scrubber.maximum() == SCRUB_STEPS
+        assert [button.text() for button in controls.event_buttons] == [
+            "Strike",
+            "Finish",
+        ]
+        assert [
+            controls.speed_combo.itemData(index)
+            for index in range(controls.speed_combo.count())
+        ] == list(PLAYBACK_SPEEDS)
+
+    def test_transport_scrub_moves_the_recorded_ball(self, tab) -> None:  # type: ignore[no-untyped-def]
+        controls, view = tab.playback_controls(), tab.playback_view()
+        controls.scrubber.setValue(0)
+        start = view.status_text()
+        controls.scrubber.setValue(SCRUB_STEPS)
+        assert view.status_text() != start
+        assert controls.current_time_s() == pytest.approx(view.duration_s())
+        assert f"t {view.duration_s():.3f} s" in view.status_text()
+
+    def test_transport_event_jumps_land_on_the_recorded_endpoints(self, tab) -> None:  # type: ignore[no-untyped-def]
+        controls = tab.playback_controls()
+        strike, finish = tab.playback_view().event_times_s()
+        controls.jump_to_finish()
+        assert controls.current_time_s() == pytest.approx(finish)
+        controls.jump_to_strike()
+        assert controls.current_time_s() == pytest.approx(strike)
+        assert not controls.timer().isActive()
+
+    def test_clearing_collapses_the_transport_with_the_scene(self, tab, qtbot) -> None:  # type: ignore[no-untyped-def]
+        """A dropped scene must not leave a playable phantom timeline."""
+        from rate_of_closure.ui.pyqt6.putt_playback_controls import PuttPlaybackPanel
+
+        panel = PuttPlaybackPanel()
+        qtbot.addWidget(panel)
+        result = tab.result()
+        panel.set_putt(result, tab.green_controls().surface(), hole_distance_m=3.0)
+        assert panel.controls.duration_s() == pytest.approx(result.times_s[-1])
+        assert panel.controls.play_button.isEnabled()
+        panel.clear()
+        assert panel.view.trajectory() is None
+        assert panel.controls.duration_s() == 0.0
+        assert not panel.controls.play_button.isEnabled()
+
+    def test_recompute_readopts_the_transport_timeline(self, tab) -> None:  # type: ignore[no-untyped-def]
+        controls = tab.playback_controls()
+        before = controls.duration_s()
+        tab.green_controls().stimp_spin.setValue(
+            tab.green_controls().stimp_spin.value() + 2.0
+        )
+        assert controls.duration_s() != pytest.approx(before)
+        assert controls.duration_s() == pytest.approx(tab.playback_view().duration_s())
+        assert controls.current_time_s() == 0.0

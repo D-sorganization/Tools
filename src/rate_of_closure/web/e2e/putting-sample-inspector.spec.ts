@@ -50,7 +50,7 @@ for (const viewport of [
     const startBox = await start.boundingBox();
     if (startBox === null) throw new Error("putting start sample has no rendered rectangle");
     await page.mouse.click(startBox.x + startBox.width / 2, startBox.y + startBox.height / 2);
-    const status = page.getByRole("status");
+    const status = page.getByRole("status", { name: "Selected putt sample" });
     await expect(status).toContainText("Source sample 0 (zero-based)");
     await expect(page.getByTestId("putting-selected-sample")).toHaveCount(2);
     const displayedContext = page.getByLabel("Displayed putting result context");

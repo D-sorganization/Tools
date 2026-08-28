@@ -75,6 +75,7 @@ from .playback_transport import (
     scrub_value,
     time_at_scrub,
 )
+from .putt_playback import putt_playback_trajectory
 from .session import (
     BALL_POSITION_M,
     DEFAULT_DRIVER_TEE_HEIGHT_M,
@@ -155,6 +156,7 @@ __all__ = [
     "launch_from_delivery",
     "launch_from_direct",
     "make_source",
+    "putt_playback_trajectory",
     "run_simulation",
     "representative_wedge_parameters_for_club",
     "turf_interaction_for_run",

@@ -186,10 +186,11 @@
     {
       "surface": "react",
       "tab_id": "putting",
-      "purpose": "Inspect the delivered putt stroke, model-conditional path, speed, capture evidence, and synchronized sample state.",
+      "purpose": "Inspect the delivered putt stroke, model-conditional path, speed, capture evidence, synchronized sample state, and timeline playback of the retained trajectory samples.",
       "data_prerequisites": [
         "Putt initial conditions, surface parameters, and putting-model identity.",
-        "Delivered stroke parameters, putter head identity, and hole-capture model."
+        "Delivered stroke parameters, putter head identity, and hole-capture model.",
+        "The retained integrator samples the playback timeline replays, lifted onto the same green surface the putt was solved on."
       ],
       "counterpart_tab_id": "putting",
       "classification": "visual-first",
@@ -375,11 +376,12 @@
     {
       "surface": "pyqt",
       "tab_id": "putting",
-      "purpose": "Inspect model-conditional putt path, speed, and synchronized sample state.",
+      "purpose": "Inspect model-conditional putt path, speed, synchronized sample state, and orbitable 3-D timeline playback of the retained trajectory samples.",
       "data_prerequisites": [
         "Putt initial conditions, surface parameters, and putting-model identity.",
         "A complete delivered stroke: putter-head identity with its provenance kind, resolved pace, and the aim, face, path, attack, and strike-location parameters the impact solve declares.",
-        "A green surface with a declared provenance — planar grade and aspect, or an imported heightfield read through its own declared wire — together with the hole distance and the named hole-capture model."
+        "A green surface with a declared provenance — planar grade and aspect, or an imported heightfield read through its own declared wire — together with the hole distance and the named hole-capture model.",
+        "The retained integrator samples the playback timeline replays, lifted onto the same green surface the putt was solved on."
       ],
       "counterpart_tab_id": "putting",
       "classification": "visual-first",

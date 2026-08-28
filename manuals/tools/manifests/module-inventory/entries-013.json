@@ -3,6 +3,259 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 1955,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f8109a67be615f855d486b0312159be4f503a2919bd472aad20d81a95dbe21f5",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-QT-WORKSPACE-PY-56528427F179",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/_qt/workspace.py",
+      "purpose": "Workspace / plot slash-command bridge (Tools issue #2849).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "dispatch_workspace_command",
+            "signature": "dock: Any, cmd: str, arg: str"
+          },
+          {
+            "kind": "function",
+            "name": "handle_plot",
+            "signature": "dock: Any, arg: str"
+          },
+          {
+            "kind": "function",
+            "name": "handle_ws_read",
+            "signature": "dock: Any, arg: str"
+          },
+          {
+            "kind": "function",
+            "name": "handle_ws_write",
+            "signature": "dock: Any, arg: str"
+          },
+          {
+            "kind": "re-export",
+            "name": "build_workspace_context_block",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4073,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2e6390da3a582e1e5dc93d8fdfec628f1397fcb8af323e21f50a4c93d222d7ed",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-QUICK-BAR-THEME-PY-D40714BAD180",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/_quick_bar_theme.py",
+      "purpose": "Pure-Python theme helpers for ChatQuickBar.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ThemeProviderProtocol",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/chat/test_quick_bar.py"
+        ],
+        "unit_mentions": [
+          "bar"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1194,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "936e9561d9a776af0472d035a233a150d810e3d35207d6e89c9d14a985ce0497",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-ROUTER-PROTOCOL-ADAPTERS-PY-483FEE06E602",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/_router_protocol_adapters.py",
+      "purpose": "Private adapters between the chat router and shared WebSocket protocol.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "router_message_context",
+            "signature": "message: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "router_session_info_extra",
+            "signature": "websocket: WebSocket, _state: ChatWebSocketState"
+          },
+          {
+            "kind": "function",
+            "name": "terminal_runtime",
+            "signature": "websocket: WebSocket"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1961,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c3feefbff498bc245b06dad45f81b1f64c7c71439771a3518f8d0d50153b1c2b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-THEME-PROTOCOL-PY-D93A27FAE0B8",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/_theme_protocol.py",
+      "purpose": "Theme provider protocol for the portable chat dock widget.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ThemeProviderProtocol",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_DEFAULT_DARK_COLORS",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 6736,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -16317,307 +16570,6 @@
         "public_surfaces": [],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 11192,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0fac63297ebc9245b9b29150a9c634bb4e9b3ab7eaf02a712e9c96748c12cbac",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-LIBRARY-CACHE-PY-453BD54FF773",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/library/cache.py",
-      "purpose": "Model caching system for offline access and performance.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CacheConfig",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CacheEntry",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ModelCache",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/document_processing/pdf_renamer/tests/test_cache.py",
-          "src/shared/python/model_generation/tests/test_library.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 11237,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6d064c470f10fff933b749f0028f7b19035fa1868e35110715621c551c87ae75",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-LIBRARY-GITHUB-IMPORTER-PY-1EE49B6D1DAB",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/library/github_importer.py",
-      "purpose": "GitHub Importer for Model Library.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "https://api.github.com",
-          "https://api.github.com/search/repositories"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "GitHubImporter",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ImportResult",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_ALLOWED_GITHUB_HOSTS",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/model_generation/tests/test_github_importer.py"
-        ],
-        "unit_mentions": [
-          "N"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 30690,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "637e153bb06b0f8ebfa5e58d767e6df970046d944b9992f3c8c6bd4597700da2",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-LIBRARY-MODEL-LIBRARY-PY-CBAB43E551B2",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/library/model_library.py",
-      "purpose": "Model Library for managing URDF model collections.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "https://api.github.com/repos/{owner"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "LibraryConfig",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ModelCategory",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ModelEntry",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ModelFormat",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ModelLibrary",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RepositorySource",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 17044,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f2d1469c131f2af2d1780fa56ed5aed4bd421cba7f7bdad3975d0ce60f3e3c33",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-LIBRARY-REPOSITORY-PY-8A0633B0EEEB",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/library/repository.py",
-      "purpose": "Repository interfaces for model library.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "https://api.github.com",
-          "https://github.com/{self._owner",
-          "https://raw.githubusercontent.com"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CompositeRepository",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GitHubRepository",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "LocalRepository",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "Repository",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RepositoryModel",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_ALLOWED_GITHUB_HOSTS",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/model_generation/tests/test_library.py",
-          "tests/shared/python/model_generation/test_repository.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
         "validation_paths": []
       }
     }

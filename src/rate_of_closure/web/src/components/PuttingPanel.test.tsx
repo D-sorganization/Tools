@@ -4,6 +4,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { PuttingPanel } from "./PuttingPanel";
+import { SCRUB_STEPS } from "../model/playbackTransport";
 import { evaluatePuttWithTrajectory } from "../model/puttingScenario";
 
 type Authority = typeof evaluatePuttWithTrajectory;
@@ -105,16 +106,16 @@ describe("PuttingPanel accepted-study authority", () => {
     const { rerender } = render(<PuttingPanel distanceUnit="m" />);
     const path = screen.getByRole("img", { name: /interactive putt path/i });
     fireEvent.keyDown(path, { key: "Home" });
-    expect(screen.getByRole("status")).toHaveTextContent("Source sample 0");
+    expect(screen.getByRole("status", { name: "Selected putt sample" })).toHaveTextContent("Source sample 0");
 
     rerender(<PuttingPanel distanceUnit="yd" />);
-    expect(screen.getByRole("status")).toHaveTextContent("Source sample 0");
+    expect(screen.getByRole("status", { name: "Selected putt sample" })).toHaveTextContent("Source sample 0");
 
     fireEvent.change(screen.getByRole("textbox", { name: "Slope grade %" }), {
       target: { value: "1" },
     });
     fireEvent.blur(screen.getByRole("textbox", { name: "Slope grade %" }));
-    expect(screen.getByRole("status")).toHaveTextContent(
+    expect(screen.getByRole("status", { name: "Selected putt sample" })).toHaveTextContent(
       "No trajectory sample selected",
     );
   });
@@ -143,7 +144,7 @@ describe("PuttingPanel accepted-study authority", () => {
     expect(screen.getByRole("alert")).toHaveTextContent(
       "solver authority unavailable",
     );
-    expect(screen.getByRole("status")).toHaveTextContent("Source sample 0");
+    expect(screen.getByRole("status", { name: "Selected putt sample" })).toHaveTextContent("Source sample 0");
     expect(screen.getAllByTestId("putting-selected-sample")[0]).toBe(marker);
     expect(path.innerHTML).toBe(acceptedGeometry);
     expect(
@@ -215,8 +216,86 @@ describe("PuttingPanel accepted-study authority", () => {
       target: { value: "1" },
     });
     fireEvent.blur(screen.getByRole("textbox", { name: "Slope grade %" }));
-    expect(screen.getByRole("status")).toHaveTextContent(
+    expect(screen.getByRole("status", { name: "Selected putt sample" })).toHaveTextContent(
       "No trajectory sample selected",
+    );
+  });
+});
+
+describe("PuttingPanel playback on the shared transport (#4800 P8)", () => {
+  it("exposes the shared transport with Putt wording and Strike/Finish jumps", () => {
+    render(<PuttingPanel />);
+
+    expect(screen.getByRole("button", { name: "Play Putt" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Restart Putt" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Jump to Strike" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Jump to Finish" })).toBeEnabled();
+    expect(screen.getByRole("slider", { name: "Putt Time" })).toHaveAttribute(
+      "max",
+      String(SCRUB_STEPS),
+    );
+    expect(screen.getByLabelText("Playback Speed")).toHaveValue("1");
+    expect(screen.getByLabelText("Putt playback position")).toHaveTextContent(
+      /^0\.00 \/ \d+\.\d\d s$/,
+    );
+  });
+
+  it("replays the retained samples: scrubbing moves the reported frame", () => {
+    render(<PuttingPanel />);
+
+    const frame = screen.getByRole("status", { name: "Putt playback frame" });
+    expect(frame).toHaveTextContent(/^t 0\.000 s of \d+\.\d{3} s;/);
+    const start = frame.textContent;
+    fireEvent.change(screen.getByRole("slider", { name: "Putt Time" }), {
+      target: { value: String(SCRUB_STEPS) },
+    });
+    expect(frame.textContent).not.toBe(start);
+    expect(frame).toHaveTextContent(/elevation -?\d+\.\d{3} m; (holed|in play)\.$/);
+  });
+
+  it("jumps to the recorded strike and finish samples", () => {
+    render(<PuttingPanel />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Jump to Finish" }));
+    const finish = screen.getByLabelText("Putt playback position").textContent;
+    const [current, total] = (finish ?? "").replace(" s", "").split(" / ");
+    expect(current).toBe(total);
+    expect(Number(total)).toBeGreaterThan(0);
+    fireEvent.click(screen.getByRole("button", { name: "Jump to Strike" }));
+    expect(screen.getByLabelText("Putt playback position")).toHaveTextContent(
+      /^0\.00 \//,
+    );
+  });
+
+  it("draws the playback ball on the accepted green view", () => {
+    const view = render(<PuttingPanel />);
+
+    const ball = view.container.querySelector(
+      '[data-testid="putt-playback-ball"]',
+    );
+    expect(ball).not.toBeNull();
+    const startX = ball?.getAttribute("cx");
+    fireEvent.click(screen.getByRole("button", { name: "Jump to Finish" }));
+    expect(
+      view.container
+        .querySelector('[data-testid="putt-playback-ball"]')
+        ?.getAttribute("cx"),
+    ).not.toBe(startX);
+  });
+
+  it("returns to the strike when a new putt is accepted", () => {
+    render(<PuttingPanel />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Jump to Finish" }));
+    expect(screen.getByLabelText("Putt playback position")).not.toHaveTextContent(
+      /^0\.00 \//,
+    );
+    fireEvent.change(screen.getByRole("textbox", { name: "Slope grade %" }), {
+      target: { value: "2" },
+    });
+    fireEvent.blur(screen.getByRole("textbox", { name: "Slope grade %" }));
+    expect(screen.getByLabelText("Putt playback position")).toHaveTextContent(
+      /^0\.00 \//,
     );
   });
 });

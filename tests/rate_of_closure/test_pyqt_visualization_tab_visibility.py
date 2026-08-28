@@ -66,13 +66,14 @@ def test_initial_variation_execution_policy_is_visible_and_bounded(qtbot) -> Non
 def test_initial_putting_delivery_and_green_controls_are_visible_and_named(
     qtbot,
 ) -> None:  # type: ignore[no-untyped-def]
-    """Expose the whole #4800 P6 delivery in the first viewport.
+    """Expose the whole #4800 P6/P8 delivery in the first viewport.
 
     The widened Putting surface must not push its own controls out of
     reach: every delivery and green control the impact solve and the
     surface integrator read is visible and carries a bounded accessible
-    name, and both the 2-D inspector and the 3-D playback canvas render
-    inside the tab.
+    name, both the 2-D inspector and the 3-D playback canvas render
+    inside the tab, and P8's shared transport that drives the playback is
+    reachable beside them.
     """
 
     tab = PuttingTab()
@@ -109,6 +110,23 @@ def test_initial_putting_delivery_and_green_controls_are_visible_and_named(
     assert inspector.isVisible() and playback.isVisible()
     assert inspector.height() >= 240
     assert playback.accessibleName() == "Rotatable 3D putt playback"
+
+    # #4800 P8: the shared transport that drives the 3-D view is part of
+    # the registered surface, so it is reachable in the first viewport
+    # with bounded names rather than hidden behind a disclosure.
+    transport = tab.playback_controls()
+    for control in (
+        transport.strike_button,
+        transport.play_button,
+        transport.restart_button,
+        transport.finish_button,
+        transport.scrubber,
+        transport.speed_combo,
+    ):
+        assert control.isVisible()
+    assert transport.scrubber.accessibleName() == "Putt Time"
+    assert transport.play_button.accessibleName() == "Play or Pause Putt"
+    assert transport.time_label.accessibleName() == "Putt Playback Time"
 
 
 def _probe(

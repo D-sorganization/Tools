@@ -3,6 +3,126 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 1318,
+      "classification": "calculation",
+      "classification_basis": "path-marker:torque",
+      "content_sha256_lf": "8e213f3c0dc66ecc44b1437d621803e18e26af2ffc499ef3984952ab459cacb2",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-TORQUE-PROFILE-WIDGETS-PY-AAD6EBA439D3",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/ui/pyqt6/torque_profile_widgets.py",
+      "purpose": "Shared widget metadata for prescribed joint-torque profile authoring.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "MODEL_JOINTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MODE_DESCRIPTIONS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "clickable_button",
+            "signature": "button: QPushButton, tooltip: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3635,
+      "classification": "calculation",
+      "classification_basis": "path-marker:torque",
+      "content_sha256_lf": "0297bd313dfe279c4c1977aecbbff032918faff10a376cc4563c8fc88ff5bf19",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-TORQUE-PROFILE-WORKSPACE-PY-37589FD79397",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/ui/pyqt6/torque_profile_workspace.py",
+      "purpose": "Workspace capture/apply mixin for the native torque-profile editor.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "TorqueProfileWorkspaceMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 5602,
       "classification": "calculation",
       "classification_basis": "path-marker:filter",
@@ -7904,10 +8024,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3664,
+      "bytes_lf": 3698,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9fd58777529bacc0c157933a132d57cc0e1968bb0731b0c397f79bd4aecafdf5",
+      "content_sha256_lf": "2f079b823b0129d30fed1e7278d596041d58384b33bdeac7b4e8f2efdd718ea2",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-E2E-PUTTING-SAMPLE-INSPECTOR-SPEC-TS-5939E7174540",
       "language": "typescript",
@@ -8356,10 +8476,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11390,
+      "bytes_lf": 11860,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a63dbb778227e59359d8fb3b82e21131420e5da3134b55a9560872aa7dbb2062",
+      "content_sha256_lf": "f3be1f8118dbbca6bbf578d369a5024407cc8c842a5bbd268a9dc665a4d97f12",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-E2E-VISUALIZATION-TAB-VISIBILITY-SPEC-TS-9730C4E18FC5",
       "language": "typescript",
@@ -8393,6 +8513,7 @@
         "public_surfaces": [],
         "test_paths": [],
         "unit_mentions": [
+          "bar",
           "mm",
           "s"
         ],
@@ -10560,10 +10681,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9468,
+      "bytes_lf": 5696,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "34e13da11cfb97e35f3fbb6c5a4ce72b33d1708bc0d09bb31e356c8f29288b9c",
+      "content_sha256_lf": "0cf7146e7baef61f778a429806358037f6bbbd551414da5d01741443b3e076bb",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-FLIGHTPLAYBACK3D-TSX-3445431C32C6",
       "language": "typescript-react",
@@ -12384,60 +12505,15 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3413,
+      "bytes_lf": 6177,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6bfc4827ce0a20bd7ec18946c1a1dfae01dc6078fd1b09ff767750d3d015071f",
+      "content_sha256_lf": "4e44e74eed3ec07ddf86af0737198cab778ba68c5e9eef39d5db815930549acd",
       "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-PLOTCANVASCARD-TEST-TSX-9B3F5BA1908A",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-PLAYBACKTRANSPORTBAR-TSX-5602C107C0FE",
       "language": "typescript-react",
       "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/components/PlotCanvasCard.test.tsx",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [
-          "m/s",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 15079,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7e061fa0c0c7d2222420ec4149456b6fc7264dffd8b37b878d42635edf8e705d",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-PLOTCANVASCARD-TSX-85C7536DF86E",
-      "language": "typescript-react",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/components/PlotCanvasCard.tsx",
+      "path": "src/rate_of_closure/web/src/components/PlaybackTransportBar.tsx",
       "purpose": null,
       "review_status": "inventory-baseline",
       "risk_tags": [
@@ -12469,62 +12545,21 @@
         "public_surfaces": [
           {
             "kind": "export",
-            "name": "LegendPosition",
+            "name": "PlaybackEvent",
             "signature": null
           },
           {
             "kind": "export",
-            "name": "PlotCanvasCard",
+            "name": "PlaybackTransportBar",
             "signature": null
           }
         ],
         "test_paths": [],
         "unit_mentions": [
           "bar",
+          "g",
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5997,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "997016b91656c0f0635018036a8cd542f8ad695d62344c0b8feb0506972f2953",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-PLOTSPANEL-TEST-TSX-EC6C01479A35",
-      "language": "typescript-react",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/components/PlotsPanel.test.tsx",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }
