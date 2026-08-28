@@ -2,6 +2,483 @@
   "authority": "D-sorganization/Tools",
   "entries": [
     {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10444,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e77f1c9a5ca8030e1fd11b76157ff912e4727505c1092e279230a37eee9e9cb6",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-SCALARENSEMBLECONTRACT-TS-6B87178C67CF",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/scalarEnsembleContract.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "SCALAR_ENSEMBLE_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ScalarAvailability",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ScalarCohortDefinition",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ScalarEnsembleInput",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ScalarEnsembleProvenance",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ScalarEnsembleResult",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ScalarEnsembleRow",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ScalarEnsembleStage",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ScalarScatterData",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ScalarScatterPoint",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ScalarVariableCategory",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ScalarVariableDefinition",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "buildScalarEnsembleScatter",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "createScalarEnsemble",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "scalarEnsembleRowId",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3877,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "191a3a157e997f1c6b3c4b96916612b328c6ed0d4c201004213d56fb6f86fc4c",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-SCALARENSEMBLECSV-TEST-TS-E36E4D507C24",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/scalarEnsembleCsv.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "m/s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2853,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "08172bda83898e647f1344c6251549dcf3d10adbe4d5701be51368d115f532dd",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-SCALARENSEMBLECSV-TS-C640B255AF97",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/scalarEnsembleCsv.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "nonCompleteReasonSummary",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "scalarEnsembleToCsv",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "spreadsheetCsvCell",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6521,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e9b244d83176f9f3e58c618cc483d696bc24e4f87b9ff904fe3bee8b7cfbbca4",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-SCALARENSEMBLEWIRE-TS-41D2FDEABD22",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/scalarEnsembleWire.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "parseScalarEnsembleWire",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2862,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "730c5ebb2b11ebb7d797c917a0bd53935e9b6c3b395efb757b09b54f2c3be5d1",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-SCREWANALYSIS-TEST-TS-F7631A981E6D",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/screwAnalysis.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9200,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "320c516d989c06e29b2167a58b3dfbb62d80ca89163219d55df5028856a71559",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-SCREWANALYSIS-TS-65CB23318F7A",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/screwAnalysis.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "JointMotionAtTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "MotionKind",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "MotionProjectionTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ScrewGlyphTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ScrewMotionTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "Twist6",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "Vec3",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "analyzeTwist",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "buildScrewGlyph",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "jointMotionAt",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "projectMotion",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2929,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f27daf38e44d952ca2a9e350a2f8e9d4d338ae681955ae58da4d2564e947996d",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-SHA256-TS-85E2D5BAFF2E",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/sha256.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "sha256Text",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "provisional",
       "bytes_lf": 13264,
       "classification": "calculation",
@@ -14275,349 +14752,6 @@
         "unit_mentions": [
           "rad"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 329,
-      "classification": "calculation",
-      "classification_basis": "path-marker:rotation",
-      "content_sha256_lf": "e47d60dda42f404dd98a6cb4006c5047ff6a5fd401180452f9111ed27a9c368f",
-      "family": "rotation-converter-calculation",
-      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-WEB-SRC-INDEX-CSS-0C654458B0CE",
-      "language": "css",
-      "maintainer": "Rotation converter maintainers",
-      "path": "src/rotation_converter/web/src/index.css",
-      "purpose": null,
-      "review_status": "review-required",
-      "risk_tags": [
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 236,
-      "classification": "calculation",
-      "classification_basis": "path-marker:rotation",
-      "content_sha256_lf": "6d64ef738d4185c22b804f5ec27ec5adc76d4c90690c91b06557d82961defa57",
-      "family": "rotation-converter-calculation",
-      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-WEB-SRC-MAIN-TSX-71B2FFA94B09",
-      "language": "typescript-react",
-      "maintainer": "Rotation converter maintainers",
-      "path": "src/rotation_converter/web/src/main.tsx",
-      "purpose": null,
-      "review_status": "review-required",
-      "risk_tags": [
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 168,
-      "classification": "calculation",
-      "classification_basis": "path-marker:rotation",
-      "content_sha256_lf": "429758169a4832f34db64fcfffc86f6df42e86992280cc896ba04a29246a9cf3",
-      "family": "rotation-converter-calculation",
-      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-WEB-TAILWIND-CONFIG-JS-3CA5EE34E537",
-      "language": "javascript",
-      "maintainer": "Rotation converter maintainers",
-      "path": "src/rotation_converter/web/tailwind.config.js",
-      "purpose": null,
-      "review_status": "review-required",
-      "risk_tags": [
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 361,
-      "classification": "calculation",
-      "classification_basis": "path-marker:rotation",
-      "content_sha256_lf": "ebc6ee956df20965b19847bb414361a92b4fac08b04dbd351b543803568d8ead",
-      "family": "rotation-converter-calculation",
-      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-WEB-VITE-CONFIG-TS-2681F2FB62CE",
-      "language": "typescript",
-      "maintainer": "Rotation converter maintainers",
-      "path": "src/rotation_converter/web/vite.config.ts",
-      "purpose": null,
-      "review_status": "review-required",
-      "risk_tags": [
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 251,
-      "classification": "calculation",
-      "classification_basis": "path-marker:rotation",
-      "content_sha256_lf": "3a5959546231ff5c5300c52d775babf15377b865bd381f810f23384d40bbe817",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-ROTATION-TRANSFORMS-INIT-PY-81561691B103",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/rotation_transforms/__init__.py",
-      "purpose": "Compatibility shim for ``shared.python.rotation_transforms``.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 33,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d8dcdc5c703e5ad99933983ad5e759ad98727cbbae6477a15322a779ce6a3bc8",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-INIT-PY-BC047B6E7F57",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/rrt_path_planner/__init__.py",
-      "purpose": "Package: rrt_path_planner.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 776,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7b0751fe67cc7b8d74567cd405a5436ec8802e3f07dca1125d96a4b0fa23d771",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-LAUNCH-RRT-ASTEROID-NAVIGATOR-PY-E2FCA8704DD7",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/rrt_path_planner/launch_rrt_asteroid_navigator.py",
-      "purpose": "Standalone launcher for the RRT asteroid navigator.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "CURRENT_FILE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PYTHON_SRC",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "REPO_ROOT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_RRT_ROOT",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

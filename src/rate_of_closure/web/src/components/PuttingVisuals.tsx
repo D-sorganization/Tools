@@ -1,8 +1,17 @@
-/** Bounded synchronized path/speed evidence and exact sample inspection. */
+/**
+ * Bounded synchronized path/speed evidence and exact sample inspection.
+ *
+ * The green view draws only what an accepted study measured: the
+ * retained skid/pure-roll samples, and — when the `putting_result/2`
+ * record is available (#4800 P5/P7) — the launched start line, the
+ * apex of the break, and the speed-dependent effective hole radius the
+ * capture decision was actually taken against (#4800 P2).
+ */
 
 import type { KeyboardEvent, PointerEvent } from "react";
 
 import { captureSpeedMps, type PuttResult } from "../model/putting";
+import type { PuttingResultDocument } from "../model/puttingResultWire";
 import {
   navigatePuttingSamples,
   nearestPuttingSample,
@@ -18,6 +27,8 @@ interface PuttingVisualsProps {
   readonly holeX: number;
   readonly grade: number;
   readonly aspect: number;
+  /** The accepted v2 record; absent for a bare trajectory preview. */
+  readonly document?: PuttingResultDocument | null;
 }
 
 interface PlotPoint {
@@ -30,6 +41,8 @@ const PATH_WIDTH = 640;
 const PATH_HEIGHT = 320;
 const SPEED_WIDTH = 640;
 const SPEED_HEIGHT = 180;
+/** Below this the putt did not break; an apex ring would be noise. */
+const APEX_BREAK_FLOOR_M = 0.005;
 
 function renderedPoints(svg: SVGSVGElement, points: readonly PlotPoint[]): PlotPoint[] {
   const matrix = svg.getScreenCTM();
@@ -87,6 +100,40 @@ function selectedPoint(points: readonly PlotPoint[], rawIndex: number | null): P
   return points.find((point) => point.rawIndex === rawIndex) ?? null;
 }
 
+interface OverlayProps {
+  readonly document: PuttingResultDocument | null;
+  readonly holeX: number;
+  readonly scaleX: (value: number) => number;
+  readonly scaleY: (value: number) => number;
+  readonly span: number;
+}
+
+/**
+ * Start line, apex of the break, and the capture mouth actually used.
+ *
+ * Every quantity is read straight off the accepted `putting_result/2`
+ * record — the start azimuth P1 launched on, the apex the integrator
+ * passed through, and the effective hole radius at the approach speed
+ * the capture test was evaluated at. Nothing is re-derived here.
+ */
+function CaptureOverlay({ document, holeX, scaleX, scaleY, span }: OverlayProps) {
+  if (document === null) return null;
+  const azimuth = (document.startAzimuthDeg * Math.PI) / 180;
+  const reach = Math.max(holeX, 0.2);
+  const radiusPx = (document.effectiveHoleRadiusM / span) * PATH_WIDTH;
+  return <g>
+    <line x1={scaleX(0)} y1={scaleY(0)}
+      x2={scaleX(reach * Math.cos(azimuth))} y2={scaleY(-reach * Math.sin(azimuth))}
+      stroke="#e879f9" strokeWidth={1.5} strokeDasharray="5 5" />
+    {Math.abs(document.apexBreakM) >= APEX_BREAK_FLOOR_M && <circle
+      data-testid="putting-apex-break" cx={scaleX(document.apexBreakAtM)}
+      cy={scaleY(document.apexBreakM)} r={5} fill="none" stroke="#a78bfa" strokeWidth={2} />}
+    {radiusPx > 0.5 && <circle data-testid="putting-capture-mouth"
+      cx={scaleX(holeX)} cy={scaleY(0)} r={radiusPx}
+      fill="none" stroke="#38bdf8" strokeWidth={2} strokeDasharray="3 3" />}
+  </g>;
+}
+
 function GreenView(props: PuttingVisualsProps) {
   const { result, plan } = props;
   if (!result || !plan) return <p className="text-sm text-slate-400">Inputs out of range.</p>;
@@ -101,7 +148,7 @@ function GreenView(props: PuttingVisualsProps) {
   }));
   const selected = selectedPoint(points, props.selectedRawIndex);
   const arrowX = scaleX(props.holeX * 0.5); const arrowY = scaleY(0);
-  return <figure aria-label="Top-down green view: skid phase orange, pure roll green, hole circle, downhill arrow"
+  return <figure aria-label="Top-down green view: skid phase orange, pure roll green, hole circle, downhill arrow, launched start line, apex of the break, and the effective capture mouth"
     className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-4 shadow-lg shadow-black/20 backdrop-blur">
     <p id="putting-sample-instructions" className="mb-2 text-xs text-slate-400">
       Select a displayed sample with pointer. Left/Right moves, Home/End jumps, Escape clears.
@@ -118,6 +165,8 @@ function GreenView(props: PuttingVisualsProps) {
       <circle cx={scaleX(props.holeX)} cy={scaleY(0)}
         r={Math.max(5, (0.054 / (maxX - minX)) * PATH_WIDTH)}
         fill="none" stroke="#f8fafc" strokeWidth={2} />
+      <CaptureOverlay document={props.document ?? null} holeX={props.holeX}
+        scaleX={scaleX} scaleY={scaleY} span={maxX - minX} />
       <circle cx={scaleX(0)} cy={scaleY(0)} r={4} fill="#f8fafc" />
       {props.grade > 0 && <g stroke="#94a3b8" strokeWidth={2}>
         <line x1={arrowX} y1={arrowY}
@@ -133,7 +182,9 @@ function GreenView(props: PuttingVisualsProps) {
         r={8} fill="none" stroke="#facc15" strokeWidth={3} />}
     </svg>
     <figcaption className="mt-2 text-xs text-slate-400">Orange = skid; green = pure roll;
-      the circle is the hole. Left is the putt&apos;s left (+y).</figcaption>
+      the white circle is the hole. Magenta dashes = the start line the ball launched on;
+      violet ring = the apex of the break; blue dashes = the effective capture mouth at the
+      approach speed. Left is the putt&apos;s left (+y).</figcaption>
   </figure>;
 }
 

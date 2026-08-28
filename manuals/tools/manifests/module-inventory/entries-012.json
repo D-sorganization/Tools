@@ -2,6 +2,349 @@
   "authority": "D-sorganization/Tools",
   "entries": [
     {
+      "authority_status": "provisional",
+      "bytes_lf": 329,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "e47d60dda42f404dd98a6cb4006c5047ff6a5fd401180452f9111ed27a9c368f",
+      "family": "rotation-converter-calculation",
+      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-WEB-SRC-INDEX-CSS-0C654458B0CE",
+      "language": "css",
+      "maintainer": "Rotation converter maintainers",
+      "path": "src/rotation_converter/web/src/index.css",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 236,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "6d64ef738d4185c22b804f5ec27ec5adc76d4c90690c91b06557d82961defa57",
+      "family": "rotation-converter-calculation",
+      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-WEB-SRC-MAIN-TSX-71B2FFA94B09",
+      "language": "typescript-react",
+      "maintainer": "Rotation converter maintainers",
+      "path": "src/rotation_converter/web/src/main.tsx",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 168,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "429758169a4832f34db64fcfffc86f6df42e86992280cc896ba04a29246a9cf3",
+      "family": "rotation-converter-calculation",
+      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-WEB-TAILWIND-CONFIG-JS-3CA5EE34E537",
+      "language": "javascript",
+      "maintainer": "Rotation converter maintainers",
+      "path": "src/rotation_converter/web/tailwind.config.js",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 361,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "ebc6ee956df20965b19847bb414361a92b4fac08b04dbd351b543803568d8ead",
+      "family": "rotation-converter-calculation",
+      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-WEB-VITE-CONFIG-TS-2681F2FB62CE",
+      "language": "typescript",
+      "maintainer": "Rotation converter maintainers",
+      "path": "src/rotation_converter/web/vite.config.ts",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 251,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "3a5959546231ff5c5300c52d775babf15377b865bd381f810f23384d40bbe817",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-ROTATION-TRANSFORMS-INIT-PY-81561691B103",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rotation_transforms/__init__.py",
+      "purpose": "Compatibility shim for ``shared.python.rotation_transforms``.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 33,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d8dcdc5c703e5ad99933983ad5e759ad98727cbbae6477a15322a779ce6a3bc8",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-INIT-PY-BC047B6E7F57",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/__init__.py",
+      "purpose": "Package: rrt_path_planner.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 776,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7b0751fe67cc7b8d74567cd405a5436ec8802e3f07dca1125d96a4b0fa23d771",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-LAUNCH-RRT-ASTEROID-NAVIGATOR-PY-E2FCA8704DD7",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/launch_rrt_asteroid_navigator.py",
+      "purpose": "Standalone launcher for the RRT asteroid navigator.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "CURRENT_FILE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PYTHON_SRC",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REPO_ROOT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_RRT_ROOT",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "not-applicable",
       "bytes_lf": 1154,
       "classification": "non-calculation",
@@ -14593,520 +14936,6 @@
         "unit_mentions": [
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 9077,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "53b4805ad2fdf594474487b386203cb38ec397a6667458eb97b15df7ba710351",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-CHAT-DOCK-WIDGET-PY-823BB8886AED",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/chat_dock_widget.py",
-      "purpose": "Lazy exports for the Qt-backed shared chat dock widget.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ChatQtUnavailableError",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "chat_qt_runtime_diagnostic",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/chat/tests/test_chat.py",
-          "tests/shared/python/chat/test_chat_dock_widget.py",
-          "tests/shared/python/chat/test_chat_session_helpers.py",
-          "tests/shared/python/sidekick/ui/test_tools_sidebar_runtime_tabs.py",
-          "tests/unit/sidekick/test_chat_redock.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5852,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b982ed6e654e9dfa856871a2e0aaac637818c70a1454f46252d640c376067865",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-CHAT-POPOUT-WINDOW-PY-199D56CA0B89",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/chat_popout_window.py",
-      "purpose": "Pop-out window wrapper for the shared chat dock widget (issue #2935).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ChatPopoutWindow",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_REDOCK_BUTTON_OBJECT_NAME",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "make_chat_popout_window",
-            "signature": "chat_widget: Any, *, session_id: str, redock_callback: Callable[[], None], title: str='Chat', parent: Any=None"
-          }
-        ],
-        "test_paths": [
-          "tests/unit/sidekick/test_chat_redock.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4484,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "620c7faa3e0a457bf2e6ab4e964448a4e0e84bd1c0f9baac646fb8697ae31fa7",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-CLI-PROVIDER-AVAILABILITY-PY-F74BAD5C711A",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/cli_provider_availability.py",
-      "purpose": "Runtime availability probe for terminal CLI agent providers.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CliProviderEntry",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_CLI_AGENT_DESCRIPTORS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "list_available_cli_providers",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/chat/test_cli_agent_adapters.py",
-          "tests/shared/python/chat/test_cli_provider_dropdown.py",
-          "tests/unit/ai/adapters/test_github_cli_provider.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1048,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "580bf4a6ba1ccd47c0dab427388c8f8ea1181d10f59bab1d63975faf4bd1ba2b",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-CONDENSATION-INIT-PY-8269B4A8D79A",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/condensation/__init__.py",
-      "purpose": "Thread condensation (Tools issue #2736).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "CondensationRequest",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CondensationResult",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CondensationStrategy",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "Condenser",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "KeepRecentStrategy",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PinnedAnchorStrategy",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "STRATEGY_REGISTRY",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SemanticSummaryStrategy",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "StrategyName",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SummaryProvider",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "estimate_tokens",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3970,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f6c13640e05edd25cb511311b2e743e0ba9133a257a6ccfcd3e34df08eb8de1c",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-CONDENSATION-CONDENSER-PY-C167873BC192",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/condensation/condenser.py",
-      "purpose": "Top-level :class:`Condenser` orchestrator (Tools issue #2736).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "Condenser",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/unit/chat/condensation/test_condenser.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3063,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4df975075f34ab3491765f0dbe6f14eecd19f1ce16fb87c767e2dfbfb5fcf494",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-CONDENSATION-CONTRACTS-PY-3AEDE2385010",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/condensation/contracts.py",
-      "purpose": "Contracts for thread condensation (Tools issue #2736).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CondensationRequest",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CondensationResult",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_VALID_STRATEGIES",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
-          "src/shared/python/model_generation/tests/test_contracts.py",
-          "tests/rate_of_closure/test_contracts.py",
-          "tests/shared/python/golf_club/test_contracts.py",
-          "tests/shared/python/test_contracts.py",
-          "tests/unit/ai/mcp/test_contracts.py",
-          "tests/unit/ai/peer_review/test_contracts.py",
-          "tests/unit/ai/skills/test_contracts.py",
-          "tests/unit/test_contracts.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
-          "src/shared/python/model_generation/tests/test_contracts.py",
-          "tests/rate_of_closure/test_contracts.py",
-          "tests/shared/python/golf_club/test_contracts.py",
-          "tests/shared/python/test_contracts.py",
-          "tests/unit/ai/mcp/test_contracts.py",
-          "tests/unit/ai/peer_review/test_contracts.py",
-          "tests/unit/ai/skills/test_contracts.py",
-          "tests/unit/test_contracts.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5133,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b73367827c674ff6a46a50550def724bbdc4094f292960040da0301c8153f14d",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-CONDENSATION-STRATEGY-PY-C5E043A32BCA",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/condensation/strategy.py",
-      "purpose": "Condensation strategies (Tools issue #2736).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CondensationStrategy",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "KeepRecentStrategy",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PinnedAnchorStrategy",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SemanticSummaryStrategy",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SummaryProvider",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "STRATEGY_REGISTRY",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/unit/chat/condensation/test_strategy.py"
-        ],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

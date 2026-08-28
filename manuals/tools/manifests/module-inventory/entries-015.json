@@ -3,6 +3,424 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 1851,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "74bd79259edaf5438a6fc0043541dfe792160a6c77acda4deeef48adc4b2a93c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-JUPYTER-TAB-AVAILABILITY-PY-A65102700036",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/jupyter_tab/availability.py",
+      "purpose": "Detect whether Jupyter dependencies are installed for Sidekick.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "JupyterTabAvailability",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/unit/sidekick/jupyter_tab/test_availability.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3222,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "44a96284da38af7dc1b4d66a9b1ca7965d07c547ff7f13790fbce6ebe710825d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-JUPYTER-TAB-NOTEBOOK-LOADER-PY-77D5966CF9C1",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/jupyter_tab/notebook_loader.py",
+      "purpose": "Load notebooks from disk into the immutable Sidekick notebook model.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "NotebookLoadError",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "load_notebook",
+            "signature": "path: Path"
+          }
+        ],
+        "test_paths": [
+          "tests/unit/sidekick/jupyter_tab/test_notebook_loader.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1741,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e26b6cbc7191ad0ca65aeaa80ab6184c0ef04a75fab723f4bee2f0be599b0ee9",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-JUPYTER-TAB-NOTEBOOK-MODEL-PY-1153802A12FF",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/jupyter_tab/notebook_model.py",
+      "purpose": "Immutable data model for Jupyter notebooks rendered in Sidekick.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CellOutput",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CodeCell",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MarkdownCell",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "NotebookDocument",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RawCell",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/unit/sidekick/jupyter_tab/test_notebook_model.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8992,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d0e966b234a149fdb94ddbe1d48ed95bfee4fc0da1f962ec729bbca131ff78f5",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-JUPYTER-TAB-NOTEBOOK-SESSION-PY-68E5AAEDD2BB",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/jupyter_tab/notebook_session.py",
+      "purpose": "Notebook session model and persistence for Sidekick Phase 2 (Tools #2876).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "NotebookSessionManager",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "NotebookSessionModel",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/unit/sidekick/jupyter_tab/test_notebook_session_model.py",
+          "tests/unit/sidekick/jupyter_tab/test_notebook_session_persistence.py",
+          "tests/unit/sidekick/jupyter_tab/test_notebook_widget_phase2.py",
+          "tests/unit/sidekick/jupyter_tab/test_notebook_widget_phase3.py",
+          "tests/unit/sidekick/jupyter_tab/test_workspace_bridge.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6393,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "28b830195307c20bf64c77e57bbbfb23ef78f31f889760030ad19b19db3a35c9",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-JUPYTER-TAB-SIDEKICK-NOTEBOOK-WIDGET-PY-B06B1569B159",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/jupyter_tab/sidekick_notebook_widget.py",
+      "purpose": "SidekickNotebookWidget — Phase 2 + Phase 3 session-aware notebook wrapper.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SidekickNotebookWidget",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/unit/sidekick/jupyter_tab/test_notebook_widget_phase2.py",
+          "tests/unit/sidekick/jupyter_tab/test_notebook_widget_phase3.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1900,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b65160bc1d59ab675e4d5624a0444e9ede533801b59ee2f004e684a00fb0c0f5",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-JUPYTER-TAB-UNAVAILABLE-WIDGET-PY-F22F1B53F486",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/jupyter_tab/unavailable_widget.py",
+      "purpose": "Placeholder shown when Jupyter dependencies are missing.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "JupyterUnavailableWidget",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/unit/sidekick/jupyter_tab/test_unavailable_widget.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4961,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7786ec327cc20c5a871a6f3844e8446ce0dbdba47cd76bc2649a5cc778d0c3e2",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-JUPYTER-TAB-WIDGET-PY-3FFCF5593567",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/jupyter_tab/widget.py",
+      "purpose": "Read-only Jupyter notebook viewer for Sidekick (Phase 1).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "JupyterNotebookWidget",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/unit/sidekick/jupyter_tab/test_widget.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 4364,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17172,889 +17590,6 @@
         ],
         "test_paths": [],
         "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5500,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8c84de45aab2f93317c64d8c57097a2631fbf07d1d1dc91b0b0528c8706963ed",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-INIT-PY-3763F6A25399",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/putting/__init__.py",
-      "purpose": "Putting vertical for swing_sim (epic #4125, H3).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "CaptureModel",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "DEFAULT_PUTTER_COR",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "DEFAULT_PUTTER_MOI_KG_M2",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "DEFAULT_SLIDING_MU",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "GREEN_SURFACE_FORMAT",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "GreenConditions",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "GreenSurface",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "GridGreenSurface",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "HOLE_RADIUS_M",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "MINIMAL_PUTTERS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PUTTING_RESULT_FORMAT",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PUTTING_RESULT_FORMAT_V1",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PUTTING_RESULT_KERNEL",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PUTTING_STROKE_FORMAT",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PlanarGreenSurface",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PuttLaunch",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PuttResult",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PutterSpec",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PuttingResultDocument",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PuttingResultProvenance",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PuttingResultV1Archive",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PuttingStroke",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "STIMP_RELEASE_SPEED_MPS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SkidSolution",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "StrokePutt",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "StrokeSample",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "StrokeStrike",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "UdGreenTopography",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "capture_speed_mps",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "clubhead_speed_from_backstroke",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "effective_hole_radius_m",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "green_surface_from_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "green_surface_from_ud_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "green_surface_to_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "green_surface_to_ud_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "impact_sample_index",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "putt_from_stroke",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "putting_result_document",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "putting_result_from_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "putting_result_to_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "putting_result_v1_archive_from_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "putting_stroke_from_drake_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "putting_stroke_from_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "putting_stroke_from_mujoco_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "putting_stroke_from_opensim_sto",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "putting_stroke_to_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "roll_out_distance",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "roll_time_s",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "rolling_mu_to_stimp",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "simulate_putt",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "simulate_putt_on_surface",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "solve_skid",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "stimp_to_rolling_mu",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "strike_from_stroke",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "strike_parameters",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3797,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b061b188dd9e46f8a32641213ea0d8a881feb41e7be09c4eb188140c0300b4bc",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-CAPTURE-PY-B453BF5D2B9D",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/putting/capture.py",
-      "purpose": "Hole-capture physics: lip bound and effective radius (#4800 P2).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "HOLE_RADIUS_M",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "capture_speed_mps",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "effective_hole_radius_m",
-            "signature": "speed_mps: float"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "J",
-          "g",
-          "m/s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 14114,
-      "classification": "calculation",
-      "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "46ba9dd61eafabd075a91bd53d59eac93a1a0affa790376f99720e41054adf19",
-      "family": "swing-simulation-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-DISPERSION-PY-AA9FBB7AC22A",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/putting/dispersion.py",
-      "purpose": "Putt dispersion outcomes, summary, and wire (epic #4800, P5).",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "PuttDispersionReport",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PuttDispersionSummary",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PuttOutcome",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PuttVariableDeclaration",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PUTT_DISPERSION_FORMAT",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "putt_dispersion_from_json",
-            "signature": "text: str"
-          },
-          {
-            "kind": "function",
-            "name": "putt_dispersion_to_json",
-            "signature": "report: PuttDispersionReport"
-          },
-          {
-            "kind": "function",
-            "name": "summarize_putt_outcomes",
-            "signature": "outcomes: tuple[PuttOutcome, ...]"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/putting/tests/test_variation.py"
-        ],
-        "unit_mentions": [
-          "deg",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 16756,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a86fc75a7b7f91c368fcc82d2a37c0ec603f601c693eda7f2b79515975b3d086",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-GREEN-PY-C9095C77BD3B",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/putting/green.py",
-      "purpose": "Green roll integration, break, and hole capture (#4125 H3, #4800 P2).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "GreenConditions",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PuttResult",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "simulate_putt",
-            "signature": "launch: PuttLaunch, green: GreenConditions, hole_distance_m: float"
-          },
-          {
-            "kind": "function",
-            "name": "simulate_putt_on_surface",
-            "signature": "launch: PuttLaunch, surface: GreenSurface, *, stimp_ft: float, hole_distance_m: float, mu_slide: float=DEFAULT_SLIDING_MU, capture_model: CaptureModel='effective_radius'"
-          },
-          {
-            "kind": "re-export",
-            "name": "HOLE_RADIUS_M",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "capture_speed_mps",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "effective_hole_radius_m",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/putting/tests/test_green.py"
-        ],
-        "unit_mentions": [
-          "deg",
-          "g",
-          "m/s",
-          "m/s^2",
-          "mm",
-          "ms",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 17362,
-      "classification": "calculation",
-      "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "024872d3ac8736be6ba7551df11df37cddf1501199ca49d42661a7f1cc519ba5",
-      "family": "swing-simulation-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-IMPACT-PY-3307AA71CDBE",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/putting/impact.py",
-      "purpose": "Putter-ball impact: low-speed impulse with loft (epic #4125, H3).",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "PuttLaunch",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PutterSpec",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_PUTTER_COR",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_PUTTER_MOI_KG_M2",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MINIMAL_PUTTERS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "clubhead_speed_from_backstroke",
-            "signature": "backstroke_m: float, putter_length_m: float=0.889"
-          },
-          {
-            "kind": "function",
-            "name": "strike",
-            "signature": "putter: PutterSpec, clubhead_speed_mps: float, shaft_lean_deg: float=0.0, *, aim_deg: float=0.0, face_angle_deg: float=0.0, path_angle_deg: float=0.0, attack_angle_deg: float=0.0, strike_offset_toe_mm: float=0.0, strike_offset_high_mm: float=0.0, head_moi_kg_m2: float | None=None"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/putting/tests/test_impact.py"
-        ],
-        "unit_mentions": [
-          "cm",
-          "deg",
-          "g",
-          "kg",
-          "m/s",
-          "m/s^2",
-          "mm",
-          "ms",
-          "rad/s",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 22152,
-      "classification": "calculation",
-      "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "34681d1119d2253fc666ba3761cb12e294a2fc060f4b0556c3f27235fcbf297e",
-      "family": "swing-simulation-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-RESULT-WIRE-PY-532851184369",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/putting/result_wire.py",
-      "purpose": "Putt result wire ``swing_sim.putting_result/2`` (epic #4800, P5).",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "PuttingResultDocument",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PuttingResultProvenance",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PuttingResultV1Archive",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PUTTING_RESULT_FORMAT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PUTTING_RESULT_FORMAT_V1",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PUTTING_RESULT_KERNEL",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "putting_result_document",
-            "signature": "launch: PuttLaunch, result: PuttResult, provenance: PuttingResultProvenance, *, hole_distance_m: float"
-          },
-          {
-            "kind": "function",
-            "name": "putting_result_from_json",
-            "signature": "text: str"
-          },
-          {
-            "kind": "function",
-            "name": "putting_result_to_json",
-            "signature": "document: PuttingResultDocument"
-          },
-          {
-            "kind": "function",
-            "name": "putting_result_v1_archive_from_json",
-            "signature": "text: str"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/putting/tests/test_result_wire.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 8624,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4391fd723cc3327f19c425fc365721e743b406c377b4905735af08dce86cc51e",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-ROLL-PY-E780606D57E2",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/putting/roll.py",
-      "purpose": "Skid -> pure-roll model with stimpmeter green speed (#4125, H3).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SkidSolution",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_SLIDING_MU",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GRAVITY_M_S2",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "STIMP_RELEASE_SPEED_MPS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "roll_out_distance",
-            "signature": "speed_mps: float, mu_roll: float"
-          },
-          {
-            "kind": "function",
-            "name": "roll_time_s",
-            "signature": "speed_mps: float, mu_roll: float"
-          },
-          {
-            "kind": "function",
-            "name": "rolling_mu_to_stimp",
-            "signature": "mu_r: float"
-          },
-          {
-            "kind": "function",
-            "name": "solve_skid",
-            "signature": "speed_mps: float, spin_rad_s: float, ball_radius_m: float, mu_slide: float=DEFAULT_SLIDING_MU"
-          },
-          {
-            "kind": "function",
-            "name": "stimp_to_rolling_mu",
-            "signature": "stimp_ft: float"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/putting/tests/test_roll.py",
-          "src/shared/python/swing_sim/putting/tests/test_ud_adapter.py"
-        ],
-        "unit_mentions": [
-          "deg",
-          "g",
-          "m/s",
-          "m/s^2",
-          "mm",
-          "rad",
-          "rad/s",
           "s"
         ],
         "validation_paths": []

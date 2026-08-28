@@ -3,6 +3,532 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 900,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "31cae41339b3a81168d4bf160043bb751110ae0dc94e30a42431cee3df7fe4e4",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-NOTES-INIT-PY-BDE35EAA0ECC",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/notes/__init__.py",
+      "purpose": "Shared notes workspace package.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "NoteCard",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "NoteCardStore",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "NotesBoardSettings",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "NotesStorage",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RecycledNoteItem",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9394,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a8b30fca3b23095a622497f30fa2786a6c6fd7917fecefdf5c4d0c2efa32c107",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-NOTES-CARD-STORE-PY-EF3EA7808316",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/notes/card_store.py",
+      "purpose": "Markdown note-card storage with reversible deletion.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "NoteCardStore",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "META_END",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "META_START",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "UTC",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/notes/test_card_store.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 760,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "454219f096caa3e32284252f37aa1fa4d5f890d629b01e2f171505115d33dab8",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-NOTES-INTEGRATION-PY-C095B5068C4D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/notes/integration.py",
+      "purpose": "Integration helper for embedding notes in host applications.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "attach_notes_dock",
+            "signature": "main_window: QWidget, project_dir: Path | str, area: Qt.DockWidgetArea=Qt.DockWidgetArea.RightDockWidgetArea, title: str='Notes'"
+          }
+        ],
+        "test_paths": [
+          "src/financial_calculator/tests/test_financial_calculator_gui_contracts.py",
+          "tests/shared/python/notes/test_integration.py",
+          "tests/shared/python/plot_theme/test_integration.py",
+          "tests/unit/ai/integrations/github_mcp/test_integration.py",
+          "tests/unit/sidekick/test_notes_storage_coverage.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "src/financial_calculator/tests/test_financial_calculator_gui_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2077,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4563499f6840319e056d5c68fdd3fa3bedcd9cd9b5ee7cf4d19b95e36a05cd60",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-NOTES-MODELS-PY-6E5365C51015",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/notes/models.py",
+      "purpose": "Data contracts for the shared notes workspace.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "NoteCard",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "NotesBoardSettings",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RecycledNoteItem",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_BOARD_BACKGROUND_COLOR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_NOTE_COLOR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_HEX_COLOR_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_NOTE_ID_RE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "normalize_color",
+            "signature": "value: str, *, field_name: str='color'"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/test_notes_store.py",
+          "tests/shared/python/notes/test_card_store.py",
+          "tests/shared/python/notes/test_models.py",
+          "tests/shared/python/notes/test_storage.py",
+          "tests/unit/sidekick/test_notes_tab.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4685,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d1a58081c4f57f2166f78018969d9b52c1396c6be9a912abd2d254059f51d2ea",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-NOTES-NOTES-DOCK-WIDGET-PY-ED7D4EE436AF",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/notes/notes_dock_widget.py",
+      "purpose": "Reusable PyQt6 notes widget with recycle-bin semantics.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "NotesDockWidget",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/notes/test_notes_dock_widget.py",
+          "tests/unit/sidekick/test_notes_storage_coverage.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5387,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "125075597cf4c6944e29579bc09ccb10af74c3e277f45cec200e577d685247ed",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-NOTES-STORAGE-PY-2B22B2DF4F7A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/notes/storage.py",
+      "purpose": "Storage and recycle-bin semantics for project notes.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "NotesStorage",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "UTC",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/notes/test_storage.py",
+          "tests/unit/sidekick/test_notes_storage_coverage.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1212,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "46b8412557dd9bcc682533932bcc69cb45f6a62260151c4b61e780998ed042d5",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-ENGINE-INIT-PY-4301F125392F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/plot_engine/__init__.py",
+      "purpose": "Shared plot engine for cross-platform visualization.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "AxisSpec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ContourPlotSpec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FilterComparisonSpec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "HeatmapSpec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "HistogramSpec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LegendSpec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlotConverter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlotRenderer",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlotSpec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SeriesData",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SeriesStyle",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SurfacePlotSpec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ThemeColorProvider",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TrendlineSpec",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2538,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17412,424 +17938,6 @@
           }
         ],
         "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1851,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "74bd79259edaf5438a6fc0043541dfe792160a6c77acda4deeef48adc4b2a93c",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-JUPYTER-TAB-AVAILABILITY-PY-A65102700036",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/jupyter_tab/availability.py",
-      "purpose": "Detect whether Jupyter dependencies are installed for Sidekick.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "JupyterTabAvailability",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/unit/sidekick/jupyter_tab/test_availability.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3222,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "44a96284da38af7dc1b4d66a9b1ca7965d07c547ff7f13790fbce6ebe710825d",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-JUPYTER-TAB-NOTEBOOK-LOADER-PY-77D5966CF9C1",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/jupyter_tab/notebook_loader.py",
-      "purpose": "Load notebooks from disk into the immutable Sidekick notebook model.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "NotebookLoadError",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "load_notebook",
-            "signature": "path: Path"
-          }
-        ],
-        "test_paths": [
-          "tests/unit/sidekick/jupyter_tab/test_notebook_loader.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1741,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e26b6cbc7191ad0ca65aeaa80ab6184c0ef04a75fab723f4bee2f0be599b0ee9",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-JUPYTER-TAB-NOTEBOOK-MODEL-PY-1153802A12FF",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/jupyter_tab/notebook_model.py",
-      "purpose": "Immutable data model for Jupyter notebooks rendered in Sidekick.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CellOutput",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CodeCell",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "MarkdownCell",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "NotebookDocument",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RawCell",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/unit/sidekick/jupyter_tab/test_notebook_model.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 8992,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d0e966b234a149fdb94ddbe1d48ed95bfee4fc0da1f962ec729bbca131ff78f5",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-JUPYTER-TAB-NOTEBOOK-SESSION-PY-68E5AAEDD2BB",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/jupyter_tab/notebook_session.py",
-      "purpose": "Notebook session model and persistence for Sidekick Phase 2 (Tools #2876).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "NotebookSessionManager",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "NotebookSessionModel",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/unit/sidekick/jupyter_tab/test_notebook_session_model.py",
-          "tests/unit/sidekick/jupyter_tab/test_notebook_session_persistence.py",
-          "tests/unit/sidekick/jupyter_tab/test_notebook_widget_phase2.py",
-          "tests/unit/sidekick/jupyter_tab/test_notebook_widget_phase3.py",
-          "tests/unit/sidekick/jupyter_tab/test_workspace_bridge.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6393,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "28b830195307c20bf64c77e57bbbfb23ef78f31f889760030ad19b19db3a35c9",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-JUPYTER-TAB-SIDEKICK-NOTEBOOK-WIDGET-PY-B06B1569B159",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/jupyter_tab/sidekick_notebook_widget.py",
-      "purpose": "SidekickNotebookWidget — Phase 2 + Phase 3 session-aware notebook wrapper.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SidekickNotebookWidget",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/unit/sidekick/jupyter_tab/test_notebook_widget_phase2.py",
-          "tests/unit/sidekick/jupyter_tab/test_notebook_widget_phase3.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1900,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b65160bc1d59ab675e4d5624a0444e9ede533801b59ee2f004e684a00fb0c0f5",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-JUPYTER-TAB-UNAVAILABLE-WIDGET-PY-F22F1B53F486",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/jupyter_tab/unavailable_widget.py",
-      "purpose": "Placeholder shown when Jupyter dependencies are missing.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "JupyterUnavailableWidget",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/unit/sidekick/jupyter_tab/test_unavailable_widget.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4961,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7786ec327cc20c5a871a6f3844e8446ce0dbdba47cd76bc2649a5cc778d0c3e2",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-JUPYTER-TAB-WIDGET-PY-3FFCF5593567",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/jupyter_tab/widget.py",
-      "purpose": "Read-only Jupyter notebook viewer for Sidekick (Phase 1).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "JupyterNotebookWidget",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/unit/sidekick/jupyter_tab/test_widget.py"
-        ],
         "unit_mentions": [],
         "validation_paths": []
       }
