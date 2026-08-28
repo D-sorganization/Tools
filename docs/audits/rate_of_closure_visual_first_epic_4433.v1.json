@@ -217,8 +217,12 @@
       "requirement_id": "V3.3",
       "requirement": "Keep frame, units, counts, cohorts, provenance, and missing-data treatment beside visuals.",
       "status": "partial",
-      "rationale": "Individual scientific views expose these fields, but no all-tab evidence authority verifies every applicable field and placement.",
-      "evidence_files": ["src/rate_of_closure/visualization_tabs.v1.json"],
+      "rationale": "Individual scientific views expose these fields, and the PyQt Putting surface now names its putter-head provenance kind and green-surface origin in the displayed authority beside the visual (#4800 P6); no all-tab evidence authority verifies every applicable field and placement.",
+      "evidence_files": [
+        "src/rate_of_closure/visualization_tabs.v1.json",
+        "src/rate_of_closure/putting_result_contract.py",
+        "src/rate_of_closure/visualization_acceptance.v1.json"
+      ],
       "gaps": [
         "Add per-tab applicability and placement evidence for scientific context fields."
       ]
@@ -277,10 +281,12 @@
       "requirement_id": "V4.3",
       "requirement": "Use rendered PyQt tests for every tab at 100/150 percent scaling, overlap, keyboard, and resize.",
       "status": "partial",
-      "rationale": "All initial tabs render at both scales with visibility and overlap checks; all-state and keyboard-path coverage is separate and incomplete.",
+      "rationale": "All initial tabs render at both scales with visibility and overlap checks, and the widened PyQt Putting surface (#4800 P6) re-renders at both scales through its own inspector probe; all-state and keyboard-path coverage is separate and incomplete.",
       "evidence_files": [
         "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py",
-        "tests/rate_of_closure/test_visualization_accessibility.py"
+        "tests/rate_of_closure/test_visualization_accessibility.py",
+        "tests/rate_of_closure/test_pyqt_putting_sample_inspector_rendered.py",
+        "tests/rate_of_closure/test_putting_gui.py"
       ],
       "gaps": [
         "Bind keyboard and every applicable state to rendered 1.0/1.5-DPI evidence."

@@ -3,6 +3,252 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 34415,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a200165158599d1f1147969298c79092d04f35e973fcad8f9de2799554c385a0",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-OS-TERMINAL-PY-054570637DEB",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/os_terminal.py",
+      "purpose": "Sidekick OS-level terminal widget (UpstreamDrift #5617).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PosixPtyBackend",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SidekickOsTerminalWidget",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SubprocessFallbackBackend",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TerminalBackend",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WindowsPtyBackend",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SIDEKICK_OS_TERMINAL_OBJECT_NAME",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "extract_osc7_cwd",
+            "signature": "data: bytes"
+          },
+          {
+            "kind": "function",
+            "name": "select_backend",
+            "signature": "*, command: Sequence[str], cwd: Path | None"
+          },
+          {
+            "kind": "function",
+            "name": "strip_ansi",
+            "signature": "data: bytes"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11562,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "10b5f0cfaed090baf706a0b3567b7bee40b8fd7fc9b6b00487b833faa09ab924",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-PROJECT-FILE-EXPLORER-PY-C341EEFDCDD0",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/project_file_explorer.py",
+      "purpose": "Project-scoped file explorer widget for the unified tools sidebar.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DefaultProgramLauncher",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ProjectFileExplorer",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WindowsDefaultProgramLauncher",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/sidekick/ui/test_project_file_explorer.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 18834,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9096ffbf4ca2856b34007815f273f6192fb6c21f4d3e301bbb844f78c5e6293d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-PYTHON-REPL-TAB-PY-977F5F1BDD69",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/python_repl_tab.py",
+      "purpose": "Python REPL widgets for Sidekick runtime tabs.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PythonReplWidget",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SidekickPythonReplWidget",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SIDEKICK_PYTHON_REPL_OBJECT_NAME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SIDEKICK_TERMINAL_OBJECT_NAME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_IMMEDIATE_COMPLETION_DRAIN_SECONDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_RESERVED_NAMESPACE_NAMES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SENTINEL",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/unit/sidekick/test_python_repl_cancel_namespace_3715.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2663,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17862,276 +18108,6 @@
         ],
         "unit_mentions": [
           "deg",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 12987,
-      "classification": "calculation",
-      "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "9aad77215e775f455852b261cbe32a02a1ea014ce870ffba22d4c1cb3fa41b32",
-      "family": "swing-simulation-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-SURFACE-PY-1376320B8CF3",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/putting/surface.py",
-      "purpose": "Green surface heightfield: parametric plane + grid form (#4800 P2).",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "GridGreenSurface",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PlanarGreenSurface",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GREEN_SURFACE_FORMAT",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "green_surface_from_json",
-            "signature": "text: str"
-          },
-          {
-            "kind": "function",
-            "name": "green_surface_to_json",
-            "signature": "surface: GreenSurface"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/putting/tests/test_surface.py"
-        ],
-        "unit_mentions": [
-          "deg",
-          "g",
-          "m/s^2",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 14995,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e052f7b03daa3c47fe5299b8ad4ed9840c207d9db658e7971f9e677248ba5168",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-UD-ADAPTER-PY-2E70242571A2",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/putting/ud_adapter.py",
-      "purpose": "UpstreamDrift ``putting_green`` topography adapter (#4800 P9).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "UdGreenTopography",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "green_surface_from_ud_json",
-            "signature": "text: str"
-          },
-          {
-            "kind": "function",
-            "name": "green_surface_to_ud_json",
-            "signature": "surface: GreenSurface, *, hole_position_m: tuple[float, float] | None=None, extent_m: tuple[float, float] | None=None, spacing_m: float | None=None"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/putting/tests/test_ud_adapter.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "m/s",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 17119,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b10c57c787852355bbfd1b592fd13c4368eb84d173f3a4ba8b3f77da8601d983",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-VARIATION-PY-A747D00331DE",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/putting/variation.py",
-      "purpose": "Monte-Carlo putting dispersion over stroke + green reading (P5, #4800).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "PuttScenario",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PuttStroke",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PuttVariationPlan",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CATEGORY_PUTTING",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PUTT_AIM_KEY",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PUTT_FACE_KEY",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PUTT_PATH_KEY",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PUTT_SPEED_KEY",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PUTT_STRIKE_TOE_KEY",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PUTT_VARIABLE_KEYS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "evaluate_putt",
-            "signature": "scenario: PuttScenario"
-          },
-          {
-            "kind": "function",
-            "name": "putt_outcome",
-            "signature": "document: PuttingResultDocument"
-          },
-          {
-            "kind": "function",
-            "name": "run_putt_dispersion",
-            "signature": "scenario: PuttScenario, plan: PuttVariationPlan"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/putting/tests/test_variation.py",
-          "tests/shared/python/golf_club/test_putter_fitting.py"
-        ],
-        "unit_mentions": [
-          "deg",
-          "m/s",
-          "mm",
           "s"
         ],
         "validation_paths": []

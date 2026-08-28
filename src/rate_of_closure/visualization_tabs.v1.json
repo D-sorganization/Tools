@@ -376,7 +376,9 @@
       "tab_id": "putting",
       "purpose": "Inspect model-conditional putt path, speed, and synchronized sample state.",
       "data_prerequisites": [
-        "Putt initial conditions, surface parameters, and putting-model identity."
+        "Putt initial conditions, surface parameters, and putting-model identity.",
+        "A complete delivered stroke: putter-head identity with its provenance kind, resolved pace, and the aim, face, path, attack, and strike-location parameters the impact solve declares.",
+        "A green surface with a declared provenance — planar grade and aspect, or an imported heightfield read through its own declared wire — together with the hole distance and the named hole-capture model."
       ],
       "counterpart_tab_id": "putting",
       "classification": "visual-first",

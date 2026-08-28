@@ -3,6 +3,251 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 15023,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9b834da59372a0fdec5a1228ec6afaf4abbd79dac27ac2273b347999f3de4c0b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-TOOLS-MATLAB-CODE-ANALYZER-GUI-EXPORTCODEISSUES-M-426063E4AD49",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/tools/matlab_code_analyzer_gui/exportCodeIssues.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "absPathIfPossible",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "collectFilesFromDir",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "defaultExcludeDirs",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "ensureField",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "escapeMd",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "exportCodeIssues",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "extractIdentifierFallback",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "getCharField",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "getNumericField",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "iscellstrlike",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "issuesTable",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "listFiles",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "matchName",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "num2strOrEmpty",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "relPath",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "stripTrailingFilesep",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "writeOutput",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2823,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "46c5b08dc1015f7e693be364ba83d020c4eda45b98b0dbafd111cec3c9bbabb0",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-TOOLS-MATLAB-CODE-ANALYZER-GUI-LAUNCHCODEANALYZER-M-2097462364E7",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/tools/matlab_code_analyzer_gui/launchCodeAnalyzer.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "launchCodeAnalyzer",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2522,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "484e6fda902d2aed4b6748ac519bb0353799360a64e5b6be7b215e741c2c9e85",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-TOOLS-MATLAB-CODE-ANALYZER-GUI-SETUP-M-642EAD5515D5",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/tools/matlab_code_analyzer_gui/setup.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "setup",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/media_processing/video_processor/apps/web/test/setup.ts",
+          "src/p1am_control_system/frontend/src/test/setup.ts",
+          "src/rate_of_closure/web/src/test/setup.ts",
+          "src/rotation_converter/web/src/test/setup.ts"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 20581,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",

@@ -251,7 +251,7 @@
       "shard_index": 5
     },
     {
-      "content_sha256_lf": "b836961167105904b460b2c2ca3434c60521ed7b4591a37dbf33ec14dd955152",
+      "content_sha256_lf": "ee9104f9eb5234cdee13f007ee3e2f058689e11023626267c2615879808ead30",
       "entry_count": 200,
       "first_path": "src/pid_generator/__init__.py",
       "last_path": "src/rate_of_closure/plotting/__init__.py",
@@ -259,106 +259,106 @@
       "shard_index": 6
     },
     {
-      "content_sha256_lf": "b0c5b2f16de83d792635cdae58299c5b7b7109bbf11c825ba069e63b3d8f1d49",
+      "content_sha256_lf": "a4a4e43d675c6c9d447543646f955bc8de3340cd1b5fd71e7797679a495e4535",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/plotting/_catalog_entries.py",
-      "last_path": "src/rate_of_closure/ui/pyqt6/variation_editor_widgets.py",
+      "last_path": "src/rate_of_closure/ui/pyqt6/variation_constants.py",
       "path": "manuals/tools/manifests/module-inventory/entries-007.json",
       "shard_index": 7
     },
     {
-      "content_sha256_lf": "6148b3e370501c3cd046595de80f481a8739ca646834e29abcfd2ca9be3dea23",
+      "content_sha256_lf": "f9e31bb0b898d094190b82ed51d9d26c05c352f2d0eb8f3ffb8e3463f4dbf060",
       "entry_count": 200,
-      "first_path": "src/rate_of_closure/ui/pyqt6/variation_forgiveness_view.py",
-      "last_path": "src/rate_of_closure/web/src/components/PuttingPanel.test.tsx",
+      "first_path": "src/rate_of_closure/ui/pyqt6/variation_control_helpers.py",
+      "last_path": "src/rate_of_closure/web/src/components/PrimaryViewTabs.test.tsx",
       "path": "manuals/tools/manifests/module-inventory/entries-008.json",
       "shard_index": 8
     },
     {
-      "content_sha256_lf": "21ae352b2cb4b447cb95b32a65af2de15889f41c24e6f42c3991193287ecace6",
+      "content_sha256_lf": "3bb2709ae05dd8ff07de954c6fbd3181919d3990317ac4fc8bfd9436b9f21aa4",
       "entry_count": 200,
-      "first_path": "src/rate_of_closure/web/src/components/PuttingPanel.tsx",
-      "last_path": "src/rate_of_closure/web/src/model/durableEnsembleEvidence.test.ts",
+      "first_path": "src/rate_of_closure/web/src/components/PrimaryViewTabs.tsx",
+      "last_path": "src/rate_of_closure/web/src/model/doublePendulumRun.ts",
       "path": "manuals/tools/manifests/module-inventory/entries-009.json",
       "shard_index": 9
     },
     {
-      "content_sha256_lf": "01ac78fced8b7a46214fd8b7aff9184fa7057a561a9c67c105583620f488f247",
+      "content_sha256_lf": "ead868920d3377601cc165f75f627dd934c8c4b9570fbbb40bec23ba9dc3c94e",
       "entry_count": 200,
-      "first_path": "src/rate_of_closure/web/src/model/durableEnsembleEvidence.ts",
-      "last_path": "src/rate_of_closure/web/src/model/simulationRunStatus.ts",
+      "first_path": "src/rate_of_closure/web/src/model/durableEnsembleAuthorityContract.test.ts",
+      "last_path": "src/rate_of_closure/web/src/model/simulation.ts",
       "path": "manuals/tools/manifests/module-inventory/entries-010.json",
       "shard_index": 10
     },
     {
-      "content_sha256_lf": "033001064c6727a4e04a5560a8f0bc3ed496e6534ce3a3b8a378ebe2a15a38e6",
+      "content_sha256_lf": "925a116c4a4894779180ca5de806236f0659b3e81af7a9b780e3a52a5fe0a4d6",
       "entry_count": 200,
-      "first_path": "src/rate_of_closure/web/src/model/simulationTypes.ts",
-      "last_path": "src/rrt_path_planner/matlab/src/core/RRTPlanner.m",
+      "first_path": "src/rate_of_closure/web/src/model/simulationDocumentFormat.ts",
+      "last_path": "src/rrt_path_planner/matlab/src/ObstaclesGeneratorScript_Dense.m",
       "path": "manuals/tools/manifests/module-inventory/entries-011.json",
       "shard_index": 11
     },
     {
-      "content_sha256_lf": "af0fafb3b986ef0c3d7c727bbe1e245a024f702e0c3542b6b0442b50c004976f",
+      "content_sha256_lf": "2f8a9184cb79168e40fbcf119f0d6dcfc91cd3a615f7635e8e5d97eb08ede025",
       "entry_count": 200,
-      "first_path": "src/rrt_path_planner/matlab/src/core/collisionCheck.m",
-      "last_path": "src/shared/python/chat/export/copy_clipboard.py",
+      "first_path": "src/rrt_path_planner/matlab/src/ai/pursuitSystem.m",
+      "last_path": "src/shared/python/chat/credentials.py",
       "path": "manuals/tools/manifests/module-inventory/entries-012.json",
       "shard_index": 12
     },
     {
-      "content_sha256_lf": "5d7f7c70e7f3628011a34497f0a8ad6043c4d2ef0c320d652930e65200c094ab",
+      "content_sha256_lf": "4b3dbf7e4f783bffc4b53d507f0c5754eeccb27b88e3af0bcd1a2dc3b128a10a",
       "entry_count": 200,
-      "first_path": "src/shared/python/chat/export/html_exporter.py",
-      "last_path": "src/shared/python/plot_engine/pyqt6_widget.py",
+      "first_path": "src/shared/python/chat/export/__init__.py",
+      "last_path": "src/shared/python/plot_engine/matplotlib_renderer.py",
       "path": "manuals/tools/manifests/module-inventory/entries-013.json",
       "shard_index": 13
     },
     {
-      "content_sha256_lf": "3bedf204f51ca8409ca838e7a52160c9ae8655fb85362eb904d3731c99aec046",
+      "content_sha256_lf": "c8cd8d11d7d41fd7afbb338b3a2519171a332e9842a7d6cc93bac98f355a2d1a",
       "entry_count": 200,
-      "first_path": "src/shared/python/plot_engine/specs.py",
-      "last_path": "src/shared/python/sidekick/ui/tools_sidebar/python_repl_tab.py",
+      "first_path": "src/shared/python/plot_engine/plotly_converter.py",
+      "last_path": "src/shared/python/sidekick/ui/tools_sidebar/notes_tab.py",
       "path": "manuals/tools/manifests/module-inventory/entries-014.json",
       "shard_index": 14
     },
     {
-      "content_sha256_lf": "89982df4b44fe51cd6fd1af2fdbdf55226cd5dd0126ae8203f151d45767f9ac0",
+      "content_sha256_lf": "2f0a98b01d73526c1ef4140e6593a27071c190144d09c2800713e2a5d3d46f95",
       "entry_count": 200,
-      "first_path": "src/shared/python/sidekick/ui/tools_sidebar/qt_compat.py",
-      "last_path": "src/shared/python/swing_sim/putting/variation.py",
+      "first_path": "src/shared/python/sidekick/ui/tools_sidebar/os_terminal.py",
+      "last_path": "src/shared/python/swing_sim/putting/stroke_interchange.py",
       "path": "manuals/tools/manifests/module-inventory/entries-015.json",
       "shard_index": 15
     },
     {
-      "content_sha256_lf": "4af778ed1ae484ba47189b20a92f343dcd3d026ef6f04939d611db57c5c2409f",
+      "content_sha256_lf": "b13b224994072a85f0eb589693a552e4f812c79ec7dde437f1ff195f073b1511",
       "entry_count": 200,
-      "first_path": "src/shared/python/swing_sim/reference.py",
-      "last_path": "src/tools/matlab_code_analyzer_gui/setup.m",
+      "first_path": "src/shared/python/swing_sim/putting/surface.py",
+      "last_path": "src/tools/matlab_code_analyzer_gui/codeIssuesGUI.m",
       "path": "manuals/tools/manifests/module-inventory/entries-016.json",
       "shard_index": 16
     },
     {
-      "content_sha256_lf": "f48ed44c226425e0dd109f4d1dba68db40d2971f5637d4fa2a4a07755f50383f",
-      "entry_count": 103,
-      "first_path": "src/tools/matlab_quality_utils.py",
+      "content_sha256_lf": "2f45c523a01be5a812a2a7cda124bb871bf28ef5f2b516e9f5a02ffb95950245",
+      "entry_count": 106,
+      "first_path": "src/tools/matlab_code_analyzer_gui/exportCodeIssues.m",
       "last_path": "wave_solver.py",
       "path": "manuals/tools/manifests/module-inventory/entries-017.json",
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "25f40c640208b0692c08d6241dcd3c0f7230412348498d1aafce365983f15fd0",
+  "source_tree_sha256": "c65423abfb875e1c9ad7663c228c8659a4e12898c7c806e7cf062a1da16047b0",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
-      "not-applicable": 2671,
+      "not-applicable": 2674,
       "provisional": 831
     },
     "blocked_count": 1,
     "calculation_count": 831,
     "classification_counts": {
       "calculation": 831,
-      "non-calculation": 2672
+      "non-calculation": 2675
     },
     "family_counts": {
       "control-systems-calculation": 6,
@@ -372,7 +372,7 @@
       "pendulum-calculation": 164,
       "process-calculators-calculation": 59,
       "rate-of-closure-calculation": 161,
-      "rate-of-closure-non-calculation": 906,
+      "rate-of-closure-non-calculation": 909,
       "repository-governance-non-calculation": 4,
       "repository-tooling-non-calculation": 76,
       "rotation-converter-calculation": 132,
@@ -382,12 +382,12 @@
       "swing-simulation-calculation": 62,
       "swing-simulation-non-calculation": 149
     },
-    "module_count": 3503,
-    "non_calculation_count": 2672,
+    "module_count": 3506,
+    "non_calculation_count": 2675,
     "provisional_count": 831,
     "review_status_counts": {
       "blocked": 1,
-      "inventory-baseline": 2671,
+      "inventory-baseline": 2674,
       "review-required": 831
     }
   }

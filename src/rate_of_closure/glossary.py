@@ -74,6 +74,15 @@ FIELD_TO_TERM: dict[str, str] = {
     "putt_break_m": "break",
     "putt_speed_at_hole_mps": "capture_speed",
     "putt_margin": "capture_speed",
+    # swing_sim.putting_result/2 fields (#4800 P1/P2/P5, surfaced by P6).
+    # No new glossary terms: every one of these lands on a term the
+    # full-swing vertical already defines, which is the point of
+    # reusing the impact sign conventions verbatim.
+    "putt_start_azimuth_deg": "launch_azimuth",
+    "putt_apex_break_m": "break",
+    "putt_entry_azimuth_deg": "launch_azimuth",
+    "putt_capture_margin_m": "capture_speed",
+    "putt_face_twist_deg": "twist",
 }
 
 

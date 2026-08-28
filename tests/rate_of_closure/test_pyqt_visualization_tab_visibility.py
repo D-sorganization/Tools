@@ -13,6 +13,7 @@ from typing import Any, cast
 import pytest
 
 from rate_of_closure.ui.pyqt6.morris_tab import MorrisScreeningTab
+from rate_of_closure.ui.pyqt6.putting_tab import PuttingTab
 from rate_of_closure.ui.pyqt6.variation_tab import VariationTab
 from rate_of_closure.visualization_performance_manifest import (
     load_visualization_performance_manifest,
@@ -60,6 +61,54 @@ def test_initial_variation_execution_policy_is_visible_and_bounded(qtbot) -> Non
         "both",
     ]
     assert tab._analysis_combo.currentData() == "both"
+
+
+def test_initial_putting_delivery_and_green_controls_are_visible_and_named(
+    qtbot,
+) -> None:  # type: ignore[no-untyped-def]
+    """Expose the whole #4800 P6 delivery in the first viewport.
+
+    The widened Putting surface must not push its own controls out of
+    reach: every delivery and green control the impact solve and the
+    surface integrator read is visible and carries a bounded accessible
+    name, and both the 2-D inspector and the 3-D playback canvas render
+    inside the tab.
+    """
+
+    tab = PuttingTab()
+    qtbot.addWidget(tab)
+    tab.resize(1440, 860)
+    tab.show()
+
+    stroke, green = tab.stroke_controls(), tab.green_controls()
+    named = {
+        stroke.putter_combo: "Putter Head",
+        stroke.pace_mode: "Putter Pace Input Mode",
+        stroke.speed_spin: "Putter Clubhead Speed",
+        stroke.lean_spin: "Putter Shaft Lean",
+        stroke.aim_spin: "Putt Aim Angle",
+        stroke.face_spin: "Putter Face Angle",
+        stroke.path_spin: "Putter Path Angle",
+        stroke.attack_spin: "Putter Attack Angle",
+        stroke.toe_spin: "Putter Strike Toe Offset",
+        stroke.high_spin: "Putter Strike High Offset",
+        green.stimp_spin: "Green Speed Stimp",
+        green.grade_spin: "Green Slope Grade",
+        green.aspect_spin: "Green Downhill Direction",
+        green.distance_spin: "Distance To Hole",
+        green.capture_combo: "Hole Capture Model",
+    }
+    for control, name in named.items():
+        assert control.accessibleName() == name
+        assert control.isVisible(), name
+    assert green.import_button.isVisible()
+    assert green.import_button.text().startswith("Import heightfield")
+
+    inspector = tab._plot_view.canvas()
+    playback = tab.playback_view().canvas()
+    assert inspector.isVisible() and playback.isVisible()
+    assert inspector.height() >= 240
+    assert playback.accessibleName() == "Rotatable 3D putt playback"
 
 
 def _probe(
