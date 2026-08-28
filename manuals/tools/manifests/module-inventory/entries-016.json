@@ -2,6 +2,126 @@
   "authority": "D-sorganization/Tools",
   "entries": [
     {
+      "authority_status": "not-applicable",
+      "bytes_lf": 17119,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b10c57c787852355bbfd1b592fd13c4368eb84d173f3a4ba8b3f77da8601d983",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-VARIATION-PY-A747D00331DE",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/putting/variation.py",
+      "purpose": "Monte-Carlo putting dispersion over stroke + green reading (P5, #4800).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PuttScenario",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PuttStroke",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PuttVariationPlan",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CATEGORY_PUTTING",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PUTT_AIM_KEY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PUTT_FACE_KEY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PUTT_PATH_KEY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PUTT_SPEED_KEY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PUTT_STRIKE_TOE_KEY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PUTT_VARIABLE_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "evaluate_putt",
+            "signature": "scenario: PuttScenario"
+          },
+          {
+            "kind": "function",
+            "name": "putt_outcome",
+            "signature": "document: PuttingResultDocument"
+          },
+          {
+            "kind": "function",
+            "name": "run_putt_dispersion",
+            "signature": "scenario: PuttScenario, plan: PuttVariationPlan"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/putting/tests/test_variation.py",
+          "tests/shared/python/golf_club/test_putter_fitting.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "m/s",
+          "mm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "provisional",
       "bytes_lf": 15768,
       "classification": "calculation",
@@ -15887,64 +16007,6 @@
           }
         ],
         "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2522,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "484e6fda902d2aed4b6748ac519bb0353799360a64e5b6be7b215e741c2c9e85",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-TOOLS-MATLAB-CODE-ANALYZER-GUI-SETUP-M-642EAD5515D5",
-      "language": "matlab",
-      "maintainer": "Tools module maintainers",
-      "path": "src/tools/matlab_code_analyzer_gui/setup.m",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "setup",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/media_processing/video_processor/apps/web/test/setup.ts",
-          "src/p1am_control_system/frontend/src/test/setup.ts",
-          "src/rate_of_closure/web/src/test/setup.ts",
-          "src/rotation_converter/web/src/test/setup.ts"
-        ],
         "unit_mentions": [
           "s"
         ],

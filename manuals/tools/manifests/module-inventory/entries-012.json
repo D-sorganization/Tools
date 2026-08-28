@@ -3,6 +3,92 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 4599,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0c745e94def2238696bc0b06374b6c8f3f5ae5287d45151225789dc1fc73d0c8",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-CORE-RRTPLANNER-M-5CFB1064F8F7",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/core/RRTPlanner.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "RRTPlanner",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "mergeParameters",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "parametersWithDefaults",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "resolvePlannerHandle",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "selectPlanner",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "setAlgorithm",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "setCollisionMode",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "setParameters",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 923,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -15123,66 +15209,6 @@
           "tests/unit/ai/skills/test_contracts.py",
           "tests/unit/test_contracts.py"
         ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3844,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f3ed3d42c169a21eb040c19019d2f1ff78b6126b1cacfdbdb3a93999d1b96bdf",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-EXPORT-COPY-CLIPBOARD-PY-83D0304007F3",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/export/copy_clipboard.py",
-      "purpose": "Per-message clipboard copy (Tools issue #2735).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ClipboardWriterProtocol",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "MessageClipboardCopier",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/chat/test_export.py",
-          "tests/unit/chat/export/test_copy_clipboard.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
       }
     }
   ],
