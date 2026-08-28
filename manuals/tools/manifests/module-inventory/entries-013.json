@@ -3,6 +3,198 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 6736,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a46d7bd86768c42b229953c1c1d7f3a1893492f5929c851bdcdad2034bd20581",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-THINKING-INDICATOR-PY-260392F68A3C",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/_thinking_indicator.py",
+      "purpose": "Reusable \"AI is thinking\" indicator for the shared chat dock.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ThinkingIndicator",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/chat/test_thinking_indicator.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2855,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ae64c0a92e2f9e2908070dab4b645819ad808dd428fb55cab81595a20e002541",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-WORKSPACE-PROTOCOL-PY-ABF5B1FC930B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/_workspace_protocol.py",
+      "purpose": "Protocol bridging a chat widget to a host calculation workspace.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "WorkspaceContextProtocol",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WorkspaceVariableInfo",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/chat/tests/test_workspace_bridge.py",
+          "tests/unit/chat/test_workspace_command_handler.py",
+          "tests/unit/sidekick/test_runtime_split_coverage.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5361,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "816101292bc74a6d93ff9cb89644245e4466ab8b0a945fd9cabf0e060794e5b0",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-AI-SETTINGS-CONTROLLER-PY-9789FC7E8009",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/ai_settings_controller.py",
+      "purpose": "Headless AI provider / model / thinking-level controller (ADR-0022, #6119).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AiSettingsController",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "AiSettingsView",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "VALID_FIELDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "VALID_THINKING_NAMES",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/unit/chat/test_ai_settings_controller.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 9077,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -6370,6 +6562,7 @@
           }
         ],
         "test_paths": [
+          "tests/rate_of_closure/test_putting.py",
           "tests/shared/python/golf_club/test_putter_fitting.py",
           "tests/shared/python/golf_club/test_putter_head.py"
         ],
@@ -16425,280 +16618,6 @@
         "unit_mentions": [
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 16320,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b975375497be633048450ad4710e6b58b6b9f81032780884487b77870062ec40",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-LIBRARY-UNIFIED-LOADER-PY-BD7C881844DD",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/library/unified_loader.py",
-      "purpose": "Unified model loader supporting URDF and MJCF formats.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ConversionError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "LoadResult",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ModelFormat",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ModelNotFoundError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "UnifiedModelLoader",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "UnsupportedFormatError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "UserPreferences",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_EXTENSION_MAP",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_LOAD_MJCF_ERRORS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "detect_format",
-            "signature": "file_path: Path"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/model_generation/tests/test_unified_loader.py",
-          "tests/shared/python/model_generation/test_unified_loader_edges.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1120,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "82e9d948af71a805aa877be41ca517261be8c00a54576cecd90caa45281d9a55",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-MESH-INIT-PY-478ADCF6013B",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/mesh/__init__.py",
-      "purpose": "Mesh processing utilities for model generation.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "CollisionGeometry",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CollisionGeometryGenerator",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "InertiaMode",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "InertiaResult",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "LODGenerationResult",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "LODGenerator",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "LODLevel",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "MeshExportConfig",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "MeshInertiaCalculator",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "MeshProcessor",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "MeshSegmentResult",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PrimitiveInertiaCalculator",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PrimitiveMeshGenerator",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PrimitiveShape",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 877,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c5cbbbcf41bf3ce0c436370ee3fa386c82db04b5d970ed644421372f0d787f05",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-PLUGINS-INIT-PY-CB5EE87201C3",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/plugins/__init__.py",
-      "purpose": "Plugin architecture for model generation integration.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ModelGenerationPlugin",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

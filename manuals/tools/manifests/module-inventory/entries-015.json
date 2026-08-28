@@ -3,6 +3,277 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 6334,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "21e34fe638424608e5ec91c8cf5450871de239a95c8e1b87b2967a42268d9db6",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-FILE-NAVIGATION-PY-EB3034BA725E",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/file_navigation.py",
+      "purpose": "Backend navigation contract for the Sidekick file explorer.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CommonLocation",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CommonLocationsProvider",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DefaultCommonLocationsProvider",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FileNavigationController",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FileNavigationState",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/integration/sidekick/test_sidekick_host_integration.py",
+          "tests/shared/python/sidekick/ui/test_file_navigation.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10149,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1c234ac556f56f0ee2d3ad736c5055b55aa1f4c9bbd8967d18da02ced1368fe3",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-HELP-CONTENT-PY-AB44B12D6DD3",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/help_content.py",
+      "purpose": "Pure-Python Sidekick help metadata and action descriptors.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SidebarActionMetadata",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_SIDEBAR_TAB_HELP",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SIDEBAR_CONTEXT_ACTIONS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "render_help_markdown",
+            "signature": "metadata: dict[str, str]"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "Hz"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1684,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "05ce894041e2ac26b7e390bb43516788943267c3cfbb3e0ffabe0ad71dc5b72b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-JUPYTER-TAB-INIT-PY-092FF2E9E77A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/jupyter_tab/__init__.py",
+      "purpose": "Sidekick Jupyter notebook tab — Phase 1 + Phase 2 + Phase 3 (Tools #2875–#2877).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "JUPYTER_TAB_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CellOutput",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CodeCell",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "JupyterNotebookWidget",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "JupyterTabAvailability",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "JupyterUnavailableWidget",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MarkdownCell",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "NotebookCell",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "NotebookDocument",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "NotebookLoadError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "NotebookSessionManager",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "NotebookSessionModel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RawCell",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SidekickNotebookWidget",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WorkspaceBridge",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "load_notebook",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 1851,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17342,256 +17613,6 @@
           "tests/rate_of_closure/test_localized_torque_web_golden.py"
         ],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 915,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "38fca59d45f2545bcd5d28f3922b17bb9afbe8fb1ac85ce1f3f8455a19a4aeeb",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-MODEL-INTERCHANGE-INIT-PY-79556FFA7405",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/model_interchange/__init__.py",
-      "purpose": "Golfer-model interchange for the heavy-hit epic (H2, #4564).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "BODY_CHAIN_FORMAT",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "BodyChain",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ChainBody",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ChainJoint",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "body_chain_from_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "body_chain_to_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "chain_from_mjcf",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "chain_from_osim",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "chain_from_urdf",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "grip_boundary_reduction",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 10738,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3af754ca3e8b8e76dc775b6184037d641dbbc6c682d98f7400e7da0e3a1c6aa8",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-MODEL-INTERCHANGE-BODY-CHAIN-PY-E11F0E175BED",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/model_interchange/body_chain.py",
-      "purpose": "Neutral body-chain contract and grip-boundary reduction (H2, #4564).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "BodyChain",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ChainBody",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ChainJoint",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "BODY_CHAIN_FORMAT",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "body_chain_from_json",
-            "signature": "text: str"
-          },
-          {
-            "kind": "function",
-            "name": "body_chain_to_json",
-            "signature": "chain: BodyChain"
-          },
-          {
-            "kind": "function",
-            "name": "grip_boundary_reduction",
-            "signature": "chain: BodyChain, *, hand_bodies: tuple[str, ...], boundary_joint_of: str, stiffness_override_n_m: float | None=None, damping_override_n_s_m: float | None=None"
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/golf_club/test_fitting_fixtures_parity.py"
-        ],
-        "unit_mentions": [
-          "N/m",
-          "N·m",
-          "rad",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 10821,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3f26f0575928413f2241387ea3c6fa83c6572cc41536535ca12a669b2b757df1",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-MODEL-INTERCHANGE-PARSERS-PY-860A347CE4F8",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/model_interchange/parsers.py",
-      "purpose": "Runtime-free engine-model parsers for the body-chain wire (H2, #4564).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "chain_from_mjcf",
-            "signature": "text: str"
-          },
-          {
-            "kind": "function",
-            "name": "chain_from_osim",
-            "signature": "text: str"
-          },
-          {
-            "kind": "function",
-            "name": "chain_from_urdf",
-            "signature": "text: str"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
         "validation_paths": []
       }
     }

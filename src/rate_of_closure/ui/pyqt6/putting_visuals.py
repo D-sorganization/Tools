@@ -1,4 +1,12 @@
-"""Bounded synchronized Matplotlib views for one accepted putt result."""
+"""Bounded synchronized Matplotlib views for one accepted putt result.
+
+The top-down green carries the #4800 P6 read: the target line, the
+start line the ball actually left on, the apex of the break, and the
+hole-capture geometry — the 54 mm rim beside the *effective* rim the
+Holmes/Penner model leaves at the arrival speed. Every one of those is
+read off the accepted ``swing_sim.putting_result/2`` record, never
+recomputed here, so the picture and the result rows can never disagree.
+"""
 
 from __future__ import annotations
 
@@ -22,7 +30,12 @@ from rate_of_closure.ui.pyqt6.figure_canvas import (
     LifecycleSafeFigureCanvas as FigureCanvas,
 )
 from rate_of_closure.ui.pyqt6.flight_view import distance_axis
-from shared.python.swing_sim.putting import PuttResult, capture_speed_mps
+from shared.python.swing_sim.putting import (
+    HOLE_RADIUS_M,
+    PuttingResultDocument,
+    PuttResult,
+    capture_speed_mps,
+)
 
 
 class PuttingPlotView(QWidget):
@@ -61,6 +74,7 @@ class PuttingPlotView(QWidget):
         layout.addWidget(self._status)
         layout.addWidget(self._canvas, 1)
         self._result: PuttResult | None = None
+        self._document: PuttingResultDocument | None = None
         self._plan: PuttingSamplePlan | None = None
         self._generation: object | None = None
         self._selected_raw_index: int | None = None
@@ -109,11 +123,13 @@ class PuttingPlotView(QWidget):
         grade: float,
         aspect: float,
         context_text: str,
+        document: PuttingResultDocument | None = None,
     ) -> None:
         """Atomically adopt one result; only replacement clears selection."""
         replacement = generation is not self._generation
         previous = (
             self._result,
+            self._document,
             self._plan,
             self._generation,
             self._hole_x,
@@ -127,6 +143,7 @@ class PuttingPlotView(QWidget):
         )
         try:
             self._result, self._plan, self._generation = result, plan, generation
+            self._document = document
             self._hole_x, self._grade, self._aspect = hole_x, grade, aspect
             self._context.setText(f"Displayed result: {context_text}")
             if replacement:
@@ -136,6 +153,7 @@ class PuttingPlotView(QWidget):
         except Exception:
             (
                 self._result,
+                self._document,
                 self._plan,
                 self._generation,
                 self._hole_x,
@@ -309,8 +327,17 @@ class PuttingPlotView(QWidget):
     def _draw_path_context(self) -> None:
         assert self._top is not None
         self._top.add_patch(
-            Circle((self._hole_x, 0.0), 0.054, fill=False, color="black", linewidth=1.5)
+            Circle(
+                (self._hole_x, 0.0),
+                HOLE_RADIUS_M,
+                fill=False,
+                color="black",
+                linewidth=1.5,
+                label="Hole rim",
+            )
         )
+        self._draw_capture_geometry()
+        self._draw_break_read()
         if self._grade > 0:
             aspect = math.radians(self._aspect)
             origin = (self._hole_x * 0.5, 0.0)
@@ -320,11 +347,65 @@ class PuttingPlotView(QWidget):
                 xytext=origin,
                 arrowprops={"arrowstyle": "-|>", "color": "grey"},
             )
+        self._top.axhline(0.0, color="grey", linewidth=0.8, linestyle="-.")
         self._top.set_xlabel(f"Along putt line [{distance_axis(self._top, 'x')}]")
         self._top.set_ylabel(f"Lateral [{distance_axis(self._top, 'y')}] (left +)")
         self._top.set_title("Top-down green")
         self._top.axis("equal")
         self._top.legend(loc="best", fontsize=8)
+
+    def _draw_capture_geometry(self) -> None:
+        """The rim the ball could actually use, from the accepted record.
+
+        ``effective_hole_radius_m`` is the Holmes/Penner radius at the
+        speed the ball crossed closest to the centre: a fast putt sees
+        a small opening even though the hole is always 54 mm.
+        """
+        if self._top is None or self._document is None:
+            return
+        radius = self._document.effective_hole_radius_m
+        if radius <= 0.0:
+            return
+        self._top.add_patch(
+            Circle(
+                (self._hole_x, 0.0),
+                radius,
+                fill=False,
+                color="tab:red",
+                linestyle="--",
+                linewidth=1.2,
+                label="Effective rim at arrival speed",
+            )
+        )
+
+    def _draw_break_read(self) -> None:
+        """The start line and the apex of the break, from the record."""
+        if self._top is None or self._document is None or self._result is None:
+            return
+        document = self._document
+        # Start line: the direction the ball left the face, drawn over
+        # the along-line span the putt actually covered. The record's
+        # azimuth is right-positive while y is left-positive.
+        reach = max(self._hole_x, max(self._result.path_x_m))
+        self._top.plot(
+            (0.0, reach),
+            (0.0, -reach * math.tan(math.radians(document.start_azimuth_deg))),
+            color="tab:purple",
+            linestyle=":",
+            linewidth=1.2,
+            label="Start line",
+        )
+        self._top.scatter(
+            document.apex_break_at_m,
+            document.apex_break_m,
+            s=60,
+            marker="D",
+            facecolors="none",
+            edgecolors="tab:blue",
+            linewidths=1.6,
+            zorder=8,
+            label="Apex break",
+        )
 
     def _draw_selected(self) -> None:
         if (

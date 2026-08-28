@@ -31,13 +31,17 @@ strokes-gained v2 into both clients; #4600 owns the PyQt reference and
 
 Club Fitting #4549, Heavy Hit #4562, and packaging #4579 are complete; physics
 is shared-first in `shared/python/{golf_club,swing_sim}`. Putting #4800 has
-P1-P5, P7, and P9; `putting_result/2` supersedes v1 without silent migration,
+P1-P7 and P9; `putting_result/2` supersedes v1 without silent migration,
 and Python remains the sole Monte-Carlo authority — the React twins mirror the
 outcome vocabulary and the deterministic single-putt evaluation only, never a
 second sampler, and the React Putting tab runs one chokepoint
-(`evaluatePuttWithTrajectory`). P6 (Qt tab) and P8 (shared 3D playback) remain;
-putt playback waits on P8's `playbackTransport.ts`/`TimedSample` seam and must
-not fork it.
+(`evaluatePuttWithTrajectory`). P6 widened the **existing** Qt tab (no
+tab-identity change, so the four-manifest lockstep stayed shut) into
+`putting_{stroke,green}_controls` + `putting_playback`; its 3-D view takes a
+physical time and owns no timer/speed/scrub. Putt playback on either surface
+waits on P8's `playbackTransport.ts`/`TimedSample`/`PlaybackTransportControls`
+seam and must not fork it. The PyQt `putting` baseline is stale by construction
+too — P6 changed that tab's first viewport. P8 remains.
 Clubhead-realism #4799 is complete (G1-G5): lean, offset hosels, real blade
 soles, 16 cross-runtime club gates, and toe-view acceptance gates over the
 **public** `parametric_head_mesh` (per-club tables plus a center-pivot

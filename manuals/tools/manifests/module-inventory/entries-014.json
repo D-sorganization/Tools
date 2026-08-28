@@ -3,6 +3,280 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 16320,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b975375497be633048450ad4710e6b58b6b9f81032780884487b77870062ec40",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-LIBRARY-UNIFIED-LOADER-PY-BD7C881844DD",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/library/unified_loader.py",
+      "purpose": "Unified model loader supporting URDF and MJCF formats.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ConversionError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LoadResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ModelFormat",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ModelNotFoundError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "UnifiedModelLoader",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "UnsupportedFormatError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "UserPreferences",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_EXTENSION_MAP",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_LOAD_MJCF_ERRORS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "detect_format",
+            "signature": "file_path: Path"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/model_generation/tests/test_unified_loader.py",
+          "tests/shared/python/model_generation/test_unified_loader_edges.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1120,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "82e9d948af71a805aa877be41ca517261be8c00a54576cecd90caa45281d9a55",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-MESH-INIT-PY-478ADCF6013B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/mesh/__init__.py",
+      "purpose": "Mesh processing utilities for model generation.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "CollisionGeometry",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CollisionGeometryGenerator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InertiaMode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InertiaResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LODGenerationResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LODGenerator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LODLevel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MeshExportConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MeshInertiaCalculator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MeshProcessor",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MeshSegmentResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PrimitiveInertiaCalculator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PrimitiveMeshGenerator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PrimitiveShape",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 877,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c5cbbbcf41bf3ce0c436370ee3fa386c82db04b5d970ed644421372f0d787f05",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-PLUGINS-INIT-PY-CB5EE87201C3",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/plugins/__init__.py",
+      "purpose": "Plugin architecture for model generation integration.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ModelGenerationPlugin",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 900,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17668,277 +17942,6 @@
           "g",
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6334,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "21e34fe638424608e5ec91c8cf5450871de239a95c8e1b87b2967a42268d9db6",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-FILE-NAVIGATION-PY-EB3034BA725E",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/file_navigation.py",
-      "purpose": "Backend navigation contract for the Sidekick file explorer.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CommonLocation",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CommonLocationsProvider",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "DefaultCommonLocationsProvider",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "FileNavigationController",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "FileNavigationState",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/integration/sidekick/test_sidekick_host_integration.py",
-          "tests/shared/python/sidekick/ui/test_file_navigation.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 10149,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "1c234ac556f56f0ee2d3ad736c5055b55aa1f4c9bbd8967d18da02ced1368fe3",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-HELP-CONTENT-PY-AB44B12D6DD3",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/help_content.py",
-      "purpose": "Pure-Python Sidekick help metadata and action descriptors.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SidebarActionMetadata",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_SIDEBAR_TAB_HELP",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SIDEBAR_CONTEXT_ACTIONS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "render_help_markdown",
-            "signature": "metadata: dict[str, str]"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "Hz"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1684,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "05ce894041e2ac26b7e390bb43516788943267c3cfbb3e0ffabe0ad71dc5b72b",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-JUPYTER-TAB-INIT-PY-092FF2E9E77A",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/jupyter_tab/__init__.py",
-      "purpose": "Sidekick Jupyter notebook tab — Phase 1 + Phase 2 + Phase 3 (Tools #2875–#2877).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "JUPYTER_TAB_ID",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CellOutput",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CodeCell",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "JupyterNotebookWidget",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "JupyterTabAvailability",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "JupyterUnavailableWidget",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "MarkdownCell",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "NotebookCell",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "NotebookDocument",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "NotebookLoadError",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "NotebookSessionManager",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "NotebookSessionModel",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "RawCell",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SidekickNotebookWidget",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WorkspaceBridge",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "load_notebook",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

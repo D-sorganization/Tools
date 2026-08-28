@@ -827,10 +827,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3691,
+      "bytes_lf": 9517,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "de1fc014bcd4c96b594cf85cc28ef03fa76e6a8b0de8e96b6da7242f0899f908",
+      "content_sha256_lf": "203e8f0fe5a2a13f06f9ecbbec60c49b4fccec3cf5a99a4da79c3d9cbc54ee1f",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-PUTTING-PY-668C8AE660B9",
       "language": "python",
@@ -872,6 +872,16 @@
           },
           {
             "kind": "function",
+            "name": "green_surface_from_document",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "putter_head_documents",
+            "signature": ""
+          },
+          {
+            "kind": "function",
             "name": "putter_specs",
             "signature": ""
           }
@@ -880,6 +890,7 @@
           "tests/rate_of_closure/test_putting.py"
         ],
         "unit_mentions": [
+          "mm",
           "s"
         ],
         "validation_paths": []
@@ -887,10 +898,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 2975,
+      "bytes_lf": 3518,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "46f4235297164fbceb541ce2bb7a248f742eab92629598333cef8d514e261646",
+      "content_sha256_lf": "bc1430ff04fddcd333b910eb4a2293378e04f85ae05f653152ab07734a5df667",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-PUTTING-RESULT-CONTRACT-PY-F4368D02DCE1",
       "language": "python",
@@ -942,7 +953,7 @@
         "unit_mentions": [
           "deg",
           "kg",
-          "m/s"
+          "s"
         ],
         "validation_paths": []
       }
@@ -9779,10 +9790,128 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1157,
+      "bytes_lf": 10996,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f4a239a62c2c0bbf2425827752c0848b87eabd0e3d503db7f99ff9214ba382b2",
+      "content_sha256_lf": "722ddecf6cd14bc0e3697d269544096a35455aa60df1e3a4f0bb44ee469ad5e8",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-PUTTING-GREEN-CONTROLS-PY-FC27AECD877F",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/ui/pyqt6/putting_green_controls.py",
+      "purpose": "Green-surface controls for the Putting tab (epic #4800, P6).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PuttGreen",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PuttingGreenControls",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "deg",
+          "mm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10711,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "861524032d51c60b2e2b490599f46dcd49c2f8b0daae485ada2af3a258bed385",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-PUTTING-PLAYBACK-PY-A7E636127072",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/ui/pyqt6/putting_playback.py",
+      "purpose": "Orbitable 3-D putt playback for the Putting tab (#4800 P6 / P8).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PuttPlaybackView",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "putt_playback_trajectory",
+            "signature": "result: PuttResult, surface: GreenSurface"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4214,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "76b5d844a9ea9502581dfc72c6085caa6ca0f80299ceea2c27dbacf9c8bf1b42",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-PUTTING-RESULT-PRESENTATION-PY-596EC4D80604",
       "language": "python",
@@ -9819,6 +9948,11 @@
         "public_surfaces": [
           {
             "kind": "function",
+            "name": "putting_document_values",
+            "signature": "document: PuttingResultDocument, twist: PutterTwist, format_m: Callable[[float], str]"
+          },
+          {
+            "kind": "function",
             "name": "putting_result_values",
             "signature": "result: PuttResult, format_m: Callable[[float], str]"
           }
@@ -9826,6 +9960,7 @@
         "test_paths": [],
         "unit_mentions": [
           "m/s",
+          "mm",
           "s"
         ],
         "validation_paths": []
@@ -9833,16 +9968,79 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 14330,
+      "bytes_lf": 12748,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ac197e84879af0b238ff5285f05cbd403ee78e1a75361c260dd12d351d9b455d",
+      "content_sha256_lf": "cbc2db92508960439a1f4c19220c7ee47358963e1beb5e2a36ab046f3a7aa44f",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-PUTTING-STROKE-CONTROLS-PY-C3D0192795AC",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/ui/pyqt6/putting_stroke_controls.py",
+      "purpose": "Delivered-stroke controls for the Putting tab (epic #4800, P6).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PuttStroke",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PuttingStrokeControls",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "cm",
+          "deg",
+          "g",
+          "m/s",
+          "mm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13520,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "afd014395ffe881bb7567410c49b5248943b2b57989dd677d7e254865c834b37",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-PUTTING-TAB-PY-DCE45086C755",
       "language": "python",
       "maintainer": "Rate of Closure maintainers",
       "path": "src/rate_of_closure/ui/pyqt6/putting_tab.py",
-      "purpose": "Putting tab — putter, stroke, green, roll-out (#4125 H3).",
+      "purpose": "Putting tab — stroke, green, results, and 3-D playback (#4800 P6).",
       "review_status": "inventory-baseline",
       "risk_tags": [
         "public-api"
@@ -9879,12 +10077,10 @@
         ],
         "test_paths": [
           "tests/rate_of_closure/pyqt_putting_sample_inspector_probe.py",
-          "tests/rate_of_closure/test_putting_gui.py"
+          "tests/rate_of_closure/test_putting_gui.py",
+          "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py"
         ],
         "unit_mentions": [
-          "cm",
-          "g",
-          "m/s",
           "s"
         ],
         "validation_paths": []
@@ -9892,10 +10088,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13694,
+      "bytes_lf": 16566,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b531a53faf9d3a7edf042e28f6697e72f17873b4d130db73359df48ae086e638",
+      "content_sha256_lf": "6429c8e85b39992d8b0f211752edbc52c77b1cd2323837bd0fcced4cd608c001",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-PUTTING-VISUALS-PY-BFF054BBE623",
       "language": "python",
@@ -9939,6 +10135,7 @@
         "test_paths": [],
         "unit_mentions": [
           "m/s",
+          "mm",
           "s"
         ],
         "validation_paths": []
@@ -12822,173 +13019,6 @@
             "kind": "class",
             "name": "TorqueProfileWorkspaceMixin",
             "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 5602,
-      "classification": "calculation",
-      "classification_basis": "path-marker:filter",
-      "content_sha256_lf": "ab3a29f3906830695f4e1916a33ab40e273b10efcacdb6a30038f914d6d075ba",
-      "family": "rate-of-closure-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VARIATION-ARC-FILTERS-PY-DA3B4FD68441",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/variation_arc_filters.py",
-      "purpose": "Outcome, perturbation-source, and phase controls for swing ensembles.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ArcFilterControls",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 374,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6132f1289998528d08abc318c6906bb2d26b0d9d49b4a02830b47f13ad66fa24",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VARIATION-CONSTANTS-PY-2803F8CE6D89",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/variation_constants.py",
-      "purpose": "UI labels and bounds shared by the variation controls.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "BASE_SOURCES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MAX_RUNS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MODE_LABELS",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 465,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ececb154f8400d46ff563d87ba9d77ebccb0bb09f154b87a80ff6a206a733a64",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VARIATION-CONTROL-HELPERS-PY-58721B059BF1",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/variation_control_helpers.py",
-      "purpose": "Small accessible control-layout helpers for variation views.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "add_labeled_control",
-            "signature": "layout: QHBoxLayout, text: str, control: QWidget, stretch: int=0"
           }
         ],
         "test_paths": [],
