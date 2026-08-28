@@ -1612,6 +1612,7 @@
           "tests/rate_of_closure/test_simulation.py",
           "tests/rate_of_closure/test_simulation_gui.py",
           "tests/rate_of_closure/test_targets.py",
+          "tests/rate_of_closure/test_variation_dataset_io.py",
           "tests/rate_of_closure/test_variation_gui.py",
           "tests/rate_of_closure/test_variation_gui_execution.py",
           "tests/rate_of_closure/test_variation_gui_roundtrip.py",
