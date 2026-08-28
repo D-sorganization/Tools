@@ -33,8 +33,9 @@ Club Fitting #4549, Heavy Hit #4562, and packaging #4579 are complete; physics
 is shared-first in `shared/python/{golf_club,swing_sim}`. Putting #4800 has
 P1-P3, P5, and P9; `putting_result/2` supersedes v1 without silent migration,
 and Python remains the sole Monte-Carlo authority. P4, P6-P8 remain.
-Clubhead-realism #4799 has G1-G3; leading-edge lean, offset hosels, real blade
-soles, and all 16 cross-runtime club gates are protected. G4-G5 remain.
+Clubhead-realism #4799 has G1-G3 and G5: leading-edge lean, offset hosels, real blade soles,
+and toe-view acceptance gates over the **public** `parametric_head_mesh` (pinned per-club
+tables + a center-pivot counterfactual that reddens all 16 clubs if the lean is reverted). G4 remains.
 
 #4142 remains Python-authoritative; PyQt6 and React do not reimplement physics.
 R10.3, R10.4, R11.1, and R11.3 are protected-merged through
@@ -68,9 +69,8 @@ PR #4738 merged V5.2's fail-closed changed-path governance as `4b4aec421`.
 The audit is 8 verified / 23 partial; seven blockers and two human actions remain.
 PRs #4835/#4837 are protected-merged through `d7a95e2a4`; the fifth manifest expands all 20 tabs
 over registered states/reference cases and binds scientific/nonvisual context.
-PR #4838's extension checklist and immutable consumer map move the audit to 10 verified
-/ 21 partial. Executed render, performance, decimation, approved-image, and
-human gaps remain; no pixel tolerance was loosened.
+PR #4838's extension checklist and immutable consumer map move the audit to 10 verified / 21 partial.
+Executed render, performance, decimation, approved-image, and human gaps remain; no pixel tolerance was loosened.
 
 ### Adding a Tab: The Five-Manifest Lockstep (Read Before Starting C6/C7/H4)
 
