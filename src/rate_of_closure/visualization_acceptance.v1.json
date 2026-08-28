@@ -242,12 +242,12 @@
       "surface": "pyqt",
       "tab_id": "putting",
       "context": {
-        "frame": "Ball-green frame declared by the putting result contract.",
+        "frame": "Ball-green frame declared by the putting result contract; delivery angles are right-positive off the target line and strike offsets are toe-positive and high-positive on the face.",
         "units": "Declared distance, speed, angle, time, and slope units.",
-        "provenance": "Canonical putting wire version, solver, surface, and seed identities.",
-        "limitations": "Synthetic putting outcomes do not establish player or green performance.",
-        "keyboard_path": "Primary tabs and named controls reach putt setup, result, and dispersion views.",
-        "nonvisual_alternative": "Putt path samples, capture outcome, and dispersion statistics are tabular."
+        "provenance": "Canonical putting wire version, solver, surface, and seed identities, with the putter-head source kind and the green surface origin named beside the displayed result.",
+        "limitations": "Synthetic putting outcomes do not establish player or green performance; the hole-capture model is the named published one, not a measured capture rate.",
+        "keyboard_path": "Primary tabs and named controls reach putt setup, stroke delivery, green surface, result, playback, and dispersion views.",
+        "nonvisual_alternative": "Putt path samples, start line, break summary, capture outcome, playback position, and dispersion statistics are tabular."
       }
     },
     {

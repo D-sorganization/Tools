@@ -10,24 +10,37 @@ from shared.python.swing_sim.putting import PuttResult
 
 @dataclass(frozen=True)
 class AcceptedPuttingContext:
-    """Complete bounded scientific authority shown beside retained evidence."""
+    """Complete bounded scientific authority shown beside retained evidence.
+
+    Epic #4800 P6 widened this from the H3 pace-and-planar-slope record
+    to the whole delivered configuration. The head-provenance kind and
+    the green's own provenance label are part of the authority: a putt
+    solved with a mesh-derived inertia tensor and one solved with the
+    catalogue-default MOI are different experiments, and the displayed
+    text must say which is on screen.
+
+    ``stroke`` and ``green`` are the prebuilt bounded labels from the
+    two control groups (``PuttStroke.label`` / ``PuttGreen.label``);
+    this record composes them with the head identity, so the plot view
+    keeps a single authority string to publish.
+    """
 
     putter: str
+    putter_source: str
     mass_kg: float
     loft_deg: float
     cor: float
-    speed_mps: float
-    stimp_ft: float
+    stroke: str
+    green: str
     grade_percent: float
     aspect_deg: float
     hole_m: float
 
     def label(self) -> str:
         return (
-            f"putter {self.putter} ({self.mass_kg:.3f} kg, {self.loft_deg:.1f} deg, "
-            f"COR {self.cor:.2f}); resolved speed {self.speed_mps:.3f} m/s; "
-            f"stimp {self.stimp_ft:.2f} ft; grade {self.grade_percent:.2f}%; "
-            f"aspect {self.aspect_deg:.1f} deg; hole {self.hole_m:.2f} m; "
+            f"putter {self.putter} [{self.putter_source}] "
+            f"({self.mass_kg:.3f} kg, {self.loft_deg:.1f} deg, "
+            f"COR {self.cor:.2f}); {self.stroke}; {self.green}; "
             "kernel RK4-2ms-v1"
         )
 
