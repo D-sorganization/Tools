@@ -33,13 +33,15 @@ Club Fitting #4549, Heavy Hit #4562, and packaging #4579 are complete; physics
 is shared-first in `shared/python/{golf_club,swing_sim}`. Putting #4800 has
 P1-P5 and P9; `putting_result/2` supersedes v1 without silent migration, and
 Python remains the sole Monte-Carlo authority. P6-P8 remain.
-Clubhead-realism #4799 has G1-G4; lean, offset hosels, blade soles, and all 16
-cross-runtime club gates are protected. G4 rebuilt every regenerable consumer
-artifact through its own flow (all byte-identical) and now gates the camera
-golden's `initial`/`limits`/`orbit_step_deg`/`zoom_step` in both twins. **Do
-not rebind the PyQt visual baselines to fix #4799**: all ten drift 924-2660
-microunits against a 250 limit, including tabs with no clubhead, from glyph
-re-rasterization no repository change explains (#4844). G5 remains.
+Clubhead-realism #4799 is complete (G1-G5): lean, offset hosels, real blade
+soles, 16 cross-runtime club gates, and toe-view acceptance gates over the
+**public** `parametric_head_mesh` (per-club tables plus a center-pivot
+counterfactual that reddens all 16 clubs if the lean is reverted). G4 rebuilt
+every regenerable consumer artifact through its own flow — all byte-identical —
+and gates the camera golden's `initial`/`limits`/`orbit_step_deg`/`zoom_step`
+in both twins. **Do not rebind the PyQt visual baselines to fix #4799**: all ten
+drift 924-2660 microunits against a 250 limit, including tabs with no clubhead,
+from glyph re-rasterization no repo change explains (#4844).
 
 #4142 remains Python-authoritative; PyQt6 and React do not reimplement physics.
 R10.3, R10.4, R11.1 and R11.3 are protected-merged through `4ddec9175`. The
@@ -63,16 +65,15 @@ effects, causal anatomy, governed human validation or coaching authority. The
 calibrated renderer envelope.
 
 PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
-the initial React/PyQt visibility, accessibility, performance, and baseline
-tier. PR #4733 merged V0.1 with purpose, prerequisites, and reciprocal
-counterparts; PR #4736 merged strict TypeScript-reader parity as `34a809d9`.
-PR #4738 merged V5.2's fail-closed changed-path governance as `4b4aec421`.
-PRs #4835/#4837 are protected-merged through `d7a95e2a4`; the fifth manifest
-expands all 20 tabs over registered states/reference cases and binds
-scientific/nonvisual context. PR #4838's extension checklist and immutable
-consumer map move the audit to 10 verified / 21 partial. Executed render,
-performance, decimation, approved-image, and human gaps remain; no pixel
-tolerance was loosened.
+the initial React/PyQt visibility, accessibility, performance and baseline tier.
+PR #4733 merged V0.1 with purpose, prerequisites and reciprocal counterparts;
+#4736 merged strict TypeScript-reader parity as `34a809d9` and #4738 merged
+V5.2's fail-closed changed-path governance as `4b4aec421`. PRs #4835/#4837 are
+protected-merged through `d7a95e2a4`; the fifth manifest expands all 20 tabs
+over registered states/reference cases and binds scientific/nonvisual context.
+PR #4838's extension checklist and immutable consumer map move the audit to 10
+verified / 21 partial. Executed render, performance, decimation,
+approved-image and human gaps remain; no pixel tolerance was loosened.
 
 ### Adding a Tab: The Five-Manifest Lockstep (Read Before Starting C6/C7/H4)
 
@@ -85,8 +86,7 @@ authority (20 entries = 10 `pyqt` + 10 `react`); `visualization_accessibility.v1
 `visualization_performance.v1.json`, `visual_baselines.v1.json` and
 `visualization_acceptance.v1.json` must match it entry-for-entry, in order.
 
-- Surface strings are **`pyqt` and `react`** — _not_ `pyqt6`, despite the
-  package being `ui/pyqt6`.
+- Surface strings are **`pyqt` and `react`**, _not_ `pyqt6`, despite `ui/pyqt6`.
 - PyQt6 registration: build the widget in `ui/pyqt6/main_window.py` (~line 127,
   beside `self._plots_tab = PlotsTab()`), then add a `PrimaryTabSpec`
   `(module_id, widget, label)`; `create_primary_tabs` in `main_window_layout.py`
@@ -105,8 +105,8 @@ authority (20 entries = 10 `pyqt` + 10 `react`); `visualization_accessibility.v1
 
 1. `src/rate_of_closure/README.md` — frame and unit conventions, run/build.
 2. `src/shared/python/swing_sim/impact/` — the contact-force law #4130 extends.
-3. `web/src/model/__fixtures__/` — golden fixtures pinning Python↔TS parity.
-   Changing one is a contract change on **both** sides; land together.
+3. `web/src/model/__fixtures__/` — golden fixtures pinning Python↔TS parity;
+   changing one is a contract change on **both** sides, so land them together.
 4. `rust_core/swing-core/` — pendulum EOM + plane projection, pyo3 + wasm.
 5. `src/shared/python/golf_club/AGENT_HANDOFF.md` — fitting/heavy-hit physics.
 
@@ -124,7 +124,7 @@ python3 -m ruff check src/rate_of_closure src/shared/python/swing_sim
 - **Do not append a dated entry to this file.** See the header.
 - **Do not merge #4466, #4446 or #4447 with a strategy flag.** See above.
 - **Do not take a branch file wholesale without diffing it against `main`.**
-  Symbol comparison misses function-body and data-only changes. Read the diff.
+  Symbol comparison misses body and data-only changes — read the diff.
 - Do not exceed 500 LOC per file in `rate_of_closure`, `swing_sim` or
   `swing-core` — split along a real seam, as `ui/pyqt6`'s mixins do.
 - Do not eagerly import `assembly_binding`, `engineering_sidecar` or
@@ -142,10 +142,9 @@ python3 -m ruff check src/rate_of_closure src/shared/python/swing_sim
 - **`tools_core` capability is two-tier** — a wheel can expose
   `simulate_trajectory` yet lack the tee-aware full-state API; guard on the
   specific capability. `test_club_view_camera.py`'s cadence test budgets
-  process-CPU time and can trip when sibling suites saturate the box.
-- **A purely additive file can still be wrong.** `PrimaryViewTabs.test.tsx`
-  and `TorqueProfilePanel.test.tsx` delete no lines yet fail against `main`.
-- PowerShell `Set-Content` and `pathlib.write_text` can rewrite LF as CRLF;
-  preserve newlines explicitly.
-- **`detect_secrets scan` writes native separators** — on Windows run it
-  _before_ normalising the baseline to forward slashes, never after.
+  process-CPU time and trips when sibling suites saturate the box.
+- **A purely additive file can still be wrong.** `PrimaryViewTabs.test.tsx` and
+  `TorqueProfilePanel.test.tsx` delete no lines yet fail against `main`.
+- PowerShell `Set-Content` and `pathlib.write_text` rewrite LF as CRLF unless
+  newlines are preserved explicitly; `detect_secrets scan` writes native
+  separators, so on Windows run it _before_ normalising the baseline.

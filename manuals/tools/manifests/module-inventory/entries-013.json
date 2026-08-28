@@ -3,6 +3,66 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 3844,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f3ed3d42c169a21eb040c19019d2f1ff78b6126b1cacfdbdb3a93999d1b96bdf",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-EXPORT-COPY-CLIPBOARD-PY-83D0304007F3",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/export/copy_clipboard.py",
+      "purpose": "Per-message clipboard copy (Tools issue #2735).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ClipboardWriterProtocol",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MessageClipboardCopier",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/chat/test_export.py",
+          "tests/unit/chat/export/test_copy_clipboard.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 4608,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -16621,63 +16681,6 @@
           "tests/shared/python/sidekick/test_protocols.py"
         ],
         "unit_mentions": [
-          "g"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4878,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ea08ddfda4caf60db885867329fbcd6d1f2cbfdbcf34cf542e19f39c189cb152",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-ENGINE-PYQT6-WIDGET-PY-DDEC1EC83F1A",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/plot_engine/pyqt6_widget.py",
-      "purpose": "Reusable PyQt6 PlotWidget backed by PlotSpec + MatplotlibRenderer.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "PlotWidget",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/plot_engine/test_pyqt6_widget.py"
-        ],
-        "unit_mentions": [
-          "bar",
           "g"
         ],
         "validation_paths": []
