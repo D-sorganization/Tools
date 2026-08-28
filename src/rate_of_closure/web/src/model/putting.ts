@@ -159,7 +159,7 @@ export function strike(
 
   // Stroke-plane solve (H3 model in the velocity-aligned frame).
   const vNormal = transfer * clubheadSpeedMps * Math.cos(beta);
-  const uTangential = clubheadSpeedMps * Math.sin(beta);
+  const uTangential = -clubheadSpeedMps * Math.sin(beta);
   const vTangential = ROLLING_CAP * uTangential;
   const spinRadS = (-(1.0 - ROLLING_CAP) * uTangential) / GOLF_BALL_RADIUS_M;
   const along = vNormal * Math.cos(beta) - vTangential * Math.sin(beta);

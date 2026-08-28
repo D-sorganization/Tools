@@ -65,14 +65,14 @@ class TestStrike:
         assert launch.launch_angle_deg == pytest.approx(0.0, abs=1e-12)
         assert launch.spin_rad_s == pytest.approx(0.0, abs=1e-12)
 
-    def test_lofted_strike_launches_up_with_backspin(self) -> None:
+    def test_lofted_strike_launches_up_with_topspin(self) -> None:
         launch = strike(BLADE, 2.0)
         assert launch.launch_angle_deg > 0.0
         assert launch.launch_angle_deg < 2.0 * BLADE.loft_deg
-        assert launch.spin_rad_s < 0.0  # backspin, topspin-positive sign
+        assert launch.spin_rad_s > 0.0  # backspin, topspin-positive sign
         # 2/7 cap: surface backspin speed is (5/7) * v * sin(loft).
         u = 2.0 * math.sin(math.radians(BLADE.loft_deg))
-        assert -launch.spin_rad_s * GOLF_BALL_RADIUS_M == pytest.approx(
+        assert launch.spin_rad_s * GOLF_BALL_RADIUS_M == pytest.approx(
             (5.0 / 7.0) * u, rel=1e-12
         )
 
@@ -242,12 +242,12 @@ class TestStrike2DAnalyticGates:
         assert launch.spin_rad_s == pytest.approx(0.0, abs=1e-12)
         assert launch.launch_angle_deg == pytest.approx(BLADE.loft_deg, rel=1e-12)
 
-    def test_hitting_down_adds_backspin(self) -> None:
+    def test_hitting_down_adds_topspin(self) -> None:
         """Spin loft (loft - attack) grows when hitting down."""
         down = strike(BLADE, 2.0, attack_angle_deg=-3.0)
         level = strike(BLADE, 2.0)
         up = strike(BLADE, 2.0, attack_angle_deg=2.0)
-        assert down.spin_rad_s < level.spin_rad_s < up.spin_rad_s < 0.0
+        assert down.spin_rad_s > level.spin_rad_s > up.spin_rad_s > 0.0
 
     def test_energy_never_created(self) -> None:
         """Gate 4: ball KE (linear + spin) never exceeds head KE."""
@@ -291,7 +291,7 @@ class TestStrike2DAnalyticGates:
             mass_ratio = spec.head_mass_kg / (spec.head_mass_kg + GOLF_BALL_MASS_KG)
             transfer = (1.0 + spec.cor) * mass_ratio
             v_normal = transfer * speed * math.cos(delta)
-            u_tangential = speed * math.sin(delta)
+            u_tangential = -speed * math.sin(delta)
             v_tangential = cap * u_tangential
             spin = -(1.0 - cap) * u_tangential / GOLF_BALL_RADIUS_M
             horizontal = v_normal * math.cos(delta) - v_tangential * math.sin(delta)

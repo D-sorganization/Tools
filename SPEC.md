@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.74                                    |
+| **Spec Version**        | 1.18.75                                    |
 | **Last Spec Update**    | 2026-08-28                                 |
 
 ## 2. Purpose & Mission
@@ -5560,6 +5560,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-28 | 1.18.75 | fix(putting, #4829): correct stroke-plane tangential impulse sign so lofted strikes launch below the effective loft, and update all physics reference pins. | #4834 |
 | 2026-08-28 | 1.18.74 | refactor(golf_club, #4825): extract putter head JSON wire serialization/deserialization to `putter_head_serde.py` (105 LOC), reducing `putter_head.py` from 502 LOC to 432 LOC to satisfy the 500-line per-file LOC budget while preserving full public API backward compatibility through re-exports. |
 | 2026-08-28 | 1.18.73 | test(variation, #4696 / #4558): add HDF5/JSON/CSV dataset IO roundtrip coverage (`test_variation_dataset_io.py`) for the schema constants and `write_hdf5`/`read_hdf5` pair already published via #4674; the PR's own HDF5 implementation was superseded by #4674/#4701 while queued, so only the test file and export list carried a net diff after rebase onto main. |
 | 2026-08-27 | 1.18.72 | fix(#4827): dedupe the duplicate `**Spec Version**` row that two concurrently merged PRs left in the §1 Identity table (one stale at 1.18.70, one current at 1.18.71), and add `tests/architecture/test_spec_version_freshness.py` so the Identity header version and the newest §12 Change Log row are asserted equal on every PR — previously that equality was only prose in the spec-check failure message, not a gate. | #4827 |

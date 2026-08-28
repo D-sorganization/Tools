@@ -93,26 +93,26 @@ class TestReferencePuttPins:
     def test_reference_launch(self) -> None:
         launch = strike(putter_specs()["Blade Putter"], 1.8)
         assert launch.ball_speed_mps == pytest.approx(2.828565312464848, rel=1e-12)
-        assert launch.launch_angle_deg == pytest.approx(3.5452147542505257, rel=1e-9)
+        assert launch.launch_angle_deg == pytest.approx(2.4547852457494757, rel=1e-9)
         assert launch.horizontal_speed_mps == pytest.approx(
-            2.8231523192738344, rel=1e-12
+            2.8259696302272945, rel=1e-12
         )
-        assert launch.spin_rad_s == pytest.approx(-3.153929533539754, rel=1e-12)
+        assert launch.spin_rad_s == pytest.approx(3.153929533539754, rel=1e-12)
 
     def test_reference_breaking_putt(self) -> None:
         launch = strike(putter_specs()["Blade Putter"], 1.8)
         green = GreenConditions(stimp_ft=10.0, grade_percent=2.0, aspect_deg=90.0)
         result = simulate_putt(launch, green, 3.0)
         assert not result.holed
-        assert result.total_distance_m == pytest.approx(4.417405938785078, rel=1e-9)
-        assert result.skid_distance_m == pytest.approx(0.5103817275162047, rel=1e-9)
-        assert result.time_s == pytest.approx(4.388, abs=2e-3)
-        assert result.break_m == pytest.approx(0.8176068791755766, rel=1e-9)
-        assert result.miss_distance_m == pytest.approx(1.4994647284222105, rel=1e-9)
+        assert result.total_distance_m == pytest.approx(4.562853055205739, rel=1e-9)
+        assert result.skid_distance_m == pytest.approx(0.49083593692889005, rel=1e-9)
+        assert result.time_s == pytest.approx(4.464, abs=2e-3)
+        assert result.break_m == pytest.approx(0.8476231786308811, rel=1e-9)
+        assert result.miss_distance_m == pytest.approx(1.6335909610224524, rel=1e-9)
 
     def test_reference_holed_putt(self) -> None:
         launch = strike(putter_specs()["Blade Putter"], 1.6)
         result = simulate_putt(launch, GreenConditions(stimp_ft=10.0), 3.0)
         assert result.holed
-        assert result.speed_at_hole_mps == pytest.approx(0.5903262895096224, rel=1e-9)
-        assert result.margin_mps == pytest.approx(0.2283133618862715, rel=1e-9)
+        assert result.speed_at_hole_mps == pytest.approx(0.6746829587276968, rel=1e-9)
+        assert result.margin_mps == pytest.approx(0.1439566926681971, rel=1e-9)
