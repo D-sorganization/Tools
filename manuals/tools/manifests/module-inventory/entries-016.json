@@ -2,6 +2,113 @@
   "authority": "D-sorganization/Tools",
   "entries": [
     {
+      "authority_status": "not-applicable",
+      "bytes_lf": 18909,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2ef579510f0eed60664dd5b00bbe46af982ce8ea727d1905480f7d734e106aca",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-STROKE-INTERCHANGE-PY-6FC8D525B444",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/putting/stroke_interchange.py",
+      "purpose": "Putting-stroke interchange: recorded strokes drive the impact solve (#4800 P4).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PuttingStroke",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StrokePutt",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StrokeSample",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StrokeStrike",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PUTTING_STROKE_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "impact_sample_index",
+            "signature": "stroke: PuttingStroke, *, body_to_face_m: float"
+          },
+          {
+            "kind": "function",
+            "name": "putt_from_stroke",
+            "signature": "stroke: PuttingStroke, putter: PutterSpec, surface: GreenSurface, *, body_to_face_m: float, stimp_ft: float, hole_distance_m: float, shaft_lean_deg: float | None=None, head_moi_kg_m2: float | None=None, mu_slide: float=DEFAULT_SLIDING_MU, capture_model: CaptureModel='effective_radius'"
+          },
+          {
+            "kind": "function",
+            "name": "putting_stroke_from_json",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "putting_stroke_to_json",
+            "signature": "stroke: PuttingStroke"
+          },
+          {
+            "kind": "function",
+            "name": "strike_from_stroke",
+            "signature": "stroke: PuttingStroke, putter: PutterSpec, *, body_to_face_m: float, shaft_lean_deg: float | None=None, head_moi_kg_m2: float | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "strike_parameters",
+            "signature": "stroke: PuttingStroke, *, body_to_face_m: float"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/putting/tests/test_stroke_interchange.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "provisional",
       "bytes_lf": 12987,
       "classification": "calculation",
@@ -15885,94 +15992,6 @@
           "tests/tools/test_logger_shim.py"
         ],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 12257,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "efd2a1409a83349004de422868475c9792761edb153daf77bac86cc23b09dd95",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-TOOLS-MATLAB-CODE-ANALYZER-GUI-CODEISSUESGUI-M-C52FD8FB0CB3",
-      "language": "matlab",
-      "maintainer": "Tools module maintainers",
-      "path": "src/tools/matlab_code_analyzer_gui/codeIssuesGUI.m",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "addFiles",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "addFolder",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "analyzeCode",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "browseOutput",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "cancelDialog",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "codeIssuesGUI",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "removePath",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "updatePathList",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
         "validation_paths": []
       }
     }

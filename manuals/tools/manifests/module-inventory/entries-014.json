@@ -3,6 +3,73 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 18042,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "eab8c6b61f0103d14305bc4146bc24d51b52bb3d7d599c0a009ba25110a6a113",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-ENGINE-MATPLOTLIB-RENDERER-PY-345ED3EDABF1",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/plot_engine/matplotlib_renderer.py",
+      "purpose": "Matplotlib renderer for PlotSpec contracts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MatplotlibRenderer",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_LINESTYLE_MAP",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_MARKER_MAP",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/plot_engine/tests/test_matplotlib_renderer.py",
+          "tests/shared/python/plot_engine/test_matplotlib_renderer.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 13094,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17763,66 +17830,6 @@
         "unit_mentions": [
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 7426,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "10ad5ef01bb6f1ffb6f86ecb10d1694216c01473c5ba597cf8b3afcbd32f7a62",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-NOTES-TAB-PY-9F1DD11B69BA",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/notes_tab.py",
-      "purpose": "Project notes widget for Sidekick runtime tabs.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SidekickNotesWidget",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SIDEKICK_NOTES_OBJECT_NAME",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/sidekick/tests/test_notes_tab.py",
-          "tests/unit/sidekick/test_notes_tab.py"
-        ],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

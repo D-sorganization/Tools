@@ -146,6 +146,7 @@ def test_all_visualization_authorities_are_declared_as_package_data() -> None:
         "visualization_tabs.v1.json",
         "visualization_performance.v1.json",
         "visualization_accessibility.v1.json",
+        "visualization_acceptance.v1.json",
         "visual_baselines.v1.json",
         "visual_baseline_calibration.v1.json",
         "visual_baselines/v1/react/*.png",

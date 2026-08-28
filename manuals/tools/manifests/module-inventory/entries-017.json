@@ -3,6 +3,94 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 12257,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "efd2a1409a83349004de422868475c9792761edb153daf77bac86cc23b09dd95",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-TOOLS-MATLAB-CODE-ANALYZER-GUI-CODEISSUESGUI-M-C52FD8FB0CB3",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/tools/matlab_code_analyzer_gui/codeIssuesGUI.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "addFiles",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "addFolder",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "analyzeCode",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "browseOutput",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "cancelDialog",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "codeIssuesGUI",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "removePath",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "updatePathList",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 15023,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",

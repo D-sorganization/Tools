@@ -3,6 +3,99 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 15176,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "a4b08832dc365db50d9d2d74983d2d6097456be8cb08408344a91ffb7bf4111a",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-SIMULATION-TS-1714CC349F81",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/simulation.ts",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "BALL_POSITION",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "SimulationInput",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "SimulationLaunchTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "SimulationRunTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "SwingSampleTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "WebSourceKind",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "runSimulation",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/pendulum_simulator/tests/test_simulation.py",
+          "tests/rate_of_closure/test_simulation.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "g",
+          "rad",
+          "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 1007,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
@@ -2830,10 +2923,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10151,
+      "bytes_lf": 10148,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c24003a9abb004a03019a5dc24661ab2568824135796cc7d4f2595ec415df058",
+      "content_sha256_lf": "4c467b1ca28ef2046c18cbebee4c47e69ac419687be9cc0ccd7c628acb983965",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONEXECUTIONSERVICE-TEST-TS-2BACC2CD08C9",
       "language": "typescript",
@@ -14516,50 +14609,6 @@
         "test_paths": [],
         "unit_mentions": [
           "g"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2035,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b90af47a282eff697b26bb3cc0c3c84536313a547892823552586e10d0ac25bd",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-OBSTACLESGENERATORSCRIPT-DENSE-M-0A2BBE6FD9F9",
-      "language": "matlab",
-      "maintainer": "Tools module maintainers",
-      "path": "src/rrt_path_planner/matlab/src/ObstaclesGeneratorScript_Dense.m",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [
-          "deg"
         ],
         "validation_paths": []
       }

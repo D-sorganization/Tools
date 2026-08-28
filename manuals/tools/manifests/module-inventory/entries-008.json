@@ -7105,6 +7105,91 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 10409,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4d7d36368aec5be9c414937929389f83b2ece9e370dd88e393ac8d9ef9500600",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-VISUALIZATION-ACCEPTANCE-MANIFEST-PY-4AAC0212FD18",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/visualization_acceptance_manifest.py",
+      "purpose": "Strict R14.6 cross-surface acceptance and human-review authority.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AcceptanceManifestError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "AcceptanceState",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "AcceptanceTab",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HumanAction",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ScientificContext",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "VisualizationAcceptanceManifest",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "load_visualization_acceptance_manifest",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_visualization_acceptance_manifest.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 5235,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -7321,6 +7406,7 @@
         ],
         "test_paths": [
           "tests/rate_of_closure/pyqt_visualization_tab_probe.py",
+          "tests/rate_of_closure/test_visualization_acceptance_manifest.py",
           "tests/rate_of_closure/test_visualization_accessibility.py",
           "tests/rate_of_closure/test_visualization_performance_manifest.py",
           "tests/rate_of_closure/test_visualization_tab_manifest.py"
@@ -12412,57 +12498,6 @@
           {
             "kind": "export",
             "name": "PrimaryViewTabs",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3784,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "79c3c783728eb1f50e8d4c80c480ed7c3aaa67a804ec826cd656161622f3af56",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-PRIMARYWORKSPACEPANEL-TSX-4C2FCD5A57AA",
-      "language": "typescript-react",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/components/PrimaryWorkspacePanel.tsx",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "PrimaryWorkspacePanel",
             "signature": null
           }
         ],

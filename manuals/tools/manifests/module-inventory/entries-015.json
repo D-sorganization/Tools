@@ -3,6 +3,66 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 7426,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "10ad5ef01bb6f1ffb6f86ecb10d1694216c01473c5ba597cf8b3afcbd32f7a62",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-NOTES-TAB-PY-9F1DD11B69BA",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/notes_tab.py",
+      "purpose": "Project notes widget for Sidekick runtime tabs.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SidekickNotesWidget",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SIDEKICK_NOTES_OBJECT_NAME",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/test_notes_tab.py",
+          "tests/unit/sidekick/test_notes_tab.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 34415,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -18001,113 +18061,6 @@
         ],
         "test_paths": [],
         "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 18909,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2ef579510f0eed60664dd5b00bbe46af982ce8ea727d1905480f7d734e106aca",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-STROKE-INTERCHANGE-PY-6FC8D525B444",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/putting/stroke_interchange.py",
-      "purpose": "Putting-stroke interchange: recorded strokes drive the impact solve (#4800 P4).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "PuttingStroke",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "StrokePutt",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "StrokeSample",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "StrokeStrike",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PUTTING_STROKE_FORMAT",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "impact_sample_index",
-            "signature": "stroke: PuttingStroke, *, body_to_face_m: float"
-          },
-          {
-            "kind": "function",
-            "name": "putt_from_stroke",
-            "signature": "stroke: PuttingStroke, putter: PutterSpec, surface: GreenSurface, *, body_to_face_m: float, stimp_ft: float, hole_distance_m: float, shaft_lean_deg: float | None=None, head_moi_kg_m2: float | None=None, mu_slide: float=DEFAULT_SLIDING_MU, capture_model: CaptureModel='effective_radius'"
-          },
-          {
-            "kind": "function",
-            "name": "putting_stroke_from_json",
-            "signature": "text: str"
-          },
-          {
-            "kind": "function",
-            "name": "putting_stroke_to_json",
-            "signature": "stroke: PuttingStroke"
-          },
-          {
-            "kind": "function",
-            "name": "strike_from_stroke",
-            "signature": "stroke: PuttingStroke, putter: PutterSpec, *, body_to_face_m: float, shaft_lean_deg: float | None=None, head_moi_kg_m2: float | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "strike_parameters",
-            "signature": "stroke: PuttingStroke, *, body_to_face_m: float"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/putting/tests/test_stroke_interchange.py"
-        ],
-        "unit_mentions": [
-          "deg",
           "s"
         ],
         "validation_paths": []

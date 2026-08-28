@@ -3,6 +3,117 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 6836,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "699988367bab931468ddea2f268c8ff0df986aa7c22f115315e9e4ffe0a99e82",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-DURABLEENSEMBLEAUTHORITYCONTRACT-TS-0B6C1F1FCE2B",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/durableEnsembleAuthorityContract.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "DURABLE_AUTHORITY_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "DURABLE_JOB_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "DURABLE_REQUEST_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "DURABLE_REQUEST_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "DURABLE_SCOPE",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "DurableEnsembleCapability",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "DurableEnsembleJob",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "DurableEnsembleRequestDocument",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "DurableEnsembleRequestInput",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "DurableJobStatus",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "parseDurableEnsembleCapability",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "parseDurableEnsembleJob",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "serializeDurableEnsembleRequest",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 1524,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -13764,99 +13875,6 @@
           "deg",
           "g",
           "ms",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 15176,
-      "classification": "calculation",
-      "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "a4b08832dc365db50d9d2d74983d2d6097456be8cb08408344a91ffb7bf4111a",
-      "family": "rate-of-closure-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-SIMULATION-TS-1714CC349F81",
-      "language": "typescript",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/model/simulation.ts",
-      "purpose": null,
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "BALL_POSITION",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "SimulationInput",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "SimulationLaunchTs",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "SimulationRunTs",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "SwingSampleTs",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "WebSourceKind",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "runSimulation",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/pendulum_simulator/tests/test_simulation.py",
-          "tests/rate_of_closure/test_simulation.py"
-        ],
-        "unit_mentions": [
-          "deg",
-          "g",
-          "rad",
-          "rad/s",
           "s"
         ],
         "validation_paths": []
