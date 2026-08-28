@@ -3,6 +3,117 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 3898,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6804bf0bf1507d27825fe728b3a8ea0ca1687a56fd10e1c75ab6c05ebd09f54d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-ENGINE-SPECS-PY-591CB1EC185F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/plot_engine/specs.py",
+      "purpose": "PlotSpec Pydantic contract hierarchy.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AxisSpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ContourPlotSpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FilterComparisonSpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HeatmapSpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HistogramSpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LegendSpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlotSpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SeriesData",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SeriesStyle",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SurfacePlotSpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TrendlineSpec",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/plot_engine/tests/test_matplotlib_renderer.py",
+          "src/shared/python/plot_engine/tests/test_plotly_converter.py",
+          "src/shared/python/plot_engine/tests/test_specs.py",
+          "tests/shared/python/plot_engine/test_matplotlib_renderer.py",
+          "tests/shared/python/plot_engine/test_plotly_converter.py",
+          "tests/shared/python/plot_engine/test_pyqt6_widget.py",
+          "tests/shared/python/plot_engine/test_specs.py",
+          "tests/test_waves_2_3_imports.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 6322,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17768,68 +17879,6 @@
           "g",
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2663,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "71387eaf6c488ab63161b54e2b2d86801e3a63fa1acc79f88705d755f72b4352",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-QT-COMPAT-PY-FA3C270556F7",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/qt_compat.py",
-      "purpose": "Small Qt binding shim for tools sidebar widgets.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "QT_API",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "all_sidebar_dock_features",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "dock_area",
-            "signature": "name: str"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

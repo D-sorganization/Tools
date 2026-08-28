@@ -11,7 +11,7 @@
     "Approved baselines cover the initial React 1440x900 and PyQt 1.0-DPI states, not narrow React, PyQt 1.5 DPI, or representative loading, result, no-impact, failure, and stale states.",
     "The manual assistive-technology protocol is ready but has not been executed and signed for React and PyQt.",
     "A user-oriented rendered review has not been approved with exact build and image identities.",
-    "The per-tab acceptance matrix does not yet bind every state to frame, units, provenance, limitation placement, keyboard path, and nonvisual alternative evidence.",
+    "The acceptance authority now binds every tab and registered state to reference cases, frame, units, provenance, limitation placement, keyboard path, and nonvisual alternatives; executed state/case geometry and exact artifact identities remain incomplete.",
     "All-tab representative-dataset render and update latency, layout-shift, and deterministic-decimation evidence is incomplete.",
     "The new-tab extension checklist and downstream cross-repository validation are not yet consolidated into protected completion evidence."
   ],
@@ -240,13 +240,15 @@
       "requirement_id": "V3.5",
       "requirement": "Provide accessible names, keyboard use, focus, announcements, and nonvisual alternatives.",
       "status": "partial",
-      "rationale": "Automated React and PyQt semantics are protected; manual AT and complete nonvisual alternatives remain unqualified.",
+      "rationale": "Automated React and PyQt semantics are protected; #4832 binds a declared nonvisual alternative and keyboard path to every tab while manual AT remains unqualified.",
       "evidence_files": [
         "src/rate_of_closure/visualization_accessibility.v1.json",
+        "src/rate_of_closure/visualization_acceptance.v1.json",
+        "tests/rate_of_closure/test_visualization_acceptance_manifest.py",
         "docs/development/rate-visualization-at-protocol.md"
       ],
       "gaps": [
-        "Execute manual AT review and complete per-tab nonvisual-alternative evidence."
+        "Execute and sign the manual AT review against the governed per-tab alternatives and paths."
       ]
     },
     {
@@ -328,10 +330,12 @@
       "requirement_id": "V5.1",
       "requirement": "Publish inventory, hierarchy, sizes, accessibility, commands, and a new-tab checklist.",
       "status": "partial",
-      "rationale": "Manifests and an AT protocol are published, but no consolidated reviewer guide contains the full extension checklist and commands.",
+      "rationale": "Manifests plus exact AT and rendered-review protocols are published, but the full new-tab extension checklist and downstream command map remain unconsolidated.",
       "evidence_files": [
         "src/rate_of_closure/visualization_tabs.v1.json",
-        "docs/development/rate-visualization-at-protocol.md"
+        "src/rate_of_closure/visualization_acceptance.v1.json",
+        "docs/development/rate-visualization-at-protocol.md",
+        "docs/development/rate-visualization-review-protocol.md"
       ],
       "gaps": [
         "Publish the consolidated visual-first extension and verification guide."
@@ -354,10 +358,11 @@
       "requirement_id": "V5.3",
       "requirement": "Complete and record a user-oriented rendered review of all tabs.",
       "status": "partial",
-      "rationale": "Automated calibrated baselines exist, but no human approval record binds exact build and image identities.",
+      "rationale": "Automated calibrated baselines and a fail-closed review protocol exist, but no human approval record binds exact build, dataset, findings, and image identities.",
       "evidence_files": [
         "src/rate_of_closure/visual_baselines.v1.json",
-        "src/rate_of_closure/visual_baseline_calibration.v1.json"
+        "src/rate_of_closure/visual_baseline_calibration.v1.json",
+        "docs/development/rate-visualization-review-protocol.md"
       ],
       "gaps": ["Obtain and record human rendered-review approval."]
     },
@@ -378,13 +383,18 @@
       "requirement_id": "AM.1",
       "requirement": "Bind every tab/state to identity, geometry, accessibility, scientific context, responsive result, and approved image evidence.",
       "status": "partial",
-      "rationale": "Three strict 20-tab manifests cover initial geometry, automated accessibility, and initial performance, but state-level scientific and approved-image fields are not unified.",
+      "rationale": "The strict acceptance authority now expands all 20 tabs over every registered state and surface reference case and binds frame, units, provenance, limitations, keyboard path, and nonvisual alternatives. Executed state/case geometry, accessibility, responsive results, and approved image identities remain incomplete.",
       "evidence_files": [
         "src/rate_of_closure/visualization_tabs.v1.json",
         "src/rate_of_closure/visualization_accessibility.v1.json",
-        "src/rate_of_closure/visualization_performance.v1.json"
+        "src/rate_of_closure/visualization_performance.v1.json",
+        "src/rate_of_closure/visualization_acceptance.v1.json",
+        "src/rate_of_closure/visualization_acceptance_manifest.py",
+        "tests/rate_of_closure/test_visualization_acceptance_manifest.py"
       ],
-      "gaps": ["Complete the per-tab/per-state acceptance evidence matrix."]
+      "gaps": [
+        "Execute every applicable state/reference case and bind exact geometry, accessibility, responsive, and approved image evidence."
+      ]
     },
     {
       "requirement_id": "C.1",

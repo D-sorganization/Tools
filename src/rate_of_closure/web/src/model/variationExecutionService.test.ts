@@ -58,7 +58,6 @@ describe("variation execution authority", () => {
     );
   });
 
-
 });
 
 class FakeWorker {
@@ -100,8 +99,6 @@ const validResult = (): ReturnType<typeof executeVariationWork> =>
   executeVariationWork(jointRequest(), () => undefined);
 
 describe("production worker transport", () => {
-
-
   it("accepts validated progress and result, then cleans up exactly once", async () => {
     const worker = new FakeWorker();
     const onProgress = vi.fn();

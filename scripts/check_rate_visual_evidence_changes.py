@@ -13,6 +13,7 @@ from typing import Final
 LOGGER = logging.getLogger(__name__)
 
 SHARED_MANIFEST: Final = "src/rate_of_closure/visualization_tabs.v1.json"
+ACCEPTANCE_MANIFEST: Final = "src/rate_of_closure/visualization_acceptance.v1.json"
 SHARED_AUDIT: Final = "docs/audits/rate_of_closure_visual_first_epic_4433.v1.json"
 REACT_FIRST_VIEWPORT_TEST: Final = (
     "src/rate_of_closure/web/e2e/visualization-tab-visibility.spec.ts"
@@ -67,9 +68,19 @@ def _surface_requirements(surface: str) -> tuple[str, ...]:
     """Return the exact evidence co-change contract for one visual surface."""
 
     if surface == "react":
-        return SHARED_MANIFEST, SHARED_AUDIT, REACT_FIRST_VIEWPORT_TEST
+        return (
+            SHARED_MANIFEST,
+            ACCEPTANCE_MANIFEST,
+            SHARED_AUDIT,
+            REACT_FIRST_VIEWPORT_TEST,
+        )
     if surface == "pyqt":
-        return SHARED_MANIFEST, SHARED_AUDIT, PYQT_FIRST_VIEWPORT_TEST
+        return (
+            SHARED_MANIFEST,
+            ACCEPTANCE_MANIFEST,
+            SHARED_AUDIT,
+            PYQT_FIRST_VIEWPORT_TEST,
+        )
     raise ValueError(f"unknown visual surface: {surface}")
 
 
@@ -81,7 +92,8 @@ def validate_visual_evidence_changes(changed_files: Iterable[str]) -> tuple[str,
         accepted.
     Postconditions:
         An empty result means every triggered surface includes its manifest,
-        audit, and first-viewport evidence update in the same change set.
+        acceptance authority, audit, and first-viewport evidence update in the
+        same change set.
     """
 
     changed = _normalize_paths(changed_files)
