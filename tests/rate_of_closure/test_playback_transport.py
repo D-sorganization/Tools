@@ -25,6 +25,9 @@ from rate_of_closure.simulation.playback_transport import (
     scrub_value,
     time_at_scrub,
 )
+from rate_of_closure.simulation.putt_playback import putt_playback_trajectory
+from shared.python.swing_sim.impact import GOLF_BALL_RADIUS_M
+from shared.python.swing_sim.putting import PlanarGreenSurface, PuttResult
 
 pytestmark = pytest.mark.unit
 
@@ -138,6 +141,75 @@ class TestTransportContract:
     ) -> None:
         with pytest.raises(ValueError, match="direction"):
             golden_trajectory.step_time(0.0, 0)
+
+
+class TestPuttGoldenParity:
+    """The putting sample->frame mapping, pinned against the TS twin.
+
+    The putting vertical replays the *same* transport as ball flight;
+    the only putt-specific step is lifting the retained integrator
+    samples onto the green they were solved on. That lift is what this
+    class pins, from the ``putt`` block of the one shared fixture — no
+    second golden, and no second transport.
+    """
+
+    @staticmethod
+    def _trajectory(golden: dict[str, Any]) -> TimedTrajectory:
+        putt = golden["putt"]
+        result = PuttResult(
+            path_x_m=tuple(putt["result"]["path_x_m"]),
+            path_y_m=tuple(putt["result"]["path_y_m"]),
+            speeds_mps=tuple(0.0 for _ in putt["result"]["times_s"]),
+            times_s=tuple(putt["result"]["times_s"]),
+            skid_end_index=int(putt["result"]["skid_end_index"]),
+            skid_distance_m=0.0,
+            total_distance_m=0.0,
+            time_s=float(putt["result"]["times_s"][-1]),
+            break_m=float(putt["result"]["path_y_m"][-1]),
+            holed=False,
+            speed_at_hole_mps=None,
+            margin_mps=None,
+            miss_distance_m=0.0,
+        )
+        surface = PlanarGreenSurface(
+            grade_percent=float(putt["surface"]["grade_percent"]),
+            aspect_deg=float(putt["surface"]["aspect_deg"]),
+        )
+        return putt_playback_trajectory(result, surface)
+
+    def test_ball_radius_matches_the_pinned_shared_constant(
+        self, golden: dict[str, Any]
+    ) -> None:
+        assert GOLF_BALL_RADIUS_M == pytest.approx(golden["putt"]["ball_radius_m"])
+
+    def test_retained_samples_lift_onto_the_green_exactly(
+        self, golden: dict[str, Any]
+    ) -> None:
+        trajectory = self._trajectory(golden)
+        putt = golden["putt"]
+        assert list(trajectory.times_s) == pytest.approx(putt["result"]["times_s"])
+        assert trajectory.duration_s == pytest.approx(putt["duration_s"])
+        for sample, expected in zip(
+            trajectory.positions_m, putt["samples_m"], strict=True
+        ):
+            assert list(sample) == pytest.approx(expected, abs=1e-12)
+
+    def test_reproduces_every_golden_putt_frame(self, golden: dict[str, Any]) -> None:
+        trajectory = self._trajectory(golden)
+        for expected in golden["putt"]["frames"]:
+            frame = trajectory.frame_at(expected["requested_time_s"])
+            assert frame.time_s == pytest.approx(expected["time_s"])
+            assert frame.lower_index == expected["lower_index"]
+            assert frame.fraction == pytest.approx(expected["fraction"])
+            assert frame.is_landing is expected["is_landing"]
+            assert list(frame.position_m) == pytest.approx(
+                expected["position_m"], abs=1e-12
+            )
+
+    def test_refuses_a_foreign_result_object(self, golden: dict[str, Any]) -> None:
+        surface = PlanarGreenSurface(grade_percent=1.0, aspect_deg=0.0)
+        with pytest.raises(TypeError, match="PuttResult"):
+            putt_playback_trajectory(object(), surface)  # type: ignore[arg-type]
 
 
 def test_transport_controls_serve_a_non_flight_subject_unchanged(qtbot) -> None:  # type: ignore[no-untyped-def]

@@ -97,7 +97,7 @@
       "requirement_id": "V1.3",
       "requirement": "Place narrow-web visuals before prose/controls without overflow and provide expanded inspection.",
       "status": "partial",
-      "rationale": "Narrow geometry, visual-before-control ordering, and overflow are tested; an expanded/full-screen path is not mapped for each applicable visual.",
+      "rationale": "Narrow geometry, visual-before-control ordering, and overflow are tested, and the React putting playback transport (#4800 P8) is asserted visible beside its green view at the authority viewport; an expanded/full-screen path is not mapped for each applicable visual.",
       "evidence_files": [
         "src/rate_of_closure/web/e2e/putting-sample-inspector.spec.ts",
         "src/rate_of_closure/web/e2e/visualization-tab-visibility.spec.ts"
@@ -273,7 +273,7 @@
       "requirement_id": "V4.2",
       "requirement": "Use Playwright to verify every React tab, geometry, overflow, overlap, and supported states.",
       "status": "partial",
-      "rationale": "Every initial tab and viewport is protected, but all supported state transitions are not exercised for every tab.",
+      "rationale": "Every initial tab and viewport is protected, including the React putting playback transport (#4800 P8), but all supported state transitions are not exercised for every tab.",
       "evidence_files": [
         "src/rate_of_closure/web/e2e/putting-sample-inspector.spec.ts",
         "src/rate_of_closure/web/e2e/visualization-tab-visibility.spec.ts"
@@ -286,7 +286,7 @@
       "requirement_id": "V4.3",
       "requirement": "Use rendered PyQt tests for every tab at 100/150 percent scaling, overlap, keyboard, and resize.",
       "status": "partial",
-      "rationale": "All initial tabs render at both scales with visibility and overlap checks, and the widened PyQt Putting surface (#4800 P6) re-renders at both scales through its own inspector probe; all-state and keyboard-path coverage is separate and incomplete.",
+      "rationale": "All initial tabs render at both scales with visibility and overlap checks, and the widened PyQt Putting surface (#4800 P6) re-renders at both scales through its own inspector probe, with the shared playback transport bound to its 3-D view (#4800 P8) asserted visible and named in the first viewport; all-state and keyboard-path coverage is separate and incomplete.",
       "evidence_files": [
         "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py",
         "tests/rate_of_closure/test_visualization_accessibility.py",

@@ -11,6 +11,7 @@
 import type { KeyboardEvent, PointerEvent } from "react";
 
 import { captureSpeedMps, type PuttResult } from "../model/putting";
+import type { Vec3 } from "../model/simulation";
 import type { PuttingResultDocument } from "../model/puttingResultWire";
 import {
   navigatePuttingSamples,
@@ -29,6 +30,12 @@ interface PuttingVisualsProps {
   readonly aspect: number;
   /** The accepted v2 record; absent for a bare trajectory preview. */
   readonly document?: PuttingResultDocument | null;
+  /**
+   * Ball-centre position at the transport's physical time (#4800 P8),
+   * lifted from the retained samples by `puttPlaybackSamples`. Absent
+   * when no putt is loaded for playback.
+   */
+  readonly playbackPositionM?: Vec3 | null;
 }
 
 interface PlotPoint {
@@ -148,7 +155,7 @@ function GreenView(props: PuttingVisualsProps) {
   }));
   const selected = selectedPoint(points, props.selectedRawIndex);
   const arrowX = scaleX(props.holeX * 0.5); const arrowY = scaleY(0);
-  return <figure aria-label="Top-down green view: skid phase orange, pure roll green, hole circle, downhill arrow, launched start line, apex of the break, and the effective capture mouth"
+  return <figure aria-label="Top-down green view: skid phase orange, pure roll green, hole circle, downhill arrow, launched start line, apex of the break, the effective capture mouth, and the playback ball at the transport's physical time"
     className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-4 shadow-lg shadow-black/20 backdrop-blur">
     <p id="putting-sample-instructions" className="mb-2 text-xs text-slate-400">
       Select a displayed sample with pointer. Left/Right moves, Home/End jumps, Escape clears.
@@ -178,13 +185,17 @@ function GreenView(props: PuttingVisualsProps) {
       </g>}
       {result.holed && <text x={scaleX(props.holeX)} y={scaleY(0) - 14} textAnchor="middle"
         fill="#4ade80" fontSize="13">HOLED</text>}
+      {props.playbackPositionM && <circle data-testid="putt-playback-ball"
+        aria-hidden="true" cx={scaleX(props.playbackPositionM[0])}
+        cy={scaleY(props.playbackPositionM[1])} r={6} fill="#eab308" />}
       {selected && <circle data-testid="putting-selected-sample" cx={selected.x} cy={selected.y}
         r={8} fill="none" stroke="#facc15" strokeWidth={3} />}
     </svg>
     <figcaption className="mt-2 text-xs text-slate-400">Orange = skid; green = pure roll;
       the white circle is the hole. Magenta dashes = the start line the ball launched on;
       violet ring = the apex of the break; blue dashes = the effective capture mouth at the
-      approach speed. Left is the putt&apos;s left (+y).</figcaption>
+      approach speed. The amber disc is the ball at the playback transport&apos;s
+      physical time. Left is the putt&apos;s left (+y).</figcaption>
   </figure>;
 }
 
@@ -232,7 +243,8 @@ export function PuttingVisuals(props: PuttingVisualsProps) {
   const sample = props.plan !== null && props.selectedRawIndex !== null
     ? props.plan.rawSample(props.selectedRawIndex) : null;
   return <>
-    <p role="status" aria-live="polite" className="rounded-lg border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-200">
+    <p role="status" aria-live="polite" aria-label="Selected putt sample"
+      className="rounded-lg border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-200">
       {sampleStatus(sample)}
     </p>
     <GreenView {...props} />

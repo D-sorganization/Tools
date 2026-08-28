@@ -2,6 +2,12 @@ import { describe, expect, it } from "vitest";
 
 import fixture from "./__fixtures__/playback_transport_golden_v1.json";
 import { PlaybackTimeline, type TimedSample } from "./flightPlayback";
+import { puttPlaybackSamples } from "./puttPlayback";
+import {
+  GOLF_BALL_RADIUS_M,
+  type GreenSurface,
+  type PuttResult,
+} from "./puttingGreen";
 import {
   DEFAULT_SPEED,
   PLAYBACK_SPEEDS,
@@ -77,6 +83,65 @@ describe("playback transport golden parity (#4800 P8)", () => {
       expect(step.timeS).toBeCloseTo(golden.next_time_s, 12);
       expect(step.finished).toBe(golden.finished);
     }
+  });
+});
+
+describe("putt playback golden parity (#4800 P8)", () => {
+  const putt = fixture.putt;
+  const surface: GreenSurface = {
+    kind: "planar",
+    gradePercent: putt.surface.grade_percent,
+    aspectDeg: putt.surface.aspect_deg,
+  };
+  const result = {
+    pathXM: putt.result.path_x_m,
+    pathYM: putt.result.path_y_m,
+    speedsMps: putt.result.times_s.map(() => 0),
+    timesS: putt.result.times_s,
+    skidEndIndex: putt.result.skid_end_index,
+    skidDistanceM: 0,
+    totalDistanceM: 0,
+    timeS: putt.result.times_s[putt.result.times_s.length - 1],
+    breakM: putt.result.path_y_m[putt.result.path_y_m.length - 1],
+    holed: false,
+    speedAtHoleMps: null,
+    marginMps: null,
+    missDistanceM: 0,
+  } satisfies PuttResult;
+
+  it("pins the ball radius the Python twin lifts elevations with", () => {
+    expect(GOLF_BALL_RADIUS_M).toBeCloseTo(putt.ball_radius_m, 12);
+  });
+
+  it("lifts the retained samples onto the green exactly", () => {
+    const samples = puttPlaybackSamples(result, surface);
+    expect(samples.map((sample) => sample.time)).toEqual(putt.result.times_s);
+    samples.forEach((sample, index) => {
+      sample.position.forEach((component, axis) => {
+        expect(component).toBeCloseTo(putt.samples_m[index][axis], 12);
+      });
+    });
+  });
+
+  it("reproduces every golden putt frame on the shared timeline", () => {
+    const timeline = new PlaybackTimeline(puttPlaybackSamples(result, surface));
+    expect(timeline.duration).toBeCloseTo(putt.duration_s, 12);
+    for (const goldenFrame of putt.frames) {
+      const frame = timeline.frameAt(goldenFrame.requested_time_s);
+      expect(frame.time).toBeCloseTo(goldenFrame.time_s, 12);
+      expect(frame.lowerIndex).toBe(goldenFrame.lower_index);
+      expect(frame.fraction).toBeCloseTo(goldenFrame.fraction, 12);
+      expect(frame.isLanding).toBe(goldenFrame.is_landing);
+      frame.position.forEach((component, axis) => {
+        expect(component).toBeCloseTo(goldenFrame.position_m[axis], 12);
+      });
+    }
+  });
+
+  it("refuses ragged putt samples", () => {
+    expect(() =>
+      puttPlaybackSamples({ ...result, pathYM: [0] }, surface),
+    ).toThrow(/one x and one y/);
   });
 });
 

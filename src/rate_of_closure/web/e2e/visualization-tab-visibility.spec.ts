@@ -168,6 +168,13 @@ test("every registered React tab exposes its primary visual in the initial viewp
           ]) {
             await expect(page.getByRole("textbox", { name: control })).toBeVisible();
           }
+          // #4800 P8: playback rides the shared transport, so the same
+          // viewport must reach it — the Putt wording and Strike/Finish
+          // jumps that bind the subject-neutral bar.
+          for (const control of ["Play Putt", "Jump to Strike", "Jump to Finish"]) {
+            await expect(page.getByRole("button", { name: control })).toBeVisible();
+          }
+          await expect(page.getByRole("slider", { name: "Putt Time" })).toBeVisible();
         }
         const file = `initial-${entry.tabId}-1440x900.png`;
         const image = await captureStablePage(page);

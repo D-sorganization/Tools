@@ -6,10 +6,18 @@
  * impact solve, P2's surface integration and P5's `putting_result/2`
  * record in a single call, and the tab presents that record — never a
  * second, differently derived set of numbers.
+ *
+ * Playback (#4800 P8) is wiring, not new machinery: the retained
+ * integrator samples are lifted by `puttPlaybackSamples`, interpolated by
+ * the shared structural `PlaybackTimeline`, and driven by the shared
+ * `PlaybackTransportBar` — the same three modules the ball-flight surface
+ * uses. Nothing is re-simulated during playback and no second transport
+ * exists.
  */
 
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
+import { PlaybackTransportBar } from "./PlaybackTransportBar";
 import { PuttingControls } from "./PuttingControls";
 import { DEFAULT_PUTT_SETUP, type PuttSetup } from "./puttingSetup";
 import { PuttingVisuals } from "./PuttingVisuals";
@@ -41,7 +49,9 @@ import {
   MINIMAL_PUTTERS,
   type PuttResult,
 } from "../model/putting";
-import { planarSurface } from "../model/puttingGreen";
+import { PlaybackTimeline, type PlaybackFrame } from "../model/flightPlayback";
+import { puttPlaybackSamples } from "../model/puttPlayback";
+import { planarSurface, type GreenSurface } from "../model/puttingGreen";
 import {
   PUTTING_RESULT_KERNEL,
   type PuttingResultDocument,
@@ -118,6 +128,25 @@ function puttScenario(
   };
 }
 
+/**
+ * The visible playback position, worded exactly as the Qt
+ * `PuttPlaybackView` status line so the two surfaces read the same.
+ */
+function playbackStatus(
+  frame: PlaybackFrame | null,
+  durationS: number,
+  holed: boolean,
+): string {
+  if (frame === null) return "No putt is loaded for playback.";
+  const [xM, yM, zM] = frame.position;
+  const outcome = holed && frame.isLanding ? "holed" : "in play";
+  return (
+    `t ${frame.time.toFixed(3)} s of ${durationS.toFixed(3)} s; ` +
+    `x ${xM.toFixed(3)} m; y ${yM.toFixed(3)} m; ` +
+    `elevation ${zM.toFixed(3)} m; ${outcome}.`
+  );
+}
+
 interface PuttingPanelProps {
   onGlossary?: (term: string) => void;
   /** Ball-flight distance display unit (#4125 H6): yards default. */
@@ -129,6 +158,8 @@ interface PuttingPanelProps {
 interface AcceptedStudy {
   executor: typeof evaluatePuttWithTrajectory;
   result: PuttResult;
+  /** The exact green the result was integrated on (playback elevations). */
+  surface: GreenSurface;
   document: PuttingResultDocument;
   twist: PutterTwist;
   plan: PuttingSamplePlan;
@@ -155,6 +186,7 @@ export function PuttingPanel({
     rawIndex: number;
   } | null>(null);
   const acceptedStudy = useRef<AcceptedStudy | null>(null);
+  const [playbackTimeS, setPlaybackTimeS] = useState(0);
 
   const candidate = useMemo(() => {
     const head =
@@ -187,6 +219,7 @@ export function PuttingPanel({
       const accepted: AcceptedStudy = {
         executor: executeStudy,
         result,
+        surface: planarSurface(setup.grade, setup.aspect),
         document: Object.freeze({ ...evaluated.document }),
         twist,
         plan,
@@ -213,6 +246,18 @@ export function PuttingPanel({
   const { error } = candidate;
   const result = accepted?.result ?? null;
   const plan = accepted?.plan ?? null;
+  const timeline = useMemo(
+    () =>
+      accepted === null
+        ? null
+        : new PlaybackTimeline(
+            puttPlaybackSamples(accepted.result, accepted.surface),
+          ),
+    [accepted],
+  );
+  useEffect(() => setPlaybackTimeS(0), [timeline]);
+  const playbackDurationS = timeline?.duration ?? 0;
+  const playbackFrame = timeline?.frameAt(playbackTimeS) ?? null;
   const selectedRawIndex =
     selection?.accepted === accepted ? selection.rawIndex : null;
   const selectSample = (rawIndex: number | null) => {
@@ -313,6 +358,29 @@ export function PuttingPanel({
             Displayed result: {accepted.context}
           </p>
         ) : null}
+        <PlaybackTransportBar
+          subjectLabel="Putt"
+          subjectPhrase="putt"
+          timeS={playbackTimeS}
+          durationS={playbackDurationS}
+          events={[
+            { label: "Strike", timeS: 0 },
+            { label: "Finish", timeS: playbackDurationS },
+          ]}
+          scrubTitle="Physical putt time [s] from strike to rest or capture, interpolated between the retained integrator samples"
+          onTimeChange={setPlaybackTimeS}
+        />
+        <p
+          role="status"
+          aria-label="Putt playback frame"
+          className="rounded-lg border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-200"
+        >
+          {playbackStatus(
+            playbackFrame,
+            playbackDurationS,
+            result?.holed ?? false,
+          )}
+        </p>
         <PuttingVisuals
           result={result}
           plan={plan}
@@ -322,6 +390,7 @@ export function PuttingPanel({
           holeX={accepted?.holeX ?? setup.distance}
           grade={accepted?.grade ?? setup.grade}
           aspect={accepted?.aspect ?? setup.aspect}
+          playbackPositionM={playbackFrame?.position ?? null}
         />
       </section>
     </div>
