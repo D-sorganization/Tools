@@ -43,12 +43,10 @@ Serialization follows the package idiom (``sort_keys``,
 from __future__ import annotations
 
 import hashlib
-import json
 import math
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
 
 import numpy as np
 
@@ -64,17 +62,18 @@ from shared.python.swing_sim.putting.impact import (
 from ._validation import (
     Matrix3,
     Vector3,
-    reject_unknown_fields,
     require_finite_float,
     require_identifier,
     require_inertia,
-    require_mapping,
     require_vector3,
 )
 from .mesh_mass_properties import mesh_inertia
+from .putter_head_serde import (
+    PUTTER_HEAD_FORMAT,
+    putter_head_from_json,
+    putter_head_to_json,
+)
 from .stl_validation import read_binary_stl
-
-PUTTER_HEAD_FORMAT = "golf_club.putter_head/1"
 
 #: Documented putter-ball contact window [s] (~0.5 ms; see module docs).
 PUTTER_CONTACT_TIME_S = 5.0e-4
@@ -82,14 +81,6 @@ PUTTER_CONTACT_TIME_S = 5.0e-4
 _MM_TO_M = 1.0e-3
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
 _SOURCE_KINDS = frozenset({"mesh", "library"})
-
-_DOCUMENT_FIELDS = frozenset(
-    {"format", "name", "head_mass_kg", "loft_deg", "cor", "cg_m"}
-    | {"inertia_at_cg_kg_m2", "provenance"}
-)
-_PROVENANCE_FIELDS = frozenset(
-    {"source_kind", "mesh_sha256", "density_kg_m3", "target_mass_kg", "library_name"}
-)
 
 __all__ = [
     "PUTTER_CONTACT_TIME_S",
@@ -438,65 +429,3 @@ def strike_with_head(
         strike_offset_high_mm=strike_offset_high_mm,
     )
     return PutterStrikeResult(launch=launch, twist=twist)
-
-
-def putter_head_to_json(document: PutterHeadDocument) -> str:
-    """Serialize with deterministic key ordering and no non-finite values."""
-    if not isinstance(document, PutterHeadDocument):
-        raise TypeError("document must be PutterHeadDocument")
-    provenance: dict[str, Any] = {"source_kind": document.provenance.source_kind}
-    for field in ("mesh_sha256", "density_kg_m3", "target_mass_kg", "library_name"):
-        value = getattr(document.provenance, field)
-        if value is not None:
-            provenance[field] = value
-    payload: dict[str, Any] = {
-        "format": PUTTER_HEAD_FORMAT,
-        "name": document.name,
-        "head_mass_kg": document.head_mass_kg,
-        "loft_deg": document.loft_deg,
-        "cor": document.cor,
-        "provenance": provenance,
-    }
-    if document.cg_m is not None:
-        payload["cg_m"] = list(document.cg_m)
-    if document.inertia_at_cg_kg_m2 is not None:
-        payload["inertia_at_cg_kg_m2"] = [
-            list(row) for row in document.inertia_at_cg_kg_m2
-        ]
-    return json.dumps(payload, allow_nan=False, separators=(",", ":"), sort_keys=True)
-
-
-def putter_head_from_json(text: str) -> PutterHeadDocument:
-    """Parse and validate; unknown fields and wrong formats are refused."""
-    if not isinstance(text, str):
-        raise TypeError("text must be str")
-    data = require_mapping(json.loads(text), "putter head document")
-    reject_unknown_fields(data, _DOCUMENT_FIELDS, "putter head document")
-    if data.get("format") != PUTTER_HEAD_FORMAT:
-        raise ValueError(f"format must be {PUTTER_HEAD_FORMAT!r}")
-    provenance_data = require_mapping(data.get("provenance"), "provenance")
-    reject_unknown_fields(provenance_data, _PROVENANCE_FIELDS, "provenance")
-    provenance = PutterHeadProvenance(
-        source_kind=require_identifier(
-            provenance_data.get("source_kind"), "source_kind"
-        ),
-        mesh_sha256=provenance_data.get("mesh_sha256"),
-        density_kg_m3=_optional_number(provenance_data, "density_kg_m3"),
-        target_mass_kg=_optional_number(provenance_data, "target_mass_kg"),
-        library_name=provenance_data.get("library_name"),
-    )
-    cg_m, tensor = data.get("cg_m"), data.get("inertia_at_cg_kg_m2")
-    return PutterHeadDocument(
-        name=require_identifier(data.get("name"), "name"),
-        head_mass_kg=require_finite_float(data.get("head_mass_kg"), "head_mass_kg"),
-        loft_deg=require_finite_float(data.get("loft_deg"), "loft_deg"),
-        cor=require_finite_float(data.get("cor"), "cor"),
-        provenance=provenance,
-        cg_m=None if cg_m is None else require_vector3(cg_m, "cg_m"),
-        inertia_at_cg_kg_m2=None if tensor is None else require_inertia(tensor),
-    )
-
-
-def _optional_number(data: Any, name: str) -> float | None:
-    value = data.get(name)
-    return None if value is None else require_finite_float(value, name)
