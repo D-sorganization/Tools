@@ -291,7 +291,7 @@
       "shard_index": 10
     },
     {
-      "content_sha256_lf": "8e1acc5db4bb97af311fa9e92bee7edc7c9c01832699cd5cee927fe852667346",
+      "content_sha256_lf": "3083f0b705435ce706426de5b852147e8165b2f6113362ebcac702ff67c56d08",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/web/src/model/solver.test.ts",
       "last_path": "src/rrt_path_planner/matlab/src/core/collisionCheck.m",
@@ -307,58 +307,58 @@
       "shard_index": 12
     },
     {
-      "content_sha256_lf": "6395d3ecbf19a67df83b84591f9f89a3609e52d2c854ced05bd4a74927cb5f2b",
+      "content_sha256_lf": "fe3c227e23a4723dbf28587dbc4753f3a9cf38adf08c2fa863c2f77b82f57e6f",
       "entry_count": 200,
       "first_path": "src/shared/python/chat/export/markdown_exporter.py",
-      "last_path": "src/shared/python/plot_engine/trendline.py",
+      "last_path": "src/shared/python/plot_engine/specs.py",
       "path": "manuals/tools/manifests/module-inventory/entries-013.json",
       "shard_index": 13
     },
     {
-      "content_sha256_lf": "741ce7a196efe4722d73eafe180277616338630730f456aa6179ae39bfdaf7ae",
+      "content_sha256_lf": "3614bac758e3a033d04d20b7cfd4554e973c7272973ac07ab2d2ac7d7d0c0ad9",
       "entry_count": 200,
-      "first_path": "src/shared/python/plot_theme/__init__.py",
-      "last_path": "src/shared/python/sidekick/ui/tools_sidebar/registry.py",
+      "first_path": "src/shared/python/plot_engine/trendline.py",
+      "last_path": "src/shared/python/sidekick/ui/tools_sidebar/qt_compat.py",
       "path": "manuals/tools/manifests/module-inventory/entries-014.json",
       "shard_index": 14
     },
     {
-      "content_sha256_lf": "1a49fcdb39c27250302d8307cbdb669aa2bb209ef263086ee2348d03ed9a6179",
+      "content_sha256_lf": "2408dbffd817615df7f075d0bf72bec28fc1c85ee6029045b3dc717efe5c07a2",
       "entry_count": 200,
-      "first_path": "src/shared/python/sidekick/ui/tools_sidebar/reporting_tab.py",
-      "last_path": "src/shared/python/swing_sim/rotating_base/__init__.py",
+      "first_path": "src/shared/python/sidekick/ui/tools_sidebar/registry.py",
+      "last_path": "src/shared/python/swing_sim/reference.py",
       "path": "manuals/tools/manifests/module-inventory/entries-015.json",
       "shard_index": 15
     },
     {
-      "content_sha256_lf": "4b4ffe1ad7cb24ca5c29f39def9d71cc2166dc4626e2d3bafa3fc546139f6102",
+      "content_sha256_lf": "1d3bb30ab484d42502938a0486b009dbb9106b3efbc0ce3103006265580dee6e",
       "entry_count": 200,
-      "first_path": "src/shared/python/swing_sim/rotating_base/_numeric.py",
-      "last_path": "src/tools/matlab_utilities/quality/exportCodeIssues.m",
+      "first_path": "src/shared/python/swing_sim/rotating_base/__init__.py",
+      "last_path": "src/tools/matlab_quality_utils.py",
       "path": "manuals/tools/manifests/module-inventory/entries-016.json",
       "shard_index": 16
     },
     {
-      "content_sha256_lf": "beff2618dd89b9fac8d4ac5d2c01461af4e7b204c6b6d6f3adc3828bd4225db5",
-      "entry_count": 101,
-      "first_path": "src/tools/matlab_utilities/quality/matlab_quality_config.m",
+      "content_sha256_lf": "26f318cd22d673b8d96f9dda9f5999110c6997002ce5810ffcc5e4db1ef140d4",
+      "entry_count": 102,
+      "first_path": "src/tools/matlab_utilities/quality/exportCodeIssues.m",
       "last_path": "wave_solver.py",
       "path": "manuals/tools/manifests/module-inventory/entries-017.json",
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "9969c97f843d29d90f71719eb3a7d833d1e8d9ad2e874108ec2eefd20a937d6d",
+  "source_tree_sha256": "445065107ed90a738639002f5085edf221f48cb39ea21243de1ead8afa3bae00",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
-      "not-applicable": 2669,
+      "not-applicable": 2670,
       "provisional": 831
     },
     "blocked_count": 1,
     "calculation_count": 831,
     "classification_counts": {
       "calculation": 831,
-      "non-calculation": 2670
+      "non-calculation": 2671
     },
     "family_counts": {
       "control-systems-calculation": 6,
@@ -377,17 +377,17 @@
       "repository-tooling-non-calculation": 76,
       "rotation-converter-calculation": 132,
       "shared-tools-calculation": 171,
-      "shared-tools-non-calculation": 1023,
+      "shared-tools-non-calculation": 1024,
       "signal-processing-calculation": 28,
       "swing-simulation-calculation": 62,
       "swing-simulation-non-calculation": 149
     },
-    "module_count": 3501,
-    "non_calculation_count": 2670,
+    "module_count": 3502,
+    "non_calculation_count": 2671,
     "provisional_count": 831,
     "review_status_counts": {
       "blocked": 1,
-      "inventory-baseline": 2669,
+      "inventory-baseline": 2670,
       "review-required": 831
     }
   }

@@ -4,6 +4,7 @@
 
 ### Changes
 
+- refactor(golf_club): split putter_head along serde boundary to satisfy 500-LOC budget (#4825)
 - Govern Whole-Run and Localized Variation Execution (#4757)
 - test(rate-of-closure): requalify R10.4 execution evidence (#4755)
 - docs(manual): add governed calculation exemplars (#4752)
