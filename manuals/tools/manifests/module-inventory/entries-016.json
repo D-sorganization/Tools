@@ -3,6 +3,70 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 4256,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "989117dedd889802e93761a308a4c0e28766ab961ca3dc3b62a48602058c7981",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-STROKE-ADAPTERS-PY-FA0E015B9A63",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/putting/stroke_adapters.py",
+      "purpose": "Engine export adapters for the putting-stroke wire (#4800 P4).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "putting_stroke_from_drake_json",
+            "signature": "text: str, *, ball_position_m: tuple[float, float, float], aim_deg: float=0.0"
+          },
+          {
+            "kind": "function",
+            "name": "putting_stroke_from_mujoco_json",
+            "signature": "text: str, *, ball_position_m: tuple[float, float, float], aim_deg: float=0.0"
+          },
+          {
+            "kind": "function",
+            "name": "putting_stroke_from_opensim_sto",
+            "signature": "text: str, *, body_name: str, frame_id: str, ball_position_m: tuple[float, float, float], aim_deg: float=0.0"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 18909,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -15922,74 +15986,6 @@
           "tests/test_launch_utils.py",
           "tests/tools/test_launch_utils.py",
           "tests/tools/test_ui_utils.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 608,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a49ed7b98613a6b26dd8200a2758a856a1614e72ee9a874e3adeea5acba8ac43",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-TOOLS-LOGGER-PY-C5B825B3A348",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/tools/logger.py",
-      "purpose": "Unified logging configuration for Tools repository.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "DEFAULT_FORMAT",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "get_logger",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "init_default_logging",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "setup_logging",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/tools/test_logger_shim.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
