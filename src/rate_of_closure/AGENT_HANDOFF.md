@@ -66,11 +66,11 @@ tier. PR #4733 merged V0.1 with purpose, prerequisites, and reciprocal
 counterparts; PR #4736 merged strict TypeScript-reader parity as `34a809d9`.
 PR #4738 merged V5.2's fail-closed changed-path governance as `4b4aec421`.
 The audit is 8 verified / 23 partial; seven blockers and two human actions remain.
-Issue #4832 is active from clean worktree `Tools-worktrees/4832-r14-6-evidence`
-on `feat/issue-4832-r14-6-evidence`. It adds the fifth manifest,
-`visualization_acceptance.v1.json`, whose strict reader expands all 20 tabs over
-registered states and reference cases and binds scientific/nonvisual context.
-It also owns the rendered-review packet and keeps both human actions pending.
+PR #4835 for #4832 is active with implementation commit `69f157774` in worktree
+`Tools-worktrees/4832-r14-6-evidence`. Its fifth manifest expands all 20 tabs
+over registered states/reference cases and binds scientific/nonvisual context.
+Focused tests (68), governance/renderer contracts (39), MyPy, Ruff, and Black
+pass; executed render, performance, downstream, and human evidence stay open.
 
 ### Adding a Tab: The Five-Manifest Lockstep (Read Before Starting C6/C7/H4)
 
