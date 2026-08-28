@@ -13,7 +13,11 @@
  *   grid with bilinear interpolation; in-plane gravity is `-g grad h`
  *   (small-slope). Outside the grid hull the surface continues flat.
  * - Roll: skid (sliding friction, spin-up) then pure roll (stimp-
- *   derived rolling resistance), integrated with classic RK4.
+ *   derived rolling resistance), integrated with classic RK4. The putt
+ *   line is the *target* line (the hole sits at `(holeDistanceM, 0)`),
+ *   so a stroke that starts off it launches at P1's `startAzimuthDeg`
+ *   (`+` = right, so `vy < 0`) — the #4800 P5 dispersion input. The
+ *   square, straight-aimed limit is bit-identical to pre-P5.
  * - Capture: effective hole radius shrinking with approach speed,
  *   `R_eff(v) = R sqrt(1 - (v / v_capture)^2)` (Holmes, Am. J. Phys.
  *   59, 129-136, 1991; Penner, Can. J. Phys. 80, 83-96, 2002), with
@@ -50,6 +54,13 @@ export interface PuttLaunch {
   /** Topspin positive; a struck putt starts negative (backspin). */
   spinRadS: number;
   effectiveLoftDeg: number;
+  /**
+   * Start direction [deg] off the target line, + = right. Always set
+   * by `strike` (#4800 P1); optional for pre-#4800 1-D literals.
+   */
+  startAzimuthDeg?: number;
+  /** Spin about the up axis [rad/s]; + = draw-side (ball turns left). */
+  sidespinRadS?: number;
 }
 
 export interface GreenConditions {
@@ -174,7 +185,12 @@ export function gridSurface(
       }
     }
   }
-  return { kind: "grid", originM: [originM[0], originM[1]], spacingM, heightsM };
+  return {
+    kind: "grid",
+    originM: [originM[0], originM[1]],
+    spacingM,
+    heightsM,
+  };
 }
 
 function gridCell(
@@ -193,7 +209,11 @@ function gridCell(
   return [i, j, u - i, v - j];
 }
 
-function gridInside(surface: GridGreenSurface, xM: number, yM: number): boolean {
+function gridInside(
+  surface: GridGreenSurface,
+  xM: number,
+  yM: number,
+): boolean {
   const nx = surface.heightsM[0].length;
   const ny = surface.heightsM.length;
   return (
@@ -247,8 +267,10 @@ function gravityField(
     const h10 = surface.heightsM[j][i + 1];
     const h01 = surface.heightsM[j + 1][i];
     const h11 = surface.heightsM[j + 1][i + 1];
-    const dhdx = ((h10 - h00) * (1.0 - ty) + (h11 - h01) * ty) / surface.spacingM;
-    const dhdy = ((h01 - h00) * (1.0 - tx) + (h11 - h10) * tx) / surface.spacingM;
+    const dhdx =
+      ((h10 - h00) * (1.0 - ty) + (h11 - h01) * ty) / surface.spacingM;
+    const dhdy =
+      ((h01 - h00) * (1.0 - tx) + (h11 - h10) * tx) / surface.spacingM;
     return [-GRAVITY_M_S2 * dhdx, -GRAVITY_M_S2 * dhdy];
   };
 }
@@ -295,6 +317,32 @@ function rk4Step(
   ) as State;
 }
 
+/**
+ * Ground-velocity components for a launch's start azimuth.
+ *
+ * The integration frame's `x` axis is the target line (the hole sits at
+ * `(holeDistanceM, 0)`), so P1's `startAzimuthDeg` — the start direction
+ * off that line, `+` = right — rotates the launch off it: `vy = -v
+ * sin(psi)` because `y` is *left* while the azimuth is positive to the
+ * *right*. A square, straight-aimed stroke short-circuits to `(v, 0)`,
+ * so every pre-#4800 P5 trajectory stays bit-identical (no `-0` from
+ * `-v sin 0`).
+ */
+function startVelocity(launch: PuttLaunch): [number, number] {
+  const azimuthDeg = launch.startAzimuthDeg ?? 0.0;
+  if (!Number.isFinite(azimuthDeg) || Math.abs(azimuthDeg) > 90) {
+    throw new Error(
+      "start azimuth must be within +/-90 deg of the target line",
+    );
+  }
+  if (azimuthDeg === 0.0) return [launch.horizontalSpeedMps, 0.0];
+  const azimuth = (azimuthDeg * Math.PI) / 180.0;
+  return [
+    launch.horizontalSpeedMps * Math.cos(azimuth),
+    -launch.horizontalSpeedMps * Math.sin(azimuth),
+  ];
+}
+
 function integrate(
   launch: PuttLaunch,
   gravityAt: (xM: number, yM: number) => [number, number],
@@ -304,14 +352,15 @@ function integrate(
   captured: (toHoleM: number, speedMps: number) => boolean,
 ): PuttResult {
   const vCapture = captureSpeedMps();
+  const [startVx, startVy] = startVelocity(launch);
   let state: State = [
     0,
     0,
-    launch.horizontalSpeedMps,
-    0,
+    startVx,
+    startVy,
     launch.spinRadS * GOLF_BALL_RADIUS_M,
   ];
-  let sliding = state[4] < state[2];
+  let sliding = state[4] < launch.horizontalSpeedMps;
   const xs = [0];
   const ys = [0];
   const speeds = [launch.horizontalSpeedMps];
@@ -445,7 +494,8 @@ export function simulatePutt(
   green: GreenConditions,
   holeDistanceM: number,
 ): PuttResult {
-  const muSlide = green.muSlide === undefined ? DEFAULT_SLIDING_MU : green.muSlide;
+  const muSlide =
+    green.muSlide === undefined ? DEFAULT_SLIDING_MU : green.muSlide;
   if (
     !Number.isFinite(green.gradePercent) ||
     !(green.gradePercent >= 0 && green.gradePercent <= 10)
