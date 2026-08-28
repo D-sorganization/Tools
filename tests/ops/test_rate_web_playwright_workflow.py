@@ -254,8 +254,7 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
         == "npm run test:e2e"
     )
     assert pr_commands["Install bounded PyQt render dependencies"] == (
-        'python -m pip install --constraint requirements-rate-pyqt.txt '
-        '-e ".[gui,dev]"'
+        'python -m pip install --constraint requirements-rate-pyqt.txt -e ".[gui,dev]"'
     )
     assert pr_commands["Verify calibrated PyQt render environment"] == (
         "python -m pip check && python scripts/check_rate_pyqt_environment.py "
