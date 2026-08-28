@@ -68,7 +68,7 @@ PR #4738 merged V5.2's fail-closed changed-path governance as `4b4aec421`.
 The audit is 8 verified / 23 partial; seven blockers and two human actions remain.
 PRs #4835/#4837 are protected-merged through `d7a95e2a4`; the fifth manifest expands all 20 tabs
 over registered states/reference cases and binds scientific/nonvisual context.
-The extension checklist and immutable consumer map move the audit to 10 verified
+PR #4838's extension checklist and immutable consumer map move the audit to 10 verified
 / 21 partial. Executed render, performance, decimation, approved-image, and
 human gaps remain; no pixel tolerance was loosened.
 
