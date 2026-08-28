@@ -8083,10 +8083,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10889,
+      "bytes_lf": 11390,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f9b9559718764c2cdec5385d1427f4a2121abd547d49ff6bec82713c264fb262",
+      "content_sha256_lf": "a63dbb778227e59359d8fb3b82e21131420e5da3134b55a9560872aa7dbb2062",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-E2E-VISUALIZATION-TAB-VISIBILITY-SPEC-TS-9730C4E18FC5",
       "language": "typescript",
@@ -8120,6 +8120,7 @@
         "public_surfaces": [],
         "test_paths": [],
         "unit_mentions": [
+          "mm",
           "s"
         ],
         "validation_paths": []
@@ -12453,25 +12454,27 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 4747,
+      "bytes_lf": 5880,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6ed2cd24c597de7e4eaf8ec44d7d0c544b329920f29a234c7411653537ef67ee",
+      "content_sha256_lf": "bf8223ffd703ee48be301328ea33b0004651536afcd84216df7244d1d4364721",
       "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-PUTTINGPANEL-TEST-TSX-B5FB98A11D3B",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-PUTTINGCONTROLS-TSX-42B6BEEE3B63",
       "language": "typescript-react",
       "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/components/PuttingPanel.test.tsx",
+      "path": "src/rate_of_closure/web/src/components/PuttingControls.tsx",
       "purpose": null,
       "review_status": "inventory-baseline",
-      "risk_tags": [],
+      "risk_tags": [
+        "public-api"
+      ],
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
         "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
+        "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "not-applicable",
@@ -12480,16 +12483,25 @@
       },
       "traceability": {
         "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
         "citation_refs": [],
         "equation_refs": [],
         "public_routes": [],
-        "public_surfaces": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "PuttingControls",
+            "signature": null
+          }
+        ],
         "test_paths": [],
         "unit_mentions": [
+          "cm",
+          "g",
           "m/s",
           "s"
         ],

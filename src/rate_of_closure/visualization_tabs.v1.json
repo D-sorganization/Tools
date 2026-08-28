@@ -186,9 +186,10 @@
     {
       "surface": "react",
       "tab_id": "putting",
-      "purpose": "Inspect model-conditional putt path, speed, and synchronized sample state.",
+      "purpose": "Inspect the delivered putt stroke, model-conditional path, speed, capture evidence, and synchronized sample state.",
       "data_prerequisites": [
-        "Putt initial conditions, surface parameters, and putting-model identity."
+        "Putt initial conditions, surface parameters, and putting-model identity.",
+        "Delivered stroke parameters, putter head identity, and hole-capture model."
       ],
       "counterpart_tab_id": "putting",
       "classification": "visual-first",

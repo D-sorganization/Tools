@@ -159,6 +159,16 @@ test("every registered React tab exposes its primary visual in the initial viewp
         if (entry.tabId === "explorer") {
           await expect(page.getByRole("button", { name: "Play" })).toBeVisible();
         }
+        if (entry.tabId === "putting") {
+          // #4800 P7: the delivered-stroke parameters are part of this
+          // tab's registered surface, so the authority viewport must show
+          // them beside the primary visual rather than behind disclosure.
+          for (const control of [
+            "Aim °", "Face angle °", "Putter path °", "Strike toward toe mm",
+          ]) {
+            await expect(page.getByRole("textbox", { name: control })).toBeVisible();
+          }
+        }
         const file = `initial-${entry.tabId}-1440x900.png`;
         const image = await captureStablePage(page);
         await writeFile(resolve(reactCandidateRoot, file), image);
