@@ -68,9 +68,9 @@ PR #4738 merged V5.2's fail-closed changed-path governance as `4b4aec421`.
 The audit is 8 verified / 23 partial; seven blockers and two human actions remain.
 PR #4835 has squash auto-merge in `Tools-worktrees/4832-r14-6-evidence`; its fifth manifest expands all 20 tabs
 over registered states/reference cases and binds scientific/nonvisual context.
-Python (68), governance (39), and the full web suite (1,881) pass. The only
-first-head failure was a missing SPEC 1.18.75 change-log row, now locally fixed;
-render, performance, downstream, and human gaps remain.
+Python (68), governance (39), and the full web suite (1,881) pass. SPEC freshness
+and PR-vs-trusted PyQt environment drift are locally fixed without loosening
+pixel tolerances; render, performance, downstream, and human gaps remain.
 
 ### Adding a Tab: The Five-Manifest Lockstep (Read Before Starting C6/C7/H4)
 
