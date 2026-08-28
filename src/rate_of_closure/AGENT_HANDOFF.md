@@ -23,25 +23,30 @@ fitting epics is the sibling `shared/python/golf_club/`.
 ## Active Epics — Golf Epics Merged
 
 Launch-monitor #4583 Release A merged (explicit-identity projects, bounded
-private-authority loading, source-backed expected-strokes). No private rows or
+private-authority loading, source-backed expected-strokes); no private rows or
 baseline data are bundled. Release B open — **do not claim vendor emulation or
-paired-device validation without real paired observations.** #4584/#4599 merged
-strokes-gained v2 into both clients; #4600 owns the PyQt reference,
+paired-device validation without real paired observations.** #4584/#4599 put
+strokes-gained v2 in both clients; #4600 owns the PyQt reference and
 #4602/#4608/#4610/#4613 the isolated rendered gates.
 
 Club Fitting #4549, Heavy Hit #4562, and packaging #4579 are complete; physics
 is shared-first in `shared/python/{golf_club,swing_sim}`. Putting #4800 has
-P1-P6 and P9; `putting_result/2` supersedes v1 without silent migration, and
-Python remains the sole Monte-Carlo authority. P6 widened the **existing** Qt
-tab (no tab-identity change, so the four-manifest lockstep stayed shut) into
-`putting_{stroke,green}_controls.py` + `putting_playback.py`; its 3-D view
-takes a physical time and owns no timer/speed/scrub, so P8's
-`PlaybackTransportControls` binds to it unchanged. **The PyQt `putting` visual
-baseline (`initial-putting-dpi-1.0.png`) is stale by construction** — the tab's
-first viewport changed — and needs re-approval through the documented two-run
-hosted protocol; no tolerance was loosened to hide the drift. P7 and P8 remain.
-Clubhead-realism #4799 has G1-G3; leading-edge lean, offset hosels, real blade
-soles, and all 16 cross-runtime club gates are protected. G4-G5 remain.
+P1-P7 and P9; `putting_result/2` supersedes v1 without silent migration, and
+Python is the sole Monte-Carlo authority — the React twins mirror the outcome
+vocabulary and the deterministic `evaluatePuttWithTrajectory` only, never a
+second sampler. P6 widened the **existing** Qt tab (no tab-identity change, so
+the four-manifest lockstep stayed shut) into `putting_{stroke,green}_controls`
++ `putting_playback`; its 3-D view takes a physical time and owns no
+timer/speed/scrub. Putt playback on either surface waits on P8's
+`playbackTransport.ts`/`TimedSample`/`PlaybackTransportControls` seam and must
+not fork it. **The PyQt `putting` visual baseline is stale by construction** —
+the tab's first viewport changed — and needs the documented two-run hosted
+re-approval; no tolerance was loosened to hide the drift. P8 remains.
+Clubhead-realism #4799 has G1-G3 and G5: leading-edge lean, offset hosels, real
+blade soles, and toe-view acceptance gates over the **public**
+`parametric_head_mesh` (per-club tables + a center-pivot counterfactual that
+reddens all 16 clubs if the lean is reverted). All 16 cross-runtime club gates
+are protected. G4 remains.
 
 #4142 remains Python-authoritative; PyQt6 and React do not reimplement physics.
 R10.3, R10.4, R11.1, and R11.3 are protected-merged through
@@ -51,20 +56,18 @@ identity, missing intervals, outcomes, failure semantics, and approximate
 impact-marker error. The inherited 3-source by 4-adapter matrix has two verified
 double-pendulum cells and ten explicitly unavailable cells.
 
-R12.3 protected-squash-merged via PR #4782 as `a1b00db14`; R13.3 PR #4784
-protected-squash-merged as `d6c8a0a67`. Its paired-attribution schema binds one
-independently estimable source and optional exact locus to state, impact, and
-shot scalars with ten unsupported cells preserved. R13.5 protected-squash-
-merged through PR #4794 as `35853199b`; `morris-target-selection` v1 binds
-kind/name/unit/point/time/frame and exact all-input or selected-source views.
-R14.3 issue #4792 is replayed from that protected base; its governed matrix
-proves PyQt/React parity from authoring through export (`all_together`,
-`individual`, `both`; dataset-free individual results, aggregate progress,
-cancellation, 1--4096 durable chunks), ledger 30 verified / 1 partial. All
-remain model-scenario screening views, not global main effects, causal anatomy,
-governed human validation, or coaching authority. Hosted visual review fixed an
-unlabeled PyQt policy selector; Linux candidate `1f3f6ca7` is proposed without
-widening its calibrated renderer envelope.
+R12.3 merged via PR #4782 as `a1b00db14`; R13.3 (PR #4784, `d6c8a0a67`) binds
+one independently estimable source and optional exact locus to state, impact,
+and shot scalars with ten unsupported cells preserved; R13.5 (PR #4794,
+`35853199b`) adds `morris-target-selection` v1 over kind/name/unit/point/time/
+frame and all-input or selected-source views. R14.3 issue #4792 replays
+from that base; its governed matrix proves PyQt/React parity from authoring
+through export (`all_together`, `individual`, `both`; dataset-free individual
+results, aggregate progress, cancellation, 1--4096 durable chunks), ledger 30
+verified / 1 partial. All remain model-scenario screening views, not global
+main effects, causal anatomy, governed human validation, or coaching authority.
+Hosted review fixed an unlabeled PyQt policy selector; Linux candidate
+`1f3f6ca7` is proposed without widening its renderer envelope.
 
 PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
 the initial React/PyQt visibility, accessibility, performance, and baseline
@@ -72,10 +75,10 @@ tier. PR #4733 merged V0.1 (purpose, prerequisites, reciprocal counterparts),
 #4736 strict TypeScript-reader parity as `34a809d9`, #4738 V5.2's fail-closed
 changed-path governance as `4b4aec421`, and #4835/#4837 through `d7a95e2a4` —
 the fifth manifest expands all 20 tabs over registered states/reference cases
-and binds scientific/nonvisual context. PR #4838's extension checklist and
-immutable consumer map move the audit to 10 verified / 21 partial. Executed
-render, performance, decimation, approved-image, and human gaps remain; no
-pixel tolerance was loosened.
+and binds scientific/nonvisual context. PR #4838's checklist and consumer map
+move the audit to 10 verified / 21 partial; executed render, performance,
+decimation, approved-image, and human gaps remain, with no pixel tolerance
+loosened.
 
 ### Adding a Tab: The Five-Manifest Lockstep (Read Before Starting C6/C7/H4)
 

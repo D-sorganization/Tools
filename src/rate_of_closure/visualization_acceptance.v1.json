@@ -126,8 +126,8 @@
         "units": "Declared distance, speed, angle, time, and slope units.",
         "provenance": "Canonical putting wire version, solver, surface, and seed identities.",
         "limitations": "Synthetic putting outcomes do not establish player or green performance.",
-        "keyboard_path": "Tab navigation reaches putt setup, execution, result, and dispersion views.",
-        "nonvisual_alternative": "Putt path samples, capture outcome, and dispersion statistics are tabular."
+        "keyboard_path": "Tab navigation reaches putter, stroke, green, execution, result, and dispersion views.",
+        "nonvisual_alternative": "Putt path samples, launched start line, capture margin and outcome, and dispersion statistics are tabular."
       }
     },
     {
