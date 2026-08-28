@@ -267,7 +267,7 @@
       "shard_index": 7
     },
     {
-      "content_sha256_lf": "6148b3e370501c3cd046595de80f481a8739ca646834e29abcfd2ca9be3dea23",
+      "content_sha256_lf": "1fb27d098d7a3250c5c3342c5cb8bfa06fa0cf0ce97b17f6a9459652f76350d7",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/ui/pyqt6/variation_forgiveness_view.py",
       "last_path": "src/rate_of_closure/web/src/components/PuttingPanel.test.tsx",
@@ -275,7 +275,7 @@
       "shard_index": 8
     },
     {
-      "content_sha256_lf": "21ae352b2cb4b447cb95b32a65af2de15889f41c24e6f42c3991193287ecace6",
+      "content_sha256_lf": "c3de6328d963b18a799352370cf36c8d26b024c12985f8e31827f4b476cf6df2",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/web/src/components/PuttingPanel.tsx",
       "last_path": "src/rate_of_closure/web/src/model/durableEnsembleEvidence.test.ts",
@@ -347,7 +347,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "25f40c640208b0692c08d6241dcd3c0f7230412348498d1aafce365983f15fd0",
+  "source_tree_sha256": "d7138ae4f362558b7e52fd8980b866156aadf0cbbb91842c41e0d0e58bc7f5a7",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
