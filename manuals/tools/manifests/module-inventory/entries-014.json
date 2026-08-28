@@ -3,6 +3,61 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 4685,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d1a58081c4f57f2166f78018969d9b52c1396c6be9a912abd2d254059f51d2ea",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-NOTES-NOTES-DOCK-WIDGET-PY-ED7D4EE436AF",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/notes/notes_dock_widget.py",
+      "purpose": "Reusable PyQt6 notes widget with recycle-bin semantics.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "NotesDockWidget",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/notes/test_notes_dock_widget.py",
+          "tests/unit/sidekick/test_notes_storage_coverage.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 5387,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17840,64 +17895,6 @@
           "tests/unit/sidekick/jupyter_tab/test_workspace_bridge.py"
         ],
         "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6393,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "28b830195307c20bf64c77e57bbbfb23ef78f31f889760030ad19b19db3a35c9",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-JUPYTER-TAB-SIDEKICK-NOTEBOOK-WIDGET-PY-B06B1569B159",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/jupyter_tab/sidekick_notebook_widget.py",
-      "purpose": "SidekickNotebookWidget — Phase 2 + Phase 3 session-aware notebook wrapper.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SidekickNotebookWidget",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/unit/sidekick/jupyter_tab/test_notebook_widget_phase2.py",
-          "tests/unit/sidekick/jupyter_tab/test_notebook_widget_phase3.py"
-        ],
-        "unit_mentions": [
-          "g",
           "s"
         ],
         "validation_paths": []

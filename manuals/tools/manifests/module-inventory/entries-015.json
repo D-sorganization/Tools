@@ -3,6 +3,64 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 6393,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "28b830195307c20bf64c77e57bbbfb23ef78f31f889760030ad19b19db3a35c9",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-JUPYTER-TAB-SIDEKICK-NOTEBOOK-WIDGET-PY-B06B1569B159",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/jupyter_tab/sidekick_notebook_widget.py",
+      "purpose": "SidekickNotebookWidget — Phase 2 + Phase 3 session-aware notebook wrapper.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SidekickNotebookWidget",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/unit/sidekick/jupyter_tab/test_notebook_widget_phase2.py",
+          "tests/unit/sidekick/jupyter_tab/test_notebook_widget_phase3.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 1900,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17857,104 +17915,6 @@
           "m/s^2",
           "mm",
           "ms",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 17362,
-      "classification": "calculation",
-      "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "024872d3ac8736be6ba7551df11df37cddf1501199ca49d42661a7f1cc519ba5",
-      "family": "swing-simulation-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-IMPACT-PY-3307AA71CDBE",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/putting/impact.py",
-      "purpose": "Putter-ball impact: low-speed impulse with loft (epic #4125, H3).",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "PuttLaunch",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PutterSpec",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_PUTTER_COR",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_PUTTER_MOI_KG_M2",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MINIMAL_PUTTERS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "clubhead_speed_from_backstroke",
-            "signature": "backstroke_m: float, putter_length_m: float=0.889"
-          },
-          {
-            "kind": "function",
-            "name": "strike",
-            "signature": "putter: PutterSpec, clubhead_speed_mps: float, shaft_lean_deg: float=0.0, *, aim_deg: float=0.0, face_angle_deg: float=0.0, path_angle_deg: float=0.0, attack_angle_deg: float=0.0, strike_offset_toe_mm: float=0.0, strike_offset_high_mm: float=0.0, head_moi_kg_m2: float | None=None"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/putting/tests/test_impact.py"
-        ],
-        "unit_mentions": [
-          "cm",
-          "deg",
-          "g",
-          "kg",
-          "m/s",
-          "m/s^2",
-          "mm",
-          "ms",
-          "rad/s",
           "s"
         ],
         "validation_paths": []

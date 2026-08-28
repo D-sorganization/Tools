@@ -10906,6 +10906,52 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 21839,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "217a008716afa151c9cc3748d431e6b1ba85aab3cf5044aa4ccca4533184f5c8",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-CLUBPROFILEACCEPTANCE-TEST-TS-EE3797036F9B",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/clubProfileAcceptance.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "cm",
+          "mm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 4261,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -11937,96 +11983,6 @@
           "ms",
           "rad"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 3829,
-      "classification": "calculation",
-      "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "d9f8d7bfaa96f895067eaa736505914474bc63a707ea4d3c3b0e62945ea81e4a",
-      "family": "rate-of-closure-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-DOUBLEPENDULUMRUN-TS-91344549601F",
-      "language": "typescript",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/model/doublePendulumRun.ts",
-      "purpose": null,
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "AppliedTorqueSample",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "DoublePendulumRunConfig",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "DoublePendulumRunSummary",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "PASSIVE_DOUBLE_PENDULUM_RUN",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "passiveDoublePendulumRun",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "prescribedDoublePendulumRun",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "summarizeDoublePendulumRun",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "withJointLocks",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

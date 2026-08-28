@@ -3,6 +3,59 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 17377,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6a247247bb23486e740a93102a18b4af3010c9d321db86cacfea3fc1033d0c66",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-TOOLS-GUI-WINDOWS-UNIFIED-LAUNCHER-WINDOW-PY-C4525480173A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/tools/gui/windows/unified_launcher_window.py",
+      "purpose": "Main window for the Unified Tools Launcher.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "UnifiedLauncher",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 5202,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
