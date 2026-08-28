@@ -5,7 +5,10 @@
   "audited_main_commit": "57b443201b402fc110ec5623885c7e310d6ad6d3",
   "protected_run": "https://github.com/D-sorganization/Tools/actions/runs/32689177846",
   "overall_status": "partial",
-  "status_counts": { "verified": 10, "partial": 21 },
+  "status_counts": {
+    "verified": 10,
+    "partial": 21
+  },
   "r14_6_blocking_gaps": [
     "Matched state-by-state geometry evidence is incomplete outside the registered initial state and selected Variation, Putting, Explorer, Flight, and Launch Monitor interactions.",
     "Approved baselines cover the initial React 1440x900 and PyQt 1.0-DPI states, not narrow React, PyQt 1.5 DPI, or representative loading, result, no-impact, failure, and stale states.",
@@ -96,6 +99,7 @@
       "status": "partial",
       "rationale": "Narrow geometry, visual-before-control ordering, and overflow are tested; an expanded/full-screen path is not mapped for each applicable visual.",
       "evidence_files": [
+        "src/rate_of_closure/web/e2e/putting-sample-inspector.spec.ts",
         "src/rate_of_closure/web/e2e/visualization-tab-visibility.spec.ts"
       ],
       "gaps": [
@@ -267,6 +271,7 @@
       "status": "partial",
       "rationale": "Every initial tab and viewport is protected, but all supported state transitions are not exercised for every tab.",
       "evidence_files": [
+        "src/rate_of_closure/web/e2e/putting-sample-inspector.spec.ts",
         "src/rate_of_closure/web/e2e/visualization-tab-visibility.spec.ts"
       ],
       "gaps": [
