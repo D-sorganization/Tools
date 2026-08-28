@@ -7756,6 +7756,7 @@
           "tests/rate_of_closure/test_morris_authority_runtime.py",
           "tests/rate_of_closure/test_variation_complete_trial_scaling_evidence.py",
           "tests/rate_of_closure/test_variation_noise_response.py",
+          "tests/rate_of_closure/test_visual_first_epic_4433_evidence.py",
           "tests/rotation_converter/test_modern_robotics_public_surface_3689.py",
           "tests/rotation_converter/test_mr_kinematics_contracts_3736.py",
           "tests/rust_bindings/_tools_core_import.py",
