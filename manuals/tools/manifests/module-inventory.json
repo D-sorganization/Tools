@@ -275,7 +275,7 @@
       "shard_index": 8
     },
     {
-      "content_sha256_lf": "3deb73f4bf8cbf98e0d9c1126015e0b4df3ab471edfe3af2f669c3b749cae5cd",
+      "content_sha256_lf": "0cc63f9336f6606cab1872eff9fd559bdf150ef0124ae49a60091bc446818ceb",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/web/src/components/PuttingPanel.test.tsx",
       "last_path": "src/rate_of_closure/web/src/model/doublePendulum.ts",
@@ -347,7 +347,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "1a4bd8bc3214380df98f3a87336a2a01999236242886b41b8814c18b786179ca",
+  "source_tree_sha256": "de80f920711c6364d399f69b4ad0ec21a3f2736d8b031a3fa8b84144f7d5533d",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
