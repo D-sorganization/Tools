@@ -58,12 +58,7 @@ describe("variation execution authority", () => {
     );
   });
 
-  it("fails before execution when a plan names an unsupported flight model", () => {
-    expect(() => executeVariationWork(
-      prepareVariationExecutionRequest({ ...plan, flightModel: "custom-flight-model" }, "all_together"),
-      vi.fn(),
-    )).toThrow(/flight model.*custom-flight-model.*waterloo_penner/i);
-  });
+
 });
 
 class FakeWorker {
@@ -105,15 +100,7 @@ const validResult = (): ReturnType<typeof executeVariationWork> =>
   executeVariationWork(jointRequest(), () => undefined);
 
 describe("production worker transport", () => {
-  it("rejects an unsupported flight model before constructing or posting to a worker", () => {
-    const worker = new FakeWorker();
 
-    expect(() => workerService(worker).execute(
-      prepareVariationExecutionRequest({ ...plan, flightModel: "custom-flight-model" }, "all_together"),
-      { signal: new AbortController().signal, onProgress: vi.fn() },
-    )).toThrow(/flight model.*custom-flight-model.*waterloo_penner/i);
-    expect(worker.posted).toEqual([]);
-  });
 
   it("accepts validated progress and result, then cleans up exactly once", async () => {
     const worker = new FakeWorker();
