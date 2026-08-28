@@ -36,17 +36,38 @@ from __future__ import annotations
 import dataclasses
 import math
 import threading
+import time
 from dataclasses import dataclass
+from functools import partial
 
 import numpy as np
 
 from shared.python.contracts import require
 
 from ..solver.objective import EvaluationConfig
+from ..solver.solve import ProgressCallback, ProgressReport
 from .engine import VariationDataset, run_variation
 from .spec import VariationPlan
 
 _MIN_RUNS_FOR_STATS = 2
+
+
+def _emit_offset_progress(
+    callback: ProgressCallback,
+    iteration_offset: int,
+    failure_offset: int,
+    started: float,
+    report: ProgressReport,
+) -> None:
+    """Translate one OAT sub-study report onto the complete analysis axis."""
+    callback(
+        dataclasses.replace(
+            report,
+            iteration=iteration_offset + report.iteration,
+            cost=failure_offset + report.cost,
+            elapsed_s=time.monotonic() - started,
+        )
+    )
 
 
 @dataclass(frozen=True)
@@ -150,6 +171,7 @@ def one_at_a_time_sensitivity(
     config: EvaluationConfig | None = None,
     n_workers: int = 4,
     cancel_event: threading.Event | None = None,
+    progress_cb: ProgressCallback | None = None,
 ) -> SensitivityResult:
     """Vary one noise spec at a time and measure each output's spread.
 
@@ -160,14 +182,36 @@ def one_at_a_time_sensitivity(
     """
     outputs = None
     rows: list[np.ndarray] = []
+    completed_before = 0
+    failed_before = 0
+    started = time.monotonic()
     for spec in plan.noise:
         # OAT is an intervention on one marginal at a time. Retaining a
         # multivariate group would reference removed specs and change the
         # method's meaning, so grouped dependence is deliberately absent.
         sub_plan = dataclasses.replace(plan, noise=(spec,), groups=())
+        offset = completed_before
+        prior_failures = failed_before
+
         dataset = run_variation(
-            sub_plan, config=config, n_workers=n_workers, cancel_event=cancel_event
+            sub_plan,
+            config=config,
+            n_workers=n_workers,
+            progress_cb=(
+                partial(
+                    _emit_offset_progress,
+                    progress_cb,
+                    offset,
+                    prior_failures,
+                    started,
+                )
+                if progress_cb is not None
+                else None
+            ),
+            cancel_event=cancel_event,
         )
+        completed_before += plan.n_runs
+        failed_before += plan.n_runs - dataset.n_success
         if outputs is None:
             outputs = dataset.output_names
         rows.append(

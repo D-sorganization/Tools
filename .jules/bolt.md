@@ -101,3 +101,7 @@
 ## 2025-02-12 - CSV Export Overhead
 **Learning:** Chained array methods (.map().join()) in data-intensive hot paths (like exporting thousands of LaunchMonitor rows) create massive numbers of intermediate arrays, increasing GC pressure and memory consumption.
 **Action:** Always replace chained declarative array operations with single-pass `for`-loops and string concatenation when generating large text payloads to bypass unnecessary memory allocations.
+
+## 2024-05-18 - CSV Export Overhead
+**Learning:** Chained array methods (.map().join()) in data-intensive hot paths (like exporting thousands of LaunchMonitor rows) create massive numbers of intermediate arrays, increasing GC pressure and memory consumption.
+**Action:** Always replace chained declarative array operations with single-pass `for`-loops and string concatenation when generating large text payloads to bypass unnecessary memory allocations.

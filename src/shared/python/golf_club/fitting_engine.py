@@ -27,8 +27,9 @@ from __future__ import annotations
 
 import json
 import math
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, TypeVar
 
 import numpy as np
 
@@ -55,6 +56,10 @@ from .shaft_scaling import ShaftProfileScaling, scale_shaft_profile
 
 FITTING_REPORT_FORMAT = "golf_club.fitting_report/1"
 
+#: One comparator evaluation's result type — a full-swing
+#: :class:`ClubOutcome` here, a putting outcome in ``putter_fitting``.
+OutcomeT = TypeVar("OutcomeT")
+
 __all__ = [
     "FITTING_REPORT_FORMAT",
     "ClubOutcome",
@@ -62,6 +67,7 @@ __all__ = [
     "FittingReport",
     "compare_counterfactuals",
     "evaluate_club",
+    "evaluate_counterfactual_set",
     "fitting_report_to_json",
 ]
 
@@ -234,6 +240,44 @@ def evaluate_club(
     )
 
 
+def evaluate_counterfactual_set(
+    counterfactuals: tuple[CounterfactualSpec, ...],
+    evaluate: Callable[[CounterfactualSpec | None], OutcomeT],
+) -> tuple[OutcomeT, tuple[OutcomeT, ...]]:
+    """Validate one counterfactual set and evaluate baseline + variants.
+
+    The *comparator* is the reusable part, not the outcome: labels must
+    be unique and none may be called ``"baseline"``, the baseline is
+    evaluated through the same ``evaluate`` callable as every variant
+    (so nothing about the held-fixed input can differ between them),
+    and the order of the returned variants matches the request.
+
+    Epic #4800 P5's putter-fitting comparison
+    (``golf_club.putter_fitting``) supplies putting metrics as
+    ``evaluate`` and inherits exactly these guarantees rather than
+    re-deriving them.
+
+    Args:
+        counterfactuals: The bounded what-ifs to evaluate.
+        evaluate: Runs one variant — ``None`` means the baseline.
+
+    Returns:
+        ``(baseline_outcome, per_counterfactual_outcomes)``.
+
+    Raises:
+        TypeError: If the set is not a tuple of :class:`CounterfactualSpec`.
+        ValueError: If labels collide or claim to be the baseline.
+    """
+    if not isinstance(counterfactuals, tuple) or not all(
+        isinstance(item, CounterfactualSpec) for item in counterfactuals
+    ):
+        raise TypeError("counterfactuals must be a tuple of CounterfactualSpec")
+    labels = [item.label for item in counterfactuals]
+    if len(set(labels)) != len(labels) or "baseline" in labels:
+        raise ValueError("counterfactual labels must be unique and not 'baseline'")
+    return evaluate(None), tuple(evaluate(spec) for spec in counterfactuals)
+
+
 def compare_counterfactuals(
     document: ClubFittingDocument,
     grip: GripKinematics,
@@ -244,13 +288,6 @@ def compare_counterfactuals(
     flight_model: str = "waterloo_penner",
 ) -> FittingReport:
     """Evaluate the baseline and every counterfactual under one swing input."""
-    if not isinstance(counterfactuals, tuple) or not all(
-        isinstance(item, CounterfactualSpec) for item in counterfactuals
-    ):
-        raise TypeError("counterfactuals must be a tuple of CounterfactualSpec")
-    labels = [item.label for item in counterfactuals]
-    if len(set(labels)) != len(labels) or "baseline" in labels:
-        raise ValueError("counterfactual labels must be unique and not 'baseline'")
     evaluate = lambda spec: evaluate_club(  # noqa: E731 - local binding
         document,
         grip,
@@ -259,11 +296,12 @@ def compare_counterfactuals(
         impact_offset_high_mm=impact_offset_high_mm,
         flight_model=flight_model,
     )
+    baseline, variants = evaluate_counterfactual_set(counterfactuals, evaluate)
     return FittingReport(
         document_id=document.document_id,
         grip=grip,
-        baseline=evaluate(None),
-        counterfactuals=tuple(evaluate(spec) for spec in counterfactuals),
+        baseline=baseline,
+        counterfactuals=variants,
     )
 
 

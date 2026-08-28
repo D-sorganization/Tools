@@ -180,14 +180,17 @@ def test_generated_hosel_datum_uses_declared_head_geometry_in_wedge_run() -> Non
         (13.155691, -2.522013, -0.410056), abs=1e-6
     )
     assert snapshot.analysis.total_aoa_deg == pytest.approx(-10.847087, abs=1e-6)
+    # Shaft-counterfactual decomposition repinned for #4799 G2: the
+    # loft-aware wedge hosel moved the shaft axis to the leading edge,
+    # changing the lever arm. Total delivery and carry are unchanged.
     assert snapshot.analysis.without_shaft_aoa_deg == pytest.approx(
-        -10.548272, abs=1e-6
+        -11.270053, abs=1e-6
     )
     assert snapshot.analysis.shaft_counterfactual_aoa_delta_deg == pytest.approx(
-        -0.298815, abs=1e-6
+        0.422965, abs=1e-6
     )
     assert snapshot.analysis.shaft_vertical_velocity_share == pytest.approx(
-        0.065050, abs=1e-6
+        0.018553, abs=1e-6
     )
     assert run.launch is not None
     assert run.launch["carry_m"] == pytest.approx(22.45855, abs=1e-5)
@@ -204,8 +207,9 @@ def test_generated_hosel_datum_uses_declared_head_geometry_in_wedge_run() -> Non
     )
     contact_target = impact_kinematics_for_run(contact_target_run).analysis
     assert contact_target.total_aoa_deg == pytest.approx(-10.0, abs=1e-9)
+    # Repinned for #4799 G2 (see above): lever arm from the new hosel.
     assert contact_target.shaft_counterfactual_aoa_delta_deg == pytest.approx(
-        -0.333108, abs=1e-6
+        0.373815, abs=1e-6
     )
     assert contact_target_run.launch is not None
     assert contact_target_run.launch["carry_m"] == pytest.approx(23.024061, abs=1e-6)
