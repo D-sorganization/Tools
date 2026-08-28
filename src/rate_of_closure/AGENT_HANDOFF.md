@@ -52,6 +52,14 @@ PyQt visual baselines to fix #4799**: all ten drift 924-2660 microunits against
 a 250 limit, including tabs with no clubhead, from glyph re-rasterization no
 repo change explains (#4844).
 
+P8's flight side landed one playback architecture: `simulation/playback_transport.py`
+and `web/src/model/playbackTransport.ts` twins own scrub quantization, speeds, and
+wall-clock advance, pinned with the `TimedTrajectory`/`PlaybackTimeline` sample→frame
+mapping by `playback_transport_golden_v1.json`. The putting seams are the
+subject-neutral Qt `PlaybackTransportControls` (flight binds it as
+`FlightPlaybackControls`) and the source-independent timeline classes; camera state
+stays with #4571 (`camera_commands`/`cameraCommands.ts`, documented extension points).
+
 #4142 remains Python-authoritative; PyQt6 and React do not reimplement physics.
 R10.3, R10.4, R11.1 and R11.3 are protected-merged through `4ddec9175`. The
 complete-trial authority and `swing-trace-time-linear-contiguous/v1` preserve

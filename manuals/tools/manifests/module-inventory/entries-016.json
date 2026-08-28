@@ -3,6 +3,580 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 915,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "38fca59d45f2545bcd5d28f3922b17bb9afbe8fb1ac85ce1f3f8455a19a4aeeb",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-MODEL-INTERCHANGE-INIT-PY-79556FFA7405",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/model_interchange/__init__.py",
+      "purpose": "Golfer-model interchange for the heavy-hit epic (H2, #4564).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "BODY_CHAIN_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BodyChain",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ChainBody",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ChainJoint",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "body_chain_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "body_chain_to_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "chain_from_mjcf",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "chain_from_osim",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "chain_from_urdf",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "grip_boundary_reduction",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10738,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3af754ca3e8b8e76dc775b6184037d641dbbc6c682d98f7400e7da0e3a1c6aa8",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-MODEL-INTERCHANGE-BODY-CHAIN-PY-E11F0E175BED",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/model_interchange/body_chain.py",
+      "purpose": "Neutral body-chain contract and grip-boundary reduction (H2, #4564).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "BodyChain",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ChainBody",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ChainJoint",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BODY_CHAIN_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "body_chain_from_json",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "body_chain_to_json",
+            "signature": "chain: BodyChain"
+          },
+          {
+            "kind": "function",
+            "name": "grip_boundary_reduction",
+            "signature": "chain: BodyChain, *, hand_bodies: tuple[str, ...], boundary_joint_of: str, stiffness_override_n_m: float | None=None, damping_override_n_s_m: float | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_fitting_fixtures_parity.py"
+        ],
+        "unit_mentions": [
+          "N/m",
+          "N·m",
+          "rad",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10821,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3f26f0575928413f2241387ea3c6fa83c6572cc41536535ca12a669b2b757df1",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-MODEL-INTERCHANGE-PARSERS-PY-860A347CE4F8",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/model_interchange/parsers.py",
+      "purpose": "Runtime-free engine-model parsers for the body-chain wire (H2, #4564).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "chain_from_mjcf",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "chain_from_osim",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "chain_from_urdf",
+            "signature": "text: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5500,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8c84de45aab2f93317c64d8c57097a2631fbf07d1d1dc91b0b0528c8706963ed",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-INIT-PY-3763F6A25399",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/putting/__init__.py",
+      "purpose": "Putting vertical for swing_sim (epic #4125, H3).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "CaptureModel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_PUTTER_COR",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_PUTTER_MOI_KG_M2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_SLIDING_MU",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GREEN_SURFACE_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GreenConditions",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GreenSurface",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GridGreenSurface",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "HOLE_RADIUS_M",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MINIMAL_PUTTERS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PUTTING_RESULT_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PUTTING_RESULT_FORMAT_V1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PUTTING_RESULT_KERNEL",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PUTTING_STROKE_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlanarGreenSurface",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PuttLaunch",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PuttResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PutterSpec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PuttingResultDocument",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PuttingResultProvenance",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PuttingResultV1Archive",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PuttingStroke",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "STIMP_RELEASE_SPEED_MPS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SkidSolution",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StrokePutt",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StrokeSample",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StrokeStrike",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "UdGreenTopography",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "capture_speed_mps",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "clubhead_speed_from_backstroke",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "effective_hole_radius_m",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "green_surface_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "green_surface_from_ud_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "green_surface_to_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "green_surface_to_ud_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "impact_sample_index",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putt_from_stroke",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putting_result_document",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putting_result_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putting_result_to_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putting_result_v1_archive_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putting_stroke_from_drake_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putting_stroke_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putting_stroke_from_mujoco_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putting_stroke_from_opensim_sto",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putting_stroke_to_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "roll_out_distance",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "roll_time_s",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "rolling_mu_to_stimp",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "simulate_putt",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "simulate_putt_on_surface",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "solve_skid",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "stimp_to_rolling_mu",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "strike_from_stroke",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "strike_parameters",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 3797,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -15934,215 +16508,6 @@
         "public_surfaces": [],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4546,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9cf8225e59d1fa6bb9e416dd9256fd6988b494c425c11412cd0dbcf1041c8cb6",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-TOOLS-GUI-COMPONENTS-CATEGORY-GROUP-PY-03AB9132BC3D",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/tools/gui/components/category_group.py",
-      "purpose": "Collapsible category group component for organizing tools by category.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CollapsibleCategoryGroup",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6776,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2f1c554c73778f3f37eee293bd45191f91e73e5016089bb6f43e26815d54fd95",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-TOOLS-GUI-COMPONENTS-ERROR-NOTIFICATION-PY-A6A0149CC202",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/tools/gui/components/error_notification.py",
-      "purpose": "Error notification dialog for the Unified Tools Launcher.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ErrorNotificationDialog",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5025,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d7d53f9ed84c4b45cb7e4ce663d434265bb42dc18394f75a83bae1bc59813e40",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-TOOLS-GUI-COMPONENTS-KEYBOARD-SHORTCUTS-DIALOG-PY-A755D51DC02D",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/tools/gui/components/keyboard_shortcuts_dialog.py",
-      "purpose": "Keyboard shortcuts help dialog for the Unified Tools Launcher.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "KeyboardShortcutsDialog",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6072,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0132d8ac8447e3115c49f495dd60e1294a1c6fdbeeedfb4f56092d07e046e549",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-TOOLS-GUI-COMPONENTS-LAUNCH-PROGRESS-PY-3B02AB2D4BFB",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/tools/gui/components/launch_progress.py",
-      "purpose": "Launch progress indicator for the Unified Tools Launcher.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "LaunchProgressDialog",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "bar",
-          "s"
-        ],
         "validation_paths": []
       }
     }

@@ -1164,10 +1164,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 4239,
+      "bytes_lf": 4595,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "d4a62fc17c0a24d8b5d034f9e16394a4de8e72ca376c8975492e6b159fae0520",
+      "content_sha256_lf": "21e4549bc8a45a2da2bfa33d68728dbecb4c10e426ab1a50b4721cd8245fc8db",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-INIT-PY-7BC8891DC6A1",
       "language": "python",
@@ -1238,6 +1238,11 @@
           },
           {
             "kind": "re-export",
+            "name": "DEFAULT_SPEED",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "EXPLORER_METRIC_KEYS",
             "signature": null
           },
@@ -1303,6 +1308,16 @@
           },
           {
             "kind": "re-export",
+            "name": "PLAYBACK_SPEEDS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlaybackAdvance",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "PlaybackFrame",
             "signature": null
           },
@@ -1319,6 +1334,11 @@
           {
             "kind": "re-export",
             "name": "SCREW_CSV_COLUMNS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SCRUB_STEPS",
             "signature": null
           },
           {
@@ -1368,7 +1388,17 @@
           },
           {
             "kind": "re-export",
+            "name": "advance_playback",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "ball_setup_from_json_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "clamp_time",
             "signature": null
           },
           {
@@ -1473,12 +1503,22 @@
           },
           {
             "kind": "re-export",
+            "name": "scrub_value",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "simulate_forced",
             "signature": null
           },
           {
             "kind": "re-export",
             "name": "spatial_target_from_simulation_document",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "time_at_scrub",
             "signature": null
           },
           {
@@ -2023,16 +2063,16 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 4091,
+      "bytes_lf": 5523,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "07079e8588113e1f5efe5c7b75a5e5ae2d2ad9ee551ea1371115fb0ae2a6041f",
+      "content_sha256_lf": "34698209a73e37fd5444658dd030b93ae0c24ede6c6c3aa41c2265d2907700d3",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-FLIGHT-PLAYBACK-PY-4CFE5FB15AC7",
       "language": "python",
       "maintainer": "Rate of Closure maintainers",
       "path": "src/rate_of_closure/simulation/flight_playback.py",
-      "purpose": "Deterministic interpolation contract for ball-flight playback (#4200).",
+      "purpose": "Deterministic interpolation contract for shot playback (#4200, #4800 P8).",
       "review_status": "review-required",
       "risk_tags": [
         "public-api",
@@ -2076,7 +2116,8 @@
           }
         ],
         "test_paths": [
-          "tests/rate_of_closure/test_flight_playback.py"
+          "tests/rate_of_closure/test_flight_playback.py",
+          "tests/rate_of_closure/test_playback_transport.py"
         ],
         "unit_mentions": [
           "N",
@@ -3074,6 +3115,97 @@
         "unit_mentions": [
           "s"
         ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 4096,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "e0d0d1ddb08b9009a9acfc4b3f3b3005772db95fb23ec288495e27c16db40264",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-PLAYBACK-TRANSPORT-PY-E7728F726E91",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/playback_transport.py",
+      "purpose": "Runtime-neutral playback transport math for 3D shot playback (#4800 P8).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PlaybackAdvance",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_SPEED",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PLAYBACK_SPEEDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCRUB_STEPS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "advance_playback",
+            "signature": "time_s: float, elapsed_s: float, speed: float, duration_s: float"
+          },
+          {
+            "kind": "function",
+            "name": "clamp_time",
+            "signature": "time_s: float, duration_s: float"
+          },
+          {
+            "kind": "function",
+            "name": "scrub_value",
+            "signature": "time_s: float, duration_s: float, steps: int=SCRUB_STEPS"
+          },
+          {
+            "kind": "function",
+            "name": "time_at_scrub",
+            "signature": "value: int, duration_s: float, steps: int=SCRUB_STEPS"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_playback_transport.py"
+        ],
+        "unit_mentions": [],
         "validation_paths": []
       }
     },
@@ -5912,16 +6044,16 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9023,
+      "bytes_lf": 4102,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "04ae9a389fb0c87950aece2bef059d838241dd8a9d8b0cac5a7e5d401e8dc465",
+      "content_sha256_lf": "301c5a11716489b5c950bf5fe53a4fe77118e408a92ca156cc3e6006291c9094",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-FLIGHT-PLAYBACK-CONTROLS-PY-576218E37F2E",
       "language": "python",
       "maintainer": "Rate of Closure maintainers",
       "path": "src/rate_of_closure/ui/pyqt6/flight_playback_controls.py",
-      "purpose": "Accessible, lifecycle-safe transport controls for ball-flight playback.",
+      "purpose": "Ball-flight binding of the shared transport controls (#4800 P8).",
       "review_status": "inventory-baseline",
       "risk_tags": [
         "public-api"
@@ -9096,6 +9228,62 @@
         ],
         "test_paths": [],
         "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9848,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ff4150290ae91e2160f3bf330cd4f6f66ce800ea05bea67e0dae4276e7e2ed11",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-PLAYBACK-TRANSPORT-CONTROLS-PY-F9D4CC8C32D3",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/ui/pyqt6/playback_transport_controls.py",
+      "purpose": "Subject-neutral, lifecycle-safe transport controls for 3D shot playback.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PlaybackTransportControls",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_playback_transport.py"
+        ],
+        "unit_mentions": [
+          "g",
           "s"
         ],
         "validation_paths": []
@@ -12830,122 +13018,6 @@
           {
             "kind": "class",
             "name": "TorqueProfileWorkspaceMixin",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 5602,
-      "classification": "calculation",
-      "classification_basis": "path-marker:filter",
-      "content_sha256_lf": "ab3a29f3906830695f4e1916a33ab40e273b10efcacdb6a30038f914d6d075ba",
-      "family": "rate-of-closure-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VARIATION-ARC-FILTERS-PY-DA3B4FD68441",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/variation_arc_filters.py",
-      "purpose": "Outcome, perturbation-source, and phase controls for swing ensembles.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ArcFilterControls",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 374,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6132f1289998528d08abc318c6906bb2d26b0d9d49b4a02830b47f13ad66fa24",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VARIATION-CONSTANTS-PY-2803F8CE6D89",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/variation_constants.py",
-      "purpose": "UI labels and bounds shared by the variation controls.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "BASE_SOURCES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MAX_RUNS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MODE_LABELS",
             "signature": null
           }
         ],

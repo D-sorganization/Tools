@@ -65,6 +65,16 @@ from .kinetics import (
     zero_torque_counterfactual,
 )
 from .manual_delivery import ManualDeliveryConfig, ShaftAxisDatum
+from .playback_transport import (
+    DEFAULT_SPEED,
+    PLAYBACK_SPEEDS,
+    SCRUB_STEPS,
+    PlaybackAdvance,
+    advance_playback,
+    clamp_time,
+    scrub_value,
+    time_at_scrub,
+)
 from .session import (
     BALL_POSITION_M,
     DEFAULT_DRIVER_TEE_HEIGHT_M,
@@ -100,9 +110,17 @@ __all__ = [
     "SCREW_CSV_COLUMNS",
     "TARGET_CSV_COLUMNS",
     "AppFrameSwing",
+    "DEFAULT_SPEED",
     "FlightExploration",
+    "PLAYBACK_SPEEDS",
+    "PlaybackAdvance",
     "PlaybackFrame",
+    "SCRUB_STEPS",
     "TimedTrajectory",
+    "advance_playback",
+    "clamp_time",
+    "scrub_value",
+    "time_at_scrub",
     "WindComparison",
     "KineticsSeries",
     "ImpactOutcome",

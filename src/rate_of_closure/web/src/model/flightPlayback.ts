@@ -1,7 +1,23 @@
-/** Deterministic interpolation over solver-owned ball-flight timestamps. */
+/**
+ * Deterministic interpolation over solver-owned trajectory timestamps
+ * (#4200, #4800 P8).
+ *
+ * Trajectory-source independent (the putting seam): `PlaybackTimeline`
+ * accepts any strictly increasing `TimedSample` timeline — recorded ball
+ * flight today, putt-result break trajectories later — so the putting
+ * vertical consumes this class unchanged. The Python twin is
+ * `rate_of_closure/simulation/flight_playback.py` (`TimedTrajectory`); the
+ * sample->frame mapping of both twins is pinned by the shared golden
+ * fixture `__fixtures__/playback_transport_golden_v1.json`.
+ */
 
-import type { FlightPoint } from "./flight";
 import type { Vec3 } from "./simulation";
+
+/** One recorded trajectory sample: physical time [s] + app-frame metres. */
+export interface TimedSample {
+  time: number;
+  position: Vec3;
+}
 
 export interface PlaybackFrame {
   time: number;
@@ -16,7 +32,7 @@ function finiteVector(vector: Vec3): boolean {
 }
 
 /** Validate the immutable playback boundary before UI animation begins. */
-export function validatePlaybackPoints(points: readonly FlightPoint[]): void {
+export function validatePlaybackPoints(points: readonly TimedSample[]): void {
   if (points.length === 0) throw new Error("playback requires at least one point");
   points.forEach((point, index) => {
     if (!Number.isFinite(point.time) || !finiteVector(point.position)) {
@@ -43,7 +59,7 @@ export class PlaybackTimeline {
   readonly duration: number;
   readonly apexTime: number;
 
-  constructor(points: readonly FlightPoint[]) {
+  constructor(points: readonly TimedSample[]) {
     validatePlaybackPoints(points);
     this.points = points.map((point) => ({
       time: point.time,
@@ -113,6 +129,6 @@ export class PlaybackTimeline {
 }
 
 /** One-shot interpolation convenience for non-animated consumers. */
-export function frameAtTime(points: readonly FlightPoint[], time: number): PlaybackFrame {
+export function frameAtTime(points: readonly TimedSample[], time: number): PlaybackFrame {
   return new PlaybackTimeline(points).frameAt(time);
 }
