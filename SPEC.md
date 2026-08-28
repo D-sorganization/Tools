@@ -27,10 +27,34 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.74                                    |
+| **Spec Version**        | 1.18.75                                    |
 | **Last Spec Update**    | 2026-08-28                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-27 Fail-Closed R14.6 Acceptance Authority (#4832 / #4433 / #4142)
+
+Version 1.18.75 adds `rate-of-closure/visualization-acceptance` v1 as the fifth
+cross-surface visualization authority. Its strict reader expands all 20 React
+and PyQt tabs over every lifecycle state already registered by the visibility
+authority and every supported desktop, narrow, or DPI reference case. Each tab
+is bound to declared frame, units, provenance, limitations, keyboard path, and
+nonvisual alternative without duplicating lifecycle definitions. The contract
+is registration evidence, not proof that every state/case has rendered or
+passed. Exact assistive-technology and user-oriented rendered-review protocols
+retain evaluator, build, dataset, image, findings, and signature requirements;
+automation cannot mark either human action approved. The #4433 and #4142
+ledgers remain partial until state/case geometry, responsive, accessibility,
+performance, deterministic-decimation, approved-image, downstream, and human
+evidence genuinely complete.
+
+The same protected slice repairs the asynchronous variation cancellation
+contract exposed by the release build: cancelling clears `busy` and progress
+immediately while the generation guard continues to reject late results. Test
+services return the request's exact execution metadata and model the production
+abort signal. Obsolete assertions that treated extensible flight-model IDs as
+an execution-layer error are removed; registry and evaluator authorities retain
+responsibility for resolving those IDs.
 
 ### 2026-08-27 Cross-Surface Variation Workflow Parity (#4792 / #4142 R14.3)
 
@@ -5560,6 +5584,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-28 | 1.18.75 | feat(rate, #4832 / #4433 / #4142): add the fail-closed `rate-of-closure/visualization-acceptance` v1 authority for all 20 React/PyQt tabs, lifecycle states, desktop/narrow/high-DPI reference cases, frame/unit/provenance/limitation declarations, keyboard paths, and nonvisual alternatives. Registration is explicitly not rendered approval; assistive-technology and user-rendered-review actions remain human-only. Also restore immediate variation-cancellation UI release while retaining the generation guard against late results, align test execution metadata with production requests, and remove obsolete closed-world flight-model assertions. |
 | 2026-08-28 | 1.18.74 | refactor(golf_club, #4825): extract putter head JSON wire serialization/deserialization to `putter_head_serde.py` (105 LOC), reducing `putter_head.py` from 502 LOC to 432 LOC to satisfy the 500-line per-file LOC budget while preserving full public API backward compatibility through re-exports. |
 | 2026-08-28 | 1.18.73 | test(variation, #4696 / #4558): add HDF5/JSON/CSV dataset IO roundtrip coverage (`test_variation_dataset_io.py`) for the schema constants and `write_hdf5`/`read_hdf5` pair already published via #4674; the PR's own HDF5 implementation was superseded by #4674/#4701 while queued, so only the test file and export list carried a net diff after rebase onto main. |
 | 2026-08-27 | 1.18.72 | fix(#4827): dedupe the duplicate `**Spec Version**` row that two concurrently merged PRs left in the §1 Identity table (one stale at 1.18.70, one current at 1.18.71), and add `tests/architecture/test_spec_version_freshness.py` so the Identity header version and the newest §12 Change Log row are asserted equal on every PR — previously that equality was only prose in the spec-check failure message, not a gate. | #4827 |

@@ -121,6 +121,8 @@ export function useVariationExecution(
       setEnsemble(acceptedEnsemble);
       acceptedIdentity.current = configurationIdentity;
     }
+    setBusy(false);
+    setProgress(null);
     setStatus("Cancelled: no partial variation result was accepted.");
     setVisualState(variationVisualState(
       retainsAccepted ? "cancel-retained" : "cancel-empty",
