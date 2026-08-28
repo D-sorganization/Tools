@@ -85,12 +85,23 @@ def test_worst_library_mesh_uses_bounded_playback_cadence(qtbot) -> None:  # typ
     )
     # This is a CPU-work budget, not a hosted-runner scheduling benchmark.
     # Wall time makes an otherwise deterministic render fail when sibling
-    # xdist workers temporarily deschedule this process.
+    # xdist workers temporarily deschedule this process, so it measures
+    # process CPU instead.
+    #
+    # CPU time alone is still not contention-proof: the same instruction
+    # stream costs more CPU when sibling workers evict its cache lines and
+    # saturate memory bandwidth. Measured on an idle box this draw takes
+    # 0.125-0.219 s, so the previous 0.5 s ceiling left only ~2.3x headroom
+    # and tripped under 14-way xdist across several PRs. What the budget
+    # exists to catch is an unbounded or super-linear redraw (re-tessellating
+    # per frame, or going quadratic in triangles), which costs an order of
+    # magnitude - so a ceiling with real headroom catches the regression
+    # just as well while no longer reporting scheduling pressure as one.
     started = process_time()
     view._draw()
     elapsed = process_time() - started
     assert view._timer.interval() == 200
-    assert elapsed < 0.5
+    assert elapsed < 2.0
 
 
 def test_playback_cycle_duration_is_independent_of_render_cadence(qtbot) -> None:  # type: ignore[no-untyped-def]
