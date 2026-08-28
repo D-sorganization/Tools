@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — Rate_of_Closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-27
+> Last updated: 2026-08-28
 > **Current state only**, capped at 150 lines; history lives in git and in [`docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md`](../../docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md).
 > Do not append dated entries — that is how it reached 2,205 lines.
 
@@ -66,11 +66,11 @@ tier. PR #4733 merged V0.1 with purpose, prerequisites, and reciprocal
 counterparts; PR #4736 merged strict TypeScript-reader parity as `34a809d9`.
 PR #4738 merged V5.2's fail-closed changed-path governance as `4b4aec421`.
 The audit is 8 verified / 23 partial; seven blockers and two human actions remain.
-PR #4835 for #4832 is active with implementation commit `69f157774` in worktree
-`Tools-worktrees/4832-r14-6-evidence`. Its fifth manifest expands all 20 tabs
+PR #4835 has squash auto-merge in `Tools-worktrees/4832-r14-6-evidence`; its fifth manifest expands all 20 tabs
 over registered states/reference cases and binds scientific/nonvisual context.
-Python (68), governance (39), and the full web suite (1,881) pass with all
-linters/build; render, performance, downstream, and human gaps remain.
+Python (68), governance (39), and the full web suite (1,881) pass. The only
+first-head failure was a missing SPEC 1.18.75 change-log row, now locally fixed;
+render, performance, downstream, and human gaps remain.
 
 ### Adding a Tab: The Five-Manifest Lockstep (Read Before Starting C6/C7/H4)
 
