@@ -63,6 +63,13 @@ def putting_document_values(
     line, so the label spells out ``right``/``left`` and never leaves a
     bare sign to be misread. Lateral break keeps the record's own
     left-positive metre sign, matching the top-down view's axis.
+
+    Capture geometry is deliberately **not** routed through the
+    distance-unit chokepoint: the hole radius is 54 mm, so the session
+    display unit (yards by default, two decimals) rounds the whole
+    effective-rim question to ``0.06 yd`` and its margin to noise.
+    These two are rim-scale quantities and read in millimetres, the
+    same way speed reads in m/s and skid share reads in percent.
     """
     return {
         "putt_start_azimuth_deg": _direction(document.start_azimuth_deg),
@@ -71,14 +78,19 @@ def putting_document_values(
         ),
         "putt_entry_azimuth_deg": _direction(document.entry_azimuth_deg),
         "putt_capture_margin_m": (
-            f"{format_m(document.capture_margin_m)} of "
-            f"{format_m(document.effective_hole_radius_m)} effective radius"
+            f"{1000.0 * document.capture_margin_m:+.1f} mm of "
+            f"{1000.0 * document.effective_hole_radius_m:.1f} mm effective radius"
         ),
-        "putt_face_twist_deg": (
-            f"{abs(twist.face_twist_open_deg):.3f}° "
-            f"{'open' if twist.face_twist_open_deg >= 0.0 else 'closed'}"
-        ),
+        "putt_face_twist_deg": _twist(twist.face_twist_open_deg),
     }
+
+
+def _twist(face_twist_open_deg: float) -> str:
+    """Quasi-static face rotation, with a centred strike named as such."""
+    if face_twist_open_deg == 0.0:
+        return "0.000° (centred strike)"
+    side = "open" if face_twist_open_deg > 0.0 else "closed"
+    return f"{abs(face_twist_open_deg):.3f}° {side}"
 
 
 def _direction(angle_deg: float) -> str:

@@ -259,7 +259,7 @@
       "shard_index": 6
     },
     {
-      "content_sha256_lf": "a4a4e43d675c6c9d447543646f955bc8de3340cd1b5fd71e7797679a495e4535",
+      "content_sha256_lf": "18e7a000b5b6ccd462dac6a6dc560e8942d6484461712d5ace54066467a6be98",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/plotting/_catalog_entries.py",
       "last_path": "src/rate_of_closure/ui/pyqt6/variation_constants.py",
@@ -347,7 +347,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "c65423abfb875e1c9ad7663c228c8659a4e12898c7c806e7cf062a1da16047b0",
+  "source_tree_sha256": "9ede6be4cd3fdc08f3250b8b6c965657c28ef8a8002b73ef1ea230f8c24e49c4",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,

@@ -289,10 +289,15 @@ class TestPuttingStrokeControls:
 
     def test_toe_strike_costs_ball_speed_and_twists_the_face(self, tab) -> None:  # type: ignore[no-untyped-def]
         centred = tab.document().ball_speed_mps
-        assert tab._rows["putt_face_twist_deg"].value_label.text().endswith("open")
+        twist_row = tab._rows["putt_face_twist_deg"].value_label
+        assert twist_row.text() == "0.000° (centred strike)"
         tab.stroke_controls().toe_spin.setValue(20.0)
         assert tab.document().ball_speed_mps < centred
-        assert "open" in tab._rows["putt_face_twist_deg"].value_label.text()
+        assert twist_row.text().endswith("open")
+
+    def test_heel_strike_closes_the_face_and_the_row_says_so(self, tab) -> None:  # type: ignore[no-untyped-def]
+        tab.stroke_controls().toe_spin.setValue(-20.0)
+        assert tab._rows["putt_face_twist_deg"].value_label.text().endswith("closed")
 
     def test_mesh_putter_import_replaces_the_library_head(self, tab, tmp_path) -> None:  # type: ignore[no-untyped-def]
         stl_path = tmp_path / "milled_blade.stl"

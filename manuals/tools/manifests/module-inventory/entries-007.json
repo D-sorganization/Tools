@@ -9720,10 +9720,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3589,
+      "bytes_lf": 4214,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "cb06788deb7a3475d6d63ff3563a51c7cb5c2c925f36f4910533bf338409392c",
+      "content_sha256_lf": "76b5d844a9ea9502581dfc72c6085caa6ca0f80299ceea2c27dbacf9c8bf1b42",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-PUTTING-RESULT-PRESENTATION-PY-596EC4D80604",
       "language": "python",
@@ -9772,6 +9772,7 @@
         "test_paths": [],
         "unit_mentions": [
           "m/s",
+          "mm",
           "s"
         ],
         "validation_paths": []
