@@ -1,0 +1,525 @@
+{
+  "schema_version": 1,
+  "requirement_id": "R14.3",
+  "status": "verified",
+  "scope": "Behavioral equivalence of the PyQt and React variation workflows at the shared scientific contract boundary; layout and host-specific storage affordances are not required to be identical.",
+  "scientific_boundary": "This matrix verifies interface behavior for model-scenario analyses. It is not human evidence, does not validate a coaching intervention, and does not make unavailable authority or trial data available.",
+  "capabilities": [
+    {
+      "capability_id": "plan.pipeline-and-noise-authoring",
+      "requirement": "Author the same pipeline mode, run count, seed, flight model, variables, distributions, scales, and clipping bounds.",
+      "parity_status": "equivalent",
+      "pyqt": {
+        "behavior": "Typed editors build the canonical VariationPlan and invalidate prior evidence on scientific edits.",
+        "implementation_files": [
+          "src/rate_of_closure/ui/pyqt6/variation_tab.py",
+          "src/rate_of_closure/ui/pyqt6/variation_rows.py"
+        ],
+        "test_files": [
+          "tests/rate_of_closure/test_variation_gui.py",
+          "tests/rate_of_closure/test_variation_gui_roundtrip.py"
+        ]
+      },
+      "react": {
+        "behavior": "Typed controls update the same canonical plan fields and invalidate accepted results.",
+        "implementation_files": [
+          "src/rate_of_closure/web/src/components/VariationSetup.tsx",
+          "src/rate_of_closure/web/src/model/variation.ts"
+        ],
+        "test_files": [
+          "src/rate_of_closure/web/src/components/VariationPanel.test.tsx",
+          "src/rate_of_closure/web/src/model/variationV2.test.ts"
+        ]
+      },
+      "validation_commands": [
+        "python -m pytest -n 0 -q tests/rate_of_closure/test_variation_gui.py tests/rate_of_closure/test_variation_gui_roundtrip.py",
+        "cd src/rate_of_closure/web && npm test -- --run src/components/VariationPanel.test.tsx src/model/variationV2.test.ts"
+      ]
+    },
+    {
+      "capability_id": "plan.localized-torque-locus-authoring",
+      "requirement": "Author exact half-open localized torque windows only for declared joints and supported swing context.",
+      "parity_status": "equivalent",
+      "pyqt": {
+        "behavior": "The swing editor exposes exact time windows and stable topological joint identities and rejects invalid loci atomically.",
+        "implementation_files": [
+          "src/rate_of_closure/ui/pyqt6/variation_tab_editors.py",
+          "src/rate_of_closure/ui/pyqt6/variation_rows.py"
+        ],
+        "test_files": [
+          "tests/rate_of_closure/test_variation_gui.py",
+          "tests/rate_of_closure/test_variation_gui_roundtrip.py"
+        ]
+      },
+      "react": {
+        "behavior": "The swing editor exposes the same half-open windows and retained joint identity with visible validation.",
+        "implementation_files": [
+          "src/rate_of_closure/web/src/components/VariationSetup.tsx",
+          "src/rate_of_closure/web/src/model/localizedTorque.ts"
+        ],
+        "test_files": [
+          "src/rate_of_closure/web/src/components/VariationPanel.test.tsx",
+          "src/rate_of_closure/web/src/model/localizedTorque.test.ts"
+        ]
+      },
+      "validation_commands": [
+        "python -m pytest -n 0 -q tests/rate_of_closure/test_localized_torque_variation.py tests/rate_of_closure/test_variation_gui_roundtrip.py",
+        "cd src/rate_of_closure/web && npm test -- --run src/components/VariationPanel.test.tsx src/model/localizedTorque.test.ts"
+      ]
+    },
+    {
+      "capability_id": "plan.grouped-plan-preservation",
+      "requirement": "Preserve validated correlation and covariance groups even when the surface does not provide a matrix authoring editor.",
+      "parity_status": "equivalent",
+      "pyqt": {
+        "behavior": "Canonical import, editor round-trip, and save retain group records losslessly.",
+        "implementation_files": [
+          "src/rate_of_closure/ui/pyqt6/variation_tab_io.py"
+        ],
+        "test_files": ["tests/rate_of_closure/test_variation_gui_roundtrip.py"]
+      },
+      "react": {
+        "behavior": "Canonical import, plan state, named-library persistence, and export retain group records losslessly.",
+        "implementation_files": [
+          "src/rate_of_closure/web/src/model/variationPersistedPlan.ts",
+          "src/rate_of_closure/web/src/components/VariationPanel.tsx"
+        ],
+        "test_files": [
+          "src/rate_of_closure/web/src/components/VariationPanel.test.tsx",
+          "src/rate_of_closure/web/src/model/variationPersistedPlan.test.ts"
+        ]
+      },
+      "validation_commands": [
+        "python -m pytest -n 0 -q tests/rate_of_closure/test_variation_gui_roundtrip.py",
+        "cd src/rate_of_closure/web && npm test -- --run src/components/VariationPanel.test.tsx src/model/variationPersistedPlan.test.ts"
+      ]
+    },
+    {
+      "capability_id": "execution.analysis-policy",
+      "requirement": "Choose joint analysis, individual one-at-a-time analysis, or both without modifying the physical plan.",
+      "parity_status": "equivalent",
+      "shared_contract": { "modes": ["all_together", "individual", "both"] },
+      "pyqt": {
+        "behavior": "A three-state policy selector drives the worker; individual-only publication retains sensitivity and does not fabricate a joint dataset.",
+        "implementation_files": [
+          "src/rate_of_closure/variation/analysis_policy.py",
+          "src/rate_of_closure/ui/pyqt6/variation_tab.py",
+          "src/rate_of_closure/ui/pyqt6/variation_worker.py"
+        ],
+        "test_files": [
+          "tests/rate_of_closure/test_variation_gui.py",
+          "tests/rate_of_closure/test_variation_gui_execution.py"
+        ]
+      },
+      "react": {
+        "behavior": "The same three-state policy selects joint and individual execution independently of the physical plan.",
+        "implementation_files": [
+          "src/rate_of_closure/web/src/model/variationAnalysisPolicy.ts",
+          "src/rate_of_closure/web/src/components/VariationSetup.tsx"
+        ],
+        "test_files": [
+          "src/rate_of_closure/web/src/components/VariationPanelAnalysis.test.tsx",
+          "src/rate_of_closure/web/src/model/variationAnalysisPolicy.test.ts"
+        ]
+      },
+      "validation_commands": [
+        "python -m pytest -n 0 -q tests/rate_of_closure/test_variation_gui.py tests/rate_of_closure/test_variation_gui_execution.py",
+        "cd src/rate_of_closure/web && npm test -- --run src/components/VariationPanelAnalysis.test.tsx src/model/variationAnalysisPolicy.test.ts"
+      ]
+    },
+    {
+      "capability_id": "execution.background-authority",
+      "requirement": "Execute without blocking the interface and keep numerical authority outside presentation components.",
+      "parity_status": "equivalent",
+      "pyqt": {
+        "behavior": "QThread owns the captured request and emits typed lifecycle signals.",
+        "implementation_files": [
+          "src/rate_of_closure/ui/pyqt6/variation_worker.py",
+          "src/rate_of_closure/ui/pyqt6/variation_tab_run.py"
+        ],
+        "test_files": ["tests/rate_of_closure/test_variation_gui_execution.py"]
+      },
+      "react": {
+        "behavior": "A dedicated Web Worker or injected service owns execution and returns a validated result record.",
+        "implementation_files": [
+          "src/rate_of_closure/web/src/model/variationExecutionService.ts",
+          "src/rate_of_closure/web/src/components/useVariationExecution.ts"
+        ],
+        "test_files": [
+          "src/rate_of_closure/web/src/components/VariationPanelAsync.test.tsx",
+          "src/rate_of_closure/web/src/model/variationExecutionService.test.ts"
+        ]
+      },
+      "validation_commands": [
+        "python -m pytest -n 0 -q tests/rate_of_closure/test_variation_gui_execution.py",
+        "cd src/rate_of_closure/web && npm test -- --run src/components/VariationPanelAsync.test.tsx src/model/variationExecutionService.test.ts"
+      ]
+    },
+    {
+      "capability_id": "execution.progress-and-cancellation",
+      "requirement": "Report completed evaluations against the exact joint-plus-individual total and cancel cooperatively without accepting partial evidence.",
+      "parity_status": "equivalent",
+      "pyqt": {
+        "behavior": "Progress offsets cover every selected phase; cancellation advances the generation and rejects late callbacks.",
+        "implementation_files": [
+          "src/rate_of_closure/ui/pyqt6/variation_worker.py",
+          "src/rate_of_closure/ui/pyqt6/variation_tab_run.py",
+          "src/shared/python/swing_sim/variation/analysis.py"
+        ],
+        "test_files": [
+          "tests/rate_of_closure/test_variation_gui.py",
+          "tests/rate_of_closure/test_variation_gui_execution.py"
+        ]
+      },
+      "react": {
+        "behavior": "Validated monotonic progress covers selected phases and AbortController cancellation discards partial results.",
+        "implementation_files": [
+          "src/rate_of_closure/web/src/model/variationExecutionService.ts",
+          "src/rate_of_closure/web/src/components/useVariationExecution.ts"
+        ],
+        "test_files": [
+          "src/rate_of_closure/web/src/components/VariationPanelAsync.test.tsx",
+          "src/rate_of_closure/web/src/model/variationExecutionService.test.ts"
+        ]
+      },
+      "validation_commands": [
+        "python -m pytest -n 0 -q tests/rate_of_closure/test_variation_gui.py tests/rate_of_closure/test_variation_gui_execution.py",
+        "cd src/rate_of_closure/web && npm test -- --run src/components/VariationPanelAsync.test.tsx src/model/variationExecutionService.test.ts"
+      ]
+    },
+    {
+      "capability_id": "execution.stale-result-rejection",
+      "requirement": "Reject stale, foreign, or mismatched completions before mutating accepted evidence.",
+      "parity_status": "equivalent",
+      "pyqt": {
+        "behavior": "Generation, worker ownership, authority identity, plan, and ensemble identity are checked before publication.",
+        "implementation_files": [
+          "src/rate_of_closure/ui/pyqt6/variation_tab_run.py",
+          "src/rate_of_closure/variation_visual_state.py"
+        ],
+        "test_files": [
+          "tests/rate_of_closure/test_variation_gui.py",
+          "tests/rate_of_closure/test_variation_gui_execution.py"
+        ]
+      },
+      "react": {
+        "behavior": "Generation ownership and validated result identity suppress stale completions and retain prior accepted evidence.",
+        "implementation_files": [
+          "src/rate_of_closure/web/src/components/useVariationExecution.ts",
+          "src/rate_of_closure/web/src/model/variationExecutionValidation.ts"
+        ],
+        "test_files": [
+          "src/rate_of_closure/web/src/components/VariationPanelAsync.test.tsx"
+        ]
+      },
+      "validation_commands": [
+        "python -m pytest -n 0 -q tests/rate_of_closure/test_variation_gui.py tests/rate_of_closure/test_variation_gui_execution.py",
+        "cd src/rate_of_closure/web && npm test -- --run src/components/VariationPanelAsync.test.tsx"
+      ]
+    },
+    {
+      "capability_id": "analysis.scalar-summary-and-rank-correlation",
+      "requirement": "Present availability-aware scalar summaries and joint-run Spearman rank correlation without treating correlation as causation.",
+      "parity_status": "equivalent",
+      "pyqt": {
+        "behavior": "Summary and rank tables derive only from the accepted joint dataset.",
+        "implementation_files": [
+          "src/rate_of_closure/ui/pyqt6/variation_tab_results.py",
+          "src/rate_of_closure/ui/pyqt6/variation_results.py"
+        ],
+        "test_files": ["tests/rate_of_closure/test_variation_gui_execution.py"]
+      },
+      "react": {
+        "behavior": "Summary and rank values derive only from the accepted joint dataset and are withheld for individual-only execution.",
+        "implementation_files": [
+          "src/rate_of_closure/web/src/components/VariationResults.tsx",
+          "src/rate_of_closure/web/src/model/variationAnalysis.ts"
+        ],
+        "test_files": [
+          "src/rate_of_closure/web/src/components/VariationPanelAnalysis.test.tsx"
+        ]
+      },
+      "validation_commands": [
+        "python -m pytest -n 0 -q tests/rate_of_closure/test_variation_gui_execution.py",
+        "cd src/rate_of_closure/web && npm test -- --run src/components/VariationPanelAnalysis.test.tsx"
+      ]
+    },
+    {
+      "capability_id": "analysis.one-at-a-time-sensitivity",
+      "requirement": "Present paired one-at-a-time output spread for individual-only or combined execution.",
+      "parity_status": "equivalent",
+      "pyqt": {
+        "behavior": "A validated sensitivity matrix can be published alone or beside a joint dataset.",
+        "implementation_files": [
+          "src/rate_of_closure/ui/pyqt6/variation_tab_results.py",
+          "src/shared/python/swing_sim/variation/analysis.py"
+        ],
+        "test_files": ["tests/rate_of_closure/test_variation_gui_execution.py"]
+      },
+      "react": {
+        "behavior": "A sensitivity matrix can be published alone or beside the joint dataset under the same three-state policy.",
+        "implementation_files": [
+          "src/rate_of_closure/web/src/components/VariationResults.tsx",
+          "src/rate_of_closure/web/src/model/variationAnalysisPolicy.ts"
+        ],
+        "test_files": [
+          "src/rate_of_closure/web/src/components/VariationPanelAnalysis.test.tsx"
+        ]
+      },
+      "validation_commands": [
+        "python -m pytest -n 0 -q tests/rate_of_closure/test_variation_gui_execution.py",
+        "cd src/rate_of_closure/web && npm test -- --run src/components/VariationPanelAnalysis.test.tsx"
+      ]
+    },
+    {
+      "capability_id": "analysis.linked-trial-visuals",
+      "requirement": "Link one selected trial across matrix, impact or shot scatter, and swing-arc views while clearing invalid selections after replacement.",
+      "parity_status": "equivalent",
+      "pyqt": {
+        "behavior": "Qt signals synchronize the three views and bound selection to the current result.",
+        "implementation_files": [
+          "src/rate_of_closure/ui/pyqt6/variation_tab_results.py",
+          "src/rate_of_closure/ui/pyqt6/variation_visualizations.py"
+        ],
+        "test_files": [
+          "tests/rate_of_closure/test_variation_visualization_widgets.py"
+        ]
+      },
+      "react": {
+        "behavior": "One controlled selection synchronizes the matrix, scatter, and arc components and clears on a smaller replacement.",
+        "implementation_files": [
+          "src/rate_of_closure/web/src/components/VariationResults.tsx",
+          "src/rate_of_closure/web/src/components/VariationArcOverlay.tsx"
+        ],
+        "test_files": [
+          "src/rate_of_closure/web/src/components/VariationResults.test.tsx",
+          "src/rate_of_closure/web/src/components/VariationPanelAnalysis.test.tsx"
+        ]
+      },
+      "validation_commands": [
+        "python -m pytest -n 0 -q tests/rate_of_closure/test_variation_visualization_widgets.py",
+        "cd src/rate_of_closure/web && npm test -- --run src/components/VariationResults.test.tsx src/components/VariationPanelAnalysis.test.tsx"
+      ]
+    },
+    {
+      "capability_id": "persistence.canonical-plan-round-trip",
+      "requirement": "Import and export the canonical plan atomically with exact v2 identifiers, loci, grouped definitions, and untouched precision.",
+      "parity_status": "equivalent",
+      "pyqt": {
+        "behavior": "File save and atomic file load use the canonical persisted-plan contract.",
+        "implementation_files": [
+          "src/rate_of_closure/ui/pyqt6/variation_tab_io.py",
+          "src/shared/python/swing_sim/variation/persisted_plan_io.py"
+        ],
+        "test_files": ["tests/rate_of_closure/test_variation_gui_roundtrip.py"]
+      },
+      "react": {
+        "behavior": "Browser download and atomic file import use the matching persisted-plan contract.",
+        "implementation_files": [
+          "src/rate_of_closure/web/src/components/VariationActions.tsx",
+          "src/rate_of_closure/web/src/model/variationPersistedPlan.ts"
+        ],
+        "test_files": [
+          "src/rate_of_closure/web/src/components/VariationPanel.test.tsx",
+          "src/rate_of_closure/web/src/model/variationPersistedPlan.test.ts"
+        ]
+      },
+      "validation_commands": [
+        "python -m pytest -n 0 -q tests/rate_of_closure/test_variation_gui_roundtrip.py",
+        "cd src/rate_of_closure/web && npm test -- --run src/components/VariationPanel.test.tsx src/model/variationPersistedPlan.test.ts"
+      ]
+    },
+    {
+      "capability_id": "persistence.durable-archive-lifecycle",
+      "requirement": "Submit or resume a path-free authority-owned archive, report its verified prefix, and retain committed chunks on cancellation.",
+      "parity_status": "environment_bounded",
+      "shared_contract": { "chunk_size": { "minimum": 1, "maximum": 4096 } },
+      "pyqt": {
+        "behavior": "The local client submits the shared request and renders verified prefix moments; absent authority is explicit.",
+        "implementation_files": [
+          "src/rate_of_closure/ui/pyqt6/durable_ensemble_tab.py",
+          "src/rate_of_closure/application/durable_ensemble/contracts.py"
+        ],
+        "test_files": [
+          "tests/rate_of_closure/test_durable_ensemble_pyqt_workflow.py"
+        ]
+      },
+      "react": {
+        "behavior": "The browser client submits the same request through a local authority bridge and remains unavailable in static-only deployments.",
+        "implementation_files": [
+          "src/rate_of_closure/web/src/components/DurableEnsembleWorkflowPanel.tsx",
+          "src/rate_of_closure/web/src/model/durableEnsembleAuthorityContract.ts"
+        ],
+        "test_files": [
+          "src/rate_of_closure/web/src/components/DurableEnsembleWorkflowPanel.test.tsx"
+        ]
+      },
+      "validation_commands": [
+        "python -m pytest -n 0 -q tests/rate_of_closure/test_durable_ensemble_pyqt_workflow.py tests/rate_of_closure/test_durable_ensemble_authority_contracts.py",
+        "cd src/rate_of_closure/web && npm test -- --run src/components/DurableEnsembleWorkflowPanel.test.tsx src/model/durableEnsembleAuthorityContract.test.ts"
+      ]
+    },
+    {
+      "capability_id": "export.dataset-csv-and-json",
+      "requirement": "Export the accepted joint dataset as CSV and canonical JSON while disabling both exports when no joint dataset exists.",
+      "parity_status": "equivalent",
+      "pyqt": {
+        "behavior": "Dataset buttons enable only for an accepted joint dataset and call shared writers.",
+        "implementation_files": [
+          "src/rate_of_closure/ui/pyqt6/variation_tab_io.py",
+          "src/shared/python/swing_sim/variation/dataset_io.py"
+        ],
+        "test_files": ["tests/rate_of_closure/test_variation_gui_execution.py"]
+      },
+      "react": {
+        "behavior": "Dataset downloads enable only for an accepted joint dataset and use the matching serializers.",
+        "implementation_files": [
+          "src/rate_of_closure/web/src/components/VariationActions.tsx",
+          "src/rate_of_closure/web/src/model/variationAnalysis.ts"
+        ],
+        "test_files": [
+          "src/rate_of_closure/web/src/components/VariationPanelAnalysis.test.tsx"
+        ]
+      },
+      "validation_commands": [
+        "python -m pytest -n 0 -q tests/rate_of_closure/test_variation_gui_execution.py",
+        "cd src/rate_of_closure/web && npm test -- --run src/components/VariationPanelAnalysis.test.tsx"
+      ]
+    },
+    {
+      "capability_id": "export.swing-traces-and-ensemble",
+      "requirement": "Export complete swing traces and typed ensemble JSON only when a joint swing ensemble exists.",
+      "parity_status": "equivalent",
+      "pyqt": {
+        "behavior": "Trace CSV and ensemble JSON buttons remain disabled outside an accepted swing ensemble.",
+        "implementation_files": [
+          "src/rate_of_closure/ui/pyqt6/variation_tab_io.py",
+          "src/rate_of_closure/variation/ensemble_io.py"
+        ],
+        "test_files": [
+          "tests/rate_of_closure/test_variation_gui_execution.py",
+          "tests/rate_of_closure/test_variation_ensemble_io_reader.py"
+        ]
+      },
+      "react": {
+        "behavior": "Trace CSV and ensemble JSON downloads remain disabled outside an accepted swing ensemble.",
+        "implementation_files": [
+          "src/rate_of_closure/web/src/components/VariationActions.tsx",
+          "src/rate_of_closure/web/src/model/variationSwingEnsemble.ts"
+        ],
+        "test_files": [
+          "src/rate_of_closure/web/src/model/variationSwingEnsemble.test.ts"
+        ]
+      },
+      "validation_commands": [
+        "python -m pytest -n 0 -q tests/rate_of_closure/test_variation_gui_execution.py tests/rate_of_closure/test_variation_ensemble_io_reader.py",
+        "cd src/rate_of_closure/web && npm test -- --run src/model/variationSwingEnsemble.test.ts"
+      ]
+    },
+    {
+      "capability_id": "state.invalid-plan-fails-before-mutation",
+      "requirement": "Reject malformed, unsupported, or unrepresentable plans before changing the current editor or persisted state.",
+      "parity_status": "equivalent",
+      "pyqt": {
+        "behavior": "Load validates the complete temporary plan before committing any editor mutation.",
+        "implementation_files": [
+          "src/rate_of_closure/ui/pyqt6/variation_tab_io.py",
+          "src/rate_of_closure/ui/pyqt6/variation_tab_editors.py"
+        ],
+        "test_files": ["tests/rate_of_closure/test_variation_gui_roundtrip.py"]
+      },
+      "react": {
+        "behavior": "Import parses and validates the complete document before replacing React state or browser storage.",
+        "implementation_files": [
+          "src/rate_of_closure/web/src/components/VariationPanel.tsx",
+          "src/rate_of_closure/web/src/model/variationPersistedPlan.ts"
+        ],
+        "test_files": [
+          "src/rate_of_closure/web/src/components/VariationPanel.test.tsx"
+        ]
+      },
+      "validation_commands": [
+        "python -m pytest -n 0 -q tests/rate_of_closure/test_variation_gui_roundtrip.py",
+        "cd src/rate_of_closure/web && npm test -- --run src/components/VariationPanel.test.tsx"
+      ]
+    },
+    {
+      "capability_id": "state.unavailable-authority-is-explicit",
+      "requirement": "Disable authority-backed execution and present a reviewer-visible reason when the local numerical authority or exact base is unavailable.",
+      "parity_status": "environment_bounded",
+      "pyqt": {
+        "behavior": "Durable and Morris run controls remain disabled until capability and exact simulation configuration are available.",
+        "implementation_files": [
+          "src/rate_of_closure/ui/pyqt6/durable_ensemble_tab.py",
+          "src/rate_of_closure/ui/pyqt6/morris_tab.py"
+        ],
+        "test_files": [
+          "tests/rate_of_closure/test_durable_ensemble_pyqt_workflow.py",
+          "tests/rate_of_closure/test_morris_pyqt_workflow.py"
+        ]
+      },
+      "react": {
+        "behavior": "Static clients remain fail-closed and show the host-supplied unavailable reason; a local bridge is required for authority work.",
+        "implementation_files": [
+          "src/rate_of_closure/web/src/components/DurableEnsembleWorkflowPanel.tsx",
+          "src/rate_of_closure/web/src/components/MorrisWorkflowPanel.tsx"
+        ],
+        "test_files": [
+          "src/rate_of_closure/web/src/components/DurableEnsembleWorkflowPanel.test.tsx",
+          "src/rate_of_closure/web/src/components/VariationPanel.test.tsx"
+        ]
+      },
+      "validation_commands": [
+        "python -m pytest -n 0 -q tests/rate_of_closure/test_durable_ensemble_pyqt_workflow.py tests/rate_of_closure/test_morris_pyqt_workflow.py",
+        "cd src/rate_of_closure/web && npm test -- --run src/components/DurableEnsembleWorkflowPanel.test.tsx src/components/VariationPanel.test.tsx"
+      ]
+    },
+    {
+      "capability_id": "state.error-is-bounded-and-retains-valid-evidence",
+      "requirement": "Bound untrusted failure text, keep one accessible error owner, and retain a prior result only when its full authority identity still matches.",
+      "parity_status": "equivalent",
+      "pyqt": {
+        "behavior": "Worker errors are length-bounded; result publication is transactional and same-authority failures retain the prior bundle.",
+        "implementation_files": [
+          "src/rate_of_closure/ui/pyqt6/variation_tab_run.py",
+          "src/rate_of_closure/ui/pyqt6/visual_state_frame.py"
+        ],
+        "test_files": [
+          "tests/rate_of_closure/test_variation_gui.py",
+          "tests/rate_of_closure/test_variation_gui_execution.py"
+        ]
+      },
+      "react": {
+        "behavior": "Worker errors are length-bounded, one alert owns announcements, and same-authority failures retain the accepted visual.",
+        "implementation_files": [
+          "src/rate_of_closure/web/src/components/useVariationExecution.ts",
+          "src/rate_of_closure/web/src/model/variationExecutionValidation.ts"
+        ],
+        "test_files": [
+          "src/rate_of_closure/web/src/components/VariationPanelAsync.test.tsx"
+        ]
+      },
+      "validation_commands": [
+        "python -m pytest -n 0 -q tests/rate_of_closure/test_variation_gui.py tests/rate_of_closure/test_variation_gui_execution.py",
+        "cd src/rate_of_closure/web && npm test -- --run src/components/VariationPanelAsync.test.tsx"
+      ]
+    }
+  ],
+  "surface_extensions": [
+    {
+      "surface": "react",
+      "capability": "Named local-storage plan library",
+      "boundary": "Convenience index over the canonical persisted-plan contract; canonical file import and export remain available on both surfaces."
+    },
+    {
+      "surface": "react",
+      "capability": "Localized torque source CSV",
+      "boundary": "Convenience projection of commands already retained in the complete ensemble; it is not an additional model or evidence authority."
+    },
+    {
+      "surface": "pyqt",
+      "capability": "Selected raw-row export from the distribution matrix",
+      "boundary": "Convenience projection of the accepted dataset; complete dataset CSV and JSON remain available on both surfaces."
+    }
+  ]
+}

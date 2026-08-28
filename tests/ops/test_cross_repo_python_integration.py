@@ -116,6 +116,20 @@ def test_upstream_install_uses_current_tools_without_repackaging_pinned_snapshot
     )
 
 
+def test_upstream_consumer_contracts_run_serially() -> None:
+    workflow = _workflow()
+    downstreams = workflow["jobs"]["downstream-consumer-contracts"]["strategy"][
+        "matrix"
+    ]["downstream"]
+    upstream = next(
+        downstream
+        for downstream in downstreams
+        if downstream["repo"] == "D-sorganization/UpstreamDrift"
+    )
+
+    assert " -n 0 " in upstream["test_command"]
+
+
 def test_downstream_checkout_keeps_sparse_checkout_authoritative() -> None:
     workflow = _workflow()
     steps = workflow["jobs"]["downstream-consumer-contracts"]["steps"]

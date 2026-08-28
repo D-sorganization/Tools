@@ -107,6 +107,22 @@ def validate_binary_stl(
     )
 
 
+def read_binary_stl(path: Path | str) -> tuple[Triangle, ...]:
+    """Parse a binary STL into vertex triangles (shared STL reading seam).
+
+    The single package-wide binary-STL reader (#4800 P3 promotes it to
+    the public surface so `putter_head` never grows a second parser).
+    Each triangle record is checked for finiteness, degeneracy, and
+    stored-normal/winding agreement exactly as release validation does.
+
+    Raises:
+        ValueError: If the byte layout is not a valid binary STL.
+        RuntimeError: If a triangle is degenerate or its stored normal
+            disagrees with its winding.
+    """
+    return _read_binary_stl(Path(path))
+
+
 def _read_binary_stl(path: Path) -> tuple[Triangle, ...]:
     payload = path.read_bytes()
     if len(payload) < _STL_HEADER_BYTES:
@@ -222,7 +238,7 @@ def _volume_error_limit(
     reference: CadGeometryReference,
     tolerance_m: float,
 ) -> float:
-    scaled = _VOLUME_TOLERANCE_FACTOR * tolerance_m / reference.minimum_span_m
+    scaled = float(_VOLUME_TOLERANCE_FACTOR * tolerance_m / reference.minimum_span_m)
     return min(
         _VOLUME_ERROR_CEILING,
         max(_VOLUME_ERROR_FLOOR, scaled),
@@ -249,10 +265,7 @@ def _signed_tetrahedron_volume(triangle: Triangle) -> float:
 
 
 def _subtract(left: Vector3, right: Vector3) -> Vector3:
-    return tuple(  # type: ignore[return-value]
-        left_value - right_value
-        for left_value, right_value in zip(left, right, strict=True)
-    )
+    return (left[0] - right[0], left[1] - right[1], left[2] - right[2])
 
 
 def _cross(left: Vector3, right: Vector3) -> Vector3:
@@ -264,14 +277,11 @@ def _cross(left: Vector3, right: Vector3) -> Vector3:
 
 
 def _dot(left: Vector3, right: Vector3) -> float:
-    return sum(
-        left_value * right_value
-        for left_value, right_value in zip(left, right, strict=True)
-    )
+    return float(left[0] * right[0] + left[1] * right[1] + left[2] * right[2])
 
 
 def _norm(vector: Vector3) -> float:
     return math.sqrt(_dot(vector, vector))
 
 
-__all__ = ["StlMeshValidation", "validate_binary_stl"]
+__all__ = ["StlMeshValidation", "read_binary_stl", "validate_binary_stl"]

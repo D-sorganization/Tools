@@ -69,16 +69,16 @@ def test_complete_simulation_authority_identity_changes_for_nested_fields() -> N
         club=get_club("Driver 10.5°"),
         source_kind="double_pendulum",
     )
-    baseline = simulation_authority_identity(plan, config, True)
-    assert baseline == simulation_authority_identity(plan, config, True)
+    baseline = simulation_authority_identity(plan, config, "both")
+    assert baseline == simulation_authority_identity(plan, config, "both")
     assert baseline != simulation_authority_identity(
-        replace(plan, seed=8), config, True
+        replace(plan, seed=8), config, "both"
     )
-    assert baseline != simulation_authority_identity(plan, config, False)
+    assert baseline != simulation_authority_identity(plan, config, "all_together")
     assert baseline != simulation_authority_identity(
         plan,
         replace(config, scenario=replace(config.scenario, clubhead_speed_mph=101.0)),
-        True,
+        "both",
     )
     assert baseline != simulation_authority_identity(
         plan,
@@ -92,7 +92,7 @@ def test_complete_simulation_authority_identity_changes_for_nested_fields() -> N
                 ),
             ),
         ),
-        True,
+        "both",
     )
 
 
@@ -102,7 +102,7 @@ def test_execution_identity_snapshots_resolved_registry_defaults(monkeypatch) ->
         scenario=ImpactScenario(clubhead_speed_mph=100.0),
         club=get_club("Driver 10.5°"),
     )
-    baseline = simulation_authority_identity(plan, config, False)
+    baseline = simulation_authority_identity(plan, config, "all_together")
     key = plan.noise[0].variable_key
     monkeypatch.setitem(
         variation_registry._REGISTRY,
@@ -110,4 +110,4 @@ def test_execution_identity_snapshots_resolved_registry_defaults(monkeypatch) ->
         replace(variation_registry._REGISTRY[key], default=101.0),
     )
 
-    assert simulation_authority_identity(plan, config, False) != baseline
+    assert simulation_authority_identity(plan, config, "all_together") != baseline

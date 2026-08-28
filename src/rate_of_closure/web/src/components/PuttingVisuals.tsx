@@ -67,8 +67,20 @@ function selectionKeys(
 
 function pointString(points: readonly PlotPoint[], rawIndices: readonly number[]): string {
   const included = new Set(rawIndices);
-  return points.filter(({ rawIndex }) => included.has(rawIndex))
-    .map(({ x, y }) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" ");
+  let d = "";
+  let first = true;
+  // ⚡ BOLT: Replaced chained .filter().map().join(" ") with a single-pass loop.
+  // This eliminates intermediate array allocations during high-frequency renders,
+  // significantly reducing garbage collection pressure when drawing SVG paths.
+  for (let i = 0; i < points.length; i++) {
+    const point = points[i];
+    if (included.has(point.rawIndex)) {
+      if (!first) d += " ";
+      d += `${point.x.toFixed(1)},${point.y.toFixed(1)}`;
+      first = false;
+    }
+  }
+  return d;
 }
 
 function selectedPoint(points: readonly PlotPoint[], rawIndex: number | null): PlotPoint | null {

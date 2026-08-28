@@ -51,6 +51,23 @@ def _fast_launch_plan(n_runs: int = 12) -> VariationPlan:
 
 
 class TestRunAndResults:
+    def test_individual_only_study_publishes_sensitivity_without_joint_dataset(
+        self, qtbot, tab: VariationTab
+    ) -> None:  # type: ignore[no-untyped-def]
+        tab.load_plan(_fast_launch_plan(8))
+        tab._analysis_combo.setCurrentIndex(tab._analysis_combo.findData("individual"))
+
+        with _wait_done(qtbot, tab):
+            pass
+
+        assert tab.dataset() is None
+        assert tab._sensitivity is not None
+        assert tab._summary_table.rowCount() == 0
+        assert tab._sensitivity_table.rowCount() == 1
+        assert tab._spearman_table.rowCount() == 0
+        assert not tab._export_json.isEnabled()
+        assert tab._visual_frame.property("visualPhase") == "result"
+
     def test_long_failure_is_bounded_before_state_strip_publication(
         self, tab: VariationTab
     ) -> None:
@@ -69,17 +86,17 @@ class TestRunAndResults:
     ) -> None:
         plan = _fast_launch_plan(4)
         dataset = run_variation(plan, n_workers=1)
-        tab._sens_check.setChecked(True)
+        tab._analysis_combo.setCurrentIndex(tab._analysis_combo.findData("both"))
         if with_prior:
             valid = one_at_a_time_sensitivity(plan, n_workers=1)
             tab._active_plan = plan
-            tab._active_compute_sensitivity = True
+            tab._active_analysis_execution = "both"
             tab._active_authority_identity = tab._current_authority_identity(plan)
             tab._on_succeeded(dataset, valid)
         prior = tab.dataset()
         prior_rows = tab._summary_table.rowCount()
         tab._active_plan = plan
-        tab._active_compute_sensitivity = True
+        tab._active_analysis_execution = "both"
         tab._active_authority_identity = tab._current_authority_identity(plan)
         malformed = SensitivityResult(
             input_keys=tuple(spec.variable_key for spec in plan.noise),
@@ -168,7 +185,9 @@ class TestRunAndResults:
             seed=2,
         )
         tab.load_plan(plan)
-        tab._sens_check.setChecked(False)
+        tab._analysis_combo.setCurrentIndex(
+            tab._analysis_combo.findData("all_together")
+        )
         tab.set_simulation_config(
             SimulationConfig(
                 scenario=ImpactScenario(clubhead_speed_mph=30.0),
@@ -186,7 +205,7 @@ class TestRunAndResults:
         assert accepted_identity is not None
         tab._active_plan = plan
         tab._active_authority_identity = accepted_identity
-        tab._active_compute_sensitivity = False
+        tab._active_analysis_execution = "all_together"
         tab._pending_ensemble_result = accepted_ensemble
         forged_dataset = replace(
             accepted_dataset,
@@ -259,11 +278,29 @@ class TestRunAndResults:
     def test_cancel_before_start_reports_cancelled(
         self, qtbot, tab: VariationTab
     ) -> None:  # type: ignore[no-untyped-def]
-        worker = VariationWorker(_fast_launch_plan(200), compute_sensitivity=False)
+        worker = VariationWorker(
+            _fast_launch_plan(200), analysis_execution="all_together"
+        )
         worker.cancel()
         with qtbot.waitSignal(worker.cancelled, timeout=15_000):
             worker.start()
         worker.wait(10_000)
+
+    def test_worker_progress_counts_joint_and_individual_evaluations(
+        self, qtbot
+    ) -> None:  # type: ignore[no-untyped-def]
+        worker = VariationWorker(
+            _fast_launch_plan(8), analysis_execution="both", n_workers=1
+        )
+        reports = []
+        worker.progressed.connect(reports.append)
+
+        with qtbot.waitSignal(worker.finished, timeout=30_000):
+            worker.start()
+        worker.wait(10_000)
+
+        assert worker.total_runs == 16
+        assert reports[-1].iteration == 16
 
     def test_swing_study_populates_trace_scatter_and_arc_views(
         self, qtbot, tab: VariationTab

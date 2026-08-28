@@ -101,7 +101,7 @@ class DurableEnsembleTab(QWidget):
         )
         form.addRow("Archive ID", self._archive_id)
         self._chunk_size = QSpinBox()
-        self._chunk_size.setRange(1, 256)
+        self._chunk_size.setRange(1, 4096)
         self._chunk_size.setValue(8)
         self._chunk_size.setAccessibleName("Durable ensemble chunk size")
         self._chunk_size.setToolTip(
