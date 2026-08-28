@@ -5,15 +5,14 @@
   "audited_main_commit": "57b443201b402fc110ec5623885c7e310d6ad6d3",
   "protected_run": "https://github.com/D-sorganization/Tools/actions/runs/32689177846",
   "overall_status": "partial",
-  "status_counts": { "verified": 8, "partial": 23 },
+  "status_counts": { "verified": 10, "partial": 21 },
   "r14_6_blocking_gaps": [
     "Matched state-by-state geometry evidence is incomplete outside the registered initial state and selected Variation, Putting, Explorer, Flight, and Launch Monitor interactions.",
     "Approved baselines cover the initial React 1440x900 and PyQt 1.0-DPI states, not narrow React, PyQt 1.5 DPI, or representative loading, result, no-impact, failure, and stale states.",
     "The manual assistive-technology protocol is ready but has not been executed and signed for React and PyQt.",
     "A user-oriented rendered review has not been approved with exact build and image identities.",
     "The acceptance authority now binds every tab and registered state to reference cases, frame, units, provenance, limitation placement, keyboard path, and nonvisual alternatives; executed state/case geometry and exact artifact identities remain incomplete.",
-    "All-tab representative-dataset render and update latency, layout-shift, and deterministic-decimation evidence is incomplete.",
-    "The new-tab extension checklist and downstream cross-repository validation are not yet consolidated into protected completion evidence."
+    "All-tab representative-dataset render and update latency, layout-shift, and deterministic-decimation evidence is incomplete."
   ],
   "external_human_actions": [
     "Execute and sign the manual assistive-technology protocol for both surfaces.",
@@ -329,17 +328,17 @@
     {
       "requirement_id": "V5.1",
       "requirement": "Publish inventory, hierarchy, sizes, accessibility, commands, and a new-tab checklist.",
-      "status": "partial",
-      "rationale": "Manifests plus exact AT and rendered-review protocols are published, but the full new-tab extension checklist and downstream command map remain unconsolidated.",
+      "status": "verified",
+      "rationale": "The consolidated extension and consumer guide now binds the five-manifest lockstep, React and PyQt state/reference-case obligations, evidence tiers, exact serial and bounded-web validation commands, protected-merge rule, and immutable downstream ownership boundary without duplicating numerical algorithms.",
       "evidence_files": [
         "src/rate_of_closure/visualization_tabs.v1.json",
         "src/rate_of_closure/visualization_acceptance.v1.json",
         "docs/development/rate-visualization-at-protocol.md",
-        "docs/development/rate-visualization-review-protocol.md"
+        "docs/development/rate-visualization-review-protocol.md",
+        "docs/development/rate-visualization-extension-and-consumer-guide.md",
+        "tests/rate_of_closure/test_visual_first_epic_4433_evidence.py"
       ],
-      "gaps": [
-        "Publish the consolidated visual-first extension and verification guide."
-      ]
+      "gaps": []
     },
     {
       "requirement_id": "V5.2",
@@ -369,15 +368,15 @@
     {
       "requirement_id": "V5.4",
       "requirement": "Cross-link #4135, #4142, #4144, and Upstream consumers without duplicating algorithms.",
-      "status": "partial",
-      "rationale": "Current handoffs cross-link the variation and Upstream work, but one protected completion map for all three Tools parents and consumers is absent.",
+      "status": "verified",
+      "rationale": "The protected completion map cross-links Tools #4135, #4142, #4144, #4433, and #4832 to UpstreamDrift #8358 and merged PR #9134; it records exact Tools and Upstream merge identities, assigns provider and host ownership, and requires editable/vendored consumer contracts for any future provider API change.",
       "evidence_files": [
         "src/rate_of_closure/AGENT_HANDOFF.md",
-        "src/rate_of_closure/README.md"
+        "src/rate_of_closure/README.md",
+        "docs/development/rate-visualization-extension-and-consumer-guide.md",
+        "tests/rate_of_closure/test_visual_first_epic_4433_evidence.py"
       ],
-      "gaps": [
-        "Publish and validate the complete parent/consumer traceability map."
-      ]
+      "gaps": []
     },
     {
       "requirement_id": "AM.1",
