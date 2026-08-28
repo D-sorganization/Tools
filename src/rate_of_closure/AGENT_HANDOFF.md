@@ -28,20 +28,35 @@ candidate against current main and preserve main-owned tests.
 
 ## Active Epics — Golf Epics Merged
 
-Launch-monitor epic #4583 has merged Release A with explicit-identity projects,
-bounded private-authority loading, canonical dataset/covariation clients, and
-source-backed expected-strokes/longitudinal analysis. No private rows or paths
-enter project files and no baseline data is bundled. Release B remains open:
-do not claim vendor emulation or paired-device validation without real paired
-observations.
+Launch-monitor #4583 Release A merged (explicit-identity projects, bounded
+private-authority loading, source-backed expected-strokes). No private rows or
+baseline data are bundled. Release B open — **do not claim vendor emulation or
+paired-device validation without real paired observations.** #4584/#4599 merged
+strokes-gained v2 into both clients; #4600 owns the PyQt reference,
+#4602/#4608/#4610/#4613 the isolated rendered gates.
 
-#4584/#4599 merged source-backed strokes-gained v2 into both clients with exact
-strata, uncertainty, exclusions, and grouping attestations. #4600 owns the
-post-merge PyQt reference; #4602/#4608/#4610/#4613 own isolated rendered gates.
+Club Fitting #4549, Heavy Hit #4562, packaging #4579 complete; physics is
+shared-first in `shared/python/{golf_club,swing_sim}` (contracts `docs/specs/`).
+Putting #4800: P1-P3, P5, and P9 landed (2-D impact solve, green heightfields +
+`swing_sim.green_surface/1` + Holmes/Penner capture, `golf_club.putter_head/1`
+mesh-MOI import, UpstreamDrift topography adapter). Planar APIs delegate
+bit-identically. P5 added `swing_sim.putting_result/2` (`puttingResultWire.ts`),
+which **supersedes v1 with no silent migration** — the v2 reader refuses a v1
+payload and the v1 archive reader refuses v2, so never "upgrade" a retained
+record — plus `swing_sim.putt_dispersion/1` (`puttingDispersion.ts`). Monte-Carlo
+**execution** stays Python-authoritative (one canonical seeded sampler); the web
+consumes the wire, so do not port the sampler. P4, P6, P7, P8 remain.
 
-Club Fitting #4549, Heavy Hit #4562, and packaging #4579 are complete and
-merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}`;
-see the two contracts under `docs/specs/`.
+Clubhead-realism #4799: G1-G3 landed. Loft is a **leading-edge lean** — the
+head is built unlofted then sheared about `y = y_le`, so the leading edge stays
+at the hosel station and the face slopes back (`head_profiles.lean_point` =
+`clubHeads.leanPoint`, shared by the mesh, `face_center_point`, `hosel_point`).
+Hosels are loft-aware (blades `x_le - offset`, **offset never onset**); blade
+soles are real (iron ~21 mm flat on `y = y_le`, wedge ~29 mm muscle-back with a
+0.3-0.8 mm bounce dip). Face sections are untouched, so strike-view extents and
+hosel pins did not move. Gates cover all 16 clubs in both twins. **G4**
+(camera-golden + visual-baseline regeneration) and **G5** (profile-view
+acceptance) remain open.
 
 #4142 remains Python-authoritative; PyQt6 and React do not reimplement physics.
 R10.3, R10.4, R11.1, and R11.3 are protected-merged through
@@ -133,12 +148,15 @@ flight`, breaking the Morris UI import contract. Use the lazy-export map.
 ## Known Local-Environment Traps
 
 - **Reproduce CI's mypy exactly.** Pass every changed file to one Python 3.12
-  invocation with `MYPYPATH=src:src/python/src`; tests are excluded.
-  `MYPYPATH='src;src/python/src' py -3.12 -m mypy --ignore-missing-imports --follow-imports=skip <changed non-test files>`
+  invocation with `MYPYPATH=src:src/python/src`; tests are excluded. The flag is
+  **`--follow-imports=silent`**, matching `ci-standard.yml`; `=skip` crashes
+  mypy 1.13 (`unresolved placeholder type`) on files already on `main`, so a
+  `skip` run reports failures that CI does not have.
+  `MYPYPATH='src;src/python/src' py -3.12 -m mypy --ignore-missing-imports --follow-imports=silent <changed non-test files>`
 - **`tools_core` capability is two-tier** — a wheel can expose
   `simulate_trajectory` yet lack the tee-aware full-state API; guard on the
-  specific capability. `test_club_view_camera.py`'s cadence test asserts
-  wall-clock time and is flaky under load.
+  specific capability. `test_club_view_camera.py`'s cadence test budgets
+  process-CPU time; it can still trip when sibling suites saturate the box.
 - PowerShell `Set-Content` and `pathlib.write_text` can rewrite LF as CRLF;
   preserve newlines explicitly.
 - **`detect_secrets scan` writes native separators** — on Windows run it

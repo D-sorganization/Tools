@@ -17,22 +17,35 @@ export function impactSceneSvg(
   width = 1600,
   height = 920,
 ): string {
-  const fills = geometry.fills.map((fill) => {
-    const points = fill.points.map((point) =>
-      project(point, width, height, camera.zoom, camera.yaw, camera.pitch)
-        .map((value) => value.toFixed(2)).join(","),
-    ).join(" ");
-    return `<polygon points="${points}" fill="${fill.color}" fill-opacity="${fill.alpha}"><title>${escapeXml(fill.label)}</title></polygon>`;
-  }).join("");
-  const lines = geometry.lines.map((line) => {
-    const points = line.points.map((point) =>
-      project(point, width, height, camera.zoom, camera.yaw, camera.pitch)
-        .map((value) => value.toFixed(2)).join(","),
-    ).join(" ");
+  // ⚡ Bolt Optimization: Replace chained array .map().join() with a single-pass loop
+  // to eliminate intermediate array allocations and reduce GC pressure for SVG paths.
+  let fills = "";
+  for (let i = 0; i < geometry.fills.length; i++) {
+    const fill = geometry.fills[i];
+    let points = "";
+    for (let j = 0; j < fill.points.length; j++) {
+      if (j > 0) points += " ";
+      const p = project(fill.points[j], width, height, camera.zoom, camera.yaw, camera.pitch);
+      points += p[0].toFixed(2) + "," + p[1].toFixed(2);
+    }
+    fills += `<polygon points="${points}" fill="${fill.color}" fill-opacity="${fill.alpha}"><title>${escapeXml(fill.label)}</title></polygon>`;
+  }
+
+  // ⚡ Bolt Optimization: Replace chained array .map().join() with a single-pass loop
+  // to eliminate intermediate array allocations and reduce GC pressure for SVG paths.
+  let lines = "";
+  for (let i = 0; i < geometry.lines.length; i++) {
+    const line = geometry.lines[i];
+    let points = "";
+    for (let j = 0; j < line.points.length; j++) {
+      if (j > 0) points += " ";
+      const p = project(line.points[j], width, height, camera.zoom, camera.yaw, camera.pitch);
+      points += p[0].toFixed(2) + "," + p[1].toFixed(2);
+    }
     const dash = line.dash ? ` stroke-dasharray="${line.dash.join(" ")}"` : "";
     const marker = line.arrow ? ' marker-end="url(#arrow)"' : "";
-    return `<polyline points="${points}" fill="none" stroke="${line.color}" stroke-width="${line.width * 2}"${dash}${marker}><title>${escapeXml(line.label)}</title></polyline>`;
-  }).join("");
+    lines += `<polyline points="${points}" fill="none" stroke="${line.color}" stroke-width="${line.width * 2}"${dash}${marker}><title>${escapeXml(line.label)}</title></polyline>`;
+  }
   const [contactX, contactY] = project(
     geometry.contactPoint, width, height, camera.zoom, camera.yaw, camera.pitch,
   );

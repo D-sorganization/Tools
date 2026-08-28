@@ -64,3 +64,6 @@
 ## 2026-08-23 - Focus Rings on Rate of Closure Inputs
 **Learning:** Found an accessibility issue pattern where inputs and buttons in Rate of Closure have `focus:outline-none` or `outline-none` but lack focus indicators, making keyboard navigation difficult.
 **Action:** Replace `outline-none` with `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500` to preserve keyboard accessibility while styling interactive elements.
+## 2024-05-15 - [Dynamic Grid Accessibility]
+**Learning:** Mathematical matrices often lack space for explicit labels for each element. Using contextual `aria-label`s like `aria-label={'Row ${i + 1}, Column ${j + 1}'}` provides screen readers the necessary context without compromising visual design.
+**Action:** Always add contextual `aria-label`s to inputs in dynamically generated grid systems where space constraints prohibit explicit `<label>` elements.
