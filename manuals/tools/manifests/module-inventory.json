@@ -275,7 +275,7 @@
       "shard_index": 8
     },
     {
-      "content_sha256_lf": "8682c2c1a79cd86bbca300528c5b8f0e153029259b33049e709b9c17b739937d",
+      "content_sha256_lf": "8fdbca2f7214afde75392daf4cd76ad8f188de25e8c7f410a58441a27d0a8931",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/web/src/components/PuttingPanel.tsx",
       "last_path": "src/rate_of_closure/web/src/model/durableEnsembleAuthorityContract.ts",
@@ -347,7 +347,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "b4deb4ea578d7a03e280cdac5a419b82afe598313b477111975aec6ee344df63",
+  "source_tree_sha256": "107e0cf773a039ee13efda864a115f4f46a7ffe3bcb72ac4225a5c935236f6e2",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
