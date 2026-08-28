@@ -307,58 +307,58 @@
       "shard_index": 12
     },
     {
-      "content_sha256_lf": "fa905c271bdcd7f99a62d2513cb17c75ffc8523d227d4165288dd01266a1d2fa",
+      "content_sha256_lf": "5d7f7c70e7f3628011a34497f0a8ad6043c4d2ef0c320d652930e65200c094ab",
       "entry_count": 200,
       "first_path": "src/shared/python/chat/export/html_exporter.py",
-      "last_path": "src/shared/python/plot_engine/specs.py",
+      "last_path": "src/shared/python/plot_engine/pyqt6_widget.py",
       "path": "manuals/tools/manifests/module-inventory/entries-013.json",
       "shard_index": 13
     },
     {
-      "content_sha256_lf": "3614bac758e3a033d04d20b7cfd4554e973c7272973ac07ab2d2ac7d7d0c0ad9",
+      "content_sha256_lf": "3bedf204f51ca8409ca838e7a52160c9ae8655fb85362eb904d3731c99aec046",
       "entry_count": 200,
-      "first_path": "src/shared/python/plot_engine/trendline.py",
-      "last_path": "src/shared/python/sidekick/ui/tools_sidebar/qt_compat.py",
+      "first_path": "src/shared/python/plot_engine/specs.py",
+      "last_path": "src/shared/python/sidekick/ui/tools_sidebar/python_repl_tab.py",
       "path": "manuals/tools/manifests/module-inventory/entries-014.json",
       "shard_index": 14
     },
     {
-      "content_sha256_lf": "2408dbffd817615df7f075d0bf72bec28fc1c85ee6029045b3dc717efe5c07a2",
+      "content_sha256_lf": "89982df4b44fe51cd6fd1af2fdbdf55226cd5dd0126ae8203f151d45767f9ac0",
       "entry_count": 200,
-      "first_path": "src/shared/python/sidekick/ui/tools_sidebar/registry.py",
-      "last_path": "src/shared/python/swing_sim/reference.py",
+      "first_path": "src/shared/python/sidekick/ui/tools_sidebar/qt_compat.py",
+      "last_path": "src/shared/python/swing_sim/putting/variation.py",
       "path": "manuals/tools/manifests/module-inventory/entries-015.json",
       "shard_index": 15
     },
     {
-      "content_sha256_lf": "1d3bb30ab484d42502938a0486b009dbb9106b3efbc0ce3103006265580dee6e",
+      "content_sha256_lf": "4af778ed1ae484ba47189b20a92f343dcd3d026ef6f04939d611db57c5c2409f",
       "entry_count": 200,
-      "first_path": "src/shared/python/swing_sim/rotating_base/__init__.py",
-      "last_path": "src/tools/matlab_quality_utils.py",
+      "first_path": "src/shared/python/swing_sim/reference.py",
+      "last_path": "src/tools/matlab_code_analyzer_gui/setup.m",
       "path": "manuals/tools/manifests/module-inventory/entries-016.json",
       "shard_index": 16
     },
     {
-      "content_sha256_lf": "26f318cd22d673b8d96f9dda9f5999110c6997002ce5810ffcc5e4db1ef140d4",
-      "entry_count": 102,
-      "first_path": "src/tools/matlab_utilities/quality/exportCodeIssues.m",
+      "content_sha256_lf": "f48ed44c226425e0dd109f4d1dba68db40d2971f5637d4fa2a4a07755f50383f",
+      "entry_count": 103,
+      "first_path": "src/tools/matlab_quality_utils.py",
       "last_path": "wave_solver.py",
       "path": "manuals/tools/manifests/module-inventory/entries-017.json",
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "add7aaff80f04f87cfe80c93c801c89199936c28b70a417ebbc084f880e4a0e5",
+  "source_tree_sha256": "25f40c640208b0692c08d6241dcd3c0f7230412348498d1aafce365983f15fd0",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
-      "not-applicable": 2670,
+      "not-applicable": 2671,
       "provisional": 831
     },
     "blocked_count": 1,
     "calculation_count": 831,
     "classification_counts": {
       "calculation": 831,
-      "non-calculation": 2671
+      "non-calculation": 2672
     },
     "family_counts": {
       "control-systems-calculation": 6,
@@ -377,17 +377,17 @@
       "repository-tooling-non-calculation": 76,
       "rotation-converter-calculation": 132,
       "shared-tools-calculation": 171,
-      "shared-tools-non-calculation": 1023,
+      "shared-tools-non-calculation": 1024,
       "signal-processing-calculation": 28,
       "swing-simulation-calculation": 62,
       "swing-simulation-non-calculation": 149
     },
-    "module_count": 3502,
-    "non_calculation_count": 2671,
+    "module_count": 3503,
+    "non_calculation_count": 2672,
     "provisional_count": 831,
     "review_status_counts": {
       "blocked": 1,
-      "inventory-baseline": 2670,
+      "inventory-baseline": 2671,
       "review-required": 831
     }
   }

@@ -27,14 +27,14 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.74                                    |
-| **Last Spec Update**    | 2026-08-27                                 |
+| **Spec Version**        | 1.18.75                                    |
+| **Last Spec Update**    | 2026-08-28                                 |
 
 ## 2. Purpose & Mission
 
 ### 2026-08-27 Fail-Closed R14.6 Acceptance Authority (#4832 / #4433 / #4142)
 
-Version 1.18.74 adds `rate-of-closure/visualization-acceptance` v1 as the fifth
+Version 1.18.75 adds `rate-of-closure/visualization-acceptance` v1 as the fifth
 cross-surface visualization authority. Its strict reader expands all 20 React
 and PyQt tabs over every lifecycle state already registered by the visibility
 authority and every supported desktop, narrow, or DPI reference case. Each tab
@@ -5584,6 +5584,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-28 | 1.18.74 | refactor(golf_club, #4825): extract putter head JSON wire serialization/deserialization to `putter_head_serde.py` (105 LOC), reducing `putter_head.py` from 502 LOC to 432 LOC to satisfy the 500-line per-file LOC budget while preserving full public API backward compatibility through re-exports. |
 | 2026-08-28 | 1.18.73 | test(variation, #4696 / #4558): add HDF5/JSON/CSV dataset IO roundtrip coverage (`test_variation_dataset_io.py`) for the schema constants and `write_hdf5`/`read_hdf5` pair already published via #4674; the PR's own HDF5 implementation was superseded by #4674/#4701 while queued, so only the test file and export list carried a net diff after rebase onto main. |
 | 2026-08-27 | 1.18.72 | fix(#4827): dedupe the duplicate `**Spec Version**` row that two concurrently merged PRs left in the §1 Identity table (one stale at 1.18.70, one current at 1.18.71), and add `tests/architecture/test_spec_version_freshness.py` so the Identity header version and the newest §12 Change Log row are asserted equal on every PR — previously that equality was only prose in the spec-check failure message, not a gate. | #4827 |
 | 2026-08-27 | 1.18.71 | docs(handoff): correct the mypy reproduction flag. The rate_of_closure handoff told agents to run `--follow-imports=skip`, but `ci-standard.yml` uses **`--follow-imports=silent`**; under `skip`, mypy 1.13 raises `unresolved placeholder type` on files already on `main` (`delivery_interchange/trajectory.py`, `golf_club/putter_head.py`), so a local `skip` run reports failures CI does not have and sends agents diagnosing phantom breakage. Also refreshes the epic status (putting P1-P3/P9 landed, P4-P8 remain) and compresses the launch-monitor and clubhead paragraphs. | #4800 |

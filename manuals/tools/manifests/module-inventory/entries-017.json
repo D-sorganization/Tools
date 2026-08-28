@@ -3,6 +3,73 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 20581,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "49c7930b9fe2f7ca17fdc798674a077107a833b99e3d751d8fa23c07ca7855e7",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-TOOLS-MATLAB-QUALITY-UTILS-PY-AFC3486381F8",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/tools/matlab_quality_utils.py",
+      "purpose": "Shared utilities for MATLAB quality checks.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MATLABQualityChecker",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MATLAB_SCRIPT_TIMEOUT_SECONDS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "run_matlab_quality_checks_cli",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/tools/test_matlab_quality_utils.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 15023,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",

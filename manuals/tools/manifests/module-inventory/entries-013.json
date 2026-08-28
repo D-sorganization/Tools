@@ -3884,10 +3884,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9215,
+      "bytes_lf": 9250,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "71ca87aeab078169aa78a9be36de0bc2cda83ee15b672e00f79711bb1cb82482",
+      "content_sha256_lf": "e5489a01be59c7238de7e75e0e913d6b0d71b0accc05fc451c0e1f4ae1e4c9ca",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-INIT-PY-7496BE48C45A",
       "language": "python",
@@ -5393,10 +5393,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 19180,
+      "bytes_lf": 15991,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "317e1f4a54f6da3ddb724df309e33f33defc40d34dfd9314d641aba5e5bd7d07",
+      "content_sha256_lf": "f7c44aa3a8dfc23011a9346acf9946e07b28bb837dcd9f91b9f52a340e289888",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-PUTTER-HEAD-PY-BA09710A9B26",
       "language": "python",
@@ -5458,19 +5458,9 @@
             "signature": null
           },
           {
-            "kind": "constant",
-            "name": "PUTTER_HEAD_FORMAT",
-            "signature": null
-          },
-          {
             "kind": "function",
             "name": "head_moi_for_strike",
             "signature": "document: PutterHeadDocument, strike_offset_toe_mm: float=0.0, strike_offset_high_mm: float=0.0"
-          },
-          {
-            "kind": "function",
-            "name": "putter_head_from_json",
-            "signature": "text: str"
           },
           {
             "kind": "function",
@@ -5489,11 +5479,6 @@
           },
           {
             "kind": "function",
-            "name": "putter_head_to_json",
-            "signature": "document: PutterHeadDocument"
-          },
-          {
-            "kind": "function",
             "name": "putter_spec",
             "signature": "document: PutterHeadDocument"
           },
@@ -5506,6 +5491,21 @@
             "kind": "function",
             "name": "twist_response",
             "signature": "document: PutterHeadDocument, clubhead_speed_mps: float, *, shaft_lean_deg: float=0.0, attack_angle_deg: float=0.0, strike_offset_toe_mm: float=0.0, strike_offset_high_mm: float=0.0"
+          },
+          {
+            "kind": "re-export",
+            "name": "PUTTER_HEAD_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putter_head_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putter_head_to_json",
+            "signature": null
           }
         ],
         "test_paths": [
@@ -5519,6 +5519,68 @@
           "ms",
           "s"
         ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4071,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2af78c7dbeb2ac8cfe5160cf977b2a77b93e5a9ce6103f90024082fd8a1e1fce",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-PUTTER-HEAD-SERDE-PY-ECB5F0555BF1",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/putter_head_serde.py",
+      "purpose": "Deterministic JSON serialization and deserialization for putter heads",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "PUTTER_HEAD_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "putter_head_from_json",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "putter_head_to_json",
+            "signature": "document: PutterHeadDocument"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
         "validation_paths": []
       }
     },
@@ -16618,117 +16680,6 @@
           "bar",
           "g"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3898,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6804bf0bf1507d27825fe728b3a8ea0ca1687a56fd10e1c75ab6c05ebd09f54d",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-ENGINE-SPECS-PY-591CB1EC185F",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/plot_engine/specs.py",
-      "purpose": "PlotSpec Pydantic contract hierarchy.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "AxisSpec",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ContourPlotSpec",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "FilterComparisonSpec",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "HeatmapSpec",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "HistogramSpec",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "LegendSpec",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PlotSpec",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SeriesData",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SeriesStyle",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SurfacePlotSpec",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TrendlineSpec",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/plot_engine/tests/test_matplotlib_renderer.py",
-          "src/shared/python/plot_engine/tests/test_plotly_converter.py",
-          "src/shared/python/plot_engine/tests/test_specs.py",
-          "tests/shared/python/plot_engine/test_matplotlib_renderer.py",
-          "tests/shared/python/plot_engine/test_plotly_converter.py",
-          "tests/shared/python/plot_engine/test_pyqt6_widget.py",
-          "tests/shared/python/plot_engine/test_specs.py",
-          "tests/test_waves_2_3_imports.py"
-        ],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

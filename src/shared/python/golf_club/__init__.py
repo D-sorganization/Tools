@@ -50,20 +50,22 @@ from .putter_fitting import (
 )
 from .putter_head import (
     PUTTER_CONTACT_TIME_S,
-    PUTTER_HEAD_FORMAT,
     PutterHeadDocument,
     PutterHeadProvenance,
     PutterStrikeResult,
     PutterTwist,
     head_moi_for_strike,
-    putter_head_from_json,
     putter_head_from_library,
     putter_head_from_mesh,
     putter_head_from_stl,
-    putter_head_to_json,
     putter_spec,
     strike_with_head,
     twist_response,
+)
+from .putter_head_serde import (
+    PUTTER_HEAD_FORMAT,
+    putter_head_from_json,
+    putter_head_to_json,
 )
 from .serialization import (
     CURRENT_FORMAT,
