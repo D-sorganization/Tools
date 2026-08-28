@@ -3,6 +3,202 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 39,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "487059eaf8a947b80f20a9aacac038a5047b2ad69d2401b827376c67d6fe847f",
+      "family": "rotation-converter-calculation",
+      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-WEB-SRC-TAURI-BUILD-RS-95E027CE821C",
+      "language": "rust",
+      "maintainer": "Rotation converter maintainers",
+      "path": "src/rotation_converter/web/src-tauri/build.rs",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 503,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "76b47eab3472f5aab37a36f61da256a0070368d41e01e782cd3996e03a52fdf6",
+      "family": "rotation-converter-calculation",
+      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-WEB-SRC-TAURI-SRC-LIB-RS-50FE399710A1",
+      "language": "rust",
+      "maintainer": "Rotation converter maintainers",
+      "path": "src/rotation_converter/web/src-tauri/src/lib.rs",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "fn",
+            "name": "run",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 194,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "1f399586e01f1e2ae97558edd40bc461fba35d105cc84ebebaeffef89b2158bf",
+      "family": "rotation-converter-calculation",
+      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-WEB-SRC-TAURI-SRC-MAIN-RS-9291ABE5D457",
+      "language": "rust",
+      "maintainer": "Rotation converter maintainers",
+      "path": "src/rotation_converter/web/src-tauri/src/main.rs",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 2326,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "eade0331d73140e7ffd7083a4d874aa8cf5e97aae5024c641813bd613d3fee7b",
+      "family": "rotation-converter-calculation",
+      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-WEB-SRC-APP-TSX-1667C7013D7D",
+      "language": "typescript-react",
+      "maintainer": "Rotation converter maintainers",
+      "path": "src/rotation_converter/web/src/App.tsx",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 2992,
       "classification": "calculation",
       "classification_basis": "path-marker:rotation",
@@ -14648,259 +14844,6 @@
         ],
         "unit_mentions": [
           "bar",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1955,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f8109a67be615f855d486b0312159be4f503a2919bd472aad20d81a95dbe21f5",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-QT-WORKSPACE-PY-56528427F179",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/_qt/workspace.py",
-      "purpose": "Workspace / plot slash-command bridge (Tools issue #2849).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "dispatch_workspace_command",
-            "signature": "dock: Any, cmd: str, arg: str"
-          },
-          {
-            "kind": "function",
-            "name": "handle_plot",
-            "signature": "dock: Any, arg: str"
-          },
-          {
-            "kind": "function",
-            "name": "handle_ws_read",
-            "signature": "dock: Any, arg: str"
-          },
-          {
-            "kind": "function",
-            "name": "handle_ws_write",
-            "signature": "dock: Any, arg: str"
-          },
-          {
-            "kind": "re-export",
-            "name": "build_workspace_context_block",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4073,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2e6390da3a582e1e5dc93d8fdfec628f1397fcb8af323e21f50a4c93d222d7ed",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-QUICK-BAR-THEME-PY-D40714BAD180",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/_quick_bar_theme.py",
-      "purpose": "Pure-Python theme helpers for ChatQuickBar.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ThemeProviderProtocol",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/chat/test_quick_bar.py"
-        ],
-        "unit_mentions": [
-          "bar"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1194,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "936e9561d9a776af0472d035a233a150d810e3d35207d6e89c9d14a985ce0497",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-ROUTER-PROTOCOL-ADAPTERS-PY-483FEE06E602",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/_router_protocol_adapters.py",
-      "purpose": "Private adapters between the chat router and shared WebSocket protocol.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "router_message_context",
-            "signature": "message: dict[str, Any]"
-          },
-          {
-            "kind": "function",
-            "name": "router_session_info_extra",
-            "signature": "websocket: WebSocket, _state: ChatWebSocketState"
-          },
-          {
-            "kind": "function",
-            "name": "terminal_runtime",
-            "signature": "websocket: WebSocket"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1961,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c3feefbff498bc245b06dad45f81b1f64c7c71439771a3518f8d0d50153b1c2b",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-THEME-PROTOCOL-PY-D93A27FAE0B8",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/_theme_protocol.py",
-      "purpose": "Theme provider protocol for the portable chat dock widget.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ThemeProviderProtocol",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_DEFAULT_DARK_COLORS",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
           "s"
         ],
         "validation_paths": []

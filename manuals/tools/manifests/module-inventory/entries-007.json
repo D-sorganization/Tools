@@ -1164,10 +1164,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 4595,
+      "bytes_lf": 4679,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "21e4549bc8a45a2da2bfa33d68728dbecb4c10e426ab1a50b4721cd8245fc8db",
+      "content_sha256_lf": "b71ca6b394d08516baebb8a0480cfb843fe5b409f08cfecc0c30f8b6e9e38928",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-INIT-PY-7BC8891DC6A1",
       "language": "python",
@@ -1474,6 +1474,11 @@
           {
             "kind": "re-export",
             "name": "manual_delivery_from_json_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putt_playback_trajectory",
             "signature": null
           },
           {
@@ -3200,6 +3205,63 @@
             "kind": "function",
             "name": "time_at_scrub",
             "signature": "value: int, duration_s: float, steps: int=SCRUB_STEPS"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_playback_transport.py",
+          "tests/rate_of_closure/test_putting_gui.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 2674,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "294090b020a9b2c89ab8c63521dfce0a2612553219ac7aecab3685bff0c304ce",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-PUTT-PLAYBACK-PY-0B4731C52DEA",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/putt_playback.py",
+      "purpose": "Runtime-neutral lift of a recorded putt onto the shared playback timeline.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "putt_playback_trajectory",
+            "signature": "result: PuttResult, surface: GreenSurface"
           }
         ],
         "test_paths": [
@@ -9280,7 +9342,8 @@
           }
         ],
         "test_paths": [
-          "tests/rate_of_closure/test_playback_transport.py"
+          "tests/rate_of_closure/test_playback_transport.py",
+          "tests/rate_of_closure/test_putting_gui.py"
         ],
         "unit_mentions": [
           "g",
@@ -9790,6 +9853,66 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 4517,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "db9639f5f8e1d76af5f8d42279a2097ad0d3d277ec4c88a32fc31fd833847ff8",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-PUTT-PLAYBACK-CONTROLS-PY-EDE16B6C6923",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/ui/pyqt6/putt_playback_controls.py",
+      "purpose": "Putting binding of the shared transport controls (#4800 P8).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PuttPlaybackControls",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PuttPlaybackPanel",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_putting_gui.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 10996,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -9850,10 +9973,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10711,
+      "bytes_lf": 9641,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "861524032d51c60b2e2b490599f46dcd49c2f8b0daae485ada2af3a258bed385",
+      "content_sha256_lf": "21452bbdaa23505464e9214aa771c9cd7a0fd8c7216e32944feba3378f9748b4",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-PUTTING-PLAYBACK-PY-A7E636127072",
       "language": "python",
@@ -9894,9 +10017,9 @@
             "signature": null
           },
           {
-            "kind": "function",
+            "kind": "re-export",
             "name": "putt_playback_trajectory",
-            "signature": "result: PuttResult, surface: GreenSurface"
+            "signature": null
           }
         ],
         "test_paths": [],
@@ -10031,16 +10154,16 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13520,
+      "bytes_lf": 13912,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "afd014395ffe881bb7567410c49b5248943b2b57989dd677d7e254865c834b37",
+      "content_sha256_lf": "0a8c8aae0300e6e9c0ec39f8df2ff2de52e25353fd64a5906a48a403bcaecf83",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-PUTTING-TAB-PY-DCE45086C755",
       "language": "python",
       "maintainer": "Rate of Closure maintainers",
       "path": "src/rate_of_closure/ui/pyqt6/putting_tab.py",
-      "purpose": "Putting tab — stroke, green, results, and 3-D playback (#4800 P6).",
+      "purpose": "Putting tab — stroke, green, results, and 3-D playback (#4800 P6 / P8).",
       "review_status": "inventory-baseline",
       "risk_tags": [
         "public-api"
@@ -12903,126 +13026,6 @@
           "g",
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 1318,
-      "classification": "calculation",
-      "classification_basis": "path-marker:torque",
-      "content_sha256_lf": "8e213f3c0dc66ecc44b1437d621803e18e26af2ffc499ef3984952ab459cacb2",
-      "family": "rate-of-closure-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-TORQUE-PROFILE-WIDGETS-PY-AAD6EBA439D3",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/torque_profile_widgets.py",
-      "purpose": "Shared widget metadata for prescribed joint-torque profile authoring.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "MODEL_JOINTS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MODE_DESCRIPTIONS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "clickable_button",
-            "signature": "button: QPushButton, tooltip: str"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 3635,
-      "classification": "calculation",
-      "classification_basis": "path-marker:torque",
-      "content_sha256_lf": "0297bd313dfe279c4c1977aecbbff032918faff10a376cc4563c8fc88ff5bf19",
-      "family": "rate-of-closure-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-TORQUE-PROFILE-WORKSPACE-PY-37589FD79397",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/torque_profile_workspace.py",
-      "purpose": "Workspace capture/apply mixin for the native torque-profile editor.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "TorqueProfileWorkspaceMixin",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }
