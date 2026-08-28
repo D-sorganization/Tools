@@ -9848,10 +9848,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 2262,
+      "bytes_lf": 4241,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "daf340c5e8eb44ab61176d4991444543440ca5e9de172fc32c12d2727c38ae25",
+      "content_sha256_lf": "ac9e0f450930bd61d8ad0e356874496f6181dce33c7a7a0f5ed85ab88cbedc0c",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-CLUBCAMERA-TEST-TS-F6CC6BEFEF9A",
       "language": "typescript",
