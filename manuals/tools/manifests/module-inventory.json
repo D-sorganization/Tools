@@ -275,7 +275,7 @@
       "shard_index": 8
     },
     {
-      "content_sha256_lf": "8ebf1fb74355ac65507c8871c5c944b59a0b1798c4de61f7014d150447be0724",
+      "content_sha256_lf": "6f2d39b5ce50c90785db214ab0b17857d5e2330f0fc95c242f60f6379a0d6797",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/web/src/components/PlotCanvasCard.test.tsx",
       "last_path": "src/rate_of_closure/web/src/model/csvSecurity.test.ts",
@@ -347,7 +347,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "174ea9a77b2fdee3aad4db0c136e6790f7a265d0deafc477d477b327cb3acca2",
+  "source_tree_sha256": "64d37685d086dfe3ae362326352e7860737286be5420330dd0339076b64c8ab7",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,

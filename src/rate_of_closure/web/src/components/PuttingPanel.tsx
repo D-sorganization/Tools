@@ -158,7 +158,11 @@ interface PuttingPanelProps {
 interface AcceptedStudy {
   executor: typeof evaluatePuttWithTrajectory;
   result: PuttResult;
-  /** The exact green the result was integrated on (playback elevations). */
+  /**
+   * The very green this result was integrated on. Playback reads its
+   * elevations off the scenario's own surface rather than re-deriving an
+   * equal one, so the replayed ball can never ride a different green.
+   */
   surface: GreenSurface;
   document: PuttingResultDocument;
   twist: PutterTwist;
@@ -196,9 +200,8 @@ export function PuttingPanel({
         setup.paceMode === "backstroke"
           ? clubheadSpeedFromBackstroke(setup.backstrokeCm / 100)
           : setup.speed;
-      const evaluated = executeStudy(
-        puttScenario(head, clubheadSpeed, setup),
-      );
+      const scenario = puttScenario(head, clubheadSpeed, setup);
+      const evaluated = executeStudy(scenario);
       const result = snapshotPuttingResult(evaluated.result);
       const plan = planPuttingSamples(puttingSampleSource(result));
       validatePuttingResultSummary(result, plan);
@@ -219,7 +222,7 @@ export function PuttingPanel({
       const accepted: AcceptedStudy = {
         executor: executeStudy,
         result,
-        surface: planarSurface(setup.grade, setup.aspect),
+        surface: scenario.surface,
         document: Object.freeze({ ...evaluated.document }),
         twist,
         plan,
