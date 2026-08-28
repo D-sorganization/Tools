@@ -3,6 +3,68 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 2663,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "71387eaf6c488ab63161b54e2b2d86801e3a63fa1acc79f88705d755f72b4352",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-QT-COMPAT-PY-FA3C270556F7",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/qt_compat.py",
+      "purpose": "Small Qt binding shim for tools sidebar widgets.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "QT_API",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "all_sidebar_dock_features",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "dock_area",
+            "signature": "name: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 20551,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -18070,155 +18132,6 @@
           "deg",
           "m/s",
           "mm",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 15768,
-      "classification": "calculation",
-      "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "7341a16a3d47af91d97ea314a6e7b68d773fce8cdb3edf6f457c16d8cfedc4d4",
-      "family": "swing-simulation-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-REFERENCE-PY-0075817C78CB",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/reference.py",
-      "purpose": "Pure-Python reference implementation of the swing dynamics.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "MASS_MATRIX_SINGULAR_TOLERANCE",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "coriolis_vector",
-            "signature": "p: PendulumParameters, theta2: float, omega1: float, omega2: float"
-          },
-          {
-            "kind": "function",
-            "name": "damping_vector",
-            "signature": "p: PendulumParameters, omega1: float, omega2: float"
-          },
-          {
-            "kind": "function",
-            "name": "derivatives",
-            "signature": "p: PendulumParameters, state: PendulumState, g_inplane: tuple[float, float]"
-          },
-          {
-            "kind": "function",
-            "name": "derivatives_forced",
-            "signature": "p: PendulumParameters, state: PendulumState, g_inplane: tuple[float, float], torques_nm: tuple[float, float]"
-          },
-          {
-            "kind": "function",
-            "name": "derivatives_locked",
-            "signature": "p: PendulumParameters, state: PendulumState, g_inplane: tuple[float, float], torques_nm: tuple[float, float], locked: tuple[bool, bool]"
-          },
-          {
-            "kind": "function",
-            "name": "gravity_vector",
-            "signature": "p: PendulumParameters, theta1: float, theta2: float, g_inplane: tuple[float, float]"
-          },
-          {
-            "kind": "function",
-            "name": "in_plane_gravity",
-            "signature": "plane_r: np.ndarray, g: float"
-          },
-          {
-            "kind": "function",
-            "name": "in_plane_gravity_from_tilts",
-            "signature": "yaw: float, side_tilt: float, fwd_tilt: float, g: float"
-          },
-          {
-            "kind": "function",
-            "name": "mass_matrix",
-            "signature": "p: PendulumParameters, theta2: float"
-          },
-          {
-            "kind": "function",
-            "name": "plane_rotation",
-            "signature": "yaw: float, side_tilt: float, fwd_tilt: float"
-          },
-          {
-            "kind": "function",
-            "name": "rk4_step",
-            "signature": "p: PendulumParameters, state: PendulumState, g_inplane: tuple[float, float], dt: float"
-          },
-          {
-            "kind": "function",
-            "name": "rk4_step_forced",
-            "signature": "p: PendulumParameters, state: PendulumState, g_inplane: tuple[float, float], time_s: float, dt: float, torque_at: Callable[[float], tuple[float, float]]"
-          },
-          {
-            "kind": "function",
-            "name": "rk4_step_locked",
-            "signature": "p: PendulumParameters, state: PendulumState, g_inplane: tuple[float, float], time_s: float, dt: float, torque_at: Callable[[float], tuple[float, float]], locked: tuple[bool, bool]"
-          },
-          {
-            "kind": "function",
-            "name": "simulate",
-            "signature": "p: PendulumParameters, initial: PendulumState, g_inplane: tuple[float, float], dt: float, n_steps: int"
-          },
-          {
-            "kind": "function",
-            "name": "simulate_forced",
-            "signature": "p: PendulumParameters, initial: PendulumState, g_inplane: tuple[float, float], dt: float, n_steps: int, torque_at: Callable[[float], tuple[float, float]]"
-          },
-          {
-            "kind": "function",
-            "name": "simulate_locked",
-            "signature": "p: PendulumParameters, initial: PendulumState, g_inplane: tuple[float, float], dt: float, n_steps: int, torque_at: Callable[[float], tuple[float, float]], locked: tuple[bool, bool]"
-          },
-          {
-            "kind": "function",
-            "name": "total_energy",
-            "signature": "p: PendulumParameters, state: PendulumState, g_inplane: tuple[float, float]"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/tests/test_parity_rust.py",
-          "src/shared/python/swing_sim/tests/test_reference.py",
-          "tests/rate_of_closure/test_localized_torque_web_golden.py"
-        ],
-        "unit_mentions": [
-          "J",
-          "N*m",
-          "g",
           "s"
         ],
         "validation_paths": []

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from scripts.check_rate_visual_evidence_changes import (
+    ACCEPTANCE_MANIFEST,
     PYQT_FIRST_VIEWPORT_TEST,
     REACT_FIRST_VIEWPORT_TEST,
     SHARED_AUDIT,
@@ -23,6 +24,7 @@ def test_react_visual_change_requires_manifest_audit_and_first_viewport_test() -
 
     assert errors == (
         f"react visual changes require {SHARED_MANIFEST}",
+        f"react visual changes require {ACCEPTANCE_MANIFEST}",
         f"react visual changes require {SHARED_AUDIT}",
         f"react visual changes require {REACT_FIRST_VIEWPORT_TEST}",
     )
@@ -35,6 +37,7 @@ def test_pyqt_visual_change_requires_manifest_audit_and_first_viewport_test() ->
 
     assert errors == (
         f"pyqt visual changes require {SHARED_MANIFEST}",
+        f"pyqt visual changes require {ACCEPTANCE_MANIFEST}",
         f"pyqt visual changes require {SHARED_AUDIT}",
         f"pyqt visual changes require {PYQT_FIRST_VIEWPORT_TEST}",
     )
@@ -45,6 +48,7 @@ def test_cross_surface_change_passes_with_complete_matched_evidence() -> None:
         "src/rate_of_closure/web/src/components/PrimaryViewTabs.tsx",
         "src/rate_of_closure/ui/pyqt6/main_window_layout.py",
         SHARED_MANIFEST,
+        ACCEPTANCE_MANIFEST,
         SHARED_AUDIT,
         REACT_FIRST_VIEWPORT_TEST,
         PYQT_FIRST_VIEWPORT_TEST,
@@ -90,6 +94,7 @@ def test_cli_changed_file_fixture_accepts_complete_evidence(tmp_path) -> None:
             (
                 "src/rate_of_closure/web/src/components/SimulationDisplay.tsx",
                 SHARED_MANIFEST,
+                ACCEPTANCE_MANIFEST,
                 SHARED_AUDIT,
                 REACT_FIRST_VIEWPORT_TEST,
             )

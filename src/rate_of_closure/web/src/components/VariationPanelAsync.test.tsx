@@ -28,6 +28,11 @@ class DeferredExecutionService implements VariationExecutionService {
   ): Promise<VariationExecutionResult> {
     return new Promise((resolve, reject) => {
       this.calls.push({ request, controls, resolve, reject });
+      controls.signal.addEventListener(
+        "abort",
+        () => reject(new DOMException("Variation execution was cancelled.", "AbortError")),
+        { once: true },
+      );
     });
   }
 }
@@ -43,9 +48,19 @@ const completedResult = (
       outputs: dataset.outputs.map((row) => row.map(() => null)),
       success: dataset.success.map(() => false),
     };
-    return { dataset: failedDataset, sensitivity: null, ensemble: null };
+    return {
+      dataset: failedDataset,
+      sensitivity: null,
+      ensemble: null,
+      executionMetadata: call.request.executionMetadata,
+    };
   }
-  return { dataset, sensitivity: null, ensemble: null };
+  return {
+    dataset,
+    sensitivity: null,
+    ensemble: null,
+    executionMetadata: call.request.executionMetadata,
+  };
 };
 
 const configureTwoJointRuns = async (user: ReturnType<typeof userEvent.setup>) => {
@@ -116,7 +131,7 @@ describe("VariationPanel asynchronous Monte Carlo execution", () => {
     expect(screen.getByRole("group", {
       name: "Scatter matrix with marginal histograms",
     })).toBe(acceptedVisual);
-    expect(run).toBeEnabled();
+    await waitFor(() => expect(run).toBeEnabled());
     expect(scroll).not.toHaveBeenCalled();
   });
 
@@ -134,6 +149,7 @@ describe("VariationPanel asynchronous Monte Carlo execution", () => {
       dataset: null,
       sensitivity: oneAtATimeSensitivity(service.calls[0].request.plan),
       ensemble: null,
+      executionMetadata: service.calls[0].request.executionMetadata,
     }));
 
     expect(HTMLElement.prototype.scrollIntoView).not.toHaveBeenCalled();
@@ -145,6 +161,7 @@ describe("VariationPanel asynchronous Monte Carlo execution", () => {
       dataset: null,
       sensitivity: oneAtATimeSensitivity(service.calls[1].request.plan),
       ensemble: null,
+      executionMetadata: service.calls[1].request.executionMetadata,
     }));
     await waitFor(() => expect(HTMLElement.prototype.scrollIntoView).toHaveBeenCalledOnce());
     expect(vi.mocked(HTMLElement.prototype.scrollIntoView).mock.instances[0])
@@ -161,7 +178,7 @@ describe("VariationPanel asynchronous Monte Carlo execution", () => {
     const stale = service.calls[0];
     expect(HTMLElement.prototype.scrollIntoView).not.toHaveBeenCalled();
     await user.click(screen.getByRole("button", { name: "Cancel Variation Study" }));
-    expect(run).toBeEnabled();
+    await waitFor(() => expect(run).toBeEnabled());
     await act(async () => stale.resolve(completedResult(stale)));
     expect(HTMLElement.prototype.scrollIntoView).not.toHaveBeenCalled();
 
@@ -227,7 +244,9 @@ describe("VariationPanel asynchronous Monte Carlo execution", () => {
     });
     expect(screen.getByRole("status", { name: "Variation status" }))
       .toHaveTextContent(/done: 2\/2 joint runs/i);
-    expect(screen.getByRole("button", { name: "Run Variation Study" })).toBeEnabled();
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: "Run Variation Study" })).toBeEnabled();
+    });
   });
 
   it("cancels cooperatively and immediately permits a safe rerun", async () => {
@@ -296,6 +315,9 @@ describe("VariationPanel asynchronous Monte Carlo execution", () => {
     await user.click(screen.getByRole("button", { name: "Run Variation Study" }));
     const stale = service.calls[0];
     await user.click(screen.getByRole("button", { name: "Cancel Variation Study" }));
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: "Run Variation Study" })).toBeEnabled();
+    });
     await user.click(screen.getByRole("button", { name: "Run Variation Study" }));
     const current = service.calls[1];
     await act(async () => {
