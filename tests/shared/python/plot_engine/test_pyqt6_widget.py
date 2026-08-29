@@ -165,14 +165,19 @@ def test_export_plot_uses_selected_format_and_chosen_path(
     widget._format_combo.setCurrentText("SVG")
     widget._export_plot()
 
-    assert saved == [
-        {
-            "path": str(export_path),
-            "format": "svg",
-            "dpi": 150,
-            "bbox_inches": "tight",
-        }
-    ]
+    assert len(saved) == 1
+    call = saved[0]
+    # The selected format, chosen path, and render settings are still honoured
+    # verbatim; #4740 additionally routes the export through
+    # ``plotting.export_figure``, which embeds provenance metadata.
+    assert call["path"] == str(export_path)
+    assert call["format"] == "svg"
+    assert call["dpi"] == 150
+    assert call["bbox_inches"] == "tight"
+    assert call["transparent"] is False
+    # Date is wall-clock, so assert its presence and shape rather than a value.
+    assert call["metadata"]["Creator"] == "Tools"
+    assert isinstance(call["metadata"]["Date"], str)
 
 
 def test_export_plot_returns_without_spec_or_path(
