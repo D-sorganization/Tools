@@ -3,6 +3,68 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 4920,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "45e7a85741fcd5fa952dbae30a45adb283a6422bc2d95a3641c112fb3f80a060",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-TERRAIN-ADAPTER-CONTRACTS-PY-1621D6BD5006",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/terrain_adapter_contracts.py",
+      "purpose": "Strict frame and interpretation contracts for the neutral terrain adapter.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FrameTransform",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TerrainAdapterInterpretation",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "canonical_sha256",
+            "signature": "payload: dict[str, Any]"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 1752,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17054,136 +17116,6 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 25230,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "15dbf9220b741b8e15f1024d9ef54ef70572f0033758a89da85c254ec1afee3b",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-STEAM-ENGINE-CALCULATOR-PYTHON-STEAM-ENGINE-CALCULATOR-UI-PYQT6-MAIN-WINDOW-PY-FBF825AD2A19",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/steam_engine_calculator/python/steam_engine_calculator/ui/pyqt6/main_window.py",
-      "purpose": "Steam Engine Calculator - PyQt6 Main Window",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SteamEngineCalculatorWindow",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "COLORS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_ALIGN_CENTER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_FONT_WEIGHT_BOLD",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_FRAME_STYLED_PANEL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_SCROLL_BAR_AS_NEEDED",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "format_enthalpy",
-            "signature": "value: float"
-          },
-          {
-            "kind": "function",
-            "name": "format_entropy",
-            "signature": "value: float"
-          },
-          {
-            "kind": "function",
-            "name": "format_pressure",
-            "signature": "value: object, unit: str='Pa'"
-          },
-          {
-            "kind": "function",
-            "name": "format_temperature",
-            "signature": "value: object, unit: str='K'"
-          },
-          {
-            "kind": "function",
-            "name": "main",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "validate_pressure_pa",
-            "signature": "value: float"
-          },
-          {
-            "kind": "function",
-            "name": "validate_temperature_k",
-            "signature": "value: float"
-          }
-        ],
-        "test_paths": [
-          "src/movement_optimizer/tests/test_main_window.py",
-          "src/pendulum_simulator/tests/test_main_window.py",
-          "src/steam_engine_calculator/tests/test_steam_engine_calculator_gui.py",
-          "tests/ode_solver/test_main_window.py"
-        ],
-        "unit_mentions": [
-          "J",
-          "MPa",
-          "N",
-          "Pa",
-          "W",
-          "bar",
-          "kPa",
-          "kg",
-          "m/s",
-          "s"
-        ],
         "validation_paths": []
       }
     }

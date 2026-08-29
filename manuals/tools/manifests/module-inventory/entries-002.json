@@ -3,6 +3,48 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 190,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "90f5af0ace167f9525d1d337e59441a4a603a68288e34f0add4af4d559b9c5d5",
+      "family": "data-processing-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-WEB-SRC-TAURI-SRC-MAIN-RS-D19FD68EE0B4",
+      "language": "rust",
+      "maintainer": "Data processing maintainers",
+      "path": "src/data_processing/data_processor/web/src-tauri/src/main.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 24981,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -13716,59 +13758,6 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 14380,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9e8863c8483cd1cdfcfa462e8e0f8e585e21a8c505c74ed3ba8af1139179d6b1",
-      "family": "media-processing-non-calculation",
-      "id": "TOOLS-MODULE-SRC-MEDIA-PROCESSING-VIDEO-PROCESSOR-APPS-WEB-COMPONENTS-GOLF-METRICSPANEL-TSX-527335438156",
-      "language": "typescript-react",
-      "maintainer": "Media processing maintainers",
-      "path": "src/media_processing/video_processor/apps/web/components/golf/MetricsPanel.tsx",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "MetricsPanel",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "cm"
-        ],
         "validation_paths": []
       }
     }
