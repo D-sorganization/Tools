@@ -22,8 +22,17 @@ const pointsFromRows = (rows: LaunchMonitorRow[], columns: {
 });
 
 const centered = (points: PlotPoint[]) => {
+  // ⚡ Bolt Optimization: Replace O(N²) array spread in loop with O(N) mutation to reduce GC pressure and execution time
   const grouped = new Map<string, PlotPoint[]>();
-  points.forEach((point) => grouped.set(point.playerId, [...(grouped.get(point.playerId) ?? []), point]));
+  for (let i = 0; i < points.length; i++) {
+    const point = points[i];
+    let group = grouped.get(point.playerId);
+    if (!group) {
+      group = [];
+      grouped.set(point.playerId, group);
+    }
+    group.push(point);
+  }
   return [...grouped.values()].flatMap((group) => {
     const xMean = group.reduce((sum, point) => sum + point.x, 0) / group.length;
     const yMean = group.reduce((sum, point) => sum + point.y, 0) / group.length;
