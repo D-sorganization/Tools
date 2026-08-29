@@ -3,6 +3,64 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 2033,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "5de631e553611519d2de2f6990e26dd039a90ad93ed22689919461a283649b8f",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-TORQUE-UTILS-PY-AB9B897571E3",
+      "language": "python",
+      "maintainer": "Pendulum maintainers",
+      "path": "src/pendulum_simulator/src/double_pendulum_golf/torque_utils.py",
+      "purpose": "Generic polynomial torque builder (DRY — single source of truth).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "make_polynomial_torque",
+            "signature": "*coeffs_per_joint: list[float]"
+          }
+        ],
+        "test_paths": [
+          "src/pendulum_simulator/tests/test_torque_utils.py"
+        ],
+        "unit_mentions": [
+          "N"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 15784,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
@@ -14958,74 +15016,6 @@
         "unit_mentions": [
           "bar"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1497,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4ae00f9ee247596a37cf1f40ec8c0d4cfc33a1cd32cb0cccecb3eba290a2a32d",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-PLOT-WORKSPACE-LIMITS-PY-29A97682FBBF",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/plot_workspace_limits.py",
-      "purpose": "Bounded resource contract for the managed Plots workspace.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "MAX_MANAGED_PLOTS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MAX_SWEEP_EVALUATIONS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "plot_evaluation_count",
-            "signature": "specs: Sequence[PlotSpec]"
-          },
-          {
-            "kind": "function",
-            "name": "validate_plot_workspace",
-            "signature": "specs: Sequence[PlotSpec]"
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/test_plot_workspace_limits.py"
-        ],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

@@ -1430,10 +1430,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11039,
+      "bytes_lf": 10967,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "edf61514977c97df5ba093c8d01eb9981edef0b6c459b0a143361366204ae878",
+      "content_sha256_lf": "65da9b6e4a9ebd3cc0c4713e600c834cc45d0278d217748a5598ecad52503f21",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-GENERATE-REAL-ASSESSMENTS-PY-37065024ED54",
       "language": "python",
@@ -1441,16 +1441,14 @@
       "path": "generate_real_assessments.py",
       "purpose": null,
       "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
+      "risk_tags": [],
       "states": {
-        "adrs": "mapped",
+        "adrs": "unavailable",
         "artifacts": "not-applicable",
         "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
+        "public_surfaces": "unavailable",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "not-applicable",
@@ -1458,21 +1456,13 @@
         "validation": "not-applicable"
       },
       "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
+        "adr_paths": [],
         "artifact_sha256": [],
         "chapter_paths": [],
         "citation_refs": [],
         "equation_refs": [],
         "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "run_cmd",
-            "signature": "cmd: str"
-          }
-        ],
+        "public_surfaces": [],
         "test_paths": [],
         "unit_mentions": [
           "N",
