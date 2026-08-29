@@ -11357,7 +11357,8 @@
           }
         ],
         "test_paths": [
-          "tests/rate_of_closure/test_club_heads.py"
+          "tests/rate_of_closure/test_club_heads.py",
+          "tests/rate_of_closure/test_club_profile_acceptance.py"
         ],
         "unit_mentions": [
           "g",
@@ -11844,7 +11845,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "not-applicable"
       },
@@ -11885,7 +11886,9 @@
             "signature": "triangles: np.ndarray"
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/rate_of_closure/test_club_profile_acceptance.py"
+        ],
         "unit_mentions": [
           "s"
         ],
@@ -12600,10 +12603,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 4077,
+      "bytes_lf": 4548,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ac50ed8bc51fe9a1c6777b2df40ff4cb35756fa03bc1c2706aec0828cc0a77a3",
+      "content_sha256_lf": "f2f6ddd2ef60dd07c1001b5eba4e75d52bea09d7748583ecbe5b27828d5b530e",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-GLOSSARY-PY-07642CD079F4",
       "language": "python",

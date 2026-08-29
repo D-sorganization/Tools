@@ -159,6 +159,23 @@ test("every registered React tab exposes its primary visual in the initial viewp
         if (entry.tabId === "explorer") {
           await expect(page.getByRole("button", { name: "Play" })).toBeVisible();
         }
+        if (entry.tabId === "putting") {
+          // #4800 P7: the delivered-stroke parameters are part of this
+          // tab's registered surface, so the authority viewport must show
+          // them beside the primary visual rather than behind disclosure.
+          for (const control of [
+            "Aim °", "Face angle °", "Putter path °", "Strike toward toe mm",
+          ]) {
+            await expect(page.getByRole("textbox", { name: control })).toBeVisible();
+          }
+          // #4800 P8: playback rides the shared transport, so the same
+          // viewport must reach it — the Putt wording and Strike/Finish
+          // jumps that bind the subject-neutral bar.
+          for (const control of ["Play Putt", "Jump to Strike", "Jump to Finish"]) {
+            await expect(page.getByRole("button", { name: control })).toBeVisible();
+          }
+          await expect(page.getByRole("slider", { name: "Putt Time" })).toBeVisible();
+        }
         const file = `initial-${entry.tabId}-1440x900.png`;
         const image = await captureStablePage(page);
         await writeFile(resolve(reactCandidateRoot, file), image);

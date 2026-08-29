@@ -28,6 +28,22 @@ class TestTimedTrajectory:
         assert trajectory.apex_time_s == pytest.approx(1.0)
         assert trajectory.frame_at(99.0).is_landing
 
+    def test_steps_to_adjacent_solver_samples_and_clamps_endpoints(self) -> None:
+        trajectory = TimedTrajectory(
+            times_s=np.array([0.0, 1.0, 3.0]),
+            positions_m=np.array([[0.0, 0.0, 0.0], [4.0, 6.0, 0.0], [8.0, 0.0, 2.0]]),
+        )
+
+        assert trajectory.step_time(0.0, 1) == pytest.approx(1.0)
+        assert trajectory.step_time(1.5, 1) == pytest.approx(3.0)
+        assert trajectory.step_time(1.5, -1) == pytest.approx(1.0)
+        assert trajectory.step_time(0.0, -1) == pytest.approx(0.0)
+        assert trajectory.step_time(3.0, 1) == pytest.approx(3.0)
+        with pytest.raises(ValueError, match="finite"):
+            trajectory.step_time(float("nan"), 1)
+        with pytest.raises(ValueError, match="direction"):
+            trajectory.step_time(0.0, 2)
+
     @pytest.mark.parametrize(
         ("times", "positions", "message"),
         [
