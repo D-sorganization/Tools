@@ -11483,10 +11483,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3954,
+      "bytes_lf": 4200,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b2da3ae05ce340aaa1abae6d95425c6b99913f4b6835546dd0ab28648a0f3495",
+      "content_sha256_lf": "e0a0f6477dfb85900f08d27e65b5c767a6c8cf15b66dcb3ba7c02389af8bbd99",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-LAUNCHMONITORCOVARIATIONCHART-TSX-B170B453B303",
       "language": "typescript-react",
@@ -11507,7 +11507,7 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "not-applicable",
-        "units": "not-applicable",
+        "units": "mapped",
         "validation": "not-applicable"
       },
       "traceability": {
@@ -11528,7 +11528,9 @@
           }
         ],
         "test_paths": [],
-        "unit_mentions": [],
+        "unit_mentions": [
+          "N"
+        ],
         "validation_paths": []
       }
     },
