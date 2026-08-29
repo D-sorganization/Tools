@@ -117,7 +117,19 @@ export function parseTorqueSampleRows(text: string): readonly TorqueSampleRow[] 
 }
 
 function designMatrix(times: readonly number[], degree: number): number[][] {
-  return times.map((time) => Array.from({ length: degree + 1 }, (_, power) => time ** power));
+  // ⚡ Bolt Optimization: Avoid Array.from({ length }) and .map overhead by pre-allocating
+  // arrays and using standard for-loops, eliminating closure overhead in hot math paths.
+  const matrix = new Array(times.length);
+  const cols = degree + 1;
+  for (let i = 0; i < times.length; i++) {
+    const time = times[i];
+    const row = new Array(cols);
+    for (let power = 0; power < cols; power++) {
+      row[power] = time ** power;
+    }
+    matrix[i] = row;
+  }
+  return matrix;
 }
 
 function solveLinearSystem(matrix: number[][], values: number[]): number[] {
