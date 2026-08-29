@@ -3,6 +3,50 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 1976,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "db1b073781f6e63878369c790ba04937bd28ef7cc72485e99d01866e6c21fde9",
+      "family": "control-systems-non-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-LIB-DATAAGE-TEST-TS-1DC52DA3401F",
+      "language": "typescript",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/frontend/src/lib/dataAge.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 3067,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -15563,90 +15607,6 @@
         ],
         "unit_mentions": [
           "N"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 15784,
-      "classification": "calculation",
-      "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "8470b8139927eb6bebe8b810371dd84dac74560d0858485920d54a238c95e384",
-      "family": "pendulum-calculation",
-      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-TRANSFER-STRATEGY-PY-FCB7E5D96C91",
-      "language": "python",
-      "maintainer": "Pendulum maintainers",
-      "path": "src/pendulum_simulator/src/double_pendulum_golf/transfer_strategy.py",
-      "purpose": "Phase-resolved metrics for falsifiable proximal-to-distal transfer studies.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "TransferSignals",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TransferSummary",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "double_pendulum_force_attribution",
-            "signature": "result: object"
-          },
-          {
-            "kind": "function",
-            "name": "double_pendulum_transfer_signals",
-            "signature": "result: object"
-          },
-          {
-            "kind": "function",
-            "name": "pareto_front",
-            "signature": "values: object, *, maximize: tuple[bool, ...]"
-          },
-          {
-            "kind": "function",
-            "name": "summarize_transfer",
-            "signature": "signals: TransferSignals, *, start_s: float, end_s: float"
-          }
-        ],
-        "test_paths": [
-          "src/pendulum_simulator/src/double_pendulum_golf/tests/test_transfer_strategy.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
         ],
         "validation_paths": []
       }
