@@ -3,6 +3,50 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 192,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0a7894506eceb9c82550a2fd1e9bddee482dc9ea40ae3ea9745d97cba2fa4312",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-LIBRARY-BUNDLED-INIT-PY-0B5E0912F1D0",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/library/bundled/__init__.py",
+      "purpose": "Bundled model library with standardized URDF and MJCF files.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 11192,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -8245,6 +8289,523 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 1134,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f6ff7f3d59a8fd4b1e418c895e07c64ede58f3a2a16f384b44a774b228add1d1",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-INIT-PY-BD60513A12BD",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/__init__.py",
+      "purpose": "Camera-agnostic markerless-mocap contracts and deterministic interchange.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "Availability",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CameraCapabilities",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CameraIdentity",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ClockDomain",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ClockKind",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CoordinateFrame",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FeatureSupport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FrameStamp",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Landmark3D",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MOCAP_SESSION_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MethodDescriptor",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MocapSessionManifest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "NumericRange",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PixelObservation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RecordingPolicy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RigidTransform",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SessionState",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ShutterKind",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SkeletonDefinition",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SupportLevel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "dumps_canonical",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "load_session_manifest",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2085,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "add08ba75daebca69122e59d046fc7a1ed85a7bccd288e4b09b2453338e48623",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-VALIDATION-PY-667AA903FE6B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/_validation.py",
+      "purpose": "Private validation helpers for markerless-mocap contracts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5389,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f2a755d559c8a5b6bc3ca0e3756e33b1a1e4e433609be3c64ebb73e783ee6689",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-DEVICES-PY-29DA2D3D12B3",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/devices.py",
+      "purpose": "Vendor-neutral camera identity and capability records.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1218,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3f4fa8497e135435678d71eb1d5fa91c72ca26671f8dcc0adf7bd5f9f0059fb4",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-ENUMS-PY-2EC075615E18",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/enums.py",
+      "purpose": "Enumerations used by camera-agnostic markerless-mocap contracts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3019,
+      "classification": "calculation",
+      "classification_basis": "path-marker:geometry",
+      "content_sha256_lf": "47326d4c54a0550261c64ce0c0962bec5766dd132391d163ef23816881d29836",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-GEOMETRY-PY-0003847C3D41",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/geometry.py",
+      "purpose": "Coordinate-frame and rigid-transform contracts.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "src/shared/python/programmatic_pid/tests/test_geometry.py",
+          "tests/programmatic_pid/test_geometry.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4988,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "aa3b10c8dcd3f34b502ce2497cc661eae810f1de5cc824260025d369be949984",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-OBSERVATIONS-PY-B9AA5942A0C3",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/observations.py",
+      "purpose": "Canonical 2-D and 3-D markerless-mocap observation records.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5394,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d017e5044de0534ec0b888725fb94f24af9d7cb5e7365a1757240214db9b3118",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-SERIALIZATION-PY-8C72FF82DE0B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/serialization.py",
+      "purpose": "Deterministic serialization for markerless-mocap contracts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_serialization.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5671,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0e9c034420b761330d53ac6c6ff3abd5571562a943f296c7f160afcc8ad7166c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-SESSION-PY-49348A36FD7D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/session.py",
+      "purpose": "Versioned markerless-mocap session and provenance records.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2801,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "80b888c3757b4bcb1744b003c0386dd33ac3b2eca4ea50059f7942b61332dbc0",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-TIMEBASE-PY-7FFB95005501",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/timebase.py",
+      "purpose": "Clock-domain and frame-timestamp evidence contracts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 8424,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -8665,6 +9226,7 @@
         ],
         "test_paths": [
           "tests/integration/sidekick/test_standalone_wheel.py",
+          "tests/shared/python/sidekick/lab/mocap/test_schema.py",
           "tests/unit/sidekick/test_standalone_canonical_package.py",
           "tests/unit/sidekick/test_standalone_runtime.py"
         ],
@@ -16941,912 +17503,6 @@
             "kind": "constant",
             "name": "SIDEKICK_CALCULATOR_OBJECT_NAME",
             "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 7615,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "b4e5795171428c531ca8c6cbd7c9bd5b70e7b8e11a311fe38f68697947fd20fb",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-CALCULATOR-STARTUP-PY-A7A1178C27DC",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/calculator_startup.py",
-      "purpose": "Validated startup imports for the Sidekick calculator.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CalculatorStartupConfig",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CalculatorStartupImport",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CalculatorStartupResult",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CalculatorStartupWarning",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_CALCULATOR_STARTUP_IMPORTS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_REPL_STARTUP_IMPORTS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "apply_calculator_startup_imports",
-            "signature": "namespace: MutableMapping[str, Any], config: CalculatorStartupConfig"
-          },
-          {
-            "kind": "function",
-            "name": "calculator_startup_config_from_state_payload",
-            "signature": "payload: Any"
-          },
-          {
-            "kind": "function",
-            "name": "default_calculator_startup_config",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "default_repl_startup_config",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "tests/integration/sidekick/test_sidekick_host_integration.py",
-          "tests/unit/sidekick/test_python_repl_cancel_namespace_3715.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 13704,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "af50a4f32546db075df99e2b841eba43e6a0e244c3c68f66689bd0d31182fd58",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-CALCULATOR-WORKSPACE-PY-84DB7978C651",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/calculator_workspace.py",
-      "purpose": "Calculator-local workspace persistence helpers for Sidekick.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CalculatorWorkspaceActions",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CalculatorWorkspaceController",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CalculatorWorkspaceLoadResult",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CalculatorWorkspaceSettings",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GlobalWorkspaceController",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GlobalWorkspaceSettings",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_calculator_workspace_controls",
-            "signature": "parent: Any, actions: CalculatorWorkspaceActions"
-          },
-          {
-            "kind": "function",
-            "name": "default_calculator_workspace_controller",
-            "signature": "registry: WorkspaceRegistry, *, storage_dir: Path | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "default_global_workspace_controller",
-            "signature": "registry: WorkspaceRegistry, *, storage_dir: Path | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "evaluate_calculator_expression",
-            "signature": "expression: str"
-          },
-          {
-            "kind": "function",
-            "name": "get_default_sidekick_dir",
-            "signature": "app_name: str | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "workspace_value_for_calculator_result",
-            "signature": "value: Any"
-          },
-          {
-            "kind": "re-export",
-            "name": "CALCULATOR_WORKSPACE_SCOPE",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CalculatorWorkspaceFacade",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "GLOBAL_WORKSPACE_SCOPE",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/contracts/test_workspace_contract_conformance.py",
-          "tests/shared/python/sidekick/ui/test_tools_sidebar_calculator_workspace.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "tests/contracts/test_workspace_contract_conformance.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 6481,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "8f102243c3787b3a759c47c017e0b20f7dff8133eafdf88166a7e4b954b14df4",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-CALCULATOR-WORKSPACE-FACADE-PY-DB8D70127BA3",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/calculator_workspace_facade.py",
-      "purpose": "Calculator-local workspace facade for Sidekick.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CalculatorWorkspaceFacade",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CALCULATOR_WORKSPACE_SCOPE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GLOBAL_WORKSPACE_SCOPE",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 15602,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b37f897503a156fe70457f79459d7e05496513a3a88b5b3426ccf69ba3cf5bfc",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-CHAT-SETTINGS-PY-7577823615CD",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/chat_settings.py",
-      "purpose": "Robust settings panel and descriptor for the Sidekick **Chat** tab.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ChatSettingsPanel",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CHAT_TAB_SETTINGS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_chat_settings_panel",
-            "signature": "sidebar: Any, tab_id: str"
-          },
-          {
-            "kind": "re-export",
-            "name": "CHAT_AGENT_MODES",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CHAT_PROVIDERS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CHAT_SETTINGS_SCHEMA_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CHAT_TAB_ID",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CHAT_TAB_SETTINGS_DEFAULTS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CHAT_THINKING_LEVELS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "apply_chat_settings_to_dock",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "chat_settings_defaults",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "coerce_chat_settings",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "credential_status",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/unit/sidekick/test_chat_settings.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5423,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "faffdfc1347531632b3e23e53f87841668991a27524a383a5ffc10134ed5a055",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-CHAT-SETTINGS-CONTRACT-PY-BEF8E48C45A6",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/chat_settings_contract.py",
-      "purpose": "Headless chat-settings contracts for the Sidekick chat tab.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "CHAT_AGENT_MODES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CHAT_PROVIDERS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CHAT_SETTINGS_SCHEMA_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CHAT_TAB_ID",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CHAT_TAB_SETTINGS_DEFAULTS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CHAT_THINKING_LEVELS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_ALLOWED_KEYS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_DEFAULT_CONDENSE_THRESHOLD",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_MAX_CONDENSE_THRESHOLD",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_MIN_CONDENSE_THRESHOLD",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "apply_chat_settings_to_dock",
-            "signature": "dock: Any, values: Mapping[str, Any]"
-          },
-          {
-            "kind": "function",
-            "name": "chat_settings_defaults",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "coerce_chat_settings",
-            "signature": "values: Mapping[str, Any] | None"
-          },
-          {
-            "kind": "function",
-            "name": "credential_status",
-            "signature": "manager: Any, providers: tuple[str, ...]=CHAT_PROVIDERS"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 17447,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4d3bf57cf484d5d06bc6bdb742c45e606b08fcf1b0f1537ffb8898438158f02c",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-CHAT-TAB-PY-2B00A350D4EA",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/chat_tab.py",
-      "purpose": "Embedded chat runtime and fallback widgets for Sidekick.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "SIDEKICK_CHAT_RUNTIME_OBJECT_NAME",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SIDEKICK_CHAT_STATUS_OBJECT_NAME",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_CHAT_INSTALL_HINT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_DEFAULT_CHAT_ACCENT_COLOR",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/unit/sidekick/test_runtime_split_coverage.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4686,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3826175b90c6b36e2ba6d9289b6f54741923906d95c074b796a392385ae50544",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-COMMAND-HISTORY-PY-7076C0CB3B1B",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/command_history.py",
-      "purpose": "Backend command history for Sidekick calculator inputs.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CommandHistoryController",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_COMMAND_HISTORY_LIMIT",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/integration/sidekick/test_sidekick_host_integration.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 13445,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ebd42be225b903b866e81f367f5f093dafe900f3fa1580f4d25bd9c85bd148c4",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-DATA-EXPLORER-SERVICE-PY-1C7CD9F14F7E",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/data_explorer_service.py",
-      "purpose": "Pure-Python data preview service for the Sidekick Data Explorer tab.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "DataExplorerColumnSummary",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "DataExplorerError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "DataExplorerPreview",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "DataExplorerService",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_DATA_EXPLORER_MAX_FILE_SIZE_BYTES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_DATA_EXPLORER_PREVIEW_ROWS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SUPPORTED_DATA_EXPLORER_SUFFIXES",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "resolve_columns",
-            "signature": "available: list[str], selected: list[str] | None, error_cls: type[Exception], error_code: str='unknown_columns', error_msg_prefix: str='Selected columns are not available: '"
-          }
-        ],
-        "test_paths": [
-          "src/p1am_control_system/backend/tests/test_data_explorer_service.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 15653,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4691df65ed66ed33852ad5d85ca7104aa0496c51a33479acafa56f1710e28436",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-DATA-EXPLORER-TAB-PY-373F2C3E11A4",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/data_explorer_tab.py",
-      "purpose": "Qt Data Explorer tab for the shared Sidekick sidebar.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SidekickDataExplorerWidget",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DATA_EXPLORER_TAB_ID",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DATA_EXPLORER_TAB_SETTINGS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_data_explorer_tab",
-            "signature": "sidebar: Any"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "bar",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 10524,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "dd8718ee1a8c6e49f1ea7400273711b31d17736c79a1d769a53596725af341fa",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-DATA-PROCESSOR-TAB-PY-3AF21B92281F",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/data_processor_tab.py",
-      "purpose": "Lazy Sidekick adapter for the optional Data Processor tab.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "DataProcessorTabError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SidekickDataProcessorTab",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DATA_PROCESSOR_TAB_ID",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_DATA_PROCESSOR_VARIABLE_NAME",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_data_processor_tab",
-            "signature": "sidebar: Any"
-          },
-          {
-            "kind": "function",
-            "name": "export_data_processor_frame",
-            "signature": "frame: Any, registry: WorkspaceRegistry, variable_name: str, *, selected_columns: list[str] | None=None"
           }
         ],
         "test_paths": [],
