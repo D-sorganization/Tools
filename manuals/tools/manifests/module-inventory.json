@@ -203,162 +203,162 @@
   },
   "shards": [
     {
-      "content_sha256_lf": "c09b4cb3a24babf37304c0d4122d59f87307eefa4354673a3fcd6fb1b01f54a5",
+      "content_sha256_lf": "0bbeb61fd830d2f8ea79b89903c296cf69282931259958f63c6e79f72327884b",
       "entry_count": 200,
       "first_path": ".docker/entrypoint.sh",
-      "last_path": "scripts/check_minimum_test_contract.py",
+      "last_path": "scripts/check_local_only_workflows.py",
       "path": "manuals/tools/manifests/module-inventory/entries-000.json",
       "shard_index": 0
     },
     {
-      "content_sha256_lf": "b8117d920d2d7008e7faa6b4f4a2d56ac7024a6017f23b8215afa6404c5a94e3",
+      "content_sha256_lf": "1038ea9855fe3c1b8bac04a913f09fc4da00f73d860c31bce46b3ec0ee0eba13",
       "entry_count": 200,
-      "first_path": "scripts/check_mirror_freshness.py",
-      "last_path": "src/data_processing/data_processor/web/src/App.tsx",
+      "first_path": "scripts/check_minimum_test_contract.py",
+      "last_path": "src/data_processing/data_processor/web/src-tauri/src/main.rs",
       "path": "manuals/tools/manifests/module-inventory/entries-001.json",
       "shard_index": 1
     },
     {
-      "content_sha256_lf": "b7b18e3c9349fc3cfb9d4529a4adc6a2eb457875c0d98dcaa08a2bfd60ec6068",
+      "content_sha256_lf": "36cb0ac355da5a1575b61a5fa978a17a37771cc9454d5d63473fb0a22f55d1c4",
       "entry_count": 200,
-      "first_path": "src/data_processing/data_processor/web/src/components/AdvancedPanel.tsx",
-      "last_path": "src/media_processing/video_processor/apps/web/components/golf/PhaseTimeline.tsx",
+      "first_path": "src/data_processing/data_processor/web/src/App.tsx",
+      "last_path": "src/media_processing/video_processor/apps/web/components/golf/MetricsPanel.tsx",
       "path": "manuals/tools/manifests/module-inventory/entries-002.json",
       "shard_index": 2
     },
     {
-      "content_sha256_lf": "a31d32c933907fe8adb9fb493d8ad5392fc42f0dd364f114f4d0cf05f9e2ff74",
+      "content_sha256_lf": "fa9d7e8111f9e0f6a577738317de829103c6335d565d73e83525778db953f561",
       "entry_count": 200,
-      "first_path": "src/media_processing/video_processor/apps/web/components/golf/PoseOverlay.tsx",
-      "last_path": "src/p1am_control_system/backend/data_capture.py",
+      "first_path": "src/media_processing/video_processor/apps/web/components/golf/PhaseTimeline.tsx",
+      "last_path": "src/p1am_control_system/backend/cors_config.py",
       "path": "manuals/tools/manifests/module-inventory/entries-003.json",
       "shard_index": 3
     },
     {
-      "content_sha256_lf": "c89be1c458d90800632e49f96983f9a77df04fdb09e42f54802be4eee77364fa",
+      "content_sha256_lf": "41fa7905e9da0092a984d953d580b504f86962abaa03162f7bac6ddd3cb76756",
       "entry_count": 200,
-      "first_path": "src/p1am_control_system/backend/data_explorer_enums.py",
-      "last_path": "src/p1am_control_system/frontend/src/lib/dataAge.test.ts",
+      "first_path": "src/p1am_control_system/backend/data_capture.py",
+      "last_path": "src/p1am_control_system/frontend/src/lib/curveFit.ts",
       "path": "manuals/tools/manifests/module-inventory/entries-004.json",
       "shard_index": 4
     },
     {
-      "content_sha256_lf": "9fc8ed69944d95879f06c4d9322fbe992ee227e0873d1e898769e8dd80caa942",
+      "content_sha256_lf": "c972731dab0cda06712d32905a5170eb0e3590ebf39d95a1663d9081f76ccd8f",
       "entry_count": 200,
-      "first_path": "src/p1am_control_system/frontend/src/lib/dataAge.ts",
-      "last_path": "src/pendulum_simulator/src/double_pendulum_golf/transfer_strategy.py",
+      "first_path": "src/p1am_control_system/frontend/src/lib/dataAge.test.ts",
+      "last_path": "src/pendulum_simulator/src/double_pendulum_golf/torque_utils.py",
       "path": "manuals/tools/manifests/module-inventory/entries-005.json",
       "shard_index": 5
     },
     {
-      "content_sha256_lf": "d09818a9ef102f45a4067f050ee46637ad3c5c34ee91f77d6b4b56d634e48637",
+      "content_sha256_lf": "a5e96bdeb55de78fd6e05bf28183dad34dcbcdeaaa33990ef53870992bd04368",
       "entry_count": 200,
-      "first_path": "src/pid_generator/__init__.py",
-      "last_path": "src/rate_of_closure/plotting/__init__.py",
+      "first_path": "src/pendulum_simulator/src/double_pendulum_golf/transfer_strategy.py",
+      "last_path": "src/rate_of_closure/plot_workspace_limits.py",
       "path": "manuals/tools/manifests/module-inventory/entries-006.json",
       "shard_index": 6
     },
     {
-      "content_sha256_lf": "1a0abc765425ee3366664fc0f3ea06851a98cd04c434f61a5b1aa200f9fd656f",
+      "content_sha256_lf": "95caa6ed0a8734f51133cf6004fdf739a261079876af8a6d99fe351fd050c29e",
       "entry_count": 200,
-      "first_path": "src/rate_of_closure/plotting/_catalog_entries.py",
-      "last_path": "src/rate_of_closure/ui/pyqt6/torque_profile_panel_behavior.py",
+      "first_path": "src/rate_of_closure/plotting/__init__.py",
+      "last_path": "src/rate_of_closure/ui/pyqt6/torque_profile_panel.py",
       "path": "manuals/tools/manifests/module-inventory/entries-007.json",
       "shard_index": 7
     },
     {
-      "content_sha256_lf": "6bd31bbd6744d19050b76dcd0e45d2fd0fda0b0622e64456021902b049f6efb4",
+      "content_sha256_lf": "ae46fa47c3b3398fc56434c4a0bf641c5abb8a72583743cd66934364fbed4b21",
       "entry_count": 200,
-      "first_path": "src/rate_of_closure/ui/pyqt6/torque_profile_widgets.py",
-      "last_path": "src/rate_of_closure/web/src/components/PlaybackTransportBar.tsx",
+      "first_path": "src/rate_of_closure/ui/pyqt6/torque_profile_panel_behavior.py",
+      "last_path": "src/rate_of_closure/web/src/components/PlaneTiltControls.tsx",
       "path": "manuals/tools/manifests/module-inventory/entries-008.json",
       "shard_index": 8
     },
     {
-      "content_sha256_lf": "6f2d39b5ce50c90785db214ab0b17857d5e2330f0fc95c242f60f6379a0d6797",
+      "content_sha256_lf": "849c26cb94f3acc9526764463af12f65c49b7d1f82e77ce45e3daceb42afea0f",
       "entry_count": 200,
-      "first_path": "src/rate_of_closure/web/src/components/PlotCanvasCard.test.tsx",
-      "last_path": "src/rate_of_closure/web/src/model/csvSecurity.test.ts",
+      "first_path": "src/rate_of_closure/web/src/components/PlaybackTransportBar.tsx",
+      "last_path": "src/rate_of_closure/web/src/model/course.ts",
       "path": "manuals/tools/manifests/module-inventory/entries-009.json",
       "shard_index": 9
     },
     {
-      "content_sha256_lf": "2f306fc15877e872d998877a297537a3efeef75f401a3996789db9eb1e4fed4c",
+      "content_sha256_lf": "8e69af382e38d4b14bfdb80e0976946b598274c5bc5c53ab9935fb9cb2212a5a",
       "entry_count": 200,
-      "first_path": "src/rate_of_closure/web/src/model/csvSecurity.ts",
-      "last_path": "src/rate_of_closure/web/src/model/repeatedBounceRequestWire.ts",
+      "first_path": "src/rate_of_closure/web/src/model/csvSecurity.test.ts",
+      "last_path": "src/rate_of_closure/web/src/model/repeatedBounceRequestWire.test.ts",
       "path": "manuals/tools/manifests/module-inventory/entries-010.json",
       "shard_index": 10
     },
     {
-      "content_sha256_lf": "c3407d161970ad4246ff4971a27edd33ac30647ba838a9257528c4217ab38a85",
+      "content_sha256_lf": "a03d28ddbfe027a1da8163136e7b8fa5338c6852c909abeba807365ff172ab4a",
       "entry_count": 200,
-      "first_path": "src/rate_of_closure/web/src/model/repeatedBounceWire.test.ts",
-      "last_path": "src/rotation_converter/web/postcss.config.js",
+      "first_path": "src/rate_of_closure/web/src/model/repeatedBounceRequestWire.ts",
+      "last_path": "src/rotation_converter/web/index.html",
       "path": "manuals/tools/manifests/module-inventory/entries-011.json",
       "shard_index": 11
     },
     {
-      "content_sha256_lf": "11c43f25eef025539850cbcb19190acf8316bf3130fa651c0f72af006e99015d",
+      "content_sha256_lf": "2f494d6cac3620902516fef6ff461a9f247a1ad3881dd19587e6ae47a4de3c9b",
       "entry_count": 200,
-      "first_path": "src/rotation_converter/web/src-tauri/build.rs",
-      "last_path": "src/shared/python/chat/_qt/ui_builder.py",
+      "first_path": "src/rotation_converter/web/postcss.config.js",
+      "last_path": "src/shared/python/chat/_qt/styling.py",
       "path": "manuals/tools/manifests/module-inventory/entries-012.json",
       "shard_index": 12
     },
     {
-      "content_sha256_lf": "77de1a3a4df16b49fb019710b3f3e5f90bb338510f6010a552c7b95060b50564",
+      "content_sha256_lf": "735bc8c73d189ac1721ddd14765ae06a51f83c9337fe9cc56396b10644516f1a",
       "entry_count": 200,
-      "first_path": "src/shared/python/chat/_qt/workspace.py",
-      "last_path": "src/shared/python/model_generation/library/bundled/__init__.py",
+      "first_path": "src/shared/python/chat/_qt/ui_builder.py",
+      "last_path": "src/shared/python/model_generation/library/_rate_limiter.py",
       "path": "manuals/tools/manifests/module-inventory/entries-013.json",
       "shard_index": 13
     },
     {
-      "content_sha256_lf": "83be5ddc34faa15a9ef546e570719940b395a0105e73ad8fcc353afd30807404",
+      "content_sha256_lf": "605008b451584cc6e5c751157343ed2355774235d06969b29c365e47e92666b2",
       "entry_count": 200,
-      "first_path": "src/shared/python/model_generation/library/cache.py",
-      "last_path": "src/shared/python/sidekick/ui/tools_sidebar/data_processor_tab.py",
+      "first_path": "src/shared/python/model_generation/library/bundled/__init__.py",
+      "last_path": "src/shared/python/sidekick/ui/tools_sidebar/calculator_runtime.py",
       "path": "manuals/tools/manifests/module-inventory/entries-014.json",
       "shard_index": 14
     },
     {
-      "content_sha256_lf": "135a55346af5df5e1dee03f0f2ad1f58b3cd0f5682c0e15ecb53f75f2b3ee2ac",
+      "content_sha256_lf": "5741ccdcd84b94d66dc1444ac3306c48806326ac3445d4aacdb3e5600952f33c",
       "entry_count": 200,
-      "first_path": "src/shared/python/sidekick/ui/tools_sidebar/default_tabs.py",
-      "last_path": "src/shared/python/swing_sim/impact/solver.py",
+      "first_path": "src/shared/python/sidekick/ui/tools_sidebar/calculator_startup.py",
+      "last_path": "src/shared/python/swing_sim/ground/unavailable_types.py",
       "path": "manuals/tools/manifests/module-inventory/entries-015.json",
       "shard_index": 15
     },
     {
-      "content_sha256_lf": "8cb85a79e6422e90c649d68c935840badb49ef7f219bc4ebd93cc977a1a6576a",
+      "content_sha256_lf": "19abec6c7f0ce485685feca935eacc1ea83b213340e31a2a127cffecfb7bfd1c",
       "entry_count": 200,
-      "first_path": "src/shared/python/swing_sim/impact/types.py",
-      "last_path": "src/tools/dependency_utils.py",
+      "first_path": "src/shared/python/swing_sim/ground/upstream_terrain_adapter.py",
+      "last_path": "src/steam_engine_calculator/web/src/App.tsx",
       "path": "manuals/tools/manifests/module-inventory/entries-016.json",
       "shard_index": 16
     },
     {
-      "content_sha256_lf": "684b5f383f89b458a67a5e858a77fc8104db64cd380a4c478a0bf58955e2c9f8",
-      "entry_count": 122,
-      "first_path": "src/tools/folder_tools/folder_tool/__init__.py",
+      "content_sha256_lf": "9bc2479da4f869007d978c2288d9f4a89b546ce7d3ece09e5aecebe2cfb88d57",
+      "entry_count": 132,
+      "first_path": "src/steam_engine_calculator/web/src/components/SteamEngineCalculator.tsx",
       "last_path": "wave_solver.py",
       "path": "manuals/tools/manifests/module-inventory/entries-017.json",
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "64d37685d086dfe3ae362326352e7860737286be5420330dd0339076b64c8ab7",
+  "source_tree_sha256": "bf58769823e879e697413cc0e866f6680a4e7ceae07270498d8a2d317e88f225",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
-      "not-applicable": 2688,
-      "provisional": 833
+      "not-applicable": 2697,
+      "provisional": 834
     },
     "blocked_count": 1,
-    "calculation_count": 833,
+    "calculation_count": 834,
     "classification_counts": {
-      "calculation": 833,
-      "non-calculation": 2689
+      "calculation": 834,
+      "non-calculation": 2698
     },
     "family_counts": {
       "control-systems-calculation": 6,
@@ -373,22 +373,22 @@
       "process-calculators-calculation": 59,
       "rate-of-closure-calculation": 163,
       "rate-of-closure-non-calculation": 923,
-      "repository-governance-non-calculation": 4,
+      "repository-governance-non-calculation": 5,
       "repository-tooling-non-calculation": 76,
       "rotation-converter-calculation": 132,
-      "shared-tools-calculation": 171,
-      "shared-tools-non-calculation": 1024,
+      "shared-tools-calculation": 172,
+      "shared-tools-non-calculation": 1032,
       "signal-processing-calculation": 28,
       "swing-simulation-calculation": 62,
       "swing-simulation-non-calculation": 149
     },
-    "module_count": 3522,
-    "non_calculation_count": 2689,
-    "provisional_count": 833,
+    "module_count": 3532,
+    "non_calculation_count": 2698,
+    "provisional_count": 834,
     "review_status_counts": {
       "blocked": 1,
-      "inventory-baseline": 2688,
-      "review-required": 833
+      "inventory-baseline": 2697,
+      "review-required": 834
     }
   }
 }
