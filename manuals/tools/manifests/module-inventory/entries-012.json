@@ -3,6 +3,53 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 79,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "082f9a07aae22ae329bfc652d405ba5a704cba1ee86f4b78c7c70f98d628a610",
+      "family": "rotation-converter-calculation",
+      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-WEB-POSTCSS-CONFIG-JS-45D7F3671C4C",
+      "language": "javascript",
+      "maintainer": "Rotation converter maintainers",
+      "path": "src/rotation_converter/web/postcss.config.js",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 39,
       "classification": "calculation",
       "classification_basis": "path-marker:rotation",
@@ -7686,6 +7733,7 @@
           "tests/architecture/test_ai_mcp_core_imports_3316.py",
           "tests/rate_of_closure/test_contracts.py",
           "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/test_contracts.py",
           "tests/unit/ai/integrations/github_mcp/test_integration.py",
           "tests/unit/ai/integrations/github_mcp/test_server_config.py",
@@ -7706,6 +7754,7 @@
           "src/shared/python/model_generation/tests/test_contracts.py",
           "tests/rate_of_closure/test_contracts.py",
           "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/test_contracts.py",
           "tests/unit/ai/mcp/test_contracts.py",
           "tests/unit/ai/peer_review/test_contracts.py",
@@ -9232,6 +9281,7 @@
           "src/shared/python/model_generation/tests/test_contracts.py",
           "tests/rate_of_closure/test_contracts.py",
           "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/test_contracts.py",
           "tests/unit/ai/mcp/test_contracts.py",
           "tests/unit/ai/peer_review/test_builtin_advocate.py",
@@ -9254,6 +9304,7 @@
           "src/shared/python/model_generation/tests/test_contracts.py",
           "tests/rate_of_closure/test_contracts.py",
           "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/test_contracts.py",
           "tests/unit/ai/mcp/test_contracts.py",
           "tests/unit/ai/peer_review/test_contracts.py",
@@ -10284,6 +10335,7 @@
           "src/shared/python/model_generation/tests/test_contracts.py",
           "tests/rate_of_closure/test_contracts.py",
           "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/test_contracts.py",
           "tests/unit/ai/mcp/test_contracts.py",
           "tests/unit/ai/peer_review/test_contracts.py",
@@ -10300,6 +10352,7 @@
           "src/shared/python/model_generation/tests/test_contracts.py",
           "tests/rate_of_closure/test_contracts.py",
           "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/test_contracts.py",
           "tests/unit/ai/mcp/test_contracts.py",
           "tests/unit/ai/peer_review/test_contracts.py",
@@ -14778,74 +14831,6 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 18854,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "1c0f29d6da49202526150169f22db68bec4a80edf4d26c7b283ef92042a1bdb1",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-QT-UI-BUILDER-PY-45D90DB4DE0A",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/_qt/ui_builder.py",
-      "purpose": "UI-construction helper for :class:`ChatDockWidget`.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ChatDockView",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_chat_dock_ui",
-            "signature": "dock: Any"
-          },
-          {
-            "kind": "function",
-            "name": "mirror_chat_dock_view",
-            "signature": "dock: Any, view: ChatDockView"
-          }
-        ],
-        "test_paths": [
-          "src/movement_optimizer/tests/test_ui_builder.py",
-          "tests/shared/python/chat/test_chat_dock_view_state.py"
-        ],
-        "unit_mentions": [
-          "bar",
-          "s"
-        ],
         "validation_paths": []
       }
     }

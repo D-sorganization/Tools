@@ -1,0 +1,54 @@
+{
+  "calibration_ids": [
+    "calibration-reference-v1"
+  ],
+  "cameras": [
+    {
+      "device_id": "camera-01",
+      "firmware_version": null,
+      "model": "reference-camera",
+      "provider_id": "synthetic",
+      "serial_number": "SYN-001",
+      "transport": "memory",
+      "vendor": "D-sorganization"
+    }
+  ],
+  "clocks": [
+    {
+      "clock_id": "synthetic-clock",
+      "kind": "device-hardware",
+      "monotonic": true,
+      "tick_period_seconds": 1e-09
+    }
+  ],
+  "created_at_utc": "2026-08-25T20:00:00Z",
+  "methods": [
+    {
+      "artifact_sha256": null,
+      "implementation": "sidekick.lab.mocap",
+      "license_spdx": "MIT",
+      "method_id": "synthetic-capture",
+      "version": "1.0.0"
+    }
+  ],
+  "recording_policy": {
+    "consent_recorded": true,
+    "no_store": true,
+    "raw_video_retained": false,
+    "retention_days": 0
+  },
+  "schema_version": "mocap-session/1.0.0",
+  "session_id": "session-2026-08-25-001",
+  "state": "finalized",
+  "warnings": [
+    "synthetic fixture; not physical qualification"
+  ],
+  "world_frame": {
+    "frame_id": "affinedrift-world-v1",
+    "handedness": "right-handed",
+    "length_unit": "m",
+    "x_axis": "toward-target",
+    "y_axis": "up",
+    "z_axis": "right"
+  }
+}

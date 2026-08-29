@@ -3,6 +3,102 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 6922,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0d3abd3f8829ee5ff2d2638f43b8e7504f6f74b1422359657f41326e0d094453",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-REPEATEDBOUNCEREQUESTWIRE-TS-8CA12C060C4D",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/repeatedBounceRequestWire.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "MAX_REPEATED_BOUNCE_REQUEST_WIRE_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "REPEATED_BOUNCE_MODEL_ID",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "REPEATED_BOUNCE_MODEL_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "REPEATED_BOUNCE_REQUEST_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "RepeatedBounceRequest",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "RepeatedBounceRequestResultPair",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "pairRepeatedBounceRequestResult",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "parseRepeatedBounceRequest",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "repeatedBounceRequestFromJson",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "stableRepeatedBounceRequestJson",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 4945,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -10623,6 +10719,7 @@
           "tests/rate_of_closure/test_contracts.py",
           "tests/rate_of_closure/test_web_companion_contracts.py",
           "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/test_contracts.py",
           "tests/unit/ai/mcp/test_contracts.py",
           "tests/unit/ai/peer_review/test_contracts.py",
@@ -10636,6 +10733,7 @@
           "tests/rate_of_closure/test_contracts.py",
           "tests/rate_of_closure/test_web_companion_contracts.py",
           "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/test_contracts.py",
           "tests/unit/ai/mcp/test_contracts.py",
           "tests/unit/ai/peer_review/test_contracts.py",
@@ -14825,53 +14923,6 @@
       "language": "html",
       "maintainer": "Rotation converter maintainers",
       "path": "src/rotation_converter/web/index.html",
-      "purpose": null,
-      "review_status": "review-required",
-      "risk_tags": [
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 79,
-      "classification": "calculation",
-      "classification_basis": "path-marker:rotation",
-      "content_sha256_lf": "082f9a07aae22ae329bfc652d405ba5a704cba1ee86f4b78c7c70f98d628a610",
-      "family": "rotation-converter-calculation",
-      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-WEB-POSTCSS-CONFIG-JS-45D7F3671C4C",
-      "language": "javascript",
-      "maintainer": "Rotation converter maintainers",
-      "path": "src/rotation_converter/web/postcss.config.js",
       "purpose": null,
       "review_status": "review-required",
       "risk_tags": [

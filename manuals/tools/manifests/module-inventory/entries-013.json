@@ -3,6 +3,74 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 18854,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1c0f29d6da49202526150169f22db68bec4a80edf4d26c7b283ef92042a1bdb1",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-QT-UI-BUILDER-PY-45D90DB4DE0A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/_qt/ui_builder.py",
+      "purpose": "UI-construction helper for :class:`ChatDockWidget`.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ChatDockView",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_chat_dock_ui",
+            "signature": "dock: Any"
+          },
+          {
+            "kind": "function",
+            "name": "mirror_chat_dock_view",
+            "signature": "dock: Any, view: ChatDockView"
+          }
+        ],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_ui_builder.py",
+          "tests/shared/python/chat/test_chat_dock_view_state.py"
+        ],
+        "unit_mentions": [
+          "bar",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 1955,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -861,6 +929,7 @@
           "src/shared/python/model_generation/tests/test_contracts.py",
           "tests/rate_of_closure/test_contracts.py",
           "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/test_contracts.py",
           "tests/unit/ai/mcp/test_contracts.py",
           "tests/unit/ai/peer_review/test_contracts.py",
@@ -873,6 +942,7 @@
           "src/shared/python/model_generation/tests/test_contracts.py",
           "tests/rate_of_closure/test_contracts.py",
           "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/test_contracts.py",
           "tests/unit/ai/mcp/test_contracts.py",
           "tests/unit/ai/peer_review/test_contracts.py",
@@ -1227,6 +1297,7 @@
           "src/shared/python/model_generation/tests/test_contracts.py",
           "tests/rate_of_closure/test_contracts.py",
           "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/test_contracts.py",
           "tests/unit/ai/mcp/test_contracts.py",
           "tests/unit/ai/peer_review/test_contracts.py",
@@ -1239,6 +1310,7 @@
           "src/shared/python/model_generation/tests/test_contracts.py",
           "tests/rate_of_closure/test_contracts.py",
           "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/test_contracts.py",
           "tests/unit/ai/mcp/test_contracts.py",
           "tests/unit/ai/peer_review/test_contracts.py",
@@ -4431,6 +4503,7 @@
           "tests/shared/python/gui_launcher/test_registry.py",
           "tests/shared/python/process_calculators/test_scrubber_calculator.py",
           "tests/shared/python/process_calculators/test_syngas_water_calculator_edge_cases.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/test_contracts.py",
           "tests/shared/python/test_cors.py",
           "tests/test_body_parameters_strict_validation.py",
@@ -4486,6 +4559,7 @@
           "tests/rate_of_closure/test_web_companion_contracts.py",
           "tests/shared/python/chat/test_terminal_contracts.py",
           "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/test_contracts.py",
           "tests/test_body_parameters_strict_validation.py",
           "tests/tools/test_scientific_auditor.py",
@@ -9572,6 +9646,7 @@
           "src/shared/python/model_generation/tests/test_contracts.py",
           "tests/rate_of_closure/test_contracts.py",
           "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/test_contracts.py",
           "tests/unit/ai/mcp/test_contracts.py",
           "tests/unit/ai/peer_review/test_contracts.py",
@@ -9585,6 +9660,7 @@
           "src/shared/python/model_generation/tests/test_contracts.py",
           "tests/rate_of_closure/test_contracts.py",
           "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/test_contracts.py",
           "tests/unit/ai/mcp/test_contracts.py",
           "tests/unit/ai/peer_review/test_contracts.py",
@@ -14648,6 +14724,7 @@
           "tests/rate_of_closure/test_contracts.py",
           "tests/shared/python/golf_club/test_contracts.py",
           "tests/shared/python/model_generation/inertia/test_calculator.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/test_contracts.py",
           "tests/test_phase2_critical_bugs.py",
           "tests/unit/ai/mcp/test_contracts.py",
@@ -14661,6 +14738,7 @@
           "src/shared/python/model_generation/tests/test_contracts.py",
           "tests/rate_of_closure/test_contracts.py",
           "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/test_contracts.py",
           "tests/unit/ai/mcp/test_contracts.py",
           "tests/unit/ai/peer_review/test_contracts.py",
@@ -16526,50 +16604,6 @@
         "unit_mentions": [
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 192,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0a7894506eceb9c82550a2fd1e9bddee482dc9ea40ae3ea9745d97cba2fa4312",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-LIBRARY-BUNDLED-INIT-PY-0B5E0912F1D0",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/library/bundled/__init__.py",
-      "purpose": "Bundled model library with standardized URDF and MJCF files.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }
