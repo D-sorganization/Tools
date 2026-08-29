@@ -15,7 +15,7 @@ pytest>=9.0.3  # Testing framework
 pytest-qt>=4.4.0  # Pytest plugin for PyQt applications
 pytest-cov>=4.0.0  # Coverage plugin for pytest (code coverage metrics)
 jsonschema>=4.26.0  # Draft 2020-12 validator for the swing_sim ground profile schema tests
-pypdf>=6.15.0,<7.0.0  # Deterministic PDF normalization and semantic design-manual QA
+pypdf>=6.16.2,<7.0.0  # Deterministic PDF normalization and semantic design-manual QA
 ruff>=0.1.0  # Fast Python linter and formatter (replaces flake8/black)
 mypy==2.3.1  # Static type checker for Python (pinned to match CI workflow)
 types-PyYAML>=6.0.12.20260815  # Type stubs for PyYAML (static typing)
