@@ -286,5 +286,16 @@ export const groundComparisonCsv = (
       canonicalGroundJson(row.delta),
     ]),
   ];
-  return rows.map((row) => row.map(csvCell).join(",")).join("\n") + "\n";
+  // ⚡ Bolt Optimization: Replace chained array .map().join() with a single-pass loop
+  // to eliminate intermediate array allocations and reduce GC pressure during CSV exports.
+  let result = "";
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    if (i > 0) result += "\n";
+    for (let j = 0; j < row.length; j++) {
+      if (j > 0) result += ",";
+      result += csvCell(row[j] as string);
+    }
+  }
+  return result + "\n";
 };
