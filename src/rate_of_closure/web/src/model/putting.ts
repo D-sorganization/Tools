@@ -9,10 +9,18 @@
  * This module carries the impact side (putter-ball strike, the 2-D
  * stroke/impact options of #4800 P1, and the
  * backstroke proxy). The green surface, the 2-D roll integration, and
- * hole capture live in `puttingGreen.ts` (#4800 P2); the legacy
- * planar `simulatePutt` and its constants are re-exported from there
- * unchanged, so existing imports keep working and the planar results
- * stay bit-identical.
+ * hole capture live in `puttingGreen.ts` (#4800 P2); the closed-form
+ * skid and pure-roll relations live in `puttingRoll.ts`. Both are
+ * re-exported here so this module is the package façade its Python
+ * twin `swing_sim/putting/__init__.py` is, export-for-export — the
+ * legacy planar `simulatePutt` and its constants included, so existing
+ * imports keep working and the planar results stay bit-identical.
+ *
+ * Two modules are deliberately **not** re-exported, mirroring the same
+ * refusal the Python façade documents: `puttingDispersion.ts` and
+ * `puttingScenario.ts`. They carry the P5 study vocabulary, whose
+ * sampler is Python-authoritative; importing them from here would
+ * suggest this runtime owns a Monte-Carlo engine it does not.
  *
  * Physics summary (full derivations in the Python docstrings):
  * - Impact: 1-D COR impulse along the lofted face normal plus the 2/7
@@ -38,6 +46,14 @@ export {
   stimpToRollingMu,
 } from "./puttingGreen";
 export type { GreenConditions, PuttLaunch, PuttResult } from "./puttingGreen";
+
+export {
+  rollingMuToStimp,
+  rollOutDistance,
+  rollTimeS,
+  solveSkid,
+} from "./puttingRoll";
+export type { SkidSolution } from "./puttingRoll";
 
 import type { PuttLaunch } from "./puttingGreen";
 

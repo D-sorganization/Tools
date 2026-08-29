@@ -174,6 +174,9 @@ def _domain(path: Path) -> tuple[str, str]:
         ("rust_core/", "native-kernels", "Native kernel maintainers"),
         ("data_processing", "data-processing", "Data processing maintainers"),
         ("media_processing", "media-processing", "Media processing maintainers"),
+        ("plot_engine", "plot-engine", "Plot engine maintainers"),
+        ("plot_theme", "plot-theme", "Plot theme maintainers"),
+        ("plotting", "shared-plotting", "Plotting and visualization maintainers"),
     )
     for marker, family, owner in mappings:
         if marker in text:

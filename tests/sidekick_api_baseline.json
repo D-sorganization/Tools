@@ -9375,6 +9375,336 @@
       }
     }
   },
+  "lab/mocap/__init__.py": {
+    "__all__": [
+      "MOCAP_SESSION_SCHEMA_VERSION",
+      "Availability",
+      "CameraCapabilities",
+      "CameraIdentity",
+      "ClockDomain",
+      "ClockKind",
+      "CoordinateFrame",
+      "FeatureSupport",
+      "FrameStamp",
+      "Landmark3D",
+      "MethodDescriptor",
+      "MocapSessionManifest",
+      "NumericRange",
+      "PixelObservation",
+      "RecordingPolicy",
+      "RigidTransform",
+      "SessionState",
+      "ShutterKind",
+      "SkeletonDefinition",
+      "SupportLevel",
+      "dumps_canonical",
+      "load_session_manifest"
+    ],
+    "symbols": {
+      "MOCAP_SESSION_SCHEMA_VERSION": {
+        "type": "variable"
+      },
+      "Availability": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "StrEnum"
+          ],
+          "methods": {}
+        }
+      },
+      "CameraCapabilities": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "supports_mode": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "resolution_px",
+                  "annotation": "tuple[int, int]",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "frame_rate_hz",
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "pixel_format",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "bool"
+            }
+          }
+        }
+      },
+      "CameraIdentity": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "stable_key": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            }
+          }
+        }
+      },
+      "ClockDomain": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "ClockKind": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "StrEnum"
+          ],
+          "methods": {}
+        }
+      },
+      "CoordinateFrame": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "affinedrift_world_v1": {
+              "args": [
+                {
+                  "name": "cls",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CoordinateFrame"
+            }
+          }
+        }
+      },
+      "FeatureSupport": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "FrameStamp": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "exposure_duration_ns": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "int | None"
+            }
+          }
+        }
+      },
+      "Landmark3D": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "MethodDescriptor": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "MocapSessionManifest": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "NumericRange": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "contains": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "value",
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "bool"
+            }
+          }
+        }
+      },
+      "PixelObservation": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "RecordingPolicy": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "RigidTransform": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "transform_name": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            }
+          }
+        }
+      },
+      "SessionState": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "StrEnum"
+          ],
+          "methods": {}
+        }
+      },
+      "ShutterKind": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "StrEnum"
+          ],
+          "methods": {}
+        }
+      },
+      "SkeletonDefinition": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "SupportLevel": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "StrEnum"
+          ],
+          "methods": {}
+        }
+      },
+      "dumps_canonical": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "manifest",
+              "annotation": "MocapSessionManifest",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "str"
+        }
+      },
+      "load_session_manifest": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "text",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "MocapSessionManifest"
+        }
+      }
+    }
+  },
+  "lab/mocap/_validation.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "lab/mocap/devices.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "lab/mocap/enums.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "lab/mocap/geometry.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "lab/mocap/observations.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "lab/mocap/serialization.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "lab/mocap/session.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "lab/mocap/timebase.py": {
+    "__all__": [],
+    "symbols": {}
+  },
   "launcher_factory.py": {
     "__all__": [
       "LauncherConfig",

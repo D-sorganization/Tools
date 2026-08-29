@@ -13,6 +13,9 @@ pytestmark = pytest.mark.unit
 ROOT = Path(__file__).resolve().parents[2]
 AUDIT = ROOT / "docs/audits/rate_of_closure_visual_first_epic_4433.v1.json"
 LEDGER = ROOT / "docs/audits/rate_of_closure_epic_4142_evidence.v1.json"
+EXTENSION_GUIDE = (
+    ROOT / "docs/development/rate-visualization-extension-and-consumer-guide.md"
+)
 
 EXPECTED_REQUIREMENTS = {
     *(f"V0.{index}" for index in range(1, 5)),
@@ -73,13 +76,51 @@ def test_visual_first_epic_acceptance_is_exhaustive_and_fail_closed() -> None:
     assert v0_1["status"] == "verified"
     assert v0_1["gaps"] == []
     assert "src/rate_of_closure/visualization_tab_manifest.py" in v0_1["evidence_files"]
-    assert audit["status_counts"] == {"verified": 8, "partial": 23}
+    assert audit["status_counts"] == {"verified": 10, "partial": 21}
 
     v5_2 = indexed["V5.2"]
     assert v5_2["status"] == "verified"
     assert v5_2["gaps"] == []
     assert "scripts/check_rate_visual_evidence_changes.py" in v5_2["evidence_files"]
     assert ".github/workflows/rate-web-playwright.yml" in v5_2["evidence_files"]
+
+    for requirement_id in ("V5.1", "V5.4"):
+        requirement = indexed[requirement_id]
+        assert requirement["status"] == "verified"
+        assert requirement["gaps"] == []
+        assert (
+            "docs/development/rate-visualization-extension-and-consumer-guide.md"
+            in requirement["evidence_files"]
+        )
+
+
+def test_extension_guide_freezes_lockstep_commands_and_ownership_boundaries() -> None:
+    guide = EXTENSION_GUIDE.read_text(encoding="utf-8")
+    for path in (
+        "visualization_tabs.v1.json",
+        "visualization_accessibility.v1.json",
+        "visualization_performance.v1.json",
+        "visual_baselines.v1.json",
+        "visualization_acceptance.v1.json",
+    ):
+        assert path in guide
+    for issue in (
+        "D-sorganization/Tools/issues/4135",
+        "D-sorganization/Tools/issues/4142",
+        "D-sorganization/Tools/issues/4144",
+        "D-sorganization/Tools/issues/4433",
+        "D-sorganization/Tools/issues/4832",
+        "D-sorganization/UpstreamDrift/issues/8358",
+        "D-sorganization/UpstreamDrift/pull/9134",
+    ):
+        assert issue in guide
+    assert "d7a95e2a4024f0f3c1d18f9790143cd766032cd3" in guide
+    assert "f3832b04454c97a7a0999906972f394474107dd7" in guide
+    assert "python -m pytest -n 0" in guide
+    assert "npm run test:e2e" in guide
+    assert "Tools owns" in guide
+    assert "UpstreamDrift owns" in guide
+    assert "does not" in guide.lower()
 
 
 def test_r14_6_retains_the_visual_first_audit_as_partial_evidence() -> None:

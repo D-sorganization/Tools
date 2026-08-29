@@ -74,17 +74,17 @@ def main() -> int:
     accepted = tab.result()
     states = [_capture(window, tab, args.output, "selected-result")]
 
-    original = putting_tab_module.simulate_putt
+    original = putting_tab_module.simulate_putt_on_surface
 
     def fail(*_args: object, **_kwargs: object) -> None:
         raise ValueError("diagnostic solver authority unavailable")
 
-    putting_tab_module.simulate_putt = fail
-    tab._grade_spin.setValue(1.0)
+    putting_tab_module.simulate_putt_on_surface = fail
+    tab.green_controls().grade_spin.setValue(1.0)
     if tab.result() is not accepted:
         raise RuntimeError("failed recompute discarded accepted evidence")
     states.append(_capture(window, tab, args.output, "error-prior"))
-    putting_tab_module.simulate_putt = original
+    putting_tab_module.simulate_putt_on_surface = original
     (args.output / "manifest.json").write_text(
         json.dumps(
             {

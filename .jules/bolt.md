@@ -105,3 +105,9 @@
 ## 2024-05-18 - CSV Export Overhead
 **Learning:** Chained array methods (.map().join()) in data-intensive hot paths (like exporting thousands of LaunchMonitor rows) create massive numbers of intermediate arrays, increasing GC pressure and memory consumption.
 **Action:** Always replace chained declarative array operations with single-pass `for`-loops and string concatenation when generating large text payloads to bypass unnecessary memory allocations.
+## 2026-12-07 - Avoid Array.from combined with map in mathematical matrices
+**Learning:** Found instances of `Array.from({ length: cols })` inside `.map` during `designMatrix` construction for polynomial curve fitting in `torqueProfileEditor.ts`. This dynamically creates arrays and iterators in a tight numerical loop, adding closure and function call overhead which increases GC pressure.
+**Action:** Always pre-allocate matrix/array dimensions using `new Array(size)` and populate them with standard `for` loops in mathematical or performance-sensitive hot paths to eliminate iteration overhead.
+## 2024-08-30 - Replace Math.min/max spread with loops for dynamic scales
+**Learning:** Using `Math.min(...spread)` and `Math.max(...spread)` on large streams of extracted subset data frequently leads to "Maximum call stack size exceeded" errors. It allocates a new array and spreads it out onto the call stack.
+**Action:** When calculating min/max bounds across historically tracked subsets, avoid the `Math.min(...spread)` syntax entirely. Use a single-pass `for` loop that computes `realMin` and `realMax` dynamically, avoiding massive call stack allocations and garbage collection pressure.

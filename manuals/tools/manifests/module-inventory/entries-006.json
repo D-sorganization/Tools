@@ -2,6 +2,90 @@
   "authority": "D-sorganization/Tools",
   "entries": [
     {
+      "authority_status": "provisional",
+      "bytes_lf": 15784,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "8470b8139927eb6bebe8b810371dd84dac74560d0858485920d54a238c95e384",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-TRANSFER-STRATEGY-PY-FCB7E5D96C91",
+      "language": "python",
+      "maintainer": "Pendulum maintainers",
+      "path": "src/pendulum_simulator/src/double_pendulum_golf/transfer_strategy.py",
+      "purpose": "Phase-resolved metrics for falsifiable proximal-to-distal transfer studies.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "TransferSignals",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TransferSummary",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "double_pendulum_force_attribution",
+            "signature": "result: object"
+          },
+          {
+            "kind": "function",
+            "name": "double_pendulum_transfer_signals",
+            "signature": "result: object"
+          },
+          {
+            "kind": "function",
+            "name": "pareto_front",
+            "signature": "values: object, *, maximize: tuple[bool, ...]"
+          },
+          {
+            "kind": "function",
+            "name": "summarize_transfer",
+            "signature": "signals: TransferSignals, *, start_s: float, end_s: float"
+          }
+        ],
+        "test_paths": [
+          "src/pendulum_simulator/src/double_pendulum_golf/tests/test_transfer_strategy.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "not-applicable",
       "bytes_lf": 134,
       "classification": "non-calculation",
@@ -1066,6 +1150,7 @@
           "tests/shared/python/plot_engine/test_matplotlib_renderer.py",
           "tests/shared/python/plot_engine/test_protocols.py",
           "tests/shared/python/plot_engine/test_pyqt6_widget.py",
+          "tests/shared/python/plotting/test_identity_export.py",
           "tests/shared/python/process_calculators/test_analysis_utils.py",
           "tests/shared/python/sidekick/ui/test_tools_sidebar_runtime_tabs.py",
           "tests/shared/python/test_contracts.py",
@@ -4833,10 +4918,10 @@
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
       "content_sha256_lf": "44bf4b1194b95e1d3920a75bd12dc1dba99c75bbb657ae1e43d6510a96bff706",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-plotting-non-calculation",
       "id": "TOOLS-MODULE-SRC-PYTHON-SRC-UTILS-PLOTTING-PY-8769127CF0D1",
       "language": "python",
-      "maintainer": "Tools module maintainers",
+      "maintainer": "Plotting and visualization maintainers",
       "path": "src/python/src/utils/plotting.py",
       "purpose": "Plotting utilities for colorblind-safe visualizations and export support.",
       "review_status": "inventory-baseline",
@@ -6962,6 +7047,7 @@
           "tests/rate_of_closure/test_durable_ensemble_authority_contracts.py",
           "tests/rate_of_closure/test_morris_ui_client.py",
           "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/test_contracts.py",
           "tests/unit/ai/mcp/test_contracts.py",
           "tests/unit/ai/peer_review/test_contracts.py",
@@ -6975,6 +7061,7 @@
           "tests/rate_of_closure/test_contracts.py",
           "tests/rate_of_closure/test_durable_ensemble_authority_contracts.py",
           "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/test_contracts.py",
           "tests/unit/ai/mcp/test_contracts.py",
           "tests/unit/ai/peer_review/test_contracts.py",
@@ -7791,6 +7878,7 @@
           "tests/rate_of_closure/test_morris_authority_service.py",
           "tests/rate_of_closure/test_morris_ui_contract.py",
           "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/test_contracts.py",
           "tests/unit/ai/mcp/test_contracts.py",
           "tests/unit/ai/peer_review/test_contracts.py",
@@ -7807,6 +7895,7 @@
           "tests/rate_of_closure/test_morris_authority_contracts.py",
           "tests/rate_of_closure/test_morris_ui_contract.py",
           "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/test_contracts.py",
           "tests/unit/ai/mcp/test_contracts.py",
           "tests/unit/ai/peer_review/test_contracts.py",
@@ -11357,7 +11446,8 @@
           }
         ],
         "test_paths": [
-          "tests/rate_of_closure/test_club_heads.py"
+          "tests/rate_of_closure/test_club_heads.py",
+          "tests/rate_of_closure/test_club_profile_acceptance.py"
         ],
         "unit_mentions": [
           "g",
@@ -11844,7 +11934,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "not-applicable"
       },
@@ -11885,7 +11975,9 @@
             "signature": "triangles: np.ndarray"
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/rate_of_closure/test_club_profile_acceptance.py"
+        ],
         "unit_mentions": [
           "s"
         ],
@@ -12600,10 +12692,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 4077,
+      "bytes_lf": 4548,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ac50ed8bc51fe9a1c6777b2df40ff4cb35756fa03bc1c2706aec0828cc0a77a3",
+      "content_sha256_lf": "f2f6ddd2ef60dd07c1001b5eba4e75d52bea09d7748583ecbe5b27828d5b530e",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-GLOSSARY-PY-07642CD079F4",
       "language": "python",
@@ -14933,162 +15025,6 @@
         "test_paths": [
           "tests/rate_of_closure/test_plot_workspace_limits.py"
         ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1514,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3bf3f4a55a11393268e4c491e129d7116249e0ad9942660a635a0c1125316f09",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-PLOTTING-INIT-PY-56F29B40537C",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/plotting/__init__.py",
-      "purpose": "Investigative plotting suite (epic #4120, phase V1).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "BUILTIN_PLOTS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CATALOG",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CATEGORIES",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PLOT_KINDS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PUTTING_CATALOG",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PlotData",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PlotSpec",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PuttingVariableSpec",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "VariableSpec",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "builtin_spec",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "catalog_keys",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "compute_plot_data",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "extract",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "extract_putting",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "plot_data_rows",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "putting_catalog_keys",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "render_plot",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "spec_from_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "spec_to_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "variables_by_category",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "write_plot_csv",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "write_plot_json",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []
       }

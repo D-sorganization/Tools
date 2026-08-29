@@ -7,6 +7,8 @@ and constants on both sides).
 
 from __future__ import annotations
 
+import json
+
 import numpy as np
 import pytest
 
@@ -16,10 +18,19 @@ from rate_of_closure.plotting import (
     extract_putting,
     putting_catalog_keys,
 )
-from rate_of_closure.putting import PUTT_EXPLANATIONS, putter_specs
+from rate_of_closure.putting import (
+    PUTT_EXPLANATIONS,
+    green_surface_from_document,
+    putter_head_documents,
+    putter_specs,
+)
 from shared.python.swing_sim.putting import (
+    GREEN_SURFACE_FORMAT,
     GreenConditions,
+    GridGreenSurface,
+    PlanarGreenSurface,
     PutterSpec,
+    green_surface_to_json,
     simulate_putt,
     strike,
 )
@@ -116,3 +127,60 @@ class TestReferencePuttPins:
         assert result.holed
         assert result.speed_at_hole_mps == pytest.approx(0.6746829587276968, rel=1e-9)
         assert result.margin_mps == pytest.approx(0.1439566926681971, rel=1e-9)
+
+
+class TestPutterHeadBridge:
+    """The P3 head documents the Qt tab actually solves with (#4800 P6)."""
+
+    def test_library_heads_are_the_documented_no_mesh_fallback(self) -> None:
+        heads = putter_head_documents()
+        assert set(heads) == set(putter_specs())
+        blade = heads["Blade Putter"]
+        assert blade.provenance.source_kind == "library"
+        assert blade.provenance.library_name == "Blade Putter"
+        # The fallback deliberately carries no tensor, so P1 applies its
+        # catalogue default and the results stay bit-identical.
+        assert blade.cg_m is None
+        assert blade.inertia_at_cg_kg_m2 is None
+
+    def test_head_document_reproduces_the_v1_spec_exactly(self) -> None:
+        from shared.python.golf_club.putter_head import putter_spec
+
+        for name, spec in putter_specs().items():
+            assert putter_spec(putter_head_documents()[name]) == spec
+
+
+class TestGreenDocumentBridge:
+    """Import dispatch is on the declared format, never on shape."""
+
+    def test_tools_wire_is_read_by_the_tools_reader(self) -> None:
+        surface = PlanarGreenSurface(grade_percent=2.0, aspect_deg=90.0)
+        parsed, wire = green_surface_from_document(green_surface_to_json(surface))
+        assert parsed == surface
+        assert wire == GREEN_SURFACE_FORMAT
+
+    def test_upstreamdrift_topography_is_read_by_the_p9_adapter(self) -> None:
+        text = json.dumps(
+            {
+                "contours": [
+                    {"x": x * 0.5, "y": y * 0.5, "elevation": -0.01 * x}
+                    for y in range(4)
+                    for x in range(4)
+                ]
+            }
+        )
+        parsed, wire = green_surface_from_document(text)
+        assert isinstance(parsed, GridGreenSurface)
+        assert parsed.spacing_m == pytest.approx(0.5)
+        assert "upstreamdrift" in wire
+
+    def test_a_declared_but_unknown_format_is_refused_not_guessed(self) -> None:
+        """A wrong ``format`` never falls through to the UD reader."""
+        with pytest.raises(ValueError):
+            green_surface_from_document('{"format": "swing_sim.green_surface/9"}')
+
+    def test_non_object_and_non_text_documents_are_refused(self) -> None:
+        with pytest.raises(ValueError):
+            green_surface_from_document("[]")
+        with pytest.raises(TypeError):
+            green_surface_from_document(b"{}")  # type: ignore[arg-type]
