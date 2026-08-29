@@ -3,6 +3,275 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 8320,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "e5cd9833cb4977d4419fe2ed34d3425a08125cee3a322f98a88dadd4a3bc57b7",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-CALCULATOR-ASSIST-PY-F48A29ED285B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/calculator_assist.py",
+      "purpose": "Sidekick calculator help and predictive text contracts.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CalculatorHelpTopic",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CalculatorPredictionProvider",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CalculatorPredictiveText",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CalculatorSuggestion",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StaticCalculatorPredictionProvider",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ALLOWED_CALCULATOR_COMMANDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CALCULATOR_HELP",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CALCULATOR_TAB_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCIENTIFIC_DEPENDENCY_ALIASES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "calculator_context_preferences",
+            "signature": "state: SidebarState"
+          },
+          {
+            "kind": "function",
+            "name": "calculator_predictive_text_enabled",
+            "signature": "sidebar: Any"
+          },
+          {
+            "kind": "function",
+            "name": "calculator_startup_config",
+            "signature": "sidebar: Any"
+          },
+          {
+            "kind": "function",
+            "name": "calculator_state_fields",
+            "signature": "state: SidebarState"
+          },
+          {
+            "kind": "function",
+            "name": "set_calculator_predictive_text_enabled",
+            "signature": "sidebar: Any, enabled: bool"
+          },
+          {
+            "kind": "function",
+            "name": "set_calculator_startup_config",
+            "signature": "sidebar: Any, config: CalculatorStartupConfig"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 8504,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "4fdd998424b94f02af26b74470d2ae9ff50254f8722f056a97e64aa90a84893f",
+      "family": "shared-plotting-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-CALCULATOR-PLOTTING-PY-E2D4E5855EFA",
+      "language": "python",
+      "maintainer": "Plotting and visualization maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/calculator_plotting.py",
+      "purpose": "Sidekick calculator plot request contracts.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CalculatorPlotRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CalculatorPlotSource",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CalculatorPlotTabConfig",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CALCULATOR_PLOT_TAB_ID",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_calculator_plot_spec",
+            "signature": "request: CalculatorPlotRequest, registry: WorkspaceRegistry"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/test_calculator_plotting.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 13203,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "fb514432b46617d34601216c2109185c4b72c97fed41ce1f3a3ceca20da7f26f",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-CALCULATOR-RUNTIME-PY-1DE37C9B9819",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/calculator_runtime.py",
+      "purpose": "Runtime widget for the Sidekick calculator tab.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SidekickCalculatorWidget",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SIDEKICK_CALCULATOR_OBJECT_NAME",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 7615,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
@@ -17393,208 +17662,6 @@
           }
         ],
         "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1752,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0525c8b17edf8e1ba8599e1d227a6ca57ec941935e123a7ad55e70b7bf5f0e39",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-TERRAIN-ADAPTER-MATH-PY-073C1C453176",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/terrain_adapter_math.py",
-      "purpose": "Small strict vector helpers shared by neutral terrain adapter records.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "UNIT_TOLERANCE",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "determinant",
-            "signature": "rows: tuple[Vector3, Vector3, Vector3]"
-          },
-          {
-            "kind": "function",
-            "name": "dot",
-            "signature": "left: Vector3, right: Vector3"
-          },
-          {
-            "kind": "function",
-            "name": "matrix_vector",
-            "signature": "rows: tuple[Vector3, Vector3, Vector3], value: Vector3"
-          },
-          {
-            "kind": "function",
-            "name": "unit_vector",
-            "signature": "value: object, name: str"
-          },
-          {
-            "kind": "function",
-            "name": "vector",
-            "signature": "value: object, name: str"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 1726,
-      "classification": "calculation",
-      "classification_basis": "path-marker:trajectory",
-      "content_sha256_lf": "01007dc6e197fda9ad4fd7caee350ed0525d794d6cc513a3c2ed115e4535609f",
-      "family": "swing-simulation-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-TRAJECTORY-TRANSITION-RULES-PY-37E2D51A531B",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/trajectory_transition_rules.py",
-      "purpose": "Legal phase and event transitions for the strict v1 ground ledger.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "EVENT_TRANSITIONS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PHASE_TRANSITIONS",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1530,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "79ab59c86257e3805f2a86acbafa543c53e2b602d81474a82a1d405f4ea406ec",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-UNAVAILABLE-TYPES-PY-6186FB20E3F6",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/unavailable_types.py",
-      "purpose": "Typed unavailable-input evidence for flight-to-ground v1.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "GroundUnavailableField",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundUnavailableFieldId",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundUnavailableReason",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/test_ground_study_scalar_adapter.py"
-        ],
         "unit_mentions": [],
         "validation_paths": []
       }
