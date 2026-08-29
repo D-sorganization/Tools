@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — Rate_of_Closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-28
+> Last updated: 2026-08-29
 > **Current state only**, capped at 150 lines; history lives in git and in [`docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md`](../../docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md).
 > Do not append dated entries — that is how it reached 2,205 lines.
 
@@ -29,21 +29,15 @@ paired-device validation without real paired observations.** #4584/#4599 merged
 strokes-gained v2 into both clients; #4600 owns the PyQt reference and
 #4602/#4608/#4610/#4613 the isolated rendered gates.
 
-Club Fitting #4549, Heavy Hit #4562, and packaging #4579 are complete; physics
-is shared-first in `shared/python/{golf_club,swing_sim}`. Putting #4800 is
-complete (P1-P9); `putting_result/2` supersedes v1 without silent migration,
-and Python remains the sole Monte-Carlo authority — the React twins mirror the
-outcome vocabulary and the deterministic single-putt evaluation only, never a
-second sampler, and the React Putting tab runs one chokepoint
-(`evaluatePuttWithTrajectory`). P6 widened the **existing** Qt tab into
-`putting_{stroke,green}_controls` + `putting_playback`, whose 3-D view owns no
-transport; P8 bound it to the **one** shared transport — Qt
-`putt_playback_controls.PuttPlaybackPanel`, React `PlaybackTransportBar`
-(extracted out of `FlightPlayback3D`) — lifting samples through
-`simulation/putt_playback.py` + `model/puttPlayback.ts`, pinned by the `putt`
-block of the single `playback_transport_golden_v1.json`. **Never fork a second
-transport or golden.** That moved pyqt/putting 22 -> 29 controls; its PyQt
-baseline is stale by construction (P6/P8 both moved that first viewport).
+Club Fitting #4549, Heavy Hit #4562, packaging #4579, and Putting #4800
+(P1-P9) are complete; physics is shared-first in
+`shared/python/{golf_club,swing_sim}`. `putting_result/2` supersedes v1 without
+silent migration. Python remains the sole Monte-Carlo authority; React mirrors
+only the outcome vocabulary and deterministic single-putt evaluation through
+`evaluatePuttWithTrajectory`. Both clients consume the one shared playback
+transport and the `putt` block of `playback_transport_golden_v1.json`.
+**Never fork a second transport, sampler, or golden.** The PyQt putting visual
+baseline remains stale because P6/P8 deliberately changed its first viewport.
 Clubhead-realism #4799 is complete (G1-G5): lean, offset hosels, real blade
 soles, 16 cross-runtime club gates, and toe-view acceptance gates over the
 **public** `parametric_head_mesh` (per-club tables plus a center-pivot
@@ -53,14 +47,6 @@ and gates the camera golden's header block in both twins. **Do not rebind the
 PyQt visual baselines to fix #4799**: all ten drift 924-2660 microunits against
 a 250 limit, including tabs with no clubhead, from glyph re-rasterization no
 repo change explains (#4844).
-
-P8's flight side landed one playback architecture: `simulation/playback_transport.py`
-and `web/src/model/playbackTransport.ts` twins own scrub quantization, speeds, and
-wall-clock advance, pinned with the `TimedTrajectory`/`PlaybackTimeline` sample→frame
-mapping by `playback_transport_golden_v1.json`. The putting seams are the
-subject-neutral Qt `PlaybackTransportControls` (flight binds it as
-`FlightPlaybackControls`) and the source-independent timeline classes; camera state
-stays with #4571 (`camera_commands`/`cameraCommands.ts`, documented extension points).
 
 #4142 remains Python-authoritative; PyQt6 and React do not reimplement physics.
 R10.3, R10.4, R11.1 and R11.3 are protected-merged through `4ddec9175`. The

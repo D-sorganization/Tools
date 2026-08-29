@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — pendulum_simulator
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-21
+> Last updated: 2026-08-29
 
 ## Where This Tool Is Headed
 
@@ -87,17 +87,6 @@ standstill at impact. Contract:
 Next open item is the **late release**: every objective releases at ~90% of the
 downswing against a measured 55-80%. A moving hub (`physics_triple.py`) is the
 most likely route. Hill-type actuation (`actuation.py`) is built and tested.
-
-## Recent Activity (grounding — `git log --oneline -15 -- src/pendulum_simulator`)
-
-Latest substantive change is the #4450 consolidation that landed the drift-
-transfer diagnostics. Before that, work was performance/hardening/accessibility
-maintenance rather than feature growth: Bolt perf passes on the web
-Nelder-Mead simplex sort, a #3745 GUI/error-handling cleanup, a 20-PR
-fleet-CI-relief consolidation, physics hot-loop allocation removal, and earlier
-`pendulum-core` maturin/pyo3 packaging + import-canonicalization work. No open
-PR #4618 owns the merged Tools delivery; do not duplicate it. Its catalog
-digest is `66493b833955c6492a00eae4a600df795df60a6f473f9a11c403084b58e51678`.
 
 ## Must-Read Architecture Pointers
 
