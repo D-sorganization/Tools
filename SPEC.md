@@ -6584,6 +6584,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ## 9. Changelog
 
+### Version 1.17.11
+
+- 2026-08-28: perf(rate_of_closure) — optimize `designMatrix` array allocations inside `src/rate_of_closure/web/src/model/torqueProfileEditor.ts` to reduce garbage collection pressure.
+
 ### Version 1.17.10
 
 - 2026-08-22: fix(flow-rate-converter) — replaced focus:outline-none with focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 on input and select elements to restore keyboard focus indicators.
