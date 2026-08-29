@@ -11483,10 +11483,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3954,
+      "bytes_lf": 4379,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b2da3ae05ce340aaa1abae6d95425c6b99913f4b6835546dd0ab28648a0f3495",
+      "content_sha256_lf": "f2a7268514e7ba28cec511ad13436297df70c6f9900bd078e9dacb5fc50a36ab",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-LAUNCHMONITORCOVARIATIONCHART-TSX-B170B453B303",
       "language": "typescript-react",
@@ -11507,7 +11507,7 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "not-applicable",
-        "units": "not-applicable",
+        "units": "mapped",
         "validation": "not-applicable"
       },
       "traceability": {
@@ -11528,7 +11528,9 @@
           }
         ],
         "test_paths": [],
-        "unit_mentions": [],
+        "unit_mentions": [
+          "N"
+        ],
         "validation_paths": []
       }
     },
@@ -11685,10 +11687,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 7120,
+      "bytes_lf": 7428,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6611f56126aec49b518165f66a65057ea3d5d0b112551a3fcdd3fee608ee852d",
+      "content_sha256_lf": "f088ed7569147c1bc24b4fddacec163fd1d7af09417b6882c5ef8ab173e2fbe8",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-LAUNCHMONITORLONGITUDINALANALYSIS-TSX-D5CED70B36B5",
       "language": "typescript-react",
