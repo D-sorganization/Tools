@@ -3,6 +3,107 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 5714,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "677db258e589e08a10795d152cccdb1adf6decdb9dbfa9cd784962c4a40593c6",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-LIBRARY-RATE-LIMITER-PY-119419C88664",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/library/_rate_limiter.py",
+      "purpose": "Rate-limit handling for GitHub API requests.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "RateLimitError",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_INITIAL_BACKOFF",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_MAX_BACKOFF",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_MAX_RETRIES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "RATE_LIMIT_HEADER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "RATE_LIMIT_LIMIT_HEADER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "RATE_LIMIT_RESET_HEADER",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "extract_rate_limit_info",
+            "signature": "response: Any"
+          },
+          {
+            "kind": "function",
+            "name": "log_rate_limit_status",
+            "signature": "url: str, rate_limit_info: dict[str, int | None], status_code: int | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "make_request_with_backoff",
+            "signature": "url: str, max_retries: int=DEFAULT_MAX_RETRIES, initial_backoff: float=DEFAULT_INITIAL_BACKOFF, max_backoff: float=DEFAULT_MAX_BACKOFF, headers: dict[str, str] | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/model_generation/test_rate_limiter.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 192,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17417,52 +17518,6 @@
         ],
         "unit_mentions": [
           "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1801,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "32b0f29cc643dcdff0d308958859e0adb41de357fdef0e975d385141b992e529",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-APPEARANCE-SETTINGS-CONTROLS-PY-EEA530CBBD2D",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/appearance_settings_controls.py",
-      "purpose": "Small appearance-setting controls shared by Sidekick settings panels.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [
-          "g"
         ],
         "validation_paths": []
       }
