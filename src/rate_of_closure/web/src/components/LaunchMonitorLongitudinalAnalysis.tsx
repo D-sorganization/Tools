@@ -36,8 +36,17 @@ export function LaunchMonitorLongitudinalAnalysis({ rows, columns, numeric }: {
   const ready = Boolean(player && session && order && metric && playerAttested && sessionAttested);
   const orders = result?.sessionPoints.map((point) => point.sessionOrder) ?? [];
   const values = result?.sessionPoints.map((point) => point.mean) ?? [];
-  const minX = Math.min(...orders, 0); const maxX = Math.max(...orders, 1);
-  const minY = Math.min(...values, 0); const maxY = Math.max(...values, 1);
+  // ⚡ Bolt Optimization: Replaced Math.min/max spread with a single-pass loop to eliminate call stack limits and GC pressure
+  let minX = 0; let maxX = 1;
+  let minY = 0; let maxY = 1;
+  for (let i = 0; i < orders.length; i++) {
+    if (orders[i] < minX) minX = orders[i];
+    if (orders[i] > maxX) maxX = orders[i];
+  }
+  for (let i = 0; i < values.length; i++) {
+    if (values[i] < minY) minY = values[i];
+    if (values[i] > maxY) maxY = values[i];
+  }
   const x = (value: number) => 45 + (value - minX) / Math.max(maxX - minX, 1) * 560;
   const y = (value: number) => 210 - (value - minY) / Math.max(maxY - minY, 1) * 170;
 

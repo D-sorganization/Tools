@@ -291,7 +291,7 @@
       "shard_index": 7
     },
     {
-      "content_sha256_lf": "471975244cf99257b37d8ff2a2b62c8d6291d1fa28ed66d3d66647520c2de652",
+      "content_sha256_lf": "1fda41dfa80ba31ad9ee9a8b186dd2df9709b450b63be261bed10bb2b3b3ac5e",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/ui/pyqt6/torque_profile_panel_behavior.py",
       "last_path": "src/rate_of_closure/web/src/components/PlaneTiltControls.tsx",
@@ -371,7 +371,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "79ad4941805d8d540f1810589dcfd8453dda5c8cffa9f817d8d393fc9c1cc5ae",
+  "source_tree_sha256": "2ef21587301a426cc116c6b73fe4a172fa5069369c846039561c4d5a3dfe603c",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
