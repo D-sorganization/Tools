@@ -100,7 +100,7 @@ frame-explicit, provenance-bearing `golf_club.wedge_parameters/1` input.
 `wedge_cad.py` lazily invokes the optional pinned build123d/OpenCascade kernel
 and returns one exact solid plus independently recovered datum measurements.
 
-`wedge_export.py` owns deterministic `golf_club.wedge_export/2` exports:
+`wedge_export.py` owns deterministic `golf_club.wedge_export/1` exports:
 
 - STEP and native BREP are reopened with build123d and must recover one valid
   solid with source-bounded volume and axis-aligned bounds.
@@ -113,12 +113,6 @@ and returns one exact solid plus independently recovered datum measurements.
   tolerance. Any failed check aborts before manifest publication.
 - The manifest records the canonical parameter SHA-256 plus each artifact's
   SHA-256, byte size, reader, checks, measured values, and limits.
-
-`golf_club.wedge_export/2` supersedes `/1`. There is no manifest reader or
-silent migration path: retain historical `/1` JSON as unvalidated archive
-evidence, and regenerate a `/2` export from canonical wedge-parameter JSON when
-current validation evidence is required. Never infer that a `/1` artifact
-passed checks which did not exist in its schema.
 
 These checks establish deterministic file and topology evidence. They do not
 qualify minimum wall/feature size, machining, additive processing, materials,
