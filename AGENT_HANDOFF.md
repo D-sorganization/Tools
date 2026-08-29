@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — Tools (Monorepo Root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-28
+> Last updated: 2026-08-29
 > **Current state only**, capped at 150 lines by `CLAUDE.md`; history lives in
 > git and in [`docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md`](docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md).
 > Do not append dated entries here again.

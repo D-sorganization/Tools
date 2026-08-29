@@ -135,12 +135,6 @@ The environment lacks some root-config pytest plugins, so the focused command
 disables plugin autoload and clears `addopts`; unknown-config warnings are
 environment evidence, not failures.
 
-Latest local evidence, 2026-08-27 (after P5): `tests/shared/python/golf_club`
-+ `swing_sim/putting/tests`: **437 passed, 2 skipped**. The C1/H1 gates plus
-P3's box-inertia/twist/fallback and P5's closed-form MOI-ratio gates are in
-that run; ruff and the CI-faithful mypy batch are clean (mypy 1.13 needs
-numpy < 2.4 or `--no-incremental`: 2.4+ stubs crash its cache serializer).
-
 ## Residual #4149 / #4146 Scope
 
 - Implement versioned Driver/Wood, Hybrid, Iron, and Blade/Mallet Putter
