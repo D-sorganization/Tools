@@ -1,120 +1,171 @@
-/** Putting controls and an SVG green view with phase-coded roll-out. */
+/**
+ * Putting tab — stroke, putter, green controls and the 2-D green view.
+ *
+ * React parity for the shared putting model (#4800 P1-P5, P7). One
+ * chokepoint runs the putt: `evaluatePuttWithTrajectory` performs P1's
+ * impact solve, P2's surface integration and P5's `putting_result/2`
+ * record in a single call, and the tab presents that record — never a
+ * second, differently derived set of numbers.
+ *
+ * Playback (#4800 P8) is wiring, not new machinery: the retained
+ * integrator samples are lifted by `puttPlaybackSamples`, interpolated by
+ * the shared structural `PlaybackTimeline`, and driven by the shared
+ * `PlaybackTransportBar` — the same three modules the ball-flight surface
+ * uses. Nothing is re-simulated during playback and no second transport
+ * exists.
+ */
 
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
-import { DecimalInput } from "./DecimalInput";
+import { PlaybackTransportBar } from "./PlaybackTransportBar";
+import { PuttingControls } from "./PuttingControls";
+import { DEFAULT_PUTT_SETUP, type PuttSetup } from "./puttingSetup";
 import { PuttingVisuals } from "./PuttingVisuals";
 import {
-  planPuttingSamples, puttingSampleSource, type PuttingSamplePlan,
+  PUTTING_RESULT_ROWS,
+  puttingResultValues,
+} from "./puttingResultRows";
+import {
+  planPuttingSamples,
   puttingContextLabel,
+  puttingSampleSource,
   snapshotPuttingResult,
   validatePuttingResultSummary,
+  type PuttingSamplePlan,
 } from "../model/puttingSampleInspector";
 
 import { CLUB_LIBRARY } from "../model/club";
-import { FIELD_TO_TERM } from "../model/glossary";
+import { GLOSSARY } from "../model/glossary";
+import {
+  headMoiForStrike,
+  putterHeadFromLibrary,
+  putterSpec,
+  twistResponse,
+  type PutterHeadDocument,
+  type PutterTwist,
+} from "../model/putterHead";
 import {
   clubheadSpeedFromBackstroke,
   MINIMAL_PUTTERS,
-  type PutterSpec,
-  DEFAULT_PUTTER_COR,
   type PuttResult,
-  simulatePutt,
-  strike,
 } from "../model/putting";
+import { PlaybackTimeline, type PlaybackFrame } from "../model/flightPlayback";
+import { puttPlaybackSamples } from "../model/puttPlayback";
+import { planarSurface, type GreenSurface } from "../model/puttingGreen";
+import {
+  PUTTING_RESULT_KERNEL,
+  type PuttingResultDocument,
+} from "../model/puttingResultWire";
+import {
+  evaluatePuttWithTrajectory,
+  puttStroke,
+  type PuttScenario,
+} from "../model/puttingScenario";
 import { formatDistanceM } from "../model/units";
 
 /** Library putters first (H1 reconciliation), minimal specs fallback. */
-function putterChoices(): PutterSpec[] {
-  const library = CLUB_LIBRARY.filter((c) => c.clubType === "Putter").map(
-    (c) => ({
-      name: c.name,
-      headMassKg: c.headMassKg,
-      loftDeg: c.loftDeg,
-      cor: DEFAULT_PUTTER_COR,
-    }),
+function putterChoices(): PutterHeadDocument[] {
+  const library = CLUB_LIBRARY.filter((club) => club.clubType === "Putter").map(
+    (club) =>
+      putterHeadFromLibrary(club.name, {
+        headMassKg: club.headMassKg,
+        loftDeg: club.loftDeg,
+      }),
   );
-  return library.length > 0 ? library : MINIMAL_PUTTERS;
+  if (library.length > 0) return library;
+  return MINIMAL_PUTTERS.map((spec) => ({
+    name: spec.name,
+    head_mass_kg: spec.headMassKg,
+    loft_deg: spec.loftDeg,
+    cor: spec.cor,
+    provenance: { source_kind: "library" as const, library_name: spec.name },
+  }));
 }
 
-const ROWS: { key: string; label: string; explanation: string }[] = [
-  {
-    key: "puttRolloutM",
-    label: "Roll-Out Distance",
-    explanation:
-      "How far the ball travels before stopping (or dropping). The skid " +
-      "phase sheds speed at the sliding-friction rate, then pure roll " +
-      "decelerates at the stimp-derived rolling rate — faster greens mean " +
-      "a lower rolling coefficient and a longer roll-out for the same pace.",
-  },
-  {
-    key: "puttSkidM",
-    label: "Skid Distance",
-    explanation:
-      "Ground covered while the ball is still sliding rather than rolling. " +
-      "A struck putt leaves the face with backspin, so friction must first " +
-      "spin it up to pure roll; the transition happens where ball speed " +
-      "equals surface spin speed (v = ωr).",
-  },
-  {
-    key: "puttSkidPct",
-    label: "Skid Share of Putt",
-    explanation:
-      "The skid distance as a share of the whole putt. Good strokes keep " +
-      "this small — the classic no-spin result is pure roll at 5/7 of " +
-      "launch speed, and more backspin extends the skid.",
-  },
-  {
-    key: "puttTimeS",
-    label: "Time To Rest",
-    explanation:
-      "Elapsed time from impact until the ball stops or drops. Rolling " +
-      "deceleration is constant on a uniform green, so time grows linearly " +
-      "with the speed the roll phase starts at.",
-  },
-  {
-    key: "puttBreakM",
-    label: "Break",
-    explanation:
-      "Lateral drift of the ball off the starting line (positive = left), " +
-      "caused by the in-plane component of gravity on the sloped green. " +
-      "Break grows fastest late in the putt, when the ball is slow.",
-  },
-  {
-    key: "puttSpeedAtHoleMps",
-    label: "Speed At The Hole",
-    explanation:
-      "Ball speed when it first crosses the hole mouth. The putt drops " +
-      "only if this is at or below the geometric capture bound — the ball " +
-      "must fall half its diameter while crossing the opening.",
-  },
-  {
-    key: "puttMargin",
-    label: "Holed / Miss Margin",
-    explanation:
-      "Holed putts: how far under the capture-speed bound the ball crossed " +
-      "the hole. Missed putts: the distance from the ball's resting place " +
-      "back to the hole — the length of the comebacker.",
-  },
-];
-
-/** Single distance-format chokepoint — follows the session distance
- * display unit (#4125 H6: yards default, metres option). */
+/** Single distance-format chokepoint — follows the session unit. */
 function formatDistance(value: number, unit: string): string {
   return formatDistanceM(value, unit, 2);
+}
+
+/** Build the fully specified scenario one accepted putt is run from. */
+function puttScenario(
+  head: PutterHeadDocument,
+  clubheadSpeedMps: number,
+  setup: PuttSetup,
+): PuttScenario {
+  const libraryName = head.provenance.library_name ?? head.name;
+  return {
+    scenarioId: "react-putting-tab",
+    putter: putterSpec(head),
+    stroke: puttStroke(clubheadSpeedMps, {
+      shaftLeanDeg: setup.shaftLeanDeg,
+      aimDeg: setup.aimDeg,
+      faceAngleDeg: setup.faceAngleDeg,
+      pathAngleDeg: setup.pathAngleDeg,
+      attackAngleDeg: setup.attackAngleDeg,
+      strikeOffsetToeMm: setup.strikeOffsetToeMm,
+      strikeOffsetHighMm: setup.strikeOffsetHighMm,
+    }),
+    surface: planarSurface(setup.grade, setup.aspect),
+    stimpFt: setup.stimp,
+    holeDistanceM: setup.distance,
+    provenance: {
+      putterSource: "library",
+      putterName: head.name,
+      strokeSource: "declared",
+      captureModel: setup.captureModel,
+      putterMeshSha256: null,
+      putterLibraryName: libraryName,
+      strokeSourceId: null,
+      kernel: PUTTING_RESULT_KERNEL,
+    },
+    captureModel: setup.captureModel,
+    headMoiKgM2: headMoiForStrike(
+      head,
+      setup.strikeOffsetToeMm,
+      setup.strikeOffsetHighMm,
+    ),
+  };
+}
+
+/**
+ * The visible playback position, worded exactly as the Qt
+ * `PuttPlaybackView` status line so the two surfaces read the same.
+ */
+function playbackStatus(
+  frame: PlaybackFrame | null,
+  durationS: number,
+  holed: boolean,
+): string {
+  if (frame === null) return "No putt is loaded for playback.";
+  const [xM, yM, zM] = frame.position;
+  const outcome = holed && frame.isLanding ? "holed" : "in play";
+  return (
+    `t ${frame.time.toFixed(3)} s of ${durationS.toFixed(3)} s; ` +
+    `x ${xM.toFixed(3)} m; y ${yM.toFixed(3)} m; ` +
+    `elevation ${zM.toFixed(3)} m; ${outcome}.`
+  );
 }
 
 interface PuttingPanelProps {
   onGlossary?: (term: string) => void;
   /** Ball-flight distance display unit (#4125 H6): yards default. */
   distanceUnit?: string;
-  /** Production computation authority; injectable for deterministic failure tests. */
-  executeStudy?: typeof simulatePutt;
+  /** Production computation authority; injectable for failure tests. */
+  executeStudy?: typeof evaluatePuttWithTrajectory;
 }
 
 interface AcceptedStudy {
-  executor: typeof simulatePutt;
+  executor: typeof evaluatePuttWithTrajectory;
   result: PuttResult;
+  /**
+   * The very green this result was integrated on. Playback reads its
+   * elevations off the scenario's own surface rather than re-deriving an
+   * equal one, so the replayed ball can never ride a different green.
+   */
+  surface: GreenSurface;
+  document: PuttingResultDocument;
+  twist: PutterTwist;
   plan: PuttingSamplePlan;
   context: string;
   holeX: number;
@@ -125,215 +176,126 @@ interface AcceptedStudy {
 export function PuttingPanel({
   onGlossary,
   distanceUnit = "yd",
-  executeStudy = simulatePutt,
+  executeStudy = evaluatePuttWithTrajectory,
 }: PuttingPanelProps) {
   const formatM = (value: number) => formatDistance(value, distanceUnit);
   const putters = useMemo(putterChoices, []);
-  const [putterName, setPutterName] = useState(putters[0].name);
-  const [paceMode, setPaceMode] = useState<"speed" | "backstroke">("speed");
-  const [speed, setSpeed] = useState(1.8);
-  const [backstrokeCm, setBackstrokeCm] = useState(30);
-  const [stimp, setStimp] = useState(10);
-  const [grade, setGrade] = useState(0);
-  const [aspect, setAspect] = useState(90);
-  const [distance, setDistance] = useState(3);
-  const [explained, setExplained] = useState(ROWS[0].key);
+  const [setup, setSetup] = useState<PuttSetup>(() => ({
+    ...DEFAULT_PUTT_SETUP,
+    putterName: putters[0].name,
+  }));
+  const [explained, setExplained] = useState(PUTTING_RESULT_ROWS[0].key);
   const [selection, setSelection] = useState<{
-    accepted: AcceptedStudy; rawIndex: number;
+    accepted: AcceptedStudy;
+    rawIndex: number;
   } | null>(null);
   const acceptedStudy = useRef<AcceptedStudy | null>(null);
+  const [playbackTimeS, setPlaybackTimeS] = useState(0);
 
   const candidate = useMemo(() => {
-    const putter =
-      putters.find((p) => p.name === putterName) ?? putters[0];
+    const head =
+      putters.find((putter) => putter.name === setup.putterName) ?? putters[0];
     try {
       const clubheadSpeed =
-        paceMode === "backstroke"
-          ? clubheadSpeedFromBackstroke(backstrokeCm / 100)
-          : speed;
-      const result = snapshotPuttingResult(executeStudy(
-        strike(putter, clubheadSpeed),
-        { stimpFt: stimp, gradePercent: grade, aspectDeg: aspect },
-        distance,
-      ));
+        setup.paceMode === "backstroke"
+          ? clubheadSpeedFromBackstroke(setup.backstrokeCm / 100)
+          : setup.speed;
+      const scenario = puttScenario(head, clubheadSpeed, setup);
+      const evaluated = executeStudy(scenario);
+      const result = snapshotPuttingResult(evaluated.result);
       const plan = planPuttingSamples(puttingSampleSource(result));
       validatePuttingResultSummary(result, plan);
+      const twist = twistResponse(head, clubheadSpeed, {
+        shaftLeanDeg: setup.shaftLeanDeg,
+        attackAngleDeg: setup.attackAngleDeg,
+        strikeOffsetToeMm: setup.strikeOffsetToeMm,
+        strikeOffsetHighMm: setup.strikeOffsetHighMm,
+      });
       const context = puttingContextLabel(
-        putter, clubheadSpeed, stimp, grade, aspect, distance,
+        putterSpec(head),
+        clubheadSpeed,
+        setup.stimp,
+        setup.grade,
+        setup.aspect,
+        setup.distance,
       );
       const accepted: AcceptedStudy = {
-        executor: executeStudy, result, plan, context,
-        holeX: distance, grade, aspect,
+        executor: executeStudy,
+        result,
+        surface: scenario.surface,
+        document: Object.freeze({ ...evaluated.document }),
+        twist,
+        plan,
+        context,
+        holeX: setup.distance,
+        grade: setup.grade,
+        aspect: setup.aspect,
       };
       return { accepted, error: null };
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       return { accepted: null, error: message.slice(0, 512) };
     }
-  }, [
-    executeStudy, putters, putterName, paceMode, speed, backstrokeCm,
-    stimp, grade, aspect, distance,
-  ]);
-  const accepted = candidate.accepted ?? (
-    acceptedStudy.current?.executor === executeStudy ? acceptedStudy.current : null
-  );
+  }, [executeStudy, putters, setup]);
+
+  const accepted =
+    candidate.accepted ??
+    (acceptedStudy.current?.executor === executeStudy
+      ? acceptedStudy.current
+      : null);
   useLayoutEffect(() => {
     if (candidate.accepted !== null) acceptedStudy.current = candidate.accepted;
   }, [candidate]);
   const { error } = candidate;
   const result = accepted?.result ?? null;
   const plan = accepted?.plan ?? null;
-  const selectedRawIndex = selection?.accepted === accepted ? selection.rawIndex : null;
+  const timeline = useMemo(
+    () =>
+      accepted === null
+        ? null
+        : new PlaybackTimeline(
+            puttPlaybackSamples(accepted.result, accepted.surface),
+          ),
+    [accepted],
+  );
+  useEffect(() => setPlaybackTimeS(0), [timeline]);
+  const playbackDurationS = timeline?.duration ?? 0;
+  const playbackFrame = timeline?.frameAt(playbackTimeS) ?? null;
+  const selectedRawIndex =
+    selection?.accepted === accepted ? selection.rawIndex : null;
   const selectSample = (rawIndex: number | null) => {
-    setSelection(rawIndex === null || accepted === null ? null : { accepted, rawIndex });
+    setSelection(
+      rawIndex === null || accepted === null
+        ? null
+        : { accepted, rawIndex },
+    );
   };
 
-  const values: Record<string, string> = result
-    ? {
-        puttRolloutM: formatM(result.totalDistanceM),
-        puttSkidM: formatM(result.skidDistanceM),
-        puttSkidPct: `${(
-          (100 * result.skidDistanceM) /
-          Math.max(result.totalDistanceM, 1e-9)
-        ).toFixed(1)} %`,
-        puttTimeS: `${result.timeS.toFixed(2)} s`,
-        puttBreakM: formatM(result.breakM),
-        puttSpeedAtHoleMps:
-          result.speedAtHoleMps !== null
-            ? `${result.speedAtHoleMps.toFixed(2)} m/s`
-            : "— (never reached)",
-        puttMargin: result.holed
-          ? `HOLED (+${(result.marginMps ?? 0).toFixed(2)} m/s under bound)`
-          : `miss by ${formatM(result.missDistanceM ?? 0)}`,
-      }
+  const values: Record<string, string> = accepted
+    ? puttingResultValues(accepted.document, accepted.twist, formatM)
     : {};
-  const explainedRow = ROWS.find((r) => r.key === explained) ?? ROWS[0];
-
-  const numberField = (
-    label: string,
-    value: number,
-    set: (v: number) => void,
-    step: number,
-    title: string,
-    suffix: string,
-    bounds?: readonly [min: number, max: number],
-  ) => (
-    <label className="mb-2 flex items-center justify-between gap-2 text-sm">
-      <span className="text-slate-300">{label}</span>
-      <span className="flex items-center gap-1">
-        <DecimalInput
-          value={value}
-          step={step}
-          min={bounds?.[0]}
-          max={bounds?.[1]}
-          aria-label={`${label} ${suffix}`.trim()}
-          title={title}
-          onCommit={set}
-          className="w-24 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-right text-slate-100 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-        />
-        <span className="text-slate-400">{suffix}</span>
-      </span>
-    </label>
-  );
+  const explainedRow =
+    PUTTING_RESULT_ROWS.find((row) => row.key === explained) ??
+    PUTTING_RESULT_ROWS[0];
+  const explainedTerm =
+    explainedRow.term !== undefined && GLOSSARY[explainedRow.term] !== undefined
+      ? explainedRow.term
+      : null;
 
   return (
     <div className="grid gap-6 lg:grid-cols-[340px_1fr]">
       <section aria-label="Putt setup" className="space-y-4">
-        <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-5 shadow-lg shadow-black/20 backdrop-blur">
-          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
-            Putt Setup
-          </h2>
-          <label className="mb-2 flex items-center justify-between gap-2 text-sm">
-            <span className="text-slate-300">Putter</span>
-            <select
-              value={putterName}
-              title="Putter head used for the impact model (library putters when available); head mass and loft drive ball speed and launch spin"
-              onChange={(e) => setPutterName(e.target.value)}
-              className="rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-100 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-            >
-              {putters.map((p) => (
-                <option key={p.name} value={p.name}>
-                  {p.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="mb-2 flex items-center justify-between gap-2 text-sm">
-            <span className="text-slate-300">Pace input</span>
-            <select
-              value={paceMode}
-              title="Set the stroke pace directly as clubhead speed, or as a pendulum backstroke length (v = A·sqrt(g/L))"
-              onChange={(e) =>
-                setPaceMode(e.target.value as "speed" | "backstroke")
-              }
-              className="rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-100 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-            >
-              <option value="speed">Clubhead speed</option>
-              <option value="backstroke">Backstroke length</option>
-            </select>
-          </label>
-          {paceMode === "speed"
-            ? numberField(
-                "Clubhead speed",
-                speed,
-                setSpeed,
-                0.05,
-                "Clubhead speed at impact; 0.5-3 m/s covers putts inside 15 m (swing_sim.putting.impact)",
-                "m/s",
-                [0.2, 6],
-              )
-            : numberField(
-                "Backstroke",
-                backstrokeCm,
-                setBackstrokeCm,
-                1,
-                "Backstroke arc length, converted with the simple-pendulum proxy v = A·sqrt(g/L); 10-60 cm typical",
-                "cm",
-                [5, 100],
-              )}
-          {numberField(
-            "Green speed (stimp)",
-            stimp,
-            setStimp,
-            0.5,
-            "Stimpmeter reading; 7 slow - 13 tournament fast (USGA stimpmeter geometry, swing_sim.putting.roll)",
-            "ft",
-            [3, 16],
-          )}
-          {numberField(
-            "Slope grade",
-            grade,
-            setGrade,
-            0.25,
-            "Uniform green slope grade; greens rarely exceed ~5 % (swing_sim.putting.green)",
-            "%",
-            [0, 10],
-          )}
-          {numberField(
-            "Downhill direction",
-            aspect,
-            setAspect,
-            5,
-            "Downhill direction relative to the putt line: 0° ahead, +90° low side left, 180° uphill",
-            "°",
-            [-360, 360],
-          )}
-          {numberField(
-            "Distance to hole",
-            distance,
-            setDistance,
-            0.1,
-            "Ball-to-hole distance along the starting line; 1-15 m typical",
-            "m",
-            [0.1, 40],
-          )}
-        </div>
+        <PuttingControls
+          setup={setup}
+          putters={putters}
+          onChange={(patch) => setSetup((current) => ({ ...current, ...patch }))}
+        />
 
         <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-5 shadow-lg shadow-black/20 backdrop-blur">
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
             Putt Results
           </h2>
-          {ROWS.map((row) => (
+          {PUTTING_RESULT_ROWS.map((row) => (
             <button
               key={row.key}
               type="button"
@@ -341,14 +303,14 @@ export function PuttingPanel({
               aria-pressed={explained === row.key}
               title={`Click for a plain-language explanation of ${row.label}`}
               className={
-                "mb-1 flex w-full items-center justify-between rounded-lg border px-3 py-1.5 text-sm transition-all " +
+                "mb-1 flex w-full items-center justify-between gap-3 rounded-lg border px-3 py-1.5 text-left text-sm transition-all " +
                 (explained === row.key
                   ? "border-sky-400/60 bg-sky-500/10 ring-1 ring-sky-400/40"
                   : "border-slate-800 bg-slate-900/40 hover:border-slate-600")
               }
             >
               <span className="text-slate-300">{row.label}</span>
-              <span className="font-semibold text-slate-100">
+              <span className="text-right font-semibold text-slate-100">
                 {values[row.key] ?? "—"}
               </span>
             </button>
@@ -363,33 +325,76 @@ export function PuttingPanel({
             {explainedRow.label}
           </h3>
           <p className="text-slate-400">{explainedRow.explanation}</p>
-          <button
-            type="button"
-            title="Open the Glossary at the matching term"
-            onClick={() => onGlossary?.(FIELD_TO_TERM[explainedRow.key] ?? "")}
-            className="mt-2 text-sky-400 hover:text-sky-300"
-          >
-            Glossary
-          </button>
+          {explainedTerm !== null ? (
+            <button
+              type="button"
+              title="Open the Glossary at the matching term"
+              onClick={() => onGlossary?.(explainedTerm)}
+              className="mt-2 text-sky-400 hover:text-sky-300"
+            >
+              Glossary
+            </button>
+          ) : null}
         </div>
       </section>
 
-      <section aria-label="Green view" className="order-first space-y-4 lg:order-none">
+      <section
+        aria-label="Green view"
+        className="order-first space-y-4 lg:order-none"
+      >
         {error ? (
-          <p role="alert" className="rounded border border-red-500/60 bg-red-950/70 px-3 py-2 text-sm text-red-100">
-            Attempted putting configuration rejected: {error}. {accepted
+          <p
+            role="alert"
+            className="rounded border border-red-500/60 bg-red-950/70 px-3 py-2 text-sm text-red-100"
+          >
+            Attempted putting configuration rejected: {error}.{" "}
+            {accepted
               ? "The accepted context below remains displayed."
               : "No accepted putt is available."}
           </p>
         ) : null}
         {accepted ? (
-          <p aria-label="Displayed putting result context" className="text-xs text-slate-400">
+          <p
+            aria-label="Displayed putting result context"
+            className="text-xs text-slate-400"
+          >
             Displayed result: {accepted.context}
           </p>
         ) : null}
-        <PuttingVisuals result={result} plan={plan} selectedRawIndex={selectedRawIndex}
-          onSelectionChange={selectSample} holeX={accepted?.holeX ?? distance}
-          grade={accepted?.grade ?? grade} aspect={accepted?.aspect ?? aspect} />
+        <PlaybackTransportBar
+          subjectLabel="Putt"
+          subjectPhrase="putt"
+          timeS={playbackTimeS}
+          durationS={playbackDurationS}
+          events={[
+            { label: "Strike", timeS: 0 },
+            { label: "Finish", timeS: playbackDurationS },
+          ]}
+          scrubTitle="Physical putt time [s] from strike to rest or capture, interpolated between the retained integrator samples"
+          onTimeChange={setPlaybackTimeS}
+        />
+        <p
+          role="status"
+          aria-label="Putt playback frame"
+          className="rounded-lg border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-200"
+        >
+          {playbackStatus(
+            playbackFrame,
+            playbackDurationS,
+            result?.holed ?? false,
+          )}
+        </p>
+        <PuttingVisuals
+          result={result}
+          plan={plan}
+          document={accepted?.document ?? null}
+          selectedRawIndex={selectedRawIndex}
+          onSelectionChange={selectSample}
+          holeX={accepted?.holeX ?? setup.distance}
+          grade={accepted?.grade ?? setup.grade}
+          aspect={accepted?.aspect ?? setup.aspect}
+          playbackPositionM={playbackFrame?.position ?? null}
+        />
       </section>
     </div>
   );

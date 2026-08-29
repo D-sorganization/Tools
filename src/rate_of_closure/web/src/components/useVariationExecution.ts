@@ -7,6 +7,7 @@ import type { SwingVariationResultTs } from "../model/variationSwingEnsemble";
 import {
   createVariationExecutionService,
   plannedVariationRuns,
+  prepareVariationExecutionRequest,
   type VariationExecutionProgress,
   type VariationExecutionResult,
   type VariationExecutionService,
@@ -87,15 +88,24 @@ export function useVariationExecution(
   }, []);
 
   const invalidateResults = useCallback(() => {
+    // Only announce a discard that actually happened. This runs from an effect
+    // on every configuration-identity change, including the one caused by
+    // loading a plan, so announcing unconditionally would overwrite the
+    // caller's own message -- e.g. the import provenance warning, which is the
+    // only place the user is told a plan resolved against the current registry
+    // rather than its recorded one. Refs, so the callback identity is stable
+    // and the effect that calls this cannot re-trigger itself.
+    const discarded =
+      acceptedIdentity.current !== null || activeController.current !== null;
     generation.current += 1;
     activeController.current?.abort();
     activeController.current = null;
-    setBusy(false);
-    setProgress(null);
+    setDataset(null);
+    setEnsemble(null);
     clearResultState();
     acceptedIdentity.current = null;
     setVisualState(variationVisualState("invalidate"));
-    setStatus("Ready: configuration changed; run again.");
+    if (discarded) setStatus("Ready: configuration changed; run again.");
   }, [clearResultState]);
 
   const cancel = useCallback(() => {
@@ -111,6 +121,8 @@ export function useVariationExecution(
       setEnsemble(acceptedEnsemble);
       acceptedIdentity.current = configurationIdentity;
     }
+    setBusy(false);
+    setProgress(null);
     setStatus("Cancelled: no partial variation result was accepted.");
     setVisualState(variationVisualState(
       retainsAccepted ? "cancel-retained" : "cancel-empty",
@@ -134,7 +146,9 @@ export function useVariationExecution(
     setProgress(initialProgress);
     setStatus(runningStatus(initialProgress));
     try {
-      const request = { plan, analysisExecution };
+      // The prepared request carries the execution metadata that both the
+      // request and the returned result are validated against.
+      const request = prepareVariationExecutionRequest(plan, analysisExecution);
       validateExecutionRequest(request);
       const result = validateResult(await service.execute(
         request,

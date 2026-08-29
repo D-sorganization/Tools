@@ -65,6 +65,17 @@ from .kinetics import (
     zero_torque_counterfactual,
 )
 from .manual_delivery import ManualDeliveryConfig, ShaftAxisDatum
+from .playback_transport import (
+    DEFAULT_SPEED,
+    PLAYBACK_SPEEDS,
+    SCRUB_STEPS,
+    PlaybackAdvance,
+    advance_playback,
+    clamp_time,
+    scrub_value,
+    time_at_scrub,
+)
+from .putt_playback import putt_playback_trajectory
 from .session import (
     BALL_POSITION_M,
     DEFAULT_DRIVER_TEE_HEIGHT_M,
@@ -100,9 +111,17 @@ __all__ = [
     "SCREW_CSV_COLUMNS",
     "TARGET_CSV_COLUMNS",
     "AppFrameSwing",
+    "DEFAULT_SPEED",
     "FlightExploration",
+    "PLAYBACK_SPEEDS",
+    "PlaybackAdvance",
     "PlaybackFrame",
+    "SCRUB_STEPS",
     "TimedTrajectory",
+    "advance_playback",
+    "clamp_time",
+    "scrub_value",
+    "time_at_scrub",
     "WindComparison",
     "KineticsSeries",
     "ImpactOutcome",
@@ -137,6 +156,7 @@ __all__ = [
     "launch_from_delivery",
     "launch_from_direct",
     "make_source",
+    "putt_playback_trajectory",
     "run_simulation",
     "representative_wedge_parameters_for_club",
     "turf_interaction_for_run",

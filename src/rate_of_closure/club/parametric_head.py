@@ -14,9 +14,14 @@ one. Given a :class:`~rate_of_closure.club.types.ClubSpec`:
   specified, each face vertex is set back by the circular sagitta
   ``s(t) = R - sqrt(R² - t²)`` in its offset coordinate, producing a
   convex spherical-ish face; with both off the face is flat.
-* **Loft** tilts the whole face patch about the heel-toe (z) axis
-  through the face center, so the face normal at center is
-  ``(cos loft, sin loft, 0)``.
+* **Loft** is a leading-edge lean (#4799 G1): the whole head is built
+  unlofted, then every vertex is sheared about the ``y = y_le``
+  leading-edge line (:func:`~.head_profiles.lean_point`), so the
+  leading edge stays at the authored face station — no onset — the
+  authored face height becomes slant height (vertical extent compresses
+  by ``cos loft``), and the flat-face normal is exactly
+  ``(cos loft, sin loft, 0)``. The map's Jacobian determinant is
+  ``cos loft > 0``, preserving orientation and watertightness.
 
 Everything is a pure function of the spec — no RNG — so meshes are
 bit-for-bit deterministic and the vitest twin (``web/src/model/
@@ -28,8 +33,12 @@ future impact package: for the pre-loft surface
 
     n ∝ (1,  y / sqrt(R_roll² - y²),  z / sqrt(R_bulge² - z²))
 
-(the gradient of the surface function), rotated by the loft tilt. With
-curvature off the corresponding component is zero — a flat lofted face.
+(the gradient of the surface function), rotated by the loft tilt. This
+analytic rotated form is the contract: the leaned mesh realizes it
+exactly for flat faces (all blades), and to first order in the sagitta
+slope for curved wood faces (a shear and a rotation of a curved surface
+agree only to first order). With curvature off the corresponding
+component is zero — a flat lofted face.
 """
 
 from __future__ import annotations
@@ -42,7 +51,7 @@ from rate_of_closure._contracts import ensure, require, require_finite
 from rate_of_closure.mesh import HeadMesh, triangle_normals
 
 from .geometry import RING_POINTS, cap_fan, loft_band, superellipse_ring
-from .head_profiles import mass_scale, profile_for
+from .head_profiles import leading_edge_height, mass_scale, profile_for
 from .types import ClubSpec
 
 __all__ = [
@@ -122,7 +131,12 @@ def face_sagitta(spec: ClubSpec, toe_m: float, high_m: float) -> float:
 
 
 def _loft_rotation(loft_deg: float) -> np.ndarray:
-    """Rotation about +z tilting the face normal up by the loft angle."""
+    """Rotation about +z tilting the face normal up by the loft angle.
+
+    Used for **normals only** (:func:`face_normal_at_offset`); mesh
+    positions are lofted by the leading-edge lean map instead
+    (#4799 G1 — see :func:`build_parametric_head`).
+    """
     lam = math.radians(loft_deg)
     rotation: np.ndarray = np.array(
         [
@@ -202,20 +216,18 @@ def build_parametric_head(spec: ClubSpec) -> np.ndarray:
     rings = [body_ring(section) for section in sections]
     face_x, _hh0, _hw0, face_yc = sections[0]
     center = np.array([face_x, face_yc, 0.0])
-    rotation = _loft_rotation(spec.loft_deg)
 
     def face_ring(fraction: float) -> np.ndarray:
-        """One concentric face ring: curvature set-back, then loft tilt."""
+        """One concentric unlofted face ring with its curvature set-back."""
         scaled = rings[0].copy()
         scaled[:, 1] = face_yc + (scaled[:, 1] - face_yc) * fraction
         scaled[:, 2] *= fraction
         for row in scaled:
             row[0] = face_x - face_sagitta(spec, float(row[2]), float(row[1] - face_yc))
-        transformed: np.ndarray = np.asarray((scaled - center) @ rotation.T + center)
-        return transformed
+        return scaled
 
     face_rings = [face_ring(fraction) for fraction in _FACE_FRACTIONS]
-    face_center = center.copy()  # sagitta at (0, 0) is zero; loft fixes c
+    face_center = center.copy()  # sagitta at (0, 0) is zero
 
     triangles: list[np.ndarray] = []
     # Body: lofted bands from the (tilted) face boundary back to the
@@ -236,6 +248,17 @@ def build_parametric_head(spec: ClubSpec) -> np.ndarray:
     triangles.extend(cap_fan(tail_center, rings[-1], outward_x=False))
 
     mesh: np.ndarray = np.array(triangles)
+    # Leading-edge loft lean (#4799 G1): shear the assembled unlofted
+    # solid about the y = y_le leading-edge line instead of rotating the
+    # face patch about its center, so the leading edge keeps the
+    # authored face station (no onset) and the authored face height
+    # becomes slant height. Same map as head_profiles.lean_point;
+    # Jacobian det = cos(loft) > 0 keeps the winding outward.
+    lam = math.radians(spec.loft_deg)
+    y_le = leading_edge_height(spec)
+    dy = mesh[:, :, 1] - y_le
+    mesh[:, :, 0] -= dy * math.sin(lam)
+    mesh[:, :, 1] = y_le + dy * math.cos(lam)
     expected = (2 * (len(sections) - 1) + 2 * (len(face_rings) - 1) + 2) * RING_POINTS
     ensure(mesh.shape[0] == expected, "parametric head is closed")
     ensure(bool(np.isfinite(mesh).all()), "parametric head vertices finite")

@@ -11258,7 +11258,8 @@
         "test_paths": [
           "src/shared/python/programmatic_pid/tests/test_geometry.py",
           "tests/programmatic_pid/test_geometry.py",
-          "tests/rate_of_closure/test_club.py"
+          "tests/rate_of_closure/test_club.py",
+          "tests/rate_of_closure/test_club_heads.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
@@ -11266,10 +11267,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 7881,
+      "bytes_lf": 12542,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "eb658da90680687c08f498a82ea3d1beb213df514673c44f1ce9e080101f6c8a",
+      "content_sha256_lf": "7017b8151f3f59a7d53b35f2a02103c454cdeb8b8c2f2ddf91fdbd8fd16e857e",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-CLUB-HEAD-PROFILES-PY-56C0CB8FD437",
       "language": "python",
@@ -11311,6 +11312,11 @@
           },
           {
             "kind": "constant",
+            "name": "BLADE_HOSEL_HEIGHT_FRACTION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
             "name": "PLUMBER_NECK_OFFSET_M",
             "signature": null
           },
@@ -11323,6 +11329,16 @@
             "kind": "function",
             "name": "hosel_point",
             "signature": "spec: ClubSpec"
+          },
+          {
+            "kind": "function",
+            "name": "leading_edge_height",
+            "signature": "spec: ClubSpec"
+          },
+          {
+            "kind": "function",
+            "name": "lean_point",
+            "signature": "spec: ClubSpec, point: tuple[float, float, float]"
           },
           {
             "kind": "function",
@@ -11341,7 +11357,8 @@
           }
         ],
         "test_paths": [
-          "tests/rate_of_closure/test_club_heads.py"
+          "tests/rate_of_closure/test_club_heads.py",
+          "tests/rate_of_closure/test_club_profile_acceptance.py"
         ],
         "unit_mentions": [
           "g",
@@ -11513,10 +11530,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10480,
+      "bytes_lf": 11750,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ef6508baa3c27d1ac9f368b0164513a5274db0650ad5b764871d537e6de935f2",
+      "content_sha256_lf": "c56dedda595fc275ef7113a555a6440938e08fa751c6c2bf3c9d69d7628ad33a",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-CLUB-PARAMETRIC-HEAD-PY-D3457B92491D",
       "language": "python",
@@ -11583,6 +11600,7 @@
           }
         ],
         "test_paths": [
+          "tests/rate_of_closure/test_club_heads.py",
           "tests/rate_of_closure/test_club_mesh_inertia.py"
         ],
         "unit_mentions": [
@@ -11827,7 +11845,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "not-applicable"
       },
@@ -11868,7 +11886,9 @@
             "signature": "triangles: np.ndarray"
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/rate_of_closure/test_club_profile_acceptance.py"
+        ],
         "unit_mentions": [
           "s"
         ],
@@ -12583,10 +12603,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 4077,
+      "bytes_lf": 4548,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ac50ed8bc51fe9a1c6777b2df40ff4cb35756fa03bc1c2706aec0828cc0a77a3",
+      "content_sha256_lf": "f2f6ddd2ef60dd07c1001b5eba4e75d52bea09d7748583ecbe5b27828d5b530e",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-GLOSSARY-PY-07642CD079F4",
       "language": "python",

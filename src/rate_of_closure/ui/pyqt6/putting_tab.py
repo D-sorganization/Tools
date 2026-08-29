@@ -1,39 +1,47 @@
-"""Putting tab — putter, stroke, green, roll-out (#4125 H3).
+"""Putting tab — stroke, green, results, and 3-D playback (#4800 P6 / P8).
 
-Left: putter picker (H1 club-library putters via
-:func:`rate_of_closure.putting.putter_specs`), stroke pace (clubhead
-speed directly, or a backstroke length through the pendulum proxy),
-green conditions (stimp, grade, downhill aspect), hole distance, and
-clickable result rows with explanations. Right: a top-down green view
-(path colour-coded by skid/pure-roll phase, hole, downhill arrow) over
-a speed-vs-distance plot with the capture-speed bound marked.
+Left column: the delivered stroke
+(:mod:`~rate_of_closure.ui.pyqt6.putting_stroke_controls` — putter head,
+pace, aim/face/path/attack, strike location), the green
+(:mod:`~rate_of_closure.ui.pyqt6.putting_green_controls` — stimp, planar
+grade and aspect or an imported heightfield, hole distance, capture
+model), then clickable result rows with explanations. Right column: the
+top-down green with the break trajectory and the hole-capture geometry
+over a speed-vs-distance plot, and the orbitable 3-D playback of the
+same recorded samples on P8's shared transport (play/pause, restart,
+Strike/Finish jumps, scrub, speed) — one transport model, never a
+putting-specific copy.
 
-The physics lives in ``shared.python.swing_sim.putting``; this widget
-is presentation only. Distances are SI (metres) end to end through the
-single ``_format_m`` chokepoint, ready for the units-quantity pass
-(H6) to route through the shared conversion table.
+Every number on screen comes from one solve per recompute:
+``strike_with_head`` (P1 impact through P3's head document) →
+``simulate_putt_on_surface`` (P2 surface integration and capture) →
+``putting_result_document`` (the ``swing_sim.putting_result/2`` record,
+P5). The wire record is the presentation authority for the 2-D fields;
+the tab never recomputes a summary the record already carries, and the
+playback view replays the retained samples rather than re-integrating.
+
+The physics lives in ``shared.python.swing_sim.putting`` and
+``shared.python.golf_club.putter_head``; this widget is presentation
+only. Distances are SI (metres) end to end through the single
+``_format_m`` chokepoint, which follows the session's display unit.
 """
 
 from __future__ import annotations
 
 import logging
 
-from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import (
-    QComboBox,
-    QDoubleSpinBox,
-    QFormLayout,
     QFrame,
     QGroupBox,
     QScrollArea,
     QSplitter,
-    QStackedWidget,
     QTextBrowser,
     QVBoxLayout,
     QWidget,
 )
 
-from rate_of_closure.putting import PUTT_EXPLANATIONS, putter_specs
+from rate_of_closure.putting import PUTT_EXPLANATIONS
 from rate_of_closure.putting_result_contract import (
     AcceptedPuttingContext,
     validate_putting_result_summary,
@@ -43,16 +51,26 @@ from rate_of_closure.putting_sample_inspector import (
     PuttingSampleSeries,
     plan_putting_samples,
 )
-from rate_of_closure.ui.pyqt6.putting_result_presentation import putting_result_values
+from rate_of_closure.ui.pyqt6.putt_playback_controls import (
+    PuttPlaybackControls,
+    PuttPlaybackPanel,
+)
+from rate_of_closure.ui.pyqt6.putting_green_controls import PuttingGreenControls
+from rate_of_closure.ui.pyqt6.putting_playback import PuttPlaybackView
+from rate_of_closure.ui.pyqt6.putting_result_presentation import (
+    putting_document_values,
+    putting_result_values,
+)
+from rate_of_closure.ui.pyqt6.putting_stroke_controls import PuttingStrokeControls
 from rate_of_closure.ui.pyqt6.putting_visuals import PuttingPlotView
 from rate_of_closure.ui.pyqt6.result_row import ResultRow, explanation_html
 from rate_of_closure.units import format_distance_m
 from shared.python.swing_sim.putting import (
-    GreenConditions,
+    PuttingResultDocument,
+    PuttingResultProvenance,
     PuttResult,
-    clubhead_speed_from_backstroke,
-    simulate_putt,
-    strike,
+    putting_result_document,
+    simulate_putt_on_surface,
 )
 
 logger = logging.getLogger(__name__)
@@ -66,29 +84,46 @@ _ROWS: tuple[tuple[str, str], ...] = (
     ("putt_skid_m", "Skid Distance"),
     ("putt_skid_pct", "Skid Share of Putt"),
     ("putt_time_s", "Time To Rest"),
-    ("putt_break_m", "Break"),
+    ("putt_start_azimuth_deg", "Start Line"),
+    ("putt_break_m", "Break At Rest"),
+    ("putt_apex_break_m", "Apex Break"),
+    ("putt_entry_azimuth_deg", "Entry Direction"),
     ("putt_speed_at_hole_mps", "Speed At The Hole"),
+    ("putt_capture_margin_m", "Capture Margin"),
+    ("putt_face_twist_deg", "Face Twist At Strike"),
     ("putt_margin", "Holed / Miss Margin"),
 )
 
+#: ``putter_head/1`` provenance kind -> ``putting_result/2`` putter
+#: source. The two wires name the same origins with their own
+#: vocabularies; mapping them here keeps the record honest about which
+#: kind of head actually solved the impact.
+_PUTTER_SOURCES = {"mesh": "mesh", "library": "library"}
+
 
 class PuttingTab(QWidget):
-    """Interactive putting laboratory on a uniform sloped green."""
+    """Interactive putting laboratory on a planar or imported green."""
 
     glossaryRequested = pyqtSignal(str)  # noqa: N815 - Qt signal style
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
-        self._putters = putter_specs()
         self._rows: dict[str, ResultRow] = {}
         self._result: PuttResult | None = None
         self._accepted_context: AcceptedPuttingContext | None = None
         self._accepted_plan: PuttingSamplePlan | None = None
         self._accepted_generation: object | None = None
+        self._accepted_document: PuttingResultDocument | None = None
+
+        self._stroke_controls = PuttingStrokeControls()
+        self._green_controls = PuttingGreenControls()
+        for controls in (self._stroke_controls, self._green_controls):
+            controls.changed.connect(self._recompute)
 
         left = QWidget()
         left_layout = QVBoxLayout(left)
-        left_layout.addWidget(self._build_controls_box())
+        left_layout.addWidget(self._stroke_controls)
+        left_layout.addWidget(self._green_controls)
         left_layout.addWidget(self._build_rows_box())
         left_layout.addWidget(self._build_explanation_box())
         left_layout.addStretch(1)
@@ -100,10 +135,17 @@ class PuttingTab(QWidget):
 
         self._plot_view = PuttingPlotView()
         self._canvas = self._plot_view.canvas()
+        self._playback = PuttPlaybackPanel()
+        visuals = QSplitter()
+        visuals.setOrientation(Qt.Orientation.Vertical)
+        visuals.addWidget(self._plot_view)
+        visuals.addWidget(self._playback)
+        visuals.setStretchFactor(0, 3)
+        visuals.setStretchFactor(1, 2)
 
         splitter = QSplitter()
         splitter.addWidget(scroll)
-        splitter.addWidget(self._plot_view)
+        splitter.addWidget(visuals)
         splitter.setStretchFactor(0, 0)
         splitter.setStretchFactor(1, 1)
         layout = QVBoxLayout(self)
@@ -113,139 +155,6 @@ class PuttingTab(QWidget):
         self._show_explanation(_ROWS[0][0])
 
     # ── construction ────────────────────────────────────────────────
-    def _spin(
-        self,
-        low: float,
-        high: float,
-        value: float,
-        step: float,
-        suffix: str,
-        tooltip: str,
-        decimals: int = 2,
-    ) -> QDoubleSpinBox:
-        box = QDoubleSpinBox()
-        box.setRange(low, high)
-        box.setValue(value)
-        box.setSingleStep(step)
-        box.setDecimals(decimals)
-        box.setSuffix(suffix)
-        box.setToolTip(tooltip)
-        box.valueChanged.connect(self._recompute)
-        return box
-
-    def _build_controls_box(self) -> QGroupBox:
-        box = QGroupBox("Putt Setup")
-        form = QFormLayout(box)
-
-        self._putter_combo = QComboBox()
-        self._putter_combo.addItems(list(self._putters))
-        self._putter_combo.setToolTip(
-            "Putter head used for the impact model. Library putters "
-            "(H1 club library) when available; head mass and loft "
-            "drive the ball-speed transfer and launch spin."
-        )
-        self._putter_combo.currentTextChanged.connect(self._recompute)
-        form.addRow("Putter", self._putter_combo)
-
-        self._pace_mode = QComboBox()
-        self._pace_mode.addItems(["Clubhead speed", "Backstroke length"])
-        self._pace_mode.setToolTip(
-            "How the stroke pace is set: the head speed at impact "
-            "directly, or a pendulum backstroke length through "
-            "v = A·sqrt(g/L) (simple-pendulum proxy)."
-        )
-        form.addRow("Pace input", self._pace_mode)
-
-        self._speed_spin = self._spin(
-            0.2,
-            6.0,
-            1.8,
-            0.05,
-            " m/s",
-            "Clubhead speed at impact. Suggested range: 0.5-3 m/s for "
-            "putts inside 15 m. Source: pendulum-stroke kinematics "
-            "(swing_sim.putting.impact).",
-        )
-        self._speed_spin.setAccessibleName("Putter Clubhead Speed")
-        self._backstroke_spin = self._spin(
-            5.0,
-            100.0,
-            30.0,
-            1.0,
-            " cm",
-            "Backstroke arc length; converted to head speed with the "
-            "simple-pendulum proxy v = A·sqrt(g/L). Suggested range: "
-            "10-60 cm. Source: swing_sim.putting.impact derivation.",
-            decimals=0,
-        )
-        self._backstroke_spin.setAccessibleName("Putter Backstroke Length")
-        self._pace_stack = QStackedWidget()
-        self._pace_stack.setToolTip(
-            "Stroke pace entry — switches with the pace-input mode."
-        )
-        for widget in (self._speed_spin, self._backstroke_spin):
-            holder = QWidget()
-            holder_layout = QVBoxLayout(holder)
-            holder_layout.setContentsMargins(0, 0, 0, 0)
-            holder_layout.addWidget(widget)
-            self._pace_stack.addWidget(holder)
-        self._pace_stack.setCurrentIndex(0)
-        self._pace_mode.currentIndexChanged.connect(self._pace_stack.setCurrentIndex)
-        self._pace_mode.currentIndexChanged.connect(self._recompute)
-        form.addRow("Stroke pace", self._pace_stack)
-
-        self._stimp_spin = self._spin(
-            3.0,
-            16.0,
-            10.0,
-            0.5,
-            " ft",
-            "Green speed as a stimpmeter reading. Suggested range: "
-            "7 (slow) - 13 (tournament fast). Source: USGA stimpmeter "
-            "geometry (swing_sim.putting.roll derivation).",
-            decimals=1,
-        )
-        form.addRow("Green speed (stimp)", self._stimp_spin)
-
-        self._grade_spin = self._spin(
-            0.0,
-            10.0,
-            0.0,
-            0.25,
-            " %",
-            "Uniform slope grade of the green. Suggested range: 0-4 % "
-            "(greens rarely exceed ~5 %). Source: course-architecture "
-            "norms (swing_sim.putting.green).",
-        )
-        form.addRow("Slope grade", self._grade_spin)
-
-        self._aspect_spin = self._spin(
-            -360.0,
-            360.0,
-            90.0,
-            5.0,
-            "°",
-            "Downhill direction relative to the putt line: 0° = "
-            "downhill straight ahead, +90° = low side on your left, "
-            "180° = uphill putt. Source: swing_sim.putting.green frame.",
-            decimals=0,
-        )
-        form.addRow("Downhill direction", self._aspect_spin)
-
-        self._distance_spin = self._spin(
-            0.1,
-            40.0,
-            3.0,
-            0.1,
-            " m",
-            "Distance from the ball to the hole centre along the "
-            "starting line. Suggested range: 1-15 m. Source: "
-            "swing_sim.putting.green.",
-            decimals=1,
-        )
-        form.addRow("Distance to hole", self._distance_spin)
-        return box
-
     def _build_rows_box(self) -> QGroupBox:
         box = QGroupBox("Putt Results")
         layout = QVBoxLayout(box)
@@ -291,16 +200,6 @@ class PuttingTab(QWidget):
         if text.startswith("glossary:"):
             self.glossaryRequested.emit(text.partition(":")[2])
 
-    def _clubhead_speed(self) -> float:
-        if self._pace_mode.currentIndex() == 1:
-            putter_length_m = 0.889  # standard 35 in putter
-            return float(
-                clubhead_speed_from_backstroke(
-                    self._backstroke_spin.value() / 100.0, putter_length_m
-                )
-            )
-        return float(self._speed_spin.value())
-
     @staticmethod
     def _format_m(value: float) -> str:
         """Single distance-format chokepoint — follows the session's
@@ -311,64 +210,124 @@ class PuttingTab(QWidget):
         """The last computed putt (LoD seam for tests)."""
         return self._result
 
+    def document(self) -> PuttingResultDocument | None:
+        """The last ``putting_result/2`` record (LoD seam for tests)."""
+        return self._accepted_document
+
+    def playback_view(self) -> PuttPlaybackView:
+        """The 3-D playback surface (probe seam)."""
+        return self._playback.view
+
+    def playback_controls(self) -> PuttPlaybackControls:
+        """The shared transport driving the 3-D playback (test seam)."""
+        return self._playback.controls
+
+    def stroke_controls(self) -> PuttingStrokeControls:
+        """The delivered-stroke control group (LoD seam for tests)."""
+        return self._stroke_controls
+
+    def green_controls(self) -> PuttingGreenControls:
+        """The green control group (LoD seam for tests)."""
+        return self._green_controls
+
     def refresh_units(self) -> None:
         """Re-render rows and axes in the distance display unit (H6)."""
-        if self._result is not None:
-            self._update_rows(self._result)
-            if (
-                self._accepted_context is None
-                or self._accepted_plan is None
-                or self._accepted_generation is None
-            ):
-                raise RuntimeError("accepted putting display bundle is unavailable")
-            context = self._accepted_context
-            self._plot_view.set_result(
-                self._result,
-                self._accepted_plan,
-                generation=self._accepted_generation,
-                hole_x=context.hole_m,
-                grade=context.grade_percent,
-                aspect=context.aspect_deg,
-                context_text=context.label(),
-            )
+        if self._result is None:
+            return
+        self._update_rows(self._result)
+        if (
+            self._accepted_context is None
+            or self._accepted_plan is None
+            or self._accepted_generation is None
+        ):
+            raise RuntimeError("accepted putting display bundle is unavailable")
+        context = self._accepted_context
+        self._plot_view.set_result(
+            self._result,
+            self._accepted_plan,
+            generation=self._accepted_generation,
+            hole_x=context.hole_m,
+            grade=context.grade_percent,
+            aspect=context.aspect_deg,
+            context_text=context.label(),
+        )
 
     def _recompute(self) -> None:
-        putter = self._putters[self._putter_combo.currentText()]
-        speed = self._clubhead_speed()
+        from shared.python.golf_club.putter_head import strike_with_head
+
+        head = self._stroke_controls.head_document()
+        stroke = self._stroke_controls.stroke()
+        green = self._green_controls.green()
         context = AcceptedPuttingContext(
-            putter.name,
-            putter.head_mass_kg,
-            putter.loft_deg,
-            putter.cor,
-            speed,
-            self._stimp_spin.value(),
-            self._grade_spin.value(),
-            self._aspect_spin.value(),
-            self._distance_spin.value(),
+            head.name,
+            head.provenance.source_kind,
+            head.head_mass_kg,
+            head.loft_deg,
+            head.cor,
+            stroke.label(),
+            green.label(),
+            green.grade_percent,
+            green.aspect_deg,
+            green.hole_distance_m,
         )
         try:
-            launch = strike(putter, speed)
-            green = GreenConditions(
-                stimp_ft=self._stimp_spin.value(),
-                grade_percent=self._grade_spin.value(),
-                aspect_deg=self._aspect_spin.value(),
+            solved = strike_with_head(
+                head,
+                stroke.clubhead_speed_mps,
+                stroke.shaft_lean_deg,
+                aim_deg=stroke.aim_deg,
+                face_angle_deg=stroke.face_angle_deg,
+                path_angle_deg=stroke.path_angle_deg,
+                attack_angle_deg=stroke.attack_angle_deg,
+                strike_offset_toe_mm=stroke.strike_offset_toe_mm,
+                strike_offset_high_mm=stroke.strike_offset_high_mm,
             )
-            result = simulate_putt(launch, green, self._distance_spin.value())
+            result = simulate_putt_on_surface(
+                solved.launch,
+                green.surface,
+                stimp_ft=green.stimp_ft,
+                hole_distance_m=green.hole_distance_m,
+                capture_model=green.capture_model,
+            )
+            document = putting_result_document(
+                solved.launch,
+                result,
+                PuttingResultProvenance(
+                    putter_source=_PUTTER_SOURCES[head.provenance.source_kind],
+                    putter_name=head.name,
+                    stroke_source="declared",
+                    capture_model=green.capture_model,
+                    putter_mesh_sha256=head.provenance.mesh_sha256,
+                    putter_library_name=head.provenance.library_name,
+                ),
+                hole_distance_m=green.hole_distance_m,
+            )
             plan = plan_putting_samples(PuttingSampleSeries.from_result(result))
             validate_putting_result_summary(result, plan)
             row_values = putting_result_values(result, self._format_m)
+            row_values.update(
+                putting_document_values(document, solved.twist, self._format_m)
+            )
             generation = object()
+            self._playback.set_putt(
+                result, green.surface, hole_distance_m=green.hole_distance_m
+            )
             self._plot_view.set_result(
                 result,
                 plan,
                 generation=generation,
-                hole_x=context.hole_m,
-                grade=context.grade_percent,
-                aspect=context.aspect_deg,
+                hole_x=green.hole_distance_m,
+                grade=green.grade_percent,
+                aspect=green.aspect_deg,
                 context_text=context.label(),
+                document=document,
             )
         except Exception as error:
             logger.exception("putt inputs rejected")
+            # The 2-D view is the retained-evidence authority and
+            # restores itself; the derived playback is dropped so it
+            # can never show a putt the tab has not accepted.
+            self._playback.clear()
             self._plot_view.set_error(
                 f"Attempted configuration rejected ({context.label()}): {error}"
             )
@@ -377,6 +336,7 @@ class PuttingTab(QWidget):
         self._accepted_plan = plan
         self._accepted_context = context
         self._accepted_generation = generation
+        self._accepted_document = document
         self._publish_rows(row_values)
 
     def _publish_rows(self, values: dict[str, str]) -> None:

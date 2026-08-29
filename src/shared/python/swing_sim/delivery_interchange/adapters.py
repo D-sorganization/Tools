@@ -47,6 +47,7 @@ from __future__ import annotations
 
 import json
 import math
+from collections.abc import Sequence
 from typing import Any
 
 import numpy as np
@@ -71,6 +72,10 @@ _RECORD_FIELDS = frozenset(
 __all__ = [
     "DRAKE_EXPORT_FORMAT",
     "MUJOCO_EXPORT_FORMAT",
+    "body_export_envelope",
+    "body_kinematics_columns",
+    "euler_xyz_deg_to_quaternion",
+    "read_sto_table",
     "trajectory_from_drake_json",
     "trajectory_from_mujoco_json",
     "trajectory_from_opensim_sto",
@@ -99,9 +104,17 @@ def _records_to_trajectory(
     )
 
 
-def _body_export_from_json(
-    text: str, *, expected_format: str, name_field: str, source_prefix: str
-) -> DeliveryTrajectory:
+def body_export_envelope(
+    text: str, *, expected_format: str, name_field: str
+) -> tuple[str, str, list[Any]]:
+    """Validate an engine body-export envelope; return name, frame, records.
+
+    The envelope is shared by every ``*.body_export/1``-style document
+    (Drake bodies, MuJoCo sites, and the putting-stroke sibling wire in
+    ``swing_sim.putting.stroke_interchange``): a declared ``format``, a
+    nonempty body/site name, a declared ``frame_id``, and a ``records``
+    list whose per-record schema belongs to the consuming wire.
+    """
     require(isinstance(text, str), "text must be str")
     data = json.loads(text)
     require(isinstance(data, dict), "export must be an object")
@@ -118,6 +131,15 @@ def _body_export_from_json(
     )
     records = data.get("records")
     require(isinstance(records, list), "records must be a list")
+    return name, frame_id, records
+
+
+def _body_export_from_json(
+    text: str, *, expected_format: str, name_field: str, source_prefix: str
+) -> DeliveryTrajectory:
+    name, frame_id, records = body_export_envelope(
+        text, expected_format=expected_format, name_field=name_field
+    )
     return _records_to_trajectory(records, f"{source_prefix}:{name}", frame_id)
 
 
@@ -141,7 +163,7 @@ def trajectory_from_mujoco_json(text: str) -> DeliveryTrajectory:
     )
 
 
-def _euler_xyz_deg_to_quaternion(
+def euler_xyz_deg_to_quaternion(
     rx_deg: float, ry_deg: float, rz_deg: float
 ) -> tuple[float, float, float, float]:
     """Body-fixed XYZ Euler angles (OpenSim BodyKinematics) to wxyz."""
@@ -159,6 +181,44 @@ def _euler_xyz_deg_to_quaternion(
     )
 
 
+def body_kinematics_columns(body_name: str) -> list[str]:
+    """The ``BodyKinematics`` column names this package reads for a body."""
+    require(
+        isinstance(body_name, str) and body_name != "", "body_name must be nonempty"
+    )
+    return ["time"] + [
+        f"{body_name}_{suffix}" for suffix in ("X", "Y", "Z", "Ox", "Oy", "Oz")
+    ]
+
+
+def read_sto_table(text: str, *, columns: Sequence[str]) -> np.ndarray:
+    """Read the named columns of an OpenSim ``.sto`` table after ``endheader``.
+
+    Returns one float64 row per data line, columns in the requested
+    order. Missing columns, ragged rows, and non-finite values are
+    refused — the fail-closed posture the JSON wires use.
+    """
+    require(isinstance(text, str), "text must be str")
+    require(len(columns) > 0, "columns must be nonempty")
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    require("endheader" in lines, ".sto input must contain an endheader line")
+    body_start = lines.index("endheader") + 1
+    require(len(lines) > body_start + 2, ".sto input must contain data rows")
+    header = lines[body_start].split()
+    positions = {name: index for index, name in enumerate(header)}
+    missing = [name for name in columns if name not in positions]
+    require(not missing, f"missing .sto columns: {missing}")
+
+    rows = []
+    for line in lines[body_start + 1 :]:
+        values = [float(item) for item in line.split()]
+        require(len(values) == len(header), ".sto row width must match its header")
+        rows.append([values[positions[name]] for name in columns])
+    table = np.asarray(rows, dtype=np.float64)
+    require(bool(np.isfinite(table).all()), ".sto values must be finite")
+    return table
+
+
 def trajectory_from_opensim_sto(
     text: str,
     *,
@@ -172,30 +232,8 @@ def trajectory_from_opensim_sto(
     angular velocities are central-differenced from the sampled poses —
     a documented v1 choice for ``.sto`` sources without velocity tables.
     """
-    require(isinstance(text, str), "text must be str")
-    require(
-        isinstance(body_name, str) and body_name != "", "body_name must be nonempty"
-    )
     require(isinstance(frame_id, str) and frame_id != "", "frame_id must be nonempty")
-    lines = [line.strip() for line in text.splitlines() if line.strip()]
-    require("endheader" in lines, ".sto input must contain an endheader line")
-    body_start = lines.index("endheader") + 1
-    require(len(lines) > body_start + 2, ".sto input must contain data rows")
-    header = lines[body_start].split()
-    columns = {name: position for position, name in enumerate(header)}
-    needed = ["time"] + [
-        f"{body_name}_{suffix}" for suffix in ("X", "Y", "Z", "Ox", "Oy", "Oz")
-    ]
-    missing = [name for name in needed if name not in columns]
-    require(not missing, f"missing .sto columns: {missing}")
-
-    rows = []
-    for line in lines[body_start + 1 :]:
-        values = [float(item) for item in line.split()]
-        require(len(values) == len(header), ".sto row width must match its header")
-        rows.append([values[columns[name]] for name in needed])
-    table = np.asarray(rows, dtype=np.float64)
-    require(bool(np.isfinite(table).all()), ".sto values must be finite")
+    table = read_sto_table(text, columns=body_kinematics_columns(body_name))
 
     times = table[:, 0]
     positions = table[:, 1:4]
@@ -211,7 +249,7 @@ def trajectory_from_opensim_sto(
                 float(positions[i][1]),
                 float(positions[i][2]),
             ),
-            quaternion_wxyz=_euler_xyz_deg_to_quaternion(*eulers_deg[i]),
+            quaternion_wxyz=euler_xyz_deg_to_quaternion(*eulers_deg[i]),
             linear_velocity_mps=(
                 float(linear[i][0]),
                 float(linear[i][1]),

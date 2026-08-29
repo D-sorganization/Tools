@@ -1,7 +1,15 @@
-"""Deterministic interpolation contract for ball-flight playback (#4200).
+"""Deterministic interpolation contract for shot playback (#4200, #4800 P8).
 
 The physics engine owns the sampled timestamps. Playback interpolates those
 samples in physical SI time without altering or re-integrating the trajectory.
+
+Trajectory-source independence (the putting seam): :class:`TimedTrajectory`
+accepts any strictly increasing timeline with app-frame ``(N, 3)`` positions —
+recorded ball flight today, putt-result break trajectories later — so the
+putting vertical consumes this class unchanged. The TypeScript twin is
+``web/src/model/flightPlayback.ts`` (``PlaybackTimeline``); the sample→frame
+mapping of both twins is pinned by the shared golden fixture
+``web/src/model/__fixtures__/playback_transport_golden_v1.json``.
 """
 
 from __future__ import annotations
@@ -86,6 +94,25 @@ class TimedTrajectory:
             + self.positions_m[upper_index] * fraction
         )
         return PlaybackFrame(time_s, position, lower_index, fraction, False)
+
+    def step_time(self, requested_time_s: float, direction: int) -> float:
+        """Return the adjacent solver-owned sample time, clamped to the ends.
+
+        Twin of ``PlaybackTimeline.stepTime`` in the TypeScript model:
+        stepping forward lands on the next recorded sample, stepping
+        backward lands on the previous one (or the current sample when
+        the time sits strictly between two samples).
+        """
+        if direction not in (-1, 1):
+            raise ValueError("playback step direction must be -1 or 1")
+        frame = self.frame_at(requested_time_s)
+        if direction == 1:
+            next_index = min(frame.lower_index + 1, len(self.times_s) - 1)
+            return float(self.times_s[next_index])
+        previous_index = (
+            frame.lower_index if frame.fraction > 0.0 else max(frame.lower_index - 1, 0)
+        )
+        return float(self.times_s[previous_index])
 
     def _frame(self, index: int, fraction: float, time_s: float) -> PlaybackFrame:
         """Create an endpoint frame with a defensive position copy."""

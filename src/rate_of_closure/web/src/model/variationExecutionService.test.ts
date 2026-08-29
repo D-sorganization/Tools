@@ -5,6 +5,7 @@ import {
   executeVariationWork,
   createVariationExecutionService,
   plannedVariationRuns,
+  prepareVariationExecutionRequest,
   type VariationExecutionProgress,
   type VariationWorkerFactory,
 } from "./variationExecutionService";
@@ -31,18 +32,21 @@ const plan: VariationPlanTs = {
   flightModel: "waterloo_penner",
 };
 
+const jointRequest = () => prepareVariationExecutionRequest(plan, "all_together");
+
 describe("variation execution authority", () => {
   it("preserves the existing deterministic results and reports completed evaluations", () => {
     const progress: VariationExecutionProgress[] = [];
-    const result = executeVariationWork(
-      { plan, analysisExecution: "both" },
-      (value) => progress.push(value),
-    );
+    const request = prepareVariationExecutionRequest(plan, "both");
+    const result = executeVariationWork(request, (value) => progress.push(value));
+    const replay = executeVariationWork(request, () => undefined);
     const expected = executeVariationAnalyses(plan, "both");
 
     expect(result.dataset).toEqual(expected.dataset);
     expect(result.sensitivity).toEqual(expected.sensitivity);
     expect(result.ensemble).toBeNull();
+    expect(replay).toEqual(result);
+    expect(result.executionMetadata).toEqual(request.executionMetadata);
     expect(plannedVariationRuns(plan, "both")).toBe(12);
     expect(progress[progress.length - 1]).toEqual({
       completedRuns: 12,
@@ -53,6 +57,7 @@ describe("variation execution authority", () => {
       Array.from({ length: 12 }, (_unused, index) => index + 1),
     );
   });
+
 });
 
 class FakeWorker {
@@ -91,7 +96,7 @@ const workerService = (worker: FakeWorker) => {
 };
 
 const validResult = (): ReturnType<typeof executeVariationWork> =>
-  executeVariationWork({ plan, analysisExecution: "all_together" }, () => undefined);
+  executeVariationWork(jointRequest(), () => undefined);
 
 describe("production worker transport", () => {
   it("accepts validated progress and result, then cleans up exactly once", async () => {
@@ -99,11 +104,11 @@ describe("production worker transport", () => {
     const onProgress = vi.fn();
     const controller = new AbortController();
     const pending = workerService(worker).execute(
-      { plan, analysisExecution: "all_together" },
+      jointRequest(),
       { signal: controller.signal, onProgress },
     );
 
-    expect(worker.posted).toEqual([{ plan, analysisExecution: "all_together" }]);
+    expect(worker.posted).toEqual([jointRequest()]);
     for (let completedRuns = 1; completedRuns <= plan.nRuns; completedRuns += 1) {
       worker.emitMessage({
         kind: "progress",
@@ -121,12 +126,69 @@ describe("production worker transport", () => {
     expect(worker.onmessageerror).toBeNull();
   });
 
+  it("rejects cross-plan metadata before constructing or posting to a worker", () => {
+    const worker = new FakeWorker();
+    const request = jointRequest();
+    request.plan = { ...plan, seed: plan.seed + 1 };
+
+    expect(() => workerService(worker).execute(
+      request,
+      { signal: new AbortController().signal, onProgress: vi.fn() },
+    )).toThrow(/plan digest/i);
+    expect(worker.posted).toEqual([]);
+  });
+
+  it("rejects unknown inline metadata fields before performing work", () => {
+    const request = structuredClone(jointRequest());
+    Object.assign(request.executionMetadata, { unexpected: true });
+
+    expect(() => executeVariationWork(request, vi.fn())).toThrow(/metadata fields/i);
+  });
+
+  it("rejects result metadata drift after otherwise valid worker progress", async () => {
+    const worker = new FakeWorker();
+    const pending = workerService(worker).execute(
+      jointRequest(),
+      { signal: new AbortController().signal, onProgress: vi.fn() },
+    );
+    for (let completedRuns = 1; completedRuns <= plan.nRuns; completedRuns += 1) {
+      worker.emitMessage({
+        kind: "progress",
+        progress: { completedRuns, totalRuns: plan.nRuns, phase: "joint" },
+      });
+    }
+    const result = structuredClone(validResult());
+    (result.executionMetadata.resolvedVariables[0] as { unit: string }).unit = "m/s";
+    worker.emitMessage({ kind: "result", result });
+
+    await expect(pending).rejects.toThrow(/execution metadata/i);
+  });
+
+  it("rejects unknown Worker result metadata fields", async () => {
+    const worker = new FakeWorker();
+    const pending = workerService(worker).execute(
+      jointRequest(),
+      { signal: new AbortController().signal, onProgress: vi.fn() },
+    );
+    for (let completedRuns = 1; completedRuns <= plan.nRuns; completedRuns += 1) {
+      worker.emitMessage({
+        kind: "progress",
+        progress: { completedRuns, totalRuns: plan.nRuns, phase: "joint" },
+      });
+    }
+    const result = structuredClone(validResult());
+    Object.assign(result.executionMetadata, { unexpected: true });
+    worker.emitMessage({ kind: "result", result });
+
+    await expect(pending).rejects.toThrow(/execution metadata/i);
+  });
+
   it("aborts, terminates, and ignores late events", async () => {
     const worker = new FakeWorker();
     const onProgress = vi.fn();
     const controller = new AbortController();
     const pending = workerService(worker).execute(
-      { plan, analysisExecution: "all_together" },
+      jointRequest(),
       { signal: controller.signal, onProgress },
     );
     const lateMessage = worker.onmessage;
@@ -167,7 +229,7 @@ describe("production worker transport", () => {
   ])("fails closed for %s", async (_label, emit, expectedMessage) => {
     const worker = new FakeWorker();
     const pending = workerService(worker).execute(
-      { plan, analysisExecution: "all_together" },
+      jointRequest(),
       { signal: new AbortController().signal, onProgress: vi.fn() },
     );
 
@@ -182,7 +244,7 @@ describe("production worker transport", () => {
     worker.postError = new DOMException("cannot clone", "DataCloneError");
 
     const pending = workerService(worker).execute(
-      { plan, analysisExecution: "all_together" },
+      jointRequest(),
       { signal: new AbortController().signal, onProgress: vi.fn() },
     );
 
@@ -195,7 +257,7 @@ describe("production worker transport", () => {
     const factory: VariationWorkerFactory = () => { throw constructionError; };
 
     const pending = createVariationExecutionService(factory).execute(
-      { plan, analysisExecution: "all_together" },
+      jointRequest(),
       { signal: new AbortController().signal, onProgress: vi.fn() },
     );
 
@@ -205,7 +267,7 @@ describe("production worker transport", () => {
   it("rejects validly shaped results whose field identities cross the request", async () => {
     const worker = new FakeWorker();
     const pending = workerService(worker).execute(
-      { plan, analysisExecution: "all_together" },
+      jointRequest(),
       { signal: new AbortController().signal, onProgress: vi.fn() },
     );
     for (let completedRuns = 1; completedRuns <= plan.nRuns; completedRuns += 1) {

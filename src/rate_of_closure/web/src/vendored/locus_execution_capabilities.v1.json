@@ -314,6 +314,56 @@
       "point_locus_policy": "forbidden",
       "point_ids": [],
       "unsupported_reason": null
+    },
+    {
+      "variable_key": "swing_sim.putting.aim_deg",
+      "supported": false,
+      "adapter_id": null,
+      "whole_run": false,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": "Putting aim has no double-pendulum trace execution adapter."
+    },
+    {
+      "variable_key": "swing_sim.putting.clubhead_speed_mps",
+      "supported": false,
+      "adapter_id": null,
+      "whole_run": false,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": "Putting speed has no double-pendulum trace execution adapter."
+    },
+    {
+      "variable_key": "swing_sim.putting.face_angle_deg",
+      "supported": false,
+      "adapter_id": null,
+      "whole_run": false,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": "Putting face angle has no double-pendulum trace execution adapter."
+    },
+    {
+      "variable_key": "swing_sim.putting.path_angle_deg",
+      "supported": false,
+      "adapter_id": null,
+      "whole_run": false,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": "Putting path angle has no double-pendulum trace execution adapter."
+    },
+    {
+      "variable_key": "swing_sim.putting.strike_offset_toe_mm",
+      "supported": false,
+      "adapter_id": null,
+      "whole_run": false,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": "Putting strike offset has no double-pendulum trace execution adapter."
     }
   ]
 }

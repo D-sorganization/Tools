@@ -8,6 +8,7 @@ import {
   type PlaybackCamera,
 } from "./flightPlaybackDrawing";
 import { PlaybackTimeline, validatePlaybackPoints } from "../model/flightPlayback";
+import { PlaybackTransportBar } from "./PlaybackTransportBar";
 import type { FlightPoint } from "../model/flight";
 import type { SpatialTargetTs } from "../model/spatialTarget";
 import { spatialTargetSummary } from "./spatialTargetPresentation";
@@ -21,22 +22,22 @@ interface Props {
   selectedCommandId?: number;
 }
 
+// #4571 extension point: named cameras (Face-On / Down-the-Line) own their
+// state in model/cameraCommands.ts. When that seam lands for playback, seed
+// this orbit camera from `canvasAngles(cameraPreset(...))` instead of the
+// constant below; playback must never re-implement camera state (#4800 P8).
 const INITIAL_CAMERA: PlaybackCamera = {
   yawRad: -0.65,
   pitchRad: 0.38,
   zoom: 1,
 };
-const SPEEDS = [0.25, 0.5, 1, 2, 4];
 
 export function FlightPlayback3D({
   points, comparisonPoints = [], spatialTarget, selectedTimeS = null, selectedCommandId = 0,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const dragRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
-  const timeRef = useRef(0);
   const [time, setTime] = useState(0);
-  const [playing, setPlaying] = useState(false);
-  const [speed, setSpeed] = useState(1);
   const [camera, setCamera] = useState(INITIAL_CAMERA);
   const timeline = useMemo(
     () => (points.length > 0 ? new PlaybackTimeline(points) : null),
@@ -48,40 +49,12 @@ export function FlightPlayback3D({
     if (comparisonPoints.length > 0) validatePlaybackPoints(comparisonPoints);
   }, [comparisonPoints]);
 
-  useEffect(() => {
-    setPlaying(false);
-    timeRef.current = 0;
-    setTime(0);
-  }, [points]);
-
-  useEffect(() => {
-    timeRef.current = time;
-  }, [time]);
+  useEffect(() => setTime(0), [points]);
 
   useEffect(() => {
     if (selectedTimeS === null || !Number.isFinite(selectedTimeS)) return;
-    const next = Math.max(0, Math.min(duration, selectedTimeS));
-    setPlaying(false);
-    timeRef.current = next;
-    setTime(next);
+    setTime(Math.max(0, Math.min(duration, selectedTimeS)));
   }, [selectedTimeS, selectedCommandId, duration]);
-
-  useEffect(() => {
-    if (!playing || duration <= 0) return;
-    let animationId = 0;
-    let previous = performance.now();
-    const animate = (now: number) => {
-      const elapsed = Math.max(0, now - previous) / 1000;
-      previous = now;
-      const next = Math.min(duration, timeRef.current + elapsed * speed);
-      timeRef.current = next;
-      setTime(next);
-      if (next >= duration) setPlaying(false);
-      else animationId = window.requestAnimationFrame(animate);
-    };
-    animationId = window.requestAnimationFrame(animate);
-    return () => window.cancelAnimationFrame(animationId);
-  }, [playing, duration, speed]);
 
   const frame = useMemo(
     () => timeline?.frameAt(time) ?? null,
@@ -98,104 +71,21 @@ export function FlightPlayback3D({
     return observeCanvas(canvasRef, draw);
   }, [points, comparisonPoints, frame, camera, spatialTarget]);
 
-  const togglePlayback = () => {
-    if (playing) setPlaying(false);
-    else {
-      if (time >= duration) {
-        timeRef.current = 0;
-        setTime(0);
-      }
-      setPlaying(duration > 0);
-    }
-  };
-
-  const jump = (targetTime: number) => {
-    setPlaying(false);
-    timeRef.current = targetTime;
-    setTime(targetTime);
-  };
-
   return (
     <section className="space-y-3" aria-label="3D ball-flight playback">
-      <div className="flex flex-wrap items-center gap-2 text-xs">
-        <button
-          type="button"
-          disabled={duration <= 0}
-          onClick={() => jump(0)}
-          aria-label="Jump to Launch"
-          className="rounded border border-slate-700 px-2 py-1 text-slate-200 disabled:opacity-40"
-        >
-          Launch
-        </button>
-        <button
-          type="button"
-          disabled={duration <= 0}
-          onClick={togglePlayback}
-          aria-label={playing ? "Pause Ball Flight" : "Play Ball Flight"}
-          className="rounded border border-sky-500/60 bg-sky-500/10 px-3 py-1 font-semibold text-sky-200 disabled:opacity-40"
-        >
-          {playing ? "Pause" : "Play"}
-        </button>
-        <button
-          type="button"
-          disabled={duration <= 0}
-          onClick={() => {
-            jump(0);
-            setPlaying(true);
-          }}
-          aria-label="Restart Ball Flight"
-          className="rounded border border-slate-700 px-2 py-1 text-slate-200 disabled:opacity-40"
-        >
-          Restart
-        </button>
-        <button
-          type="button"
-          disabled={duration <= 0}
-          onClick={() => jump(apexTime)}
-          aria-label="Jump to Apex"
-          className="rounded border border-slate-700 px-2 py-1 text-slate-200 disabled:opacity-40"
-        >
-          Apex
-        </button>
-        <button
-          type="button"
-          disabled={duration <= 0}
-          onClick={() => jump(duration)}
-          aria-label="Jump to Landing"
-          className="rounded border border-slate-700 px-2 py-1 text-slate-200 disabled:opacity-40"
-        >
-          Landing
-        </button>
-        <input
-          type="range"
-          min={0}
-          max={duration}
-          step={0.001}
-          value={time}
-          disabled={duration <= 0}
-          onChange={(event) => jump(Number(event.target.value))}
-          aria-label="Ball Flight Time"
-          title="Physical trajectory time [s], interpolated between solver samples"
-          className="min-w-36 flex-1"
-        />
-        <label className="flex items-center gap-1 text-slate-300">
-          Speed
-          <select
-            value={speed}
-            onChange={(event) => setSpeed(Number(event.target.value))}
-            aria-label="Playback Speed"
-            className="rounded border border-slate-700 bg-slate-900 px-1 py-1"
-          >
-            {SPEEDS.map((option) => (
-              <option key={option} value={option}>{option}×</option>
-            ))}
-          </select>
-        </label>
-        <output aria-label="Ball flight playback position"
-          className="min-w-24 text-right tabular-nums text-slate-300">
-          {time.toFixed(2)} / {duration.toFixed(2)} s
-        </output>
-      </div>
+      <PlaybackTransportBar
+        subjectLabel="Ball Flight"
+        subjectPhrase="ball flight"
+        timeS={time}
+        durationS={duration}
+        events={[
+          { label: "Launch", timeS: 0 },
+          { label: "Apex", timeS: apexTime },
+          { label: "Landing", timeS: duration },
+        ]}
+        scrubTitle="Physical trajectory time [s], interpolated between solver samples"
+        onTimeChange={setTime}
+      />
       <canvas
         ref={canvasRef}
         width={FLIGHT_PLAYBACK_LOGICAL_SIZE.width}

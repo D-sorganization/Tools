@@ -80,22 +80,24 @@ describe("meshVolumeCentroid", () => {
 
 describe("Python parity pins", () => {
   it("pins the driver head volume and COG", () => {
+    // Repinned for the leading-edge loft lean (#4799 G1).
     const { volumeM3, cog } = meshVolumeCentroid(
       buildParametricHead(getClub("Driver 10.5°")),
     );
-    expect(volumeM3).toBeCloseTo(5.795797642950598e-4, 15);
-    expect(cog[0]).toBeCloseTo(7.031455482617099e-3, 14);
-    expect(cog[1]).toBeCloseTo(-5.048316491848659e-4, 14);
-    expect(cog[2]).toBeCloseTo(2.6277706394935406e-8, 13);
+    expect(volumeM3).toBeCloseTo(5.704668123824279e-4, 15);
+    expect(cog[0]).toBeCloseTo(1.9271184917634455e-3, 14);
+    expect(cog[1]).toBeCloseTo(-4.688625881900988e-4, 14);
+    expect(cog[2]).toBeCloseTo(0, 13);
   });
 
   it("pins the blade putter volume and COG", () => {
+    // Repinned for the leading-edge loft lean (#4799 G1).
     const { volumeM3, cog } = meshVolumeCentroid(
       buildParametricHead(getClub("Blade Putter")),
     );
-    expect(volumeM3).toBeCloseTo(4.6406452308838505e-5, 15);
-    expect(cog[0]).toBeCloseTo(1.0267310067905715e-3, 14);
-    expect(cog[1]).toBeCloseTo(-2.017822009425427e-3, 14);
+    expect(volumeM3).toBeCloseTo(4.634707753682171e-5, 15);
+    expect(cog[0]).toBeCloseTo(4.6947209615312937e-4, 14);
+    expect(cog[1]).toBeCloseTo(-1.9102497659159376e-3, 14);
   });
 
   it("reports both geometric and spec CG values", () => {

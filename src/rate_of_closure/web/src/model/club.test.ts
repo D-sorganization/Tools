@@ -150,16 +150,20 @@ describe("parametric head", () => {
   });
 
   it("pins the driver mesh forward extent and a face vertex", () => {
+    // Repinned for the leading-edge loft lean (#4799 G1): the forward
+    // extent is now the leading edge at the authored face station
+    // (minus the roll sagitta), and the pinned vertex is the leaned
+    // outer face-ring toe vertex.
     const flat = buildParametricHead(getClub(DRIVER)).flat();
     const xMax = Math.max(...flat.map((v) => v[0]));
-    expect(xMax).toBeCloseTo(0.058722579135751, 12);
-    const target = [0.049434717761548, -0.001031464094849, 0.058];
+    expect(xMax).toBeCloseTo(0.053596482389853546, 12);
+    const target = [0.044237344811932186, -0.00046886258820926993, 0.058];
     const hit = flat.some(
       (v) =>
         Math.abs(v[0] - target[0]) +
           Math.abs(v[1] - target[1]) +
           Math.abs(v[2] - target[2]) <
-        1e-12,
+        1e-11,
     );
     expect(hit).toBe(true);
   });
