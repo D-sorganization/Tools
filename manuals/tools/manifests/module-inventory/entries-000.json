@@ -6576,6 +6576,7 @@
           "tests/shared/python/file_watcher/test_file_watcher.py",
           "tests/shared/python/gui_launcher/test_launcher_factories.py",
           "tests/shared/python/gui_launcher/test_registry.py",
+          "tests/shared/python/plotting/test_identity_export.py",
           "tests/shared/python/theme/test_zoom.py",
           "tests/shared/python/utils/test_launcher_factory.py",
           "tests/test_anthropometry_parity.py",
@@ -10407,6 +10408,7 @@
           "src/shared/python/ai/tests/test_adapter_factory.py",
           "src/shared/python/swing_sim/ground/tests/test_upstream_terrain_adapter.py",
           "tests/architecture/test_design_manual_governance_contract.py",
+          "tests/architecture/test_phased_production_inventory.py",
           "tests/architecture/test_tools_textbook_chapter_contract.py",
           "tests/rate_of_closure/test_capability_result_export.py",
           "tests/rate_of_closure/test_chip_forgiveness_analysis.py",
@@ -13759,10 +13761,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 15891,
+      "bytes_lf": 16105,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "222ce7b9a7d9370c8a7d4503dee9e8c219dbe683aee33a24c955f97544a1ad59",
+      "content_sha256_lf": "a787d6613c0f7b1ca6c40e1f7fe133ab0b65407f9f175c35b7180ab730db6ab9",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-BUILD-TOOLS-MODULE-INVENTORY-PY-FFBDFD4ACF17",
       "language": "python",
@@ -13869,6 +13871,7 @@
           }
         ],
         "test_paths": [
+          "tests/architecture/test_phased_production_inventory.py",
           "tests/architecture/test_tools_module_inventory_contract.py",
           "tests/rate_of_closure/test_variation_noise_response.py"
         ],

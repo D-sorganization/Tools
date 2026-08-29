@@ -1035,10 +1035,10 @@
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
       "content_sha256_lf": "46b8412557dd9bcc682533932bcc69cb45f6a62260151c4b61e780998ed042d5",
-      "family": "shared-tools-non-calculation",
+      "family": "plot-engine-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-ENGINE-INIT-PY-4301F125392F",
       "language": "python",
-      "maintainer": "Tools module maintainers",
+      "maintainer": "Plot engine maintainers",
       "path": "src/shared/python/plot_engine/__init__.py",
       "purpose": "Shared plot engine for cross-platform visualization.",
       "review_status": "inventory-baseline",
@@ -1152,10 +1152,10 @@
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
       "content_sha256_lf": "522a8ad606e5c148a88b296fb149782d1ecb4b02d0d2942f934355b934e22a97",
-      "family": "shared-tools-non-calculation",
+      "family": "plot-engine-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-ENGINE-CONTOUR-PY-148102622686",
       "language": "python",
-      "maintainer": "Tools module maintainers",
+      "maintainer": "Plot engine maintainers",
       "path": "src/shared/python/plot_engine/contour.py",
       "purpose": "Contour and heatmap data preparation utilities.",
       "review_status": "inventory-baseline",
@@ -1211,10 +1211,10 @@
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
       "content_sha256_lf": "eab8c6b61f0103d14305bc4146bc24d51b52bb3d7d599c0a009ba25110a6a113",
-      "family": "shared-tools-non-calculation",
+      "family": "plot-engine-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-ENGINE-MATPLOTLIB-RENDERER-PY-345ED3EDABF1",
       "language": "python",
-      "maintainer": "Tools module maintainers",
+      "maintainer": "Plot engine maintainers",
       "path": "src/shared/python/plot_engine/matplotlib_renderer.py",
       "purpose": "Matplotlib renderer for PlotSpec contracts.",
       "review_status": "inventory-baseline",
@@ -1278,10 +1278,10 @@
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
       "content_sha256_lf": "7f538c57d6e2967f3bcb4569179c4740ae75001cac2e7a05761e2aa6f41e3b71",
-      "family": "shared-tools-non-calculation",
+      "family": "plot-engine-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-ENGINE-PLOTLY-CONVERTER-PY-2464FC20D0A9",
       "language": "python",
-      "maintainer": "Tools module maintainers",
+      "maintainer": "Plot engine maintainers",
       "path": "src/shared/python/plot_engine/plotly_converter.py",
       "purpose": "Plotly.js JSON converter for PlotSpec contracts.",
       "review_status": "inventory-baseline",
@@ -1343,10 +1343,10 @@
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
       "content_sha256_lf": "cb458b464a65520889fafb9f44009395d1debe071fb363952c2005f7331e9d70",
-      "family": "shared-tools-non-calculation",
+      "family": "plot-engine-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-ENGINE-PROTOCOLS-PY-7FFDB7499FE2",
       "language": "python",
-      "maintainer": "Tools module maintainers",
+      "maintainer": "Plot engine maintainers",
       "path": "src/shared/python/plot_engine/protocols.py",
       "purpose": "Protocol interfaces for the plot engine.",
       "review_status": "inventory-baseline",
@@ -1407,14 +1407,14 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 4878,
+      "bytes_lf": 6779,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ea08ddfda4caf60db885867329fbcd6d1f2cbfdbcf34cf542e19f39c189cb152",
-      "family": "shared-tools-non-calculation",
+      "content_sha256_lf": "ac7d78aade9d134d7f7a32ddfe87369c33243b70e242edfa9ae14450e4e1ed40",
+      "family": "plot-engine-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-ENGINE-PYQT6-WIDGET-PY-DDEC1EC83F1A",
       "language": "python",
-      "maintainer": "Tools module maintainers",
+      "maintainer": "Plot engine maintainers",
       "path": "src/shared/python/plot_engine/pyqt6_widget.py",
       "purpose": "Reusable PyQt6 PlotWidget backed by PlotSpec + MatplotlibRenderer.",
       "review_status": "inventory-baseline",
@@ -1453,11 +1453,13 @@
           }
         ],
         "test_paths": [
+          "src/shared/python/plot_engine/tests/test_pyqt6_widget_export_identity.py",
           "tests/shared/python/plot_engine/test_pyqt6_widget.py"
         ],
         "unit_mentions": [
           "bar",
-          "g"
+          "g",
+          "s"
         ],
         "validation_paths": []
       }
@@ -1468,10 +1470,10 @@
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
       "content_sha256_lf": "6804bf0bf1507d27825fe728b3a8ea0ca1687a56fd10e1c75ab6c05ebd09f54d",
-      "family": "shared-tools-non-calculation",
+      "family": "plot-engine-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-ENGINE-SPECS-PY-591CB1EC185F",
       "language": "python",
-      "maintainer": "Tools module maintainers",
+      "maintainer": "Plot engine maintainers",
       "path": "src/shared/python/plot_engine/specs.py",
       "purpose": "PlotSpec Pydantic contract hierarchy.",
       "review_status": "inventory-baseline",
@@ -1562,6 +1564,7 @@
         "test_paths": [
           "src/shared/python/plot_engine/tests/test_matplotlib_renderer.py",
           "src/shared/python/plot_engine/tests/test_plotly_converter.py",
+          "src/shared/python/plot_engine/tests/test_pyqt6_widget_export_identity.py",
           "src/shared/python/plot_engine/tests/test_specs.py",
           "tests/shared/python/plot_engine/test_matplotlib_renderer.py",
           "tests/shared/python/plot_engine/test_plotly_converter.py",
@@ -1579,10 +1582,10 @@
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
       "content_sha256_lf": "c89d799e31c01ff150cce72ea2a19fb9e16a671fbadd5bb0c9911f0db56dddbd",
-      "family": "shared-tools-non-calculation",
+      "family": "plot-engine-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-ENGINE-TRENDLINE-PY-B8DF87BE68EB",
       "language": "python",
-      "maintainer": "Tools module maintainers",
+      "maintainer": "Plot engine maintainers",
       "path": "src/shared/python/plot_engine/trendline.py",
       "purpose": "Shared trendline computation module.",
       "review_status": "inventory-baseline",
@@ -1639,10 +1642,10 @@
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
       "content_sha256_lf": "21b96544f5955ae54c300fc27ea8b17a700fd6c26d4a03ecd7dce509dc52171d",
-      "family": "shared-tools-non-calculation",
+      "family": "plot-theme-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-THEME-INIT-PY-B1B58C29FB6A",
       "language": "python",
-      "maintainer": "Tools module maintainers",
+      "maintainer": "Plot theme maintainers",
       "path": "src/shared/python/plot_theme/__init__.py",
       "purpose": "Shared plot theming system for matplotlib and scientific visualizations.",
       "review_status": "inventory-baseline",
@@ -1756,10 +1759,10 @@
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
       "content_sha256_lf": "bddf7accdb447a2251511033f7afcd89b096c476f52f618796768959968a8b22",
-      "family": "shared-tools-non-calculation",
+      "family": "plot-theme-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-THEME-INTEGRATION-PY-B16DD47A8A1B",
       "language": "python",
-      "maintainer": "Tools module maintainers",
+      "maintainer": "Plot theme maintainers",
       "path": "src/shared/python/plot_theme/integration.py",
       "purpose": "Integration helpers for plot theming.",
       "review_status": "inventory-baseline",
@@ -1845,10 +1848,10 @@
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
       "content_sha256_lf": "caa213aca0d42b058df707739dd3fe04d08ae5853702e925ab4ea2c48defcb95",
-      "family": "shared-tools-non-calculation",
+      "family": "plot-theme-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-THEME-MANAGER-PY-2C1661C5880B",
       "language": "python",
-      "maintainer": "Tools module maintainers",
+      "maintainer": "Plot theme maintainers",
       "path": "src/shared/python/plot_theme/manager.py",
       "purpose": "Plot theme manager for matplotlib visualizations.",
       "review_status": "inventory-baseline",
@@ -1908,10 +1911,10 @@
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
       "content_sha256_lf": "8b30ba434937e711e31f794e4def7f5d8500bc47025ceb10ad117ba27fcdc017",
-      "family": "shared-tools-non-calculation",
+      "family": "plot-theme-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-THEME-THEMES-PY-60BA9126588D",
       "language": "python",
-      "maintainer": "Tools module maintainers",
+      "maintainer": "Plot theme maintainers",
       "path": "src/shared/python/plot_theme/themes.py",
       "purpose": "Plot theme definitions for matplotlib visualizations.",
       "review_status": "inventory-baseline",
@@ -2050,6 +2053,227 @@
           "tests/shared/python/plot_theme/test_themes.py"
         ],
         "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 496,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "48440c55328953d6c063001713d64ad983c0b449fce11fb6ddd672f8a41d9016",
+      "family": "shared-plotting-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOTTING-INIT-PY-2B0EF7FC304B",
+      "language": "python",
+      "maintainer": "Plotting and visualization maintainers",
+      "path": "src/shared/python/plotting/__init__.py",
+      "purpose": "Plotting and export utilities with identity context support.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "ExportConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlotIdentity",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "apply_identity_footer",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "export_all_figures",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "export_figure",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "export_plot_data",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "resolve_and_apply_identity_footer",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7224,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1f15074c15892e65710e4c58cfa9900d51827a35e4490cbc92bb4ea9141f34d6",
+      "family": "shared-plotting-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOTTING-EXPORT-PY-27B1E24DCA5E",
+      "language": "python",
+      "maintainer": "Plotting and visualization maintainers",
+      "path": "src/shared/python/plotting/export.py",
+      "purpose": "Figure and data export helpers with metadata injection (Issue #4740).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ExportConfig",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "export_all_figures",
+            "signature": "figures: dict[str, Figure], config: ExportConfig | None=None, formats: list[str] | None=None, identity: PlotIdentity | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "export_figure",
+            "signature": "fig: Figure, name: str, config: ExportConfig | None=None, formats: list[str] | None=None, identity: PlotIdentity | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "export_plot_data",
+            "signature": "data: dict[str, Any], name: str, config: ExportConfig | None=None, fmt: str='json', identity: PlotIdentity | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_export.py",
+          "tests/shared/python/chat/test_export.py",
+          "tests/shared/python/plotting/test_identity_export.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5224,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1e80b415508fd2ab502c4e5b8b0083dea1ee7b829a2b4f3a998e45e5aa1cf400",
+      "family": "shared-plotting-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOTTING-IDENTITY-PY-94267542D9A2",
+      "language": "python",
+      "maintainer": "Plotting and visualization maintainers",
+      "path": "src/shared/python/plotting/identity.py",
+      "purpose": "Identity context for plots and exports (issue #4740, mirrors UpstreamDrift #8828).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PlotIdentity",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "apply_identity_footer",
+            "signature": "fig: Figure, identity: PlotIdentity | None"
+          },
+          {
+            "kind": "function",
+            "name": "resolve_and_apply_identity_footer",
+            "signature": "fig: Figure, recorder: Any, identity: PlotIdentity | None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/plot_engine/tests/test_pyqt6_widget_export_identity.py",
+          "tests/shared/python/plotting/test_identity_export.py"
+        ],
+        "unit_mentions": [
+          "g",
           "s"
         ],
         "validation_paths": []
@@ -17239,275 +17463,6 @@
         "test_paths": [],
         "unit_mentions": [
           "g"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 8320,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "e5cd9833cb4977d4419fe2ed34d3425a08125cee3a322f98a88dadd4a3bc57b7",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-CALCULATOR-ASSIST-PY-F48A29ED285B",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/calculator_assist.py",
-      "purpose": "Sidekick calculator help and predictive text contracts.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CalculatorHelpTopic",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CalculatorPredictionProvider",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CalculatorPredictiveText",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CalculatorSuggestion",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "StaticCalculatorPredictionProvider",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ALLOWED_CALCULATOR_COMMANDS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CALCULATOR_HELP",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CALCULATOR_TAB_ID",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SCIENTIFIC_DEPENDENCY_ALIASES",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "calculator_context_preferences",
-            "signature": "state: SidebarState"
-          },
-          {
-            "kind": "function",
-            "name": "calculator_predictive_text_enabled",
-            "signature": "sidebar: Any"
-          },
-          {
-            "kind": "function",
-            "name": "calculator_startup_config",
-            "signature": "sidebar: Any"
-          },
-          {
-            "kind": "function",
-            "name": "calculator_state_fields",
-            "signature": "state: SidebarState"
-          },
-          {
-            "kind": "function",
-            "name": "set_calculator_predictive_text_enabled",
-            "signature": "sidebar: Any, enabled: bool"
-          },
-          {
-            "kind": "function",
-            "name": "set_calculator_startup_config",
-            "signature": "sidebar: Any, config: CalculatorStartupConfig"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 8504,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "4fdd998424b94f02af26b74470d2ae9ff50254f8722f056a97e64aa90a84893f",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-CALCULATOR-PLOTTING-PY-E2D4E5855EFA",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/calculator_plotting.py",
-      "purpose": "Sidekick calculator plot request contracts.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CalculatorPlotRequest",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CalculatorPlotSource",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CalculatorPlotTabConfig",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CALCULATOR_PLOT_TAB_ID",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_calculator_plot_spec",
-            "signature": "request: CalculatorPlotRequest, registry: WorkspaceRegistry"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/sidekick/tests/test_calculator_plotting.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 13203,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "fb514432b46617d34601216c2109185c4b72c97fed41ce1f3a3ceca20da7f26f",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-CALCULATOR-RUNTIME-PY-1DE37C9B9819",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/calculator_runtime.py",
-      "purpose": "Runtime widget for the Sidekick calculator tab.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SidekickCalculatorWidget",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SIDEKICK_CALCULATOR_OBJECT_NAME",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
         ],
         "validation_paths": []
       }

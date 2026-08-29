@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.83                                    |
+| **Spec Version**        | 1.18.84                                    |
 | **Last Spec Update**    | 2026-08-28                                 |
 
 ## 2. Purpose & Mission
@@ -55,6 +55,21 @@ services return the request's exact execution metadata and model the production
 abort signal. Obsolete assertions that treated extensible flight-model IDs as
 an execution-layer error are removed; registry and evaluator authorities retain
 responsibility for resolving those IDs.
+
+### 2026-08-27 PlotWidget Export Metadata Injection and Module Inventory (#4740, #4722)
+
+Version 1.18.65 wires plot and export provenance metadata and formalizes deterministic module inventory classification:
+
+1. **PlotWidget Export Metadata and Identity Wiring (#4740)**:
+
+   - Wires `PlotWidget.set_identity()` and `PlotWidget.get_identity()` with immutable `PlotIdentity` value objects in `src/shared/python/plotting/identity.py` and `export.py`.
+   - Routes PyQt6 widget export path (`_export_plot`) through `export_figure` and `export_plot_data` with `ExportConfig.include_metadata=True`.
+   - Injects provenance metadata (`engine`, `model`, `run_id`, `version`, and UTC `timestamp`) into saved figure metadata (PNG text chunks, PDF/SVG document properties) and CSV export header comments.
+   - Automatically renders live identity footer on the embedded matplotlib canvas when identity context is attached.
+
+2. **Module Inventory Classification and Production Manifest (#4722)**:
+   - Extends deterministic module domain mappings in `scripts/build_tools_module_inventory.py` to classify plotting, plot engine, and plot theme modules under dedicated maintainers.
+   - Maintains phased production manifest invariants and schema validation for all governed implementation and configuration files.
 
 ### 2026-08-27 Cross-Surface Variation Workflow Parity (#4792 / #4142 R14.3)
 
@@ -5584,6 +5599,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-28 | 1.18.84 | feat(plotting, #4740, #4722): wire `PlotWidget.set_identity()`/`get_identity()` with immutable `PlotIdentity` value objects in `src/shared/python/plotting/identity.py` and `export.py`; route the PyQt6 widget export path (`_export_plot`) through `export_figure`/`export_plot_data` with `ExportConfig.include_metadata=True`, injecting provenance metadata (`engine`, `model`, `run_id`, `version`, UTC `timestamp`) into saved figure metadata (PNG text chunks, PDF/SVG document properties) and CSV export header comments, and rendering a live identity footer on the embedded matplotlib canvas when identity context is attached; extend deterministic module domain mappings in `scripts/build_tools_module_inventory.py` to classify plotting, plot engine, and plot theme modules under dedicated maintainers, and maintain phased production manifest invariants and schema validation for all governed implementation and configuration files. |
 | 2026-08-28 | 1.18.83 | docs(golf_club, #4828): correct wedge_export wire version reference in `AGENT_HANDOFF.md` from aspirational `/2` to shipped `golf_club.wedge_export/1`, removing unneeded supersede paragraph. | #4828 |
 | 2026-08-28 | 1.18.82 | feat(putting, #4800 P8): putt playback on the shared transport — the putting vertical now consumes P8's one playback architecture on both runtimes instead of growing a second one. Qt: `ui/pyqt6/putt_playback_controls.py` binds the subject-neutral `PlaybackTransportControls` with "Putt" wording and Strike/Finish jumps (the terminal sample is capture-or-rest, exactly as P6's `event_times_s` documents it) and composes it with P6's `PuttPlaybackView` — one instantiation plus one `timeChanged` -> `set_time` connection; the Putting tab holds that panel and adopts or collapses the transport timeline through the view's `duration_s`/`event_times_s` seam, so a refused solve cannot leave a playable phantom timeline. React: `components/PlaybackTransportBar.tsx` extracts the transport chrome and its sole animation frame out of `FlightPlayback3D` into one shared subject-neutral component mirroring the Qt widget — `FlightPlayback3D` now binds it with the wording and events it always exposed, and the Putting tab binds it with "Putt" — so neither runtime carries two transports. Frames still come only from the retained integrator samples: `putt_playback_trajectory` moves out of the Qt widget into the runtime-neutral `simulation/putt_playback.py` beside `flight_playback.py` (the widget re-exports it, so P6's callers are untouched) because that lift is the sample->frame mapping P8 pins parity on, and its TypeScript twin is the new `model/puttPlayback.ts`. Parity reuses the single shared golden: `playback_transport_golden_v1.json` gains a purely additive `putt` block (schema unchanged) pinning the green-lift elevations and the resulting frames, replayed by both `test_playback_transport.py` and `playbackTransport.test.ts` — no second golden. The PyQt `putting` registered control count moves 22 -> 29 (Strike, Play/Pause, Restart, Finish, the scrub slider, and the speed combo with its popup view) and the accessibility expectation moves with it; the React and PyQt visual-evidence four-file co-change is carried, including the named `Selected putt sample` status region the second live region required. Camera state remains #4571's. | #4806 |
 | 2026-08-28 | 1.18.81 | fix(ops): unblock the detect-secrets gate and make its staleness guard meaningful. Two independent defects. (1) The committed `.secrets.baseline` was stale: the clubhead lean (#4799 G1/G2) changed the driver STL content digest pinned in `clubAssemblyBinding.test.ts` and `clubEngineeringSidecar.test.ts`, and #4433 evidence added two commit SHAs, so `detect-secrets` failed on **main itself**. All four findings were verified as content hashes - two literally named `DRIVER_STL_SHA256`, two git SHAs asserted present in a docs guide - not credentials, then regenerated through the documented flow (scan, then `normalize_secrets_baseline.py`; the scan must run before normalisation or Windows separators leak into the keys). (2) `test_scan_result_matches_baseline_fingerprint` scanned **unfiltered** while the baseline is generated with CI's `--exclude-files`, so it reported every excluded `.json` fixture and inventory shard as a new secret and could not pass against any baseline CI would accept; it failed on pristine main and stayed invisible because `tests/ops` is changed-file scoped. The guard now scans with CI's exact exclusion pattern. Verified: 25 passed. | #4799 |
