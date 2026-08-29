@@ -1,0 +1,266 @@
+{
+  "schema_id": "rate-of-closure/visualization-acceptance",
+  "schema_version": 1,
+  "evidence_policy": "registered-contract-not-rendered-or-human-approval",
+  "coverage_policy": "all-visibility-states-x-surface-reference-cases",
+  "reference_cases": {
+    "react": ["desktop-1440x900", "desktop-1280x720", "narrow-390x844"],
+    "pyqt": ["desktop-1440x900-dpi-1.0", "desktop-1440x900-dpi-1.5"]
+  },
+  "human_actions": [
+    {
+      "action_id": "manual-assistive-technology-protocol",
+      "status": "pending-human",
+      "protocol_path": "docs/development/rate-visualization-at-protocol.md",
+      "evidence_identity": null
+    },
+    {
+      "action_id": "user-rendered-review-approval",
+      "status": "pending-human",
+      "protocol_path": "docs/development/rate-visualization-review-protocol.md",
+      "evidence_identity": null
+    }
+  ],
+  "tabs": [
+    {
+      "surface": "react",
+      "tab_id": "explorer",
+      "context": {
+        "frame": "Club-model coordinates declared by the loaded profile.",
+        "units": "Profile-declared length and angle units.",
+        "provenance": "Generated profile or imported source identity remains adjacent to the view.",
+        "limitations": "Interactive geometry is model evidence, not measured anatomy or equipment qualification.",
+        "keyboard_path": "Tab navigation reaches scenario inputs, camera actions, and export.",
+        "nonvisual_alternative": "Geometry and pose values remain available as labeled controls and metadata."
+      }
+    },
+    {
+      "surface": "react",
+      "tab_id": "calculation",
+      "context": {
+        "frame": "Each equation declares its own coordinate convention.",
+        "units": "Equation-specific SI or explicitly declared engineering units.",
+        "provenance": "Bundled calculation-description authority.",
+        "limitations": "Reference equations do not establish experimental validity.",
+        "keyboard_path": "Tab navigation reaches all headings, links, and disclosures.",
+        "nonvisual_alternative": "The semantic calculation text is the primary representation."
+      }
+    },
+    {
+      "surface": "react",
+      "tab_id": "simulation",
+      "context": {
+        "frame": "Mechanism-local and inertial frames declared by the scenario.",
+        "units": "Scenario-declared length, time, angle, and rate units.",
+        "provenance": "Configured mechanism parameters and solver identity.",
+        "limitations": "The preview is synthetic and must not be presented as measured evidence.",
+        "keyboard_path": "Tab navigation reaches setup, playback, view, and reset controls.",
+        "nonvisual_alternative": "Configured state and current sample values are exposed as labeled text."
+      }
+    },
+    {
+      "surface": "react",
+      "tab_id": "plots",
+      "context": {
+        "frame": "Series-declared coordinate frame.",
+        "units": "Per-series declared units.",
+        "provenance": "Imported or generated series identity and derivation metadata.",
+        "limitations": "Derived bins and summaries remain distinguishable from exact samples.",
+        "keyboard_path": "Tab navigation reaches plot management, selectors, inspector, and export.",
+        "nonvisual_alternative": "Exact selected samples and derived summaries are available in semantic tables."
+      }
+    },
+    {
+      "surface": "react",
+      "tab_id": "flight",
+      "context": {
+        "frame": "Launch-aligned ground frame.",
+        "units": "Declared launch, distance, time, and speed units.",
+        "provenance": "Launch state, environment, and identified flight-model authority.",
+        "limitations": "Trajectory is model-conditional and not paired-device validation.",
+        "keyboard_path": "Tab navigation reaches inputs, execution, sample inspector, and export.",
+        "nonvisual_alternative": "Synchronized trajectory samples and outcomes are available as labeled values."
+      }
+    },
+    {
+      "surface": "react",
+      "tab_id": "launch-monitor-analytics",
+      "context": {
+        "frame": "Dataset-declared launch and target frame.",
+        "units": "Column-declared launch-monitor units.",
+        "provenance": "Governed table identity or explicit demonstration-data label.",
+        "limitations": "Statistical diagnostics do not establish vendor equivalence or causal technique.",
+        "keyboard_path": "Tab navigation reaches data source, analysis contract, plot, and results.",
+        "nonvisual_alternative": "Observation counts, diagnostics, exclusions, and selected rows are tabular."
+      }
+    },
+    {
+      "surface": "react",
+      "tab_id": "neural-model-lab",
+      "context": {
+        "frame": "Model-card-declared feature and target conventions.",
+        "units": "Feature- and target-specific declared units.",
+        "provenance": "Registered model card, eligible feature contract, and governed input identity.",
+        "limitations": "Predictions remain model-conditional and unavailable inputs fail closed.",
+        "keyboard_path": "Tab navigation reaches model selection, controls, diagnostics, and residuals.",
+        "nonvisual_alternative": "Eligibility, predictions, residuals, and model limitations are semantic tables and text."
+      }
+    },
+    {
+      "surface": "react",
+      "tab_id": "variation",
+      "context": {
+        "frame": "Source-trial-declared coordinate and outcome frames.",
+        "units": "Input, output, point, time, and outcome units remain explicit.",
+        "provenance": "Deterministic bundle, method, seed, plan, and dataset identities.",
+        "limitations": "Sensitivity is scenario-conditional, not a causal anatomical or coaching result.",
+        "keyboard_path": "Tab navigation reaches setup, execution, selectors, diagnostics, and export.",
+        "nonvisual_alternative": "Trial outcomes, dispersion, sensitivity, exclusions, and provenance are tabular."
+      }
+    },
+    {
+      "surface": "react",
+      "tab_id": "putting",
+      "context": {
+        "frame": "Ball-green frame declared by the putting result contract.",
+        "units": "Declared distance, speed, angle, time, and slope units.",
+        "provenance": "Canonical putting wire version, solver, surface, and seed identities.",
+        "limitations": "Synthetic putting outcomes do not establish player or green performance.",
+        "keyboard_path": "Tab navigation reaches putter, stroke, green, execution, result, playback transport, and dispersion views.",
+        "nonvisual_alternative": "Putt path samples, launched start line, capture margin and outcome, the playback frame position and elevation at the transport's physical time, and dispersion statistics are tabular."
+      }
+    },
+    {
+      "surface": "react",
+      "tab_id": "glossary",
+      "context": {
+        "frame": "Term-specific reference conventions.",
+        "units": "Term-specific units where applicable.",
+        "provenance": "Bundled glossary authority.",
+        "limitations": "Definitions provide terminology, not independent scientific evidence.",
+        "keyboard_path": "Tab navigation reaches search, term headings, and cross-references.",
+        "nonvisual_alternative": "The semantic glossary is the primary representation."
+      }
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "clubhead",
+      "context": {
+        "frame": "Club-model coordinates declared by the loaded profile.",
+        "units": "Profile-declared length and angle units.",
+        "provenance": "Generated profile or imported source identity remains adjacent to the view.",
+        "limitations": "Interactive geometry is model evidence, not measured anatomy or equipment qualification.",
+        "keyboard_path": "Primary tabs and named controls reach scenario, camera, and export actions.",
+        "nonvisual_alternative": "Geometry and pose values remain available as labeled controls and metadata."
+      }
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "plots",
+      "context": {
+        "frame": "Series-declared coordinate frame.",
+        "units": "Per-series declared units.",
+        "provenance": "Imported or generated series identity and derivation metadata.",
+        "limitations": "Derived bins and summaries remain distinguishable from exact samples.",
+        "keyboard_path": "Primary tabs and named controls reach plot selectors, inspector, and export.",
+        "nonvisual_alternative": "Exact selected samples and derived summaries are available in semantic tables."
+      }
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "calculation_description",
+      "context": {
+        "frame": "Each equation declares its own coordinate convention.",
+        "units": "Equation-specific SI or explicitly declared engineering units.",
+        "provenance": "Bundled calculation-description authority.",
+        "limitations": "Reference equations do not establish experimental validity.",
+        "keyboard_path": "Primary tabs and document navigation reach all semantic content.",
+        "nonvisual_alternative": "The semantic calculation text is the primary representation."
+      }
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "simulation",
+      "context": {
+        "frame": "Mechanism-local and inertial frames declared by the scenario.",
+        "units": "Scenario-declared length, time, angle, and rate units.",
+        "provenance": "Configured mechanism parameters and solver identity.",
+        "limitations": "The preview is synthetic and must not be presented as measured evidence.",
+        "keyboard_path": "Primary tabs and named controls reach setup, playback, view, and reset.",
+        "nonvisual_alternative": "Configured state and current sample values are exposed as labeled text."
+      }
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "flight_explorer",
+      "context": {
+        "frame": "Launch-aligned ground frame.",
+        "units": "Declared launch, distance, time, and speed units.",
+        "provenance": "Launch state, environment, and identified flight-model authority.",
+        "limitations": "Trajectory is model-conditional and not paired-device validation.",
+        "keyboard_path": "Primary tabs and named controls reach inputs, execution, inspector, and export.",
+        "nonvisual_alternative": "Synchronized trajectory samples and outcomes are available as labeled values."
+      }
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "launch_monitor_analytics",
+      "context": {
+        "frame": "Dataset-declared launch and target frame.",
+        "units": "Column-declared launch-monitor units.",
+        "provenance": "Governed table identity or explicit demonstration-data label.",
+        "limitations": "Statistical diagnostics do not establish vendor equivalence or causal technique.",
+        "keyboard_path": "Primary tabs and named controls reach source, contract, plot, and results.",
+        "nonvisual_alternative": "Observation counts, diagnostics, exclusions, and selected rows are tabular."
+      }
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "neural_model_lab",
+      "context": {
+        "frame": "Model-card-declared feature and target conventions.",
+        "units": "Feature- and target-specific declared units.",
+        "provenance": "Registered model card, eligible feature contract, and governed input identity.",
+        "limitations": "Predictions remain model-conditional and unavailable inputs fail closed.",
+        "keyboard_path": "Primary tabs and named controls reach model controls, diagnostics, and residuals.",
+        "nonvisual_alternative": "Eligibility, predictions, residuals, and model limitations are semantic tables and text."
+      }
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "variation",
+      "context": {
+        "frame": "Source-trial-declared coordinate and outcome frames.",
+        "units": "Input, output, point, time, and outcome units remain explicit.",
+        "provenance": "Deterministic bundle, method, seed, plan, and dataset identities.",
+        "limitations": "Sensitivity is scenario-conditional, not a causal anatomical or coaching result.",
+        "keyboard_path": "Primary tabs and named controls reach setup, execution, diagnostics, and export.",
+        "nonvisual_alternative": "Trial outcomes, dispersion, sensitivity, exclusions, and provenance are tabular."
+      }
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "putting",
+      "context": {
+        "frame": "Ball-green frame declared by the putting result contract; delivery angles are right-positive off the target line and strike offsets are toe-positive and high-positive on the face.",
+        "units": "Declared distance, speed, angle, time, and slope units.",
+        "provenance": "Canonical putting wire version, solver, surface, and seed identities, with the putter-head source kind and the green surface origin named beside the displayed result.",
+        "limitations": "Synthetic putting outcomes do not establish player or green performance; the hole-capture model is the named published one, not a measured capture rate.",
+        "keyboard_path": "Primary tabs and named controls reach putt setup, stroke delivery, green surface, result, playback, and dispersion views.",
+        "nonvisual_alternative": "Putt path samples, start line, break summary, capture outcome, playback position, and dispersion statistics are tabular."
+      }
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "glossary",
+      "context": {
+        "frame": "Term-specific reference conventions.",
+        "units": "Term-specific units where applicable.",
+        "provenance": "Bundled glossary authority.",
+        "limitations": "Definitions provide terminology, not independent scientific evidence.",
+        "keyboard_path": "Primary tabs and named controls reach search, terms, and cross-references.",
+        "nonvisual_alternative": "The semantic glossary is the primary representation."
+      }
+    }
+  ]
+}

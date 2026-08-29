@@ -44,7 +44,14 @@ _EXPECTED_REGISTERED_CONTROL_RANGES = {
     # selectors. The durable authority and asynchronous availability probes can
     # contribute the remaining environment-dependent controls during the audit.
     "variation": (164, 166),
-    "putting": (11, 11),
+    # #4800 P6 widened this surface from the H3 pace/planar-slope form
+    # to the full delivery: 13 spin boxes, 3 combos (each contributing
+    # its hidden popup view), the heightfield import button, and both
+    # the 2-D inspector and the 3-D playback canvases. #4800 P8 binds
+    # the shared playback transport to that 3-D view, adding exactly its
+    # own controls: Strike, Play/Pause, Restart and Finish buttons, the
+    # scrub slider, and the speed combo with its hidden popup view.
+    "putting": (29, 29),
     "glossary": (2, 2),
 }
 

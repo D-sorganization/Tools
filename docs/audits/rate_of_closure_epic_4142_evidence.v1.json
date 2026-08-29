@@ -515,15 +515,20 @@
       "requirement_id": "R14.6",
       "requirement": "Complete the visual-first tab visibility epic with initial-viewport and matched-state evidence.",
       "status": "partial",
-      "rationale": "Current-main trusted React and PyQt visual evidence passes the registered initial-viewport manifests and states.",
+      "rationale": "Current-main trusted React and PyQt visual evidence passes the registered initial-viewport manifests and states. Issue #4832 adds a fail-closed all-tab, all-state, and surface-reference-case acceptance authority plus exact human-review protocols without promoting the still-unexecuted evidence.",
       "evidence_files": [
         "docs/audits/rate_of_closure_visual_first_epic_4433.v1.json",
+        "docs/development/rate-visualization-at-protocol.md",
+        "docs/development/rate-visualization-review-protocol.md",
+        "src/rate_of_closure/visualization_acceptance.v1.json",
+        "src/rate_of_closure/visualization_acceptance_manifest.py",
         "src/rate_of_closure/visualization_tabs.v1.json",
+        "tests/rate_of_closure/test_visualization_acceptance_manifest.py",
         "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py",
         "tests/rate_of_closure/test_visual_baseline_compare.py"
       ],
       "validation_commands": [
-        "python -m pytest tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py tests/rate_of_closure/test_visualization_tab_manifest.py tests/rate_of_closure/test_visual_baseline_compare.py -q"
+        "python -m pytest tests/rate_of_closure/test_visualization_acceptance_manifest.py tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py tests/rate_of_closure/test_visualization_tab_manifest.py tests/rate_of_closure/test_visual_baseline_compare.py -q"
       ],
       "remote_evidence": [
         "https://github.com/D-sorganization/Tools/issues/4433",
@@ -534,9 +539,8 @@
         "Approved baselines cover the initial React 1440x900 and PyQt 1.0-DPI states, not narrow React, PyQt 1.5 DPI, or representative loading, result, no-impact, failure, and stale states.",
         "The manual assistive-technology protocol is ready but has not been executed and signed for React and PyQt.",
         "A user-oriented rendered review has not been approved with exact build and image identities.",
-        "The per-tab acceptance matrix does not yet bind every state to frame, units, provenance, limitation placement, keyboard path, and nonvisual alternative evidence.",
-        "All-tab representative-dataset render and update latency, layout-shift, and deterministic-decimation evidence is incomplete.",
-        "The new-tab extension checklist and downstream cross-repository validation are not yet consolidated into protected completion evidence."
+        "The acceptance authority now binds every tab and registered state to reference cases, frame, units, provenance, limitation placement, keyboard path, and nonvisual alternatives; executed state/case geometry and exact artifact identities remain incomplete.",
+        "All-tab representative-dataset render and update latency, layout-shift, and deterministic-decimation evidence is incomplete."
       ]
     },
     {

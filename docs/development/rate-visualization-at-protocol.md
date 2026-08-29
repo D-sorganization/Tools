@@ -1,8 +1,8 @@
 # Rate Visualization Assistive-Technology Qualification Protocol
 
-## Purpose and claim boundary
+## Purpose and Claim Boundary
 
-This protocol is the human qualification step for the nine primary Rate of
+This protocol is the human qualification step for the ten primary Rate of
 Closure visualization tabs in both the React and PyQt applications. It is not
 an automated test result. A release is **not** manually assistive-technology
 qualified until a named evaluator completes this protocol, records the exact
@@ -21,7 +21,7 @@ Automated success does not prove screen-reader announcement quality, voice
 control usability, cognitive accessibility, or successful human task
 completion.
 
-## Qualification record
+## Qualification Record
 
 Complete every field before execution:
 
@@ -44,7 +44,7 @@ Do not use a development state seam or injected UI props. Run the normal built
 applications and normal user-visible controls. Record any dependency failure
 or inaccessible state as a failure, not as skipped evidence.
 
-## Common acceptance criteria
+## Common Acceptance Criteria
 
 For each surface and tab:
 
@@ -71,7 +71,7 @@ For each surface and tab:
 Pass requires all criteria or an approved, documented exception linked to a
 tracked remediation. “Not tested,” silence, or ambiguous output is not a pass.
 
-## React tab task matrix
+## React Tab Task Matrix
 
 | Tab | Required primary task | Required announcement evidence |
 | --- | --- | --- |
@@ -81,11 +81,12 @@ tracked remediation. “Not tested,” silence, or ambiguous output is not a pas
 | Plots | Select/add a plot, navigate the plot inspector, and return to plot controls | Managed plot name, selected point status, processing/error state |
 | Flight | Run and select a raw trajectory sample from the primary profile | Accepted-flight context, exact sample status, prior-result warning |
 | Launch Monitor Analytics | Import a valid dataset and run an available analysis | Import result, analysis status, validation error |
+| Neural Model Lab | Load an eligible model/input and inspect predictions and residuals | Eligibility, model-card limits, prediction status, and typed unavailable state |
 | Variation | Run a study, reach Cancel/Return/Retry as applicable, inspect result | One live status owner, retained/empty error distinction, result landmark |
 | Putting | Change pace input, recompute, and inspect a retained solver sample | Accepted context, exact sample status, retained-error distinction |
 | Glossary | Search, select a term, and read its definition | Search name, term list, selected definition heading/content |
 
-## PyQt tab task matrix
+## PyQt Tab Task Matrix
 
 | Tab | Required primary task | Required announcement evidence |
 | --- | --- | --- |
@@ -95,11 +96,12 @@ tracked remediation. “Not tested,” silence, or ambiguous output is not a pas
 | Simulation | Run, scrub impact and playback position, inspect display controls | Both slider names/values, run state, displayed evidence |
 | Flight Explorer | Run and select a raw trajectory sample | Inspector name, exact sample status, accepted/prior context |
 | Launch Monitor Analytics | Import and run an available analysis | Import/analysis controls, status and validation error |
+| Neural Model Lab | Load an eligible model/input and inspect predictions and residuals | Eligibility, model-card limits, prediction status, and typed unavailable state |
 | Variation | Configure a variable and run/cancel/retry a study | Variable/distribution/scale names, live status, result/error state |
 | Putting | Change pace input and inspect a sample | Pace control name/value, sample status, retained error |
 | Glossary | Search, select a term, and read its definition | Search name, glossary list, selected definition |
 
-## Evidence package
+## Evidence Package
 
 The qualification package must contain:
 

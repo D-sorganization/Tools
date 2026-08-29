@@ -94,11 +94,27 @@ def _run_fresh_scan() -> dict[str, Any]:
     return updated
 
 
+#: The exclusion pattern `.github/workflows/detect-secrets.yml` scans with.
+#: A staleness guard is only meaningful if it scans the same tree CI does:
+#: scanning unfiltered while the baseline is filtered reports every excluded
+#: `.json` fixture and manifest shard as a "new secret", which can never be
+#: satisfied by any baseline CI would accept.
+CI_EXCLUDE_FILES = (
+    r"(^|/)(\.secrets\.baseline(\..*)?"
+    r"|src/document_processing/pdf_renamer/(API_KEY_SETUP|QUICK_START|README)\.md"
+    r"|.*\.txt|.*\.log|.*\.json|.*\.xml|.*\.ipynb)$"
+)
+
+
 def _scan_fresh_without_updating_baseline() -> dict[str, Any]:
-    """Run detect-secrets scan (no --baseline) to get a raw fresh scan result."""
+    """Run detect-secrets scan (no --baseline) to get a raw fresh scan result.
+
+    Uses CI's exclusion pattern so the comparison is against the same file set
+    the committed baseline was generated from.
+    """
     try:
         result = subprocess.run(
-            ["detect-secrets", "scan"],
+            ["detect-secrets", "scan", "--exclude-files", CI_EXCLUDE_FILES],
             capture_output=True,
             text=True,
             cwd=str(REPO_ROOT),

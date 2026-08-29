@@ -60,6 +60,11 @@ export const FIELD_TO_TERM: Record<string, string> = {
   puttBreakM: "break",
   puttSpeedAtHoleMps: "capture_speed",
   puttMargin: "capture_speed",
+  puttStartAzimuthDeg: "launch_azimuth",
+  puttApexBreakM: "break",
+  puttEntryAzimuthDeg: "launch_azimuth",
+  puttCaptureMarginM: "capture_speed",
+  puttFaceTwistDeg: "twist",
 };
 
 /** Glossary keys whose term or definition matches `query`. */

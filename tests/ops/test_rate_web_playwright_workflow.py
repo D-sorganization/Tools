@@ -54,6 +54,8 @@ PYQT_AUTHORITY_PATHS = {
     "src/rate_of_closure/visualization_performance.v1.json",
     "src/rate_of_closure/visualization_accessibility_manifest.py",
     "src/rate_of_closure/visualization_accessibility.v1.json",
+    "src/rate_of_closure/visualization_acceptance_manifest.py",
+    "src/rate_of_closure/visualization_acceptance.v1.json",
     "src/rate_of_closure/visual_baseline_compare.py",
     "src/rate_of_closure/visual_baseline_manifest.py",
     "src/rate_of_closure/visual_baselines.v1.json",
@@ -99,6 +101,7 @@ PYQT_AUTHORITY_PATHS = {
     "tests/rate_of_closure/test_visualization_tab_audit.py",
     "tests/rate_of_closure/test_visualization_performance_manifest.py",
     "tests/rate_of_closure/test_visualization_accessibility.py",
+    "tests/rate_of_closure/test_visualization_acceptance_manifest.py",
     "tests/rate_of_closure/test_visual_baseline_compare.py",
     "tests/rate_of_closure/test_visual_layout_gui.py",
     "tests/rate_of_closure/test_visual_layout_preferences.py",
@@ -251,8 +254,11 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
         == "npm run test:e2e"
     )
     assert pr_commands["Install bounded PyQt render dependencies"] == (
-        'python -m pip install -e ".[gui,dev]" "scipy>=1.10,<1.18" '
-        '"pytest-benchmark==5.2.3"'
+        'python -m pip install --constraint requirements-rate-pyqt.txt -e ".[gui,dev]"'
+    )
+    assert pr_commands["Verify calibrated PyQt render environment"] == (
+        "python -m pip check && python scripts/check_rate_pyqt_environment.py "
+        "--constraints requirements-rate-pyqt.txt"
     )
     assert pr_commands["Exercise PyQt tab visibility at 100 and 150 percent DPI"] == (
         "python -m pytest "
