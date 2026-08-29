@@ -4075,6 +4075,7 @@
           }
         ],
         "test_paths": [
+          "tests/architecture/test_phased_production_inventory.py",
           "tests/architecture/test_tools_module_inventory_contract.py"
         ],
         "unit_mentions": [],
@@ -4301,6 +4302,7 @@
           }
         ],
         "test_paths": [
+          "tests/architecture/test_phased_production_inventory.py",
           "tests/architecture/test_tools_module_inventory_contract.py"
         ],
         "unit_mentions": [],

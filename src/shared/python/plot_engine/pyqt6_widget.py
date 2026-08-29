@@ -2,13 +2,14 @@
 """Reusable PyQt6 PlotWidget backed by PlotSpec + MatplotlibRenderer.
 
 Provides a drop-in QWidget containing an embedded matplotlib canvas,
-toolbar with style controls, export functionality, and live theme
-switching via PlotThemeManager.
+toolbar with style controls, export functionality with metadata injection,
+and live theme switching via PlotThemeManager.
 """
 
 from __future__ import annotations
 
 import logging
+from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg, NavigationToolbar2QT
@@ -23,6 +24,8 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from shared.python.plotting.export import ExportConfig, export_figure, export_plot_data
+from shared.python.plotting.identity import PlotIdentity, apply_identity_footer
 from shared.python.theme.integration import get_theme_manager
 from shared.python.theme.matplotlib_style import apply_plot_theme
 
@@ -40,7 +43,7 @@ class PlotWidget(QWidget):
 
     Features:
     - Embedded matplotlib FigureCanvas with navigation toolbar
-    - Export to PNG/SVG/PDF
+    - Export to PNG/SVG/PDF/CSV with identity metadata
     - Live theme switching
     - Accepts any PlotSpec subclass
     """
@@ -56,6 +59,7 @@ class PlotWidget(QWidget):
         self._theme_manager = theme_manager
         self._renderer = MatplotlibRenderer(theme_manager)
         self._current_spec: PlotSpec | None = None
+        self._identity: PlotIdentity | None = None
 
         self._setup_ui()
 
@@ -85,7 +89,7 @@ class PlotWidget(QWidget):
         self._export_btn.clicked.connect(self._export_plot)
 
         self._format_combo = QComboBox()
-        self._format_combo.addItems(["PNG", "SVG", "PDF"])
+        self._format_combo.addItems(["PNG", "SVG", "PDF", "CSV"])
 
         control_bar.addWidget(self._toolbar)
         control_bar.addStretch()
@@ -107,6 +111,15 @@ class PlotWidget(QWidget):
         """Get the current plot specification."""
         return self._current_spec
 
+    def set_identity(self, identity: PlotIdentity | None) -> None:
+        """Attach engine/model/run identity used for export metadata and footer."""
+        self._identity = identity
+        self.refresh()
+
+    def get_identity(self) -> PlotIdentity | None:
+        """Return the identity currently attached to this widget's exports."""
+        return self._identity
+
     def refresh(self) -> None:
         """Re-render the current spec (e.g., after theme change)."""
         if self._current_spec:
@@ -119,6 +132,8 @@ class PlotWidget(QWidget):
 
         self._figure.clear()
         self._renderer.render(self._current_spec, fig=self._figure)
+        if self._identity is not None:
+            apply_identity_footer(self._figure, self._identity)
         self._canvas.draw()
 
     def _on_theme_changed(self, _theme: Any) -> None:
@@ -126,7 +141,7 @@ class PlotWidget(QWidget):
         self.refresh()
 
     def _export_plot(self) -> None:
-        """Export the current plot to a file."""
+        """Export the current plot to a file, embedding export metadata."""
         if self._current_spec is None:
             return
 
@@ -135,17 +150,50 @@ class PlotWidget(QWidget):
             "png": "PNG Files (*.png)",
             "svg": "SVG Files (*.svg)",
             "pdf": "PDF Files (*.pdf)",
+            "csv": "CSV Files (*.csv)",
         }
         filter_str = ext_map.get(fmt, "All Files (*)")
 
+        default_name = self._current_spec.title or "plot"
         path, _ = QFileDialog.getSaveFileName(
-            self, "Export Plot", f"plot.{fmt}", filter_str
+            self, "Export Plot", f"{default_name}.{fmt}", filter_str
         )
         if not path:
             return
 
-        self._figure.savefig(path, format=fmt, dpi=150, bbox_inches="tight")
-        logger.info(f"Plot exported to {path}")
+        save_path = Path(path)
+        if fmt == "csv":
+            data: dict[str, Any] = {}
+            for s in self._current_spec.series:
+                if s.x is not None and s.y is not None:
+                    data[f"{s.name}_x"] = s.x
+                    data[f"{s.name}_y"] = s.y
+            export_config = ExportConfig(
+                output_dir=save_path.parent,
+                include_metadata=True,
+            )
+            export_plot_data(
+                data,
+                save_path.stem,
+                config=export_config,
+                fmt="csv",
+                identity=self._identity,
+            )
+        else:
+            export_config = ExportConfig(
+                output_dir=save_path.parent,
+                dpi=150,
+                bbox_inches="tight",
+                include_metadata=True,
+            )
+            export_figure(
+                self._figure,
+                save_path.stem,
+                config=export_config,
+                formats=[fmt],
+                identity=self._identity,
+            )
+        logger.info(f"Plot exported to {save_path}")
 
     def get_image_bytes(self, fmt: str = "png", dpi: int = 150) -> bytes:
         """Get the current plot as image bytes."""
