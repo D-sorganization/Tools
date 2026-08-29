@@ -7019,6 +7019,7 @@
           "tests/rate_of_closure/test_variation_geometry_properties.py",
           "tests/shared/python/ai/test_rust_adapter_extended.py",
           "tests/shared/python/chat/test_ai_memory_manager.py",
+          "tests/shared/python/sidekick/lab/mocap/test_session_serialization.py",
           "tests/test_debug_utils.py",
           "tests/test_health_checks.py",
           "tests/unit/ai/mcp/test_claude_desktop_import.py",
@@ -7312,7 +7313,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "not-applicable"
       },
@@ -7342,7 +7343,9 @@
             "signature": null
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_schema.py"
+        ],
         "unit_mentions": [
           "g"
         ],
@@ -7731,6 +7734,7 @@
           "tests/architecture/test_gh1696_god_modules.py",
           "tests/architecture/test_import_resolvability.py",
           "tests/architecture/test_layer_boundaries.py",
+          "tests/architecture/test_mocap_authority_program.py",
           "tests/architecture/test_shared_import_aliases_3316.py",
           "tests/architecture/test_sidekick_external_imports_3316.py",
           "tests/conftest.py",
@@ -8485,7 +8489,7 @@
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "mapped"
       },
       "traceability": {
         "adr_paths": [
@@ -8558,12 +8562,15 @@
           "tests/rotation_converter/test_rigid_transform.py",
           "tests/rotation_converter/test_rotation_core.py",
           "tests/rust_bindings/test_math_primitives_bindings.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/unit/lower_body_model/test_simulator.py"
         ],
         "unit_mentions": [
           "s"
         ],
-        "validation_paths": []
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py"
+        ]
       }
     },
     {
@@ -8904,14 +8911,16 @@
           "tests/rotation_converter/test_rigid_transform.py",
           "tests/shared/python/golf_club/test_contracts.py",
           "tests/shared/python/model_generation/inertia/test_spatial.py",
-          "tests/shared/python/rotation_transforms/test_rotation_transforms.py"
+          "tests/shared/python/rotation_transforms/test_rotation_transforms.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py"
         ],
         "unit_mentions": [
           "s"
         ],
         "validation_paths": [
           "tests/contract/test_calc_backend_contract_surface.py",
-          "tests/shared/python/golf_club/test_contracts.py"
+          "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py"
         ]
       }
     },
@@ -12393,6 +12402,7 @@
           "tests/shared/python/process_calculators/test_water_vapor_pressure_shared.py",
           "tests/shared/python/process_calculators/test_wave1_process_numerics.py",
           "tests/shared/python/process_calculators/test_wgs_reactor_calculator.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/signal_toolkit/test_series.py",
           "tests/shared/python/test_safe_eval.py",
           "tests/shared/python/utils/test_unit_constants.py",
@@ -12410,6 +12420,7 @@
           "src/movement_optimizer/tests/test_parameter_validation.py",
           "src/shared/python/swing_sim/ground/tests/test_study_validation.py",
           "tests/rate_of_closure/test_morris_metric_validation.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/tools/test_scientific_auditor.py",
           "tests/vessel_drafter/test_contracts_unified.py"
         ]
@@ -13201,6 +13212,59 @@
           "kg",
           "s"
         ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4704,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "594eb6836dc57092a1bde045fc7f831030c935fc52f30ffc9868a7ea7dcbda06",
+      "family": "repository-governance-non-calculation",
+      "id": "TOOLS-MODULE-SCHEMAS-MOCAP-MOCAP-SESSION-V1-SCHEMA-JSON-A05A3C7D6BC1",
+      "language": "json",
+      "maintainer": "Repository governance maintainers",
+      "path": "schemas/mocap/mocap-session-v1.schema.json",
+      "purpose": "Camera-Agnostic Mocap Session Manifest v1",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://json-schema.org/draft/2020-12/schema",
+          "https://schemas.d-sorganization.org/mocap/mocap-session-v1.schema.json"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "schema",
+            "name": "https://schemas.d-sorganization.org/mocap/mocap-session-v1.schema.json",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
         "validation_paths": []
       }
     },
@@ -14674,80 +14738,6 @@
         ],
         "unit_mentions": [],
         "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5137,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7904f9281a639365341360d1f1ef14c7a1f721fb4b1a5beaca1bf916d9341f37",
-      "family": "repository-tooling-non-calculation",
-      "id": "TOOLS-MODULE-SCRIPTS-CHECK-MINIMUM-TEST-CONTRACT-PY-D00C141F501F",
-      "language": "python",
-      "maintainer": "Repository tooling maintainers",
-      "path": "scripts/check_minimum_test_contract.py",
-      "purpose": "Enforce minimum test contract for changed source packages.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "ROOT",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "changed_files",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "has_tests",
-            "signature": "pkg_key: str"
-          },
-          {
-            "kind": "function",
-            "name": "main",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "package_key",
-            "signature": "path: str"
-          }
-        ],
-        "test_paths": [
-          "tests/test_minimum_test_contract.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "tests/test_minimum_test_contract.py"
-        ]
       }
     }
   ],

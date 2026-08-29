@@ -26,3 +26,4 @@ This directory stores architecture decisions for cross-tool boundaries and share
 | [ADR-005](ADR-005-plugin-discovery-vs-registry.md)        | Accepted | Dual-mode plugin registration: per-tool manifests merged with centralized tools.json.              |
 | [ADR-006](ADR-006-type-safety-mypy-strict.md)             | Accepted | Type safety enforcement strategy using mypy delta CI and py.typed marker.                          |
 | [ADR-007](ADR-007-engineering-design-manual-authority.md) | Accepted | Sole QMD authority and fail-closed multi-format release boundary.                                  |
+| [ADR-008](ADR-008-markerless-mocap-authority-and-licensing.md) | Accepted | Cross-repository markerless-mocap authority, evidence, coordinate, C3D, privacy, and licensing boundaries. |
