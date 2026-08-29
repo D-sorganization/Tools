@@ -40,10 +40,16 @@ export function LaunchMonitorCovariationChart({ rows, xColumn, yColumn, playerCo
   });
   const points = centered(original);
   if (points.length < 2) return <p className="text-sm text-amber-200">At least two complete shots are needed for the plot.</p>;
-  const xValues = points.map((point) => point.x);
-  const yValues = points.map((point) => point.y);
-  const xLow = Math.min(...xValues); const xHigh = Math.max(...xValues);
-  const yLow = Math.min(...yValues); const yHigh = Math.max(...yValues);
+  // ⚡ Bolt Optimization: Replaced Math.min/max spread with a single-pass loop to eliminate call stack limits and GC pressure
+  let xLow = Infinity; let xHigh = -Infinity;
+  let yLow = Infinity; let yHigh = -Infinity;
+  for (let i = 0; i < points.length; i++) {
+    const p = points[i];
+    if (p.x < xLow) xLow = p.x;
+    if (p.x > xHigh) xHigh = p.x;
+    if (p.y < yLow) yLow = p.y;
+    if (p.y > yHigh) yHigh = p.y;
+  }
   const players = [...new Set(points.map((point) => point.playerId))].sort();
   return <svg id="launch-monitor-covariation-plot" viewBox="0 0 640 250" role="img"
     aria-label={`Within-player centered ${metricLabel(yColumn)} versus ${metricLabel(xColumn)} scatter plot`}
