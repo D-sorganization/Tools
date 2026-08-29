@@ -1,20 +1,18 @@
 # ruff: noqa: E501
 import re
-import subprocess
 from pathlib import Path
+
+from scripts.repo_metrics import (
+    count_files,
+    count_matching_lines,
+    list_directory_entries,
+)
 
 docs_dir = Path("docs/assessments")
 archive_dir = docs_dir / "archive"
 src_dir = Path("src")
-
-
-# 1. Gather Real Data
-def run_cmd(cmd: str) -> str:
-    try:
-        return subprocess.check_output(cmd, shell=True, text=True)
-    except subprocess.CalledProcessError as e:
-        output = e.output
-        return output if isinstance(output, str) else str(output)
+tests_dir = Path("tests")
+workflows_dir = Path(".github/workflows")
 
 
 src_categories = [
@@ -34,16 +32,18 @@ if pragmatic_file.exists():
         r"Hardcoded API Key\n\s+- Secrets in code\n\s+- Files: (.*)", content
     )  # noqa: E501
 
-todos = run_cmd("grep -rnw 'TODO' src/ | wc -l").strip()
-fixmes = run_cmd("grep -rnw 'FIXME' src/ | wc -l").strip()
-not_impl = run_cmd("grep -rnw 'NotImplementedError' src/ | wc -l").strip()
-test_files_count = run_cmd(
-    "find tests src -name 'test_*.py' -o -name '*.test.ts' -o -name '*.test.tsx' | wc -l"
-).strip()  # noqa: E501
-python_files = run_cmd("find src -name '*.py' | wc -l").strip()
-ts_files = run_cmd("find src -name '*.ts' -o -name '*.tsx' | wc -l").strip()
+# 1. Gather Real Data. Counted in-process rather than through a shell so a
+# failing command raises instead of returning its error text as a metric.
+todos = count_matching_lines([src_dir], "TODO")
+fixmes = count_matching_lines([src_dir], "FIXME")
+not_impl = count_matching_lines([src_dir], "NotImplementedError")
+test_files_count = count_files(
+    [tests_dir, src_dir], ["test_*.py", "*.test.ts", "*.test.tsx"]
+)
+python_files = count_files([src_dir], ["*.py"])
+ts_files = count_files([src_dir], ["*.ts", "*.tsx"])
 
-workflows = run_cmd("ls .github/workflows/").split()
+workflows = list_directory_entries(workflows_dir)
 
 categories_prompts = list("ABCDEFGHIJKLMNO")
 
