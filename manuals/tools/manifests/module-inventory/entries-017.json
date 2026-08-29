@@ -520,6 +520,185 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 381,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "768eebf687c599b04a54d2cac957985d8b8205870a63ff9f09a2c0154c00c291",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-TOOLS-INIT-PY-E230EA7FDB8A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/tools/__init__.py",
+      "purpose": "Tools package initialization.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "setup_logging",
+            "signature": "*args: Any, **kwargs: Any"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3273,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6a9ffcc38957ec279361065fe666958532f92545a258786fbb6c83527fcf24b9",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-TOOLS-CONFIG-LOADER-PY-622C2BCAFD3B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/tools/config_loader.py",
+      "purpose": "Configuration loader utility for generic tool launchers.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "CATEGORY_ORDER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_REPO_ROOT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "load_tools_config",
+            "signature": "repo_root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "validate_tools_config",
+            "signature": "tools_dict: dict[str, Any], repo_root: Path | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/test_config_loader.py",
+          "tests/tools/test_config_loader.py",
+          "tests/unit/ai/mcp/test_config_loader.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2576,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e4957c763e9acd651d809c3917eb308857f3373bbc41d1c885eb341b28f186d0",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-TOOLS-DEPENDENCY-UTILS-PY-692B6A359943",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/tools/dependency_utils.py",
+      "purpose": "Utilities for managing Python package dependencies.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "check_dependencies",
+            "signature": "packages: list[str]"
+          },
+          {
+            "kind": "function",
+            "name": "install_packages",
+            "signature": "packages: list[str]"
+          }
+        ],
+        "test_paths": [
+          "tests/tools/test_dependency_utils.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 0,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
