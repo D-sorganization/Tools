@@ -2,6 +2,1746 @@
   "authority": "D-sorganization/Tools",
   "entries": [
     {
+      "authority_status": "provisional",
+      "bytes_lf": 5326,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "e96803fe5dae95fa30ee477c4c50acd98400132be9e01a2c3f0117a793f61c82",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-TYPES-PY-F4CE9F20EB05",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/impact/types.py",
+      "purpose": "Impact model value types.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ImpactEvent",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImpactModelType",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImpactParameters",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PostImpactState",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PreImpactState",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/impact/tests/test_delivery.py",
+          "src/shared/python/swing_sim/impact/tests/test_models.py",
+          "src/shared/python/swing_sim/impact/tests/test_solver.py",
+          "tests/shared/python/golf_club/test_impact_coupling.py"
+        ],
+        "unit_mentions": [
+          "J",
+          "N",
+          "N/m",
+          "kg",
+          "m/s",
+          "rad",
+          "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3616,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "1f8bc01c8349a8d028fcc3406dac6c1bc6f7a15d47e4c8777c5cea8e113cb485",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-UTILS-PY-C17B4FB26FAC",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/impact/utils.py",
+      "purpose": "Impact energy-balance validation.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "validate_energy_balance",
+            "signature": "pre_state: PreImpactState, post_state: PostImpactState, params: ImpactParameters"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/impact/tests/test_solver.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 796,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "58b4b6accd679554e0947207a583d8920b152e07f4ffa930dd2c3581e35a46ad",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-INTEGRATION-GRID-PY-70856AB994CB",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/integration_grid.py",
+      "purpose": "Canonical fixed-step integration-grid calculations.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "DEFAULT_SWING_RK4_DT_S",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "effective_rk4_duration",
+            "signature": "duration_s: object, dt_s: object=DEFAULT_SWING_RK4_DT_S"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 4716,
+      "classification": "calculation",
+      "classification_basis": "path-marker:torque",
+      "content_sha256_lf": "a8b88bf94fd22b04e6f93b146b089a4f5e9d9823fe5260eb9d8eef8550935843",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-LOCALIZED-TORQUE-PY-7AEDA79C146E",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/localized_torque.py",
+      "purpose": "Topological joint/time contracts for additive torque commands.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "LocalizedTorqueOffset",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DOUBLE_PENDULUM_JOINT_IDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SHOULDER_JOINT_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "WRIST_JOINT_ID",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "add_localized_offsets",
+            "signature": "base_torques_nm: tuple[float, float], offsets: tuple[LocalizedTorqueOffset, ...], time_s: float"
+          },
+          {
+            "kind": "function",
+            "name": "require_offsets_within_duration",
+            "signature": "offsets: tuple[LocalizedTorqueOffset, ...], duration_s: float"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/tests/test_localized_torque.py",
+          "tests/rate_of_closure/test_localized_torque_web_golden.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 915,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "38fca59d45f2545bcd5d28f3922b17bb9afbe8fb1ac85ce1f3f8455a19a4aeeb",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-MODEL-INTERCHANGE-INIT-PY-79556FFA7405",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/model_interchange/__init__.py",
+      "purpose": "Golfer-model interchange for the heavy-hit epic (H2, #4564).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "BODY_CHAIN_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BodyChain",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ChainBody",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ChainJoint",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "body_chain_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "body_chain_to_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "chain_from_mjcf",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "chain_from_osim",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "chain_from_urdf",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "grip_boundary_reduction",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10738,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3af754ca3e8b8e76dc775b6184037d641dbbc6c682d98f7400e7da0e3a1c6aa8",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-MODEL-INTERCHANGE-BODY-CHAIN-PY-E11F0E175BED",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/model_interchange/body_chain.py",
+      "purpose": "Neutral body-chain contract and grip-boundary reduction (H2, #4564).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "BodyChain",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ChainBody",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ChainJoint",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BODY_CHAIN_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "body_chain_from_json",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "body_chain_to_json",
+            "signature": "chain: BodyChain"
+          },
+          {
+            "kind": "function",
+            "name": "grip_boundary_reduction",
+            "signature": "chain: BodyChain, *, hand_bodies: tuple[str, ...], boundary_joint_of: str, stiffness_override_n_m: float | None=None, damping_override_n_s_m: float | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_fitting_fixtures_parity.py"
+        ],
+        "unit_mentions": [
+          "N/m",
+          "N·m",
+          "rad",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10821,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3f26f0575928413f2241387ea3c6fa83c6572cc41536535ca12a669b2b757df1",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-MODEL-INTERCHANGE-PARSERS-PY-860A347CE4F8",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/model_interchange/parsers.py",
+      "purpose": "Runtime-free engine-model parsers for the body-chain wire (H2, #4564).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "chain_from_mjcf",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "chain_from_osim",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "chain_from_urdf",
+            "signature": "text: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5500,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8c84de45aab2f93317c64d8c57097a2631fbf07d1d1dc91b0b0528c8706963ed",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-INIT-PY-3763F6A25399",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/putting/__init__.py",
+      "purpose": "Putting vertical for swing_sim (epic #4125, H3).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "CaptureModel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_PUTTER_COR",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_PUTTER_MOI_KG_M2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_SLIDING_MU",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GREEN_SURFACE_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GreenConditions",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GreenSurface",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GridGreenSurface",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "HOLE_RADIUS_M",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MINIMAL_PUTTERS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PUTTING_RESULT_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PUTTING_RESULT_FORMAT_V1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PUTTING_RESULT_KERNEL",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PUTTING_STROKE_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlanarGreenSurface",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PuttLaunch",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PuttResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PutterSpec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PuttingResultDocument",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PuttingResultProvenance",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PuttingResultV1Archive",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PuttingStroke",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "STIMP_RELEASE_SPEED_MPS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SkidSolution",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StrokePutt",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StrokeSample",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StrokeStrike",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "UdGreenTopography",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "capture_speed_mps",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "clubhead_speed_from_backstroke",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "effective_hole_radius_m",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "green_surface_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "green_surface_from_ud_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "green_surface_to_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "green_surface_to_ud_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "impact_sample_index",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putt_from_stroke",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putting_result_document",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putting_result_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putting_result_to_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putting_result_v1_archive_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putting_stroke_from_drake_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putting_stroke_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putting_stroke_from_mujoco_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putting_stroke_from_opensim_sto",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putting_stroke_to_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "roll_out_distance",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "roll_time_s",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "rolling_mu_to_stimp",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "simulate_putt",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "simulate_putt_on_surface",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "solve_skid",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "stimp_to_rolling_mu",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "strike_from_stroke",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "strike_parameters",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3797,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b061b188dd9e46f8a32641213ea0d8a881feb41e7be09c4eb188140c0300b4bc",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-CAPTURE-PY-B453BF5D2B9D",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/putting/capture.py",
+      "purpose": "Hole-capture physics: lip bound and effective radius (#4800 P2).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "HOLE_RADIUS_M",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "capture_speed_mps",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "effective_hole_radius_m",
+            "signature": "speed_mps: float"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "J",
+          "g",
+          "m/s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 14114,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "46ba9dd61eafabd075a91bd53d59eac93a1a0affa790376f99720e41054adf19",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-DISPERSION-PY-AA9FBB7AC22A",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/putting/dispersion.py",
+      "purpose": "Putt dispersion outcomes, summary, and wire (epic #4800, P5).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PuttDispersionReport",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PuttDispersionSummary",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PuttOutcome",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PuttVariableDeclaration",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PUTT_DISPERSION_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "putt_dispersion_from_json",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "putt_dispersion_to_json",
+            "signature": "report: PuttDispersionReport"
+          },
+          {
+            "kind": "function",
+            "name": "summarize_putt_outcomes",
+            "signature": "outcomes: tuple[PuttOutcome, ...]"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/putting/tests/test_variation.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 16756,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a86fc75a7b7f91c368fcc82d2a37c0ec603f601c693eda7f2b79515975b3d086",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-GREEN-PY-C9095C77BD3B",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/putting/green.py",
+      "purpose": "Green roll integration, break, and hole capture (#4125 H3, #4800 P2).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GreenConditions",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PuttResult",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "simulate_putt",
+            "signature": "launch: PuttLaunch, green: GreenConditions, hole_distance_m: float"
+          },
+          {
+            "kind": "function",
+            "name": "simulate_putt_on_surface",
+            "signature": "launch: PuttLaunch, surface: GreenSurface, *, stimp_ft: float, hole_distance_m: float, mu_slide: float=DEFAULT_SLIDING_MU, capture_model: CaptureModel='effective_radius'"
+          },
+          {
+            "kind": "re-export",
+            "name": "HOLE_RADIUS_M",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "capture_speed_mps",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "effective_hole_radius_m",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/putting/tests/test_green.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "g",
+          "m/s",
+          "m/s^2",
+          "mm",
+          "ms",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 17362,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "024872d3ac8736be6ba7551df11df37cddf1501199ca49d42661a7f1cc519ba5",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-IMPACT-PY-3307AA71CDBE",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/putting/impact.py",
+      "purpose": "Putter-ball impact: low-speed impulse with loft (epic #4125, H3).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PuttLaunch",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PutterSpec",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_PUTTER_COR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_PUTTER_MOI_KG_M2",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MINIMAL_PUTTERS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "clubhead_speed_from_backstroke",
+            "signature": "backstroke_m: float, putter_length_m: float=0.889"
+          },
+          {
+            "kind": "function",
+            "name": "strike",
+            "signature": "putter: PutterSpec, clubhead_speed_mps: float, shaft_lean_deg: float=0.0, *, aim_deg: float=0.0, face_angle_deg: float=0.0, path_angle_deg: float=0.0, attack_angle_deg: float=0.0, strike_offset_toe_mm: float=0.0, strike_offset_high_mm: float=0.0, head_moi_kg_m2: float | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/putting/tests/test_impact.py"
+        ],
+        "unit_mentions": [
+          "cm",
+          "deg",
+          "g",
+          "kg",
+          "m/s",
+          "m/s^2",
+          "mm",
+          "ms",
+          "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 22152,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "34681d1119d2253fc666ba3761cb12e294a2fc060f4b0556c3f27235fcbf297e",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-RESULT-WIRE-PY-532851184369",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/putting/result_wire.py",
+      "purpose": "Putt result wire ``swing_sim.putting_result/2`` (epic #4800, P5).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PuttingResultDocument",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PuttingResultProvenance",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PuttingResultV1Archive",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PUTTING_RESULT_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PUTTING_RESULT_FORMAT_V1",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PUTTING_RESULT_KERNEL",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "putting_result_document",
+            "signature": "launch: PuttLaunch, result: PuttResult, provenance: PuttingResultProvenance, *, hole_distance_m: float"
+          },
+          {
+            "kind": "function",
+            "name": "putting_result_from_json",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "putting_result_to_json",
+            "signature": "document: PuttingResultDocument"
+          },
+          {
+            "kind": "function",
+            "name": "putting_result_v1_archive_from_json",
+            "signature": "text: str"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/putting/tests/test_result_wire.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8624,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4391fd723cc3327f19c425fc365721e743b406c377b4905735af08dce86cc51e",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-ROLL-PY-E780606D57E2",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/putting/roll.py",
+      "purpose": "Skid -> pure-roll model with stimpmeter green speed (#4125, H3).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SkidSolution",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_SLIDING_MU",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GRAVITY_M_S2",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "STIMP_RELEASE_SPEED_MPS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "roll_out_distance",
+            "signature": "speed_mps: float, mu_roll: float"
+          },
+          {
+            "kind": "function",
+            "name": "roll_time_s",
+            "signature": "speed_mps: float, mu_roll: float"
+          },
+          {
+            "kind": "function",
+            "name": "rolling_mu_to_stimp",
+            "signature": "mu_r: float"
+          },
+          {
+            "kind": "function",
+            "name": "solve_skid",
+            "signature": "speed_mps: float, spin_rad_s: float, ball_radius_m: float, mu_slide: float=DEFAULT_SLIDING_MU"
+          },
+          {
+            "kind": "function",
+            "name": "stimp_to_rolling_mu",
+            "signature": "stimp_ft: float"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/putting/tests/test_roll.py",
+          "src/shared/python/swing_sim/putting/tests/test_ud_adapter.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "g",
+          "m/s",
+          "m/s^2",
+          "mm",
+          "rad",
+          "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4256,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "989117dedd889802e93761a308a4c0e28766ab961ca3dc3b62a48602058c7981",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-STROKE-ADAPTERS-PY-FA0E015B9A63",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/putting/stroke_adapters.py",
+      "purpose": "Engine export adapters for the putting-stroke wire (#4800 P4).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "putting_stroke_from_drake_json",
+            "signature": "text: str, *, ball_position_m: tuple[float, float, float], aim_deg: float=0.0"
+          },
+          {
+            "kind": "function",
+            "name": "putting_stroke_from_mujoco_json",
+            "signature": "text: str, *, ball_position_m: tuple[float, float, float], aim_deg: float=0.0"
+          },
+          {
+            "kind": "function",
+            "name": "putting_stroke_from_opensim_sto",
+            "signature": "text: str, *, body_name: str, frame_id: str, ball_position_m: tuple[float, float, float], aim_deg: float=0.0"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 18909,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2ef579510f0eed60664dd5b00bbe46af982ce8ea727d1905480f7d734e106aca",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-STROKE-INTERCHANGE-PY-6FC8D525B444",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/putting/stroke_interchange.py",
+      "purpose": "Putting-stroke interchange: recorded strokes drive the impact solve (#4800 P4).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PuttingStroke",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StrokePutt",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StrokeSample",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StrokeStrike",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PUTTING_STROKE_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "impact_sample_index",
+            "signature": "stroke: PuttingStroke, *, body_to_face_m: float"
+          },
+          {
+            "kind": "function",
+            "name": "putt_from_stroke",
+            "signature": "stroke: PuttingStroke, putter: PutterSpec, surface: GreenSurface, *, body_to_face_m: float, stimp_ft: float, hole_distance_m: float, shaft_lean_deg: float | None=None, head_moi_kg_m2: float | None=None, mu_slide: float=DEFAULT_SLIDING_MU, capture_model: CaptureModel='effective_radius'"
+          },
+          {
+            "kind": "function",
+            "name": "putting_stroke_from_json",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "putting_stroke_to_json",
+            "signature": "stroke: PuttingStroke"
+          },
+          {
+            "kind": "function",
+            "name": "strike_from_stroke",
+            "signature": "stroke: PuttingStroke, putter: PutterSpec, *, body_to_face_m: float, shaft_lean_deg: float | None=None, head_moi_kg_m2: float | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "strike_parameters",
+            "signature": "stroke: PuttingStroke, *, body_to_face_m: float"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/putting/tests/test_stroke_interchange.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 12987,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "9aad77215e775f455852b261cbe32a02a1ea014ce870ffba22d4c1cb3fa41b32",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-SURFACE-PY-1376320B8CF3",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/putting/surface.py",
+      "purpose": "Green surface heightfield: parametric plane + grid form (#4800 P2).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GridGreenSurface",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlanarGreenSurface",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GREEN_SURFACE_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "green_surface_from_json",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "green_surface_to_json",
+            "signature": "surface: GreenSurface"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/putting/tests/test_surface.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "g",
+          "m/s^2",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 14995,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e052f7b03daa3c47fe5299b8ad4ed9840c207d9db658e7971f9e677248ba5168",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-UD-ADAPTER-PY-2E70242571A2",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/putting/ud_adapter.py",
+      "purpose": "UpstreamDrift ``putting_green`` topography adapter (#4800 P9).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "UdGreenTopography",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "green_surface_from_ud_json",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "green_surface_to_ud_json",
+            "signature": "surface: GreenSurface, *, hole_position_m: tuple[float, float] | None=None, extent_m: tuple[float, float] | None=None, spacing_m: float | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/putting/tests/test_ud_adapter.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "not-applicable",
       "bytes_lf": 17119,
       "classification": "non-calculation",
@@ -14873,1143 +16613,6 @@
           "tests/tools/test_dependency_utils.py"
         ],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 0,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-TOOLS-FOLDER-TOOLS-FOLDER-TOOL-INIT-PY-A4D435E017B4",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/tools/folder_tools/folder_tool/__init__.py",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 13947,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b0e40fa331163ed46858f40ba0598244b096cae4b8d6affb90faf5379b5b4e46",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-TOOLS-FOLDER-TOOLS-FOLDER-TOOL-FOLDER-TOOL-ANALYSIS-PY-2DE6267A8DFB",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/tools/folder_tools/folder_tool/folder_tool_analysis.py",
-      "purpose": "AnalysisMixin -- Analysis report and input validation for FolderProcessorApp.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "AnalysisMixin",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/folder_tool/test_folder_tool_analysis.py"
-        ],
-        "unit_mentions": [
-          "g"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 166,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "09d4e4fa8b720ece5e387da5be5254a28c6869a49f4bfd72a28321e76394f337",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-TOOLS-GUI-INIT-PY-02AE2E41573B",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/tools/gui/__init__.py",
-      "purpose": "GUI package for Tools Launcher components.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 27,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ffe50ba30dfe0f3915b4317f171e4735ffbb72011d72191ebafd3e1e4b0f3ca2",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-TOOLS-GUI-COMPONENTS-INIT-PY-F2C71C5F533D",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/tools/gui/components/__init__.py",
-      "purpose": "Package: components.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4546,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9cf8225e59d1fa6bb9e416dd9256fd6988b494c425c11412cd0dbcf1041c8cb6",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-TOOLS-GUI-COMPONENTS-CATEGORY-GROUP-PY-03AB9132BC3D",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/tools/gui/components/category_group.py",
-      "purpose": "Collapsible category group component for organizing tools by category.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CollapsibleCategoryGroup",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6776,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2f1c554c73778f3f37eee293bd45191f91e73e5016089bb6f43e26815d54fd95",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-TOOLS-GUI-COMPONENTS-ERROR-NOTIFICATION-PY-A6A0149CC202",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/tools/gui/components/error_notification.py",
-      "purpose": "Error notification dialog for the Unified Tools Launcher.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ErrorNotificationDialog",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5025,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d7d53f9ed84c4b45cb7e4ce663d434265bb42dc18394f75a83bae1bc59813e40",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-TOOLS-GUI-COMPONENTS-KEYBOARD-SHORTCUTS-DIALOG-PY-A755D51DC02D",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/tools/gui/components/keyboard_shortcuts_dialog.py",
-      "purpose": "Keyboard shortcuts help dialog for the Unified Tools Launcher.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "KeyboardShortcutsDialog",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6072,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0132d8ac8447e3115c49f495dd60e1294a1c6fdbeeedfb4f56092d07e046e549",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-TOOLS-GUI-COMPONENTS-LAUNCH-PROGRESS-PY-3B02AB2D4BFB",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/tools/gui/components/launch_progress.py",
-      "purpose": "Launch progress indicator for the Unified Tools Launcher.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "LaunchProgressDialog",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "bar",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5444,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f7cdb0071ccc5efecc62a0be0e3536768ebcd9d9783322bdcb952a3b9c09012d",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-TOOLS-GUI-COMPONENTS-TOOL-CARD-PY-1E70E353D9C4",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/tools/gui/components/tool_card.py",
-      "purpose": "ToolCard component for the Unified Launcher.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ToolCard",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 7979,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "fa976286ce0db84eccbe9a33c913bc850fd2e8f0dc6b63e8eaa120b27df66055",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-TOOLS-GUI-SEARCH-PY-F405E32067B6",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/tools/gui/search.py",
-      "purpose": "Search engine for tool discovery in the Unified Launcher.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SearchEngine",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_IGNORED_TERMS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_TOKEN_PATTERN",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/tools/gui/test_search_engine.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 24,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "56378e86c3e9ba6460b641bcb7ab2e4e0a5e2e6e7c8ceb118e3a956d3403928b",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-TOOLS-GUI-WINDOWS-INIT-PY-9C63C5DBF1E6",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/tools/gui/windows/__init__.py",
-      "purpose": "Package: windows.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 17377,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6a247247bb23486e740a93102a18b4af3010c9d321db86cacfea3fc1033d0c66",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-TOOLS-GUI-WINDOWS-UNIFIED-LAUNCHER-WINDOW-PY-C4525480173A",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/tools/gui/windows/unified_launcher_window.py",
-      "purpose": "Main window for the Unified Tools Launcher.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "UnifiedLauncher",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5202,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b5dd8725106cc19ca5252dd0fae15fe83a62f785801a6ff44566421a4e01ce33",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-TOOLS-ICON-UTILS-PY-F69E4CB4F931",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/tools/icon_utils.py",
-      "purpose": "Shared utilities for icon conversion and manipulation.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "ICO_SIZES",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "check_pil_installed",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "convert_image_mode",
-            "signature": "img: Image.Image"
-          },
-          {
-            "kind": "function",
-            "name": "convert_png_to_ico",
-            "signature": "png_path: Path, ico_path: Path, sizes: list[tuple[int, int]] | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "create_resized_images",
-            "signature": "img: Image.Image, sizes: list[tuple[int, int]]"
-          },
-          {
-            "kind": "function",
-            "name": "ensure_pil_installed",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/theme/test_icon_utils.py",
-          "tests/test_icon_utils.py",
-          "tests/test_wave1_paths.py",
-          "tests/tools/test_icon_utils.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 14861,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "63668867e109440fac3158a84b6a5fa846cae41fde3755802da44266299f9ca1",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-TOOLS-LAUNCH-UTILS-PY-A2F9A3F17D12",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/tools/launch_utils.py",
-      "purpose": "Shared utilities for launching tools.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "LaunchError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PlatformError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SecurityError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ToolNotFoundError",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "get_repo_root",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "launch_batch_tool",
-            "signature": "path: Path, tool_name: str, is_debug: bool=False, log_func: Callable[[str], None] | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "launch_browser_tool",
-            "signature": "path: Path, log_func: Callable[[str], None] | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "launch_matlab_tool",
-            "signature": "path: Path, tool_name: str, is_debug: bool=False, log_func: Callable[[str], None] | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "launch_octave_tool",
-            "signature": "path: Path, tool_name: str, is_debug: bool=False, log_func: Callable[[str], None] | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "launch_python_tool",
-            "signature": "path: Path, tool_name: str, is_debug: bool=False, log_func: Callable[[str], None] | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "launch_tool",
-            "signature": "tool_info: dict[str, Any], repo_root: Path, is_debug: bool=False, log_func: Callable[[str], None] | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "validate_and_sanitize_path",
-            "signature": "path_str: str, repo_root: Path"
-          }
-        ],
-        "test_paths": [
-          "tests/test_dry_compliance.py",
-          "tests/test_launch_utils.py",
-          "tests/tools/test_launch_utils.py",
-          "tests/tools/test_ui_utils.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 608,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a49ed7b98613a6b26dd8200a2758a856a1614e72ee9a874e3adeea5acba8ac43",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-TOOLS-LOGGER-PY-C5B825B3A348",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/tools/logger.py",
-      "purpose": "Unified logging configuration for Tools repository.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "DEFAULT_FORMAT",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "get_logger",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "init_default_logging",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "setup_logging",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/tools/test_logger_shim.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 12257,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "efd2a1409a83349004de422868475c9792761edb153daf77bac86cc23b09dd95",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-TOOLS-MATLAB-CODE-ANALYZER-GUI-CODEISSUESGUI-M-C52FD8FB0CB3",
-      "language": "matlab",
-      "maintainer": "Tools module maintainers",
-      "path": "src/tools/matlab_code_analyzer_gui/codeIssuesGUI.m",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "addFiles",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "addFolder",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "analyzeCode",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "browseOutput",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "cancelDialog",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "codeIssuesGUI",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "removePath",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "updatePathList",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 15023,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9b834da59372a0fdec5a1228ec6afaf4abbd79dac27ac2273b347999f3de4c0b",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-TOOLS-MATLAB-CODE-ANALYZER-GUI-EXPORTCODEISSUES-M-426063E4AD49",
-      "language": "matlab",
-      "maintainer": "Tools module maintainers",
-      "path": "src/tools/matlab_code_analyzer_gui/exportCodeIssues.m",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "absPathIfPossible",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "collectFilesFromDir",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "defaultExcludeDirs",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "ensureField",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "escapeMd",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "exportCodeIssues",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "extractIdentifierFallback",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "getCharField",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "getNumericField",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "iscellstrlike",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "issuesTable",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "listFiles",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "matchName",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "num2strOrEmpty",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "relPath",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "stripTrailingFilesep",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "writeOutput",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2823,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "46c5b08dc1015f7e693be364ba83d020c4eda45b98b0dbafd111cec3c9bbabb0",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-TOOLS-MATLAB-CODE-ANALYZER-GUI-LAUNCHCODEANALYZER-M-2097462364E7",
-      "language": "matlab",
-      "maintainer": "Tools module maintainers",
-      "path": "src/tools/matlab_code_analyzer_gui/launchCodeAnalyzer.m",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "launchCodeAnalyzer",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
         "validation_paths": []
       }
     }
