@@ -6745,7 +6745,7 @@
     "Impact requires a non-looping first pass near the bottom with rightward velocity within 15 degrees of horizontal."
   ],
   "provenance": {
-    "git_sha": "c99406a2e66a73fb3904acc2c235c655424072e5",
+    "git_sha": "c99406a2e66a",
     "generator": "run_force_source_optimization.py",
     "profile": "thorough",
     "initial_pose": {
