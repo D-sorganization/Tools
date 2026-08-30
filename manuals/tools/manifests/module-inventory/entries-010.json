@@ -11935,10 +11935,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 12504,
+      "bytes_lf": 12042,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "397a54241f891c46d486eb8610732c30c488ed13afc2474b3723499f7424e7cd",
+      "content_sha256_lf": "c336781d9e2fe396e0a9356afd20d817401ef1f2e0f2d09de635e9a8e0600a0d",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-PUTTINGSAMPLEINSPECTOR-TS-AA3AC7E2E88B",
       "language": "typescript",

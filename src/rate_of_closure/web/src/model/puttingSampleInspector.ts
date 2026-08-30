@@ -158,24 +158,10 @@ export function planPuttingSamples(
     }
   }
   const cumulativeDistanceM = Object.freeze(cumulative);
-  // ⚡ Bolt Optimization: Use single-pass loop instead of Math.max(...)/Math.min(...)
-  let minX = source.path_x_m[0];
-  let maxX = source.path_x_m[0];
-  let maxYAbs = Math.abs(source.path_y_m[0]);
-  let maxSpeed = source.speeds_mps[0];
-  for (let i = 1; i < source.path_x_m.length; i++) {
-    const x = source.path_x_m[i];
-    const yAbs = Math.abs(source.path_y_m[i]);
-    const speed = source.speeds_mps[i];
-    if (x < minX) minX = x;
-    if (x > maxX) maxX = x;
-    if (yAbs > maxYAbs) maxYAbs = yAbs;
-    if (speed > maxSpeed) maxSpeed = speed;
-  }
   const envelope = [
-    maxX + 0.3 - (minX - 0.3),
-    2 * Math.max(0.3, maxYAbs),
-    maxSpeed * 1.08,
+    Math.max(...source.path_x_m) + 0.3 - (Math.min(...source.path_x_m) - 0.3),
+    2 * Math.max(0.3, ...source.path_y_m.map(Math.abs)),
+    Math.max(...source.speeds_mps) * 1.08,
   ];
   if (envelope.some((value) => !Number.isFinite(value) || value <= 0)) {
     throw new RangeError("putting display envelope must remain finite and positive");
