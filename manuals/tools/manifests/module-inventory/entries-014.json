@@ -3,6 +3,828 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 19104,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "545bc0b95f2094acfec8b3b5ca4570c9c5e16bc9eedeb6cd691d0df35e7f357c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-EXPLORER-MODEL-EXPLORER-PY-D719A4430D24",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/explorer/model_explorer.py",
+      "purpose": "Model Explorer PyQt6 Main Window.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DisplayPreviewPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ModelExplorerWindow",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ModelFileSelectionRequiredError",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N",
+          "bar",
+          "kg"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 238,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a0da1c07b7d176e2dc4c4a22f1f5beec337e7d84b9986242f4e9594f055b81c5",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-EXPORT-INIT-PY-0D8E6E8BEC04",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/export/__init__.py",
+      "purpose": "Export utilities for model generation.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "URDFWriter",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2509,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c007d3696b855a865da6f21f655925fb302bae5c518b7cbe0cb564943609fdfb",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-HUMANOID-INIT-PY-8F6129C26A04",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/humanoid/__init__.py",
+      "purpose": "Humanoid model generation components.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "AnthropometryData",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AppearanceParameters",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BodyParameters",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BuildType",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CharacterBuildResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CharacterBuilder",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DE_LEVA_DATA",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ExportOptions",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GenderModel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "HUMANOID_JOINTS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "HUMANOID_SEGMENTS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "HumanoidURDFGenerator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InertiaMode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InertiaResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "JointDefinition",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MeshInertiaCalculator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PRESET_NAMES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PrimitiveInertiaCalculator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PrimitiveShape",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SegmentDefinition",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SegmentMeshInfo",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SegmentParameters",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "URDFGeneratorConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "estimate_segment_dimensions",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "estimate_segment_inertia_from_gyration",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "estimate_segment_masses",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_com_location",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_preset_info",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_segment_length_ratio",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_segment_mass_ratio",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "list_available_presets",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "load_body_preset",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "quick_build",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "quick_urdf",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 1055,
+      "classification": "calculation",
+      "classification_basis": "path-marker:inertia",
+      "content_sha256_lf": "7013616496299ae78bf141e84862c5083f3ff50678c6497e463b4f6991add251",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-INERTIA-INIT-PY-8A5A55A0538E",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/inertia/__init__.py",
+      "purpose": "Unified inertia calculation for model generation.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "InertiaCalculator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InertiaMode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InertiaResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "box_inertia",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "capsule_inertia",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "cylinder_inertia",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ellipsoid_inertia",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "mcI",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "spatial_inertia_to_urdf",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "sphere_inertia",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "transform_spatial_inertia",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 20812,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "9057601a1ec8a169e4b0f0af764954252b59e3332294138a28f69d9bb7abbc0e",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-INERTIA-CALCULATOR-PY-F7D59AE6FD8E",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/inertia/calculator.py",
+      "purpose": "Unified inertia calculator with multiple computation modes.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "InertiaCalculator",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "InertiaMode",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "InertiaResult",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/web_applications/calculator/tests/test_calculator.py",
+          "tests/shared/python/model_generation/inertia/test_calculator.py"
+        ],
+        "unit_mentions": [
+          "kg"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 10773,
+      "classification": "calculation",
+      "classification_basis": "path-marker:inertia",
+      "content_sha256_lf": "2e43a0b4f2a216c7207e48944e039c7653da5231a48d01a926c579dec7825dc4",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-INERTIA-PRIMITIVES-PY-CD8310F10C65",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/inertia/primitives.py",
+      "purpose": "Analytical inertia formulas for primitive shapes.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "box_inertia",
+            "signature": "mass: float, size_x: float, size_y: float, size_z: float"
+          },
+          {
+            "kind": "function",
+            "name": "capsule_inertia",
+            "signature": "mass: float, radius: float, length: float, axis: str='z'"
+          },
+          {
+            "kind": "function",
+            "name": "combine_inertias",
+            "signature": "inertias: list[tuple[dict[str, float], float, tuple[float, float, float]]]"
+          },
+          {
+            "kind": "function",
+            "name": "cone_inertia",
+            "signature": "mass: float, radius: float, height: float, axis: str='z'"
+          },
+          {
+            "kind": "function",
+            "name": "cylinder_inertia",
+            "signature": "mass: float, radius: float, length: float, axis: str='z'"
+          },
+          {
+            "kind": "function",
+            "name": "ellipsoid_inertia",
+            "signature": "mass: float, a: float, b: float, c: float"
+          },
+          {
+            "kind": "function",
+            "name": "hollow_cylinder_inertia",
+            "signature": "mass: float, inner_radius: float, outer_radius: float, length: float, axis: str='z'"
+          },
+          {
+            "kind": "function",
+            "name": "parallel_axis",
+            "signature": "inertia: dict[str, float], mass: float, offset: tuple[float, float, float]"
+          },
+          {
+            "kind": "function",
+            "name": "sphere_inertia",
+            "signature": "mass: float, radius: float"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/model_generation/inertia/test_calculator.py",
+          "tests/shared/python/model_generation/inertia/test_primitives.py"
+        ],
+        "unit_mentions": [
+          "kg"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 6932,
+      "classification": "calculation",
+      "classification_basis": "path-marker:inertia",
+      "content_sha256_lf": "02e19970c799288ba6265f56a7d6e778b85679608f70f7f2dc27da3186b10a45",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-INERTIA-SPATIAL-PY-B0A93271BD76",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/inertia/spatial.py",
+      "purpose": "Spatial inertia utilities for rigid body dynamics.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "composite_rigid_body_inertia",
+            "signature": "inertias: list[tuple[NDArray[np.float64], NDArray[np.float64]]]"
+          },
+          {
+            "kind": "function",
+            "name": "mcI",
+            "signature": "mass: float, com: NDArray[np.float64], I_com: NDArray[np.float64]"
+          },
+          {
+            "kind": "function",
+            "name": "spatial_inertia_to_urdf",
+            "signature": "spatial_inertia: NDArray[np.float64]"
+          },
+          {
+            "kind": "function",
+            "name": "spatial_transform",
+            "signature": "rotation: NDArray[np.float64], translation: NDArray[np.float64]"
+          },
+          {
+            "kind": "function",
+            "name": "transform_spatial_inertia",
+            "signature": "I_A: NDArray[np.float64], X_BA: NDArray[np.float64]"
+          },
+          {
+            "kind": "function",
+            "name": "urdf_to_spatial_inertia",
+            "signature": "mass: float, com: tuple[float, float, float] | list[float] | NDArray, ixx: float, iyy: float, izz: float, ixy: float=0.0, ixz: float=0.0, iyz: float=0.0"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/model_generation/inertia/test_spatial.py"
+        ],
+        "unit_mentions": [
+          "kg"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1298,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a489bc4d16c1ced2108da3169a4533dfa499da2ab07d81b88a3ad96d21433ca4",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-LIBRARY-INIT-PY-F9583BB00221",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/library/__init__.py",
+      "purpose": "Model Library for URDF and MJCF model management.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "GitHubImporter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GitHubRepository",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImportResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LoadResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LocalRepository",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ModelCache",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ModelCategory",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ModelEntry",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ModelFormat",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ModelLibrary",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Repository",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RepositorySource",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "UnifiedModelLoader",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "UserPreferences",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "detect_format",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 5714,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -16648,876 +17470,6 @@
         "test_paths": [],
         "unit_mentions": [
           "g"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 312,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d9652e301435303104aba2919bf8d1a22d26aac19eca48b4d5d3dd7324f22c50",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-MANAGERS-INIT-PY-5D2B6D7062AF",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/managers/__init__.py",
-      "purpose": "UI managers for Upstream Drift Tools.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "UNIT_CATEGORIES",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "UnitCategory",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "UnitPreferencesManager",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "get_unit_preferences_manager",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 12878,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ae89ba02bd7a20adda50758b2563607034ebba26faf35b1e6184c7353bee4394",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-MANAGERS-UNIT-PREFERENCES-MANAGER-PY-75E58CCC4EAB",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/managers/unit_preferences_manager.py",
-      "purpose": "Unit Preferences Manager - Global unit preferences management for the application.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "UnitCategory",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "UnitPreferencesManager",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "UNIT_CATEGORIES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "UNIT_PRESETS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "get_unit_preferences_manager",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/sidekick/tests/test_unit_aware_input.py",
-          "src/shared/python/sidekick/tests/test_unit_preferences_manager.py"
-        ],
-        "unit_mentions": [
-          "J",
-          "MPa",
-          "Nm",
-          "N·m",
-          "Pa",
-          "W",
-          "bar",
-          "cm",
-          "deg",
-          "g",
-          "kPa",
-          "kg",
-          "mm",
-          "rad/s",
-          "rpm",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 69,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8262c7e073d704e1cd2ec4cc4b026b2559ba2268cb0bb81b91e4d8a41032b3d3",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-MIXINS-INIT-PY-E85C8D0A2EAE",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/mixins/__init__.py",
-      "purpose": "UI Mixins for Upstream Drift Tools.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 1562,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "8a0331a2cc8f5a3525915a34b9353dd7a71c4669f6f98240e7426e3f2b47d17f",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-MIXINS-BASE-CALCULATOR-MIXIN-PY-74F898170EF4",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/mixins/base_calculator_mixin.py",
-      "purpose": "Base Calculator Widget Mixin",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "BaseCalculatorMixin",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/sidekick/tests/test_base_calculator_mixin.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 31010,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "8c78203601bb6433f440c78bfcc3d7021b678a847c2e31f22b3d88148bb035d8",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-MIXINS-CALCULATOR-STATE-MIXIN-PY-347B160C8554",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/mixins/calculator_state_mixin.py",
-      "purpose": "Calculator State Mixin",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CalculatorStateMixin",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/sidekick/tests/process_calculators/test_acid_gas_dewpoint_calculator.py",
-          "src/shared/python/sidekick/tests/process_calculators/test_syngas_compression_engine.py",
-          "src/shared/python/sidekick/tests/process_calculators/test_wgs_reactor_calculator.py",
-          "src/shared/python/sidekick/tests/test_calculator_state_mixin.py",
-          "tests/shared/python/ui/test_wave1_widget_state.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5924,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d431db619930a3b7f200afec4a37b295b19820de7ac821ed048960785e51c7f4",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-INIT-PY-7F81C1BA8F1A",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/__init__.py",
-      "purpose": "Unified tools sidebar public API.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "CALCULATOR_HELP",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CALCULATOR_PLOT_TAB_ID",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CALCULATOR_WORKSPACE_SCOPE",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CLEAR_SIDEKICK_DATA_CONFIRMATION",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CLEAR_SIDEKICK_DATA_WARNING",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CalculatorPlotRequest",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CalculatorPlotSource",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CalculatorPlotTabConfig",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CalculatorPredictiveText",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CalculatorStartupConfig",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CalculatorStartupImport",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CalculatorStartupResult",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CalculatorStartupWarning",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CalculatorWorkspaceController",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CalculatorWorkspaceFacade",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CalculatorWorkspaceLoadResult",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CalculatorWorkspaceSettings",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CommandHistoryController",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CommonLocation",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CommonLocationsProvider",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "DEFAULT_COMMAND_HISTORY_LIMIT",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "DEFAULT_SIDEBAR_TAB_HELP",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "DefaultCommonLocationsProvider",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "FileNavigationController",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "FileNavigationState",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "GLOBAL_WORKSPACE_SCOPE",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "GlobalWorkspaceController",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "GlobalWorkspaceSettings",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SIDEBAR_CONTEXT_ACTIONS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SIDEKICK_DESIGN_TOKENS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SIDEKICK_DOCK_OBJECT_NAME",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SIDEKICK_FUNCTION_GENERATOR_OBJECT_NAME",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SIDEKICK_PLACEHOLDER_LABEL_OBJECT_NAME",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SIDEKICK_PLACEHOLDER_OBJECT_NAME",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SIDEKICK_PROJECT_EXPLORER_OBJECT_NAME",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SIDEKICK_PROJECT_TREE_OBJECT_NAME",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SIDEKICK_ROTATION_CONVERTER_OBJECT_NAME",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SIDEKICK_SIDEBAR_OBJECT_NAME",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SIDEKICK_TABS_OBJECT_NAME",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SIDEKICK_TAB_BAR_OBJECT_NAME",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SIDEKICK_TOKEN_NAMES",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SIDEKICK_TOOLBAR_OBJECT_NAME",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SIDEKICK_WORKSPACE_LIST_OBJECT_NAME",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SIDEKICK_WORKSPACE_TAB_OBJECT_NAME",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SidebarActionMetadata",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SidebarState",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SidebarTabSettingsDescriptor",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SidebarTabSettingsSchema",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SidebarTabSettingsStore",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SidekickDesignTokens",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SidekickFontSettings",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SidekickStateProfileResult",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SidekickStateProfileStore",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SidekickTerminalTheme",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SidekickThemeMode",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SidekickThemeSettings",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "StaticCalculatorPredictionProvider",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WorkspaceRegistry",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WorkspaceVariable",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "build_calculator_plot_spec",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "default_calculator_startup_config",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "default_calculator_workspace_controller",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "default_global_workspace_controller",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "get_default_sidekick_dir",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "resolve_sidekick_theme",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "sidekick_qss",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "validate_calculator_workspace_path",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "validate_profile_name",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3771,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "5f0fdc98a6b9c18a3febd32cd4fb352c4cd4800ec8f230c52280dc0065701b13",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-API-PY-638C1CB4DB7B",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/api.py",
-      "purpose": "Public Sidekick sidebar factory and host-install helpers.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ToolsSidebarInstallResult",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "create_tools_sidebar",
-            "signature": "project_root: str | Path | None=None, registry: WorkspaceRegistry | None=None, state: SidebarState | None=None, tab_definitions: list[SidebarTabDefinition] | None=None, design_tokens: SidekickDesignTokens | None=None, sidekick_tokens: dict[str, str] | None=None, theme_name: str | None=None, parent: QtWidgets.QWidget | None=None, context_provider: Callable[[], Any] | None=None, **_: Any"
-          },
-          {
-            "kind": "function",
-            "name": "install_tools_sidebar",
-            "signature": "main_window: QtWidgets.QMainWindow, *, project_root: str | Path | None=None, registry: WorkspaceRegistry | None=None, state: SidebarState | None=None, tab_definitions: list[SidebarTabDefinition] | None=None, design_tokens: SidekickDesignTokens | None=None, sidekick_tokens: dict[str, str] | None=None, theme_name: str | None=None, context_provider: Callable[[], Any] | None=None, area: str | None=None, title: str='Tools', state_path: str | Path | None=None, **_: Any"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 8004,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c69e121b40949d2afe5dcb246309493247277fd1e9fb55eaccaf38d790d89df3",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-APPEARANCE-PY-42A22D640B06",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/appearance.py",
-      "purpose": "Shared, user-adjustable panel appearance for Sidekick runtime tabs.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "PanelAppearance",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_DARK_PANEL_APPEARANCE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_LIGHT_PANEL_APPEARANCE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MAX_BORDER_RADIUS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MAX_BORDER_WIDTH",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "coerce_appearance",
-            "signature": "values: Mapping[str, Any] | None, base: PanelAppearance=DEFAULT_DARK_PANEL_APPEARANCE"
-          },
-          {
-            "kind": "function",
-            "name": "is_hex_color",
-            "signature": "value: Any"
-          },
-          {
-            "kind": "function",
-            "name": "is_panel_appearance",
-            "signature": "value: object"
-          },
-          {
-            "kind": "function",
-            "name": "panel_qss",
-            "signature": "object_name: str, appearance: PanelAppearance"
-          }
-        ],
-        "test_paths": [
-          "tests/unit/sidekick/test_appearance.py"
-        ],
-        "unit_mentions": [
-          "s"
         ],
         "validation_paths": []
       }

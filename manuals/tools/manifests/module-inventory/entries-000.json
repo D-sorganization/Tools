@@ -6487,6 +6487,7 @@
           "src/p1am_control_system/backend/tests/test_temperature_models.py",
           "src/p1am_control_system/backend/tests/test_temperature_persistence.py",
           "src/p1am_control_system/backend/tests/test_validation_guards_3745.py",
+          "src/pendulum_simulator/pendulum-web/tests/forceSourceStudy.test.ts",
           "src/pendulum_simulator/tests/test_downswing_optimizer.py",
           "src/pendulum_simulator/tests/test_hub_options.py",
           "src/pendulum_simulator/tests/test_jacobians.py",
@@ -8159,6 +8160,7 @@
         ],
         "test_paths": [
           "src/optimizer_gui/tests/test_swing_chain_models.py",
+          "src/pendulum_simulator/pendulum-web/tests/forceSourceStudy.test.ts",
           "src/shared/python/humanoid_character_builder/tests/test_builder_assembly.py",
           "src/shared/python/humanoid_character_builder/tests/test_urdf_generator.py",
           "src/shared/python/model_generation/tests/test_physics_validation.py",

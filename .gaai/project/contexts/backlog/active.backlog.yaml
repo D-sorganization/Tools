@@ -6,6 +6,16 @@
 #   - Only Discovery may add items; only Delivery may update status
 
 items:
+  - id: E01S01
+    epic: E01
+    title: "Configure, optimize, and compare force-source swing strategies"
+    priority: high
+    status: in_progress
+    artefact: .gaai/project/contexts/artefacts/stories/E01S01.story.md
+    dependencies: []
+    notes: "User-directed force-source comparison lab, 2026-08-29"
+    created_at: 2026-08-29
+
   - id: GH1601
     title: "type: 739 type: ignore comments + legacy directories excluded from mypy"
     priority: medium

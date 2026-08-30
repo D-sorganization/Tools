@@ -43,6 +43,7 @@ import type {
 import { PendulumCanvas } from "./components/PendulumCanvas";
 import { TriplePendulumCanvas } from "./components/TriplePendulumCanvas";
 import { GolferCanvas } from "./components/GolferCanvas";
+import { ForceSourceLab } from "./components/ForceSourceLab";
 import { UnitSelector } from "./components/UnitSelector";
 import { CompanionGuide } from "./components/CompanionGuide";
 import {
@@ -617,6 +618,11 @@ export default function App() {
     alpha_rs_deg_g,
     tEnd_g,
   ]);
+
+  const currentDoubleParams = makePendulumParams({
+    m1, m2, mClub, L1, L2, g: 9.81, b1, b2, mu1, mu2,
+  });
+  const currentDoubleInitialState = buildStateFromDeg(theta1Deg, phiDeg, 0, 0);
 
   return (
     <div className="app">
@@ -1399,6 +1405,16 @@ export default function App() {
           </div>
         </aside>
       </div>
+      {modelType === 'double' && (
+        <ForceSourceLab
+          params={currentDoubleParams}
+          initialState={currentDoubleInitialState}
+          onUsePose={(armAngleDeg, wristCockDeg) => {
+            setTheta1Deg(armAngleDeg);
+            setPhiDeg(wristCockDeg);
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -3,6 +3,876 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 312,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d9652e301435303104aba2919bf8d1a22d26aac19eca48b4d5d3dd7324f22c50",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-MANAGERS-INIT-PY-5D2B6D7062AF",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/managers/__init__.py",
+      "purpose": "UI managers for Upstream Drift Tools.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "UNIT_CATEGORIES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "UnitCategory",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "UnitPreferencesManager",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_unit_preferences_manager",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 12878,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ae89ba02bd7a20adda50758b2563607034ebba26faf35b1e6184c7353bee4394",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-MANAGERS-UNIT-PREFERENCES-MANAGER-PY-75E58CCC4EAB",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/managers/unit_preferences_manager.py",
+      "purpose": "Unit Preferences Manager - Global unit preferences management for the application.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "UnitCategory",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "UnitPreferencesManager",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "UNIT_CATEGORIES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "UNIT_PRESETS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_unit_preferences_manager",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/test_unit_aware_input.py",
+          "src/shared/python/sidekick/tests/test_unit_preferences_manager.py"
+        ],
+        "unit_mentions": [
+          "J",
+          "MPa",
+          "Nm",
+          "N·m",
+          "Pa",
+          "W",
+          "bar",
+          "cm",
+          "deg",
+          "g",
+          "kPa",
+          "kg",
+          "mm",
+          "rad/s",
+          "rpm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 69,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8262c7e073d704e1cd2ec4cc4b026b2559ba2268cb0bb81b91e4d8a41032b3d3",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-MIXINS-INIT-PY-E85C8D0A2EAE",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/mixins/__init__.py",
+      "purpose": "UI Mixins for Upstream Drift Tools.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 1562,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "8a0331a2cc8f5a3525915a34b9353dd7a71c4669f6f98240e7426e3f2b47d17f",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-MIXINS-BASE-CALCULATOR-MIXIN-PY-74F898170EF4",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/mixins/base_calculator_mixin.py",
+      "purpose": "Base Calculator Widget Mixin",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "BaseCalculatorMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/test_base_calculator_mixin.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 31010,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "8c78203601bb6433f440c78bfcc3d7021b678a847c2e31f22b3d88148bb035d8",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-MIXINS-CALCULATOR-STATE-MIXIN-PY-347B160C8554",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/mixins/calculator_state_mixin.py",
+      "purpose": "Calculator State Mixin",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CalculatorStateMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/process_calculators/test_acid_gas_dewpoint_calculator.py",
+          "src/shared/python/sidekick/tests/process_calculators/test_syngas_compression_engine.py",
+          "src/shared/python/sidekick/tests/process_calculators/test_wgs_reactor_calculator.py",
+          "src/shared/python/sidekick/tests/test_calculator_state_mixin.py",
+          "tests/shared/python/ui/test_wave1_widget_state.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5924,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d431db619930a3b7f200afec4a37b295b19820de7ac821ed048960785e51c7f4",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-INIT-PY-7F81C1BA8F1A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/__init__.py",
+      "purpose": "Unified tools sidebar public API.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "CALCULATOR_HELP",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CALCULATOR_PLOT_TAB_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CALCULATOR_WORKSPACE_SCOPE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CLEAR_SIDEKICK_DATA_CONFIRMATION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CLEAR_SIDEKICK_DATA_WARNING",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalculatorPlotRequest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalculatorPlotSource",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalculatorPlotTabConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalculatorPredictiveText",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalculatorStartupConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalculatorStartupImport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalculatorStartupResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalculatorStartupWarning",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalculatorWorkspaceController",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalculatorWorkspaceFacade",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalculatorWorkspaceLoadResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalculatorWorkspaceSettings",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CommandHistoryController",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CommonLocation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CommonLocationsProvider",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_COMMAND_HISTORY_LIMIT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_SIDEBAR_TAB_HELP",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DefaultCommonLocationsProvider",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FileNavigationController",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FileNavigationState",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GLOBAL_WORKSPACE_SCOPE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GlobalWorkspaceController",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GlobalWorkspaceSettings",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SIDEBAR_CONTEXT_ACTIONS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SIDEKICK_DESIGN_TOKENS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SIDEKICK_DOCK_OBJECT_NAME",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SIDEKICK_FUNCTION_GENERATOR_OBJECT_NAME",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SIDEKICK_PLACEHOLDER_LABEL_OBJECT_NAME",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SIDEKICK_PLACEHOLDER_OBJECT_NAME",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SIDEKICK_PROJECT_EXPLORER_OBJECT_NAME",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SIDEKICK_PROJECT_TREE_OBJECT_NAME",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SIDEKICK_ROTATION_CONVERTER_OBJECT_NAME",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SIDEKICK_SIDEBAR_OBJECT_NAME",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SIDEKICK_TABS_OBJECT_NAME",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SIDEKICK_TAB_BAR_OBJECT_NAME",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SIDEKICK_TOKEN_NAMES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SIDEKICK_TOOLBAR_OBJECT_NAME",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SIDEKICK_WORKSPACE_LIST_OBJECT_NAME",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SIDEKICK_WORKSPACE_TAB_OBJECT_NAME",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SidebarActionMetadata",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SidebarState",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SidebarTabSettingsDescriptor",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SidebarTabSettingsSchema",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SidebarTabSettingsStore",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SidekickDesignTokens",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SidekickFontSettings",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SidekickStateProfileResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SidekickStateProfileStore",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SidekickTerminalTheme",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SidekickThemeMode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SidekickThemeSettings",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StaticCalculatorPredictionProvider",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WorkspaceRegistry",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WorkspaceVariable",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_calculator_plot_spec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "default_calculator_startup_config",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "default_calculator_workspace_controller",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "default_global_workspace_controller",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_default_sidekick_dir",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "resolve_sidekick_theme",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "sidekick_qss",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "validate_calculator_workspace_path",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "validate_profile_name",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3771,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5f0fdc98a6b9c18a3febd32cd4fb352c4cd4800ec8f230c52280dc0065701b13",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-API-PY-638C1CB4DB7B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/api.py",
+      "purpose": "Public Sidekick sidebar factory and host-install helpers.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ToolsSidebarInstallResult",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "create_tools_sidebar",
+            "signature": "project_root: str | Path | None=None, registry: WorkspaceRegistry | None=None, state: SidebarState | None=None, tab_definitions: list[SidebarTabDefinition] | None=None, design_tokens: SidekickDesignTokens | None=None, sidekick_tokens: dict[str, str] | None=None, theme_name: str | None=None, parent: QtWidgets.QWidget | None=None, context_provider: Callable[[], Any] | None=None, **_: Any"
+          },
+          {
+            "kind": "function",
+            "name": "install_tools_sidebar",
+            "signature": "main_window: QtWidgets.QMainWindow, *, project_root: str | Path | None=None, registry: WorkspaceRegistry | None=None, state: SidebarState | None=None, tab_definitions: list[SidebarTabDefinition] | None=None, design_tokens: SidekickDesignTokens | None=None, sidekick_tokens: dict[str, str] | None=None, theme_name: str | None=None, context_provider: Callable[[], Any] | None=None, area: str | None=None, title: str='Tools', state_path: str | Path | None=None, **_: Any"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8004,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c69e121b40949d2afe5dcb246309493247277fd1e9fb55eaccaf38d790d89df3",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-APPEARANCE-PY-42A22D640B06",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/appearance.py",
+      "purpose": "Shared, user-adjustable panel appearance for Sidekick runtime tabs.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PanelAppearance",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_DARK_PANEL_APPEARANCE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_LIGHT_PANEL_APPEARANCE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_BORDER_RADIUS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_BORDER_WIDTH",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "coerce_appearance",
+            "signature": "values: Mapping[str, Any] | None, base: PanelAppearance=DEFAULT_DARK_PANEL_APPEARANCE"
+          },
+          {
+            "kind": "function",
+            "name": "is_hex_color",
+            "signature": "value: Any"
+          },
+          {
+            "kind": "function",
+            "name": "is_panel_appearance",
+            "signature": "value: object"
+          },
+          {
+            "kind": "function",
+            "name": "panel_qss",
+            "signature": "object_name: str, appearance: PanelAppearance"
+          }
+        ],
+        "test_paths": [
+          "tests/unit/sidekick/test_appearance.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 1801,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17065,587 +17935,6 @@
           }
         ],
         "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 8775,
-      "classification": "calculation",
-      "classification_basis": "path-marker:geometry",
-      "content_sha256_lf": "7e25a748e884015b2e9796bea7cd2db79a44dcc948a197da074caeabc0ace9ad",
-      "family": "swing-simulation-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-STUDY-GEOMETRY-PY-D14178A93F6A",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/study_geometry.py",
-      "purpose": "Arbitrary-plane contact and landing-target geometry for ground studies.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "endpoint_contacts_surface",
-            "signature": "center_position_m: Vector3, surface: GroundSurfaceProfile, ball_radius_m: float"
-          },
-          {
-            "kind": "function",
-            "name": "intrinsic_target_miss",
-            "signature": "target: SpatialTarget, contact_point_m: Vector3, surface: GroundSurfaceProfile"
-          },
-          {
-            "kind": "function",
-            "name": "sphere_contact_point",
-            "signature": "center_position_m: Vector3, normal_unit: Vector3, ball_radius_m: float"
-          },
-          {
-            "kind": "function",
-            "name": "surface_contact_point",
-            "signature": "center_position_m: Vector3, surface: GroundSurfaceProfile, ball_radius_m: float"
-          },
-          {
-            "kind": "function",
-            "name": "target_evaluation",
-            "signature": "target: SpatialTarget, center_position_m: Vector3, endpoint_kind: GroundEndpointKind, request: GroundSimulationRequest"
-          },
-          {
-            "kind": "function",
-            "name": "validate_target",
-            "signature": "target: SpatialTarget, surface: GroundSurfaceProfile"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_study_validation.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_study_validation.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6426,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a285f43c256147700508fc469744842be2ca003a2b469c31044cbe9b2f76247e",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-STUDY-PROJECTION-PY-87EBFE4DF1D1",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/study_projection.py",
-      "purpose": "Project qualified ground results into target- and solver-safe studies.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "project_ground_study",
-            "signature": "request: GroundSimulationRequest, result: GroundSimulationResult, *, bound_surface: BoundGroundSurface | None=None, target: SpatialTarget | None=None"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_study_projection.py",
-          "src/shared/python/swing_sim/ground/tests/test_study_result_adapter.py",
-          "src/shared/python/swing_sim/ground/tests/test_study_state.py",
-          "src/shared/python/swing_sim/ground/tests/test_study_validation.py",
-          "tests/rate_of_closure/test_ground_study_scalar_adapter.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_study_validation.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 14572,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "05fb25598f8c21c864bafa0a6d8b0374d01f3ddd866a64e01ba3258027628f50",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-STUDY-RECORD-PY-FD746BA2E2B0",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/study_record.py",
-      "purpose": "Top-level versioned record for one qualified ground study.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "GroundStudyProjection",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_study_projection.py",
-          "src/shared/python/swing_sim/ground/tests/test_study_result_adapter.py",
-          "src/shared/python/swing_sim/ground/tests/test_study_state.py",
-          "src/shared/python/swing_sim/ground/tests/test_study_validation.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_study_validation.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 658,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3ff20dcb29ce45a12ea89e1157b3cee0c74ee869328024f5243fd6c96005b8cd",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-STUDY-TARGET-PY-69B64DE92257",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/study_target.py",
-      "purpose": "Canonical target helpers for deterministic ground-study records.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "canonical_ground_target",
-            "signature": "target: SpatialTarget"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 9392,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c6924794a9b3d481f4b7a8ad8c0082f5f9b50bfe58085f8b1e43312895148d5b",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-STUDY-TYPES-PY-D7C5D88E2498",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/study_types.py",
-      "purpose": "Immutable qualified ground-study projection contracts.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "GroundEndpointKind",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundSolverEligibility",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundSolverEligibilityReason",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundStudyMetrics",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundStudyProfile",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundStudyStatus",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundTargetEvaluation",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundTargetUnavailableReason",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GROUND_STUDY_SCHEMA_VERSION",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_study_projection.py",
-          "src/shared/python/swing_sim/ground/tests/test_study_state.py",
-          "src/shared/python/swing_sim/ground/tests/test_study_validation.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_study_validation.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 13631,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f3268f64bc1ea9006caf63ec04ef5472e4b73283645d6969ae6bf78919a8f237",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-STUDY-WIRE-PY-356BC8F46E36",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/study_wire.py",
-      "purpose": "Strict deterministic wire format for ground-study projections.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "study_from_dict",
-            "signature": "payload: dict[str, Any]"
-          },
-          {
-            "kind": "function",
-            "name": "study_from_json",
-            "signature": "text: str"
-          },
-          {
-            "kind": "function",
-            "name": "study_to_dict",
-            "signature": "value: GroundStudyProjection"
-          },
-          {
-            "kind": "function",
-            "name": "study_to_json",
-            "signature": "value: GroundStudyProjection"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 10836,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "519a552a6b35be83c75f8cf3c0afcfbc8630a755a550921a3a20bab64f85a942",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-SURFACE-MOTION-TYPES-PY-A7CDB84EEA40",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/surface_motion_types.py",
-      "purpose": "Typed non-wire contracts for planar skid/roll surface motion.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "PlanarSurfaceDomain",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RigidMotion",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SkidRollEnergyLedger",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SkidRollSettings",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SkidRollTermination",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SkidRollTerminationReason",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SurfaceBoundaryCrossing",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SurfaceKinematicSegment",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GROUND_SKID_ROLL_MODEL_ID",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GROUND_SKID_ROLL_MODEL_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "STANDARD_GRAVITY_M_S2",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_skid_roll_passivity.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 12613,
-      "classification": "calculation",
-      "classification_basis": "path-marker:solver",
-      "content_sha256_lf": "ed87cb28ead302c887ac8b3f82c20b9dc896283282780b48a7eb96d3e0a485aa",
-      "family": "swing-simulation-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-SURFACE-RESOLVER-PY-100063BD1313",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/surface_resolver.py",
-      "purpose": "Fail-closed resolver for coplanar material regions and finite edges.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SurfaceResolver",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_surface_resolver.py"
-        ],
         "unit_mentions": [],
         "validation_paths": []
       }

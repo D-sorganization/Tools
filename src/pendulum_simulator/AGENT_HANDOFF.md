@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — pendulum_simulator
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-29
+> Last updated: 2026-08-30
 
 ## Where This Tool Is Headed
 
@@ -61,6 +61,16 @@ perturbation analysis code first.
 physics (merged #4774). #4775 then asked why its optima brake the arms to a
 standstill at impact. Contract:
 `docs/specs/SWING_ACTUATION_AND_REALISM.md`.
+
+The React web mirror now includes a synchronized six-objective comparison
+surface backed by a strict generated-study artifact. The sixth objective is
+signed physical grip-force impulse along the hand path, not hand-path work.
+The browser accepts direct start-pose, torque, timing, integration, impact, and
+robustness inputs; defaults to one fixed-hub comparison frame; and runs held-out
+perturbations around its winner. Keep optimization math out of React components:
+the browser engine lives in focused force-source modules while the canonical
+scientific optimizer remains independently testable. Design contract:
+`docs/specs/FORCE_SOURCE_WEB_LAB.md`.
 
 **Five results that bind future work here** (all regression-pinned):
 

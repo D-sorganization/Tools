@@ -173,7 +173,7 @@ def compare_objectives(
 
     Args:
         config: The conditions held fixed across every objective.
-        objective_keys: Objectives to compare. Defaults to all five.
+        objective_keys: Objectives to compare. Defaults to the full registry.
 
     Returns:
         The completed comparison.
