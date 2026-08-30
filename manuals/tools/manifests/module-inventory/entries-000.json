@@ -6487,6 +6487,7 @@
           "src/p1am_control_system/backend/tests/test_temperature_models.py",
           "src/p1am_control_system/backend/tests/test_temperature_persistence.py",
           "src/p1am_control_system/backend/tests/test_validation_guards_3745.py",
+          "src/pendulum_simulator/pendulum-web/tests/forceSourceStudy.test.ts",
           "src/pendulum_simulator/tests/test_downswing_optimizer.py",
           "src/pendulum_simulator/tests/test_hub_options.py",
           "src/pendulum_simulator/tests/test_jacobians.py",

@@ -1,32 +1,20 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import {
-    CartesianGrid,
-    Legend,
-    Line,
-    LineChart,
-    ResponsiveContainer,
-    Tooltip,
-    XAxis,
-    YAxis,
-} from 'recharts';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
-import type { PendulumParams, State } from '../physics';
-import {
-    interpolateSeries,
-    pendulumThumbnailGeometry,
-    wrappedDegrees,
-} from '../forceSourceView';
+import { ForceSourceResults, OBJECTIVE_COLORS } from './ForceSourceResults';
+import { wrappedDegrees, type AnimationAlignment } from '../forceSourceView';
 import {
     artifactWithScenario,
+    DEFAULT_OPTIMIZATION_CONSTRAINTS,
     FORCE_SOURCE_OBJECTIVES,
     OBJECTIVE_LABELS,
     optimizeForceSource,
     parseForceSourceArtifact,
     type ForceSourceArtifact,
+    type ForceSourceConstraints,
     type ForceSourceObjective,
-    type ForceSourceScenario,
     type SearchThoroughness,
 } from '../forceSourceStudy';
+import type { PendulumParams, State } from '../physics';
 
 interface ForceSourceLabProps {
     params: PendulumParams;
@@ -34,140 +22,56 @@ interface ForceSourceLabProps {
     onUsePose: (armAngleDeg: number, wristCockDeg: number) => void;
 }
 
-const COLORS: Record<ForceSourceObjective, string> = {
-    coriolis_impulse: '#31d6c3',
-    coriolis_energy_transfer: '#50a7ff',
-    centrifugal_impulse: '#ffbd4a',
-    centrifugal_energy_transfer: '#ff7a68',
-    clubhead_speed: '#b58cff',
-};
-
-const CHART_STYLE: React.CSSProperties = {
-    background: '#151927',
-    border: '1px solid #30384e',
-    borderRadius: 10,
-    padding: 10,
-    minHeight: 245,
-};
-
-function interpolate(time: number[], values: number[], target: number): number | null {
-    if (target < time[0] || target > time[time.length - 1]) return null;
-    return interpolateSeries(time, values, target);
+interface NumericFieldProps {
+    id: string; label: string; value: number; title: string;
+    onChange: (value: number) => void; min?: number; max?: number; step?: number; disabled?: boolean;
 }
 
-function PendulumThumbnail({ scenario, time, params }: {
-    scenario: ForceSourceScenario;
-    time: number;
-    params: PendulumParams;
-}) {
-    const sampleTime = Math.min(time, scenario.impact_time_s);
-    const arm = interpolateSeries(
-        scenario.series.time_s,
-        scenario.series.arm_angle_rad,
-        sampleTime,
-    );
-    const wrist = interpolateSeries(
-        scenario.series.time_s,
-        scenario.series.wrist_cock_rad,
-        sampleTime,
-    );
-    const { originX, originY, wristX, wristY, tipX, tipY } = pendulumThumbnailGeometry(arm, wrist, params);
-    const finalIndex = scenario.series.time_s.length - 1;
-    const impact = pendulumThumbnailGeometry(
-        scenario.series.arm_angle_rad[finalIndex],
-        scenario.series.wrist_cock_rad[finalIndex],
-        params,
-    );
-    return (
-        <svg viewBox="0 0 192 176" role="img" aria-label={`${OBJECTIVE_LABELS[scenario.objective]} swing at ${time.toFixed(3)} seconds`}>
-            <line x1="14" y1={impact.tipY} x2="178" y2={impact.tipY} stroke="#5a647d" strokeDasharray="4 5" />
-            <circle cx={impact.tipX} cy={impact.tipY} r="3.5" fill="#ffffff" stroke="#aab4ca" />
-            <circle cx={originX} cy={originY} r="4" fill="#eaf0ff" />
-            <line x1={originX} y1={originY} x2={wristX} y2={wristY} stroke="#56d6c8" strokeWidth="7" strokeLinecap="round" />
-            <line x1={wristX} y1={wristY} x2={tipX} y2={tipY} stroke="#e8edf9" strokeWidth="4" strokeLinecap="round" />
-            <circle cx={wristX} cy={wristY} r="5" fill="#ffbd4a" />
-            <circle cx={tipX} cy={tipY} r="7" fill={COLORS[scenario.objective]} />
-        </svg>
-    );
+function NumericField({ id, label, value, title, onChange, ...inputProps }: NumericFieldProps) {
+    return <label htmlFor={id} title={title} className="force-source-number">
+        <span>{label}</span>
+        <input id={id} type="number" value={value} onChange={event => onChange(Number(event.target.value))} title={title} {...inputProps} />
+    </label>;
 }
 
-function ComparisonPlot({ title, unit, scenarios, field }: {
-    title: string;
-    unit: string;
-    scenarios: ForceSourceScenario[];
-    field: 'clubhead_speed_m_s' | 'shoulder_torque_nm' | 'wrist_torque_nm';
-}) {
-    const data = useMemo(() => {
-        const maxTime = Math.max(...scenarios.map(scenario => scenario.impact_time_s));
-        return Array.from({ length: 181 }, (_, index) => {
-            const time = maxTime * index / 180;
-            const row: Record<string, number | null> = { time: +time.toFixed(4) };
-            for (const scenario of scenarios) {
-                row[scenario.objective] = interpolate(
-                    scenario.series.time_s,
-                    scenario.series[field],
-                    time,
-                );
-            }
-            return row;
-        });
-    }, [field, scenarios]);
-    return (
-        <div style={CHART_STYLE} data-testid={`force-source-plot-${field}`}>
-            <h4>{title} <span className="force-source-unit">[{unit}]</span></h4>
-            <ResponsiveContainer width="100%" height={205}>
-                <LineChart data={data} margin={{ top: 6, right: 12, bottom: 2, left: 4 }}>
-                    <CartesianGrid stroke="#30384e" strokeOpacity={0.65} />
-                    <XAxis dataKey="time" type="number" domain={['dataMin', 'dataMax']} stroke="#8791aa" tick={{ fontSize: 10 }} label={{ value: 'Time [s]', position: 'insideBottomRight', offset: -2 }} />
-                    <YAxis stroke="#8791aa" tick={{ fontSize: 10 }} />
-                    <Tooltip contentStyle={{ background: '#111522', border: '1px solid #3c455e' }} />
-                    <Legend wrapperStyle={{ fontSize: 10 }} formatter={(value: string) => OBJECTIVE_LABELS[value as ForceSourceObjective]} />
-                    {scenarios.map(scenario => (
-                        <Line key={scenario.objective} type="monotone" dataKey={scenario.objective} stroke={COLORS[scenario.objective]} dot={false} strokeWidth={2} connectNulls={false} />
-                    ))}
-                </LineChart>
-            </ResponsiveContainer>
-        </div>
-    );
-}
+const degrees = (radians: number) => radians * 180 / Math.PI;
+const radians = (value: number) => value * Math.PI / 180;
 
-export const ForceSourceLab: React.FC<ForceSourceLabProps> = ({ params, initialState, onUsePose }) => {
+export function ForceSourceLab({ params, initialState, onUsePose }: ForceSourceLabProps) {
     const [artifact, setArtifact] = useState<ForceSourceArtifact | null>(null);
-    const [loadError, setLoadError] = useState<string | null>(null);
-    const [selected, setSelected] = useState<Set<ForceSourceObjective>>(new Set(FORCE_SOURCE_OBJECTIVES));
+    const [message, setMessage] = useState<string | null>(null);
+    const [selected, setSelected] = useState(new Set<ForceSourceObjective>(FORCE_SOURCE_OBJECTIVES));
+    const [objective, setObjective] = useState<ForceSourceObjective>('clubhead_speed');
+    const [thoroughness, setThoroughness] = useState<SearchThoroughness>('quick');
+    const [constraints, setConstraints] = useState<ForceSourceConstraints>({ ...DEFAULT_OPTIMIZATION_CONSTRAINTS });
+    const [startArm, setStartArm] = useState(degrees(initialState[0]));
+    const [startWrist, setStartWrist] = useState(degrees(initialState[1]));
+    const [running, setRunning] = useState(false);
+    const [progress, setProgress] = useState({ completed: 0, total: 1, bestScore: -Infinity, label: '' });
     const [playing, setPlaying] = useState(false);
     const [playbackRate, setPlaybackRate] = useState(0.35);
     const [time, setTime] = useState(0);
+    const [alignment, setAlignment] = useState<AnimationAlignment>('fixed_hub');
     const lastTimestamp = useRef<number | null>(null);
-    const [objective, setObjective] = useState<ForceSourceObjective>('clubhead_speed');
-    const [thoroughness, setThoroughness] = useState<SearchThoroughness>('quick');
-    const [wristLimit, setWristLimit] = useState(30);
-    const [running, setRunning] = useState(false);
-    const [progress, setProgress] = useState({ completed: 0, total: 1, bestScore: Number.NEGATIVE_INFINITY });
 
     useEffect(() => {
         let active = true;
-        fetch('/force-source-comparison.json')
-            .then(response => {
-                if (!response.ok) throw new Error(`Built-in study returned HTTP ${response.status}`);
-                return response.json();
-            })
-            .then(value => {
-                if (active) setArtifact(parseForceSourceArtifact(value));
-            })
-            .catch(error => {
-                if (active) setLoadError(`Load a registered study JSON to compare scenarios. ${String(error)}`);
-            });
+        fetch('/force-source-comparison.json').then(response => {
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return response.json();
+        }).then(value => {
+            if (!active) return;
+            const parsed = parseForceSourceArtifact(value);
+            setArtifact(parsed);
+            setStartArm(+degrees(parsed.initial_pose.arm_angle_rad).toFixed(2));
+            setStartWrist(+degrees(parsed.initial_pose.wrist_cock_rad).toFixed(2));
+        })
+            .catch(error => { if (active) setMessage(`Built-in comparison unavailable: ${String(error)}`); });
         return () => { active = false; };
     }, []);
 
-    const visibleScenarios = useMemo(
-        () => artifact?.scenarios.filter(scenario => selected.has(scenario.objective)) ?? [],
-        [artifact, selected],
-    );
-    const maxTime = visibleScenarios.length
-        ? Math.max(...visibleScenarios.map(scenario => scenario.impact_time_s))
-        : 0;
+    const visible = useMemo(() => artifact?.scenarios.filter(item => selected.has(item.objective)) ?? [], [artifact, selected]);
+    const maxTime = visible.length ? Math.max(...visible.map(item => item.impact_time_s)) : 0;
 
     useEffect(() => {
         if (!playing || maxTime <= 0) return;
@@ -181,190 +85,126 @@ export const ForceSourceLab: React.FC<ForceSourceLabProps> = ({ params, initialS
             frame = requestAnimationFrame(tick);
         };
         frame = requestAnimationFrame(tick);
-        return () => {
-            cancelAnimationFrame(frame);
-            lastTimestamp.current = null;
-        };
+        return () => { cancelAnimationFrame(frame); lastTimestamp.current = null; };
     }, [maxTime, playbackRate, playing]);
+
+    const setConstraint = <K extends keyof ForceSourceConstraints>(key: K, value: ForceSourceConstraints[K]) => {
+        setConstraints(previous => ({ ...previous, [key]: value }));
+    };
+
+    const optimizationState = (): State => [radians(startArm), radians(startWrist), initialState[2], initialState[3]];
+
+    const runObjectives = async (objectives: readonly ForceSourceObjective[]) => {
+        setRunning(true); setMessage(null);
+        let current = artifact;
+        try {
+            for (const requested of objectives) {
+                const scenario = await optimizeForceSource({ params, initialState: optimizationState(), objective: requested, thoroughness, constraints }, update => {
+                    setProgress({ ...update, label: OBJECTIVE_LABELS[requested] });
+                });
+                current = artifactWithScenario(current, scenario, optimizationState(), params);
+                setArtifact(current); setSelected(previous => new Set([...previous, requested]));
+            }
+            setTime(0);
+        } catch (error) {
+            setMessage(`Optimization stopped: ${String(error)}`);
+        } finally { setRunning(false); }
+    };
 
     const importArtifact = async (file: File) => {
         try {
             const parsed = parseForceSourceArtifact(JSON.parse(await file.text()));
-            setArtifact(parsed);
-            setLoadError(null);
-            setTime(0);
-            setSelected(new Set(parsed.scenarios.map(scenario => scenario.objective)));
-        } catch (error) {
-            setLoadError(`Study import failed: ${String(error)}`);
-        }
+            setArtifact(parsed); setMessage(null); setTime(0);
+            setSelected(new Set(parsed.scenarios.map(item => item.objective)));
+        } catch (error) { setMessage(`Study import failed: ${String(error)}`); }
     };
 
-    const runOptimization = async () => {
-        setRunning(true);
-        setLoadError(null);
-        try {
-            const scenario = await optimizeForceSource(
-                { params, initialState, objective, wristTorqueLimitNm: wristLimit, thoroughness },
-                setProgress,
-            );
-            setArtifact(previous => artifactWithScenario(previous, scenario, initialState, params));
-            setSelected(previous => new Set([...previous, objective]));
-            setTime(0);
-        } catch (error) {
-            setLoadError(`Optimization failed: ${String(error)}`);
-        } finally {
-            setRunning(false);
-        }
+    const exportArtifact = () => {
+        if (!artifact) return;
+        const url = URL.createObjectURL(new Blob([JSON.stringify(artifact, null, 2)], { type: 'application/json' }));
+        const link = document.createElement('a');
+        link.href = url; link.download = 'force-source-comparison.json'; link.click();
+        URL.revokeObjectURL(url);
     };
 
-    const toggleScenario = (objectiveName: ForceSourceObjective) => {
-        setSelected(previous => {
-            const next = new Set(previous);
-            if (next.has(objectiveName)) next.delete(objectiveName);
-            else next.add(objectiveName);
-            return next;
-        });
-    };
+    const toggleScenario = (name: ForceSourceObjective) => setSelected(previous => {
+        const next = new Set(previous);
+        if (next.has(name)) next.delete(name); else next.add(name);
+        return next;
+    });
 
-    return (
-        <section className="force-source-lab" aria-labelledby="force-source-heading">
-            <div className="force-source-heading-row">
-                <div>
-                    <p className="force-source-kicker">Double-pendulum research workspace</p>
-                    <h2 id="force-source-heading">Force-Source Optimization Lab</h2>
-                    <p>Compare synchronized motion, clubhead speed, and shoulder/wrist loading across five coordinate-explicit objectives. Only a non-looping first pass with near-horizontal clubhead motion near the bottom of the arc qualifies as impact.</p>
-                </div>
-                <label className="btn btn-secondary force-source-import">
-                    Import study JSON
-                    <input type="file" accept="application/json,.json" onChange={event => {
-                        const file = event.target.files?.[0];
-                        if (file) void importArtifact(file);
-                    }} />
-                </label>
+    return <section className="force-source-lab" aria-labelledby="force-source-heading">
+        <div className="force-source-heading-row">
+            <div><p className="force-source-kicker">Double-pendulum research workspace</p>
+                <h2 id="force-source-heading">Force-Source Optimization Lab</h2>
+                <p>Compare six objectives under one user-selected pose and constraint contract. Qualifying swings make one non-looping, rightward, near-horizontal pass near the bottom of the arc.</p></div>
+            <label className="btn btn-secondary force-source-import" title="Open a registered comparison artifact">Import study JSON<input type="file" accept="application/json,.json" onChange={event => { const file = event.target.files?.[0]; if (file) void importArtifact(file); }} /></label>
+        </div>
+
+        <div className="force-source-config">
+            <label title="Quantity maximized by the selected optimization"><span>Objective</span>
+                <select id="force-objective" value={objective} onChange={event => setObjective(event.target.value as ForceSourceObjective)} disabled={running}>
+                    {FORCE_SOURCE_OBJECTIVES.map(value => <option key={value} value={value}>{OBJECTIVE_LABELS[value]}</option>)}
+                </select></label>
+            <label title="Quick explores broadly; thorough and research add local refinement"><span>Search depth</span>
+                <select id="force-search-depth" value={thoroughness} onChange={event => setThoroughness(event.target.value as SearchThoroughness)} disabled={running}>
+                    <option value="quick">Quick</option><option value="thorough">Thorough</option><option value="research">Research</option>
+                </select></label>
+            <NumericField id="force-start-arm" label="Start arm [deg]" value={startArm} step={0.1} onChange={setStartArm} disabled={running} title="Absolute arm angle; direct entry is not slider-limited" />
+            <NumericField id="force-start-wrist" label="Start wrist [deg]" value={startWrist} step={0.1} onChange={setStartWrist} disabled={running} title="Wrist cock relative to the arm; more negative means more initial cock in this coordinate convention" />
+            <NumericField id="force-wrist-limit" label="Wrist limit [N m]" value={constraints.wristTorqueLimitNm} min={0.1} max={30} step={0.5} onChange={value => setConstraint('wristTorqueLimitNm', value)} disabled={running} title="Absolute wrist restrain and drive torque limit; supported maximum is 30 N m" />
+            <NumericField id="force-wrist-step" label="Wrist step [N m]" value={constraints.wristTorqueStepNm} min={0.1} max={30} step={0.1} onChange={value => setConstraint('wristTorqueStepNm', value)} disabled={running} title="Local wrist-torque granularity; smaller values make refinement finer" />
+            <button className="btn btn-primary" onClick={() => void runObjectives([objective])} disabled={running}>Optimize selected</button>
+            <button className="btn btn-secondary" onClick={() => void runObjectives(FORCE_SOURCE_OBJECTIVES)} disabled={running}>Optimize all 6</button>
+        </div>
+
+        <details className="force-source-advanced"><summary>Advanced constraints and robustness</summary>
+            <div className="force-source-constraint-grid">
+                <NumericField id="force-candidate-budget" label="Candidate budget" value={constraints.candidateBudget} min={8} max={10000} step={1} onChange={value => setConstraint('candidateBudget', value)} title="Number of deterministic low-discrepancy global candidates per objective" />
+                <NumericField id="force-robustness" label="Robustness trials" value={constraints.robustnessTrials} min={1} max={101} step={2} onChange={value => setConstraint('robustnessTrials', value)} title="Held-out perturbations around the winning program" />
+                <NumericField id="force-path-angle" label="Max impact path [deg]" value={constraints.maxImpactPathAngleDeg} min={1} max={30} step={0.5} onChange={value => setConstraint('maxImpactPathAngleDeg', value)} title="Maximum vertical deviation from horizontal at impact" />
+                <NumericField id="force-bottom-reach" label="Minimum bottom reach" value={constraints.minBottomReachFraction} min={0.8} max={1} step={0.01} onChange={value => setConstraint('minBottomReachFraction', value)} title="Minimum downward clubhead reach as a fraction of total link length" />
+                <NumericField id="force-shoulder-min" label="Shoulder min [N m]" value={constraints.shoulderTorqueNm.min} step={1} onChange={value => setConstraint('shoulderTorqueNm', { ...constraints.shoulderTorqueNm, min: value })} title="Lower shoulder-torque search bound" />
+                <NumericField id="force-shoulder-max" label="Shoulder max [N m]" value={constraints.shoulderTorqueNm.max} step={1} onChange={value => setConstraint('shoulderTorqueNm', { ...constraints.shoulderTorqueNm, max: value })} title="Upper shoulder-torque search bound" />
+                <NumericField id="force-shoulder-step" label="Shoulder step [N m]" value={constraints.shoulderTorqueNm.step} min={0.1} step={0.1} onChange={value => setConstraint('shoulderTorqueNm', { ...constraints.shoulderTorqueNm, step: value })} title="Shoulder-torque quantization" />
+                <NumericField id="force-onset-min" label="Release onset min [s]" value={constraints.onsetS.min} min={0} step={0.005} onChange={value => setConstraint('onsetS', { ...constraints.onsetS, min: value })} title="Earliest wrist torque reversal" />
+                <NumericField id="force-onset-max" label="Release onset max [s]" value={constraints.onsetS.max} min={0} step={0.005} onChange={value => setConstraint('onsetS', { ...constraints.onsetS, max: value })} title="Latest wrist torque reversal" />
+                <NumericField id="force-onset-step" label="Release onset step [s]" value={constraints.onsetS.step} min={0.001} step={0.001} onChange={value => setConstraint('onsetS', { ...constraints.onsetS, step: value })} title="Release timing granularity" />
+                <NumericField id="force-arm-min" label="Arm angle min [deg]" value={constraints.armAngleDeg.min} step={1} onChange={value => setConstraint('armAngleDeg', { ...constraints.armAngleDeg, min: value })} title="Lower allowable absolute arm angle" />
+                <NumericField id="force-arm-max" label="Arm angle max [deg]" value={constraints.armAngleDeg.max} step={1} onChange={value => setConstraint('armAngleDeg', { ...constraints.armAngleDeg, max: value })} title="Upper allowable absolute arm angle" />
+                <NumericField id="force-wrist-min" label="Wrist angle min [deg]" value={constraints.wristAngleDeg.min} step={1} onChange={value => setConstraint('wristAngleDeg', { ...constraints.wristAngleDeg, min: value })} title="Lower allowable relative wrist angle" />
+                <NumericField id="force-wrist-max" label="Wrist angle max [deg]" value={constraints.wristAngleDeg.max} step={1} onChange={value => setConstraint('wristAngleDeg', { ...constraints.wristAngleDeg, max: value })} title="Upper allowable relative wrist angle" />
+                <NumericField id="force-arm-travel" label="Max arm travel [deg]" value={constraints.maxArmTravelDeg} min={1} step={1} onChange={value => setConstraint('maxArmTravelDeg', value)} title="Anti-loop limit on total arm angular excursion before impact" />
+                <NumericField id="force-club-travel" label="Max club travel [deg]" value={constraints.maxClubTravelDeg} min={1} step={1} onChange={value => setConstraint('maxClubTravelDeg', value)} title="Anti-loop limit on total absolute-club angular excursion before impact" />
+                <NumericField id="force-duration" label="Duration [s]" value={constraints.simulationDurationS} min={0.2} step={0.05} onChange={value => setConstraint('simulationDurationS', value)} title="Maximum simulated time before a candidate is rejected" />
+                <NumericField id="force-integration-step" label="Integration step [s]" value={constraints.integrationStepS} min={0.00025} step={0.00025} onChange={value => setConstraint('integrationStepS', value)} title="RK4 simulation resolution; smaller values are smoother and slower" />
+                <NumericField id="force-pose-perturbation" label="Pose perturbation [deg]" value={constraints.posePerturbationDeg} min={0} step={0.25} onChange={value => setConstraint('posePerturbationDeg', value)} title="Held-out start-angle perturbation used for robustness" />
+                <NumericField id="force-torque-perturbation" label="Torque perturbation [fraction]" value={constraints.torquePerturbationFraction} min={0} max={0.25} step={0.01} onChange={value => setConstraint('torquePerturbationFraction', value)} title="Held-out multiplicative torque perturbation used for robustness" />
             </div>
+        </details>
 
-            <div className="force-source-config">
-                <div>
-                    <label htmlFor="force-objective">Objective</label>
-                    <select id="force-objective" value={objective} onChange={event => setObjective(event.target.value as ForceSourceObjective)} disabled={running}>
-                        {FORCE_SOURCE_OBJECTIVES.map(value => <option key={value} value={value}>{OBJECTIVE_LABELS[value]}</option>)}
-                    </select>
-                </div>
-                <div>
-                    <label htmlFor="force-search-depth">Search</label>
-                    <select id="force-search-depth" value={thoroughness} onChange={event => setThoroughness(event.target.value as SearchThoroughness)} disabled={running}>
-                        <option value="quick">Quick — coarse + 2 refinements</option>
-                        <option value="thorough">Thorough — 5 N m grid + 1 N m refinement</option>
-                    </select>
-                </div>
-                <div className="force-source-limit">
-                    <label htmlFor="force-wrist-limit">Wrist limit: {wristLimit} N m</label>
-                    <input id="force-wrist-limit" type="range" min="5" max="30" step="1" value={wristLimit} onChange={event => setWristLimit(Number(event.target.value))} disabled={running} />
-                </div>
-                <div className="force-source-start">
-                    <span>Next optimization start</span>
-                    <strong>Arm {(initialState[0] * 180 / Math.PI).toFixed(1)}° absolute · Wrist {(initialState[1] * 180 / Math.PI).toFixed(1)}° relative</strong>
-                    <span>Club {wrappedDegrees(initialState[0] + initialState[1]).toFixed(1)}° absolute</span>
-                    <button
-                        type="button"
-                        className="force-source-text-button"
-                        onClick={() => artifact && onUsePose(
-                            artifact.initial_pose.arm_angle_rad * 180 / Math.PI,
-                            artifact.initial_pose.wrist_cock_rad * 180 / Math.PI,
-                        )}
-                        disabled={running || !artifact}
-                    >
-                        Apply loaded comparison pose
-                    </button>
-                </div>
-                <button className="btn btn-primary" onClick={() => void runOptimization()} disabled={running}>
-                    {running ? 'Optimizing…' : 'Optimize from this pose'}
-                </button>
+        <div className="force-source-pose-actions">
+            <button className="force-source-text-button" onClick={() => { setStartArm(degrees(initialState[0])); setStartWrist(degrees(initialState[1])); }}>Use simulator pose</button>
+            <button className="force-source-text-button" onClick={() => onUsePose(startArm, startWrist)}>Apply entered pose to simulator</button>
+            <span>Club {wrappedDegrees(radians(startArm + startWrist)).toFixed(1)}° absolute</span>
+            <label title="Fixed hub uses one physical reference frame. Impact alignment moves only the camera for each card."><input id="force-fixed-hub" type="checkbox" checked={alignment === 'fixed_hub'} onChange={event => setAlignment(event.target.checked ? 'fixed_hub' : 'impact_aligned')} /> Fixed hub comparison</label>
+        </div>
+        {running && <div className="force-source-progress" role="status"><span style={{ width: `${Math.min(100, 100 * progress.completed / progress.total)}%` }} /><p>{progress.label}: {progress.completed}/{progress.total} candidates · best {Number.isFinite(progress.bestScore) ? progress.bestScore.toFixed(3) : '—'}</p></div>}
+        {message && <div className="error-box">{message}</div>}
+
+        {artifact && <>
+            <div className="force-source-provenance"><span>{artifact.model}</span><span>Coordinates: shoulder absolute / wrist relative</span><span>{artifact.scenarios.length}/6 objectives available</span><button className="force-source-text-button" onClick={exportArtifact}>Export current study JSON</button></div>
+            <div className="force-source-scenario-toggles" aria-label="Visible optimization scenarios">{artifact.scenarios.map(item => <label key={item.objective} style={{ borderColor: OBJECTIVE_COLORS[item.objective] }}><input type="checkbox" checked={selected.has(item.objective)} onChange={() => toggleScenario(item.objective)} />{OBJECTIVE_LABELS[item.objective]}</label>)}</div>
+            <div className="force-source-playback">
+                <button className="btn btn-secondary" onClick={() => setPlaying(value => !value)}>{playing ? 'Pause' : 'Play'}</button>
+                <button className="btn btn-secondary" onClick={() => setTime(0)}>Restart</button>
+                <label>Speed<select aria-label="Playback speed" value={playbackRate} onChange={event => setPlaybackRate(Number(event.target.value))}>{[0.05, 0.1, 0.2, 0.35, 0.5, 0.75, 1, 1.5, 2, 3].map(rate => <option key={rate} value={rate}>{rate.toFixed(2)}×</option>)}</select></label>
+                <input aria-label="Comparison time" type="range" min="0" max={Math.max(maxTime, 0.001)} step="0.00025" value={Math.min(time, maxTime)} onChange={event => { setTime(Number(event.target.value)); setPlaying(false); }} />
+                <output>{time.toFixed(4)} s</output>
             </div>
-
-            {running && (
-                <div className="force-source-progress" role="status">
-                    <span style={{ width: `${Math.min(100, 100 * progress.completed / progress.total)}%` }} />
-                    <p>{progress.completed}/{progress.total} candidates · best {Number.isFinite(progress.bestScore) ? progress.bestScore.toFixed(3) : '—'}</p>
-                </div>
-            )}
-            {loadError && <div className="error-box">{loadError}</div>}
-
-            {artifact && (
-                <>
-                    <div className="force-source-provenance">
-                        <span>{artifact.model}</span>
-                        <span>
-                            Loaded start: arm {(artifact.initial_pose.arm_angle_rad * 180 / Math.PI).toFixed(1)}° absolute · wrist {(artifact.initial_pose.wrist_cock_rad * 180 / Math.PI).toFixed(1)}° relative · club {wrappedDegrees(artifact.initial_pose.arm_angle_rad + artifact.initial_pose.wrist_cock_rad).toFixed(1)}° absolute
-                        </span>
-                        <span>{artifact.evaluated_count} evaluated · {artifact.qualified_count} qualified</span>
-                        {artifact.qualification_counts?.unqualified_loop_or_joint_excursion !== undefined && (
-                            <span>{artifact.qualification_counts.unqualified_loop_or_joint_excursion} loop/joint rejects</span>
-                        )}
-                        {artifact.qualification_counts?.unqualified_impact_geometry !== undefined && (
-                            <span>{artifact.qualification_counts.unqualified_impact_geometry} impact-path rejects</span>
-                        )}
-                        <span>Coordinates: shoulder absolute / wrist relative</span>
-                    </div>
-                    <div className="force-source-scenario-toggles" aria-label="Visible optimization scenarios">
-                        {artifact.scenarios.map(scenario => (
-                            <label key={scenario.objective} style={{ borderColor: COLORS[scenario.objective] }}>
-                                <input type="checkbox" checked={selected.has(scenario.objective)} onChange={() => toggleScenario(scenario.objective)} />
-                                {OBJECTIVE_LABELS[scenario.objective]}
-                            </label>
-                        ))}
-                    </div>
-
-                    <div className="force-source-playback">
-                        <button className="btn btn-secondary" onClick={() => setPlaying(value => !value)}>{playing ? 'Pause' : 'Play'}</button>
-                        <button className="btn btn-secondary" onClick={() => setTime(0)}>Restart</button>
-                        <label className="force-source-rate">
-                            Speed
-                            <select aria-label="Playback speed" value={playbackRate} onChange={event => setPlaybackRate(Number(event.target.value))}>
-                                {[0.1, 0.2, 0.35, 0.5, 0.75, 1, 1.5, 2].map(rate => (
-                                    <option key={rate} value={rate}>{rate.toFixed(2)}×</option>
-                                ))}
-                            </select>
-                        </label>
-                        <input aria-label="Comparison time" type="range" min="0" max={Math.max(maxTime, 0.001)} step="0.0005" value={Math.min(time, maxTime)} onChange={event => { setTime(Number(event.target.value)); setPlaying(false); }} />
-                        <output>{time.toFixed(4)} s</output>
-                    </div>
-
-                    <div className="force-source-animation-grid">
-                        {visibleScenarios.map(scenario => (
-                            <article key={scenario.objective} style={{ borderColor: COLORS[scenario.objective] }}>
-                                <h3>{OBJECTIVE_LABELS[scenario.objective]}</h3>
-                                <PendulumThumbnail scenario={scenario} time={Math.min(time, scenario.impact_time_s)} params={params} />
-                                <dl>
-                                    <div><dt>Impact speed</dt><dd>{scenario.series.clubhead_speed_m_s[scenario.series.clubhead_speed_m_s.length - 1].toFixed(2)} m/s</dd></div>
-                                    {scenario.impact_diagnostics && <div><dt>Impact path</dt><dd>{scenario.impact_diagnostics.path_angle_deg.toFixed(1)}° · {(100 * scenario.impact_diagnostics.bottom_reach_fraction).toFixed(0)}% reach</dd></div>}
-                                    <div><dt>Wrist program</dt><dd>−{scenario.candidate.wrist_restrain_nm.toFixed(1)} / +{scenario.candidate.wrist_drive_nm.toFixed(1)} N m</dd></div>
-                                    <div>
-                                        <dt>Robust qualification</dt>
-                                        <dd>
-                                            {scenario.robustness.sample_count <= 1
-                                                ? "Nominal only"
-                                                : `${(100 * scenario.robustness.qualification_rate).toFixed(0)}%`}
-                                        </dd>
-                                    </div>
-                                </dl>
-                                {scenario.boundary_hits.length > 0 && <p className="force-source-boundary">Boundary: {scenario.boundary_hits.join(', ')}</p>}
-                            </article>
-                        ))}
-                    </div>
-
-                    {visibleScenarios.length > 0 && (
-                        <div className="force-source-plot-grid">
-                            <ComparisonPlot title="Clubhead speed" unit="m/s" scenarios={visibleScenarios} field="clubhead_speed_m_s" />
-                            <ComparisonPlot title="Shoulder torque" unit="N m" scenarios={visibleScenarios} field="shoulder_torque_nm" />
-                            <ComparisonPlot title="Wrist torque" unit="N m" scenarios={visibleScenarios} field="wrist_torque_nm" />
-                        </div>
-                    )}
-                    <aside className="force-source-caveat">
-                        <strong>Interpretation boundary.</strong> {artifact.interpretation_limits.join(' ')}
-                    </aside>
-                </>
-            )}
-        </section>
-    );
-};
+            <p className="force-source-frame-note">{alignment === 'fixed_hub' ? 'One common hub and scale across every animation.' : 'Impact-aligned camera: the physical hub remains fixed in the model, but each card is translated for visual impact registration.'}</p>
+            <ForceSourceResults scenarios={visible} time={time} params={params} alignment={alignment} />
+            <aside className="force-source-caveat"><strong>Interpretation boundary.</strong> {artifact.interpretation_limits.join(' ')}</aside>
+        </>}
+    </section>;
+}

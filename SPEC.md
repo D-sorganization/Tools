@@ -27,10 +27,24 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.89                                    |
-| **Last Spec Update**    | 2026-08-29                                 |
+| **Spec Version**        | 1.18.90                                    |
+| **Last Spec Update**    | 2026-08-30                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-30 Configurable Six-Objective Force-Source Lab
+
+Version 1.18.90 makes the React comparison workspace vertically scrollable and
+uses a common fixed-hub frame by default. Users can directly enter the starting
+arm and relative-wrist angles, torque and joint bounds, release timing,
+integration resolution, impact qualification, candidate budget, and robustness
+perturbations. Deterministic quick, thorough, and research searches support
+wrist-torque limits through 30 N m with user-selected granularity and can run
+one objective or all six. The sixth objective integrates signed physical grip
+force along the hand path; its contract explicitly distinguishes impulse from
+work and average force over distance. High-resolution animation remains paired
+with clubhead-speed, shoulder-torque, and wrist-torque plots, non-looping
+golf-like impact qualification, boundary diagnostics, and held-out robustness.
 
 ### 2026-08-29 Web Force-Source Comparison Lab
 
@@ -5609,6 +5623,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-30 | 1.18.90 | feat(pendulum): make the force-source workspace scrollable; add a fixed-hub default frame, direct pose and constraint entry, deterministic quick/thorough/research searches, 30 N m wrist limits with user-selected granularity, held-out robustness, and the sixth signed hand-path impulse objective; retain synchronized high-resolution animations and clubhead-speed/shoulder-torque/wrist-torque plots with golf-like single-pass qualification. |
 | 2026-08-29 | 1.18.89 | docs(handoff): refresh the P1AM bench turnover against protected main, record that PRs #3078/#3081 are merged, retain the dated live-hardware evidence boundary, and require bench requalification before energization. Refresh the root turnover with exact protected-main and UpstreamDrift #9153 no-provider-delta state. |
 | 2026-08-29 | 1.18.88 | fix(putting, #4829): correct stroke-plane tangential impulse sign so lofted strikes launch below the effective loft, and update all physics reference pins. | #4834 |
 | 2026-08-29 | 1.18.87 | docs(governance, Repository_Management#1390): restore the current-state handoff contract by removing stale run history from the pendulum, shared golf-club, and Rate of Closure handoffs; retain active scientific boundaries, architecture pointers, verification commands, and ordered next work; refresh the monorepo-root turnover date; and return every `AGENT_HANDOFF.md` to the repository-wide 150-line ceiling so a successor receives bounded operational state rather than an accumulating changelog. |

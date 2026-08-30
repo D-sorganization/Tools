@@ -21,6 +21,7 @@ import {
     frictionTorqueVector,
     makePolynomialTorque,
     forwardKinematics,
+    gripForceAlongHandPath,
     kineticEnergy,
     potentialEnergy,
     totalEnergy,
@@ -204,6 +205,32 @@ describe('forwardKinematics', () => {
         expect(pos.wrist[1]).toBeCloseTo(-1.0, 10);
         expect(pos.tip[0]).toBeCloseTo(0, 10);
         expect(pos.tip[1]).toBeCloseTo(-2.0, 10);
+    });
+});
+
+describe('gripForceAlongHandPath', () => {
+    it('projects the physical grip force onto the direction of hand travel', () => {
+        const state: State = [-1.2, -0.8, 8, 12];
+        const acceleration = equationsOfMotion(state, 0.1, stdParams, () => [80, 10]);
+        const result = gripForceAlongHandPath(
+            state,
+            [acceleration[2], acceleration[3]],
+            stdParams,
+        );
+
+        expect(result.handSpeedMps).toBeGreaterThan(0);
+        expect(result.tangentForceN).not.toBeNull();
+        expect(result.powerW).toBeCloseTo(
+            (result.tangentForceN ?? 0) * result.handSpeedMps,
+            9,
+        );
+    });
+
+    it('reports an undefined tangent at zero hand speed', () => {
+        const result = gripForceAlongHandPath([0, 0, 0, 0], [0, 0], stdParams);
+
+        expect(result.handSpeedMps).toBe(0);
+        expect(result.tangentForceN).toBeNull();
     });
 });
 

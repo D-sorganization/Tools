@@ -85,16 +85,19 @@ identity and the resulting independence are pinned by tests.
 
 All are **maximized**, over the interval from the top of the backswing to impact.
 
-| Key                | Quantity                                              | Units |
-| ------------------ | ----------------------------------------------------- | ----- |
-| `clubhead_speed`   | tip speed at impact                                   | m/s   |
-| `centrifugal`      | `∫ mu*sin(phi)*dtheta1**2 dt` release angular impulse | N·m·s |
-| `coriolis`         | energy Coriolis coupling drains from the arms         | J     |
-| `energy_transfer`  | work delivered to the club by grip force              | J     |
-| `impulse_transfer` | `∫ ‖F_grip‖ dt`                                       | N·s   |
+| Key                 | Quantity                                              | Units |
+| ------------------- | ----------------------------------------------------- | ----- |
+| `clubhead_speed`    | tip speed at impact                                   | m/s   |
+| `centrifugal`       | `∫ mu*sin(phi)*dtheta1**2 dt` release angular impulse | N·m·s |
+| `coriolis`          | energy Coriolis coupling drains from the arms         | J     |
+| `energy_transfer`   | work delivered to the club by grip force              | J     |
+| `impulse_transfer`  | `∫ ‖F_grip‖ dt`                                       | N·s   |
+| `hand_path_impulse` | `∫ F_grip · v_hand / ‖v_hand‖ dt`                     | N·s   |
 
 `energy_transfer` and `impulse_transfer` are computed from the grip force, which
-is pinned against `physics.net_joint_forces`.
+is pinned against `physics.net_joint_forces`. `hand_path_impulse` keeps only the
+signed force component along hand travel. It is distinct from hand-path work and
+from MacKenzie-style average force over path length.
 
 ## 7. Transcription and conditioning
 

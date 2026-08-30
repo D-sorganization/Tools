@@ -118,8 +118,24 @@ def test_signals_expose_consistent_shapes() -> None:
     assert signals.clubhead_speed.shape == (_SAMPLE_COUNT,)
     assert signals.grip_force.shape == (_SAMPLE_COUNT, 2)
     assert signals.grip_velocity.shape == (_SAMPLE_COUNT, 2)
+    assert signals.grip_force_tangent.shape == (_SAMPLE_COUNT,)
     assert signals.centrifugal_wrist_moment.shape == (_SAMPLE_COUNT,)
     assert signals.coriolis_hub_power.shape == (_SAMPLE_COUNT,)
+
+
+def test_hand_path_force_is_the_signed_projection_onto_hand_velocity() -> None:
+    """The MacKenzie-style force channel excludes radial grip force."""
+    time, states, torques = _trajectory(seed=11)
+    signals = build_swing_signals(time, states, torques, _PARAMS)
+    speed = np.linalg.norm(signals.grip_velocity, axis=1)
+    expected = np.divide(
+        signals.grip_force_power,
+        speed,
+        out=np.zeros_like(speed),
+        where=speed > 1e-12,
+    )
+
+    assert np.allclose(signals.grip_force_tangent, expected)
 
 
 def test_velocity_term_signals_agree_with_the_scalar_decomposition() -> None:

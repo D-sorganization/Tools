@@ -193,6 +193,23 @@ class SwingSignals:
         power: FloatArray = np.sum(self.grip_force * self.grip_velocity, axis=1)
         return power
 
+    @property
+    def grip_force_tangent(self) -> FloatArray:
+        """Signed grip force along the instantaneous hand path in N.
+
+        Zero-speed samples have no defined tangent and contribute zero. This
+        convention keeps the aligned trajectory finite while ensuring that an
+        isolated zero-speed sample adds no impulse or work.
+        """
+        speed = np.linalg.norm(self.grip_velocity, axis=1)
+        tangent: FloatArray = np.divide(
+            self.grip_force_power,
+            speed,
+            out=np.zeros_like(speed),
+            where=speed > 1e-12,
+        )
+        return tangent
+
     def integrate(self, series: FloatArray) -> float:
         """Trapezoidally integrate a per-sample series over the trajectory time.
 

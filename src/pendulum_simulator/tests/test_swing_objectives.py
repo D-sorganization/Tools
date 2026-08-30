@@ -1,4 +1,4 @@
-"""Contract tests for the five competing swing objectives.
+"""Contract tests for the competing swing objectives.
 
 The registry exists to answer one question: does optimizing a downswing for a
 *mechanism* produce the same swing as optimizing it for the *outcome*? That only
@@ -30,6 +30,7 @@ _EXPECTED_KEYS = {
     "coriolis",
     "energy_transfer",
     "impulse_transfer",
+    "hand_path_impulse",
 }
 
 
@@ -49,8 +50,8 @@ def _signals(seed: int = 4768, uncock_scale: float = 1.0):
     return build_swing_signals(time, states, torques, _PARAMS)
 
 
-def test_registry_exposes_exactly_the_five_named_objectives() -> None:
-    """The comparison is defined over these five and no others."""
+def test_registry_exposes_all_named_objectives() -> None:
+    """The comparison registry includes the outcome and all mechanisms."""
     assert set(SWING_OBJECTIVES) == _EXPECTED_KEYS
     for key, objective in SWING_OBJECTIVES.items():
         assert isinstance(objective, SwingObjective)
@@ -139,6 +140,15 @@ def test_transfer_objectives_use_grip_force_signals() -> None:
         expected_impulse
     )
     assert expected_impulse > 0.0, "grip-force impulse magnitude cannot be negative"
+
+
+def test_hand_path_impulse_integrates_only_the_force_along_hand_travel() -> None:
+    """Hand-path impulse is signed tangential impulse, not force magnitude."""
+    signals = _signals()
+    expected = signals.integrate(signals.grip_force_tangent)
+
+    assert SWING_OBJECTIVES["hand_path_impulse"].evaluate(signals) == pytest.approx(expected)
+    assert expected != pytest.approx(signals.integrate(signals.grip_force_magnitude))
 
 
 def test_objectives_are_immutable_registry_entries() -> None:

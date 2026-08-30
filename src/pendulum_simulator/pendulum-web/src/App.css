@@ -27,13 +27,14 @@
 html,
 body,
 #root {
-  height: 100%;
-  overflow: hidden;
+  min-height: 100%;
 }
 
 body {
   background: var(--bg);
   color: var(--text);
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* ── App layout ──────────────────────────────────────────────────────────── */
@@ -41,8 +42,8 @@ body {
 .app {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
+  overflow: visible;
 }
 
 .app-header {
@@ -69,7 +70,9 @@ body {
 
 .app-body {
   display: flex;
-  flex: 1;
+  flex: none;
+  height: calc(100vh - 42px);
+  min-height: 620px;
   overflow: hidden;
 }
 
@@ -596,9 +599,16 @@ body {
   clip: rect(0, 0, 0, 0);
 }
 
+.force-source-import {
+  width: auto;
+  min-width: 145px;
+  margin-top: 0;
+  white-space: nowrap;
+}
+
 .force-source-config {
   display: grid;
-  grid-template-columns: minmax(180px, 1.2fr) minmax(210px, 1.3fr) minmax(170px, 1fr) minmax(170px, 1fr) auto;
+  grid-template-columns: repeat(4, minmax(145px, 1fr)) auto auto;
   gap: 12px;
   align-items: end;
   margin: 20px 0 14px;
@@ -608,8 +618,7 @@ body {
   border-radius: 12px;
 }
 
-.force-source-config label,
-.force-source-start span {
+.force-source-config label {
   display: block;
   margin-bottom: 6px;
   color: #8f9db8;
@@ -626,6 +635,58 @@ body {
   background: #1d2434;
   border: 1px solid #3b4660;
   border-radius: 7px;
+}
+
+.force-source-number input {
+  width: 100%;
+  min-height: 36px;
+  padding: 6px 8px;
+  color: #e7edfb;
+  background: #1d2434;
+  border: 1px solid #3b4660;
+  border-radius: 7px;
+  font-variant-numeric: tabular-nums;
+}
+
+.force-source-number span {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.force-source-advanced {
+  margin: 0 0 14px;
+  padding: 10px 14px;
+  background: rgba(8, 11, 18, 0.35);
+  border: 1px solid #293248;
+  border-radius: 10px;
+}
+
+.force-source-advanced summary {
+  cursor: pointer;
+  color: #a9b7d0;
+  font-size: 0.8rem;
+}
+
+.force-source-constraint-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(130px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.force-source-constraint-grid label {
+  color: #8f9db8;
+  font-size: 0.7rem;
+}
+
+.force-source-pose-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 14px;
+  color: #8f9db8;
+  font-size: 0.76rem;
 }
 
 .force-source-limit input {
@@ -717,7 +778,7 @@ body {
 
 .force-source-playback {
   display: grid;
-  grid-template-columns: auto auto minmax(190px, 280px) minmax(180px, 1fr) 76px;
+  grid-template-columns: auto auto minmax(130px, 180px) minmax(180px, 1fr) 76px minmax(120px, auto);
   margin: 12px 0;
 }
 
@@ -741,7 +802,7 @@ body {
 
 .force-source-animation-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(170px, 1fr));
+  grid-template-columns: repeat(3, minmax(210px, 1fr));
   gap: 10px;
 }
 
@@ -800,6 +861,20 @@ body {
   margin-top: 14px;
 }
 
+.force-source-chart {
+  min-height: 245px;
+  padding: 10px;
+  background: #151927;
+  border: 1px solid #30384e;
+  border-radius: 10px;
+}
+
+.force-source-frame-note {
+  margin: 0 0 10px;
+  color: #8997b1;
+  font-size: 0.74rem;
+}
+
 .force-source-plot-grid h4 {
   margin: 0 0 5px;
   font-size: 0.85rem;
@@ -825,6 +900,10 @@ body {
     grid-template-columns: repeat(2, minmax(180px, 1fr));
   }
 
+  .force-source-constraint-grid {
+    grid-template-columns: repeat(3, minmax(140px, 1fr));
+  }
+
   .force-source-animation-grid {
     grid-template-columns: repeat(3, minmax(180px, 1fr));
   }
@@ -845,7 +924,8 @@ body {
   }
 
   .force-source-config,
-  .force-source-animation-grid {
+  .force-source-animation-grid,
+  .force-source-constraint-grid {
     grid-template-columns: 1fr;
   }
 

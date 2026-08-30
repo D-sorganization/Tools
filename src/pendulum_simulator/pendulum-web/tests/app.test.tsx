@@ -19,8 +19,12 @@ describe('App entrypoint', () => {
         expect(html).toContain('Triple Pendulum (3-DOF)');
         expect(html).toContain('Golfer (8-DOF)');
         expect(html).toContain('Force-Source Optimization Lab');
-        expect(html).toContain('Optimize from this pose');
-        expect(html).toContain('id="force-wrist-limit"');
+        expect(html).toContain('Optimize selected');
+        expect(html).toContain('Optimize all 6');
+        expect(html).toContain('id="force-start-arm"');
+        expect(html).toContain('id="force-start-wrist"');
+        expect(html).toContain('id="force-wrist-step"');
+        expect(html).toContain('id="force-fixed-hub"');
         expect(html).toContain('max="30"');
     });
 });

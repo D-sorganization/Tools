@@ -3,6 +3,596 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 11142,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e62804bf5e39a6b5ca5b8c170ad088918c6639a8b742c427e33a5a6dabd9a37f",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-LAUNCH-MONITOR-WORKSPACE-V3-PY-F8163B751655",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/launch_monitor_workspace_v3.py",
+      "purpose": "Portable, row-free launch-monitor workspace v3 persistence and export.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "WorkspaceExportAuthorization",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WorkspaceProject",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_CLASSIFICATIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ROW_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "create_workspace_bundle",
+            "signature": "output_directory: str | Path, project: Mapping[str, Any], backing_rows: Any=(), authorization: WorkspaceExportAuthorization | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "parse_workspace_project",
+            "signature": "value: str | bytes | Mapping[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "serialize_workspace_project",
+            "signature": "project: Mapping[str, Any]"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_launch_monitor_forbidden_identity.py",
+          "tests/rate_of_closure/test_launch_monitor_provenance_and_unavailable.py",
+          "tests/rate_of_closure/test_launch_monitor_workspace.py",
+          "tests/rate_of_closure/test_launch_monitor_workspace_v3.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 565,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3115ae96acbfd4f7f2469b2175c614b05deba01ffc03ad25441da764e1cedac8",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-LAUNCH-PYQT6-PY-0C554127EC22",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/launch_pyqt6.py",
+      "purpose": "Standalone PyQt6 launcher for Rate of Closure Impact Explorer.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/folder_tool/test_launch_pyqt6.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 991,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ccf56a337f0bc65d5e8dcc257b868719142acf71ae67c8308ec4e88412693f5d",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-LAUNCH-WEB-PY-4E076F32983F",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/launch_web.py",
+      "purpose": "Launch the Rate of Closure Impact Explorer React web application.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_REPO_ROOT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 12316,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "04d7184abd31eee20eb6c86a7f793bc5fd42b9a90f653d5d3f6e33fd62cd061e",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-MESH-PY-FF58637C4883",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/mesh.py",
+      "purpose": "STL clubhead meshes for bounded flat-shaded display normalization.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "HeadMesh",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "HEAD_DEPTH_M",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_HEAD_SPAN_M",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_IMPORTED_MESH_TRIANGLES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_RENDER_MESH_TRIANGLES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_STL_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "load_head_mesh",
+            "signature": "path: str | Path, depth_m: float=HEAD_DEPTH_M"
+          },
+          {
+            "kind": "function",
+            "name": "normalize_head",
+            "signature": "triangles: np.ndarray, depth_m: float=HEAD_DEPTH_M"
+          },
+          {
+            "kind": "function",
+            "name": "parse_stl",
+            "signature": "data: bytes"
+          },
+          {
+            "kind": "function",
+            "name": "snapshot_head_mesh",
+            "signature": "mesh: HeadMesh"
+          },
+          {
+            "kind": "function",
+            "name": "triangle_normals",
+            "signature": "triangles: np.ndarray"
+          },
+          {
+            "kind": "function",
+            "name": "write_ascii_stl",
+            "signature": "triangles: np.ndarray, name: str='rate_of_closure'"
+          },
+          {
+            "kind": "function",
+            "name": "write_binary_stl",
+            "signature": "triangles: np.ndarray, header: str='rate_of_closure'"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/pyqt_club_camera_probe.py",
+          "tests/rate_of_closure/test_club_mesh_source.py",
+          "tests/rate_of_closure/test_gui.py",
+          "tests/rate_of_closure/test_mesh.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 16046,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "648ea3cc7859327bcf66b6ef004acbbaddab5c3727537b84c80a1bb995fd254b",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-MODEL-PY-A6133DE2F61C",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/model.py",
+      "purpose": "Twist-based impact-point velocity model for a rotating clubhead.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ClosureMetrics",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImpactResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImpactScenario",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MPH_PER_MPS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "closure_metrics",
+            "signature": "scenario: ImpactScenario"
+          },
+          {
+            "kind": "function",
+            "name": "solve",
+            "signature": "scenario: ImpactScenario"
+          },
+          {
+            "kind": "function",
+            "name": "sweep",
+            "signature": "scenario: ImpactScenario, field_name: str, values: np.ndarray"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/pyqt_variation_render_probe.py",
+          "tests/rate_of_closure/test_ball_setup.py",
+          "tests/rate_of_closure/test_ball_setup_parity.py",
+          "tests/rate_of_closure/test_club_view_camera.py",
+          "tests/rate_of_closure/test_complete_trial_standalone_wheel.py",
+          "tests/rate_of_closure/test_contracts.py",
+          "tests/rate_of_closure/test_derivation.py",
+          "tests/rate_of_closure/test_derivation_models.py",
+          "tests/rate_of_closure/test_gui.py",
+          "tests/rate_of_closure/test_impact_kinematics.py",
+          "tests/rate_of_closure/test_impact_outcomes.py",
+          "tests/rate_of_closure/test_impact_scene.py",
+          "tests/rate_of_closure/test_kinetics.py",
+          "tests/rate_of_closure/test_kinetics_gui.py",
+          "tests/rate_of_closure/test_manual_delivery.py",
+          "tests/rate_of_closure/test_model.py",
+          "tests/rate_of_closure/test_morris_pyqt_workflow.py",
+          "tests/rate_of_closure/test_morris_pyqt_workspace.py",
+          "tests/rate_of_closure/test_morris_rate_adapter.py",
+          "tests/rate_of_closure/test_morris_ui_contract.py",
+          "tests/rate_of_closure/test_plots_async_performance.py",
+          "tests/rate_of_closure/test_plots_gui.py",
+          "tests/rate_of_closure/test_plotting.py",
+          "tests/rate_of_closure/test_prescribed_kinetics_presentation.py",
+          "tests/rate_of_closure/test_screw_analysis.py",
+          "tests/rate_of_closure/test_simulation.py",
+          "tests/rate_of_closure/test_simulation_gui.py",
+          "tests/rate_of_closure/test_simulation_scrub_authority.py",
+          "tests/rate_of_closure/test_solver_gui.py",
+          "tests/rate_of_closure/test_spatial_target_persistence.py",
+          "tests/rate_of_closure/test_torque_run_history.py",
+          "tests/rate_of_closure/test_turf_interaction.py",
+          "tests/rate_of_closure/test_units.py",
+          "tests/rate_of_closure/test_variation_complete_trial_record.py",
+          "tests/rate_of_closure/test_variation_gui.py",
+          "tests/rate_of_closure/test_variation_gui_execution.py",
+          "tests/rate_of_closure/test_variation_simulation_adapter.py",
+          "tests/rate_of_closure/test_variation_simulation_request.py",
+          "tests/rate_of_closure/test_variation_visual_state.py",
+          "tests/rate_of_closure/test_variation_visualization_widgets.py",
+          "tests/rate_of_closure/test_viewers_gui.py",
+          "tests/rate_of_closure/test_wedge_ground_clearance.py",
+          "tests/rate_of_closure/test_wedge_ground_clearance_gui.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "m/s",
+          "mm",
+          "rad/s",
+          "s"
+        ],
+        "validation_paths": [
+          "tests/rate_of_closure/test_contracts.py",
+          "tests/rate_of_closure/test_morris_ui_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13385,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "21804eeb9a231e0df1e6fa9531c6ace9872a230aaa11fa1d4a11df9f69fbb260",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-NEURAL-LAB-CONTRACT-PY-B678B975D5BB",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/neural_lab_contract.py",
+      "purpose": "Safe contracts for private neural training requests and portable inference.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CapabilityManifest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DatasetAuthority",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroupSummary",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Layer",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PortableModel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Prediction",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TrainingManifest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TrainingSelection",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Variable",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "VendorCapability",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BUNDLE_SCHEMA",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CAPABILITY_SCHEMA",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FORBIDDEN_SPLIT_GROUPS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TRAINING_SCHEMA",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_training_manifest",
+            "signature": "authority: DatasetAuthority, frame: pd.DataFrame, selection: TrainingSelection"
+          },
+          {
+            "kind": "function",
+            "name": "load_capability_manifest",
+            "signature": "path: Path | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "load_portable_model",
+            "signature": "source: Path | Mapping[str, object]"
+          },
+          {
+            "kind": "function",
+            "name": "predict_one",
+            "signature": "model: PortableModel, inputs: Mapping[str, object]"
+          },
+          {
+            "kind": "function",
+            "name": "validate_training_groups",
+            "signature": "frame: pd.DataFrame, column: str, *, policy_approved: bool"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_neural_lab_contract_v2.py"
+        ],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": [
+          "tests/rate_of_closure/test_neural_lab_contract_v2.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 12582,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -12833,376 +13423,6 @@
           }
         ],
         "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 7598,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7b03055d0ef5f85f9b4b0f21f90a43a7d7cc36ad00dff0af7ecbdfd29553c877",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-SPATIAL-TARGET-RENDERING-PY-0EBFF7482B55",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/spatial_target_rendering.py",
-      "purpose": "Matplotlib projection painters for canonical spatial targets.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "draw_spatial_target_3d",
-            "signature": "axes: Any, target: SpatialTarget"
-          },
-          {
-            "kind": "function",
-            "name": "draw_spatial_target_side",
-            "signature": "axes: Any, target: SpatialTarget"
-          },
-          {
-            "kind": "function",
-            "name": "draw_spatial_target_top",
-            "signature": "axes: Any, target: SpatialTarget"
-          },
-          {
-            "kind": "function",
-            "name": "spatial_target_extents",
-            "signature": "target: SpatialTarget"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 6005,
-      "classification": "calculation",
-      "classification_basis": "path-marker:trajectory",
-      "content_sha256_lf": "3412e052862ad88ed63471cd1e6d631fb847e37a265041edb1705cadace8e389",
-      "family": "rate-of-closure-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-SPATIAL-TARGET-TRAJECTORY-PY-2A02EF2C0C7B",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/spatial_target_trajectory.py",
-      "purpose": "UI-facing target residual selection for a completed flight trajectory.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "LandingSurfaceResolutionError",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "trajectory_target_miss",
-            "signature": "target: SpatialTarget, positions_m: np.ndarray"
-          },
-          {
-            "kind": "function",
-            "name": "validate_landing_surface",
-            "signature": "target: SpatialTarget"
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/test_spatial_target_gui.py"
-        ],
-        "unit_mentions": [
-          "N",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4168,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6311d13a8f1246d71a46dd3b9d66f21db5328bdfc99b19d22c2ef1032678edc8",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-SPATIAL-TARGET-WORKFLOW-PY-334D482949AC",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/spatial_target_workflow.py",
-      "purpose": "Small controller keeping target editing, rendering, and residuals aligned.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SpatialTargetWorkflow",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_spatial_target_workflow",
-            "signature": "view: FlightView"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "N"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 13275,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "37dd94b35e14ae6565ad878a31fb36cae22e06eb5eb372a81fb0306e74a3ecd4",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-STRIKE-VIEW-PY-F3AE1FA8CAD0",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/strike_view.py",
-      "purpose": "Impact-zone (strike) viewer — face-scale display, never flight scale.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "StrikeView",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "STRIKE_MAX_EXTENT_MM",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/test_viewers_gui.py"
-        ],
-        "unit_mentions": [
-          "bar",
-          "g",
-          "mm",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 1835,
-      "classification": "calculation",
-      "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "84d817948af155539eeea219fa0e1dece68a68817270fe3d78e7a363950bb444",
-      "family": "rate-of-closure-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-SYNCHRONIZED-SIMULATION-VIEW-PY-18725B09BA6E",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/synchronized_simulation_view.py",
-      "purpose": "Simulation view adapter that publishes its shared playback clock.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SynchronizedSimulationView",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 10588,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ef728d1334632083bab00221bc922b54069d80aca4e3281e2f4f5de17d98c9c1",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-TARGET-PANEL-PY-A7C27E527EBF",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/target_panel.py",
-      "purpose": "Target-region editor + 'Optimize to Target' (epic #4125, H7b).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "TargetPanel",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/test_target_gui.py"
-        ],
         "unit_mentions": [
           "s"
         ],

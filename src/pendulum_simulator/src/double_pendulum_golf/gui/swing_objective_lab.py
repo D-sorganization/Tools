@@ -86,7 +86,7 @@ def format_comparison_matrix(comparison: SwingComparison) -> list[list[str]]:
 class ComparisonWorker(QThread):
     """Runs the objective comparison off the UI thread.
 
-    A five-objective comparison takes seconds; running it inline would freeze
+    A multi-objective comparison takes seconds; running it inline would freeze
     the interface.
     """
 

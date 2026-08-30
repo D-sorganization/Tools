@@ -1,16 +1,45 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-    candidateGrid,
+    buildCandidateSet,
+    DEFAULT_OPTIMIZATION_CONSTRAINTS,
     FORCE_SOURCE_SCHEMA,
+    FORCE_SOURCE_OBJECTIVES,
     golfLikeImpactIndex,
     parseForceSourceArtifact,
+    summarizeRobustness,
+    validateBrowserOptimizationConfig,
+    type BrowserOptimizationConfig,
     type ForceSourceArtifact,
 } from '../src/forceSourceStudy';
 import {
     interpolateSeries,
     pendulumThumbnailGeometry,
+    thumbnailOrigin,
 } from '../src/forceSourceView';
+
+const params = {
+    m1: 5, m2: 0.3, mClub: 0.2, L1: 0.65, L2: 1.1,
+    g: 9.81, b1: 0.1, b2: 0.05, mu1: 0.02, mu2: 0.01,
+};
+
+function optimizationConfig(): BrowserOptimizationConfig {
+    return {
+        params,
+        initialState: [-2.2, -1.57, 0, 0],
+        objective: 'clubhead_speed',
+        thoroughness: 'thorough',
+        constraints: {
+            ...DEFAULT_OPTIMIZATION_CONSTRAINTS,
+            shoulderTorqueNm: { min: 60, max: 120, step: 10 },
+            wristTorqueLimitNm: 30,
+            wristTorqueStepNm: 0.5,
+            onsetS: { min: 0.05, max: 0.25, step: 0.01 },
+            candidateBudget: 96,
+            robustnessTrials: 9,
+        },
+    };
+}
 
 function validArtifact(): ForceSourceArtifact {
     const pair = [0, 0.1];
@@ -90,33 +119,48 @@ describe('force-source artifact contract', () => {
 });
 
 describe('hierarchical search grid', () => {
-    it('covers the 30 N m thorough grid at 5 N m increments', () => {
-        const candidates = candidateGrid('thorough', 30);
+    it('honors user bounds, budget, and 0.5 N m wrist granularity', () => {
+        const candidates = buildCandidateSet(optimizationConfig());
 
-        expect(candidates).toHaveLength(3 * 7 * 7 * 13);
+        expect(candidates).toHaveLength(96);
         expect(Math.max(...candidates.map(candidate => candidate.wrist_drive_nm))).toBe(30);
         expect(Math.max(...candidates.map(candidate => candidate.wrist_restrain_nm))).toBe(30);
+        expect(candidates.every(candidate => candidate.wrist_drive_nm * 2 % 1 === 0)).toBe(true);
+        expect(candidates.every(candidate => candidate.shoulder_torque_nm >= 60)).toBe(true);
+        expect(candidates.every(candidate => candidate.shoulder_torque_nm <= 120)).toBe(true);
     });
 
-    it('includes a non-multiple-of-five wrist limit exactly', () => {
-        const candidates = candidateGrid('thorough', 28);
+    it('fails closed when a start pose violates the chosen joint bounds', () => {
+        const config = optimizationConfig();
+        config.constraints = {
+            ...config.constraints,
+            armAngleDeg: { min: -90, max: 45 },
+        };
 
-        expect(candidates.some(candidate => candidate.wrist_drive_nm === 28)).toBe(true);
-        expect(candidates.some(candidate => candidate.wrist_restrain_nm === 28)).toBe(true);
-        expect(Math.max(...candidates.map(candidate => candidate.wrist_drive_nm))).toBe(28);
+        expect(() => validateBrowserOptimizationConfig(config)).toThrow(/initial arm angle/i);
     });
 
-    it('fails closed for limits outside the supported range', () => {
-        expect(() => candidateGrid('quick', 31)).toThrow(/\(0, 30\]/);
+    it('fails closed for wrist limits above the supported 30 N m', () => {
+        const config = optimizationConfig();
+        config.constraints = { ...config.constraints, wristTorqueLimitNm: 31 };
+
+        expect(() => validateBrowserOptimizationConfig(config)).toThrow(/30/);
+    });
+
+    it('summarizes held-out qualification rather than reporting nominal-only robustness', () => {
+        expect(summarizeRobustness([10, null, 12, 8])).toEqual({
+            sample_count: 4,
+            qualified_count: 3,
+            qualification_rate: 0.75,
+            median_score: 10,
+            worst_score: 8,
+            best_score: 12,
+            score_spread: 4,
+        });
     });
 });
 
 describe('golf-like impact qualification', () => {
-    const params = {
-        m1: 5, m2: 0.3, mClub: 0.2, L1: 0.65, L2: 1.1,
-        g: 9.81, b1: 0.1, b2: 0.05, mu1: 0.02, mu2: 0.01,
-    };
-
     it('accepts a rightward near-horizontal bottom pass', () => {
         const states = [
             [-2.2, -1.57, 0, 0],
@@ -156,6 +200,30 @@ describe('comparison animation coordinates', () => {
 
         expect(geometry.wristY).toBeLessThan(geometry.originY);
         expect(geometry.tipY).toBeLessThan(geometry.wristY);
+    });
+
+    it('keeps every scenario hub at one shared point in fixed-hub mode', () => {
+        const firstImpact = pendulumThumbnailGeometry(-0.2, 0.2, lengths);
+        const secondImpact = pendulumThumbnailGeometry(-0.5, 0.5, lengths);
+
+        expect(thumbnailOrigin('fixed_hub', firstImpact)).toEqual({ x: 96, y: 88 });
+        expect(thumbnailOrigin('fixed_hub', secondImpact)).toEqual({ x: 96, y: 88 });
+    });
+
+    it('offers impact alignment as an explicit alternative camera frame', () => {
+        const impact = pendulumThumbnailGeometry(-0.3, 0.3, lengths);
+        const origin = thumbnailOrigin('impact_aligned', impact);
+        const aligned = pendulumThumbnailGeometry(-0.3, 0.3, lengths, origin);
+
+        expect(aligned.tipX).toBeCloseTo(150);
+        expect(aligned.tipY).toBeCloseTo(148);
+    });
+});
+
+describe('objective registry', () => {
+    it('includes signed force impulse along the hand path as the sixth objective', () => {
+        expect(FORCE_SOURCE_OBJECTIVES).toContain('hand_path_impulse');
+        expect(FORCE_SOURCE_OBJECTIVES).toHaveLength(6);
     });
 });
 

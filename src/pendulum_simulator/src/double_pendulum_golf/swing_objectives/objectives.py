@@ -1,4 +1,4 @@
-"""The five competing objectives a golf downswing can be optimized for.
+"""The competing objectives a golf downswing can be optimized for.
 
 A golfer, a coach and a biomechanist each name a different thing as the point of
 the downswing: hold the lag and let centrifugal force release the club; sequence
@@ -7,7 +7,7 @@ through the grip; pull hard on the club for as long as possible; or simply swing
 the head as fast as possible. Four of those are statements about *mechanism*, one
 is a statement about *outcome*.
 
-Each is a well-defined functional of the trajectory, and all five are defined here
+Each is a well-defined functional of the trajectory, and all six are defined here
 so the same golfer can be optimized against each in turn under an identical torque
 budget. **Every objective is to be maximized.**
 
@@ -53,6 +53,7 @@ __all__ = [
     "CORIOLIS",
     "ENERGY_TRANSFER",
     "IMPULSE_TRANSFER",
+    "HAND_PATH_IMPULSE",
 ]
 
 EvaluateFn = Callable[[SwingSignals], float]
@@ -108,6 +109,11 @@ def _grip_force_energy(signals: SwingSignals) -> float:
 def _grip_force_impulse(signals: SwingSignals) -> float:
     """Time integral of grip-force magnitude, in N·s."""
     return signals.integrate(signals.grip_force_magnitude)
+
+
+def _hand_path_impulse(signals: SwingSignals) -> float:
+    """Signed time integral of grip force along hand travel, in N·s."""
+    return signals.integrate(signals.grip_force_tangent)
 
 
 CLUBHEAD_SPEED = SwingObjective(
@@ -174,6 +180,18 @@ IMPULSE_TRANSFER = SwingObjective(
     evaluate=_grip_force_impulse,
 )
 
+HAND_PATH_IMPULSE = SwingObjective(
+    key="hand_path_impulse",
+    name="Hand-path impulse",
+    units="N*s",
+    description=(
+        "Maximize signed impulse from grip force projected along the hand path. "
+        "Unlike grip-force magnitude, radial force does not increase this score."
+    ),
+    scale=100.0,
+    evaluate=_hand_path_impulse,
+)
+
 #: Every objective, keyed by identifier. Iteration order is the order used for
 #: comparison tables and plots, with the outcome baseline first.
 SWING_OBJECTIVES: dict[str, SwingObjective] = {
@@ -184,6 +202,7 @@ SWING_OBJECTIVES: dict[str, SwingObjective] = {
         CORIOLIS,
         ENERGY_TRANSFER,
         IMPULSE_TRANSFER,
+        HAND_PATH_IMPULSE,
     )
 }
 
@@ -198,7 +217,7 @@ def get_objective(objective: str | SwingObjective) -> SwingObjective:
         The resolved objective.
 
     Raises:
-        KeyError: If the key is not one of the five defined objectives.
+        KeyError: If the key is not one of the defined objectives.
 
     Pre: none.
     Post: the returned objective is a member of :data:`SWING_OBJECTIVES`.

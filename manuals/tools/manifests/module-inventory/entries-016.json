@@ -2,6 +2,426 @@
   "authority": "D-sorganization/Tools",
   "entries": [
     {
+      "authority_status": "provisional",
+      "bytes_lf": 8775,
+      "classification": "calculation",
+      "classification_basis": "path-marker:geometry",
+      "content_sha256_lf": "7e25a748e884015b2e9796bea7cd2db79a44dcc948a197da074caeabc0ace9ad",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-STUDY-GEOMETRY-PY-D14178A93F6A",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/study_geometry.py",
+      "purpose": "Arbitrary-plane contact and landing-target geometry for ground studies.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "endpoint_contacts_surface",
+            "signature": "center_position_m: Vector3, surface: GroundSurfaceProfile, ball_radius_m: float"
+          },
+          {
+            "kind": "function",
+            "name": "intrinsic_target_miss",
+            "signature": "target: SpatialTarget, contact_point_m: Vector3, surface: GroundSurfaceProfile"
+          },
+          {
+            "kind": "function",
+            "name": "sphere_contact_point",
+            "signature": "center_position_m: Vector3, normal_unit: Vector3, ball_radius_m: float"
+          },
+          {
+            "kind": "function",
+            "name": "surface_contact_point",
+            "signature": "center_position_m: Vector3, surface: GroundSurfaceProfile, ball_radius_m: float"
+          },
+          {
+            "kind": "function",
+            "name": "target_evaluation",
+            "signature": "target: SpatialTarget, center_position_m: Vector3, endpoint_kind: GroundEndpointKind, request: GroundSimulationRequest"
+          },
+          {
+            "kind": "function",
+            "name": "validate_target",
+            "signature": "target: SpatialTarget, surface: GroundSurfaceProfile"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/ground/tests/test_study_validation.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "src/shared/python/swing_sim/ground/tests/test_study_validation.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6426,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a285f43c256147700508fc469744842be2ca003a2b469c31044cbe9b2f76247e",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-STUDY-PROJECTION-PY-87EBFE4DF1D1",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/study_projection.py",
+      "purpose": "Project qualified ground results into target- and solver-safe studies.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "project_ground_study",
+            "signature": "request: GroundSimulationRequest, result: GroundSimulationResult, *, bound_surface: BoundGroundSurface | None=None, target: SpatialTarget | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/ground/tests/test_study_projection.py",
+          "src/shared/python/swing_sim/ground/tests/test_study_result_adapter.py",
+          "src/shared/python/swing_sim/ground/tests/test_study_state.py",
+          "src/shared/python/swing_sim/ground/tests/test_study_validation.py",
+          "tests/rate_of_closure/test_ground_study_scalar_adapter.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "src/shared/python/swing_sim/ground/tests/test_study_validation.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 14572,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "05fb25598f8c21c864bafa0a6d8b0374d01f3ddd866a64e01ba3258027628f50",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-STUDY-RECORD-PY-FD746BA2E2B0",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/study_record.py",
+      "purpose": "Top-level versioned record for one qualified ground study.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GroundStudyProjection",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/ground/tests/test_study_projection.py",
+          "src/shared/python/swing_sim/ground/tests/test_study_result_adapter.py",
+          "src/shared/python/swing_sim/ground/tests/test_study_state.py",
+          "src/shared/python/swing_sim/ground/tests/test_study_validation.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "src/shared/python/swing_sim/ground/tests/test_study_validation.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 658,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3ff20dcb29ce45a12ea89e1157b3cee0c74ee869328024f5243fd6c96005b8cd",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-STUDY-TARGET-PY-69B64DE92257",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/study_target.py",
+      "purpose": "Canonical target helpers for deterministic ground-study records.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "canonical_ground_target",
+            "signature": "target: SpatialTarget"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9392,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c6924794a9b3d481f4b7a8ad8c0082f5f9b50bfe58085f8b1e43312895148d5b",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-STUDY-TYPES-PY-D7C5D88E2498",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/study_types.py",
+      "purpose": "Immutable qualified ground-study projection contracts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GroundEndpointKind",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundSolverEligibility",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundSolverEligibilityReason",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundStudyMetrics",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundStudyProfile",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundStudyStatus",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundTargetEvaluation",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundTargetUnavailableReason",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GROUND_STUDY_SCHEMA_VERSION",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/ground/tests/test_study_projection.py",
+          "src/shared/python/swing_sim/ground/tests/test_study_state.py",
+          "src/shared/python/swing_sim/ground/tests/test_study_validation.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "src/shared/python/swing_sim/ground/tests/test_study_validation.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13631,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f3268f64bc1ea9006caf63ec04ef5472e4b73283645d6969ae6bf78919a8f237",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-STUDY-WIRE-PY-356BC8F46E36",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/study_wire.py",
+      "purpose": "Strict deterministic wire format for ground-study projections.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "study_from_dict",
+            "signature": "payload: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "study_from_json",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "study_to_dict",
+            "signature": "value: GroundStudyProjection"
+          },
+          {
+            "kind": "function",
+            "name": "study_to_json",
+            "signature": "value: GroundStudyProjection"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "not-applicable",
       "bytes_lf": 10836,
       "classification": "non-calculation",
@@ -16807,372 +17227,6 @@
         "unit_mentions": [
           "N",
           "bar",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 474,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "3c9da543e154fd8a708fd4bdb21827fe9d7d7f206d2a82b7c29cc9ccc14c44c2",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-STEAM-ENGINE-CALCULATOR-INIT-PY-C8C97E353374",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/steam_engine_calculator/__init__.py",
-      "purpose": "Compatibility package for the steam engine calculator.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 312,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "0e7209560abb79f89e92a361b748e70beecca32c8752ad8371499364a816530a",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-STEAM-ENGINE-CALCULATOR-CONFTEST-PY-02AC9AE16483",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/steam_engine_calculator/conftest.py",
-      "purpose": "Root conftest for steam_engine_calculator — sets up PYTHONPATH.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [
-          "src/data_processing/data_processor/python/tests/conftest.py",
-          "src/document_processing/pdf_renamer/tests/conftest.py",
-          "src/movement_optimizer/tests/conftest.py",
-          "src/p1am_control_system/backend/tests/conftest.py",
-          "src/pendulum_simulator/tests/conftest.py",
-          "src/shared/python/sidekick/tests/conftest.py",
-          "src/signal_processing_studio/tests/conftest.py",
-          "src/urdf_builder_gui/tests/conftest.py",
-          "src/vessel_drafter/tests/conftest.py",
-          "src/web_applications/urdf_viewer/tests/conftest.py",
-          "tests/benchmarks/conftest.py",
-          "tests/conftest.py",
-          "tests/e2e/conftest.py",
-          "tests/integration/conftest.py",
-          "tests/ode_solver/conftest.py",
-          "tests/p1am_control_system/conftest.py",
-          "tests/pendulum_simulator/conftest.py",
-          "tests/rate_of_closure/conftest.py",
-          "tests/shared/python/sidekick/process_calculators/conftest.py",
-          "tests/solar_system_model/conftest.py",
-          "tests/tools/folder_tools/conftest.py",
-          "tests/unit/ai/integrations/conftest.py",
-          "tests/unit/ai/integrations/github_mcp/conftest.py",
-          "tests/unit/ai/mcp/conftest.py",
-          "tests/unit/chat/conftest.py",
-          "tests/unit/codemap/conftest.py",
-          "tests/unit/lower_body_model/conftest.py",
-          "tests/unit/sidekick/conftest.py",
-          "tests/vessel_drafter/conftest.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 927,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "82c9b39241a5b73ca78ce24b0716833a3b06a4d4995f389531f463e8429762bc",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-STEAM-ENGINE-CALCULATOR-GUI-REGISTRATION-PY-ABD3C8D00041",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/steam_engine_calculator/gui_registration.py",
-      "purpose": "GUI registration for Steam Engine Calculator.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "GUI_INFO",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GUI_METADATA",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "get_gui_info",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "tests/folder_tool/test_gui_registration.py",
-          "tests/rate_of_closure/test_gui_registration.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 367,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "76de73ec7e9a2586f8a029fee1dda40a412caf99652b59382a0f8bbe5676162b",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-STEAM-ENGINE-CALCULATOR-LAUNCH-PYQT6-PY-7F4A38B75815",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/steam_engine_calculator/launch_pyqt6.py",
-      "purpose": "Standalone PyQt6 launcher for Steam Engine Calculator.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [
-          "tests/folder_tool/test_launch_pyqt6.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 137,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "462b1595832e8bc94f6e219cea1b9859ca7fd5b462b7411a5ab8624de2742b40",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-STEAM-ENGINE-CALCULATOR-PYTHON-STEAM-ENGINE-CALCULATOR-INIT-PY-9CC6CE446038",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/steam_engine_calculator/python/steam_engine_calculator/__init__.py",
-      "purpose": "Steam Engine Calculator",
-      "review_status": "review-required",
-      "risk_tags": [
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 5983,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "c95e337a678990016eb0081e107a58f1757bd89edd6dd52e0f2ca678bcb55639",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-STEAM-ENGINE-CALCULATOR-PYTHON-STEAM-ENGINE-CALCULATOR-API-PY-70C28A2D556A",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/steam_engine_calculator/python/steam_engine_calculator/api.py",
-      "purpose": "FastAPI backend for Steam Engine Calculator.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "mapped",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [
-          "/api/steam/calculate",
-          "/health"
-        ],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CalculationMode",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SteamRequest",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SteamResponse",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "calculate_steam",
-            "signature": "request: SteamRequest"
-          },
-          {
-            "kind": "function",
-            "name": "health",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "tests/test_phase2_critical_bugs.py"
-        ],
-        "unit_mentions": [
           "s"
         ],
         "validation_paths": []

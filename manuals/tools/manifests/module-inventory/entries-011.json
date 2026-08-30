@@ -3,6 +3,367 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 1917,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "134c9293dd852027769f0e655577008c88801283ba4f41eb86ca601f14703879",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-REGIONALGROUNDVARIATIONREQUESTFILES-TEST-TS-54F71F4523F4",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/regionalGroundVariationRequestFiles.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1597,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "33878dbb704803ca08b2df574ce3cd336e9a9905b5c34856fa74d875d3c41f2b",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-REGIONALGROUNDVARIATIONREQUESTFILES-TS-3ADB8976CC80",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/regionalGroundVariationRequestFiles.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "RegionalGroundVariationRequestFile",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "downloadRegionalGroundVariationRequest",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "readRegionalGroundVariationRequestFile",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2614,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d4f8da67cb09b253accf90b4cb5d0e47537b3bdf9663c91b9c0f0327bd262ea7",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-REGIONALGROUNDVARIATIONREQUESTWIRE-TEST-TS-212440C34DA5",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/regionalGroundVariationRequestWire.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7577,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4ea094982c61a4bcf45c5c2740600d226a169cb2b2e9c064f4490ec23fd02da2",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-REGIONALGROUNDVARIATIONREQUESTWIRE-TS-4C81F0846058",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/regionalGroundVariationRequestWire.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "MAX_REGIONAL_GROUND_VARIATION_REQUEST_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "REGIONAL_GROUND_VARIATION_REQUEST_SCHEMA",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "REGIONAL_GROUND_VARIATION_REQUEST_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "regionalGroundVariationRequestFromJson",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "stableRegionalGroundVariationRequestJson",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5108,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "58656db9397a12e6aadb44906d04253e302379471cccf4959159a5f576280373",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-REGIONALGROUNDVARIATIONWORKSPACE-TEST-TS-B6E9A6716DB4",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/regionalGroundVariationWorkspace.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8443,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3a6e4a2feb31c6cf31d7bb61beea9d37a4cbbf182133db4a91c28ed940da7731",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-REGIONALGROUNDVARIATIONWORKSPACE-TS-7A5149C1F724",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/regionalGroundVariationWorkspace.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "MAX_REGIONAL_GROUND_STUDY_ROWS",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "RegionalGroundVariationRequestIdentity",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "RegionalGroundVariationRequestPort",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "RegionalGroundVariationRequestTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "RegionalGroundVariationWorkspaceAction",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "RegionalGroundVariationWorkspaceState",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "applyRegionalGroundVariationRequest",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "composeRegionalGroundVariationRequest",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "createRegionalGroundVariationWorkspaceState",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "regionalGroundVariationWorkspaceReducer",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "validateRegionalGroundVariationRequest",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 8400,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -14571,438 +14932,6 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 46689,
-      "classification": "calculation",
-      "classification_basis": "path-marker:rotation",
-      "content_sha256_lf": "0ab5d247331b10fcbc801c4bf20e17b16326a5a38d3f5e00086dce035f9561e7",
-      "family": "rotation-converter-calculation",
-      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-UI-PYQT6-MAIN-WINDOW-PY-DDE156A0A4EC",
-      "language": "python",
-      "maintainer": "Rotation converter maintainers",
-      "path": "src/rotation_converter/ui/pyqt6/main_window.py",
-      "purpose": "Rotation Converter Main Window -- PyQt6 GUI.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "RigidTransformTab",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RotationConverterMainWindow",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RotationConverterTab",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ScrewVisualiserTab",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TrajectoryPlotsTab",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/movement_optimizer/tests/test_main_window.py",
-          "src/pendulum_simulator/tests/test_main_window.py",
-          "tests/ode_solver/test_main_window.py"
-        ],
-        "unit_mentions": [
-          "bar",
-          "deg",
-          "g",
-          "m/s",
-          "rad",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 3685,
-      "classification": "calculation",
-      "classification_basis": "path-marker:rotation",
-      "content_sha256_lf": "0806ba7eb7134f182d980eef6977abacb2def757d0b7292101eee26281e9e0d9",
-      "family": "rotation-converter-calculation",
-      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-UI-PYQT6-PLOT-HELPERS-PY-9C9A231E84E1",
-      "language": "python",
-      "maintainer": "Rotation converter maintainers",
-      "path": "src/rotation_converter/ui/pyqt6/plot_helpers.py",
-      "purpose": "Shared plot helpers for rotation converter tabs.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "EULER_CONVENTIONS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_AXIS_COLORS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_DARK_ACCENT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_DARK_BG",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_DARK_FG",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_DARK_SURFACE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_THEME_AVAILABLE",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "fmt_mat",
-            "signature": "M: np.ndarray, decimals: int=6"
-          },
-          {
-            "kind": "function",
-            "name": "fmt_vec",
-            "signature": "v: np.ndarray, decimals: int=6"
-          },
-          {
-            "kind": "function",
-            "name": "get_plot_colors",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "parse_vec",
-            "signature": "text: str"
-          },
-          {
-            "kind": "function",
-            "name": "style_figure",
-            "signature": "fig: Figure, ax: Any=None"
-          }
-        ],
-        "test_paths": [
-          "tests/rotation_converter/test_plot_helpers.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 6547,
-      "classification": "calculation",
-      "classification_basis": "path-marker:rotation",
-      "content_sha256_lf": "edd5d481ac93aace8256747ab9931072b75f6c98f79895b100f0f8da87ee0454",
-      "family": "rotation-converter-calculation",
-      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-UI-PYQT6-REFERENCE-FRAME-TAB-PY-F4639D56FD4D",
-      "language": "python",
-      "maintainer": "Rotation converter maintainers",
-      "path": "src/rotation_converter/ui/pyqt6/reference_frame_tab.py",
-      "purpose": "PyQt6 tab for educational reference-frame conversion operations.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ReferenceFrameTab",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_OPS",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 10205,
-      "classification": "calculation",
-      "classification_basis": "path-marker:rotation",
-      "content_sha256_lf": "1900c6c5813ae9a016e24a8aea5e7ceb796d535fea75bacbd1ade480ee405f30",
-      "family": "rotation-converter-calculation",
-      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-UI-PYQT6-RIGID-TRANSFORM-TAB-PY-E74D4E22C657",
-      "language": "python",
-      "maintainer": "Rotation converter maintainers",
-      "path": "src/rotation_converter/ui/pyqt6/rigid_transform_tab.py",
-      "purpose": "Rigid Transform Tab — frame-aware SE(3) conversions with body/space twist display.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "RigidTransformTab",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "deg",
-          "g",
-          "rad",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 10731,
-      "classification": "calculation",
-      "classification_basis": "path-marker:rotation",
-      "content_sha256_lf": "e1ea61e6cd6f5e8afdf71944d6a7795aceadc782f35295950ae4a500daff6530",
-      "family": "rotation-converter-calculation",
-      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-UI-PYQT6-ROTATION-TAB-PY-E130118FCE67",
-      "language": "python",
-      "maintainer": "Rotation converter maintainers",
-      "path": "src/rotation_converter/ui/pyqt6/rotation_tab.py",
-      "purpose": "Rotation Converter Tab — live pairwise conversion between all representations.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "RotationConverterTab",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "deg",
-          "g",
-          "rad"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 6629,
-      "classification": "calculation",
-      "classification_basis": "path-marker:rotation",
-      "content_sha256_lf": "25db270e59350b8efbe795717b6b525afae923fa2b1735bb11196a2b13e97260",
-      "family": "rotation-converter-calculation",
-      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-UI-PYQT6-SCREW-VISUALISER-TAB-PY-CD06AF1EF3BD",
-      "language": "python",
-      "maintainer": "Rotation converter maintainers",
-      "path": "src/rotation_converter/ui/pyqt6/screw_visualiser_tab.py",
-      "purpose": "Screw Axis Visualiser Tab — interactive 3D screw axis animation.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ScrewVisualiserTab",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
         "validation_paths": []
       }
     }

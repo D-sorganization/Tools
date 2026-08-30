@@ -3,6 +3,372 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 474,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "3c9da543e154fd8a708fd4bdb21827fe9d7d7f206d2a82b7c29cc9ccc14c44c2",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-STEAM-ENGINE-CALCULATOR-INIT-PY-C8C97E353374",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/steam_engine_calculator/__init__.py",
+      "purpose": "Compatibility package for the steam engine calculator.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 312,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "0e7209560abb79f89e92a361b748e70beecca32c8752ad8371499364a816530a",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-STEAM-ENGINE-CALCULATOR-CONFTEST-PY-02AC9AE16483",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/steam_engine_calculator/conftest.py",
+      "purpose": "Root conftest for steam_engine_calculator — sets up PYTHONPATH.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "src/data_processing/data_processor/python/tests/conftest.py",
+          "src/document_processing/pdf_renamer/tests/conftest.py",
+          "src/movement_optimizer/tests/conftest.py",
+          "src/p1am_control_system/backend/tests/conftest.py",
+          "src/pendulum_simulator/tests/conftest.py",
+          "src/shared/python/sidekick/tests/conftest.py",
+          "src/signal_processing_studio/tests/conftest.py",
+          "src/urdf_builder_gui/tests/conftest.py",
+          "src/vessel_drafter/tests/conftest.py",
+          "src/web_applications/urdf_viewer/tests/conftest.py",
+          "tests/benchmarks/conftest.py",
+          "tests/conftest.py",
+          "tests/e2e/conftest.py",
+          "tests/integration/conftest.py",
+          "tests/ode_solver/conftest.py",
+          "tests/p1am_control_system/conftest.py",
+          "tests/pendulum_simulator/conftest.py",
+          "tests/rate_of_closure/conftest.py",
+          "tests/shared/python/sidekick/process_calculators/conftest.py",
+          "tests/solar_system_model/conftest.py",
+          "tests/tools/folder_tools/conftest.py",
+          "tests/unit/ai/integrations/conftest.py",
+          "tests/unit/ai/integrations/github_mcp/conftest.py",
+          "tests/unit/ai/mcp/conftest.py",
+          "tests/unit/chat/conftest.py",
+          "tests/unit/codemap/conftest.py",
+          "tests/unit/lower_body_model/conftest.py",
+          "tests/unit/sidekick/conftest.py",
+          "tests/vessel_drafter/conftest.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 927,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "82c9b39241a5b73ca78ce24b0716833a3b06a4d4995f389531f463e8429762bc",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-STEAM-ENGINE-CALCULATOR-GUI-REGISTRATION-PY-ABD3C8D00041",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/steam_engine_calculator/gui_registration.py",
+      "purpose": "GUI registration for Steam Engine Calculator.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "GUI_INFO",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GUI_METADATA",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_gui_info",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_gui_registration.py",
+          "tests/rate_of_closure/test_gui_registration.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 367,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "76de73ec7e9a2586f8a029fee1dda40a412caf99652b59382a0f8bbe5676162b",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-STEAM-ENGINE-CALCULATOR-LAUNCH-PYQT6-PY-7F4A38B75815",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/steam_engine_calculator/launch_pyqt6.py",
+      "purpose": "Standalone PyQt6 launcher for Steam Engine Calculator.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/folder_tool/test_launch_pyqt6.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 137,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "462b1595832e8bc94f6e219cea1b9859ca7fd5b462b7411a5ab8624de2742b40",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-STEAM-ENGINE-CALCULATOR-PYTHON-STEAM-ENGINE-CALCULATOR-INIT-PY-9CC6CE446038",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/steam_engine_calculator/python/steam_engine_calculator/__init__.py",
+      "purpose": "Steam Engine Calculator",
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 5983,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "c95e337a678990016eb0081e107a58f1757bd89edd6dd52e0f2ca678bcb55639",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-STEAM-ENGINE-CALCULATOR-PYTHON-STEAM-ENGINE-CALCULATOR-API-PY-70C28A2D556A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/steam_engine_calculator/python/steam_engine_calculator/api.py",
+      "purpose": "FastAPI backend for Steam Engine Calculator.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "mapped",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [
+          "/api/steam/calculate",
+          "/health"
+        ],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CalculationMode",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SteamRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SteamResponse",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "calculate_steam",
+            "signature": "request: SteamRequest"
+          },
+          {
+            "kind": "function",
+            "name": "health",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/test_phase2_critical_bugs.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 29,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
