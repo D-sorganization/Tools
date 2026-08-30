@@ -1,6 +1,6 @@
 import type { PendulumParams, State } from './physics';
 
-export const FORCE_SOURCE_SCHEMA = 'force-source-comparison/v1' as const;
+export const FORCE_SOURCE_SCHEMA = 'force-source-comparison/v2' as const;
 
 export const FORCE_SOURCE_OBJECTIVES = [
     'coriolis_impulse',
@@ -17,8 +17,8 @@ export type SearchThoroughness = 'quick' | 'thorough' | 'research';
 export const OBJECTIVE_LABELS: Record<ForceSourceObjective, string> = {
     coriolis_impulse: 'Coriolis impulse',
     coriolis_energy_transfer: 'Coriolis energy transfer',
-    centrifugal_impulse: 'Squared-speed impulse',
-    centrifugal_energy_transfer: 'Squared-speed energy transfer',
+    centrifugal_impulse: 'Centrifugal (squared-speed) impulse',
+    centrifugal_energy_transfer: 'Centrifugal (squared-speed) energy transfer',
     clubhead_speed: 'Clubhead speed',
     hand_path_impulse: 'Hand-path force impulse',
 };
@@ -63,6 +63,9 @@ export const DEFAULT_OPTIMIZATION_CONSTRAINTS: ForceSourceConstraints = {
     posePerturbationDeg: 1,
     torquePerturbationFraction: 0.03,
 };
+
+/** Registered golf-like address for the bundled force-source comparison. */
+export const DEFAULT_FORCE_SOURCE_INITIAL_STATE: State = [-2.2, -1.57, 0, 0];
 
 export interface BrowserOptimizationConfig {
     params: PendulumParams;
@@ -132,7 +135,14 @@ export interface ForceSourceScenario {
     boundary_hits: string[];
     convergence: number[];
     series: ForceSourceSeries;
+    comparison_contract_id: string;
     provenance?: Record<string, unknown>;
+}
+
+export interface ForceSourceComparisonContract {
+    id: string;
+    thoroughness: SearchThoroughness;
+    constraints: ForceSourceConstraints;
 }
 
 export interface ForceSourceArtifact {
@@ -148,6 +158,7 @@ export interface ForceSourceArtifact {
     };
     parameters?: PendulumParams;
     search_profile: Record<string, unknown>;
+    comparison_contract: ForceSourceComparisonContract;
     evaluated_count: number;
     qualified_count: number;
     qualification_counts?: Record<string, number>;

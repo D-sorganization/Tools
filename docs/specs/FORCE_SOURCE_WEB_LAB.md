@@ -26,6 +26,19 @@ candidate budget is explicit rather than hidden behind the depth name. Winning
 programs are rerun under start-pose and torque perturbations; the cards report
 the fraction that still qualifies.
 
+Every scenario in one comparison carries the same versioned contract ID. The
+contract covers the initial state, model parameters, all constraints, candidate
+budget, integration step, robustness settings, and search depth. Changing any
+of those inputs starts a new comparison instead of retaining stale rows. After
+the independent searches finish, every winning candidate is evaluated against
+every displayed objective. An artifact is rejected if an objective's own row
+loses to another displayed row. This is a displayed-candidate certification,
+not a proof of the mathematical global optimum.
+
+Imported candidates must also fall on the torque and onset grids declared by
+that contract. Impact diagnostics are checked against the contract's selected
+path-angle and bottom-reach thresholds, not hidden default thresholds.
+
 ## Impact Qualification
 
 The first forward crossing is the only eligible impact. Before that event:
@@ -43,11 +56,20 @@ of human feasibility.
 ## Comparison Frame and Playback
 
 `Fixed hub` is the default and places every model shoulder at the same SVG point
-and uses one scale. The physical hub is fixed in every simulation. The optional
-impact-aligned view translates each card's camera so impact tips coincide; it
-does not alter dynamics and may make hubs appear to drift. Playback uses
+and uses one scale and one registered starting pose. Fixed-hub cards show only
+the physical hub, wrist, links, and clubhead; they do not show an impact target
+or reference line. The optional impact-aligned view translates each card's
+camera so impact tips coincide at a labelled camera-only crosshair; it does not
+alter dynamics and may make hubs appear to drift. Playback uses
 continuous interpolation on `requestAnimationFrame`, rate controls from 0.05×
 to 3×, and a 0.25 ms scrubber.
+
+The energy channels have an explicit interface meaning. Coriolis transfer is
+the power drained from the proximal arm, while centrifugal (squared-speed)
+transfer is power delivered at the distal wrist coordinate. In the declared
+relative-wrist coordinates they satisfy
+`P_coriolis_to_distal = 2 * P_centrifugal_to_distal` at every sample. A unit
+test pins both the sign and this identity.
 
 ## Hand-Path Impulse
 
@@ -68,31 +90,29 @@ and the repository's rank-aware mapping contract in
 
 ## Interpretation of the Registered Comparison
 
-The five historical scenarios in the checked-in artifact produce impact speeds
-of roughly 24.5–36.8 m/s; the reproducible research-depth hand-path scenario
-reaches 38.0 m/s. Those values are mechanically plausible for a simplified club
-model, but they are not a validated human-performance range. The canonical
-inertia-matched two-link study reaches 49.7 m/s under a different torque budget
-and club representation. Agreement in proximal-to-distal release and sensitivity
-to wrist-torque timing is consistent with other double-pendulum studies;
-numerical speed equality is not expected unless mass, inertia, initial pose,
-torques, duration, coordinates, and impact event all match.
-
-The historical registered comparison also shows that some apparent winners are fragile:
-three of five have held-out qualification rates near 52–56%, one reaches 89%,
-and one reaches 100%. Boundary hits and qualification rate must accompany any
-claim about the best objective.
+The checked-in version-2 artifact runs all six objectives under one research
+contract: 512 deterministic global candidates, 1 ms integration, 0.5 N m wrist
+granularity, and 25 held-out robustness trials. The certified clubhead-speed
+winner reaches about 38.33 m/s, while the hand-path-impulse winner reaches about
+38.03 m/s. The Coriolis impulse and the two energy-transfer objectives select
+the same displayed candidate as clubhead speed; centrifugal release impulse is
+slower at about 30.93 m/s. These values are mechanically plausible for this
+simplified club model, but they are not a validated human-performance range.
+The canonical inertia-matched two-link study reaches 49.7 m/s under a different
+torque budget and club representation. Boundary hits and qualification rates
+must accompany any ranking claim.
 
 ## Architecture
 
 - `forceSourceTypes.ts` owns the schema and user-visible constraints.
 - `forceSourceOptimization.ts` owns validation, deterministic search,
   qualification, scoring, and robustness.
-- `forceSourceArtifact.ts` owns fail-closed artifact parsing and updates.
+- `forceSourceArtifact.ts` owns version-2 contract identity, cross-objective
+  dominance validation, fail-closed parsing, and contract-aware updates.
 - `forceSourceView.ts` owns interpolation and explicit camera alignment.
 - `ForceSourceLab.tsx` coordinates state and commands.
 - `ForceSourceResults.tsx` renders animations and supplemental plots.
 
 Physics remains in `physics.ts`; React components do not implement equations of
-motion. Version-1 artifacts remain readable because the new hand-path force
-series is additive and optional for the five historical scenarios.
+motion. Version-1 mixed-contract artifacts are intentionally rejected rather
+than silently promoted to comparable evidence.

@@ -4,6 +4,7 @@ import {
     gripForceAlongHandPath,
     jointVelocities,
     runSimulation,
+    type ForceSourceTerms,
     type PendulumParams,
     type State,
     type TorqueFunc,
@@ -14,6 +15,7 @@ import {
     type BrowserOptimizationConfig,
     type BrowserOptimizationProgress,
     type ForceSourceCandidate,
+    type ForceSourceComparisonContract,
     type ForceSourceConstraints,
     type ForceSourceObjective,
     type ForceSourceScenario,
@@ -30,6 +32,50 @@ interface EvaluatedCandidate {
 
 const radians = (degrees: number) => degrees * Math.PI / 180;
 const degrees = (value: number) => value * 180 / Math.PI;
+const OBJECTIVE_TOLERANCE = 1e-10;
+
+function contractChecksum(value: string): string {
+    let hash = 0x811c9dc5;
+    for (let index = 0; index < value.length; index++) {
+        hash ^= value.charCodeAt(index);
+        hash = Math.imul(hash, 0x01000193);
+    }
+    return (hash >>> 0).toString(16).padStart(8, '0');
+}
+
+function contractPayload(config: BrowserOptimizationConfig): unknown[] {
+    const c = config.constraints;
+    const p = config.params;
+    return [
+        config.initialState,
+        [p.m1, p.m2, p.mClub, p.L1, p.L2, p.g, p.b1, p.b2, p.mu1, p.mu2],
+        config.thoroughness,
+        [
+            c.shoulderTorqueNm.min, c.shoulderTorqueNm.max, c.shoulderTorqueNm.step,
+            c.wristTorqueLimitNm, c.wristTorqueStepNm,
+            c.onsetS.min, c.onsetS.max, c.onsetS.step,
+            c.armAngleDeg.min, c.armAngleDeg.max,
+            c.wristAngleDeg.min, c.wristAngleDeg.max,
+            c.maxImpactPathAngleDeg, c.minBottomReachFraction,
+            c.simulationDurationS, c.integrationStepS,
+            c.maxArmTravelDeg, c.maxClubTravelDeg,
+            c.candidateBudget, c.robustnessTrials,
+            c.posePerturbationDeg, c.torquePerturbationFraction,
+        ],
+    ];
+}
+
+/** Build the immutable contract shared by every scenario in a fair comparison. */
+export function buildOptimizationContract(
+    config: BrowserOptimizationConfig,
+): ForceSourceComparisonContract {
+    validateBrowserOptimizationConfig(config);
+    return {
+        id: `force-source-search/v1-${contractChecksum(JSON.stringify(contractPayload(config)))}`,
+        thoroughness: config.thoroughness,
+        constraints: structuredClone(config.constraints),
+    };
+}
 
 function validateRange(range: NumericRange, name: string): void {
     if (![range.min, range.max, range.step].every(Number.isFinite)) {
@@ -162,19 +208,31 @@ function emptySeries(): ForceSourceSeries {
     };
 }
 
+/** Energy crossing from the proximal arm into the distal coordinate. */
+export function forceSourceTransferPowers(
+    sources: ForceSourceTerms,
+    state: State,
+): { coriolis_to_distal_w: number; centrifugal_to_distal_w: number } {
+    return {
+        coriolis_to_distal_w: -sources.coriolis[0] * state[2],
+        centrifugal_to_distal_w: sources.squaredSpeed[1] * state[3],
+    };
+}
+
 function appendSample(series: ForceSourceSeries, state: State, time: number, config: BrowserOptimizationConfig, torque: TorqueFunc): void {
     const control = torque(time);
     const sources = generalizedForceSources(state, config.params, control);
     const acceleration = computeAccelerations(state, time, config.params, torque);
     const hand = gripForceAlongHandPath(state, acceleration, config.params);
+    const transfer = forceSourceTransferPowers(sources, state);
     series.time_s.push(time); series.arm_angle_rad.push(state[0]); series.wrist_cock_rad.push(state[1]);
     series.arm_angular_velocity_rad_s.push(state[2]); series.wrist_angular_velocity_rad_s.push(state[3]);
     series.shoulder_torque_nm.push(control[0]); series.wrist_torque_nm.push(control[1]);
     series.clubhead_speed_m_s.push(jointVelocities(state, config.params).tipSpeed);
     series.coriolis_tangent_force_n.push(sources.coriolis[0] / config.params.L1);
-    series.coriolis_power_w.push(sources.coriolis[0] * state[2] + sources.coriolis[1] * state[3]);
+    series.coriolis_power_w.push(transfer.coriolis_to_distal_w);
     series.squared_speed_tangent_force_n.push(sources.squaredSpeed[0] / config.params.L1);
-    series.squared_speed_power_w.push(sources.squaredSpeed[0] * state[2] + sources.squaredSpeed[1] * state[3]);
+    series.squared_speed_power_w.push(transfer.centrifugal_to_distal_w);
     series.hand_path_tangent_force_n?.push(hand.tangentForceN ?? 0);
 }
 
@@ -183,7 +241,9 @@ function trapezoid(values: number[], time: number[]): number {
         sum + 0.5 * (values[index] + value) * (time[index + 1] - time[index]), 0);
 }
 
-function scoreSeries(series: ForceSourceSeries): Record<ForceSourceObjective, number> {
+export function scoreForceSourceSeries(
+    series: ForceSourceSeries,
+): Record<ForceSourceObjective, number> {
     return {
         coriolis_impulse: trapezoid(series.coriolis_tangent_force_n.map(Math.abs), series.time_s),
         coriolis_energy_transfer: trapezoid(series.coriolis_power_w, series.time_s),
@@ -215,10 +275,11 @@ function evaluateCandidate(config: BrowserOptimizationConfig, candidate: ForceSo
     if (impactIndex === null) return null;
     const series = emptySeries();
     for (let index = 0; index <= impactIndex; index++) appendSample(series, simulation.states[index], simulation.t[index], config, torque);
-    const score = scoreSeries(series)[config.objective];
+    const score = scoreForceSourceSeries(series)[config.objective];
     const robustness = summarizeRobustness([score]);
     return { score, candidate, scenario: {
         objective: config.objective, score, candidate,
+        comparison_contract_id: buildOptimizationContract(config).id,
         impact_time_s: series.time_s[series.time_s.length - 1] ?? 0,
         impact_diagnostics: impactDiagnostics(simulation.states[impactIndex], config.params),
         robustness, near_optimal_count: 1, boundary_hits: [], convergence: [score], series,
@@ -324,7 +385,8 @@ export async function optimizeForceSource(
     }
     best.scenario.convergence = convergence;
     best.scenario.robustness = await evaluateRobustness(best, config);
-    best.scenario.near_optimal_count = qualifiedScores.filter(score => score >= 0.99 * best.score).length;
+    const nearOptimalFloor = best.score - 0.01 * Math.max(Math.abs(best.score), 1);
+    best.scenario.near_optimal_count = qualifiedScores.filter(score => score >= nearOptimalFloor).length;
     best.scenario.boundary_hits = boundaryHits(best.candidate, config.constraints);
     best.scenario.provenance = {
         runtime: 'Tools pendulum-web deterministic search',
@@ -335,4 +397,84 @@ export async function optimizeForceSource(
         integration_step_s: config.constraints.integrationStepS,
     };
     return best.scenario;
+}
+
+function candidateKey(candidate: ForceSourceCandidate): string {
+    return [
+        candidate.shoulder_torque_nm,
+        candidate.wrist_drive_nm,
+        candidate.wrist_restrain_nm,
+        candidate.onset_s,
+    ].join('|');
+}
+
+async function finalizedCrossWinner(
+    evaluated: EvaluatedCandidate,
+    original: ForceSourceScenario,
+    config: BrowserOptimizationConfig,
+    scores: number[],
+): Promise<ForceSourceScenario> {
+    const scenario = evaluated.scenario;
+    scenario.convergence = [...original.convergence, evaluated.score];
+    scenario.robustness = await evaluateRobustness(evaluated, config);
+    const floor = evaluated.score - 0.01 * Math.max(Math.abs(evaluated.score), 1);
+    scenario.near_optimal_count = scores.filter(score => score >= floor).length;
+    scenario.boundary_hits = boundaryHits(evaluated.candidate, config.constraints);
+    scenario.provenance = {
+        ...original.provenance,
+        comparison_contract_id: buildOptimizationContract(config).id,
+        cross_objective_certified: true,
+        cross_objective_candidate_count: scores.length,
+    };
+    return scenario;
+}
+
+/**
+ * Optimize requested objectives and certify every winner against every displayed
+ * candidate. This guarantees that an objective cannot lose to another row in
+ * the same comparison, while making no claim of a mathematical global optimum.
+ */
+export async function optimizeForceSourceComparison(
+    config: Omit<BrowserOptimizationConfig, 'objective'>,
+    objectives: readonly ForceSourceObjective[] = FORCE_SOURCE_OBJECTIVES,
+    seedScenarios: readonly ForceSourceScenario[] = [],
+    onProgress?: (progress: BrowserOptimizationProgress) => void,
+): Promise<ForceSourceScenario[]> {
+    if (objectives.length === 0) throw new RangeError('at least one objective is required');
+    const contractId = buildOptimizationContract({ ...config, objective: objectives[0] }).id;
+    const retained = seedScenarios.filter(item => item.comparison_contract_id === contractId);
+    const byObjective = new Map(retained.map(item => [item.objective, item]));
+    for (const objective of objectives) {
+        const scenario = await optimizeForceSource(
+            { ...config, objective },
+            progress => onProgress?.({ ...progress, objective }),
+        );
+        byObjective.set(objective, scenario);
+    }
+
+    const candidates = [...new Map(
+        [...byObjective.values()].map(item => [candidateKey(item.candidate), item.candidate]),
+    ).values()];
+    for (const [objective, original] of byObjective) {
+        const objectiveConfig: BrowserOptimizationConfig = { ...config, objective };
+        const evaluated = candidates
+            .map(candidate => evaluateCandidate(objectiveConfig, candidate))
+            .filter((item): item is EvaluatedCandidate => item !== null);
+        if (evaluated.length === 0) continue;
+        const best = evaluated.reduce((winner, item) => item.score > winner.score ? item : winner);
+        const scores = evaluated.map(item => item.score);
+        if (best.score > original.score + OBJECTIVE_TOLERANCE) {
+            byObjective.set(objective, await finalizedCrossWinner(best, original, objectiveConfig, scores));
+        } else {
+            original.provenance = {
+                ...original.provenance,
+                comparison_contract_id: contractId,
+                cross_objective_certified: true,
+                cross_objective_candidate_count: scores.length,
+            };
+        }
+    }
+    return FORCE_SOURCE_OBJECTIVES
+        .filter(objective => byObjective.has(objective))
+        .map(objective => byObjective.get(objective) as ForceSourceScenario);
 }

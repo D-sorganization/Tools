@@ -835,6 +835,43 @@ body {
   height: 100%;
 }
 
+.force-source-animation-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin: 0 0 8px;
+  color: #9aa7be;
+  font-size: 0.7rem;
+}
+
+.force-source-animation-key span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.force-source-marker {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #b58cff;
+}
+
+.force-source-marker--hub {
+  background: #111522;
+  border: 2px solid #eaf0ff;
+}
+
+.force-source-marker--wrist {
+  background: #ffbd4a;
+}
+
+.force-source-marker--camera {
+  border-radius: 0;
+  background: linear-gradient(45deg, transparent 43%, #8b96ad 44% 56%, transparent 57%);
+}
+
 .force-source-animation-grid dl {
   display: grid;
   gap: 5px;

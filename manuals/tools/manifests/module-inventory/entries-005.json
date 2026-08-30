@@ -5052,10 +5052,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 1491,
+      "bytes_lf": 1155,
       "classification": "calculation",
       "classification_basis": "path-marker:force",
-      "content_sha256_lf": "f9fe28e63efbb7bf7d231eb5ddf2c83e8fd2e228cc9848da130f0dafa8b8ca8e",
+      "content_sha256_lf": "236bd03ff969bc8bf7c8e26a7191e19907788e59977c61909ea7ea8287d73a68",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SCRIPTS-GENERATEFORCESOURCECOMPARISON-TS-EB8D8978E15D",
       "language": "typescript",
@@ -5249,10 +5249,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 18658,
+      "bytes_lf": 19306,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "890019401492352ca5d77df9a75b1695abeffaff62202c47ea9c231d438bfb57",
+      "content_sha256_lf": "519a7197c622709fbc64cb297b7089dd10c801fd6fe0c7e2a76599a1f8a8f264",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-APP-CSS-F6FE792BCAFE",
       "language": "css",
@@ -5653,10 +5653,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 18673,
+      "bytes_lf": 19581,
       "classification": "calculation",
       "classification_basis": "path-marker:force",
-      "content_sha256_lf": "b75f3cd61d1790f5d0a6b89251505ce3fd784a5651ff8159f1af0f0e4bb19418",
+      "content_sha256_lf": "85124f35189fab0de283014e4e45cecb39d9bb40076ccfecb9f2f2c45bfdb1d3",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-COMPONENTS-FORCESOURCELAB-TSX-C5EBC30CB892",
       "language": "typescript-react",
@@ -5712,10 +5712,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 7995,
+      "bytes_lf": 9018,
       "classification": "calculation",
       "classification_basis": "path-marker:force",
-      "content_sha256_lf": "57fcc57def627ac31e178f3ae464795f0f05445e21ead54bd0ddc99cefdd9f62",
+      "content_sha256_lf": "61e27f20c7c0c52639943ae8696f93cd3b992248b10347d3ba9f03c95dd08299",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-COMPONENTS-FORCESOURCERESULTS-TSX-121C5F9A2F73",
       "language": "typescript-react",
@@ -5770,6 +5770,7 @@
           "J",
           "N",
           "N m",
+          "g",
           "m/s",
           "s"
         ],
@@ -6233,10 +6234,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 5478,
+      "bytes_lf": 11598,
       "classification": "calculation",
       "classification_basis": "path-marker:force",
-      "content_sha256_lf": "ab94616167f04416082f21945d5e8443c013b35b71f6100d686ba20ccfb0101b",
+      "content_sha256_lf": "6d73b701bd6702952cf51548491ce1ce973084f9dfe43fa369b6e71071e5e81a",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-FORCESOURCEARTIFACT-TS-20BDD5DAD377",
       "language": "typescript",
@@ -6277,7 +6278,7 @@
         "public_surfaces": [
           {
             "kind": "export",
-            "name": "artifactWithScenario",
+            "name": "artifactWithScenarios",
             "signature": null
           },
           {
@@ -6288,17 +6289,17 @@
         ],
         "test_paths": [],
         "unit_mentions": [
-          "N m"
+          "g"
         ],
         "validation_paths": []
       }
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 18276,
+      "bytes_lf": 24255,
       "classification": "calculation",
       "classification_basis": "path-marker:force",
-      "content_sha256_lf": "11967b2cf820af7b8fbbc9745667ab67194e479c6d81fada9240632710f677de",
+      "content_sha256_lf": "aac774c6d40cd5857f7e005804e743ae53253a95e426278a1d078f26c9337aa3",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-FORCESOURCEOPTIMIZATION-TS-F6C0040C15CC",
       "language": "typescript",
@@ -6344,12 +6345,32 @@
           },
           {
             "kind": "export",
+            "name": "buildOptimizationContract",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "forceSourceTransferPowers",
+            "signature": null
+          },
+          {
+            "kind": "export",
             "name": "golfLikeImpactIndex",
             "signature": null
           },
           {
             "kind": "export",
             "name": "optimizeForceSource",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "optimizeForceSourceComparison",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "scoreForceSourceSeries",
             "signature": null
           },
           {
@@ -6365,7 +6386,8 @@
         ],
         "test_paths": [],
         "unit_mentions": [
-          "N m"
+          "N m",
+          "g"
         ],
         "validation_paths": []
       }
@@ -6419,10 +6441,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 4691,
+      "bytes_lf": 5114,
       "classification": "calculation",
       "classification_basis": "path-marker:force",
-      "content_sha256_lf": "ce36e44ce6a1565feefb7a0b3de65ce933174c45f2853ebb5f1481b79c90e02a",
+      "content_sha256_lf": "e4875e49b99e47fced32138587a63774f87466c7905ca51c7aa2b936e24cbd36",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-FORCESOURCETYPES-TS-CB8CFD999104",
       "language": "typescript",
@@ -6478,6 +6500,11 @@
           },
           {
             "kind": "export",
+            "name": "DEFAULT_FORCE_SOURCE_INITIAL_STATE",
+            "signature": null
+          },
+          {
+            "kind": "export",
             "name": "DEFAULT_OPTIMIZATION_CONSTRAINTS",
             "signature": null
           },
@@ -6499,6 +6526,11 @@
           {
             "kind": "export",
             "name": "ForceSourceCandidate",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ForceSourceComparisonContract",
             "signature": null
           },
           {

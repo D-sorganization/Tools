@@ -3,11 +3,12 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { ForceSourceResults, OBJECTIVE_COLORS } from './ForceSourceResults';
 import { wrappedDegrees, type AnimationAlignment } from '../forceSourceView';
 import {
-    artifactWithScenario,
+    artifactWithScenarios,
+    buildOptimizationContract,
     DEFAULT_OPTIMIZATION_CONSTRAINTS,
     FORCE_SOURCE_OBJECTIVES,
     OBJECTIVE_LABELS,
-    optimizeForceSource,
+    optimizeForceSourceComparison,
     parseForceSourceArtifact,
     type ForceSourceArtifact,
     type ForceSourceConstraints,
@@ -96,14 +97,30 @@ export function ForceSourceLab({ params, initialState, onUsePose }: ForceSourceL
 
     const runObjectives = async (objectives: readonly ForceSourceObjective[]) => {
         setRunning(true); setMessage(null);
-        let current = artifact;
         try {
-            for (const requested of objectives) {
-                const scenario = await optimizeForceSource({ params, initialState: optimizationState(), objective: requested, thoroughness, constraints }, update => {
-                    setProgress({ ...update, label: OBJECTIVE_LABELS[requested] });
-                });
-                current = artifactWithScenario(current, scenario, optimizationState(), params);
-                setArtifact(current); setSelected(previous => new Set([...previous, requested]));
+            if (objectives.length === 0) throw new RangeError('Select at least one objective');
+            const initialState = optimizationState();
+            const baseConfig = { params, initialState, thoroughness, constraints };
+            const contract = buildOptimizationContract({ ...baseConfig, objective: objectives[0] });
+            const changedContract = artifact !== null && artifact.comparison_contract.id !== contract.id;
+            const scenarios = await optimizeForceSourceComparison(
+                baseConfig,
+                objectives,
+                artifact?.scenarios ?? [],
+                update => setProgress({
+                    ...update,
+                    label: OBJECTIVE_LABELS[update.objective ?? objectives[0]],
+                }),
+            );
+            const current = artifactWithScenarios(
+                artifact,
+                scenarios,
+                { ...baseConfig, objective: objectives[0] },
+            );
+            setArtifact(current);
+            setSelected(new Set(current.scenarios.map(item => item.objective)));
+            if (changedContract) {
+                setMessage('Started a new comparison because the pose or search contract changed; stale scenarios were removed.');
             }
             setTime(0);
         } catch (error) {
@@ -193,7 +210,7 @@ export function ForceSourceLab({ params, initialState, onUsePose }: ForceSourceL
         {message && <div className="error-box">{message}</div>}
 
         {artifact && <>
-            <div className="force-source-provenance"><span>{artifact.model}</span><span>Coordinates: shoulder absolute / wrist relative</span><span>{artifact.scenarios.length}/6 objectives available</span><button className="force-source-text-button" onClick={exportArtifact}>Export current study JSON</button></div>
+            <div className="force-source-provenance"><span>{artifact.model}</span><span>Coordinates: shoulder absolute / wrist relative</span><span>Contract: {artifact.comparison_contract.id}</span><span>{artifact.scenarios.length}/6 certified objectives</span><button className="force-source-text-button" onClick={exportArtifact}>Export current study JSON</button></div>
             <div className="force-source-scenario-toggles" aria-label="Visible optimization scenarios">{artifact.scenarios.map(item => <label key={item.objective} style={{ borderColor: OBJECTIVE_COLORS[item.objective] }}><input type="checkbox" checked={selected.has(item.objective)} onChange={() => toggleScenario(item.objective)} />{OBJECTIVE_LABELS[item.objective]}</label>)}</div>
             <div className="force-source-playback">
                 <button className="btn btn-secondary" onClick={() => setPlaying(value => !value)}>{playing ? 'Pause' : 'Play'}</button>
@@ -202,8 +219,8 @@ export function ForceSourceLab({ params, initialState, onUsePose }: ForceSourceL
                 <input aria-label="Comparison time" type="range" min="0" max={Math.max(maxTime, 0.001)} step="0.00025" value={Math.min(time, maxTime)} onChange={event => { setTime(Number(event.target.value)); setPlaying(false); }} />
                 <output>{time.toFixed(4)} s</output>
             </div>
-            <p className="force-source-frame-note">{alignment === 'fixed_hub' ? 'One common hub and scale across every animation.' : 'Impact-aligned camera: the physical hub remains fixed in the model, but each card is translated for visual impact registration.'}</p>
-            <ForceSourceResults scenarios={visible} time={time} params={params} alignment={alignment} />
+            <p className="force-source-frame-note">{alignment === 'fixed_hub' ? 'Fixed physical frame: every card uses the same shoulder hub, scale, and registered starting pose. No impact-camera guides are shown.' : 'Impact-aligned camera: each card is translated so its impact reaches the camera crosshair; this is not physical hub motion.'}</p>
+            <ForceSourceResults scenarios={visible} time={time} params={artifact.parameters ?? params} alignment={alignment} />
             <aside className="force-source-caveat"><strong>Interpretation boundary.</strong> {artifact.interpretation_limits.join(' ')}</aside>
         </>}
     </section>;
