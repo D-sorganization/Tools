@@ -11,11 +11,14 @@ const COHORTS: WindOutcomeStatus[] = ["completed", "nonconverged", "invalid"];
 
 const bounds = (values: number[]): [number, number] => {
   if (!values.length) return [-1, 1];
-  let low = values[0];
-  let high = values[0];
+  // ⚡ Bolt Optimization: Calculate bounds dynamically in a single pass to avoid spreading large arrays
+  // on the call stack, which causes "Maximum call stack size exceeded" errors and heavy GC pressure.
+  let low = values[0] ?? 0;
+  let high = values[0] ?? 0;
   for (let i = 1; i < values.length; i++) {
-    if (values[i] < low) low = values[i];
-    if (values[i] > high) high = values[i];
+    const value = values[i] as number;
+    if (value < low) low = value;
+    if (value > high) high = value;
   }
   const padding = Math.max((high - low) * 0.08, Math.max(Math.abs(low), 1) * 1e-6);
   return [low - padding, high + padding];
