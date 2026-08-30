@@ -27,10 +27,21 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.90                                    |
+| **Spec Version**        | 1.18.91                                    |
 | **Last Spec Update**    | 2026-08-30                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-30 Registered Force-Source Animation Frames
+
+Version 1.18.91 makes the fixed-hub comparison visually and numerically
+registered. Every objective card reserves the same three-line title row and
+undistorted 192 by 176 animation stage; fixed-hub playback keeps the shoulder at
+SVG coordinate (96, 88), while the common comparison target and horizontal
+reference remain at (150, 148). Impact-aligned playback remains an explicit
+alternative and registers each scenario impact at that same target. Rendered
+SVG and layout regression tests cover all six objectives, both camera modes,
+and playback times before, within, and after the simulated trajectory.
 
 ### 2026-08-30 Configurable Six-Objective Force-Source Lab
 
@@ -5623,6 +5634,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-30 | 1.18.91 | fix(pendulum): register every force-source animation in one undistorted 192 by 176 stage with a fixed three-line title row; keep fixed-hub playback at (96, 88), distinguish the common (150, 148) comparison target from each scenario's measured impact location, and cover all six objectives, both camera modes, and playback boundaries in rendered regression tests. |
 | 2026-08-30 | 1.18.90 | feat(pendulum): make the force-source workspace scrollable; add a fixed-hub default frame, direct pose and constraint entry, deterministic quick/thorough/research searches, 30 N m wrist limits with user-selected granularity, held-out robustness, and the sixth signed hand-path impulse objective; retain synchronized high-resolution animations and clubhead-speed/shoulder-torque/wrist-torque plots with golf-like single-pass qualification. |
 | 2026-08-29 | 1.18.89 | docs(handoff): refresh the P1AM bench turnover against protected main, record that PRs #3078/#3081 are merged, retain the dated live-hardware evidence boundary, and require bench requalification before energization. Refresh the root turnover with exact protected-main and UpstreamDrift #9153 no-provider-delta state. |
 | 2026-08-29 | 1.18.88 | fix(putting, #4829): correct stroke-plane tangential impulse sign so lofted strikes launch below the effective loft, and update all physics reference pins. | #4834 |

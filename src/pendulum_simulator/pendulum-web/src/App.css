@@ -807,6 +807,9 @@ body {
 }
 
 .force-source-animation-grid article {
+  display: grid;
+  grid-template-rows: 3lh auto 1fr;
+  align-content: start;
   min-width: 0;
   padding: 10px;
   background: #131825;
@@ -815,15 +818,21 @@ body {
 }
 
 .force-source-animation-grid h3 {
-  min-height: 34px;
+  height: 3lh;
   margin: 0;
+  overflow: hidden;
   font-size: 0.82rem;
 }
 
-.force-source-animation-grid svg {
+.force-source-animation-stage {
+  width: 100%;
+  aspect-ratio: 192 / 176;
+}
+
+.force-source-animation-stage svg {
   display: block;
   width: 100%;
-  max-height: 180px;
+  height: 100%;
 }
 
 .force-source-animation-grid dl {

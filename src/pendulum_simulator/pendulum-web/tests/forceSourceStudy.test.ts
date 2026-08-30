@@ -203,11 +203,20 @@ describe('comparison animation coordinates', () => {
     });
 
     it('keeps every scenario hub at one shared point in fixed-hub mode', () => {
-        const firstImpact = pendulumThumbnailGeometry(-0.2, 0.2, lengths);
-        const secondImpact = pendulumThumbnailGeometry(-0.5, 0.5, lengths);
+        const poses = FORCE_SOURCE_OBJECTIVES.map((_, index) => ({
+            arm: -0.2 - index * 0.1,
+            wrist: 0.2 + index * 0.1,
+        }));
 
-        expect(thumbnailOrigin('fixed_hub', firstImpact)).toEqual({ x: 96, y: 88 });
-        expect(thumbnailOrigin('fixed_hub', secondImpact)).toEqual({ x: 96, y: 88 });
+        for (const pose of poses) {
+            const impact = pendulumThumbnailGeometry(pose.arm, pose.wrist, lengths);
+            const origin = thumbnailOrigin('fixed_hub', impact);
+            expect(origin).toEqual({ x: 96, y: 88 });
+            expect(pendulumThumbnailGeometry(pose.arm, pose.wrist, lengths, origin)).toMatchObject({
+                originX: 96,
+                originY: 88,
+            });
+        }
     });
 
     it('offers impact alignment as an explicit alternative camera frame', () => {
@@ -217,6 +226,12 @@ describe('comparison animation coordinates', () => {
 
         expect(aligned.tipX).toBeCloseTo(150);
         expect(aligned.tipY).toBeCloseTo(148);
+    });
+
+    it('rejects an unknown comparison frame instead of silently drifting', () => {
+        const impact = pendulumThumbnailGeometry(-0.3, 0.3, lengths);
+
+        expect(() => thumbnailOrigin('unknown' as 'fixed_hub', impact)).toThrow(/Unsupported animation alignment/);
     });
 });
 
