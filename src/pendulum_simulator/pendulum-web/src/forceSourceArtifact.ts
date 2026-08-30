@@ -1,7 +1,12 @@
 import type { PendulumParams, State } from './physics';
 import {
     buildOptimizationContract,
+    actuatorEffortMetrics,
+    candidateProfileId,
+    candidateTorqueFunction,
+    profileDiagnostics,
     scoreForceSourceSeries,
+    seriesMeetsStudyContract,
 } from './forceSourceOptimization';
 import {
     FORCE_SOURCE_OBJECTIVES,
@@ -21,6 +26,16 @@ const SERIES_KEYS = [
     'coriolis_tangent_force_n', 'coriolis_power_w',
     'squared_speed_tangent_force_n', 'squared_speed_power_w',
     'hand_path_tangent_force_n',
+    'shoulder_actuator_power_w', 'wrist_actuator_power_w',
+    'total_actuator_power_w', 'cumulative_positive_actuator_work_j',
+    'cumulative_net_actuator_work_j',
+] as const;
+
+const EFFORT_KEYS = [
+    'shoulder_net_work_j', 'wrist_net_work_j', 'total_net_work_j',
+    'total_positive_work_j', 'total_negative_work_j',
+    'absolute_torque_impulse_nm_s', 'squared_torque_effort_nm2_s',
+    'peak_shoulder_power_w', 'peak_wrist_power_w', 'peak_total_power_w',
 ] as const;
 
 const PARAMETER_KEYS = [
@@ -28,6 +43,10 @@ const PARAMETER_KEYS = [
 ] as const;
 const START_TOLERANCE = 1e-10;
 const SCORE_TOLERANCE = 1e-8;
+
+function exceedsScaledTolerance(actual: number, expected: number): boolean {
+    return Math.abs(actual - expected) > SCORE_TOLERANCE * Math.max(1, Math.abs(expected));
+}
 const GRID_TOLERANCE = 1e-8;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -84,21 +103,45 @@ function validateCandidate(
     path: string,
     constraints: ForceSourceConstraints,
 ): void {
-    const values = [
-        ['shoulder_torque_nm', finite(raw.shoulder_torque_nm, `${path}.shoulder_torque_nm`),
+    if (raw.basis !== 'bernstein_6') throw new TypeError(`${path}.basis must be bernstein_6`);
+    const shoulder = raw.shoulder_coefficients_nm;
+    const wrist = raw.wrist_coefficients_nm;
+    if (!Array.isArray(shoulder) || shoulder.length !== 7
+        || !Array.isArray(wrist) || wrist.length !== 7) {
+        throw new TypeError(`${path} must contain seven coefficients for each degree-6 profile`);
+    }
+    const values: Array<readonly [string, number, number, number, number]> = [
+        ['profile_duration_s', finite(raw.profile_duration_s, `${path}.profile_duration_s`),
+            constraints.profileDurationS.min, constraints.profileDurationS.max,
+            constraints.profileDurationS.step],
+        ...shoulder.map((value, index) => [
+            `shoulder_coefficients_nm[${index}]`, finite(value, `${path}.shoulder_coefficients_nm[${index}]`),
             constraints.shoulderTorqueNm.min, constraints.shoulderTorqueNm.max,
-            constraints.shoulderTorqueNm.step],
-        ['wrist_drive_nm', finite(raw.wrist_drive_nm, `${path}.wrist_drive_nm`),
-            0, constraints.wristTorqueLimitNm, constraints.wristTorqueStepNm],
-        ['wrist_restrain_nm', finite(raw.wrist_restrain_nm, `${path}.wrist_restrain_nm`),
-            0, constraints.wristTorqueLimitNm, constraints.wristTorqueStepNm],
-        ['onset_s', finite(raw.onset_s, `${path}.onset_s`),
-            constraints.onsetS.min, constraints.onsetS.max, constraints.onsetS.step],
-    ] as const;
+            constraints.shoulderTorqueNm.step,
+        ] as const),
+        ...wrist.map((value, index) => [
+            `wrist_coefficients_nm[${index}]`, finite(value, `${path}.wrist_coefficients_nm[${index}]`),
+            -constraints.wristTorqueLimitNm, constraints.wristTorqueLimitNm,
+            constraints.wristTorqueStepNm,
+        ] as const),
+    ];
     for (const [name, value, min, max, step] of values) {
         if (!isRegisteredGridValue(value, min, max, step)) {
             throw new RangeError(`${path}.${name} is outside the registered search contract`);
         }
+    }
+    const candidate = raw as unknown as ForceSourceScenario['candidate'];
+    if (candidate.shoulder_coefficients_nm[6] !== 0
+        || candidate.wrist_coefficients_nm[0] !== 0
+        || candidate.wrist_coefficients_nm[6] !== 0) {
+        throw new RangeError(`${path} torque profiles must start and finish at zero`);
+    }
+    const diagnostics = profileDiagnostics(candidate, constraints.transitionTorqueNm);
+    if (diagnostics.peak_shoulder_slew_nm_s > constraints.maxTorqueSlewNmS + GRID_TOLERANCE
+        || diagnostics.peak_wrist_slew_nm_s > constraints.maxTorqueSlewNmS + GRID_TOLERANCE
+        || diagnostics.wrist_reversal_count !== 1
+        || diagnostics.wrist_transition_duration_s < constraints.minWristTransitionS - 1e-3) {
+        throw new RangeError(`${path} violates the registered continuity, slew, or wrist-transition contract`);
     }
 }
 
@@ -117,11 +160,76 @@ function validateScenario(
     const series = raw.series;
     finite(raw.score, `${path}.score`);
     finite(raw.impact_time_s, `${path}.impact_time_s`);
+    if (!isRecord(raw.robustness)) throw new TypeError(`${path}.robustness is missing`);
+    const qualificationRate = finite(
+        raw.robustness.qualification_rate,
+        `${path}.robustness.qualification_rate`,
+    );
+    if (qualificationRate < constraints.minimumRobustQualificationRate - SCORE_TOLERANCE
+        || qualificationRate > 1 + SCORE_TOLERANCE) {
+        throw new RangeError(`${path} violates the registered minimum robust qualification rate`);
+    }
     validateImpact(raw.impact_diagnostics, `${path}.impact_diagnostics`, constraints);
     validateCandidate(raw.candidate, `${path}.candidate`, constraints);
     const lengths = SERIES_KEYS.map(key => finiteSeries(series[key], `${path}.series.${key}`).length);
     if (!lengths.every(length => length === lengths[0])) {
         throw new TypeError(`${path} series lengths must match`);
+    }
+    const candidate = raw.candidate as unknown as ForceSourceScenario['candidate'];
+    if (raw.profile_id !== candidateProfileId(candidate)) {
+        throw new TypeError(`${path}.profile_id does not match the registered polynomial`);
+    }
+    const torque = candidateTorqueFunction(candidate);
+    const times = series.time_s as number[];
+    const shoulder = series.shoulder_torque_nm as number[];
+    const wrist = series.wrist_torque_nm as number[];
+    const armRate = series.arm_angular_velocity_rad_s as number[];
+    const wristRate = series.wrist_angular_velocity_rad_s as number[];
+    const shoulderPower = series.shoulder_actuator_power_w as number[];
+    const wristPower = series.wrist_actuator_power_w as number[];
+    const totalPower = series.total_actuator_power_w as number[];
+    const positiveWork = series.cumulative_positive_actuator_work_j as number[];
+    const netWork = series.cumulative_net_actuator_work_j as number[];
+    for (const [sampleIndex, time] of times.entries()) {
+        const expected = torque(time);
+        if (Math.abs(shoulder[sampleIndex] - expected[0]) > SCORE_TOLERANCE
+            || Math.abs(wrist[sampleIndex] - expected[1]) > SCORE_TOLERANCE) {
+            throw new TypeError(`${path} plotted torques do not match the registered polynomial`);
+        }
+        const expectedShoulderPower = shoulder[sampleIndex] * armRate[sampleIndex];
+        const expectedWristPower = wrist[sampleIndex] * wristRate[sampleIndex];
+        const expectedTotalPower = expectedShoulderPower + expectedWristPower;
+        if (exceedsScaledTolerance(shoulderPower[sampleIndex], expectedShoulderPower)
+            || exceedsScaledTolerance(wristPower[sampleIndex], expectedWristPower)
+            || exceedsScaledTolerance(totalPower[sampleIndex], expectedTotalPower)) {
+            throw new TypeError(`${path} plotted actuator powers do not match torque times angular velocity`);
+        }
+        const expectedPositiveWork = sampleIndex === 0 ? 0 : positiveWork[sampleIndex - 1]
+            + 0.5 * (Math.max(shoulderPower[sampleIndex - 1], 0)
+                + Math.max(wristPower[sampleIndex - 1], 0)
+                + Math.max(expectedShoulderPower, 0) + Math.max(expectedWristPower, 0))
+                * (time - times[sampleIndex - 1]);
+        const expectedNetWork = sampleIndex === 0 ? 0 : netWork[sampleIndex - 1]
+            + 0.5 * (totalPower[sampleIndex - 1] + expectedTotalPower)
+                * (time - times[sampleIndex - 1]);
+        if (exceedsScaledTolerance(positiveWork[sampleIndex], expectedPositiveWork)
+            || exceedsScaledTolerance(netWork[sampleIndex], expectedNetWork)) {
+            throw new TypeError(`${path} plotted cumulative work does not match actuator power`);
+        }
+    }
+    const typedSeries = series as unknown as ForceSourceScenario['series'];
+    if (!seriesMeetsStudyContract(typedSeries, constraints)) {
+        throw new RangeError(`${path} violates the registered speed or actuator-effort contract`);
+    }
+    if (!isRecord(raw.effort)) throw new TypeError(`${path}.effort is missing`);
+    const expectedEffort = actuatorEffortMetrics(typedSeries);
+    for (const key of EFFORT_KEYS) {
+        const declared = finite(raw.effort[key], `${path}.effort.${key}`);
+        const expected = expectedEffort[key];
+        const tolerance = SCORE_TOLERANCE * Math.max(1, Math.abs(expected));
+        if (Math.abs(declared - expected) > tolerance) {
+            throw new TypeError(`${path}.effort.${key} does not match the registered series`);
+        }
     }
 }
 
@@ -223,6 +331,11 @@ export function artifactWithScenarios(
     config: BrowserOptimizationConfig,
 ): ForceSourceArtifact {
     const contract = buildOptimizationContract(config);
+    const studyLimit = config.constraints.studyMode === 'equal_speed'
+        ? `Every winner is inside ${config.constraints.targetClubheadSpeedMps.toFixed(2)}–${(config.constraints.targetClubheadSpeedMps + config.constraints.speedToleranceMps).toFixed(2)} m/s and the common actuator-effort caps.`
+        : config.constraints.studyMode === 'equal_effort'
+            ? 'Every winner shares the registered positive-work and squared-torque-effort caps; resulting speed is an outcome, not an objective constraint.'
+            : 'Only common torque, slew, profile, and motion bounds constrain input; realized work is reported but not equalized.';
     const retained = existing?.comparison_contract.id === contract.id
         ? existing.scenarios.filter(item => !incoming.some(next => next.objective === item.objective))
         : [];
@@ -245,6 +358,11 @@ export function artifactWithScenarios(
             thoroughness: config.thoroughness,
             candidate_budget: config.constraints.candidateBudget,
             integration_step_s: config.constraints.integrationStepS,
+            study_mode: config.constraints.studyMode,
+            target_speed_m_s: config.constraints.targetClubheadSpeedMps,
+            speed_tolerance_m_s: config.constraints.speedToleranceMps,
+            positive_work_cap_j: config.constraints.maxPositiveActuatorWorkJ,
+            squared_effort_cap_nm2_s: config.constraints.maxSquaredTorqueEffortNm2S,
         },
         comparison_contract: contract,
         evaluated_count: scenarios.reduce((sum, scenario) =>
@@ -256,6 +374,10 @@ export function artifactWithScenarios(
             ? existing.interpretation_limits : [
             'Force-source terms depend on the declared coordinates.',
             'Hand-path impulse is signed force integrated over time; it is not hand-path work or average force over distance.',
+            'Torque controls are continuous bounded degree-6 Bernstein polynomials; coefficient bounds constrain the full curves.',
+            studyLimit,
+            'Equal profile IDs identify objectives that selected exactly the same polynomial controls.',
+            'The target speed is a study contract or comparison marker, not evidence that this fixed-hub model reproduces a human golfer.',
             'This synthetic planar model is exploratory, not individualized swing advice.',
         ],
     };

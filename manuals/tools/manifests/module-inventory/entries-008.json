@@ -3,6 +3,94 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 3588,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d5cc03aa6491337c6d3b1f650737e38ef7e68245cbbd2885db3fe19034c13359",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-SPATIAL-TARGET-PANEL-TEXT-PY-AE5C737BC01C",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/ui/pyqt6/spatial_target_panel_text.py",
+      "purpose": "Text, labels, and scalar validation for the spatial-target editor.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "COORDINATE_LABELS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_GROUND_SOURCE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FRAME_ITEMS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "KIND_ITEMS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TOLERANCE_ITEMS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "finite_number",
+            "signature": "edit: QLineEdit, label: str, *, positive: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "miss_summary",
+            "signature": "miss: TargetMiss, *, landing: bool"
+          },
+          {
+            "kind": "function",
+            "name": "target_summary",
+            "signature": "target: SpatialTarget"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 7598,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -12638,57 +12726,6 @@
           "deg",
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3400,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "5f9190956d54017150504dc5c4fa721d3565f6c4a05e4156988667e60de21c13",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-MORRISFACTOREDITOR-TSX-336311257406",
-      "language": "typescript-react",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/components/MorrisFactorEditor.tsx",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "MorrisFactorEditor",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

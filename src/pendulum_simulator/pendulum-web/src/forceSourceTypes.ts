@@ -1,6 +1,7 @@
 import type { PendulumParams, State } from './physics';
 
-export const FORCE_SOURCE_SCHEMA = 'force-source-comparison/v2' as const;
+export const FORCE_SOURCE_SCHEMA = 'force-source-comparison/v4' as const;
+export const TORQUE_POLYNOMIAL_DEGREE = 6 as const;
 
 export const FORCE_SOURCE_OBJECTIVES = [
     'coriolis_impulse',
@@ -13,6 +14,7 @@ export const FORCE_SOURCE_OBJECTIVES = [
 
 export type ForceSourceObjective = typeof FORCE_SOURCE_OBJECTIVES[number];
 export type SearchThoroughness = 'quick' | 'thorough' | 'research';
+export type ForceSourceStudyMode = 'common_bounds' | 'equal_effort' | 'equal_speed';
 
 export const OBJECTIVE_LABELS: Record<ForceSourceObjective, string> = {
     coriolis_impulse: 'Coriolis impulse',
@@ -30,7 +32,17 @@ export interface ForceSourceConstraints {
     shoulderTorqueNm: NumericRange;
     wristTorqueLimitNm: number;
     wristTorqueStepNm: number;
-    onsetS: NumericRange;
+    profileDurationS: NumericRange;
+    maxTorqueSlewNmS: number;
+    transitionTorqueNm: number;
+    minWristTransitionS: number;
+    studyMode: ForceSourceStudyMode;
+    targetClubheadSpeedMps: number;
+    speedToleranceMps: number;
+    maxPositiveActuatorWorkJ: number;
+    maxSquaredTorqueEffortNm2S: number;
+    minimumRobustQualificationRate: number;
+    eliteCandidateCount: number;
     armAngleDeg: AngleBounds;
     wristAngleDeg: AngleBounds;
     maxImpactPathAngleDeg: number;
@@ -46,10 +58,20 @@ export interface ForceSourceConstraints {
 }
 
 export const DEFAULT_OPTIMIZATION_CONSTRAINTS: ForceSourceConstraints = {
-    shoulderTorqueNm: { min: 60, max: 120, step: 10 },
+    shoulderTorqueNm: { min: -250, max: 250, step: 5 },
     wristTorqueLimitNm: 30,
-    wristTorqueStepNm: 1,
-    onsetS: { min: 0.04, max: 0.28, step: 0.01 },
+    wristTorqueStepNm: 0.5,
+    profileDurationS: { min: 0.3, max: 0.7, step: 0.01 },
+    maxTorqueSlewNmS: 2500,
+    transitionTorqueNm: 3,
+    minWristTransitionS: 0.012,
+    studyMode: 'equal_speed',
+    targetClubheadSpeedMps: 52.3,
+    speedToleranceMps: 0.75,
+    maxPositiveActuatorWorkJ: 525,
+    maxSquaredTorqueEffortNm2S: 7500,
+    minimumRobustQualificationRate: 0.6,
+    eliteCandidateCount: 8,
     armAngleDeg: { min: -180, max: 45 },
     wristAngleDeg: { min: -135, max: 110 },
     maxImpactPathAngleDeg: 15,
@@ -82,11 +104,25 @@ export interface BrowserOptimizationProgress {
     objective?: ForceSourceObjective;
 }
 
+export type TorquePolynomialCoefficients = [number, number, number, number, number, number, number];
+
 export interface ForceSourceCandidate {
-    shoulder_torque_nm: number;
-    wrist_drive_nm: number;
-    wrist_restrain_nm: number;
-    onset_s: number;
+    basis: 'bernstein_6';
+    profile_duration_s: number;
+    shoulder_coefficients_nm: TorquePolynomialCoefficients;
+    wrist_coefficients_nm: TorquePolynomialCoefficients;
+}
+
+export interface TorqueProfileDiagnostics {
+    peak_shoulder_torque_nm: number;
+    peak_wrist_torque_nm: number;
+    rms_shoulder_torque_nm: number;
+    rms_wrist_torque_nm: number;
+    peak_shoulder_slew_nm_s: number;
+    peak_wrist_slew_nm_s: number;
+    wrist_reversal_count: number;
+    wrist_reversal_time_s: number | null;
+    wrist_transition_duration_s: number;
 }
 
 export interface RobustnessSummary {
@@ -113,6 +149,24 @@ export interface ForceSourceSeries {
     squared_speed_tangent_force_n: number[];
     squared_speed_power_w: number[];
     hand_path_tangent_force_n?: number[];
+    shoulder_actuator_power_w: number[];
+    wrist_actuator_power_w: number[];
+    total_actuator_power_w: number[];
+    cumulative_positive_actuator_work_j: number[];
+    cumulative_net_actuator_work_j: number[];
+}
+
+export interface ActuatorEffortMetrics {
+    shoulder_net_work_j: number;
+    wrist_net_work_j: number;
+    total_net_work_j: number;
+    total_positive_work_j: number;
+    total_negative_work_j: number;
+    absolute_torque_impulse_nm_s: number;
+    squared_torque_effort_nm2_s: number;
+    peak_shoulder_power_w: number;
+    peak_wrist_power_w: number;
+    peak_total_power_w: number;
 }
 
 export interface ImpactDiagnostics {
@@ -128,6 +182,8 @@ export interface ForceSourceScenario {
     objective: ForceSourceObjective;
     score: number;
     candidate: ForceSourceCandidate;
+    profile_id: string;
+    effort: ActuatorEffortMetrics;
     impact_time_s: number;
     impact_diagnostics?: ImpactDiagnostics;
     robustness: RobustnessSummary;

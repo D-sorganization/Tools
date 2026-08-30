@@ -27,10 +27,41 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.92                                    |
+| **Spec Version**        | 1.18.94                                    |
 | **Last Spec Update**    | 2026-08-30                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-30 Fair Force-Source Work and Activation Comparisons
+
+Version 1.18.94 replaces the force-source speed marker with explicit selectable
+study contracts. Equal-speed mode requires every winner to reach 52.30--53.05
+m/s under common 525 J positive-work and 7,500 N²m²s squared-effort caps;
+equal-effort mode applies the same input caps and leaves speed as an outcome;
+common-bounds mode retains the unconstrained capacity comparison. Robust winner
+selection now tests nominal elites and high-headroom candidates and enforces a
+user-selected held-out qualification floor. Version-4 artifacts register stable
+polynomial profile IDs and derived shoulder/wrist/total power, cumulative work,
+positive/net/negative work, torque impulse, squared effort, and peak power.
+Imports recompute those quantities and reject inconsistent plots. Two bundled
+research artifacts expose both equal-output efficiency and equal-input capacity
+without adding clubhead speed to a component objective's score.
+
+### 2026-08-30 Continuous Torque Profile Optimization
+
+Version 1.18.93 replaces the force-source lab's constant-shoulder/single-switch
+wrist programs with bounded degree-6 Bernstein torque profiles. Each joint has
+seven optimized coefficients and a shared optimized duration; coefficient
+bounds constrain the complete continuous curves, while analytic slew limits,
+zero terminal torque, one wrist reversal, and a minimum low-torque transition
+are enforced. Deterministic global sampling combines physical seed families
+with multi-elite coefficient refinement. The registered version-3 artifact also
+corrects the web club from the stale 0.50 kg lumped tip mass to the authoritative
+0.2381186694 kg inertia-equivalent driver and exposes the symmetric 250 N m hub
+budget. Its certified smooth speed strategy reaches about 53.7 m/s. Results now
+include every sampled channel, a cross-objective rank matrix, Pareto fronts,
+control work/RMS/peak/slew/transition diagnostics, and all polynomial
+coefficients; imported artifacts must reproduce their plotted torques.
 
 ### 2026-08-30 Certified Force-Source Comparisons
 
@@ -5648,6 +5679,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-30 | 1.18.94 | feat(pendulum): add selectable equal-speed, equal-effort, and common-bound force-source study contracts; keep speed as a feasibility band rather than a hidden component reward; register positive/net/negative actuator work, torque impulse, squared activation, peak power, cumulative work plots, and stable duplicate-profile identity; require robust high-headroom winners; and ship independent equal-output and equal-input research artifacts. |
+| 2026-08-30 | 1.18.93 | feat(pendulum): replace bang-bang force-source controls with bounded continuous degree-6 Bernstein shoulder/wrist profiles; enforce coefficient, duration, slew, endpoint, single-reversal, and low-torque-transition contracts; add deterministic physical seed families and 2/6/12-round multi-elite refinement; align the web driver to the authoritative 0.2381186694 kg inertia-equivalent club and ±250 N m hub budget; reach a certified smooth 53.7 m/s speed solution; render all sampled channels, cross-objective/Pareto ranks, strategy work/RMS/peak/slew/transition diagnostics, and polynomial coefficients; reject imported torque plots that do not reproduce the registered polynomial. |
 | 2026-08-30 | 1.18.92 | fix(pendulum): replace the mixed-search artifact with a single version-2 research contract; cross-certify every objective against every displayed winner; reject stale poses, settings, score drift, and objective-dominance failures; correct Coriolis/centrifugal energy-transfer signs and their exact 2:1 interface identity; remove the misleading white target, impact ring, and dashed line from fixed-hub cards; label physical markers and the optional camera-only crosshair; regenerate all six 1 ms trajectories and extend TDD coverage. |
 | 2026-08-30 | 1.18.91 | fix(pendulum): register every force-source animation in one undistorted 192 by 176 stage with a fixed three-line title row; keep fixed-hub playback at (96, 88), distinguish the common (150, 148) comparison target from each scenario's measured impact location, and cover all six objectives, both camera modes, and playback boundaries in rendered regression tests. |
 | 2026-08-30 | 1.18.90 | feat(pendulum): make the force-source workspace scrollable; add a fixed-hub default frame, direct pose and constraint entry, deterministic quick/thorough/research searches, 30 N m wrist limits with user-selected granularity, held-out robustness, and the sixth signed hand-path impulse objective; retain synchronized high-resolution animations and clubhead-speed/shoulder-torque/wrist-torque plots with golf-like single-pass qualification. |

@@ -59,13 +59,15 @@ perturbation analysis code first.
 
 #4766 shipped the mechanism-vs-outcome comparison through #4774; #4775 owns
 actuation and realism (`docs/specs/SWING_ACTUATION_AND_REALISM.md`). The React
-lab's `force-source-comparison/v2` artifact now binds initial state, model,
+lab's `force-source-comparison/v4` artifacts now bind initial state, model,
 constraints, integration, robustness, and search depth to one contract ID.
 Changed inputs discard stale rows; imports reject off-grid candidates and use
 declared impact thresholds. Every objective is cross-evaluated on every
 displayed winner and fails if its own row loses. The bundled research contract
-uses 512 candidates, 1 ms integration, 0.5 N m wrist steps, and 25 robustness
-trials. Fixed-hub mode shows only physical markers in one frame; impact
+uses bounded degree-6 Bernstein shoulder/wrist torques, 2,048 global/seeded
+candidates, 16 nominal elite starts, 12 multi-elite refinement rounds, 1 ms
+integration, 0.5 N m wrist coefficient steps, 25 robustness trials, and a 60%
+minimum held-out qualification rate. Fixed-hub mode shows only physical markers in one frame; impact
 alignment alone shows a labelled camera crosshair. Design contract: `docs/specs/FORCE_SOURCE_WEB_LAB.md`.
 
 **Five results that bind future work here** (all regression-pinned):
@@ -86,14 +88,23 @@ alignment alone shows a labelled camera crosshair. Design contract: `docs/specs/
 4. **Corrected, the model is golf-like**: 49.7 m/s clubhead, 7.26 m/s hands,
    club/arm 3.46, five of six measured observables inside their bands, with no
    hand-speed floor. A moving hub is an improvement, not a prerequisite.
-5. **The browser ranking is now self-consistent.** Its certified speed winner is
-   38.33 m/s versus 38.03 m/s for hand-path impulse; Coriolis impulse and both
-   energy rows select the speed candidate, while centrifugal impulse reaches
-   30.93 m/s. This certifies displayed candidates, not a global optimum.
+5. **The browser now separates equal-output efficiency from equal-input
+   capacity.** The corrected 0.2381186694 kg inertia-equivalent driver and
+   symmetric 250 N m hub budget remain. The default equal-speed artifact holds
+   every robust winner inside 52.30--53.05 m/s, 525 J positive work, and 7,500
+   N²m²s squared effort; it finds three distinct profile IDs. The independent
+   equal-effort artifact leaves speed unconstrained and exposes about 51.1 m/s
+   for Coriolis impulse, 34.7 m/s for centrifugal impulse, and 53.5 m/s for the
+   shared energy/speed/hand-path program. Equal profile IDs are displayed rather
+   than relabelled as different approaches. This certifies displayed candidates,
+   not a global optimum.
 
-Next open item is the **late release**: every objective releases at ~90% of the
-downswing against a measured 55-80%. A moving hub (`physics_triple.py`) is the
-most likely route. Hill-type actuation (`actuation.py`) is built and tested.
+The web lab reports wrist reversal time, low-torque transition duration, torque
+slew, positive/net/negative joint work, torque impulse, squared activation,
+peak power and utilization, all coefficients, seventeen sampled signals, stable
+profile identity, and the full cross-objective/Pareto matrix. A moving hub
+(`physics_triple.py`) remains the next structural fidelity step. Hill-type
+actuation (`actuation.py`) is built and tested.
 
 ## Must-Read Architecture Pointers
 
