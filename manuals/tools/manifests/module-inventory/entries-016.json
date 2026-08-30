@@ -2407,10 +2407,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 17362,
+      "bytes_lf": 17363,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "024872d3ac8736be6ba7551df11df37cddf1501199ca49d42661a7f1cc519ba5",
+      "content_sha256_lf": "9a6a8022b8786b60c08f37b93b6cc0c898d6837e29934c071fd12e908ad02c48",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-IMPACT-PY-3307AA71CDBE",
       "language": "python",

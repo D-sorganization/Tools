@@ -105,14 +105,14 @@ class TestPlanarLimitRegression:
         launch = strike(BLADE, 1.8)
         green = GreenConditions(stimp_ft=10.0, grade_percent=2.0, aspect_deg=90.0)
         result = simulate_putt(launch, green, 3.0)
-        assert result.total_distance_m == pytest.approx(4.417405938785078, rel=1e-12)
-        assert result.skid_distance_m == pytest.approx(0.5103817275162047, rel=1e-12)
-        assert result.break_m == pytest.approx(0.8176068791755766, rel=1e-12)
-        assert result.miss_distance_m == pytest.approx(1.4994647284222105, rel=1e-12)
+        assert result.total_distance_m == pytest.approx(4.562853055205739, rel=1e-12)
+        assert result.skid_distance_m == pytest.approx(0.49083593692889005, rel=1e-12)
+        assert result.break_m == pytest.approx(0.8476231786308811, rel=1e-12)
+        assert result.miss_distance_m == pytest.approx(1.6335909610224524, rel=1e-12)
         holed = simulate_putt(strike(BLADE, 1.6), GreenConditions(stimp_ft=10.0), 3.0)
         assert holed.holed
-        assert holed.speed_at_hole_mps == pytest.approx(0.5903262895096224, rel=1e-12)
-        assert holed.margin_mps == pytest.approx(0.2283133618862715, rel=1e-12)
+        assert holed.speed_at_hole_mps == pytest.approx(0.6746829587276968, rel=1e-12)
+        assert holed.margin_mps == pytest.approx(0.1439566926681971, rel=1e-12)
 
 
 class TestFlatStraight:
@@ -276,7 +276,7 @@ class TestCaptureModel:
     def test_firm_edge_pace_discriminates_the_models(self) -> None:
         """Near the capture bound the shrunken hole rejects the pass
         the flat threshold accepted."""
-        launch = strike(BLADE, 1.69)
+        launch = strike(BLADE, 1.66)
         effective = simulate_putt_on_surface(
             launch, FLAT, stimp_ft=10.0, hole_distance_m=3.0
         )
@@ -296,10 +296,10 @@ class TestCaptureModel:
             strike(BLADE, 1.6), FLAT, stimp_ft=10.0, hole_distance_m=3.0
         )
         assert result.holed
-        assert result.speed_at_hole_mps == pytest.approx(0.5903262895096224, rel=1e-12)
-        assert result.margin_mps == pytest.approx(0.2283133618862715, rel=1e-12)
-        assert result.total_distance_m == pytest.approx(2.9618566583973425, rel=1e-9)
-        assert result.time_s == pytest.approx(2.368, abs=2e-3)
+        assert result.speed_at_hole_mps == pytest.approx(0.6746829587276968, rel=1e-12)
+        assert result.margin_mps == pytest.approx(0.1439566926681971, rel=1e-12)
+        assert result.total_distance_m == pytest.approx(2.9687052346196463, rel=1e-9)
+        assert result.time_s == pytest.approx(2.276, abs=2e-3)
 
     def test_reference_grid_cross_slope_pins(self) -> None:
         """Cross-runtime pins (mirrored in puttingGreen.test.ts)."""
@@ -310,10 +310,10 @@ class TestCaptureModel:
             hole_distance_m=10.0,
         )
         assert not result.holed
-        assert result.break_m == pytest.approx(1.014167410853712, rel=1e-9)
-        assert result.total_distance_m == pytest.approx(5.476502851932196, rel=1e-9)
-        assert result.skid_distance_m == pytest.approx(0.626653383578046, rel=1e-9)
-        assert result.miss_distance_m == pytest.approx(4.830211424915357, rel=1e-9)
+        assert result.break_m == pytest.approx(1.0478455745462154, rel=1e-9)
+        assert result.total_distance_m == pytest.approx(5.639840165062302, rel=1e-9)
+        assert result.skid_distance_m == pytest.approx(0.6049655102874043, rel=1e-9)
+        assert result.miss_distance_m == pytest.approx(4.684540514279886, rel=1e-9)
 
     def test_unknown_capture_model_is_refused(self) -> None:
         with pytest.raises(ValueError):

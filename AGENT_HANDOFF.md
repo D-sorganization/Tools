@@ -8,7 +8,7 @@
 
 ## Merge Governance
 
-- Protected `main` is `cefcc1878de11804c44cd7d1d19c0ffcf58fa89e`; no Tools pull request was open when this handoff was refreshed.
+- Protected `main` is `eb2b67436483fc33821790f8aa08d61dac079e39`; turnover PR #4870 is the only open Tools pull request.
 - The live `main` rules require zero approving reviews. Do not require or request a named maintainer's approval; `@dieterolson` is not a standing release gate. Optional review remains available for risk, expertise, or unresolved feedback.
 - Never use admin bypass, force-push, check bypass, or protection changes to merge a failing or stale head.
 
