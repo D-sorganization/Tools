@@ -1,8 +1,6 @@
 # Bench Handoff — P1AM Bring-up
 
-This file captures the state of the P1AM-100 bring-up work as of **2026-05-27**.
-It is intended for the next agent or operator who picks up the work, so they
-can resume without re-discovering what's already known.
+Updated **2026-08-29** from protected `main`. PR #3078 merged as `04289469b8a0`; PR #3081 merged as `0add84c54249`. Live hardware state was not requalified.
 
 ## Hardware in scope
 
@@ -141,14 +139,12 @@ HMI at `frontend/` (port 3002) can't start.
 
 ## Recommended next steps
 
-1. **Merge PR #3078 and PR #3081** (in either order — they touch different
-   files). Both are live-PLC verified.
-2. **Run the bench calibration** in PR #3078 with a DMM end-to-end. The
+1. **Requalify the bench state** before energizing hardware; the retained live
+   verification is from 2026-05-27, not this turnover refresh.
+2. **Run the bench calibration** from merged PR #3078 with a DMM end-to-end. The
    procedure document is at `calibration/CALIBRATION.md`.
 3. **Wire input routing** for whichever physical sensors get connected
    (registers 100..105). Currently the unit has all routing unmapped, so
    AIs and thermocouples don't reach tags.
 4. **Bring up the React HMI** on port 3002 once `npm` is installed.
-5. **Consider adding firmware manual-override** — a coil or register block
-   that lets the host inject tag values without going through a PID. Would
-   simplify calibration and any operator-driven testing.
+5. **Consider a governed firmware manual-override** only with explicit safety, provenance, and operator-authorization gates.

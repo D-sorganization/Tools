@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.88                                    |
+| **Spec Version**        | 1.18.89                                    |
 | **Last Spec Update**    | 2026-08-29                                 |
 
 ## 2. Purpose & Mission
@@ -5599,6 +5599,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-29 | 1.18.89 | docs(handoff): refresh the P1AM bench turnover against protected main, record that PRs #3078/#3081 are merged, retain the dated live-hardware evidence boundary, and require bench requalification before energization. Refresh the root turnover with exact protected-main and UpstreamDrift #9153 no-provider-delta state. |
 | 2026-08-29 | 1.18.88 | fix(putting, #4829): correct stroke-plane tangential impulse sign so lofted strikes launch below the effective loft, and update all physics reference pins. | #4834 |
 | 2026-08-29 | 1.18.87 | docs(governance, Repository_Management#1390): restore the current-state handoff contract by removing stale run history from the pendulum, shared golf-club, and Rate of Closure handoffs; retain active scientific boundaries, architecture pointers, verification commands, and ordered next work; refresh the monorepo-root turnover date; and return every `AGENT_HANDOFF.md` to the repository-wide 150-line ceiling so a successor receives bounded operational state rather than an accumulating changelog. |
 | 2026-08-29 | 1.18.86 | fix(security, #4866): remove the last `shell=True` in Tools' non-test Python. `generate_real_assessments.py` ran seven `grep`/`find`/`ls` pipelines through `subprocess.check_output(cmd, shell=True)` behind a `run_cmd` helper that returned `CalledProcessError.output` on failure — so a broken command produced its **error text where a count was expected**, and the script emitted a plausible but wrong assessment instead of raising. The pipelines are now counted in-process by `scripts/repo_metrics.py` (`count_matching_lines` reproducing `grep -rnw WORD DIR | wc -l` including whole-word semantics and one-count-per-line; `count_files` reproducing `find ROOTS -name P1 -o -name P2 | wc -l` including dedup across patterns; `list_directory_entries` for `ls`), which removes the bandit B602 in the repo-root file most likely to be copied as a template and makes the metrics portable to hosts without POSIX `grep`/`find`. Output equivalence was verified by generating `docs/assessments/*.md` both ways and diffing: **byte-for-byte identical**, all seven metrics matching the POSIX ground truth. 13 new unit gates in `tests/scripts/test_repo_metrics.py`. |
