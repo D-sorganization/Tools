@@ -1,7 +1,14 @@
 import { useMemo } from 'react';
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
-import { interpolateSeries, pendulumThumbnailGeometry, thumbnailOrigin, type AnimationAlignment } from '../forceSourceView';
+import {
+    interpolateSeries,
+    pendulumThumbnailGeometry,
+    SHARED_IMPACT,
+    thumbnailOrigin,
+    THUMBNAIL_VIEWBOX,
+    type AnimationAlignment,
+} from '../forceSourceView';
 import { OBJECTIVE_LABELS, type ForceSourceObjective, type ForceSourceScenario } from '../forceSourceStudy';
 import type { PendulumParams } from '../physics';
 
@@ -16,6 +23,10 @@ const OBJECTIVE_UNITS: Record<ForceSourceObjective, string> = {
     centrifugal_impulse: 'N s', centrifugal_energy_transfer: 'J',
     clubhead_speed: 'm/s', hand_path_impulse: 'N s',
 };
+
+function registeredCoordinate(value: number): number {
+    return Number(value.toFixed(6));
+}
 
 function PendulumThumbnail({ scenario, time, params, alignment }: {
     scenario: ForceSourceScenario; time: number; params: PendulumParams; alignment: AnimationAlignment;
@@ -32,15 +43,33 @@ function PendulumThumbnail({ scenario, time, params, alignment }: {
     const arm = interpolateSeries(scenario.series.time_s, scenario.series.arm_angle_rad, sampleTime);
     const wrist = interpolateSeries(scenario.series.time_s, scenario.series.wrist_cock_rad, sampleTime);
     const geometry = pendulumThumbnailGeometry(arm, wrist, params, origin);
-    return <svg viewBox="0 0 192 176" role="img" aria-label={`${OBJECTIVE_LABELS[scenario.objective]} swing at ${time.toFixed(3)} seconds`}>
-        <line x1="14" y1={impact.tipY} x2="178" y2={impact.tipY} stroke="#5a647d" strokeDasharray="4 5" />
-        <circle cx={impact.tipX} cy={impact.tipY} r="3.5" fill="#fff" stroke="#aab4ca" />
-        <circle cx={geometry.originX} cy={geometry.originY} r="4" fill="#eaf0ff" />
-        <line x1={geometry.originX} y1={geometry.originY} x2={geometry.wristX} y2={geometry.wristY} stroke="#56d6c8" strokeWidth="7" strokeLinecap="round" />
-        <line x1={geometry.wristX} y1={geometry.wristY} x2={geometry.tipX} y2={geometry.tipY} stroke="#e8edf9" strokeWidth="4" strokeLinecap="round" />
-        <circle cx={geometry.wristX} cy={geometry.wristY} r="5" fill="#ffbd4a" />
-        <circle cx={geometry.tipX} cy={geometry.tipY} r="7" fill={OBJECTIVE_COLORS[scenario.objective]} />
-    </svg>;
+    return <div className="force-source-animation-stage">
+        <svg
+            data-animation-frame
+            data-alignment={alignment}
+            data-hub-x={registeredCoordinate(geometry.originX)}
+            data-hub-y={registeredCoordinate(geometry.originY)}
+            data-impact-x={registeredCoordinate(impact.tipX)}
+            data-impact-y={registeredCoordinate(impact.tipY)}
+            data-reference-y={SHARED_IMPACT.y}
+            width={THUMBNAIL_VIEWBOX.width}
+            height={THUMBNAIL_VIEWBOX.height}
+            viewBox={`0 0 ${THUMBNAIL_VIEWBOX.width} ${THUMBNAIL_VIEWBOX.height}`}
+            preserveAspectRatio="xMidYMid meet"
+            role="img"
+            aria-label={`${OBJECTIVE_LABELS[scenario.objective]} swing at ${time.toFixed(3)} seconds`}
+        >
+            <line data-role="reference-line" x1="14" y1={SHARED_IMPACT.y} x2="178" y2={SHARED_IMPACT.y} stroke="#5a647d" strokeDasharray="4 5" />
+            <circle data-role="comparison-target" cx={SHARED_IMPACT.x} cy={SHARED_IMPACT.y} r="3.5" fill="#fff" stroke="#aab4ca" />
+            <circle data-role="impact-location" cx={impact.tipX} cy={impact.tipY} r="5.5" fill="none" stroke={OBJECTIVE_COLORS[scenario.objective]} strokeWidth="1.5" />
+            <circle data-role="hub-guide" cx={geometry.originX} cy={geometry.originY} r="8" fill="none" stroke="#69758f" strokeWidth="1" />
+            <circle data-role="hub" cx={geometry.originX} cy={geometry.originY} r="4" fill="#eaf0ff" />
+            <line x1={geometry.originX} y1={geometry.originY} x2={geometry.wristX} y2={geometry.wristY} stroke="#56d6c8" strokeWidth="7" strokeLinecap="round" />
+            <line x1={geometry.wristX} y1={geometry.wristY} x2={geometry.tipX} y2={geometry.tipY} stroke="#e8edf9" strokeWidth="4" strokeLinecap="round" />
+            <circle cx={geometry.wristX} cy={geometry.wristY} r="5" fill="#ffbd4a" />
+            <circle cx={geometry.tipX} cy={geometry.tipY} r="7" fill={OBJECTIVE_COLORS[scenario.objective]} />
+        </svg>
+    </div>;
 }
 
 type PlotField = 'clubhead_speed_m_s' | 'shoulder_torque_nm' | 'wrist_torque_nm';

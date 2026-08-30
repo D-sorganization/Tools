@@ -16,8 +16,9 @@ export interface PendulumGeometry {
     tipY: number;
 }
 
-const FIXED_HUB: ThumbnailOrigin = { x: 96, y: 88 };
-const SHARED_IMPACT = { x: 150, y: 148 };
+export const THUMBNAIL_VIEWBOX = { width: 192, height: 176 } as const;
+export const FIXED_HUB: Readonly<ThumbnailOrigin> = { x: 96, y: 88 };
+export const SHARED_IMPACT: Readonly<ThumbnailOrigin> = { x: 150, y: 148 };
 
 export function interpolateSeries(
     time: number[],
