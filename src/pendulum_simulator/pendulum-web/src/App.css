@@ -717,7 +717,7 @@ body {
 
 .force-source-playback {
   display: grid;
-  grid-template-columns: auto auto minmax(180px, 1fr) 64px;
+  grid-template-columns: auto auto minmax(190px, 280px) minmax(180px, 1fr) 76px;
   margin: 12px 0;
 }
 
@@ -728,6 +728,15 @@ body {
 .force-source-playback output {
   font-variant-numeric: tabular-nums;
   color: #b9c5dd;
+}
+
+.force-source-rate {
+  display: grid;
+  grid-template-columns: auto minmax(90px, 1fr);
+  align-items: center;
+  gap: 8px;
+  color: #8f9db8;
+  font-size: 0.78rem;
 }
 
 .force-source-animation-grid {
@@ -844,7 +853,11 @@ body {
     grid-template-columns: auto auto 1fr;
   }
 
-  .force-source-playback output {
+  .force-source-rate {
+    grid-column: 1 / -1;
+  }
+
+  .force-source-playback > output {
     grid-column: 1 / -1;
   }
 }

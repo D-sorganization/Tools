@@ -7,7 +7,10 @@ import {
     parseForceSourceArtifact,
     type ForceSourceArtifact,
 } from '../src/forceSourceStudy';
-import { pendulumThumbnailGeometry } from '../src/components/ForceSourceLab';
+import {
+    interpolateSeries,
+    pendulumThumbnailGeometry,
+} from '../src/forceSourceView';
 
 function validArtifact(): ForceSourceArtifact {
     const pair = [0, 0.1];
@@ -153,5 +156,17 @@ describe('comparison animation coordinates', () => {
 
         expect(geometry.wristY).toBeLessThan(geometry.originY);
         expect(geometry.tipY).toBeLessThan(geometry.wristY);
+    });
+});
+
+describe('high-resolution playback interpolation', () => {
+    it('interpolates between simulation samples instead of snapping frames', () => {
+        expect(interpolateSeries([0, 0.001], [10, 14], 0.00025)).toBeCloseTo(11);
+        expect(interpolateSeries([0, 0.001], [10, 14], 0.00075)).toBeCloseTo(13);
+    });
+
+    it('clamps cleanly at trajectory boundaries', () => {
+        expect(interpolateSeries([0, 0.001], [10, 14], -1)).toBe(10);
+        expect(interpolateSeries([0, 0.001], [10, 14], 1)).toBe(14);
     });
 });

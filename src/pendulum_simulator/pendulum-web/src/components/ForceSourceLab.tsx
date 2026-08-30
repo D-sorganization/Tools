@@ -12,6 +12,11 @@ import {
 
 import type { PendulumParams, State } from '../physics';
 import {
+    interpolateSeries,
+    pendulumThumbnailGeometry,
+    wrappedDegrees,
+} from '../forceSourceView';
+import {
     artifactWithScenario,
     FORCE_SOURCE_OBJECTIVES,
     OBJECTIVE_LABELS,
@@ -45,47 +50,9 @@ const CHART_STYLE: React.CSSProperties = {
     minHeight: 245,
 };
 
-const wrappedDegrees = (radians: number) => {
-    const value = radians * 180 / Math.PI;
-    return (((value + 180) % 360) + 360) % 360 - 180;
-};
-
-function nearestIndex(values: number[], target: number): number {
-    let best = 0;
-    let distance = Number.POSITIVE_INFINITY;
-    for (let index = 0; index < values.length; index++) {
-        const candidate = Math.abs(values[index] - target);
-        if (candidate < distance) {
-            best = index;
-            distance = candidate;
-        }
-    }
-    return best;
-}
-
 function interpolate(time: number[], values: number[], target: number): number | null {
     if (target < time[0] || target > time[time.length - 1]) return null;
-    const right = time.findIndex(value => value >= target);
-    if (right <= 0) return values[Math.max(0, right)];
-    const left = right - 1;
-    const fraction = (target - time[left]) / (time[right] - time[left]);
-    return values[left] + fraction * (values[right] - values[left]);
-}
-
-export function pendulumThumbnailGeometry(
-    arm: number,
-    wrist: number,
-    params: Pick<PendulumParams, 'L1' | 'L2'>,
-) {
-    const scale = 74 / (params.L1 + params.L2);
-    const originX = 96;
-    const originY = 88;
-    const wristX = originX + params.L1 * scale * Math.sin(arm);
-    const wristY = originY + params.L1 * scale * Math.cos(arm);
-    const clubAngle = arm + wrist;
-    const tipX = wristX + params.L2 * scale * Math.sin(clubAngle);
-    const tipY = wristY + params.L2 * scale * Math.cos(clubAngle);
-    return { originX, originY, wristX, wristY, tipX, tipY };
+    return interpolateSeries(time, values, target);
 }
 
 function PendulumThumbnail({ scenario, time, params }: {
@@ -93,9 +60,17 @@ function PendulumThumbnail({ scenario, time, params }: {
     time: number;
     params: PendulumParams;
 }) {
-    const index = nearestIndex(scenario.series.time_s, time);
-    const arm = scenario.series.arm_angle_rad[index];
-    const wrist = scenario.series.wrist_cock_rad[index];
+    const sampleTime = Math.min(time, scenario.impact_time_s);
+    const arm = interpolateSeries(
+        scenario.series.time_s,
+        scenario.series.arm_angle_rad,
+        sampleTime,
+    );
+    const wrist = interpolateSeries(
+        scenario.series.time_s,
+        scenario.series.wrist_cock_rad,
+        sampleTime,
+    );
     const { originX, originY, wristX, wristY, tipX, tipY } = pendulumThumbnailGeometry(arm, wrist, params);
     const finalIndex = scenario.series.time_s.length - 1;
     const impact = pendulumThumbnailGeometry(
@@ -161,6 +136,7 @@ export const ForceSourceLab: React.FC<ForceSourceLabProps> = ({ params, initialS
     const [loadError, setLoadError] = useState<string | null>(null);
     const [selected, setSelected] = useState<Set<ForceSourceObjective>>(new Set(FORCE_SOURCE_OBJECTIVES));
     const [playing, setPlaying] = useState(false);
+    const [playbackRate, setPlaybackRate] = useState(0.35);
     const [time, setTime] = useState(0);
     const lastTimestamp = useRef<number | null>(null);
     const [objective, setObjective] = useState<ForceSourceObjective>('clubhead_speed');
@@ -198,8 +174,8 @@ export const ForceSourceLab: React.FC<ForceSourceLabProps> = ({ params, initialS
         let frame = 0;
         const tick = (timestamp: number) => {
             if (lastTimestamp.current !== null) {
-                const elapsed = (timestamp - lastTimestamp.current) / 1000;
-                setTime(previous => (previous + elapsed) % maxTime);
+                const elapsed = Math.min((timestamp - lastTimestamp.current) / 1000, 0.05);
+                setTime(previous => (previous + elapsed * playbackRate) % maxTime);
             }
             lastTimestamp.current = timestamp;
             frame = requestAnimationFrame(tick);
@@ -209,7 +185,7 @@ export const ForceSourceLab: React.FC<ForceSourceLabProps> = ({ params, initialS
             cancelAnimationFrame(frame);
             lastTimestamp.current = null;
         };
-    }, [maxTime, playing]);
+    }, [maxTime, playbackRate, playing]);
 
     const importArtifact = async (file: File) => {
         try {
@@ -342,8 +318,16 @@ export const ForceSourceLab: React.FC<ForceSourceLabProps> = ({ params, initialS
                     <div className="force-source-playback">
                         <button className="btn btn-secondary" onClick={() => setPlaying(value => !value)}>{playing ? 'Pause' : 'Play'}</button>
                         <button className="btn btn-secondary" onClick={() => setTime(0)}>Restart</button>
-                        <input aria-label="Comparison time" type="range" min="0" max={Math.max(maxTime, 0.001)} step="0.001" value={Math.min(time, maxTime)} onChange={event => { setTime(Number(event.target.value)); setPlaying(false); }} />
-                        <output>{time.toFixed(3)} s</output>
+                        <label className="force-source-rate">
+                            Speed
+                            <select aria-label="Playback speed" value={playbackRate} onChange={event => setPlaybackRate(Number(event.target.value))}>
+                                {[0.1, 0.2, 0.35, 0.5, 0.75, 1, 1.5, 2].map(rate => (
+                                    <option key={rate} value={rate}>{rate.toFixed(2)}×</option>
+                                ))}
+                            </select>
+                        </label>
+                        <input aria-label="Comparison time" type="range" min="0" max={Math.max(maxTime, 0.001)} step="0.0005" value={Math.min(time, maxTime)} onChange={event => { setTime(Number(event.target.value)); setPlaying(false); }} />
+                        <output>{time.toFixed(4)} s</output>
                     </div>
 
                     <div className="force-source-animation-grid">

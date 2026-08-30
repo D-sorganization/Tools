@@ -11,6 +11,8 @@ squared-speed impulse, squared-speed energy transfer, and clubhead speed.
 The lab provides:
 
 - five animations on one shared timeline;
+- continuously interpolated animation frames with 0.10×–2.00× playback speed
+  and a 0.5 ms scrubber;
 - aligned clubhead-speed, shoulder-torque, and wrist-torque plots;
 - a selectable initial arm angle and wrist cock, inherited from the visible
   simulator pose;
