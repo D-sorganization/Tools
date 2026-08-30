@@ -104,18 +104,18 @@ describe("planar-limit regression (CRITICAL gate)", () => {
       { stimpFt: 10, gradePercent: 2, aspectDeg: 90 },
       3.0,
     );
-    expect(result.totalDistanceM).toBeCloseTo(4.417405938785078, 10);
-    expect(result.skidDistanceM).toBeCloseTo(0.5103817275162047, 10);
-    expect(result.breakM).toBeCloseTo(0.8176068791755766, 10);
-    expect(result.missDistanceM).toBeCloseTo(1.4994647284222105, 10);
+    expect(result.totalDistanceM).toBeCloseTo(4.562853055205739, 10);
+    expect(result.skidDistanceM).toBeCloseTo(0.49083593692889005, 10);
+    expect(result.breakM).toBeCloseTo(0.8476231786308811, 10);
+    expect(result.missDistanceM).toBeCloseTo(1.6335909610224524, 10);
     const holed = simulatePutt(
       strike(PUTTER, 1.6),
       { stimpFt: 10, gradePercent: 0, aspectDeg: 0 },
       3.0,
     );
     expect(holed.holed).toBe(true);
-    expect(holed.speedAtHoleMps).toBeCloseTo(0.5903262895096224, 10);
-    expect(holed.marginMps).toBeCloseTo(0.2283133618862715, 10);
+    expect(holed.speedAtHoleMps).toBeCloseTo(0.6746829587276963, 10);
+    expect(holed.marginMps).toBeCloseTo(0.1439566926681971, 10);
   });
 });
 
@@ -301,7 +301,7 @@ describe("capture model", () => {
   });
 
   it("firm edge pace discriminates the models", () => {
-    const launch = strike(PUTTER, 1.69);
+    const launch = strike(PUTTER, 1.66);
     const effective = simulatePuttOnSurface(launch, FLAT, {
       stimpFt: 10,
       holeDistanceM: 3,
@@ -321,10 +321,10 @@ describe("capture model", () => {
       holeDistanceM: 3,
     });
     expect(result.holed).toBe(true);
-    expect(result.speedAtHoleMps).toBeCloseTo(0.5903262895096224, 10);
-    expect(result.marginMps).toBeCloseTo(0.2283133618862715, 10);
-    expect(result.totalDistanceM).toBeCloseTo(2.9618566583973425, 7);
-    expect(result.timeS).toBeCloseTo(2.368, 2);
+    expect(result.speedAtHoleMps).toBeCloseTo(0.6746829587276963, 10);
+    expect(result.marginMps).toBeCloseTo(0.1439566926681971, 10);
+    expect(result.totalDistanceM).toBeCloseTo(2.9687052346196463, 7);
+    expect(result.timeS).toBeCloseTo(2.276, 2);
   });
 
   it("pins the grid cross-slope reference putt (Python parity)", () => {
@@ -333,10 +333,10 @@ describe("capture model", () => {
       holeDistanceM: 10,
     });
     expect(result.holed).toBe(false);
-    expect(result.breakM).toBeCloseTo(1.014167410853712, 7);
-    expect(result.totalDistanceM).toBeCloseTo(5.476502851932196, 7);
-    expect(result.skidDistanceM).toBeCloseTo(0.626653383578046, 7);
-    expect(result.missDistanceM).toBeCloseTo(4.830211424915357, 7);
+    expect(result.breakM).toBeCloseTo(1.0478455745462154, 7);
+    expect(result.totalDistanceM).toBeCloseTo(5.639840165062302, 7);
+    expect(result.skidDistanceM).toBeCloseTo(0.6049655102874043, 7);
+    expect(result.missDistanceM).toBeCloseTo(4.684540514279886, 7);
   });
 
   it("refuses unknown capture models and bad speeds", () => {

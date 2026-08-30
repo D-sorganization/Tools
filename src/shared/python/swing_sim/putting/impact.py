@@ -330,7 +330,7 @@ def strike(
 
     # Stroke-plane solve (H3 model in the velocity-aligned frame).
     v_normal = transfer * clubhead_speed_mps * math.cos(beta)
-    u_tangential = clubhead_speed_mps * math.sin(beta)
+    u_tangential = -clubhead_speed_mps * math.sin(beta)
     v_tangential = _ROLLING_CAP * u_tangential
     # Backspin: contact-surface speed (5/7)u, topspin-positive sign.
     spin_rad_s = -(1.0 - _ROLLING_CAP) * u_tangential / GOLF_BALL_RADIUS_M
