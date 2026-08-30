@@ -32,6 +32,16 @@
 
 ## 2. Purpose & Mission
 
+### 2026-08-29 Web Force-Source Comparison Lab
+
+Version 1.18.89 adds a React comparison surface for five optimized double-
+pendulum objectives. It loads a versioned, fail-closed study artifact, presents
+the trajectories on one interpolated playback clock, and aligns clubhead-speed,
+shoulder-torque, and wrist-torque plots. The web surface is presentation-only:
+the generated artifact retains the optimizer configuration, constraints,
+provenance, robustness summary, and planar-model limitations needed to keep the
+comparison distinct from a human-golfer validation claim.
+
 ### 2026-08-27 Fail-Closed R14.6 Acceptance Authority (#4832 / #4433 / #4142)
 
 Version 1.18.75 adds `rate-of-closure/visualization-acceptance` v1 as the fifth

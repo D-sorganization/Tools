@@ -3,6 +3,124 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 3787,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "694e509bf4f64e17a54e3400206386dcdb1904569b23ec433ec3271b7b72dda2",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-CONTACT-TS-55FC2FF96826",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/contact.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "ContactMode",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ContactSample",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ImpactOutcomeTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ImpactStatus",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "assessFixedContact",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "deliveryInspectionOutcome",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2159,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "27a0ab58717079e07484565d066c69626f619e5291aabf6438cf71213a67cadf",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-COURSE-TEST-TS-9A24E9D56468",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/course.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 1259,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -13639,163 +13757,6 @@
           {
             "kind": "export",
             "name": "validateRegionalGroundVariationRequest",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 8400,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f6fc4344b5cba0dc44f4da52160c8b6ea6febce660168d8d4386b6de00662803",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-REGIONALSURFACEPLAN-TS-3ABEB8D6CC6B",
-      "language": "typescript",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/model/regionalSurfacePlan.ts",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "MAX_REGIONAL_SURFACE_EDITOR_ROWS",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "REGIONAL_SURFACE_EDITOR_PROVIDER",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "REGIONAL_SURFACE_EDITOR_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "RegionalOverlayDraft",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "RegionalSurfacePlanDraft",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "SurfaceMaterialDraft",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "buildGroundRegionalSurfacePlanRequest",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "editorDraftFromGroundRegionalSurfacePlanRequest",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "illustrativeRegionalSurfacePlanDraft",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "regionalSurfacePlanRequestForDraft",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1227,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ae89b45a7e69480749483113681e70066945635f85757dcae649f2ea84254d2b",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-REGIONALSURFACEPLANFILES-TS-52EC75C5B9DD",
-      "language": "typescript",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/model/regionalSurfacePlanFiles.ts",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "RegionalPlanFile",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "downloadRegionalSurfacePlanRequest",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "readRegionalSurfacePlanFile",
             "signature": null
           }
         ],

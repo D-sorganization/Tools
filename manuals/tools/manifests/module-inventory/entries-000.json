@@ -8159,6 +8159,7 @@
         ],
         "test_paths": [
           "src/optimizer_gui/tests/test_swing_chain_models.py",
+          "src/pendulum_simulator/pendulum-web/tests/forceSourceStudy.test.ts",
           "src/shared/python/humanoid_character_builder/tests/test_builder_assembly.py",
           "src/shared/python/humanoid_character_builder/tests/test_urdf_generator.py",
           "src/shared/python/model_generation/tests/test_physics_validation.py",

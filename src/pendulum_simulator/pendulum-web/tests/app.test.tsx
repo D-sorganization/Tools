@@ -18,6 +18,10 @@ describe('App entrypoint', () => {
         expect(html).toContain('Double Pendulum (2-DOF)');
         expect(html).toContain('Triple Pendulum (3-DOF)');
         expect(html).toContain('Golfer (8-DOF)');
+        expect(html).toContain('Force-Source Optimization Lab');
+        expect(html).toContain('Optimize from this pose');
+        expect(html).toContain('id="force-wrist-limit"');
+        expect(html).toContain('max="30"');
     });
 });
 

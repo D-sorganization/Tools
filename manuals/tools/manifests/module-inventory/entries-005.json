@@ -5202,10 +5202,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 11307,
+      "bytes_lf": 16830,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "780281e4015d49d77dcdbe0901df7dd0c3b24388bc7496b8f8863e17d1626f47",
+      "content_sha256_lf": "8e8fdf08e0cf6c99457f2dbc0b95124dd2c89d3c387501cbfbc186b739deda02",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-APP-CSS-F6FE792BCAFE",
       "language": "css",
@@ -5252,10 +5252,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 44556,
+      "bytes_lf": 45122,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "3d9b58a47e85c98485892a103b1d73bb72f488c2fde28d611d3eeb4dd8da9e57",
+      "content_sha256_lf": "7a52e129d570c2ae36673eee64564675dcf5079b14b5a0829ccf7cacb6dd0e2f",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-APP-TSX-50CCAB82E3E2",
       "language": "typescript-react",
@@ -5601,6 +5601,70 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 19527,
+      "classification": "calculation",
+      "classification_basis": "path-marker:force",
+      "content_sha256_lf": "99ba97527365d709ac63477d8177cdd1afe73970ff8844066b89680625e2b37f",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-COMPONENTS-FORCESOURCELAB-TSX-C5EBC30CB892",
+      "language": "typescript-react",
+      "maintainer": "Pendulum maintainers",
+      "path": "src/pendulum_simulator/pendulum-web/src/components/ForceSourceLab.tsx",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "ForceSourceLab",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "pendulumThumbnailGeometry",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N m",
+          "m/s",
+          "s"
+        ],
         "validation_paths": []
       }
     },
@@ -6061,6 +6125,143 @@
     },
     {
       "authority_status": "provisional",
+      "bytes_lf": 19556,
+      "classification": "calculation",
+      "classification_basis": "path-marker:force",
+      "content_sha256_lf": "f1c5a06da750046861112b473ba49d0133c2d3383ada535eb0cc2c417ff3c231",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-FORCESOURCESTUDY-TS-AB3C3426FBA8",
+      "language": "typescript",
+      "maintainer": "Pendulum maintainers",
+      "path": "src/pendulum_simulator/pendulum-web/src/forceSourceStudy.ts",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "BrowserOptimizationConfig",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "BrowserOptimizationProgress",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "FORCE_SOURCE_OBJECTIVES",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "FORCE_SOURCE_SCHEMA",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ForceSourceArtifact",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ForceSourceCandidate",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ForceSourceObjective",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ForceSourceScenario",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ForceSourceSeries",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "OBJECTIVE_LABELS",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "RobustnessSummary",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "SearchThoroughness",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "artifactWithScenario",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "candidateGrid",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "golfLikeImpactIndex",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "optimizeForceSource",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "parseForceSourceArtifact",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N m"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 229,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
@@ -6256,10 +6457,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 22113,
+      "bytes_lf": 23466,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "a479877e3677b9511933d12b8f9d84861eae9fe06d04bb69fca40b34f635aecb",
+      "content_sha256_lf": "94db97da595eee765aa49ad379db85b4901f241782220952e9c91c0d415e020d",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-PHYSICS-TS-24B32F483306",
       "language": "typescript",
@@ -6310,6 +6511,11 @@
           {
             "kind": "export",
             "name": "DEFAULT_TORQUE_CLAMP",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ForceSourceTerms",
             "signature": null
           },
           {
@@ -6390,6 +6596,11 @@
           {
             "kind": "export",
             "name": "frictionTorqueVector",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "generalizedForceSources",
             "signature": null
           },
           {
@@ -15512,159 +15723,6 @@
           "deg",
           "m/s",
           "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 11544,
-      "classification": "calculation",
-      "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "c46633102b5bc0830a617ab8e91e6dcb462e131e98a65b03d40e3c3a9a48d8e5",
-      "family": "pendulum-calculation",
-      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-SIGNALS-PY-A76CFBA57D0D",
-      "language": "python",
-      "maintainer": "Pendulum maintainers",
-      "path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/signals.py",
-      "purpose": "Vectorized downswing signals shared by every swing objective.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SwingSignals",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_swing_signals",
-            "signature": "time_s: FloatArray, states: FloatArray, torques: FloatArray, params: PendulumParams"
-          },
-          {
-            "kind": "function",
-            "name": "generalized_accelerations",
-            "signature": "states: FloatArray, torques: FloatArray, params: PendulumParams"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "N",
-          "N·m",
-          "W",
-          "g",
-          "m/s",
-          "rad/s",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 7924,
-      "classification": "calculation",
-      "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "7b2e5ba5874ca0cd3141e1b59631ccf163138bd554cc6d62cd20429bd81bcbf1",
-      "family": "pendulum-calculation",
-      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-VELOCITY-TERMS-PY-3D4873B6458B",
-      "language": "python",
-      "maintainer": "Pendulum maintainers",
-      "path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/velocity_terms.py",
-      "purpose": "Named split of the velocity-product term into centrifugal and Coriolis parts.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "VelocityTerms",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "centrifugal_vector",
-            "signature": "phi: float, dtheta1: float, dphi: float, params: PendulumParams"
-          },
-          {
-            "kind": "function",
-            "name": "coriolis_only_vector",
-            "signature": "phi: float, dtheta1: float, dphi: float, params: PendulumParams"
-          },
-          {
-            "kind": "function",
-            "name": "coupling_constant",
-            "signature": "params: PendulumParams"
-          },
-          {
-            "kind": "function",
-            "name": "decompose_velocity_terms",
-            "signature": "phi: float, dtheta1: float, dphi: float, params: PendulumParams"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "N·m",
-          "kg",
-          "rad",
-          "rad/s"
         ],
         "validation_paths": []
       }

@@ -130,6 +130,42 @@ function coriolisVector(phi: number, dtheta1: number, dphi: number,
     return [h * (2 * dtheta1 * dphi + dphi ** 2), -h * dtheta1 ** 2];
 }
 
+export interface ForceSourceTerms {
+    coriolis: [number, number];
+    squaredSpeed: [number, number];
+    gravity: [number, number];
+    damping: [number, number];
+    applied: [number, number];
+}
+
+/**
+ * Coordinate-explicit generalized-force terms used by the optimization lab.
+ *
+ * ``coriolis`` is the cross-speed part and ``squaredSpeed`` is the remaining
+ * velocity-quadratic part.  Both are source terms on the right-hand side of
+ * M(q)qdd, so their signs are the negative of the corresponding C-vector
+ * terms.  This split is coordinate dependent and is not a muscle-force model.
+ */
+export function generalizedForceSources(
+    state: State,
+    p: PendulumParams,
+    applied: [number, number],
+): ForceSourceTerms {
+    state.forEach((value, index) => assertFinite(value, `state[${index}]`));
+    applied.forEach((value, index) => assertFinite(value, `applied[${index}]`));
+    const [theta1, phi, dtheta1, dphi] = state;
+    const coupling = -m2eff(p) * p.L1 * p.L2 * Math.sin(phi);
+    const gravity = gravityVector(theta1, phi, p);
+    const damping = frictionTorqueVector(dtheta1, dphi, p);
+    return {
+        coriolis: [-2 * coupling * dtheta1 * dphi, 0],
+        squaredSpeed: [-coupling * dphi ** 2, coupling * dtheta1 ** 2],
+        gravity: [-gravity[0], -gravity[1]],
+        damping,
+        applied: [...applied],
+    };
+}
+
 // ── Gravity ───────────────────────────────────────────────────────────────────
 
 function gravityVector(theta1: number, phi: number,

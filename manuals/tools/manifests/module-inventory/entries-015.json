@@ -3,6 +3,166 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 3771,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5f0fdc98a6b9c18a3febd32cd4fb352c4cd4800ec8f230c52280dc0065701b13",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-API-PY-638C1CB4DB7B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/api.py",
+      "purpose": "Public Sidekick sidebar factory and host-install helpers.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ToolsSidebarInstallResult",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "create_tools_sidebar",
+            "signature": "project_root: str | Path | None=None, registry: WorkspaceRegistry | None=None, state: SidebarState | None=None, tab_definitions: list[SidebarTabDefinition] | None=None, design_tokens: SidekickDesignTokens | None=None, sidekick_tokens: dict[str, str] | None=None, theme_name: str | None=None, parent: QtWidgets.QWidget | None=None, context_provider: Callable[[], Any] | None=None, **_: Any"
+          },
+          {
+            "kind": "function",
+            "name": "install_tools_sidebar",
+            "signature": "main_window: QtWidgets.QMainWindow, *, project_root: str | Path | None=None, registry: WorkspaceRegistry | None=None, state: SidebarState | None=None, tab_definitions: list[SidebarTabDefinition] | None=None, design_tokens: SidekickDesignTokens | None=None, sidekick_tokens: dict[str, str] | None=None, theme_name: str | None=None, context_provider: Callable[[], Any] | None=None, area: str | None=None, title: str='Tools', state_path: str | Path | None=None, **_: Any"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8004,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c69e121b40949d2afe5dcb246309493247277fd1e9fb55eaccaf38d790d89df3",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-APPEARANCE-PY-42A22D640B06",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/appearance.py",
+      "purpose": "Shared, user-adjustable panel appearance for Sidekick runtime tabs.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PanelAppearance",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_DARK_PANEL_APPEARANCE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_LIGHT_PANEL_APPEARANCE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_BORDER_RADIUS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_BORDER_WIDTH",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "coerce_appearance",
+            "signature": "values: Mapping[str, Any] | None, base: PanelAppearance=DEFAULT_DARK_PANEL_APPEARANCE"
+          },
+          {
+            "kind": "function",
+            "name": "is_hex_color",
+            "signature": "value: Any"
+          },
+          {
+            "kind": "function",
+            "name": "is_panel_appearance",
+            "signature": "value: object"
+          },
+          {
+            "kind": "function",
+            "name": "panel_qss",
+            "signature": "object_name: str, appearance: PanelAppearance"
+          }
+        ],
+        "test_paths": [
+          "tests/unit/sidekick/test_appearance.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 1801,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17485,167 +17645,6 @@
           }
         ],
         "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 10836,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "519a552a6b35be83c75f8cf3c0afcfbc8630a755a550921a3a20bab64f85a942",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-SURFACE-MOTION-TYPES-PY-A7CDB84EEA40",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/surface_motion_types.py",
-      "purpose": "Typed non-wire contracts for planar skid/roll surface motion.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "PlanarSurfaceDomain",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RigidMotion",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SkidRollEnergyLedger",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SkidRollSettings",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SkidRollTermination",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SkidRollTerminationReason",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SurfaceBoundaryCrossing",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SurfaceKinematicSegment",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GROUND_SKID_ROLL_MODEL_ID",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GROUND_SKID_ROLL_MODEL_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "STANDARD_GRAVITY_M_S2",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_skid_roll_passivity.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 12613,
-      "classification": "calculation",
-      "classification_basis": "path-marker:solver",
-      "content_sha256_lf": "ed87cb28ead302c887ac8b3f82c20b9dc896283282780b48a7eb96d3e0a485aa",
-      "family": "swing-simulation-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-SURFACE-RESOLVER-PY-100063BD1313",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/surface_resolver.py",
-      "purpose": "Fail-closed resolver for coplanar material regions and finite edges.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SurfaceResolver",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_surface_resolver.py"
-        ],
         "unit_mentions": [],
         "validation_paths": []
       }

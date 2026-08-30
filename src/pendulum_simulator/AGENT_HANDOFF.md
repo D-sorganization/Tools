@@ -62,6 +62,11 @@ physics (merged #4774). #4775 then asked why its optima brake the arms to a
 standstill at impact. Contract:
 `docs/specs/SWING_ACTUATION_AND_REALISM.md`.
 
+The React web mirror now includes a synchronized five-objective comparison
+surface backed by a strict generated-study artifact. Keep optimization math out
+of the component: the browser validates and visualizes the artifact while the
+canonical scientific optimizer remains independently testable.
+
 **Five results that bind future work here** (all regression-pinned):
 
 1. `P_coriolis_hub = -2 * P_centrifugal_wrist` identically, so centrifugal and

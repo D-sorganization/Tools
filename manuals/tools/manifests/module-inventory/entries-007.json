@@ -3,6 +3,216 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 12582,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e6390b29b46e338f845d8b4478526d948dbe60943e2b24b23337b567d3f3e7f6",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-PLAYER-COVARIATION-PY-980A5451543D",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/player_covariation.py",
+      "purpose": "Within-player association and cross-player meta-analysis.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "analyze_player_covariation",
+            "signature": "frame: pd.DataFrame, request: CovariationRequest"
+          },
+          {
+            "kind": "function",
+            "name": "scan_covariation_pairs",
+            "signature": "frame: pd.DataFrame, request: PairScanRequest"
+          },
+          {
+            "kind": "re-export",
+            "name": "AssociationEstimate",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CovariationRequest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MetaAnalysisSummary",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PairScanAnalysis",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PairScanRequest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlayerCovariationAnalysis",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_launch_monitor_provenance_and_unavailable.py",
+          "tests/rate_of_closure/test_player_covariation.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "m/s",
+          "rpm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10929,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f2429548944cd33d07dcdd9bd4c1b4feef98589a3b6245d1d0ddd7dbc498f679",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-PLOT-POINT-INSPECTOR-PY-2AD5ABF93D94",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/plot_point_inspector.py",
+      "purpose": "Immutable exact-point and derived-bin plans for managed plot inspection.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "HistogramBin",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HistogramSelection",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlotInspectionPlan",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlotSeries",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SeriesSelection",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_PLOT_HIT_RADIUS_PX",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_PLOT_SAMPLES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_PLOT_SERIES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_PLOT_VERTICES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "histogram_bin_at_data",
+            "signature": "plan: PlotInspectionPlan, x_value: object, y_value: object"
+          },
+          {
+            "kind": "function",
+            "name": "navigate_plot_selection",
+            "signature": "plan: PlotInspectionPlan, current: PlotSelection | None, command: PlotNavigation"
+          },
+          {
+            "kind": "function",
+            "name": "nearest_series_point",
+            "signature": "plan: PlotInspectionPlan, projected: object, pointer_px: object, hit_radius_px: object=DEFAULT_PLOT_HIT_RADIUS_PX"
+          },
+          {
+            "kind": "function",
+            "name": "plan_plot_inspection",
+            "signature": "kind: object, x_input: object, series_input: object"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_plot_canvas_inspector.py",
+          "tests/rate_of_closure/test_plot_point_inspector.py"
+        ],
+        "unit_mentions": [
+          "bar"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 1497,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -12995,139 +13205,6 @@
         ],
         "unit_mentions": [
           "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 9361,
-      "classification": "calculation",
-      "classification_basis": "path-marker:torque",
-      "content_sha256_lf": "9b536b15790a3425d08cf210c5dfd0dcb49660fc094db928fc3cb95d6197e95e",
-      "family": "rate-of-closure-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-TORQUE-PROFILE-CONTROLLER-PY-5D33BD5730FE",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/torque_profile_controller.py",
-      "purpose": "UI-neutral seam between Rate of Closure and canonical torque profiles.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ProfileDraft",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RunMode",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TorqueExecutionSelection",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TorqueProfileLibraryAdapter",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "execution_selection",
-            "signature": "mode: RunMode, profile: PrescribedTorqueProfile | None"
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/test_torque_profile_ui.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 1620,
-      "classification": "calculation",
-      "classification_basis": "path-marker:torque",
-      "content_sha256_lf": "39c7bd1244d0d24470ef5ee92fee0f11e2c1cb7cb411811096e7b8092ed5d721",
-      "family": "rate-of-closure-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-TORQUE-PROFILE-DIALOG-PY-01B8542BC5EC",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/torque_profile_dialog.py",
-      "purpose": "Polynomial-generator dialog for prescribed joint-torque profiles.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "TorquePolynomialDialog",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "N·m"
         ],
         "validation_paths": []
       }

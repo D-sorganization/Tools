@@ -3,6 +3,141 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 7360,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "31319e7fa228e3de5326abca58fd84c988186d799b47ea58261f032d740fd280",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-QT-QUEUE-PANEL-PY-EFBC213B06CA",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/_qt/queue_panel.py",
+      "purpose": "Inline queue-preview panel for the shared chat dock (Tools chat UX).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "QueuePanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "QueuedMessage",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/chat/test_chat_queue_panel.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2731,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "869f061c8eab31b2328dada3ffe2e481b06987a9b711da99da554ea761232d16",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-QT-SESSIONS-PY-4548D3D48622",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/_qt/sessions.py",
+      "purpose": "Conversation-management helpers (Tools issue #2872).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "add_context_session",
+            "signature": "dock: Any, session_id: str"
+          },
+          {
+            "kind": "function",
+            "name": "breadcrumb_labels",
+            "signature": "dock: Any"
+          },
+          {
+            "kind": "function",
+            "name": "refresh_breadcrumb",
+            "signature": "dock: Any"
+          },
+          {
+            "kind": "function",
+            "name": "remove_context_session",
+            "signature": "dock: Any, session_id: str"
+          },
+          {
+            "kind": "function",
+            "name": "resolve_use_session_target",
+            "signature": "dock: Any, target: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 1057,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -16349,212 +16484,6 @@
         "unit_mentions": [
           "kg"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 6932,
-      "classification": "calculation",
-      "classification_basis": "path-marker:inertia",
-      "content_sha256_lf": "02e19970c799288ba6265f56a7d6e778b85679608f70f7f2dc27da3186b10a45",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-INERTIA-SPATIAL-PY-B0A93271BD76",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/inertia/spatial.py",
-      "purpose": "Spatial inertia utilities for rigid body dynamics.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "composite_rigid_body_inertia",
-            "signature": "inertias: list[tuple[NDArray[np.float64], NDArray[np.float64]]]"
-          },
-          {
-            "kind": "function",
-            "name": "mcI",
-            "signature": "mass: float, com: NDArray[np.float64], I_com: NDArray[np.float64]"
-          },
-          {
-            "kind": "function",
-            "name": "spatial_inertia_to_urdf",
-            "signature": "spatial_inertia: NDArray[np.float64]"
-          },
-          {
-            "kind": "function",
-            "name": "spatial_transform",
-            "signature": "rotation: NDArray[np.float64], translation: NDArray[np.float64]"
-          },
-          {
-            "kind": "function",
-            "name": "transform_spatial_inertia",
-            "signature": "I_A: NDArray[np.float64], X_BA: NDArray[np.float64]"
-          },
-          {
-            "kind": "function",
-            "name": "urdf_to_spatial_inertia",
-            "signature": "mass: float, com: tuple[float, float, float] | list[float] | NDArray, ixx: float, iyy: float, izz: float, ixy: float=0.0, ixz: float=0.0, iyz: float=0.0"
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/model_generation/inertia/test_spatial.py"
-        ],
-        "unit_mentions": [
-          "kg"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1298,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a489bc4d16c1ced2108da3169a4533dfa499da2ab07d81b88a3ad96d21433ca4",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-LIBRARY-INIT-PY-F9583BB00221",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/library/__init__.py",
-      "purpose": "Model Library for URDF and MJCF model management.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "GitHubImporter",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "GitHubRepository",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ImportResult",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "LoadResult",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "LocalRepository",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ModelCache",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ModelCategory",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ModelEntry",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ModelFormat",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ModelLibrary",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "Repository",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "RepositorySource",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "UnifiedModelLoader",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "UserPreferences",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "detect_format",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }
