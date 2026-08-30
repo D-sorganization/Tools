@@ -46,8 +46,12 @@ function fittedRange(
   const transformed = values
     .filter((value) => Number.isFinite(value) && (!logarithmic || value > 0))
     .map((value) => axisCoordinate(value, logarithmic));
-  let min = Math.min(...transformed);
-  let max = Math.max(...transformed);
+  let min = transformed[0] ?? 0;
+  let max = transformed[0] ?? 0;
+  for (let i = 1; i < transformed.length; i++) {
+    if (transformed[i] < min) min = transformed[i];
+    if (transformed[i] > max) max = transformed[i];
+  }
   if (!Number.isFinite(min) || !Number.isFinite(max)) return [0, 1];
   if (min === max) {
     min -= 0.5;
