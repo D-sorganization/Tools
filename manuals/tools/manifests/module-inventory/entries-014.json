@@ -3,6 +3,60 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 486,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4b50d65b4f84a26881aaf4f6418e4590d1c351bbcb8454b2cdbbd97e1f06925a",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-EXPLORER-DISPLAY-CONFIG-PY-9AFC5B5F75F3",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/explorer/display_config.py",
+      "purpose": "Display configuration constants for the Model Explorer.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "DISPLAY_OPTIONS",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/model_generation/tests/test_unified_loader.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 19104,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17397,80 +17451,6 @@
           "src/shared/python/sidekick/tests/ui/test_catppuccin_theme.py"
         ],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3368,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b7c14247ae01b1093d6ca504c532a80ea1bad03401ded1af7d35c6feeb18224e",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-DESIGN-TOKENS-PY-011466A20CA4",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/design_tokens.py",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "apply_tokens_to_qss",
-            "signature": "qss_content: str, theme_name: str='light'"
-          },
-          {
-            "kind": "function",
-            "name": "get_qss_variables",
-            "signature": "theme_name: str='light'"
-          },
-          {
-            "kind": "function",
-            "name": "get_token_dict",
-            "signature": "theme_name: str='light'"
-          },
-          {
-            "kind": "function",
-            "name": "get_tokens_path",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "load_design_tokens",
-            "signature": ""
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "g"
-        ],
         "validation_paths": []
       }
     }

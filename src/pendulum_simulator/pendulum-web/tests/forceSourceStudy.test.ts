@@ -2,9 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 
 import {
+    actuatorEffortMetrics,
     buildCandidateSet,
     buildOptimizationContract,
     candidateTorqueFunction,
+    candidateProfileId,
     artifactWithScenarios,
     DEFAULT_OPTIMIZATION_CONSTRAINTS,
     FORCE_SOURCE_SCHEMA,
@@ -43,6 +45,7 @@ function optimizationConfig(): BrowserOptimizationConfig {
             wristTorqueLimitNm: 30,
             wristTorqueStepNm: 0.5,
             profileDurationS: { min: 0.3, max: 0.7, step: 0.01 },
+            studyMode: 'common_bounds',
             candidateBudget: 96,
             robustnessTrials: 9,
         },
@@ -60,6 +63,28 @@ function validArtifact(): ForceSourceArtifact {
         wrist_coefficients_nm: [0, -10, -8, 0, 12, 20, 0] as const,
     };
     const torques = pair.map(time => candidateTorqueFunction(candidate)(time));
+    const series = {
+        time_s: pair,
+        arm_angle_rad: [-2.2, -2.1],
+        wrist_cock_rad: [-1.57, -1.47],
+        arm_angular_velocity_rad_s: pair,
+        wrist_angular_velocity_rad_s: pair,
+        shoulder_torque_nm: torques.map(value => value[0]),
+        wrist_torque_nm: torques.map(value => value[1]),
+        clubhead_speed_m_s: pair,
+        coriolis_tangent_force_n: pair,
+        coriolis_power_w: pair,
+        squared_speed_tangent_force_n: pair,
+        squared_speed_power_w: pair,
+        hand_path_tangent_force_n: pair,
+        shoulder_actuator_power_w: torques.map((value, index) => value[0] * pair[index]),
+        wrist_actuator_power_w: torques.map((value, index) => value[1] * pair[index]),
+        total_actuator_power_w: torques.map((value, index) => (value[0] + value[1]) * pair[index]),
+        cumulative_positive_actuator_work_j: [0, 0.5 * 0.1 * (
+            Math.max(torques[1][0] * 0.1, 0) + Math.max(torques[1][1] * 0.1, 0)
+        )],
+        cumulative_net_actuator_work_j: [0, 0.5 * 0.1 * (torques[1][0] + torques[1][1]) * 0.1],
+    };
     return {
         schema_version: FORCE_SOURCE_SCHEMA,
         force_attribution_schema: 'force-attribution/v1',
@@ -81,6 +106,8 @@ function validArtifact(): ForceSourceArtifact {
             objective: 'clubhead_speed',
             score: 0.1,
             candidate: structuredClone(candidate),
+            profile_id: candidateProfileId(candidate),
+            effort: actuatorEffortMetrics(series),
             impact_time_s: 0.1,
             comparison_contract_id: contract.id,
             robustness: {
@@ -95,27 +122,13 @@ function validArtifact(): ForceSourceArtifact {
             near_optimal_count: 2,
             boundary_hits: [],
             convergence: [39, 40],
-            series: {
-                time_s: pair,
-                arm_angle_rad: [-2.2, -2.1],
-                wrist_cock_rad: [-1.57, -1.47],
-                arm_angular_velocity_rad_s: pair,
-                wrist_angular_velocity_rad_s: pair,
-                shoulder_torque_nm: torques.map(value => value[0]),
-                wrist_torque_nm: torques.map(value => value[1]),
-                clubhead_speed_m_s: pair,
-                coriolis_tangent_force_n: pair,
-                coriolis_power_w: pair,
-                squared_speed_tangent_force_n: pair,
-                squared_speed_power_w: pair,
-                hand_path_tangent_force_n: pair,
-            },
+            series,
         }],
     };
 }
 
 describe('force-source artifact contract', () => {
-    it('accepts aligned version-3 scenario series', () => {
+    it('accepts aligned version-4 scenario series', () => {
         expect(parseForceSourceArtifact(validArtifact()).scenarios).toHaveLength(1);
     });
 
@@ -170,6 +183,26 @@ describe('force-source artifact contract', () => {
         artifact.scenarios[0].series.wrist_torque_nm[1] += 1;
 
         expect(() => parseForceSourceArtifact(artifact)).toThrow(/plotted torques/i);
+    });
+
+    it('rejects plotted actuator power or cumulative work that does not match the trajectory', () => {
+        const artifact = validArtifact();
+        artifact.scenarios[0].series.shoulder_actuator_power_w[1] += 1;
+        expect(() => parseForceSourceArtifact(artifact)).toThrow(/actuator powers/i);
+
+        const second = validArtifact();
+        second.scenarios[0].series.cumulative_positive_actuator_work_j[1] += 1;
+        expect(() => parseForceSourceArtifact(second)).toThrow(/cumulative work/i);
+    });
+
+    it('rejects derived effort or profile identity that does not match the registered series', () => {
+        const artifact = validArtifact();
+        artifact.scenarios[0].effort.total_positive_work_j += 1;
+        expect(() => parseForceSourceArtifact(artifact)).toThrow(/effort/i);
+
+        const second = validArtifact();
+        second.scenarios[0].profile_id = 'profile-tampered';
+        expect(() => parseForceSourceArtifact(second)).toThrow(/profile_id/i);
     });
 
     it('rejects scenarios whose first pose differs from the registered comparison pose', () => {
@@ -242,6 +275,14 @@ describe('force-source artifact contract', () => {
         expect(speedWinner?.score).toBeGreaterThanOrEqual(
             artifact.comparison_contract.constraints.targetClubheadSpeedMps,
         );
+        expect(artifact.comparison_contract.constraints.studyMode).toBe('equal_speed');
+        expect(new Set(artifact.scenarios.map(item => item.profile_id)).size).toBeGreaterThanOrEqual(3);
+        expect(artifact.scenarios.find(item => item.objective === 'coriolis_energy_transfer')?.profile_id).toBe(
+            artifact.scenarios.find(item => item.objective === 'centrifugal_energy_transfer')?.profile_id,
+        );
+        expect(speedWinner?.profile_id).not.toBe(
+            artifact.scenarios.find(item => item.objective === 'coriolis_impulse')?.profile_id,
+        );
         for (const [index, scenario] of artifact.scenarios.entries()) {
             expect(crossScores[index][scenario.objective]).toBeCloseTo(
                 Math.max(...crossScores.map(scores => scores[scenario.objective])),
@@ -249,6 +290,48 @@ describe('force-source artifact contract', () => {
             );
             expect(scenario.series.arm_angle_rad[0]).toBe(artifact.initial_pose.arm_angle_rad);
             expect(scenario.series.wrist_cock_rad[0]).toBe(artifact.initial_pose.wrist_cock_rad);
+            const speed = scenario.series.clubhead_speed_m_s[scenario.series.clubhead_speed_m_s.length - 1];
+            expect(speed).toBeGreaterThanOrEqual(
+                artifact.comparison_contract.constraints.targetClubheadSpeedMps - 1e-8,
+            );
+            expect(speed).toBeLessThanOrEqual(
+                artifact.comparison_contract.constraints.targetClubheadSpeedMps
+                    + artifact.comparison_contract.constraints.speedToleranceMps + 1e-8,
+            );
+            expect(scenario.effort.total_positive_work_j).toBeLessThanOrEqual(
+                artifact.comparison_contract.constraints.maxPositiveActuatorWorkJ + 1e-8,
+            );
+            expect(scenario.effort.squared_torque_effort_nm2_s).toBeLessThanOrEqual(
+                artifact.comparison_contract.constraints.maxSquaredTorqueEffortNm2S + 1e-8,
+            );
+            expect(scenario.robustness.qualification_rate).toBeGreaterThanOrEqual(
+                artifact.comparison_contract.constraints.minimumRobustQualificationRate,
+            );
+        }
+    });
+
+    it('registers a separate equal-effort capacity study with differentiated output speeds', () => {
+        const artifactUrl = new URL(
+            '../public/force-source-comparison-equal-effort.json',
+            import.meta.url,
+        );
+        const artifact = parseForceSourceArtifact(JSON.parse(readFileSync(artifactUrl, 'utf8')));
+        const speeds = artifact.scenarios.map(item => item.series.clubhead_speed_m_s[
+            item.series.clubhead_speed_m_s.length - 1
+        ]);
+
+        expect(artifact.comparison_contract.constraints.studyMode).toBe('equal_effort');
+        expect(Math.max(...speeds) - Math.min(...speeds)).toBeGreaterThan(10);
+        for (const scenario of artifact.scenarios) {
+            expect(scenario.effort.total_positive_work_j).toBeLessThanOrEqual(
+                artifact.comparison_contract.constraints.maxPositiveActuatorWorkJ + 1e-8,
+            );
+            expect(scenario.effort.squared_torque_effort_nm2_s).toBeLessThanOrEqual(
+                artifact.comparison_contract.constraints.maxSquaredTorqueEffortNm2S + 1e-8,
+            );
+            expect(scenario.robustness.qualification_rate).toBeGreaterThanOrEqual(
+                artifact.comparison_contract.constraints.minimumRobustQualificationRate,
+            );
         }
     });
 });

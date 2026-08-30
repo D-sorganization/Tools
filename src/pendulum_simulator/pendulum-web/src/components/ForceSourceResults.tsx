@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import {
-    CartesianGrid, Legend, Line, LineChart, ReferenceLine,
+    CartesianGrid, Legend, Line, LineChart, ReferenceArea, ReferenceLine,
     ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from 'recharts';
 
@@ -11,7 +11,7 @@ import {
 import {
     FORCE_SOURCE_OBJECTIVES, OBJECTIVE_LABELS, profileDiagnostics,
     scoreForceSourceSeries, type ForceSourceObjective,
-    type ForceSourceScenario, type ForceSourceSeries,
+    type ForceSourceConstraints, type ForceSourceScenario, type ForceSourceSeries,
 } from '../forceSourceStudy';
 import type { PendulumParams } from '../physics';
 
@@ -93,10 +93,15 @@ const PLOT_SPECS: PlotSpec[] = [
     { title: 'Centrifugal tangential force', unit: 'N', field: 'squared_speed_tangent_force_n' },
     { title: 'Centrifugal transfer power', unit: 'W', field: 'squared_speed_power_w' },
     { title: 'Hand-path tangential force', unit: 'N', field: 'hand_path_tangent_force_n' },
+    { title: 'Shoulder actuator power', unit: 'W', field: 'shoulder_actuator_power_w' },
+    { title: 'Wrist actuator power', unit: 'W', field: 'wrist_actuator_power_w' },
+    { title: 'Total actuator power', unit: 'W', field: 'total_actuator_power_w' },
+    { title: 'Cumulative positive actuator work', unit: 'J', field: 'cumulative_positive_actuator_work_j' },
+    { title: 'Cumulative net actuator work', unit: 'J', field: 'cumulative_net_actuator_work_j' },
 ];
 
-function ComparisonPlot({ spec, scenarios, targetClubheadSpeedMps }: {
-    spec: PlotSpec; scenarios: ForceSourceScenario[]; targetClubheadSpeedMps: number;
+function ComparisonPlot({ spec, scenarios, constraints }: {
+    spec: PlotSpec; scenarios: ForceSourceScenario[]; constraints: ForceSourceConstraints;
 }) {
     const data = useMemo(() => {
         const maxTime = Math.max(...scenarios.map(item => item.impact_time_s));
@@ -121,21 +126,16 @@ function ComparisonPlot({ spec, scenarios, targetClubheadSpeedMps }: {
                 <YAxis stroke="#8791aa" tick={{ fontSize: 10 }} />
                 <Tooltip contentStyle={{ background: '#111522', border: '1px solid #3c455e' }} />
                 <Legend wrapperStyle={{ fontSize: 10 }} formatter={(value: string) => OBJECTIVE_LABELS[value as ForceSourceObjective]} />
-                {spec.field === 'clubhead_speed_m_s' && <ReferenceLine y={targetClubheadSpeedMps} stroke="#f4f7ff" strokeDasharray="5 4" label={{ value: `target ${targetClubheadSpeedMps.toFixed(1)}`, fill: '#f4f7ff', fontSize: 10 }} />}
+                {spec.field === 'clubhead_speed_m_s' && constraints.studyMode === 'equal_speed' && <ReferenceArea
+                    y1={constraints.targetClubheadSpeedMps}
+                    y2={constraints.targetClubheadSpeedMps + constraints.speedToleranceMps}
+                    fill="#f4f7ff" fillOpacity={0.08}
+                />}
+                {spec.field === 'clubhead_speed_m_s' && <ReferenceLine y={constraints.targetClubheadSpeedMps} stroke="#f4f7ff" strokeDasharray="5 4" label={{ value: `target ${constraints.targetClubheadSpeedMps.toFixed(1)}`, fill: '#f4f7ff', fontSize: 10 }} />}
                 {scenarios.map(item => <Line key={item.objective} type="monotone" dataKey={item.objective} stroke={OBJECTIVE_COLORS[item.objective]} dot={false} strokeWidth={2} connectNulls={false} />)}
             </LineChart>
         </ResponsiveContainer>
     </div>;
-}
-
-function trapezoidProduct(left: number[], right: number[], time: number[]): number {
-    let total = 0;
-    for (let index = 1; index < time.length; index += 1) {
-        const prior = left[index - 1] * right[index - 1];
-        const current = left[index] * right[index];
-        total += 0.5 * (prior + current) * (time[index] - time[index - 1]);
-    }
-    return total;
 }
 
 function objectiveRanks(scenarios: ForceSourceScenario[]) {
@@ -178,6 +178,53 @@ function paretoRanks(scenarios: ForceSourceScenario[]): Map<ForceSourceObjective
     return ranks;
 }
 
+function scalarRanks(
+    scenarios: ForceSourceScenario[],
+    value: (scenario: ForceSourceScenario) => number,
+    lowerIsBetter = false,
+): Map<ForceSourceObjective, number> {
+    const sorted = [...scenarios].sort((left, right) =>
+        (lowerIsBetter ? 1 : -1) * (value(left) - value(right)));
+    const ranks = new Map<ForceSourceObjective, number>();
+    let priorValue: number | null = null;
+    let priorRank = 0;
+    sorted.forEach((scenario, index) => {
+        const current = value(scenario);
+        const tied = priorValue !== null
+            && Math.abs(current - priorValue) <= 1e-10 * Math.max(1, Math.abs(current), Math.abs(priorValue));
+        const rank = tied ? priorRank : index + 1;
+        ranks.set(scenario.objective, rank);
+        priorValue = current;
+        priorRank = rank;
+    });
+    return ranks;
+}
+
+function inputParetoRanks(scenarios: ForceSourceScenario[]): Map<ForceSourceObjective, number> {
+    const remaining = new Set(scenarios.map(item => item.objective));
+    const ranks = new Map<ForceSourceObjective, number>();
+    const speed = (item: ForceSourceScenario) => item.series.clubhead_speed_m_s[
+        item.series.clubhead_speed_m_s.length - 1
+    ] ?? 0;
+    let rank = 1;
+    while (remaining.size > 0) {
+        const front = [...remaining].filter(candidate => ![...remaining].some(other => {
+            if (candidate === other) return false;
+            const left = scenarios.find(item => item.objective === candidate)!;
+            const right = scenarios.find(item => item.objective === other)!;
+            return speed(right) >= speed(left)
+                && right.effort.total_positive_work_j <= left.effort.total_positive_work_j
+                && right.effort.squared_torque_effort_nm2_s <= left.effort.squared_torque_effort_nm2_s
+                && (speed(right) > speed(left)
+                    || right.effort.total_positive_work_j < left.effort.total_positive_work_j
+                    || right.effort.squared_torque_effort_nm2_s < left.effort.squared_torque_effort_nm2_s);
+        }));
+        for (const objective of front) { ranks.set(objective, rank); remaining.delete(objective); }
+        rank += 1;
+    }
+    return ranks;
+}
+
 function TradeoffTable({ scenarios, targetClubheadSpeedMps }: {
     scenarios: ForceSourceScenario[]; targetClubheadSpeedMps: number;
 }) {
@@ -201,24 +248,45 @@ function TradeoffTable({ scenarios, targetClubheadSpeedMps }: {
     </div>;
 }
 
-function StrategyTable({ scenarios, transitionTorqueNm }: {
-    scenarios: ForceSourceScenario[]; transitionTorqueNm: number;
+function StrategyTable({ scenarios, constraints }: {
+    scenarios: ForceSourceScenario[]; constraints: ForceSourceConstraints;
 }) {
+    const profileGroups = new Map<string, ForceSourceScenario[]>();
+    for (const scenario of scenarios) {
+        profileGroups.set(scenario.profile_id, [...(profileGroups.get(scenario.profile_id) ?? []), scenario]);
+    }
+    const shoulderLimit = Math.max(Math.abs(constraints.shoulderTorqueNm.min), Math.abs(constraints.shoulderTorqueNm.max));
+    const speedValue = (scenario: ForceSourceScenario) => scenario.series.clubhead_speed_m_s[
+        scenario.series.clubhead_speed_m_s.length - 1
+    ] ?? 0;
+    const speedRanks = scalarRanks(scenarios, speedValue);
+    const workRanks = scalarRanks(scenarios, scenario => scenario.effort.total_positive_work_j, true);
+    const activationRanks = scalarRanks(scenarios, scenario => scenario.effort.squared_torque_effort_nm2_s, true);
+    const inputPareto = inputParetoRanks(scenarios);
     return <div className="force-source-table-wrap">
-        <h3>Control strategy diagnostics</h3>
+        <h3>Input work, activation, and control strategy</h3>
+        <p>Positive work counts energy supplied by either actuator; negative work records braking separately. Input Pareto rank 1 means no displayed strategy is at least as fast with no more positive work and squared activation. Equal profile IDs mean the objectives selected exactly the same polynomial controls.</p>
         <table className="force-source-strategy-table">
-            <thead><tr><th>Strategy</th><th>Impact [s]</th><th>Shoulder peak / RMS [N m]</th><th>Wrist peak / RMS [N m]</th><th>Peak slew shoulder / wrist [N m/s]</th><th>Wrist reversal / low-torque duration [s]</th><th>Shoulder / wrist work [J]</th></tr></thead>
+            <thead><tr><th>Strategy / profile</th><th>Input Pareto</th><th>Speed [m/s]</th><th>Positive / net / braking work [J]</th><th>Shoulder / wrist net work [J]</th><th>Peak shoulder / wrist [N m]</th><th>Peak utilization</th><th>RMS shoulder / wrist [N m]</th><th>∫|τ|dt [N m s]</th><th>∫τ²dt [N² m² s]</th><th>Peak power shoulder / wrist [W]</th><th>Peak slew shoulder / wrist [N m/s]</th><th>Reversal / low-torque [s]</th></tr></thead>
             <tbody>{scenarios.map(scenario => {
-                const diagnostic = profileDiagnostics(scenario.candidate, transitionTorqueNm);
-                const shoulderWork = trapezoidProduct(scenario.series.shoulder_torque_nm, scenario.series.arm_angular_velocity_rad_s, scenario.series.time_s);
-                const wristWork = trapezoidProduct(scenario.series.wrist_torque_nm, scenario.series.wrist_angular_velocity_rad_s, scenario.series.time_s);
-                return <tr key={scenario.objective}><th>{OBJECTIVE_LABELS[scenario.objective]}</th>
-                    <td>{scenario.impact_time_s.toFixed(3)}</td>
-                    <td>{diagnostic.peak_shoulder_torque_nm.toFixed(1)} / {diagnostic.rms_shoulder_torque_nm.toFixed(1)}</td>
-                    <td>{diagnostic.peak_wrist_torque_nm.toFixed(1)} / {diagnostic.rms_wrist_torque_nm.toFixed(1)}</td>
+                const diagnostic = profileDiagnostics(scenario.candidate, constraints.transitionTorqueNm);
+                const speed = scenario.series.clubhead_speed_m_s[
+                    scenario.series.clubhead_speed_m_s.length - 1
+                ] ?? 0;
+                const group = profileGroups.get(scenario.profile_id) ?? [];
+                return <tr key={scenario.objective}><th>{OBJECTIVE_LABELS[scenario.objective]}<small>{scenario.profile_id}{group.length > 1 ? ` · shared by ${group.length} objectives` : ''}</small></th>
+                    <td>{inputPareto.get(scenario.objective)}</td>
+                    <td>{speed.toFixed(2)}<small>speed #{speedRanks.get(scenario.objective)}</small></td>
+                    <td>{scenario.effort.total_positive_work_j.toFixed(1)} / {scenario.effort.total_net_work_j.toFixed(1)} / {scenario.effort.total_negative_work_j.toFixed(1)}<small>positive-work #{workRanks.get(scenario.objective)}</small></td>
+                    <td>{scenario.effort.shoulder_net_work_j.toFixed(1)} / {scenario.effort.wrist_net_work_j.toFixed(1)}</td>
+                    <td>{diagnostic.peak_shoulder_torque_nm.toFixed(1)} / {diagnostic.peak_wrist_torque_nm.toFixed(1)}</td>
+                    <td>{(100 * diagnostic.peak_shoulder_torque_nm / shoulderLimit).toFixed(0)}% / {(100 * diagnostic.peak_wrist_torque_nm / constraints.wristTorqueLimitNm).toFixed(0)}%</td>
+                    <td>{diagnostic.rms_shoulder_torque_nm.toFixed(1)} / {diagnostic.rms_wrist_torque_nm.toFixed(1)}</td>
+                    <td>{scenario.effort.absolute_torque_impulse_nm_s.toFixed(1)}</td>
+                    <td>{scenario.effort.squared_torque_effort_nm2_s.toFixed(0)}<small>activation #{activationRanks.get(scenario.objective)}</small></td>
+                    <td>{scenario.effort.peak_shoulder_power_w.toFixed(0)} / {scenario.effort.peak_wrist_power_w.toFixed(0)}</td>
                     <td>{diagnostic.peak_shoulder_slew_nm_s.toFixed(0)} / {diagnostic.peak_wrist_slew_nm_s.toFixed(0)}</td>
                     <td>{diagnostic.wrist_reversal_time_s?.toFixed(3) ?? '—'} / {diagnostic.wrist_transition_duration_s.toFixed(3)}</td>
-                    <td>{shoulderWork.toFixed(1)} / {wristWork.toFixed(1)}</td>
                 </tr>;
             })}</tbody>
         </table>
@@ -236,10 +304,15 @@ function CoefficientTable({ scenarios }: { scenarios: ForceSourceScenario[] }) {
     </details>;
 }
 
-export function ForceSourceResults({ scenarios, time, params, alignment, targetClubheadSpeedMps, transitionTorqueNm }: {
+export function ForceSourceResults({ scenarios, time, params, alignment, constraints }: {
     scenarios: ForceSourceScenario[]; time: number; params: PendulumParams;
-    alignment: AnimationAlignment; targetClubheadSpeedMps: number; transitionTorqueNm: number;
+    alignment: AnimationAlignment; constraints: ForceSourceConstraints;
 }) {
+    const profileGroups = useMemo(() => new Map(
+        [...new Set(scenarios.map(item => item.profile_id))].map(profileId => [
+            profileId, scenarios.filter(item => item.profile_id === profileId),
+        ]),
+    ), [scenarios]);
     return <>
         <div className="force-source-animation-key" aria-label="Animation marker key">
             <span><i className="force-source-marker force-source-marker--hub" />Fixed shoulder hub</span>
@@ -248,7 +321,7 @@ export function ForceSourceResults({ scenarios, time, params, alignment, targetC
             {alignment === 'impact_aligned' && <span><i className="force-source-marker force-source-marker--camera" />Camera-only impact target</span>}
         </div>
         <div className="force-source-animation-grid">{scenarios.map(scenario => {
-            const diagnostics = profileDiagnostics(scenario.candidate, transitionTorqueNm);
+            const diagnostics = profileDiagnostics(scenario.candidate, constraints.transitionTorqueNm);
             const speed = scenario.series.clubhead_speed_m_s[
                 scenario.series.clubhead_speed_m_s.length - 1
             ] ?? 0;
@@ -257,8 +330,10 @@ export function ForceSourceResults({ scenarios, time, params, alignment, targetC
                 <PendulumThumbnail scenario={scenario} time={time} params={params} alignment={alignment} />
                 <dl>
                     <div><dt>Objective score</dt><dd>{scenario.score.toFixed(2)} {OBJECTIVE_UNITS[scenario.objective]}</dd></div>
+                    <div><dt>Control profile</dt><dd>{scenario.profile_id}{(profileGroups.get(scenario.profile_id)?.length ?? 0) > 1 ? ` · shared by ${profileGroups.get(scenario.profile_id)?.length} objectives` : ''}</dd></div>
                     <div><dt>Impact speed</dt><dd>{speed.toFixed(2)} m/s · {(speed * 2.23694).toFixed(1)} mph</dd></div>
-                    <div><dt>Target gap</dt><dd>{(speed - targetClubheadSpeedMps).toFixed(2)} m/s</dd></div>
+                    <div><dt>Target gap</dt><dd>{(speed - constraints.targetClubheadSpeedMps).toFixed(2)} m/s</dd></div>
+                    <div><dt>Positive work</dt><dd>{scenario.effort.total_positive_work_j.toFixed(1)} J</dd></div>
                     {scenario.impact_diagnostics && <div><dt>Impact path</dt><dd>{scenario.impact_diagnostics.path_angle_deg.toFixed(1)}° · {(100 * scenario.impact_diagnostics.bottom_reach_fraction).toFixed(0)}% reach</dd></div>}
                     <div><dt>Wrist reversal</dt><dd>{diagnostics.wrist_reversal_time_s?.toFixed(3) ?? '—'} s · {diagnostics.wrist_transition_duration_s.toFixed(3)} s low torque</dd></div>
                     <div><dt>Robust qualification</dt><dd>{scenario.robustness.sample_count <= 1 ? 'Nominal only' : `${(100 * scenario.robustness.qualification_rate).toFixed(0)}%`}</dd></div>
@@ -266,10 +341,10 @@ export function ForceSourceResults({ scenarios, time, params, alignment, targetC
             </article>;
         })}</div>
         {scenarios.length > 0 && <>
-            <TradeoffTable scenarios={scenarios} targetClubheadSpeedMps={targetClubheadSpeedMps} />
-            <StrategyTable scenarios={scenarios} transitionTorqueNm={transitionTorqueNm} />
+            <TradeoffTable scenarios={scenarios} targetClubheadSpeedMps={constraints.targetClubheadSpeedMps} />
+            <StrategyTable scenarios={scenarios} constraints={constraints} />
             <CoefficientTable scenarios={scenarios} />
-            <div className="force-source-plot-grid">{PLOT_SPECS.map(spec => <ComparisonPlot key={spec.field} spec={spec} scenarios={scenarios} targetClubheadSpeedMps={targetClubheadSpeedMps} />)}</div>
+            <div className="force-source-plot-grid">{PLOT_SPECS.map(spec => <ComparisonPlot key={spec.field} spec={spec} scenarios={scenarios} constraints={constraints} />)}</div>
         </>}
     </>;
 }

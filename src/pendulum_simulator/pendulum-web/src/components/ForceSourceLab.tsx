@@ -13,6 +13,7 @@ import {
     type ForceSourceArtifact,
     type ForceSourceConstraints,
     type ForceSourceObjective,
+    type ForceSourceStudyMode,
     type SearchThoroughness,
 } from '../forceSourceStudy';
 import type { PendulumParams, State } from '../physics';
@@ -37,9 +38,11 @@ function NumericField({ id, label, value, title, onChange, ...inputProps }: Nume
 
 const degrees = (radians: number) => radians * 180 / Math.PI;
 const radians = (value: number) => value * Math.PI / 180;
+type BundledStudy = 'equal_speed' | 'equal_effort';
 
 export function ForceSourceLab({ params, initialState, onUsePose }: ForceSourceLabProps) {
     const [artifact, setArtifact] = useState<ForceSourceArtifact | null>(null);
+    const [bundledStudy, setBundledStudy] = useState<BundledStudy>('equal_speed');
     const [message, setMessage] = useState<string | null>(null);
     const [selected, setSelected] = useState(new Set<ForceSourceObjective>(FORCE_SOURCE_OBJECTIVES));
     const [objective, setObjective] = useState<ForceSourceObjective>('clubhead_speed');
@@ -57,19 +60,24 @@ export function ForceSourceLab({ params, initialState, onUsePose }: ForceSourceL
 
     useEffect(() => {
         let active = true;
-        fetch('/force-source-comparison.json').then(response => {
+        const path = bundledStudy === 'equal_speed'
+            ? '/force-source-comparison.json'
+            : '/force-source-comparison-equal-effort.json';
+        fetch(path).then(response => {
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             return response.json();
         }).then(value => {
             if (!active) return;
             const parsed = parseForceSourceArtifact(value);
             setArtifact(parsed);
+            setConstraints(structuredClone(parsed.comparison_contract.constraints));
+            setThoroughness(parsed.comparison_contract.thoroughness);
             setStartArm(+degrees(parsed.initial_pose.arm_angle_rad).toFixed(2));
             setStartWrist(+degrees(parsed.initial_pose.wrist_cock_rad).toFixed(2));
         })
             .catch(error => { if (active) setMessage(`Built-in comparison unavailable: ${String(error)}`); });
         return () => { active = false; };
-    }, []);
+    }, [bundledStudy]);
 
     const visible = useMemo(() => artifact?.scenarios.filter(item => selected.has(item.objective)) ?? [], [artifact, selected]);
     const maxTime = visible.length ? Math.max(...visible.map(item => item.impact_time_s)) : 0;
@@ -132,6 +140,8 @@ export function ForceSourceLab({ params, initialState, onUsePose }: ForceSourceL
         try {
             const parsed = parseForceSourceArtifact(JSON.parse(await file.text()));
             setArtifact(parsed); setMessage(null); setTime(0);
+            setConstraints(structuredClone(parsed.comparison_contract.constraints));
+            setThoroughness(parsed.comparison_contract.thoroughness);
             setSelected(new Set(parsed.scenarios.map(item => item.objective)));
         } catch (error) { setMessage(`Study import failed: ${String(error)}`); }
     };
@@ -154,11 +164,16 @@ export function ForceSourceLab({ params, initialState, onUsePose }: ForceSourceL
         <div className="force-source-heading-row">
             <div><p className="force-source-kicker">Double-pendulum research workspace</p>
                 <h2 id="force-source-heading">Force-Source Optimization Lab</h2>
-                <p>Compare six objectives using bounded continuous sixth-order torque profiles. Qualifying swings include a low-torque wrist transition and make one non-looping, rightward, near-horizontal pass near the bottom of the arc.</p></div>
+                <p>Compare six objectives using bounded continuous sixth-order torque profiles under explicit equal-speed, equal-effort, or common-bound contracts. Work and activation are accounted separately from the optimized force-source metric.</p></div>
             <label className="btn btn-secondary force-source-import" title="Open a registered comparison artifact">Import study JSON<input type="file" accept="application/json,.json" onChange={event => { const file = event.target.files?.[0]; if (file) void importArtifact(file); }} /></label>
         </div>
 
         <div className="force-source-config">
+            <label title="Load a checked-in equal-output or equal-input research comparison"><span>Bundled comparison</span>
+                <select id="force-bundled-study" value={bundledStudy} onChange={event => setBundledStudy(event.target.value as BundledStudy)} disabled={running}>
+                    <option value="equal_speed">Equal speed</option>
+                    <option value="equal_effort">Equal effort</option>
+                </select></label>
             <label title="Quantity maximized by the selected optimization"><span>Objective</span>
                 <select id="force-objective" value={objective} onChange={event => setObjective(event.target.value as ForceSourceObjective)} disabled={running}>
                     {FORCE_SOURCE_OBJECTIVES.map(value => <option key={value} value={value}>{OBJECTIVE_LABELS[value]}</option>)}
@@ -166,6 +181,12 @@ export function ForceSourceLab({ params, initialState, onUsePose }: ForceSourceL
             <label title="Quick explores broadly; thorough and research add local refinement"><span>Search depth</span>
                 <select id="force-search-depth" value={thoroughness} onChange={event => setThoroughness(event.target.value as SearchThoroughness)} disabled={running}>
                     <option value="quick">Quick</option><option value="thorough">Thorough</option><option value="research">Research</option>
+                </select></label>
+            <label title="Equal speed enforces a target band and input caps; equal effort enforces only common input caps; common bounds applies only the torque, slew, and motion limits"><span>Comparison basis</span>
+                <select id="force-study-mode" value={constraints.studyMode} onChange={event => setConstraint('studyMode', event.target.value as ForceSourceStudyMode)} disabled={running}>
+                    <option value="equal_speed">Equal speed + input caps</option>
+                    <option value="equal_effort">Equal effort caps</option>
+                    <option value="common_bounds">Common torque bounds</option>
                 </select></label>
             <NumericField id="force-start-arm" label="Start arm [deg]" value={startArm} step={0.1} onChange={setStartArm} disabled={running} title="Absolute arm angle; direct entry is not slider-limited" />
             <NumericField id="force-start-wrist" label="Start wrist [deg]" value={startWrist} step={0.1} onChange={setStartWrist} disabled={running} title="Wrist cock relative to the arm; more negative means more initial cock in this coordinate convention" />
@@ -190,7 +211,11 @@ export function ForceSourceLab({ params, initialState, onUsePose }: ForceSourceL
                 <NumericField id="force-slew-limit" label="Max torque slew [N m/s]" value={constraints.maxTorqueSlewNmS} min={1} step={25} onChange={value => setConstraint('maxTorqueSlewNmS', value)} title="Upper bound on the derivative of either continuous torque profile" />
                 <NumericField id="force-transition-torque" label="Transition band [N m]" value={constraints.transitionTorqueNm} min={0.1} max={29.9} step={0.1} onChange={value => setConstraint('transitionTorqueNm', value)} title="Wrist torque magnitude treated as slack around direction reversal" />
                 <NumericField id="force-transition-duration" label="Minimum transition [s]" value={constraints.minWristTransitionS} min={0.001} step={0.001} onChange={value => setConstraint('minWristTransitionS', value)} title="Required continuous time inside the low-torque wrist transition band" />
-                <NumericField id="force-target-speed" label="Speed target [m/s]" value={constraints.targetClubheadSpeedMps} min={1} step={0.5} onChange={value => setConstraint('targetClubheadSpeedMps', value)} title="User-selected benchmark shown in the speed and tradeoff views" />
+                <NumericField id="force-target-speed" label="Speed target [m/s]" value={constraints.targetClubheadSpeedMps} min={1} step={0.1} onChange={value => setConstraint('targetClubheadSpeedMps', value)} title="Center of the required impact-speed band in equal-speed mode; a marker in the other modes" />
+                <NumericField id="force-speed-tolerance" label="Speed band width [m/s]" value={constraints.speedToleranceMps} min={0.05} step={0.05} onChange={value => setConstraint('speedToleranceMps', value)} title="Allowed speed range above the target in equal-speed mode" />
+                <NumericField id="force-positive-work-budget" label="Positive work cap [J]" value={constraints.maxPositiveActuatorWorkJ} min={1} step={5} onChange={value => setConstraint('maxPositiveActuatorWorkJ', value)} title="Common cap on summed positive shoulder and wrist actuator work" />
+                <NumericField id="force-squared-effort-budget" label="Squared effort cap [N² m² s]" value={constraints.maxSquaredTorqueEffortNm2S} min={1} step={50} onChange={value => setConstraint('maxSquaredTorqueEffortNm2S', value)} title="Common cap on the time integral of shoulder-torque squared plus wrist-torque squared" />
+                <NumericField id="force-min-robustness" label="Minimum robust qualification" value={constraints.minimumRobustQualificationRate} min={0} max={1} step={0.05} onChange={value => setConstraint('minimumRobustQualificationRate', value)} title="Minimum held-out fraction that must retain the golf, speed, and effort contract" />
                 <NumericField id="force-elite-count" label="Elite starts" value={constraints.eliteCandidateCount} min={1} max={64} step={1} onChange={value => setConstraint('eliteCandidateCount', value)} title="Number of globally sampled profiles retained for multi-start coefficient refinement" />
                 <NumericField id="force-arm-min" label="Arm angle min [deg]" value={constraints.armAngleDeg.min} step={1} onChange={value => setConstraint('armAngleDeg', { ...constraints.armAngleDeg, min: value })} title="Lower allowable absolute arm angle" />
                 <NumericField id="force-arm-max" label="Arm angle max [deg]" value={constraints.armAngleDeg.max} step={1} onChange={value => setConstraint('armAngleDeg', { ...constraints.armAngleDeg, max: value })} title="Upper allowable absolute arm angle" />
@@ -215,7 +240,7 @@ export function ForceSourceLab({ params, initialState, onUsePose }: ForceSourceL
         {message && <div className="error-box">{message}</div>}
 
         {artifact && <>
-            <div className="force-source-provenance"><span>{artifact.model}</span><span>Control: bounded Bernstein degree 6</span><span>Coordinates: shoulder absolute / wrist relative</span><span>Contract: {artifact.comparison_contract.id}</span><span>{artifact.scenarios.length}/6 certified objectives</span><button className="force-source-text-button" onClick={exportArtifact}>Export current study JSON</button></div>
+            <div className="force-source-provenance"><span>{artifact.model}</span><span>Control: bounded Bernstein degree 6</span><span>Basis: {artifact.comparison_contract.constraints.studyMode.replace('_', ' ')}</span><span>Coordinates: shoulder absolute / wrist relative</span><span>Contract: {artifact.comparison_contract.id}</span><span>{artifact.scenarios.length}/6 certified objectives</span><button className="force-source-text-button" onClick={exportArtifact}>Export current study JSON</button></div>
             <div className="force-source-scenario-toggles" aria-label="Visible optimization scenarios">{artifact.scenarios.map(item => <label key={item.objective} style={{ borderColor: OBJECTIVE_COLORS[item.objective] }}><input type="checkbox" checked={selected.has(item.objective)} onChange={() => toggleScenario(item.objective)} />{OBJECTIVE_LABELS[item.objective]}</label>)}</div>
             <div className="force-source-playback">
                 <button className="btn btn-secondary" onClick={() => setPlaying(value => !value)}>{playing ? 'Pause' : 'Play'}</button>
@@ -225,7 +250,7 @@ export function ForceSourceLab({ params, initialState, onUsePose }: ForceSourceL
                 <output>{time.toFixed(4)} s</output>
             </div>
             <p className="force-source-frame-note">{alignment === 'fixed_hub' ? 'Fixed physical frame: every card uses the same shoulder hub, scale, and registered starting pose. No impact-camera guides are shown.' : 'Impact-aligned camera: each card is translated so its impact reaches the camera crosshair; this is not physical hub motion.'}</p>
-            <ForceSourceResults scenarios={visible} time={time} params={artifact.parameters ?? params} alignment={alignment} targetClubheadSpeedMps={artifact.comparison_contract.constraints.targetClubheadSpeedMps} transitionTorqueNm={artifact.comparison_contract.constraints.transitionTorqueNm} />
+            <ForceSourceResults scenarios={visible} time={time} params={artifact.parameters ?? params} alignment={alignment} constraints={artifact.comparison_contract.constraints} />
             <aside className="force-source-caveat"><strong>Interpretation boundary.</strong> {artifact.interpretation_limits.join(' ')}</aside>
         </>}
     </section>;

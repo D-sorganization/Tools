@@ -3,6 +3,80 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 3368,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b7c14247ae01b1093d6ca504c532a80ea1bad03401ded1af7d35c6feeb18224e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-DESIGN-TOKENS-PY-011466A20CA4",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/design_tokens.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "apply_tokens_to_qss",
+            "signature": "qss_content: str, theme_name: str='light'"
+          },
+          {
+            "kind": "function",
+            "name": "get_qss_variables",
+            "signature": "theme_name: str='light'"
+          },
+          {
+            "kind": "function",
+            "name": "get_token_dict",
+            "signature": "theme_name: str='light'"
+          },
+          {
+            "kind": "function",
+            "name": "get_tokens_path",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "load_design_tokens",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 312,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17875,63 +17949,6 @@
             "kind": "function",
             "name": "strict_json_object",
             "signature": "text: str"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2688,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "adc227cb3058a2c604c0ec83111b6127836e4e957e692551b6395b581556b041",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-STUDY-DERIVATION-PY-EACAF1DFDF1B",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/study_derivation.py",
-      "purpose": "Canonical status and objective-eligibility derivation for ground studies.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "derive_solver_eligibility",
-            "signature": "result_status: GroundResultStatus, termination_reason: GroundTerminationReason, profile: GroundStudyProfile | None, calibration: GroundCalibration"
-          },
-          {
-            "kind": "function",
-            "name": "derive_study_status",
-            "signature": "result_status: GroundResultStatus, termination_reason: GroundTerminationReason"
           }
         ],
         "test_paths": [],

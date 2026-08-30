@@ -12,6 +12,7 @@ import {
 import {
     DEFAULT_OPTIMIZATION_CONSTRAINTS,
     FORCE_SOURCE_OBJECTIVES,
+    type ActuatorEffortMetrics,
     type BrowserOptimizationConfig,
     type BrowserOptimizationProgress,
     type ForceSourceCandidate,
@@ -29,6 +30,7 @@ import {
 interface EvaluatedCandidate {
     score: number;
     candidate: ForceSourceCandidate;
+    effort: ActuatorEffortMetrics;
     scenario: ForceSourceScenario;
 }
 
@@ -57,7 +59,10 @@ function contractPayload(config: BrowserOptimizationConfig): unknown[] {
             c.wristTorqueLimitNm, c.wristTorqueStepNm,
             c.profileDurationS.min, c.profileDurationS.max, c.profileDurationS.step,
             c.maxTorqueSlewNmS, c.transitionTorqueNm, c.minWristTransitionS,
-            c.targetClubheadSpeedMps, c.eliteCandidateCount,
+            c.studyMode, c.targetClubheadSpeedMps, c.speedToleranceMps,
+            c.maxPositiveActuatorWorkJ, c.maxSquaredTorqueEffortNm2S,
+            c.minimumRobustQualificationRate,
+            c.eliteCandidateCount,
             c.armAngleDeg.min, c.armAngleDeg.max,
             c.wristAngleDeg.min, c.wristAngleDeg.max,
             c.maxImpactPathAngleDeg, c.minBottomReachFraction,
@@ -75,7 +80,7 @@ export function buildOptimizationContract(
 ): ForceSourceComparisonContract {
     validateBrowserOptimizationConfig(config);
     return {
-        id: `force-source-search/v2-${contractChecksum(JSON.stringify(contractPayload(config)))}`,
+        id: `force-source-search/v3-${contractChecksum(JSON.stringify(contractPayload(config)))}`,
         thoroughness: config.thoroughness,
         constraints: structuredClone(config.constraints),
     };
@@ -108,7 +113,12 @@ export function validateBrowserOptimizationConfig(config: BrowserOptimizationCon
     if (!(c.maxTorqueSlewNmS > 0)) throw new RangeError('torque slew limit must be positive');
     if (!(c.transitionTorqueNm > 0 && c.transitionTorqueNm < c.wristTorqueLimitNm)) throw new RangeError('transition torque must be inside the wrist-torque bounds');
     if (!(c.minWristTransitionS > 0 && c.minWristTransitionS < c.profileDurationS.max)) throw new RangeError('wrist transition duration must be positive and shorter than the profile');
+    if (!['common_bounds', 'equal_effort', 'equal_speed'].includes(c.studyMode)) throw new RangeError('study mode is unsupported');
     if (!(c.targetClubheadSpeedMps > 0)) throw new RangeError('clubhead speed target must be positive');
+    if (!(c.speedToleranceMps > 0 && c.speedToleranceMps < c.targetClubheadSpeedMps)) throw new RangeError('speed tolerance must be positive and smaller than the target');
+    if (!(c.maxPositiveActuatorWorkJ > 0)) throw new RangeError('positive actuator-work budget must be positive');
+    if (!(c.maxSquaredTorqueEffortNm2S > 0)) throw new RangeError('squared torque-effort budget must be positive');
+    if (!(c.minimumRobustQualificationRate >= 0 && c.minimumRobustQualificationRate <= 1)) throw new RangeError('minimum robust qualification rate must be inside [0, 1]');
     if (!Number.isInteger(c.eliteCandidateCount) || c.eliteCandidateCount < 1 || c.eliteCandidateCount > 64) throw new RangeError('elite candidate count must be an integer in [1, 64]');
     const arm = degrees(config.initialState[0]);
     const wrist = degrees(config.initialState[1]);
@@ -163,6 +173,11 @@ export function candidateTorqueFunction(candidate: ForceSourceCandidate): Torque
             bernsteinTorque(candidate.wrist_coefficients_nm, phase),
         ];
     };
+}
+
+/** Stable identity for detecting objectives that selected the same control law. */
+export function candidateProfileId(candidate: ForceSourceCandidate): string {
+    return `profile-${contractChecksum(candidateKey(candidate))}`;
 }
 
 function derivativeBound(coefficients: TorquePolynomialCoefficients, duration: number): number {
@@ -405,6 +420,9 @@ function emptySeries(): ForceSourceSeries {
         coriolis_tangent_force_n: [], coriolis_power_w: [],
         squared_speed_tangent_force_n: [], squared_speed_power_w: [],
         hand_path_tangent_force_n: [],
+        shoulder_actuator_power_w: [], wrist_actuator_power_w: [],
+        total_actuator_power_w: [], cumulative_positive_actuator_work_j: [],
+        cumulative_net_actuator_work_j: [],
     };
 }
 
@@ -425,6 +443,21 @@ function appendSample(series: ForceSourceSeries, state: State, time: number, con
     const acceleration = computeAccelerations(state, time, config.params, torque);
     const hand = gripForceAlongHandPath(state, acceleration, config.params);
     const transfer = forceSourceTransferPowers(sources, state);
+    const shoulderPower = control[0] * state[2];
+    const wristPower = control[1] * state[3];
+    const totalPower = shoulderPower + wristPower;
+    const positivePower = Math.max(shoulderPower, 0) + Math.max(wristPower, 0);
+    const priorIndex = series.time_s.length - 1;
+    const timeStep = priorIndex < 0 ? 0 : time - series.time_s[priorIndex];
+    const priorPositivePower = priorIndex < 0 ? 0
+        : Math.max(series.shoulder_actuator_power_w[priorIndex], 0)
+            + Math.max(series.wrist_actuator_power_w[priorIndex], 0);
+    const positiveWork = priorIndex < 0 ? 0
+        : series.cumulative_positive_actuator_work_j[priorIndex]
+            + 0.5 * (priorPositivePower + positivePower) * timeStep;
+    const netWork = priorIndex < 0 ? 0
+        : series.cumulative_net_actuator_work_j[priorIndex]
+            + 0.5 * (series.total_actuator_power_w[priorIndex] + totalPower) * timeStep;
     series.time_s.push(time); series.arm_angle_rad.push(state[0]); series.wrist_cock_rad.push(state[1]);
     series.arm_angular_velocity_rad_s.push(state[2]); series.wrist_angular_velocity_rad_s.push(state[3]);
     series.shoulder_torque_nm.push(control[0]); series.wrist_torque_nm.push(control[1]);
@@ -434,11 +467,57 @@ function appendSample(series: ForceSourceSeries, state: State, time: number, con
     series.squared_speed_tangent_force_n.push(sources.squaredSpeed[0] / config.params.L1);
     series.squared_speed_power_w.push(transfer.centrifugal_to_distal_w);
     series.hand_path_tangent_force_n?.push(hand.tangentForceN ?? 0);
+    series.shoulder_actuator_power_w.push(shoulderPower);
+    series.wrist_actuator_power_w.push(wristPower);
+    series.total_actuator_power_w.push(totalPower);
+    series.cumulative_positive_actuator_work_j.push(positiveWork);
+    series.cumulative_net_actuator_work_j.push(netWork);
 }
 
 function trapezoid(values: number[], time: number[]): number {
     return values.slice(1).reduce((sum, value, index) =>
         sum + 0.5 * (values[index] + value) * (time[index + 1] - time[index]), 0);
+}
+
+/** Integrate actuator work and activation proxies from a registered trajectory. */
+export function actuatorEffortMetrics(series: ForceSourceSeries): ActuatorEffortMetrics {
+    const positivePower = series.shoulder_actuator_power_w.map((value, index) =>
+        Math.max(value, 0) + Math.max(series.wrist_actuator_power_w[index], 0));
+    const negativePower = series.shoulder_actuator_power_w.map((value, index) =>
+        Math.min(value, 0) + Math.min(series.wrist_actuator_power_w[index], 0));
+    const shoulderNet = trapezoid(series.shoulder_actuator_power_w, series.time_s);
+    const wristNet = trapezoid(series.wrist_actuator_power_w, series.time_s);
+    return {
+        shoulder_net_work_j: shoulderNet,
+        wrist_net_work_j: wristNet,
+        total_net_work_j: shoulderNet + wristNet,
+        total_positive_work_j: trapezoid(positivePower, series.time_s),
+        total_negative_work_j: trapezoid(negativePower, series.time_s),
+        absolute_torque_impulse_nm_s: trapezoid(series.shoulder_torque_nm.map((value, index) =>
+            Math.abs(value) + Math.abs(series.wrist_torque_nm[index])), series.time_s),
+        squared_torque_effort_nm2_s: trapezoid(series.shoulder_torque_nm.map((value, index) =>
+            value * value + series.wrist_torque_nm[index] ** 2), series.time_s),
+        peak_shoulder_power_w: Math.max(...series.shoulder_actuator_power_w.map(Math.abs)),
+        peak_wrist_power_w: Math.max(...series.wrist_actuator_power_w.map(Math.abs)),
+        peak_total_power_w: Math.max(...series.total_actuator_power_w.map(Math.abs)),
+    };
+}
+
+/** Apply the selected equal-input or equal-output feasibility contract. */
+export function seriesMeetsStudyContract(
+    series: ForceSourceSeries,
+    constraints: ForceSourceConstraints,
+): boolean {
+    if (constraints.studyMode === 'common_bounds') return true;
+    const effort = actuatorEffortMetrics(series);
+    if (effort.total_positive_work_j > constraints.maxPositiveActuatorWorkJ + 1e-8
+        || effort.squared_torque_effort_nm2_s > constraints.maxSquaredTorqueEffortNm2S + 1e-8) {
+        return false;
+    }
+    if (constraints.studyMode === 'equal_effort') return true;
+    const speed = series.clubhead_speed_m_s[series.clubhead_speed_m_s.length - 1] ?? 0;
+    return speed >= constraints.targetClubheadSpeedMps - 1e-8
+        && speed <= constraints.targetClubheadSpeedMps + constraints.speedToleranceMps + 1e-8;
 }
 
 export function scoreForceSourceSeries(
@@ -475,15 +554,77 @@ function evaluateCandidate(config: BrowserOptimizationConfig, candidate: ForceSo
     if (impactIndex === null) return null;
     const series = emptySeries();
     for (let index = 0; index <= impactIndex; index++) appendSample(series, simulation.states[index], simulation.t[index], config, torque);
+    if (!seriesMeetsStudyContract(series, c)) return null;
+    const effort = actuatorEffortMetrics(series);
     const score = scoreForceSourceSeries(series)[config.objective];
     const robustness = summarizeRobustness([score]);
-    return { score, candidate, scenario: {
+    return { score, candidate, effort, scenario: {
         objective: config.objective, score, candidate,
+        profile_id: candidateProfileId(candidate), effort,
         comparison_contract_id: buildOptimizationContract(config).id,
         impact_time_s: series.time_s[series.time_s.length - 1] ?? 0,
         impact_diagnostics: impactDiagnostics(simulation.states[impactIndex], config.params),
         robustness, near_optimal_count: 1, boundary_hits: [], convergence: [score], series,
     } };
+}
+
+/** Evaluate one candidate against the complete registered study contract. */
+export function evaluateForceSourceCandidate(
+    config: BrowserOptimizationConfig,
+    candidate: ForceSourceCandidate,
+): ForceSourceScenario | null {
+    return evaluateCandidate(config, candidate)?.scenario ?? null;
+}
+
+function preferredCandidate(
+    candidate: EvaluatedCandidate,
+    incumbent: EvaluatedCandidate | null,
+): boolean {
+    if (!incumbent) return true;
+    const tolerance = OBJECTIVE_TOLERANCE * Math.max(1, Math.abs(candidate.score), Math.abs(incumbent.score));
+    if (candidate.score > incumbent.score + tolerance) return true;
+    return Math.abs(candidate.score - incumbent.score) <= tolerance
+        && (candidate.effort.total_positive_work_j < incumbent.effort.total_positive_work_j - 1e-8
+            || (Math.abs(candidate.effort.total_positive_work_j - incumbent.effort.total_positive_work_j) <= 1e-8
+                && candidate.effort.squared_torque_effort_nm2_s < incumbent.effort.squared_torque_effort_nm2_s));
+}
+
+function evaluatedOrder(left: EvaluatedCandidate, right: EvaluatedCandidate): number {
+    if (preferredCandidate(left, right)) return -1;
+    if (preferredCandidate(right, left)) return 1;
+    return 0;
+}
+
+function normalizedConstraintHeadroom(
+    item: EvaluatedCandidate,
+    constraints: ForceSourceConstraints,
+): number {
+    const impact = item.scenario.impact_diagnostics;
+    const margins = impact ? [
+        (constraints.maxImpactPathAngleDeg - impact.path_angle_deg)
+            / Math.max(constraints.maxImpactPathAngleDeg, 1),
+        (impact.bottom_reach_fraction - constraints.minBottomReachFraction)
+            / Math.max(1 - constraints.minBottomReachFraction, 1e-6),
+    ] : [0];
+    if (constraints.studyMode !== 'common_bounds') {
+        margins.push(
+            (constraints.maxPositiveActuatorWorkJ - item.effort.total_positive_work_j)
+                / constraints.maxPositiveActuatorWorkJ,
+            (constraints.maxSquaredTorqueEffortNm2S - item.effort.squared_torque_effort_nm2_s)
+                / constraints.maxSquaredTorqueEffortNm2S,
+        );
+    }
+    if (constraints.studyMode === 'equal_speed') {
+        const speed = item.scenario.series.clubhead_speed_m_s[
+            item.scenario.series.clubhead_speed_m_s.length - 1
+        ] ?? 0;
+        margins.push(
+            (speed - constraints.targetClubheadSpeedMps) / constraints.speedToleranceMps,
+            (constraints.targetClubheadSpeedMps + constraints.speedToleranceMps - speed)
+                / constraints.speedToleranceMps,
+        );
+    }
+    return Math.min(...margins);
 }
 
 export function summarizeRobustness(scores: Array<number | null>): RobustnessSummary {
@@ -592,16 +733,18 @@ export async function optimizeForceSource(
     const candidates = buildCandidateSet(config);
     let best: EvaluatedCandidate | null = null;
     let elite: EvaluatedCandidate[] = [];
+    const evaluatedPool = new Map<string, EvaluatedCandidate>();
     const qualifiedScores: number[] = [];
     let completed = 0;
     for (const candidate of candidates) {
         const evaluated = evaluateCandidate(config, candidate);
         if (evaluated) qualifiedScores.push(evaluated.score);
         if (evaluated) {
+            evaluatedPool.set(candidateKey(evaluated.candidate), evaluated);
             elite = [...elite, evaluated]
-                .sort((left, right) => right.score - left.score)
+                .sort(evaluatedOrder)
                 .slice(0, config.constraints.eliteCandidateCount);
-            if (!best || evaluated.score > best.score) best = evaluated;
+            if (preferredCandidate(evaluated, best)) best = evaluated;
         }
         completed += 1;
         if (completed % 12 === 0) {
@@ -620,11 +763,12 @@ export async function optimizeForceSource(
             const evaluated = evaluateCandidate(config, candidate);
             if (evaluated) {
                 refined.push(evaluated);
+                evaluatedPool.set(candidateKey(evaluated.candidate), evaluated);
                 qualifiedScores.push(evaluated.score);
             }
         }
         elite = [...elite, ...refined]
-            .sort((left, right) => right.score - left.score)
+            .sort(evaluatedOrder)
             .filter((item, index, values) => values.findIndex(other =>
                 candidateKey(other.candidate) === candidateKey(item.candidate)) === index)
             .slice(0, config.constraints.eliteCandidateCount);
@@ -632,8 +776,32 @@ export async function optimizeForceSource(
         convergence.push(best.score);
         await new Promise<void>(resolve => setTimeout(resolve, 0));
     }
+    const headroomCandidates = [...evaluatedPool.values()]
+        .sort((left, right) => normalizedConstraintHeadroom(right, config.constraints)
+            - normalizedConstraintHeadroom(left, config.constraints))
+        .slice(0, Math.min(64, 2 * config.constraints.eliteCandidateCount));
+    const robustnessCandidates = [...new Map([...elite, ...headroomCandidates]
+        .map(item => [candidateKey(item.candidate), item])).values()];
+    const robustElite: EvaluatedCandidate[] = [];
+    let bestObservedQualification = 0;
+    for (const item of robustnessCandidates) {
+        item.scenario.robustness = await evaluateRobustness(item, config);
+        bestObservedQualification = Math.max(
+            bestObservedQualification,
+            item.scenario.robustness.qualification_rate,
+        );
+        if (item.scenario.robustness.qualification_rate
+            >= config.constraints.minimumRobustQualificationRate - 1e-12) {
+            robustElite.push(item);
+        }
+    }
+    robustElite.sort(evaluatedOrder);
+    if (robustElite.length === 0) {
+        throw new Error(`No elite candidate reached the minimum robust qualification rate; best was ${(100 * bestObservedQualification).toFixed(0)}%`);
+    }
+    best = robustElite[0];
+    convergence.push(best.score);
     best.scenario.convergence = convergence;
-    best.scenario.robustness = await evaluateRobustness(best, config);
     const nearOptimalFloor = best.score - 0.01 * Math.max(Math.abs(best.score), 1);
     best.scenario.near_optimal_count = qualifiedScores.filter(score => score >= nearOptimalFloor).length;
     best.scenario.boundary_hits = boundaryHits(best.candidate, config.constraints);
@@ -643,6 +811,9 @@ export async function optimizeForceSource(
         global_candidate_count: candidates.length,
         qualified_evaluation_count: qualifiedScores.length,
         robustness_trial_count: config.constraints.robustnessTrials,
+        robust_elite_count: robustElite.length,
+        robustness_candidate_count: robustnessCandidates.length,
+        minimum_robust_qualification_rate: config.constraints.minimumRobustQualificationRate,
         integration_step_s: config.constraints.integrationStepS,
     };
     return best.scenario;
@@ -666,6 +837,10 @@ async function finalizedCrossWinner(
     const scenario = evaluated.scenario;
     scenario.convergence = [...original.convergence, evaluated.score];
     scenario.robustness = await evaluateRobustness(evaluated, config);
+    if (scenario.robustness.qualification_rate
+        < config.constraints.minimumRobustQualificationRate - 1e-12) {
+        throw new Error(`${scenario.objective} cross-objective winner failed the minimum robust qualification rate`);
+    }
     const floor = evaluated.score - 0.01 * Math.max(Math.abs(evaluated.score), 1);
     scenario.near_optimal_count = scores.filter(score => score >= floor).length;
     scenario.boundary_hits = boundaryHits(evaluated.candidate, config.constraints);
@@ -710,9 +885,11 @@ export async function optimizeForceSourceComparison(
             .map(candidate => evaluateCandidate(objectiveConfig, candidate))
             .filter((item): item is EvaluatedCandidate => item !== null);
         if (evaluated.length === 0) continue;
-        const best = evaluated.reduce((winner, item) => item.score > winner.score ? item : winner);
+        const best = evaluated.reduce((winner, item) => preferredCandidate(item, winner) ? item : winner);
         const scores = evaluated.map(item => item.score);
-        if (best.score > original.score + OBJECTIVE_TOLERANCE) {
+        const originalEvaluation = evaluateCandidate(objectiveConfig, original.candidate);
+        if (!originalEvaluation || preferredCandidate(best, originalEvaluation)
+            && candidateKey(best.candidate) !== candidateKey(original.candidate)) {
             byObjective.set(objective, await finalizedCrossWinner(best, original, objectiveConfig, scores));
         } else {
             original.provenance = {

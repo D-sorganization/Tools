@@ -1,14 +1,18 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+    actuatorEffortMetrics,
     bernsteinTorque,
     buildCandidateSet,
     candidateTorqueFunction,
+    candidateProfileId,
     DEFAULT_OPTIMIZATION_CONSTRAINTS,
     profileDiagnostics,
+    seriesMeetsStudyContract,
     validateBrowserOptimizationConfig,
     type BrowserOptimizationConfig,
     type ForceSourceCandidate,
+    type ForceSourceSeries,
 } from '../src/forceSourceStudy';
 import { PRESETS } from '../src/presets';
 
@@ -37,6 +41,21 @@ const candidate: ForceSourceCandidate = {
     shoulder_coefficients_nm: [0, 30, 70, 100, 90, 40, 0],
     wrist_coefficients_nm: [0, -10, -8, 0, 12, 20, 0],
 };
+
+function effortSeries(): ForceSourceSeries {
+    const zeroes = [0, 0];
+    return {
+        time_s: [0, 1], arm_angle_rad: zeroes, wrist_cock_rad: zeroes,
+        arm_angular_velocity_rad_s: [3, 3], wrist_angular_velocity_rad_s: [-4, -4],
+        shoulder_torque_nm: [2, 2], wrist_torque_nm: [1, 1],
+        clubhead_speed_m_s: [0, 52.3], coriolis_tangent_force_n: zeroes,
+        coriolis_power_w: zeroes, squared_speed_tangent_force_n: zeroes,
+        squared_speed_power_w: zeroes, hand_path_tangent_force_n: zeroes,
+        shoulder_actuator_power_w: [6, 6], wrist_actuator_power_w: [-4, -4],
+        total_actuator_power_w: [2, 2], cumulative_positive_actuator_work_j: [0, 6],
+        cumulative_net_actuator_work_j: [0, 2],
+    };
+}
 
 describe('sixth-order continuous torque profiles', () => {
     it('uses the repository-authoritative inertia-matched driver and hub budget', () => {
@@ -108,5 +127,52 @@ describe('sixth-order continuous torque profiles', () => {
         };
 
         expect(() => validateBrowserOptimizationConfig(optimization)).toThrow(/zero/i);
+    });
+
+    it('accounts positive supply, braking, net work, and activation separately', () => {
+        expect(actuatorEffortMetrics(effortSeries())).toEqual({
+            shoulder_net_work_j: 6,
+            wrist_net_work_j: -4,
+            total_net_work_j: 2,
+            total_positive_work_j: 6,
+            total_negative_work_j: -4,
+            absolute_torque_impulse_nm_s: 3,
+            squared_torque_effort_nm2_s: 5,
+            peak_shoulder_power_w: 6,
+            peak_wrist_power_w: 4,
+            peak_total_power_w: 2,
+        });
+    });
+
+    it('enforces equal-speed and equal-effort contracts without changing the component score', () => {
+        const base = { ...DEFAULT_OPTIMIZATION_CONSTRAINTS,
+            maxPositiveActuatorWorkJ: 6,
+            maxSquaredTorqueEffortNm2S: 5,
+            targetClubheadSpeedMps: 52.3,
+            speedToleranceMps: 0.5,
+        };
+        expect(seriesMeetsStudyContract(effortSeries(), { ...base, studyMode: 'equal_speed' })).toBe(true);
+        expect(seriesMeetsStudyContract(
+            { ...effortSeries(), clubhead_speed_m_s: [0, 51] },
+            { ...base, studyMode: 'equal_speed' },
+        )).toBe(false);
+        expect(seriesMeetsStudyContract(
+            { ...effortSeries(), clubhead_speed_m_s: [0, 52.81] },
+            { ...base, studyMode: 'equal_speed' },
+        )).toBe(false);
+        expect(seriesMeetsStudyContract(effortSeries(), {
+            ...base, studyMode: 'equal_effort', maxPositiveActuatorWorkJ: 5.9,
+        })).toBe(false);
+        expect(seriesMeetsStudyContract(effortSeries(), {
+            ...base, studyMode: 'common_bounds', maxPositiveActuatorWorkJ: 1,
+        })).toBe(true);
+    });
+
+    it('gives identical polynomial controls one stable profile identity', () => {
+        expect(candidateProfileId(structuredClone(candidate))).toBe(candidateProfileId(candidate));
+        expect(candidateProfileId({
+            ...candidate,
+            shoulder_coefficients_nm: [0, 30, 70, 105, 90, 40, 0],
+        })).not.toBe(candidateProfileId(candidate));
     });
 });

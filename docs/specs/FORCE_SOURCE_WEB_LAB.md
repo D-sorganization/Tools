@@ -16,9 +16,26 @@ near the bottom of the arc without an arm, club, or wrist loop.
 The user may type the starting arm and relative-wrist angles directly. Search
 bounds, coefficient increments, polynomial-duration range, torque-slew ceiling,
 low-torque wrist-transition band and duration, elite count, candidate budget,
-integration step, impact-path tolerance, bottom reach, speed target, and
+integration step, impact-path tolerance, bottom reach, speed band, positive
+actuator-work cap, squared-torque-effort cap, minimum robust qualification, and
 held-out perturbations are numeric inputs. Wrist torque is hard-limited to
 30 N m. Invalid or internally inconsistent inputs fail before simulation.
+
+The comparison basis is explicit:
+
+- `equal_speed` requires every nominal winner to lie between the selected TOUR
+  target and target plus the selected band width, under common positive-work
+  and squared-effort caps;
+- `equal_effort` applies the same input caps but leaves clubhead speed as an
+  observed outcome; and
+- `common_bounds` applies the torque, slew, timing, and motion limits without
+  equalizing realized work.
+
+Clubhead speed is a feasibility filter only in `equal_speed`; it is not added
+to a component objective's score. The component score therefore cannot buy a
+better rank merely by hiding a clubhead-speed reward. Conversely, a common
+peak-torque envelope is not described as equal effort: realized work, braking,
+torque impulse, squared effort, RMS torque, and peak power remain visible.
 
 Each joint is controlled by a degree-6 Bernstein polynomial with seven torque
 coefficients. Bernstein form is still a sixth-order polynomial, but its
@@ -35,7 +52,10 @@ early-release, and late-release seeds. They retain multiple elite starts and
 run respectively two, six, or twelve coefficient-refinement rounds. The
 candidate and elite budgets are explicit rather than hidden behind the depth
 name. Winning programs are rerun under start-pose and whole-profile torque
-perturbations; the cards report the fraction that still qualifies.
+perturbations. Final selection considers both nominal objective elites and
+high-headroom candidates, and rejects any winner below the selected held-out
+qualification rate. Headroom covers speed, work, activation, path angle, and
+bottom reach; it does not alter the component score.
 
 Every scenario in one comparison carries the same versioned contract ID. The
 contract covers the initial state, model parameters, all constraints, candidate
@@ -48,8 +68,11 @@ not a proof of the mathematical global optimum.
 
 Imported coefficients and durations must fall on their declared grids, satisfy
 the complete continuity/transition/slew contract, and reproduce every plotted
-shoulder and wrist torque sample. Impact diagnostics are checked against the
-contract's selected path-angle and bottom-reach thresholds, not hidden defaults.
+shoulder and wrist torque sample. Plotted actuator power and cumulative work
+must reproduce torque times angular velocity and trapezoidal integration.
+Derived effort totals and stable control-profile IDs are also recomputed on
+import. Impact diagnostics are checked against the contract's selected
+path-angle and bottom-reach thresholds, not hidden defaults.
 
 ## Impact Qualification
 
@@ -100,37 +123,51 @@ include path speed. See MacKenzie and Lavers,
 and the repository's rank-aware mapping contract in
 `docs/development/pendulum-force-attribution.md`.
 
-## Interpretation of the Registered Comparison
+## Interpretation of the Registered Comparisons
 
-The checked-in version-3 artifact runs all six objectives under one research
-contract: 512 deterministic global/seeded candidates, 12 elite refinement
-rounds, 1 ms integration, 0.5 N m wrist-coefficient granularity, and 25 held-out
-robustness trials. It now uses the repository-authoritative inertia-matched
-driver equivalent (`m2 + mClub = 0.2381186694 kg`) and a selectable symmetric
-250 N m hub-torque budget instead of the web preset's stale 0.50 kg lumped club.
+The checked-in version-4 artifacts each run all six objectives under an
+independent research contract: 2,048 deterministic global/seeded candidates,
+16 nominal elite starts, 12 coefficient-refinement rounds, 1 ms integration,
+0.5 N m wrist-coefficient granularity, and 25 held-out robustness trials. They
+use the repository-authoritative inertia-matched driver equivalent
+(`m2 + mClub = 0.2381186694 kg`) and a selectable symmetric 250 N m hub-torque
+budget.
 
-The certified clubhead-speed winner reaches about 53.7 m/s (120.2 mph), above
-the 52.3 m/s marker corresponding to the PGA TOUR's 116.96 mph 2026 year-to-date
-average reported on the official
-[Club Head Speed stat](https://www.pgatour.com/stats/detail/02401). Coriolis
-impulse selects a distinct approximately 50.9 m/s strategy and centrifugal
-impulse selects a markedly different approximately 34.7 m/s strategy; the
-energy-transfer, speed, and hand-path rows share the displayed speed winner.
-That agreement is reported rather than artificially broken. Boundary hits,
-qualification rates, polynomial coefficients, work, slew, transition timing,
-and the full cross-objective score/rank matrix accompany the ranking.
+The default equal-speed study requires 52.30–53.05 m/s, no more than 525 J of
+positive actuator work, no more than 7,500 N²m²s of squared torque effort, and
+at least 60% held-out qualification. Its three distinct robust control programs
+reach 52.87–53.05 m/s. Coriolis and centrifugal impulse share one program;
+Coriolis energy, centrifugal energy, and hand-path impulse share a second; the
+speed row selects a third. These identities are explicit profile IDs rather
+than six visually duplicated claims.
+
+The equal-effort capacity study uses the same input caps and robustness floor
+without a speed filter. It exposes the output difference the equal-speed study
+necessarily hides: the robust centrifugal-impulse winner reaches about
+34.7 m/s, the Coriolis-impulse winner about 51.1 m/s, and the energy/speed/hand-
+path program about 53.5 m/s. This is evidence about the declared optimization
+and model, not proof that one named inertial term independently causes human
+clubhead speed. The two energy objectives must remain identical because their
+declared powers satisfy the exact 2:1 identity.
+
+The 52.3 m/s lower bound corresponds to the PGA TOUR's 116.96 mph 2026
+year-to-date average reported on the official
+[Club Head Speed stat](https://www.pgatour.com/stats/detail/02401). Boundary
+hits, robustness, profile identity, positive/net/negative work, peak/RMS
+activation, power, slew, transition timing, coefficients, and the complete
+cross-objective matrix accompany every comparison.
 
 ## Architecture
 
 - `forceSourceTypes.ts` owns the schema and user-visible constraints.
 - `forceSourceOptimization.ts` owns validation, deterministic search,
   qualification, scoring, and robustness.
-- `forceSourceArtifact.ts` owns version-3 contract identity, polynomial/plot
+- `forceSourceArtifact.ts` owns version-4 contract identity, polynomial/plot
   consistency, cross-objective
   dominance validation, fail-closed parsing, and contract-aware updates.
 - `forceSourceView.ts` owns interpolation and explicit camera alignment.
 - `ForceSourceLab.tsx` coordinates state and commands.
-- `ForceSourceResults.tsx` renders animations, all twelve sampled channels,
+- `ForceSourceResults.tsx` renders animations, all seventeen sampled channels,
   the cross-objective/Pareto table, control-strategy diagnostics, and all
   polynomial coefficients.
 
