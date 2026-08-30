@@ -8,7 +8,7 @@
 
 ## Merge Governance
 
-- Protected `main` is `eb2b67436483fc33821790f8aa08d61dac079e39`; turnover PR #4870 is the only open Tools pull request.
+- Turnover PR #4870 protected-squash-merged as `b07be750b3ae5b7919d2bf2fe13acab56c277881`; verify current `origin/main` before acting rather than treating this evidence commit as a moving pointer.
 - The live `main` rules require zero approving reviews. Do not require or request a named maintainer's approval; `@dieterolson` is not a standing release gate. Optional review remains available for risk, expertise, or unresolved feedback.
 - Never use admin bypass, force-push, check bypass, or protection changes to merge a failing or stale head.
 
