@@ -8,6 +8,8 @@ import {
     FORCE_SOURCE_SCHEMA,
     type BrowserOptimizationConfig,
     type ForceSourceArtifact,
+    type ForceSourceComparisonContract,
+    type ForceSourceConstraints,
     type ForceSourceObjective,
     type ForceSourceScenario,
 } from './forceSourceTypes';
@@ -26,6 +28,7 @@ const PARAMETER_KEYS = [
 ] as const;
 const START_TOLERANCE = 1e-10;
 const SCORE_TOLERANCE = 1e-8;
+const GRID_TOLERANCE = 1e-8;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
     return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -45,7 +48,11 @@ function finiteSeries(value: unknown, path: string): number[] {
     return value.map((entry, index) => finite(entry, `${path}[${index}]`));
 }
 
-function validateImpact(value: unknown, path: string): void {
+function validateImpact(
+    value: unknown,
+    path: string,
+    constraints: ForceSourceConstraints,
+): void {
     if (value === undefined) return;
     if (!isRecord(value)) throw new TypeError(`${path} must be an object`);
     const pathAngle = finite(value.path_angle_deg, `${path}.path_angle_deg`);
@@ -54,12 +61,52 @@ function validateImpact(value: unknown, path: string): void {
     finite(value.y_velocity_m_s, `${path}.y_velocity_m_s`);
     finite(value.arm_angle_deg, `${path}.arm_angle_deg`);
     finite(value.club_angle_deg, `${path}.club_angle_deg`);
-    if (pathAngle > 15 || reach < 0.9 || xVelocity <= 0) {
+    if (pathAngle < 0 || pathAngle > constraints.maxImpactPathAngleDeg
+        || reach < constraints.minBottomReachFraction || xVelocity <= 0) {
         throw new RangeError(`${path} does not satisfy registered golf-like impact qualification`);
     }
 }
 
-function validateScenario(raw: unknown, index: number): void {
+function isRegisteredGridValue(
+    value: number,
+    min: number,
+    max: number,
+    step: number,
+): boolean {
+    if (value < min - GRID_TOLERANCE || value > max + GRID_TOLERANCE) return false;
+    if (Math.abs(value - max) <= GRID_TOLERANCE) return true;
+    const offset = (value - min) / step;
+    return Math.abs(offset - Math.round(offset)) <= GRID_TOLERANCE;
+}
+
+function validateCandidate(
+    raw: Record<string, unknown>,
+    path: string,
+    constraints: ForceSourceConstraints,
+): void {
+    const values = [
+        ['shoulder_torque_nm', finite(raw.shoulder_torque_nm, `${path}.shoulder_torque_nm`),
+            constraints.shoulderTorqueNm.min, constraints.shoulderTorqueNm.max,
+            constraints.shoulderTorqueNm.step],
+        ['wrist_drive_nm', finite(raw.wrist_drive_nm, `${path}.wrist_drive_nm`),
+            0, constraints.wristTorqueLimitNm, constraints.wristTorqueStepNm],
+        ['wrist_restrain_nm', finite(raw.wrist_restrain_nm, `${path}.wrist_restrain_nm`),
+            0, constraints.wristTorqueLimitNm, constraints.wristTorqueStepNm],
+        ['onset_s', finite(raw.onset_s, `${path}.onset_s`),
+            constraints.onsetS.min, constraints.onsetS.max, constraints.onsetS.step],
+    ] as const;
+    for (const [name, value, min, max, step] of values) {
+        if (!isRegisteredGridValue(value, min, max, step)) {
+            throw new RangeError(`${path}.${name} is outside the registered search contract`);
+        }
+    }
+}
+
+function validateScenario(
+    raw: unknown,
+    index: number,
+    constraints: ForceSourceConstraints,
+): void {
     const path = `scenarios[${index}]`;
     if (!isRecord(raw) || !FORCE_SOURCE_OBJECTIVES.includes(raw.objective as ForceSourceObjective)) {
         throw new TypeError(`${path}.objective is unsupported`);
@@ -70,14 +117,8 @@ function validateScenario(raw: unknown, index: number): void {
     const series = raw.series;
     finite(raw.score, `${path}.score`);
     finite(raw.impact_time_s, `${path}.impact_time_s`);
-    validateImpact(raw.impact_diagnostics, `${path}.impact_diagnostics`);
-    finite(raw.candidate.shoulder_torque_nm, `${path}.candidate.shoulder_torque_nm`);
-    finite(raw.candidate.onset_s, `${path}.candidate.onset_s`);
-    const drive = finite(raw.candidate.wrist_drive_nm, `${path}.candidate.wrist_drive_nm`);
-    const restrain = finite(raw.candidate.wrist_restrain_nm, `${path}.candidate.wrist_restrain_nm`);
-    if (drive < 0 || drive > 30 || restrain < 0 || restrain > 30) {
-        throw new RangeError(`${path} wrist torque exceeds [0, 30] N m`);
-    }
+    validateImpact(raw.impact_diagnostics, `${path}.impact_diagnostics`, constraints);
+    validateCandidate(raw.candidate, `${path}.candidate`, constraints);
     const lengths = SERIES_KEYS.map(key => finiteSeries(series[key], `${path}.series.${key}`).length);
     if (!lengths.every(length => length === lengths[0])) {
         throw new TypeError(`${path} series lengths must match`);
@@ -117,9 +158,9 @@ function registeredConfig(input: Record<string, unknown>): BrowserOptimizationCo
 function validateSharedContract(
     input: Record<string, unknown>,
     scenarios: ForceSourceScenario[],
+    config: BrowserOptimizationConfig,
+    expected: ForceSourceComparisonContract,
 ): void {
-    const config = registeredConfig(input);
-    const expected = buildOptimizationContract(config);
     const declared = input.comparison_contract as Record<string, unknown>;
     if (declared.id !== expected.id) {
         throw new TypeError('comparison_contract id does not match its registered settings');
@@ -163,12 +204,15 @@ export function parseForceSourceArtifact(input: unknown): ForceSourceArtifact {
     if (!Array.isArray(input.scenarios) || input.scenarios.length === 0) {
         throw new TypeError('scenarios must be a non-empty array');
     }
-    input.scenarios.forEach(validateScenario);
+    const config = registeredConfig(input);
+    const expected = buildOptimizationContract(config);
+    input.scenarios.forEach((scenario, index) =>
+        validateScenario(scenario, index, config.constraints));
     const scenarios = input.scenarios as unknown as ForceSourceScenario[];
     if (new Set(scenarios.map(item => item.objective)).size !== scenarios.length) {
         throw new TypeError('scenario objectives must be unique');
     }
-    validateSharedContract(input, scenarios);
+    validateSharedContract(input, scenarios, config, expected);
     validateObjectiveDominance(scenarios);
     return input as unknown as ForceSourceArtifact;
 }

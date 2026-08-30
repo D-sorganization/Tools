@@ -120,7 +120,40 @@ describe('force-source artifact contract', () => {
         const artifact = validArtifact();
         artifact.scenarios[0].candidate.wrist_drive_nm = 31;
 
-        expect(() => parseForceSourceArtifact(artifact)).toThrow(/exceeds/);
+        expect(() => parseForceSourceArtifact(artifact)).toThrow(/registered search contract/i);
+    });
+
+    it.each([
+        ['shoulder torque', 'shoulder_torque_nm', 65],
+        ['wrist torque', 'wrist_drive_nm', 10.25],
+        ['release onset', 'onset_s', 0.105],
+    ] as const)('rejects %s candidates outside the registered search grid', (_name, field, value) => {
+        const artifact = validArtifact();
+        artifact.scenarios[0].candidate[field] = value;
+
+        expect(() => parseForceSourceArtifact(artifact)).toThrow(/registered search contract/i);
+    });
+
+    it('accepts impact diagnostics under the registered custom thresholds', () => {
+        const artifact = validArtifact();
+        const config = optimizationConfig();
+        config.constraints = {
+            ...config.constraints,
+            maxImpactPathAngleDeg: 25,
+            minBottomReachFraction: 0.8,
+        };
+        artifact.comparison_contract = buildOptimizationContract(config);
+        artifact.scenarios[0].comparison_contract_id = artifact.comparison_contract.id;
+        artifact.scenarios[0].impact_diagnostics = {
+            path_angle_deg: 20,
+            bottom_reach_fraction: 0.85,
+            x_velocity_m_s: 1,
+            y_velocity_m_s: 0.3,
+            arm_angle_deg: 0,
+            club_angle_deg: 0,
+        };
+
+        expect(parseForceSourceArtifact(artifact).scenarios).toHaveLength(1);
     });
 
     it('rejects misaligned plot and animation series', () => {

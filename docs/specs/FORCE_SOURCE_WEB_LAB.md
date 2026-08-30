@@ -35,6 +35,10 @@ every displayed objective. An artifact is rejected if an objective's own row
 loses to another displayed row. This is a displayed-candidate certification,
 not a proof of the mathematical global optimum.
 
+Imported candidates must also fall on the torque and onset grids declared by
+that contract. Impact diagnostics are checked against the contract's selected
+path-angle and bottom-reach thresholds, not hidden default thresholds.
+
 ## Impact Qualification
 
 The first forward crossing is the only eligible impact. Before that event:

@@ -61,12 +61,12 @@ perturbation analysis code first.
 actuation and realism (`docs/specs/SWING_ACTUATION_AND_REALISM.md`). The React
 lab's `force-source-comparison/v2` artifact now binds initial state, model,
 constraints, integration, robustness, and search depth to one contract ID.
-Changed inputs discard stale rows. Every objective is cross-evaluated on every
-displayed winner, and imports fail if any own-objective row loses. The bundled
-research contract uses 512 candidates, 1 ms integration, 0.5 N m wrist steps,
-and 25 robustness trials. Fixed-hub mode shows only physical markers in one
-frame; impact alignment alone shows a labelled camera crosshair. Design
-contract: `docs/specs/FORCE_SOURCE_WEB_LAB.md`.
+Changed inputs discard stale rows; imports reject off-grid candidates and use
+declared impact thresholds. Every objective is cross-evaluated on every
+displayed winner and fails if its own row loses. The bundled research contract
+uses 512 candidates, 1 ms integration, 0.5 N m wrist steps, and 25 robustness
+trials. Fixed-hub mode shows only physical markers in one frame; impact
+alignment alone shows a labelled camera crosshair. Design contract: `docs/specs/FORCE_SOURCE_WEB_LAB.md`.
 
 **Five results that bind future work here** (all regression-pinned):
 

@@ -39,7 +39,8 @@ version-2 comparison contract. Initial state, model parameters, constraints,
 candidate budget, integration step, robustness settings, and search depth are
 bound by one contract ID; changed inputs reset stale rows. Every objective is
 cross-evaluated on every displayed winning candidate, and parsing fails if an
-objective-specific row loses its own metric. Coriolis and centrifugal energy
+objective-specific row loses its own metric, a candidate is off the declared
+torque/timing grid, or impact violates the contract's thresholds. Coriolis and centrifugal energy
 transfer now use proximal-drain and distal-delivery power with their exact 2:1
 identity. Fixed-hub cards show only physical markers in one frame; the old
 unlabelled white target, impact ring, and dashed reference are removed, while
