@@ -1,12 +1,18 @@
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
 
 import {
     buildCandidateSet,
+    buildOptimizationContract,
+    artifactWithScenarios,
     DEFAULT_OPTIMIZATION_CONSTRAINTS,
     FORCE_SOURCE_SCHEMA,
     FORCE_SOURCE_OBJECTIVES,
+    forceSourceTransferPowers,
     golfLikeImpactIndex,
+    optimizeForceSourceComparison,
     parseForceSourceArtifact,
+    scoreForceSourceSeries,
     summarizeRobustness,
     validateBrowserOptimizationConfig,
     type BrowserOptimizationConfig,
@@ -17,6 +23,7 @@ import {
     pendulumThumbnailGeometry,
     thumbnailOrigin,
 } from '../src/forceSourceView';
+import { generalizedForceSources } from '../src/physics';
 
 const params = {
     m1: 5, m2: 0.3, mClub: 0.2, L1: 0.65, L2: 1.1,
@@ -43,6 +50,8 @@ function optimizationConfig(): BrowserOptimizationConfig {
 
 function validArtifact(): ForceSourceArtifact {
     const pair = [0, 0.1];
+    const config = optimizationConfig();
+    const contract = buildOptimizationContract(config);
     return {
         schema_version: FORCE_SOURCE_SCHEMA,
         force_attribution_schema: 'force-attribution/v1',
@@ -54,13 +63,15 @@ function validArtifact(): ForceSourceArtifact {
             arm_velocity_rad_s: 0,
             wrist_velocity_rad_s: 0,
         },
+        parameters: params,
         search_profile: { name: 'test' },
+        comparison_contract: contract,
         evaluated_count: 2,
         qualified_count: 1,
         interpretation_limits: ['Coordinate dependent.'],
         scenarios: [{
             objective: 'clubhead_speed',
-            score: 40,
+            score: 0.1,
             candidate: {
                 shoulder_torque_nm: 100,
                 wrist_drive_nm: 30,
@@ -68,6 +79,7 @@ function validArtifact(): ForceSourceArtifact {
                 onset_s: 0.1,
             },
             impact_time_s: 0.1,
+            comparison_contract_id: contract.id,
             robustness: {
                 sample_count: 9,
                 qualified_count: 9,
@@ -82,8 +94,8 @@ function validArtifact(): ForceSourceArtifact {
             convergence: [39, 40],
             series: {
                 time_s: pair,
-                arm_angle_rad: pair,
-                wrist_cock_rad: pair,
+                arm_angle_rad: [-2.2, -2.1],
+                wrist_cock_rad: [-1.57, -1.47],
                 arm_angular_velocity_rad_s: pair,
                 wrist_angular_velocity_rad_s: pair,
                 shoulder_torque_nm: pair,
@@ -93,13 +105,14 @@ function validArtifact(): ForceSourceArtifact {
                 coriolis_power_w: pair,
                 squared_speed_tangent_force_n: pair,
                 squared_speed_power_w: pair,
+                hand_path_tangent_force_n: pair,
             },
         }],
     };
 }
 
 describe('force-source artifact contract', () => {
-    it('accepts aligned version-1 scenario series', () => {
+    it('accepts aligned version-2 scenario series', () => {
         expect(parseForceSourceArtifact(validArtifact()).scenarios).toHaveLength(1);
     });
 
@@ -116,6 +129,131 @@ describe('force-source artifact contract', () => {
 
         expect(() => parseForceSourceArtifact(artifact)).toThrow(/lengths must match/);
     });
+
+    it('rejects scenarios whose first pose differs from the registered comparison pose', () => {
+        const artifact = validArtifact();
+        const second = structuredClone(artifact.scenarios[0]);
+        second.objective = 'coriolis_impulse';
+        second.series.arm_angle_rad[0] = 0.25;
+        artifact.scenarios.push(second);
+
+        expect(() => parseForceSourceArtifact(artifact)).toThrow(/shared initial pose/i);
+    });
+
+    it('starts a new comparison instead of mixing a changed pose with stale scenarios', () => {
+        const existing = validArtifact();
+        const replacement = structuredClone(existing.scenarios[0]);
+        replacement.objective = 'hand_path_impulse';
+        replacement.score = 0.005;
+        replacement.series.arm_angle_rad[0] = -1.9;
+        replacement.series.wrist_cock_rad[0] = -1.2;
+        const config = optimizationConfig();
+        config.initialState = [-1.9, -1.2, 0, 0];
+
+        const next = artifactWithScenarios(existing, [replacement], config);
+
+        expect(next.scenarios.map(item => item.objective)).toEqual(['hand_path_impulse']);
+    });
+
+    it('starts a new comparison when search settings change under the same pose', () => {
+        const existing = validArtifact();
+        const replacement = structuredClone(existing.scenarios[0]);
+        replacement.objective = 'hand_path_impulse';
+        replacement.score = 0.005;
+        const config = optimizationConfig();
+        config.constraints = { ...config.constraints, candidateBudget: 192 };
+
+        const next = artifactWithScenarios(existing, [replacement], config);
+
+        expect(next.scenarios.map(item => item.objective)).toEqual(['hand_path_impulse']);
+        expect(next.comparison_contract.id).not.toBe(existing.comparison_contract.id);
+    });
+
+    it('rejects a scenario stamped with a different comparison contract', () => {
+        const artifact = validArtifact();
+        artifact.scenarios[0].comparison_contract_id = 'force-source-search/v1-mixed';
+
+        expect(() => parseForceSourceArtifact(artifact)).toThrow(/share the registered comparison contract/i);
+    });
+
+    it('rejects a speed winner that loses to another displayed scenario', () => {
+        const artifact = validArtifact();
+        const competitor = structuredClone(artifact.scenarios[0]);
+        competitor.objective = 'coriolis_impulse';
+        competitor.score = 0;
+        competitor.series.clubhead_speed_m_s = [0, 0.2];
+        artifact.scenarios.push(competitor);
+
+        expect(() => parseForceSourceArtifact(artifact)).toThrow(/clubhead_speed loses its objective/i);
+    });
+
+    it('registers a built-in comparison whose own objective wins every displayed cross-evaluation', () => {
+        const artifactUrl = new URL('../public/force-source-comparison.json', import.meta.url);
+        const artifact = parseForceSourceArtifact(JSON.parse(readFileSync(artifactUrl, 'utf8')));
+        const crossScores = artifact.scenarios.map(item => scoreForceSourceSeries(item.series));
+
+        expect(new Set(artifact.scenarios.map(item => item.comparison_contract_id))).toEqual(
+            new Set([artifact.comparison_contract.id]),
+        );
+        for (const [index, scenario] of artifact.scenarios.entries()) {
+            expect(crossScores[index][scenario.objective]).toBeCloseTo(
+                Math.max(...crossScores.map(scores => scores[scenario.objective])),
+                10,
+            );
+            expect(scenario.series.arm_angle_rad[0]).toBe(artifact.initial_pose.arm_angle_rad);
+            expect(scenario.series.wrist_cock_rad[0]).toBe(artifact.initial_pose.wrist_cock_rad);
+        }
+    });
+});
+
+describe('comparison contract identity', () => {
+    it('changes for every setting that can invalidate a comparison, but not for objective choice', () => {
+        const baseline = optimizationConfig();
+        const baselineId = buildOptimizationContract(baseline).id;
+        const changedPose = { ...baseline, initialState: [-2.1, -1.57, 0, 0] as const };
+        const changedParams = { ...baseline, params: { ...baseline.params, L2: 1.2 } };
+        const changedSearch = { ...baseline, thoroughness: 'research' as const };
+        const changedConstraint = {
+            ...baseline,
+            constraints: { ...baseline.constraints, integrationStepS: 0.001 },
+        };
+        const changedObjective = { ...baseline, objective: 'hand_path_impulse' as const };
+
+        expect(buildOptimizationContract(changedPose).id).not.toBe(baselineId);
+        expect(buildOptimizationContract(changedParams).id).not.toBe(baselineId);
+        expect(buildOptimizationContract(changedSearch).id).not.toBe(baselineId);
+        expect(buildOptimizationContract(changedConstraint).id).not.toBe(baselineId);
+        expect(buildOptimizationContract(changedObjective).id).toBe(baselineId);
+    });
+});
+
+describe('cross-objective optimizer certification', () => {
+    it('does not let another displayed winner beat the speed objective', async () => {
+        const config = optimizationConfig();
+        config.thoroughness = 'quick';
+        config.constraints = {
+            ...config.constraints,
+            candidateBudget: 160,
+            robustnessTrials: 1,
+            integrationStepS: 0.002,
+        };
+        const { objective: _objective, ...baseConfig } = config;
+
+        const scenarios = await optimizeForceSourceComparison(
+            baseConfig,
+            ['clubhead_speed', 'hand_path_impulse'],
+        );
+        const crossScores = scenarios.map(item => scoreForceSourceSeries(item.series));
+        const speed = scenarios.find(item => item.objective === 'clubhead_speed');
+
+        expect(speed).toBeDefined();
+        expect(speed?.score).toBeCloseTo(
+            Math.max(...crossScores.map(scores => scores.clubhead_speed)),
+            10,
+        );
+        expect(new Set(scenarios.map(item => item.comparison_contract_id)).size).toBe(1);
+        expect(scenarios.every(item => item.provenance?.cross_objective_certified === true)).toBe(true);
+    }, 15_000);
 });
 
 describe('hierarchical search grid', () => {
@@ -239,6 +377,21 @@ describe('objective registry', () => {
     it('includes signed force impulse along the hand path as the sixth objective', () => {
         expect(FORCE_SOURCE_OBJECTIVES).toContain('hand_path_impulse');
         expect(FORCE_SOURCE_OBJECTIVES).toHaveLength(6);
+    });
+});
+
+describe('energy-transfer sign and interface identity', () => {
+    it('reports positive proximal drain and distal delivery with the exact 2:1 identity', () => {
+        const state = [-1.2, -0.8, 7, 5] as const;
+        const sources = generalizedForceSources([...state], params, [0, 0]);
+        const transfer = forceSourceTransferPowers(sources, [...state]);
+
+        expect(transfer.coriolis_to_distal_w).toBeGreaterThan(0);
+        expect(transfer.centrifugal_to_distal_w).toBeGreaterThan(0);
+        expect(transfer.coriolis_to_distal_w).toBeCloseTo(
+            2 * transfer.centrifugal_to_distal_w,
+            12,
+        );
     });
 });
 

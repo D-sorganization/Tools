@@ -1,27 +1,21 @@
-import { readFile, writeFile } from 'node:fs/promises';
+import { writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 
 import {
+    artifactWithScenarios,
+    DEFAULT_FORCE_SOURCE_INITIAL_STATE,
     DEFAULT_OPTIMIZATION_CONSTRAINTS,
-    optimizeForceSource,
+    FORCE_SOURCE_OBJECTIVES,
+    optimizeForceSourceComparison,
     parseForceSourceArtifact,
 } from '../src/forceSourceStudy';
+import { PRESETS } from '../src/presets';
 
 const artifactPath = fileURLToPath(new URL('../public/force-source-comparison.json', import.meta.url));
-const existing = parseForceSourceArtifact(JSON.parse(await readFile(artifactPath, 'utf8')));
-if (!existing.parameters) throw new Error('The registered artifact must declare model parameters');
-
-const initialState = [
-    existing.initial_pose.arm_angle_rad,
-    existing.initial_pose.wrist_cock_rad,
-    existing.initial_pose.arm_velocity_rad_s,
-    existing.initial_pose.wrist_velocity_rad_s,
-] as [number, number, number, number];
-
-const scenario = await optimizeForceSource({
-    params: existing.parameters,
-    initialState,
-    objective: 'hand_path_impulse',
+const params = PRESETS[0].params;
+const baseConfig = {
+    params,
+    initialState: DEFAULT_FORCE_SOURCE_INITIAL_STATE,
     thoroughness: 'research',
     constraints: {
         ...DEFAULT_OPTIMIZATION_CONSTRAINTS,
@@ -30,16 +24,12 @@ const scenario = await optimizeForceSource({
         robustnessTrials: 25,
         integrationStepS: 0.001,
     },
-});
+} as const;
 
-const scenarios = existing.scenarios.filter(item => item.objective !== scenario.objective);
-scenarios.push(scenario);
-const output = {
-    ...existing,
-    scenarios,
-    provenance: {
-        ...existing.provenance,
-        hand_path_impulse: scenario.provenance,
-    },
-};
+const scenarios = await optimizeForceSourceComparison(baseConfig, FORCE_SOURCE_OBJECTIVES);
+const output = artifactWithScenarios(null, scenarios, {
+    ...baseConfig,
+    objective: 'clubhead_speed',
+});
+parseForceSourceArtifact(output);
 await writeFile(artifactPath, `${JSON.stringify(output, null, 2)}\n`, 'utf8');

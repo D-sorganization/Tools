@@ -19,6 +19,7 @@ function scenario(objective: ForceSourceObjective, index: number): ForceSourceSc
     const zeroes = [0, 0, 0];
     return {
         objective,
+        comparison_contract_id: 'force-source-search/v1-test',
         score: index + 1,
         candidate: {
             shoulder_torque_nm: 80 + index,
@@ -79,7 +80,8 @@ describe('force-source comparison rendering', () => {
                 expect(frame).toContain('data-alignment="fixed_hub"');
                 expect(frame).toContain('data-hub-x="96"');
                 expect(frame).toContain('data-hub-y="88"');
-                expect(frame).toContain('data-reference-y="148"');
+                expect(frame).toContain('data-start-arm="-2.2"');
+                expect(frame).toContain('data-start-wrist="-1.57"');
             }
             expect(html.match(/class="force-source-animation-stage"/g)).toHaveLength(6);
             const hubs = html.match(/<circle data-role="hub"[^>]*>/g) ?? [];
@@ -87,13 +89,15 @@ describe('force-source comparison rendering', () => {
             for (const hub of hubs) {
                 expect(hub).toContain('cx="96"');
                 expect(hub).toContain('cy="88"');
+                expect(hub).toContain('aria-label="Fixed shoulder hub"');
             }
-            const references = html.match(/<line data-role="reference-line"[^>]*>/g) ?? [];
-            expect(references).toHaveLength(6);
-            for (const reference of references) {
-                expect(reference).toContain('y1="148"');
-                expect(reference).toContain('y2="148"');
-            }
+            expect(html.match(/data-role="wrist-joint"/g)).toHaveLength(6);
+            expect(html.match(/data-role="clubhead"/g)).toHaveLength(6);
+            expect(html).toContain('aria-label="Animation marker key"');
+            expect(html).not.toContain('data-role="reference-line"');
+            expect(html).not.toContain('data-role="comparison-target"');
+            expect(html).not.toContain('data-role="impact-location"');
+            expect(html).not.toContain('stroke-dasharray');
         }
     });
 
@@ -105,5 +109,7 @@ describe('force-source comparison rendering', () => {
         expect(html.match(/data-alignment="impact_aligned"/g)).toHaveLength(6);
         expect(html.match(/data-impact-x="150"/g)).toHaveLength(6);
         expect(html.match(/data-impact-y="148"/g)).toHaveLength(6);
+        expect(html.match(/data-role="camera-impact-target"/g)).toHaveLength(6);
+        expect(html).not.toContain('data-role="reference-line"');
     });
 });

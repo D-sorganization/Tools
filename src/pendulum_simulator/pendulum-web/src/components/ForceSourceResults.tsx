@@ -51,7 +51,8 @@ function PendulumThumbnail({ scenario, time, params, alignment }: {
             data-hub-y={registeredCoordinate(geometry.originY)}
             data-impact-x={registeredCoordinate(impact.tipX)}
             data-impact-y={registeredCoordinate(impact.tipY)}
-            data-reference-y={SHARED_IMPACT.y}
+            data-start-arm={registeredCoordinate(scenario.series.arm_angle_rad[0])}
+            data-start-wrist={registeredCoordinate(scenario.series.wrist_cock_rad[0])}
             width={THUMBNAIL_VIEWBOX.width}
             height={THUMBNAIL_VIEWBOX.height}
             viewBox={`0 0 ${THUMBNAIL_VIEWBOX.width} ${THUMBNAIL_VIEWBOX.height}`}
@@ -59,15 +60,19 @@ function PendulumThumbnail({ scenario, time, params, alignment }: {
             role="img"
             aria-label={`${OBJECTIVE_LABELS[scenario.objective]} swing at ${time.toFixed(3)} seconds`}
         >
-            <line data-role="reference-line" x1="14" y1={SHARED_IMPACT.y} x2="178" y2={SHARED_IMPACT.y} stroke="#5a647d" strokeDasharray="4 5" />
-            <circle data-role="comparison-target" cx={SHARED_IMPACT.x} cy={SHARED_IMPACT.y} r="3.5" fill="#fff" stroke="#aab4ca" />
-            <circle data-role="impact-location" cx={impact.tipX} cy={impact.tipY} r="5.5" fill="none" stroke={OBJECTIVE_COLORS[scenario.objective]} strokeWidth="1.5" />
+            <title>{alignment === 'fixed_hub'
+                ? 'Physical frame: the shoulder hub remains fixed at the same coordinate in every card.'
+                : 'Camera-aligned frame: the crosshair is a visual impact target, not a physical joint.'}</title>
+            {alignment === 'impact_aligned' && <g data-role="camera-impact-target" aria-label="Camera-only impact target">
+                <line x1={SHARED_IMPACT.x - 5} y1={SHARED_IMPACT.y} x2={SHARED_IMPACT.x + 5} y2={SHARED_IMPACT.y} stroke="#8b96ad" />
+                <line x1={SHARED_IMPACT.x} y1={SHARED_IMPACT.y - 5} x2={SHARED_IMPACT.x} y2={SHARED_IMPACT.y + 5} stroke="#8b96ad" />
+            </g>}
             <circle data-role="hub-guide" cx={geometry.originX} cy={geometry.originY} r="8" fill="none" stroke="#69758f" strokeWidth="1" />
-            <circle data-role="hub" cx={geometry.originX} cy={geometry.originY} r="4" fill="#eaf0ff" />
+            <circle data-role="hub" aria-label="Fixed shoulder hub" cx={geometry.originX} cy={geometry.originY} r="4" fill="#111522" stroke="#eaf0ff" strokeWidth="2" />
             <line x1={geometry.originX} y1={geometry.originY} x2={geometry.wristX} y2={geometry.wristY} stroke="#56d6c8" strokeWidth="7" strokeLinecap="round" />
             <line x1={geometry.wristX} y1={geometry.wristY} x2={geometry.tipX} y2={geometry.tipY} stroke="#e8edf9" strokeWidth="4" strokeLinecap="round" />
-            <circle cx={geometry.wristX} cy={geometry.wristY} r="5" fill="#ffbd4a" />
-            <circle cx={geometry.tipX} cy={geometry.tipY} r="7" fill={OBJECTIVE_COLORS[scenario.objective]} />
+            <circle data-role="wrist-joint" cx={geometry.wristX} cy={geometry.wristY} r="5" fill="#ffbd4a" />
+            <circle data-role="clubhead" cx={geometry.tipX} cy={geometry.tipY} r="7" fill={OBJECTIVE_COLORS[scenario.objective]} />
         </svg>
     </div>;
 }
@@ -108,6 +113,12 @@ export function ForceSourceResults({ scenarios, time, params, alignment }: {
     scenarios: ForceSourceScenario[]; time: number; params: PendulumParams; alignment: AnimationAlignment;
 }) {
     return <>
+        <div className="force-source-animation-key" aria-label="Animation marker key">
+            <span><i className="force-source-marker force-source-marker--hub" />Fixed shoulder hub</span>
+            <span><i className="force-source-marker force-source-marker--wrist" />Wrist joint</span>
+            <span><i className="force-source-marker force-source-marker--clubhead" />Clubhead</span>
+            {alignment === 'impact_aligned' && <span><i className="force-source-marker force-source-marker--camera" />Camera-only impact target</span>}
+        </div>
         <div className="force-source-animation-grid">
             {scenarios.map(scenario => <article key={scenario.objective} style={{ borderColor: OBJECTIVE_COLORS[scenario.objective] }}>
                 <h3>{OBJECTIVE_LABELS[scenario.objective]}</h3>

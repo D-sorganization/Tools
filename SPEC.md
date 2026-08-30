@@ -27,10 +27,23 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.91                                    |
+| **Spec Version**        | 1.18.92                                    |
 | **Last Spec Update**    | 2026-08-30                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-30 Certified Force-Source Comparisons
+
+Version 1.18.92 replaces the mixed-provenance force-source artifact with a
+version-2 comparison contract. Initial state, model parameters, constraints,
+candidate budget, integration step, robustness settings, and search depth are
+bound by one contract ID; changed inputs reset stale rows. Every objective is
+cross-evaluated on every displayed winning candidate, and parsing fails if an
+objective-specific row loses its own metric. Coriolis and centrifugal energy
+transfer now use proximal-drain and distal-delivery power with their exact 2:1
+identity. Fixed-hub cards show only physical markers in one frame; the old
+unlabelled white target, impact ring, and dashed reference are removed, while
+impact-aligned mode uses a labelled camera-only crosshair.
 
 ### 2026-08-30 Registered Force-Source Animation Frames
 
@@ -5634,6 +5647,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-30 | 1.18.92 | fix(pendulum): replace the mixed-search artifact with a single version-2 research contract; cross-certify every objective against every displayed winner; reject stale poses, settings, score drift, and objective-dominance failures; correct Coriolis/centrifugal energy-transfer signs and their exact 2:1 interface identity; remove the misleading white target, impact ring, and dashed line from fixed-hub cards; label physical markers and the optional camera-only crosshair; regenerate all six 1 ms trajectories and extend TDD coverage. |
 | 2026-08-30 | 1.18.91 | fix(pendulum): register every force-source animation in one undistorted 192 by 176 stage with a fixed three-line title row; keep fixed-hub playback at (96, 88), distinguish the common (150, 148) comparison target from each scenario's measured impact location, and cover all six objectives, both camera modes, and playback boundaries in rendered regression tests. |
 | 2026-08-30 | 1.18.90 | feat(pendulum): make the force-source workspace scrollable; add a fixed-hub default frame, direct pose and constraint entry, deterministic quick/thorough/research searches, 30 N m wrist limits with user-selected granularity, held-out robustness, and the sixth signed hand-path impulse objective; retain synchronized high-resolution animations and clubhead-speed/shoulder-torque/wrist-torque plots with golf-like single-pass qualification. |
 | 2026-08-29 | 1.18.89 | docs(handoff): refresh the P1AM bench turnover against protected main, record that PRs #3078/#3081 are merged, retain the dated live-hardware evidence boundary, and require bench requalification before energization. Refresh the root turnover with exact protected-main and UpstreamDrift #9153 no-provider-delta state. |

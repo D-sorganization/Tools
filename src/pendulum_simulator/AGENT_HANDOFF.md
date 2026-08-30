@@ -57,26 +57,22 @@ perturbation analysis code first.
 
 ## Active Epics — #4766 objectives, #4775 actuation and realism
 
-#4766 shipped the mechanism-vs-outcome comparison on this tool's existing
-physics (merged #4774). #4775 then asked why its optima brake the arms to a
-standstill at impact. Contract:
-`docs/specs/SWING_ACTUATION_AND_REALISM.md`.
-
-The React web mirror now includes a synchronized six-objective comparison
-surface backed by a strict generated-study artifact. The sixth objective is
-signed physical grip-force impulse along the hand path, not hand-path work.
-The browser accepts direct start-pose, torque, timing, integration, impact, and
-robustness inputs; defaults to one fixed-hub comparison frame; and runs held-out
-perturbations around its winner. Keep optimization math out of React components:
-the browser engine lives in focused force-source modules while the canonical
-scientific optimizer remains independently testable. Design contract:
-`docs/specs/FORCE_SOURCE_WEB_LAB.md`.
+#4766 shipped the mechanism-vs-outcome comparison through #4774; #4775 owns
+actuation and realism (`docs/specs/SWING_ACTUATION_AND_REALISM.md`). The React
+lab's `force-source-comparison/v2` artifact now binds initial state, model,
+constraints, integration, robustness, and search depth to one contract ID.
+Changed inputs discard stale rows. Every objective is cross-evaluated on every
+displayed winner, and imports fail if any own-objective row loses. The bundled
+research contract uses 512 candidates, 1 ms integration, 0.5 N m wrist steps,
+and 25 robustness trials. Fixed-hub mode shows only physical markers in one
+frame; impact alignment alone shows a labelled camera crosshair. Design
+contract: `docs/specs/FORCE_SOURCE_WEB_LAB.md`.
 
 **Five results that bind future work here** (all regression-pinned):
 
-1. `P_coriolis_hub = -2 * P_centrifugal_wrist` identically, so centrifugal and
-   Coriolis _work_ are one functional. The centrifugal objective is an angular
-   impulse for that reason; do not "simplify" it back to work.
+1. `P_coriolis_to_distal = 2 * P_centrifugal_to_distal` identically. Both
+   energy rows are therefore one functional; centrifugal impulse remains the
+   independent squared-speed objective.
 2. The energy-optimal hand speed at impact is `L1*[I2 - m2*r2*(L2-r2)]`,
    identically zero for a point-mass clubhead. That is an _unconstrained ideal_,
    not a prediction about where a constrained optimum lands — a distinction that
@@ -90,9 +86,10 @@ scientific optimizer remains independently testable. Design contract:
 4. **Corrected, the model is golf-like**: 49.7 m/s clubhead, 7.26 m/s hands,
    club/arm 3.46, five of six measured observables inside their bands, with no
    hand-speed floor. A moving hub is an improvement, not a prerequisite.
-5. **The objective ranking discriminates once the club is right.** Clubhead
-   speed, Coriolis, energy and impulse transfer tie; centrifugal release impulse
-   costs ~1 m/s. Check `is_discriminating` before quoting any ranking.
+5. **The browser ranking is now self-consistent.** Its certified speed winner is
+   38.33 m/s versus 38.03 m/s for hand-path impulse; Coriolis impulse and both
+   energy rows select the speed candidate, while centrifugal impulse reaches
+   30.93 m/s. This certifies displayed candidates, not a global optimum.
 
 Next open item is the **late release**: every objective releases at ~90% of the
 downswing against a measured 55-80%. A moving hub (`physics_triple.py`) is the
@@ -148,11 +145,6 @@ double-collect by also passing the embedded path.
 
 ## Roadmap (ordered)
 
-1. Finish #4430's UpstreamDrift consumer pin for the merged PyQt/React
-   surfaces and close its remaining gates; preserve every
-   scientific-promotion boundary and adverse row.
-2. If/when epic #4103 Phase 1 lands the double/triple pendulum
-   `SwingSource` integration, expect a coordinated PR here exposing any
-   additional bindings rate_of_closure needs.
-3. Watch for epic #4120 V3 PRs reusing `perturbation_analysis` — review for
-   API-stability impact on this tool's own callers.
+1. Finish #4430's UpstreamDrift consumer pin; preserve all promotion boundaries.
+2. Coordinate any #4103 Phase 1 double/triple `SwingSource` bindings here.
+3. Review #4120 V3 `perturbation_analysis` reuse for API-stability impact.
