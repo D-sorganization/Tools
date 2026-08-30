@@ -8,7 +8,7 @@
 
 ## Merge Governance
 
-- Use feature-branch pull requests and ordinary protected merges; all configured status checks must pass on the exact head.
+- Protected `main` is `cefcc1878de11804c44cd7d1d19c0ffcf58fa89e`; no Tools pull request was open when this handoff was refreshed.
 - The live `main` rules require zero approving reviews. Do not require or request a named maintainer's approval; `@dieterolson` is not a standing release gate. Optional review remains available for risk, expertise, or unresolved feedback.
 - Never use admin bypass, force-push, check bypass, or protection changes to merge a failing or stale head.
 
@@ -45,7 +45,7 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
 
 ## Active Delivery Boundaries
 
-- Query exact PR state before acting; this handoff is not a live queue.
+- Query exact PR state before acting; local worktrees are not a live queue. The active UpstreamDrift #9153 recovery requires no Tools provider delta.
 - Markerless M0/M1 PR #4734 is the only remote mocap contribution. Local
   integration through M7/M9 is evidence, not merged authority.
 - TOOLS-D1 (#4711), TOOLS-D2 (#4712), and TOOLS-D3 (#4717) protected-squash-
