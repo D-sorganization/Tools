@@ -22,6 +22,8 @@ import {
     type ForceSourceSeries,
     type NumericRange,
     type RobustnessSummary,
+    type TorquePolynomialCoefficients,
+    type TorqueProfileDiagnostics,
 } from './forceSourceTypes';
 
 interface EvaluatedCandidate {
@@ -53,7 +55,9 @@ function contractPayload(config: BrowserOptimizationConfig): unknown[] {
         [
             c.shoulderTorqueNm.min, c.shoulderTorqueNm.max, c.shoulderTorqueNm.step,
             c.wristTorqueLimitNm, c.wristTorqueStepNm,
-            c.onsetS.min, c.onsetS.max, c.onsetS.step,
+            c.profileDurationS.min, c.profileDurationS.max, c.profileDurationS.step,
+            c.maxTorqueSlewNmS, c.transitionTorqueNm, c.minWristTransitionS,
+            c.targetClubheadSpeedMps, c.eliteCandidateCount,
             c.armAngleDeg.min, c.armAngleDeg.max,
             c.wristAngleDeg.min, c.wristAngleDeg.max,
             c.maxImpactPathAngleDeg, c.minBottomReachFraction,
@@ -71,7 +75,7 @@ export function buildOptimizationContract(
 ): ForceSourceComparisonContract {
     validateBrowserOptimizationConfig(config);
     return {
-        id: `force-source-search/v1-${contractChecksum(JSON.stringify(contractPayload(config)))}`,
+        id: `force-source-search/v2-${contractChecksum(JSON.stringify(contractPayload(config)))}`,
         thoroughness: config.thoroughness,
         constraints: structuredClone(config.constraints),
     };
@@ -90,13 +94,22 @@ export function validateBrowserOptimizationConfig(config: BrowserOptimizationCon
     const c = config.constraints;
     if (!FORCE_SOURCE_OBJECTIVES.includes(config.objective)) throw new RangeError('objective is unsupported');
     validateRange(c.shoulderTorqueNm, 'shoulder torque');
-    validateRange(c.onsetS, 'release onset');
+    validateRange(c.profileDurationS, 'profile duration');
+    if (c.shoulderTorqueNm.min > 0 || c.shoulderTorqueNm.max < 0) {
+        throw new RangeError('shoulder torque bounds must contain zero for continuous profile endpoints');
+    }
     if (!(c.wristTorqueLimitNm > 0 && c.wristTorqueLimitNm <= 30)) {
         throw new RangeError('wrist torque limit must be in (0, 30] N m');
     }
-    if (!(c.wristTorqueStepNm >= 0.1 && c.wristTorqueStepNm <= c.wristTorqueLimitNm)) {
-        throw new RangeError('wrist torque step must be between 0.1 N m and the wrist limit');
+    if (!(c.wristTorqueStepNm >= 0.05 && c.wristTorqueStepNm <= c.wristTorqueLimitNm)) {
+        throw new RangeError('wrist torque step must be between 0.05 N m and the wrist limit');
     }
+    if (!(c.profileDurationS.min > 0 && c.profileDurationS.max <= c.simulationDurationS)) throw new RangeError('profile duration must be positive and inside the simulation duration');
+    if (!(c.maxTorqueSlewNmS > 0)) throw new RangeError('torque slew limit must be positive');
+    if (!(c.transitionTorqueNm > 0 && c.transitionTorqueNm < c.wristTorqueLimitNm)) throw new RangeError('transition torque must be inside the wrist-torque bounds');
+    if (!(c.minWristTransitionS > 0 && c.minWristTransitionS < c.profileDurationS.max)) throw new RangeError('wrist transition duration must be positive and shorter than the profile');
+    if (!(c.targetClubheadSpeedMps > 0)) throw new RangeError('clubhead speed target must be positive');
+    if (!Number.isInteger(c.eliteCandidateCount) || c.eliteCandidateCount < 1 || c.eliteCandidateCount > 64) throw new RangeError('elite candidate count must be an integer in [1, 64]');
     const arm = degrees(config.initialState[0]);
     const wrist = degrees(config.initialState[1]);
     if (c.armAngleDeg.min >= c.armAngleDeg.max || c.wristAngleDeg.min >= c.wristAngleDeg.max) throw new RangeError('joint-angle bounds require min < max');
@@ -127,24 +140,211 @@ function quantized(unit: number, range: NumericRange): number {
     return Math.min(range.max, Math.max(range.min, +(range.min + steps * range.step).toFixed(8)));
 }
 
-function sampledCandidate(index: number, constraints: ForceSourceConstraints): ForceSourceCandidate {
-    const wristRange = { min: 0, max: constraints.wristTorqueLimitNm, step: constraints.wristTorqueStepNm };
-    return {
-        shoulder_torque_nm: quantized(halton(index, 2), constraints.shoulderTorqueNm),
-        wrist_drive_nm: quantized(halton(index, 3), wristRange),
-        wrist_restrain_nm: quantized(halton(index, 5), wristRange),
-        onset_s: quantized(halton(index, 7), constraints.onsetS),
+const BINOMIAL_6 = [1, 6, 15, 20, 15, 6, 1] as const;
+
+/** Evaluate a degree-6 Bernstein polynomial at normalized phase [0, 1]. */
+export function bernsteinTorque(
+    coefficients: TorquePolynomialCoefficients,
+    phase: number,
+): number {
+    const value = Math.min(1, Math.max(0, phase));
+    const complement = 1 - value;
+    return coefficients.reduce((sum, coefficient, index) => sum
+        + coefficient * BINOMIAL_6[index] * value ** index * complement ** (6 - index), 0);
+}
+
+/** Create the continuous two-joint torque function represented by a candidate. */
+export function candidateTorqueFunction(candidate: ForceSourceCandidate): TorqueFunc {
+    return time => {
+        if (time < 0 || time > candidate.profile_duration_s) return [0, 0];
+        const phase = time / candidate.profile_duration_s;
+        return [
+            bernsteinTorque(candidate.shoulder_coefficients_nm, phase),
+            bernsteinTorque(candidate.wrist_coefficients_nm, phase),
+        ];
     };
+}
+
+function derivativeBound(coefficients: TorquePolynomialCoefficients, duration: number): number {
+    return 6 * Math.max(...coefficients.slice(1).map((value, index) =>
+        Math.abs(value - coefficients[index]))) / duration;
+}
+
+/** Summarize shape, continuity, slew, and wrist-transition properties. */
+export function profileDiagnostics(
+    candidate: ForceSourceCandidate,
+    transitionTorqueNm: number,
+): TorqueProfileDiagnostics {
+    const sampleCount = 1001;
+    const torque = candidateTorqueFunction(candidate);
+    const samples = Array.from({ length: sampleCount }, (_, index) => ({
+        time: candidate.profile_duration_s * index / (sampleCount - 1),
+        value: torque(candidate.profile_duration_s * index / (sampleCount - 1)),
+    }));
+    const shoulder = samples.map(sample => sample.value[0]);
+    const wrist = samples.map(sample => sample.value[1]);
+    const signs = wrist.map(value => value > 1e-7 ? 1 : value < -1e-7 ? -1 : 0);
+    let previousSign = 0;
+    let reversalCount = 0;
+    let reversalIndex: number | null = null;
+    for (const [index, sign] of signs.entries()) {
+        if (sign === 0) continue;
+        if (previousSign < 0 && sign > 0) {
+            reversalCount += 1;
+            reversalIndex ??= index;
+        } else if (previousSign > 0 && sign < 0) {
+            reversalCount += 1;
+            reversalIndex ??= index;
+        }
+        previousSign = sign;
+    }
+    let transitionSamples = 0;
+    if (reversalIndex !== null) {
+        let left = reversalIndex;
+        let right = reversalIndex;
+        while (left > 0 && Math.abs(wrist[left - 1]) <= transitionTorqueNm) left -= 1;
+        while (right < wrist.length - 1 && Math.abs(wrist[right + 1]) <= transitionTorqueNm) right += 1;
+        transitionSamples = right - left;
+    }
+    const rms = (values: number[]) => Math.sqrt(values.reduce((sum, value) => sum + value * value, 0) / values.length);
+    return {
+        peak_shoulder_torque_nm: Math.max(...shoulder.map(Math.abs)),
+        peak_wrist_torque_nm: Math.max(...wrist.map(Math.abs)),
+        rms_shoulder_torque_nm: rms(shoulder),
+        rms_wrist_torque_nm: rms(wrist),
+        peak_shoulder_slew_nm_s: derivativeBound(candidate.shoulder_coefficients_nm, candidate.profile_duration_s),
+        peak_wrist_slew_nm_s: derivativeBound(candidate.wrist_coefficients_nm, candidate.profile_duration_s),
+        wrist_reversal_count: reversalCount,
+        wrist_reversal_time_s: reversalIndex === null ? null : samples[reversalIndex].time,
+        wrist_transition_duration_s: candidate.profile_duration_s * transitionSamples / (sampleCount - 1),
+    };
+}
+
+function quantizeValue(value: number, range: NumericRange): number {
+    return quantized((value - range.min) / (range.max - range.min || 1), range);
+}
+
+function boundedCoefficients(
+    raw: TorquePolynomialCoefficients,
+    range: NumericRange,
+    duration: number,
+    maxSlew: number,
+    zeroStart = true,
+): TorquePolynomialCoefficients {
+    const gridDelta = Math.max(range.step, Math.floor(maxSlew * duration / (6 * range.step)) * range.step);
+    const values = raw.map(value => quantizeValue(Math.min(range.max, Math.max(range.min, value)), range));
+    if (zeroStart) values[0] = 0;
+    values[6] = 0;
+    for (let pass = 0; pass < 3; pass += 1) {
+        for (let index = 1; index < values.length; index += 1) {
+            values[index] = quantizeValue(Math.min(values[index - 1] + gridDelta,
+                Math.max(values[index - 1] - gridDelta, values[index])), range);
+        }
+        for (let index = values.length - 2; index >= 0; index -= 1) {
+            values[index] = quantizeValue(Math.min(values[index + 1] + gridDelta,
+                Math.max(values[index + 1] - gridDelta, values[index])), range);
+        }
+        if (zeroStart) values[0] = 0;
+        values[6] = 0;
+    }
+    return values as TorquePolynomialCoefficients;
+}
+
+function candidateIsShapeQualified(candidate: ForceSourceCandidate, constraints: ForceSourceConstraints): boolean {
+    const diagnostics = profileDiagnostics(candidate, constraints.transitionTorqueNm);
+    return diagnostics.peak_shoulder_slew_nm_s <= constraints.maxTorqueSlewNmS + 1e-8
+        && diagnostics.peak_wrist_slew_nm_s <= constraints.maxTorqueSlewNmS + 1e-8
+        && diagnostics.wrist_reversal_count === 1
+        && diagnostics.wrist_transition_duration_s >= constraints.minWristTransitionS - 1e-3;
+}
+
+function sampledCandidate(index: number, constraints: ForceSourceConstraints): ForceSourceCandidate {
+    const duration = quantized(halton(index, 31), constraints.profileDurationS);
+    const shoulderRaw = [2, 3, 5, 7, 11, 37, 0].map(base => base === 0 ? 0
+        : constraints.shoulderTorqueNm.min
+            + halton(index, base) * (constraints.shoulderTorqueNm.max - constraints.shoulderTorqueNm.min)) as TorquePolynomialCoefficients;
+    const limit = constraints.wristTorqueLimitNm;
+    const wristRaw: TorquePolynomialCoefficients = [
+        0,
+        -limit * (0.15 + 0.85 * halton(index, 13)),
+        -limit * (0.1 + 0.9 * halton(index, 17)),
+        constraints.transitionTorqueNm * (2 * halton(index, 19) - 1),
+        limit * (0.1 + 0.9 * halton(index, 23)),
+        limit * (0.15 + 0.85 * halton(index, 29)),
+        0,
+    ];
+    const wristRange = { min: -limit, max: limit, step: constraints.wristTorqueStepNm };
+    return {
+        basis: 'bernstein_6',
+        profile_duration_s: duration,
+        shoulder_coefficients_nm: boundedCoefficients(
+            shoulderRaw, constraints.shoulderTorqueNm, duration, constraints.maxTorqueSlewNmS, false,
+        ),
+        wrist_coefficients_nm: boundedCoefficients(
+            wristRaw, wristRange, duration, constraints.maxTorqueSlewNmS,
+        ),
+    };
+}
+
+function seededCandidates(constraints: ForceSourceConstraints): ForceSourceCandidate[] {
+    const limit = constraints.wristTorqueLimitNm;
+    const wristRange = { min: -limit, max: limit, step: constraints.wristTorqueStepNm };
+    const wristShapes: TorquePolynomialCoefficients[] = [
+        [0, -0.1 * limit, limit, limit, limit, limit, 0],
+        [0, -0.3 * limit, 0.4 * limit, limit, limit, 0.8 * limit, 0],
+        [0, -0.55 * limit, -0.5 * limit, 0, 0.65 * limit, limit, 0],
+        [0, -0.7 * limit, -0.7 * limit, -0.1 * limit, 0.1 * limit, limit, 0],
+    ];
+    const shoulderLevels = [60, 80, 100, 120, 140, constraints.shoulderTorqueNm.max]
+        .filter((value, index, values) => value >= constraints.shoulderTorqueNm.min
+            && value <= constraints.shoulderTorqueNm.max && values.indexOf(value) === index);
+    const durations = [0.4, 0.5, 0.6, constraints.profileDurationS.max]
+        .map(value => quantizeValue(value, constraints.profileDurationS))
+        .filter((value, index, values) => values.indexOf(value) === index);
+    return shoulderLevels.flatMap(shoulderLevel => durations.flatMap(duration => {
+        const endpointNeighbor = Math.min(shoulderLevel,
+            Math.floor(constraints.maxTorqueSlewNmS * duration
+                / (6 * constraints.shoulderTorqueNm.step)) * constraints.shoulderTorqueNm.step);
+        const brake = Math.max(constraints.shoulderTorqueNm.min, -0.5 * shoulderLevel);
+        const shoulderShapes: TorquePolynomialCoefficients[] = [
+            [shoulderLevel, shoulderLevel, shoulderLevel, shoulderLevel,
+                shoulderLevel, endpointNeighbor, 0],
+            [shoulderLevel, shoulderLevel, shoulderLevel, 0.6 * shoulderLevel,
+                0, brake * 0.5, 0],
+            [shoulderLevel, shoulderLevel, 0.8 * shoulderLevel, 0,
+                brake, brake * 0.5, 0],
+            [0, 0.5 * shoulderLevel, shoulderLevel, shoulderLevel,
+                0.5 * shoulderLevel, 0, 0],
+        ];
+        return shoulderShapes.flatMap(shoulderRaw => {
+            const shoulder = boundedCoefficients(
+                shoulderRaw, constraints.shoulderTorqueNm, duration,
+                constraints.maxTorqueSlewNmS, false,
+            );
+            return wristShapes.map(raw => ({
+                basis: 'bernstein_6' as const,
+                profile_duration_s: duration,
+                shoulder_coefficients_nm: shoulder,
+                wrist_coefficients_nm: boundedCoefficients(
+                    raw, wristRange, duration, constraints.maxTorqueSlewNmS,
+                ),
+            }));
+        });
+    })).filter(candidate => candidateIsShapeQualified(candidate, constraints));
 }
 
 export function buildCandidateSet(config: BrowserOptimizationConfig): ForceSourceCandidate[] {
     validateBrowserOptimizationConfig(config);
     const c = config.constraints;
-    const bounds: ForceSourceCandidate[] = [
-        { shoulder_torque_nm: c.shoulderTorqueNm.min, wrist_drive_nm: 0, wrist_restrain_nm: 0, onset_s: c.onsetS.min },
-        { shoulder_torque_nm: c.shoulderTorqueNm.max, wrist_drive_nm: c.wristTorqueLimitNm, wrist_restrain_nm: c.wristTorqueLimitNm, onset_s: c.onsetS.max },
-    ];
-    return Array.from({ length: c.candidateBudget }, (_, index) => bounds[index] ?? sampledCandidate(index - 1, c));
+    const candidates = seededCandidates(c).slice(0, c.candidateBudget);
+    for (let index = 1; candidates.length < c.candidateBudget && index < c.candidateBudget * 100; index += 1) {
+        const candidate = sampledCandidate(index, c);
+        if (candidateIsShapeQualified(candidate, c)) candidates.push(candidate);
+    }
+    if (candidates.length !== c.candidateBudget) {
+        throw new Error('Unable to construct enough continuous torque profiles under the selected slew and transition constraints');
+    }
+    return candidates;
 }
 
 function span(values: number[]): number {
@@ -267,8 +467,8 @@ function impactDiagnostics(state: State, params: PendulumParams) {
 }
 
 function evaluateCandidate(config: BrowserOptimizationConfig, candidate: ForceSourceCandidate): EvaluatedCandidate | null {
-    const torque: TorqueFunc = time => [candidate.shoulder_torque_nm,
-        time < candidate.onset_s ? -candidate.wrist_restrain_nm : candidate.wrist_drive_nm];
+    if (!candidateIsShapeQualified(candidate, config.constraints)) return null;
+    const torque = candidateTorqueFunction(candidate);
     const c = config.constraints;
     const simulation = runSimulation(config.params, config.initialState, c.simulationDurationS, torque, c.integrationStepS);
     const impactIndex = golfLikeImpactIndex(simulation.states, config.params, c);
@@ -299,25 +499,54 @@ export function summarizeRobustness(scores: Array<number | null>): RobustnessSum
     };
 }
 
-function refinementNeighbors(candidate: ForceSourceCandidate, config: BrowserOptimizationConfig): ForceSourceCandidate[] {
+function coefficientNeighbor(
+    candidate: ForceSourceCandidate,
+    joint: 'shoulder' | 'wrist',
+    index: number,
+    direction: -1 | 1,
+    config: BrowserOptimizationConfig,
+): ForceSourceCandidate | null {
     const c = config.constraints;
-    const fields: Array<[keyof ForceSourceCandidate, number, number, number]> = [
-        ['shoulder_torque_nm', c.shoulderTorqueNm.step, c.shoulderTorqueNm.min, c.shoulderTorqueNm.max],
-        ['wrist_drive_nm', c.wristTorqueStepNm, 0, c.wristTorqueLimitNm],
-        ['wrist_restrain_nm', c.wristTorqueStepNm, 0, c.wristTorqueLimitNm],
-        ['onset_s', c.onsetS.step, c.onsetS.min, c.onsetS.max],
-    ];
-    return [candidate, ...fields.flatMap(([field, step, min, max]) => [-1, 1].map(direction => ({
-        ...candidate, [field]: Math.min(max, Math.max(min, +(candidate[field] + direction * step).toFixed(8))),
-    })))];
+    const field = joint === 'shoulder' ? 'shoulder_coefficients_nm' : 'wrist_coefficients_nm';
+    const step = joint === 'shoulder' ? c.shoulderTorqueNm.step : c.wristTorqueStepNm;
+    const min = joint === 'shoulder' ? c.shoulderTorqueNm.min : -c.wristTorqueLimitNm;
+    const max = joint === 'shoulder' ? c.shoulderTorqueNm.max : c.wristTorqueLimitNm;
+    const coefficients = [...candidate[field]] as TorquePolynomialCoefficients;
+    coefficients[index] = Math.min(max, Math.max(min, +(coefficients[index] + direction * step).toFixed(8)));
+    const next = { ...candidate, [field]: coefficients };
+    return candidateIsShapeQualified(next, c) ? next : null;
+}
+
+function refinementNeighbors(candidate: ForceSourceCandidate, config: BrowserOptimizationConfig): ForceSourceCandidate[] {
+    const candidates: Array<ForceSourceCandidate | null> = [candidate];
+    for (const joint of ['shoulder', 'wrist'] as const) {
+        for (let index = 1; index <= 5; index += 1) {
+            candidates.push(coefficientNeighbor(candidate, joint, index, -1, config));
+            candidates.push(coefficientNeighbor(candidate, joint, index, 1, config));
+        }
+    }
+    const c = config.constraints;
+    for (const direction of [-1, 1] as const) {
+        const profile_duration_s = Math.min(c.profileDurationS.max, Math.max(c.profileDurationS.min,
+            +(candidate.profile_duration_s + direction * c.profileDurationS.step).toFixed(8)));
+        const next = { ...candidate, profile_duration_s };
+        candidates.push(candidateIsShapeQualified(next, c) ? next : null);
+    }
+    return candidates.filter((item): item is ForceSourceCandidate => item !== null);
 }
 
 function boundaryHits(candidate: ForceSourceCandidate, constraints: ForceSourceConstraints): string[] {
     const checks: Array<[string, number, number, number]> = [
-        ['shoulder_torque_nm', candidate.shoulder_torque_nm, constraints.shoulderTorqueNm.min, constraints.shoulderTorqueNm.max],
-        ['wrist_drive_nm', candidate.wrist_drive_nm, 0, constraints.wristTorqueLimitNm],
-        ['wrist_restrain_nm', candidate.wrist_restrain_nm, 0, constraints.wristTorqueLimitNm],
-        ['onset_s', candidate.onset_s, constraints.onsetS.min, constraints.onsetS.max],
+        ...candidate.shoulder_coefficients_nm.map((value, index) => [
+            `shoulder_coefficients_nm[${index}]`, value,
+            constraints.shoulderTorqueNm.min, constraints.shoulderTorqueNm.max,
+        ] as [string, number, number, number]),
+        ...candidate.wrist_coefficients_nm.map((value, index) => [
+            `wrist_coefficients_nm[${index}]`, value,
+            -constraints.wristTorqueLimitNm, constraints.wristTorqueLimitNm,
+        ] as [string, number, number, number]),
+        ['profile_duration_s', candidate.profile_duration_s,
+            constraints.profileDurationS.min, constraints.profileDurationS.max],
     ];
     return checks.flatMap(([name, value, min, max]) => {
         if (Math.abs(value - min) <= 1e-8) return [`${name}:lower`];
@@ -338,9 +567,12 @@ function perturbedCandidate(candidate: ForceSourceCandidate, config: BrowserOpti
     const scale = 1 + fraction;
     return {
         ...candidate,
-        shoulder_torque_nm: Math.min(config.constraints.shoulderTorqueNm.max, Math.max(config.constraints.shoulderTorqueNm.min, candidate.shoulder_torque_nm * scale)),
-        wrist_drive_nm: Math.min(config.constraints.wristTorqueLimitNm, candidate.wrist_drive_nm * scale),
-        wrist_restrain_nm: Math.min(config.constraints.wristTorqueLimitNm, candidate.wrist_restrain_nm * scale),
+        shoulder_coefficients_nm: candidate.shoulder_coefficients_nm.map(value =>
+            Math.min(config.constraints.shoulderTorqueNm.max,
+                Math.max(config.constraints.shoulderTorqueNm.min, value * scale))) as TorquePolynomialCoefficients,
+        wrist_coefficients_nm: candidate.wrist_coefficients_nm.map(value =>
+            Math.min(config.constraints.wristTorqueLimitNm,
+                Math.max(-config.constraints.wristTorqueLimitNm, value * scale))) as TorquePolynomialCoefficients,
     };
 }
 
@@ -359,12 +591,18 @@ export async function optimizeForceSource(
 ): Promise<ForceSourceScenario> {
     const candidates = buildCandidateSet(config);
     let best: EvaluatedCandidate | null = null;
+    let elite: EvaluatedCandidate[] = [];
     const qualifiedScores: number[] = [];
     let completed = 0;
     for (const candidate of candidates) {
         const evaluated = evaluateCandidate(config, candidate);
         if (evaluated) qualifiedScores.push(evaluated.score);
-        if (evaluated && (!best || evaluated.score > best.score)) best = evaluated;
+        if (evaluated) {
+            elite = [...elite, evaluated]
+                .sort((left, right) => right.score - left.score)
+                .slice(0, config.constraints.eliteCandidateCount);
+            if (!best || evaluated.score > best.score) best = evaluated;
+        }
         completed += 1;
         if (completed % 12 === 0) {
             onProgress?.({ completed, total: candidates.length, bestScore: best?.score ?? -Infinity, objective: config.objective });
@@ -372,14 +610,25 @@ export async function optimizeForceSource(
         }
     }
     if (!best) throw new Error('No candidate reached the qualified, non-looping golf impact event');
-    const rounds = config.thoroughness === 'quick' ? 1 : config.thoroughness === 'thorough' ? 3 : 6;
+    const rounds = config.thoroughness === 'quick' ? 2 : config.thoroughness === 'thorough' ? 6 : 12;
     const convergence = [best.score];
     for (let round = 0; round < rounds; round++) {
-        for (const candidate of refinementNeighbors(best.candidate, config)) {
+        const neighborhood = [...new Map(elite.flatMap(item => refinementNeighbors(item.candidate, config))
+            .map(candidate => [candidateKey(candidate), candidate])).values()];
+        const refined: EvaluatedCandidate[] = [];
+        for (const candidate of neighborhood) {
             const evaluated = evaluateCandidate(config, candidate);
-            if (evaluated) qualifiedScores.push(evaluated.score);
-            if (evaluated && evaluated.score > best.score) best = evaluated;
+            if (evaluated) {
+                refined.push(evaluated);
+                qualifiedScores.push(evaluated.score);
+            }
         }
+        elite = [...elite, ...refined]
+            .sort((left, right) => right.score - left.score)
+            .filter((item, index, values) => values.findIndex(other =>
+                candidateKey(other.candidate) === candidateKey(item.candidate)) === index)
+            .slice(0, config.constraints.eliteCandidateCount);
+        best = elite[0] ?? best;
         convergence.push(best.score);
         await new Promise<void>(resolve => setTimeout(resolve, 0));
     }
@@ -401,10 +650,10 @@ export async function optimizeForceSource(
 
 function candidateKey(candidate: ForceSourceCandidate): string {
     return [
-        candidate.shoulder_torque_nm,
-        candidate.wrist_drive_nm,
-        candidate.wrist_restrain_nm,
-        candidate.onset_s,
+        candidate.basis,
+        candidate.profile_duration_s,
+        ...candidate.shoulder_coefficients_nm,
+        ...candidate.wrist_coefficients_nm,
     ].join('|');
 }
 

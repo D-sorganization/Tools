@@ -14,17 +14,28 @@ near the bottom of the arc without an arm, club, or wrist loop.
 ## User-Controlled Contract
 
 The user may type the starting arm and relative-wrist angles directly. Search
-bounds, torque ranges and increments, release-onset range and increment,
-candidate budget, integration step, impact-path tolerance, bottom reach, and
-held-out perturbations are also numeric inputs. Wrist drive and restrain torque
-are hard-limited to 30 N m. Invalid or internally inconsistent inputs fail before
-simulation.
+bounds, coefficient increments, polynomial-duration range, torque-slew ceiling,
+low-torque wrist-transition band and duration, elite count, candidate budget,
+integration step, impact-path tolerance, bottom reach, speed target, and
+held-out perturbations are numeric inputs. Wrist torque is hard-limited to
+30 N m. Invalid or internally inconsistent inputs fail before simulation.
 
-`quick`, `thorough`, and `research` use one deterministic low-discrepancy global
-sample and respectively one, three, or six local refinement rounds. The
-candidate budget is explicit rather than hidden behind the depth name. Winning
-programs are rerun under start-pose and torque perturbations; the cards report
-the fraction that still qualifies.
+Each joint is controlled by a degree-6 Bernstein polynomial with seven torque
+coefficients. Bernstein form is still a sixth-order polynomial, but its
+convex-hull property makes the bound contract strong: when every control point
+is inside the torque limits, every value on the continuous curve is also inside
+them. Both profiles finish at zero; the wrist profile also starts at zero,
+crosses from restraining to driving torque exactly once, remains inside the
+selected low-torque band for the minimum transition time, and respects the
+selected analytic slew bound.
+
+`quick`, `thorough`, and `research` use deterministic low-discrepancy global
+sampling plus physically shaped constant-drive, front-loaded, braking, ramped,
+early-release, and late-release seeds. They retain multiple elite starts and
+run respectively two, six, or twelve coefficient-refinement rounds. The
+candidate and elite budgets are explicit rather than hidden behind the depth
+name. Winning programs are rerun under start-pose and whole-profile torque
+perturbations; the cards report the fraction that still qualifies.
 
 Every scenario in one comparison carries the same versioned contract ID. The
 contract covers the initial state, model parameters, all constraints, candidate
@@ -35,9 +46,10 @@ every displayed objective. An artifact is rejected if an objective's own row
 loses to another displayed row. This is a displayed-candidate certification,
 not a proof of the mathematical global optimum.
 
-Imported candidates must also fall on the torque and onset grids declared by
-that contract. Impact diagnostics are checked against the contract's selected
-path-angle and bottom-reach thresholds, not hidden default thresholds.
+Imported coefficients and durations must fall on their declared grids, satisfy
+the complete continuity/transition/slew contract, and reproduce every plotted
+shoulder and wrist torque sample. Impact diagnostics are checked against the
+contract's selected path-angle and bottom-reach thresholds, not hidden defaults.
 
 ## Impact Qualification
 
@@ -90,29 +102,38 @@ and the repository's rank-aware mapping contract in
 
 ## Interpretation of the Registered Comparison
 
-The checked-in version-2 artifact runs all six objectives under one research
-contract: 512 deterministic global candidates, 1 ms integration, 0.5 N m wrist
-granularity, and 25 held-out robustness trials. The certified clubhead-speed
-winner reaches about 38.33 m/s, while the hand-path-impulse winner reaches about
-38.03 m/s. The Coriolis impulse and the two energy-transfer objectives select
-the same displayed candidate as clubhead speed; centrifugal release impulse is
-slower at about 30.93 m/s. These values are mechanically plausible for this
-simplified club model, but they are not a validated human-performance range.
-The canonical inertia-matched two-link study reaches 49.7 m/s under a different
-torque budget and club representation. Boundary hits and qualification rates
-must accompany any ranking claim.
+The checked-in version-3 artifact runs all six objectives under one research
+contract: 512 deterministic global/seeded candidates, 12 elite refinement
+rounds, 1 ms integration, 0.5 N m wrist-coefficient granularity, and 25 held-out
+robustness trials. It now uses the repository-authoritative inertia-matched
+driver equivalent (`m2 + mClub = 0.2381186694 kg`) and a selectable symmetric
+250 N m hub-torque budget instead of the web preset's stale 0.50 kg lumped club.
+
+The certified clubhead-speed winner reaches about 53.7 m/s (120.2 mph), above
+the 52.3 m/s marker corresponding to the PGA TOUR's 116.96 mph 2026 year-to-date
+average reported on the official
+[Club Head Speed stat](https://www.pgatour.com/stats/detail/02401). Coriolis
+impulse selects a distinct approximately 50.9 m/s strategy and centrifugal
+impulse selects a markedly different approximately 34.7 m/s strategy; the
+energy-transfer, speed, and hand-path rows share the displayed speed winner.
+That agreement is reported rather than artificially broken. Boundary hits,
+qualification rates, polynomial coefficients, work, slew, transition timing,
+and the full cross-objective score/rank matrix accompany the ranking.
 
 ## Architecture
 
 - `forceSourceTypes.ts` owns the schema and user-visible constraints.
 - `forceSourceOptimization.ts` owns validation, deterministic search,
   qualification, scoring, and robustness.
-- `forceSourceArtifact.ts` owns version-2 contract identity, cross-objective
+- `forceSourceArtifact.ts` owns version-3 contract identity, polynomial/plot
+  consistency, cross-objective
   dominance validation, fail-closed parsing, and contract-aware updates.
 - `forceSourceView.ts` owns interpolation and explicit camera alignment.
 - `ForceSourceLab.tsx` coordinates state and commands.
-- `ForceSourceResults.tsx` renders animations and supplemental plots.
+- `ForceSourceResults.tsx` renders animations, all twelve sampled channels,
+  the cross-objective/Pareto table, control-strategy diagnostics, and all
+  polynomial coefficients.
 
 Physics remains in `physics.ts`; React components do not implement equations of
-motion. Version-1 mixed-contract artifacts are intentionally rejected rather
+motion. Older mixed or bang-bang artifacts are intentionally rejected rather
 than silently promoted to comparable evidence.

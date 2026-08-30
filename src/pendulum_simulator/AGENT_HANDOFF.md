@@ -59,13 +59,14 @@ perturbation analysis code first.
 
 #4766 shipped the mechanism-vs-outcome comparison through #4774; #4775 owns
 actuation and realism (`docs/specs/SWING_ACTUATION_AND_REALISM.md`). The React
-lab's `force-source-comparison/v2` artifact now binds initial state, model,
+lab's `force-source-comparison/v3` artifact now binds initial state, model,
 constraints, integration, robustness, and search depth to one contract ID.
 Changed inputs discard stale rows; imports reject off-grid candidates and use
 declared impact thresholds. Every objective is cross-evaluated on every
 displayed winner and fails if its own row loses. The bundled research contract
-uses 512 candidates, 1 ms integration, 0.5 N m wrist steps, and 25 robustness
-trials. Fixed-hub mode shows only physical markers in one frame; impact
+uses bounded degree-6 Bernstein shoulder/wrist torques, 512 global/seeded
+candidates, 12 multi-elite refinement rounds, 1 ms integration, 0.5 N m wrist
+coefficient steps, and 25 robustness trials. Fixed-hub mode shows only physical markers in one frame; impact
 alignment alone shows a labelled camera crosshair. Design contract: `docs/specs/FORCE_SOURCE_WEB_LAB.md`.
 
 **Five results that bind future work here** (all regression-pinned):
@@ -86,14 +87,19 @@ alignment alone shows a labelled camera crosshair. Design contract: `docs/specs/
 4. **Corrected, the model is golf-like**: 49.7 m/s clubhead, 7.26 m/s hands,
    club/arm 3.46, five of six measured observables inside their bands, with no
    hand-speed floor. A moving hub is an improvement, not a prerequisite.
-5. **The browser ranking is now self-consistent.** Its certified speed winner is
-   38.33 m/s versus 38.03 m/s for hand-path impulse; Coriolis impulse and both
-   energy rows select the speed candidate, while centrifugal impulse reaches
-   30.93 m/s. This certifies displayed candidates, not a global optimum.
+5. **The browser now uses the corrected club and continuous control.** The stale
+   web preset still carried 0.50 kg at the tip; it is now aligned to the Python
+   authority's 0.2381186694 kg inertia-equivalent driver and symmetric 250 N m
+   hub budget. The certified smooth speed winner reaches about 53.7 m/s, above
+   the 52.3 m/s current TOUR-average marker; Coriolis impulse chooses about
+   50.9 m/s and centrifugal impulse about 34.7 m/s. Energy transfer, speed, and
+   hand-path impulse share the same displayed winner. This certifies displayed
+   candidates, not a global optimum.
 
-Next open item is the **late release**: every objective releases at ~90% of the
-downswing against a measured 55-80%. A moving hub (`physics_triple.py`) is the
-most likely route. Hill-type actuation (`actuation.py`) is built and tested.
+The web lab reports wrist reversal time, low-torque transition duration, torque
+slew, joint work, all coefficients, every sampled signal, and the full
+cross-objective/Pareto matrix. A moving hub (`physics_triple.py`) remains the
+next structural fidelity step. Hill-type actuation (`actuation.py`) is built and tested.
 
 ## Must-Read Architecture Pointers
 

@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import {
     buildCandidateSet,
     buildOptimizationContract,
+    candidateTorqueFunction,
     artifactWithScenarios,
     DEFAULT_OPTIMIZATION_CONSTRAINTS,
     FORCE_SOURCE_SCHEMA,
@@ -38,10 +39,10 @@ function optimizationConfig(): BrowserOptimizationConfig {
         thoroughness: 'thorough',
         constraints: {
             ...DEFAULT_OPTIMIZATION_CONSTRAINTS,
-            shoulderTorqueNm: { min: 60, max: 120, step: 10 },
+            shoulderTorqueNm: { min: 0, max: 160, step: 2 },
             wristTorqueLimitNm: 30,
             wristTorqueStepNm: 0.5,
-            onsetS: { min: 0.05, max: 0.25, step: 0.01 },
+            profileDurationS: { min: 0.3, max: 0.7, step: 0.01 },
             candidateBudget: 96,
             robustnessTrials: 9,
         },
@@ -52,6 +53,13 @@ function validArtifact(): ForceSourceArtifact {
     const pair = [0, 0.1];
     const config = optimizationConfig();
     const contract = buildOptimizationContract(config);
+    const candidate = {
+        basis: 'bernstein_6' as const,
+        profile_duration_s: 0.5,
+        shoulder_coefficients_nm: [0, 30, 70, 100, 90, 40, 0] as const,
+        wrist_coefficients_nm: [0, -10, -8, 0, 12, 20, 0] as const,
+    };
+    const torques = pair.map(time => candidateTorqueFunction(candidate)(time));
     return {
         schema_version: FORCE_SOURCE_SCHEMA,
         force_attribution_schema: 'force-attribution/v1',
@@ -72,12 +80,7 @@ function validArtifact(): ForceSourceArtifact {
         scenarios: [{
             objective: 'clubhead_speed',
             score: 0.1,
-            candidate: {
-                shoulder_torque_nm: 100,
-                wrist_drive_nm: 30,
-                wrist_restrain_nm: 10,
-                onset_s: 0.1,
-            },
+            candidate: structuredClone(candidate),
             impact_time_s: 0.1,
             comparison_contract_id: contract.id,
             robustness: {
@@ -90,7 +93,7 @@ function validArtifact(): ForceSourceArtifact {
                 score_spread: 3,
             },
             near_optimal_count: 2,
-            boundary_hits: ['wrist_drive_nm:upper'],
+            boundary_hits: [],
             convergence: [39, 40],
             series: {
                 time_s: pair,
@@ -98,8 +101,8 @@ function validArtifact(): ForceSourceArtifact {
                 wrist_cock_rad: [-1.57, -1.47],
                 arm_angular_velocity_rad_s: pair,
                 wrist_angular_velocity_rad_s: pair,
-                shoulder_torque_nm: pair,
-                wrist_torque_nm: pair,
+                shoulder_torque_nm: torques.map(value => value[0]),
+                wrist_torque_nm: torques.map(value => value[1]),
                 clubhead_speed_m_s: pair,
                 coriolis_tangent_force_n: pair,
                 coriolis_power_w: pair,
@@ -112,24 +115,23 @@ function validArtifact(): ForceSourceArtifact {
 }
 
 describe('force-source artifact contract', () => {
-    it('accepts aligned version-2 scenario series', () => {
+    it('accepts aligned version-3 scenario series', () => {
         expect(parseForceSourceArtifact(validArtifact()).scenarios).toHaveLength(1);
     });
 
     it('rejects wrist torques above 30 N m', () => {
         const artifact = validArtifact();
-        artifact.scenarios[0].candidate.wrist_drive_nm = 31;
+        artifact.scenarios[0].candidate.wrist_coefficients_nm[4] = 31;
 
         expect(() => parseForceSourceArtifact(artifact)).toThrow(/registered search contract/i);
     });
 
     it.each([
-        ['shoulder torque', 'shoulder_torque_nm', 65],
-        ['wrist torque', 'wrist_drive_nm', 10.25],
-        ['release onset', 'onset_s', 0.105],
-    ] as const)('rejects %s candidates outside the registered search grid', (_name, field, value) => {
+        ['shoulder torque', 'shoulder_coefficients_nm', 3, 65],
+        ['wrist torque', 'wrist_coefficients_nm', 4, 10.25],
+    ] as const)('rejects %s candidates outside the registered search grid', (_name, field, index, value) => {
         const artifact = validArtifact();
-        artifact.scenarios[0].candidate[field] = value;
+        artifact.scenarios[0].candidate[field][index] = value;
 
         expect(() => parseForceSourceArtifact(artifact)).toThrow(/registered search contract/i);
     });
@@ -161,6 +163,13 @@ describe('force-source artifact contract', () => {
         artifact.scenarios[0].series.clubhead_speed_m_s = [0, 1, 2];
 
         expect(() => parseForceSourceArtifact(artifact)).toThrow(/lengths must match/);
+    });
+
+    it('rejects plotted torques that do not match the registered polynomial', () => {
+        const artifact = validArtifact();
+        artifact.scenarios[0].series.wrist_torque_nm[1] += 1;
+
+        expect(() => parseForceSourceArtifact(artifact)).toThrow(/plotted torques/i);
     });
 
     it('rejects scenarios whose first pose differs from the registered comparison pose', () => {
@@ -228,6 +237,11 @@ describe('force-source artifact contract', () => {
         expect(new Set(artifact.scenarios.map(item => item.comparison_contract_id))).toEqual(
             new Set([artifact.comparison_contract.id]),
         );
+        const speedWinner = artifact.scenarios.find(item => item.objective === 'clubhead_speed');
+        expect(speedWinner).toBeDefined();
+        expect(speedWinner?.score).toBeGreaterThanOrEqual(
+            artifact.comparison_contract.constraints.targetClubheadSpeedMps,
+        );
         for (const [index, scenario] of artifact.scenarios.entries()) {
             expect(crossScores[index][scenario.objective]).toBeCloseTo(
                 Math.max(...crossScores.map(scores => scores[scenario.objective])),
@@ -294,11 +308,11 @@ describe('hierarchical search grid', () => {
         const candidates = buildCandidateSet(optimizationConfig());
 
         expect(candidates).toHaveLength(96);
-        expect(Math.max(...candidates.map(candidate => candidate.wrist_drive_nm))).toBe(30);
-        expect(Math.max(...candidates.map(candidate => candidate.wrist_restrain_nm))).toBe(30);
-        expect(candidates.every(candidate => candidate.wrist_drive_nm * 2 % 1 === 0)).toBe(true);
-        expect(candidates.every(candidate => candidate.shoulder_torque_nm >= 60)).toBe(true);
-        expect(candidates.every(candidate => candidate.shoulder_torque_nm <= 120)).toBe(true);
+        expect(candidates.every(candidate => candidate.basis === 'bernstein_6')).toBe(true);
+        expect(candidates.every(candidate => candidate.wrist_coefficients_nm.every(value => Math.abs(value) <= 30))).toBe(true);
+        expect(candidates.every(candidate => candidate.wrist_coefficients_nm.every(value => value * 2 % 1 === 0))).toBe(true);
+        expect(candidates.every(candidate => candidate.shoulder_coefficients_nm.every(value => value >= 0))).toBe(true);
+        expect(candidates.every(candidate => candidate.shoulder_coefficients_nm.every(value => value <= 160))).toBe(true);
     });
 
     it('fails closed when a start pose violates the chosen joint bounds', () => {

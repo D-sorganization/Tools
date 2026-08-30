@@ -43,7 +43,7 @@ export function ForceSourceLab({ params, initialState, onUsePose }: ForceSourceL
     const [message, setMessage] = useState<string | null>(null);
     const [selected, setSelected] = useState(new Set<ForceSourceObjective>(FORCE_SOURCE_OBJECTIVES));
     const [objective, setObjective] = useState<ForceSourceObjective>('clubhead_speed');
-    const [thoroughness, setThoroughness] = useState<SearchThoroughness>('quick');
+    const [thoroughness, setThoroughness] = useState<SearchThoroughness>('thorough');
     const [constraints, setConstraints] = useState<ForceSourceConstraints>({ ...DEFAULT_OPTIMIZATION_CONSTRAINTS });
     const [startArm, setStartArm] = useState(degrees(initialState[0]));
     const [startWrist, setStartWrist] = useState(degrees(initialState[1]));
@@ -154,7 +154,7 @@ export function ForceSourceLab({ params, initialState, onUsePose }: ForceSourceL
         <div className="force-source-heading-row">
             <div><p className="force-source-kicker">Double-pendulum research workspace</p>
                 <h2 id="force-source-heading">Force-Source Optimization Lab</h2>
-                <p>Compare six objectives under one user-selected pose and constraint contract. Qualifying swings make one non-looping, rightward, near-horizontal pass near the bottom of the arc.</p></div>
+                <p>Compare six objectives using bounded continuous sixth-order torque profiles. Qualifying swings include a low-torque wrist transition and make one non-looping, rightward, near-horizontal pass near the bottom of the arc.</p></div>
             <label className="btn btn-secondary force-source-import" title="Open a registered comparison artifact">Import study JSON<input type="file" accept="application/json,.json" onChange={event => { const file = event.target.files?.[0]; if (file) void importArtifact(file); }} /></label>
         </div>
 
@@ -170,7 +170,7 @@ export function ForceSourceLab({ params, initialState, onUsePose }: ForceSourceL
             <NumericField id="force-start-arm" label="Start arm [deg]" value={startArm} step={0.1} onChange={setStartArm} disabled={running} title="Absolute arm angle; direct entry is not slider-limited" />
             <NumericField id="force-start-wrist" label="Start wrist [deg]" value={startWrist} step={0.1} onChange={setStartWrist} disabled={running} title="Wrist cock relative to the arm; more negative means more initial cock in this coordinate convention" />
             <NumericField id="force-wrist-limit" label="Wrist limit [N m]" value={constraints.wristTorqueLimitNm} min={0.1} max={30} step={0.5} onChange={value => setConstraint('wristTorqueLimitNm', value)} disabled={running} title="Absolute wrist restrain and drive torque limit; supported maximum is 30 N m" />
-            <NumericField id="force-wrist-step" label="Wrist step [N m]" value={constraints.wristTorqueStepNm} min={0.1} max={30} step={0.1} onChange={value => setConstraint('wristTorqueStepNm', value)} disabled={running} title="Local wrist-torque granularity; smaller values make refinement finer" />
+            <NumericField id="force-wrist-step" label="Wrist coefficient step [N m]" value={constraints.wristTorqueStepNm} min={0.05} max={30} step={0.05} onChange={value => setConstraint('wristTorqueStepNm', value)} disabled={running} title="Degree-6 wrist control-point granularity; smaller values make refinement finer" />
             <button className="btn btn-primary" onClick={() => void runObjectives([objective])} disabled={running}>Optimize selected</button>
             <button className="btn btn-secondary" onClick={() => void runObjectives(FORCE_SOURCE_OBJECTIVES)} disabled={running}>Optimize all 6</button>
         </div>
@@ -184,9 +184,14 @@ export function ForceSourceLab({ params, initialState, onUsePose }: ForceSourceL
                 <NumericField id="force-shoulder-min" label="Shoulder min [N m]" value={constraints.shoulderTorqueNm.min} step={1} onChange={value => setConstraint('shoulderTorqueNm', { ...constraints.shoulderTorqueNm, min: value })} title="Lower shoulder-torque search bound" />
                 <NumericField id="force-shoulder-max" label="Shoulder max [N m]" value={constraints.shoulderTorqueNm.max} step={1} onChange={value => setConstraint('shoulderTorqueNm', { ...constraints.shoulderTorqueNm, max: value })} title="Upper shoulder-torque search bound" />
                 <NumericField id="force-shoulder-step" label="Shoulder step [N m]" value={constraints.shoulderTorqueNm.step} min={0.1} step={0.1} onChange={value => setConstraint('shoulderTorqueNm', { ...constraints.shoulderTorqueNm, step: value })} title="Shoulder-torque quantization" />
-                <NumericField id="force-onset-min" label="Release onset min [s]" value={constraints.onsetS.min} min={0} step={0.005} onChange={value => setConstraint('onsetS', { ...constraints.onsetS, min: value })} title="Earliest wrist torque reversal" />
-                <NumericField id="force-onset-max" label="Release onset max [s]" value={constraints.onsetS.max} min={0} step={0.005} onChange={value => setConstraint('onsetS', { ...constraints.onsetS, max: value })} title="Latest wrist torque reversal" />
-                <NumericField id="force-onset-step" label="Release onset step [s]" value={constraints.onsetS.step} min={0.001} step={0.001} onChange={value => setConstraint('onsetS', { ...constraints.onsetS, step: value })} title="Release timing granularity" />
+                <NumericField id="force-profile-min" label="Profile duration min [s]" value={constraints.profileDurationS.min} min={0.1} step={0.005} onChange={value => setConstraint('profileDurationS', { ...constraints.profileDurationS, min: value })} title="Shortest polynomial forcing window" />
+                <NumericField id="force-profile-max" label="Profile duration max [s]" value={constraints.profileDurationS.max} min={0.1} step={0.005} onChange={value => setConstraint('profileDurationS', { ...constraints.profileDurationS, max: value })} title="Longest polynomial forcing window" />
+                <NumericField id="force-profile-step" label="Duration step [s]" value={constraints.profileDurationS.step} min={0.001} step={0.001} onChange={value => setConstraint('profileDurationS', { ...constraints.profileDurationS, step: value })} title="Forcing-window timing granularity" />
+                <NumericField id="force-slew-limit" label="Max torque slew [N m/s]" value={constraints.maxTorqueSlewNmS} min={1} step={25} onChange={value => setConstraint('maxTorqueSlewNmS', value)} title="Upper bound on the derivative of either continuous torque profile" />
+                <NumericField id="force-transition-torque" label="Transition band [N m]" value={constraints.transitionTorqueNm} min={0.1} max={29.9} step={0.1} onChange={value => setConstraint('transitionTorqueNm', value)} title="Wrist torque magnitude treated as slack around direction reversal" />
+                <NumericField id="force-transition-duration" label="Minimum transition [s]" value={constraints.minWristTransitionS} min={0.001} step={0.001} onChange={value => setConstraint('minWristTransitionS', value)} title="Required continuous time inside the low-torque wrist transition band" />
+                <NumericField id="force-target-speed" label="Speed target [m/s]" value={constraints.targetClubheadSpeedMps} min={1} step={0.5} onChange={value => setConstraint('targetClubheadSpeedMps', value)} title="User-selected benchmark shown in the speed and tradeoff views" />
+                <NumericField id="force-elite-count" label="Elite starts" value={constraints.eliteCandidateCount} min={1} max={64} step={1} onChange={value => setConstraint('eliteCandidateCount', value)} title="Number of globally sampled profiles retained for multi-start coefficient refinement" />
                 <NumericField id="force-arm-min" label="Arm angle min [deg]" value={constraints.armAngleDeg.min} step={1} onChange={value => setConstraint('armAngleDeg', { ...constraints.armAngleDeg, min: value })} title="Lower allowable absolute arm angle" />
                 <NumericField id="force-arm-max" label="Arm angle max [deg]" value={constraints.armAngleDeg.max} step={1} onChange={value => setConstraint('armAngleDeg', { ...constraints.armAngleDeg, max: value })} title="Upper allowable absolute arm angle" />
                 <NumericField id="force-wrist-min" label="Wrist angle min [deg]" value={constraints.wristAngleDeg.min} step={1} onChange={value => setConstraint('wristAngleDeg', { ...constraints.wristAngleDeg, min: value })} title="Lower allowable relative wrist angle" />
@@ -210,7 +215,7 @@ export function ForceSourceLab({ params, initialState, onUsePose }: ForceSourceL
         {message && <div className="error-box">{message}</div>}
 
         {artifact && <>
-            <div className="force-source-provenance"><span>{artifact.model}</span><span>Coordinates: shoulder absolute / wrist relative</span><span>Contract: {artifact.comparison_contract.id}</span><span>{artifact.scenarios.length}/6 certified objectives</span><button className="force-source-text-button" onClick={exportArtifact}>Export current study JSON</button></div>
+            <div className="force-source-provenance"><span>{artifact.model}</span><span>Control: bounded Bernstein degree 6</span><span>Coordinates: shoulder absolute / wrist relative</span><span>Contract: {artifact.comparison_contract.id}</span><span>{artifact.scenarios.length}/6 certified objectives</span><button className="force-source-text-button" onClick={exportArtifact}>Export current study JSON</button></div>
             <div className="force-source-scenario-toggles" aria-label="Visible optimization scenarios">{artifact.scenarios.map(item => <label key={item.objective} style={{ borderColor: OBJECTIVE_COLORS[item.objective] }}><input type="checkbox" checked={selected.has(item.objective)} onChange={() => toggleScenario(item.objective)} />{OBJECTIVE_LABELS[item.objective]}</label>)}</div>
             <div className="force-source-playback">
                 <button className="btn btn-secondary" onClick={() => setPlaying(value => !value)}>{playing ? 'Pause' : 'Play'}</button>
@@ -220,7 +225,7 @@ export function ForceSourceLab({ params, initialState, onUsePose }: ForceSourceL
                 <output>{time.toFixed(4)} s</output>
             </div>
             <p className="force-source-frame-note">{alignment === 'fixed_hub' ? 'Fixed physical frame: every card uses the same shoulder hub, scale, and registered starting pose. No impact-camera guides are shown.' : 'Impact-aligned camera: each card is translated so its impact reaches the camera crosshair; this is not physical hub motion.'}</p>
-            <ForceSourceResults scenarios={visible} time={time} params={artifact.parameters ?? params} alignment={alignment} />
+            <ForceSourceResults scenarios={visible} time={time} params={artifact.parameters ?? params} alignment={alignment} targetClubheadSpeedMps={artifact.comparison_contract.constraints.targetClubheadSpeedMps} transitionTorqueNm={artifact.comparison_contract.constraints.transitionTorqueNm} />
             <aside className="force-source-caveat"><strong>Interpretation boundary.</strong> {artifact.interpretation_limits.join(' ')}</aside>
         </>}
     </section>;

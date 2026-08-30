@@ -1,6 +1,7 @@
 import type { PendulumParams, State } from './physics';
 
-export const FORCE_SOURCE_SCHEMA = 'force-source-comparison/v2' as const;
+export const FORCE_SOURCE_SCHEMA = 'force-source-comparison/v3' as const;
+export const TORQUE_POLYNOMIAL_DEGREE = 6 as const;
 
 export const FORCE_SOURCE_OBJECTIVES = [
     'coriolis_impulse',
@@ -30,7 +31,12 @@ export interface ForceSourceConstraints {
     shoulderTorqueNm: NumericRange;
     wristTorqueLimitNm: number;
     wristTorqueStepNm: number;
-    onsetS: NumericRange;
+    profileDurationS: NumericRange;
+    maxTorqueSlewNmS: number;
+    transitionTorqueNm: number;
+    minWristTransitionS: number;
+    targetClubheadSpeedMps: number;
+    eliteCandidateCount: number;
     armAngleDeg: AngleBounds;
     wristAngleDeg: AngleBounds;
     maxImpactPathAngleDeg: number;
@@ -46,10 +52,15 @@ export interface ForceSourceConstraints {
 }
 
 export const DEFAULT_OPTIMIZATION_CONSTRAINTS: ForceSourceConstraints = {
-    shoulderTorqueNm: { min: 60, max: 120, step: 10 },
+    shoulderTorqueNm: { min: -250, max: 250, step: 5 },
     wristTorqueLimitNm: 30,
-    wristTorqueStepNm: 1,
-    onsetS: { min: 0.04, max: 0.28, step: 0.01 },
+    wristTorqueStepNm: 0.5,
+    profileDurationS: { min: 0.3, max: 0.7, step: 0.01 },
+    maxTorqueSlewNmS: 2500,
+    transitionTorqueNm: 3,
+    minWristTransitionS: 0.012,
+    targetClubheadSpeedMps: 52.3,
+    eliteCandidateCount: 8,
     armAngleDeg: { min: -180, max: 45 },
     wristAngleDeg: { min: -135, max: 110 },
     maxImpactPathAngleDeg: 15,
@@ -82,11 +93,25 @@ export interface BrowserOptimizationProgress {
     objective?: ForceSourceObjective;
 }
 
+export type TorquePolynomialCoefficients = [number, number, number, number, number, number, number];
+
 export interface ForceSourceCandidate {
-    shoulder_torque_nm: number;
-    wrist_drive_nm: number;
-    wrist_restrain_nm: number;
-    onset_s: number;
+    basis: 'bernstein_6';
+    profile_duration_s: number;
+    shoulder_coefficients_nm: TorquePolynomialCoefficients;
+    wrist_coefficients_nm: TorquePolynomialCoefficients;
+}
+
+export interface TorqueProfileDiagnostics {
+    peak_shoulder_torque_nm: number;
+    peak_wrist_torque_nm: number;
+    rms_shoulder_torque_nm: number;
+    rms_wrist_torque_nm: number;
+    peak_shoulder_slew_nm_s: number;
+    peak_wrist_slew_nm_s: number;
+    wrist_reversal_count: number;
+    wrist_reversal_time_s: number | null;
+    wrist_transition_duration_s: number;
 }
 
 export interface RobustnessSummary {

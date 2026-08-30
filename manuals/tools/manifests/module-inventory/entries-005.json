@@ -5249,10 +5249,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 19306,
+      "bytes_lf": 20542,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "519a7197c622709fbc64cb297b7089dd10c801fd6fe0c7e2a76599a1f8a8f264",
+      "content_sha256_lf": "9be417ed9efb6e1e95b694ecebdd2b688f8306621372e4b952b4ab03f5fa96c5",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-APP-CSS-F6FE792BCAFE",
       "language": "css",
@@ -5653,10 +5653,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 19581,
+      "bytes_lf": 21445,
       "classification": "calculation",
       "classification_basis": "path-marker:force",
-      "content_sha256_lf": "85124f35189fab0de283014e4e45cecb39d9bb40076ccfecb9f2f2c45bfdb1d3",
+      "content_sha256_lf": "9cdb8852090ec402ebff033f8fa33f4ac30290472447221771eddd8063b90e97",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-COMPONENTS-FORCESOURCELAB-TSX-C5EBC30CB892",
       "language": "typescript-react",
@@ -5705,6 +5705,7 @@
         "unit_mentions": [
           "N m",
           "deg",
+          "m/s",
           "s"
         ],
         "validation_paths": []
@@ -5712,10 +5713,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 9018,
+      "bytes_lf": 18189,
       "classification": "calculation",
       "classification_basis": "path-marker:force",
-      "content_sha256_lf": "61e27f20c7c0c52639943ae8696f93cd3b992248b10347d3ba9f03c95dd08299",
+      "content_sha256_lf": "07214005f2047a37d1c302a63ee7d9819ca86951ee69b19ade682e729068afa9",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-COMPONENTS-FORCESOURCERESULTS-TSX-121C5F9A2F73",
       "language": "typescript-react",
@@ -5770,8 +5771,11 @@
           "J",
           "N",
           "N m",
+          "W",
+          "deg",
           "g",
           "m/s",
+          "rad/s",
           "s"
         ],
         "validation_paths": []
@@ -6234,10 +6238,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 11598,
+      "bytes_lf": 14004,
       "classification": "calculation",
       "classification_basis": "path-marker:force",
-      "content_sha256_lf": "6d73b701bd6702952cf51548491ce1ce973084f9dfe43fa369b6e71071e5e81a",
+      "content_sha256_lf": "84ac494552e7b91c41ae7069ee1ed6d79b96a715aac43d027b5f45c128876cf1",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-FORCESOURCEARTIFACT-TS-20BDD5DAD377",
       "language": "typescript",
@@ -6296,10 +6300,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 24255,
+      "bytes_lf": 36880,
       "classification": "calculation",
       "classification_basis": "path-marker:force",
-      "content_sha256_lf": "aac774c6d40cd5857f7e005804e743ae53253a95e426278a1d078f26c9337aa3",
+      "content_sha256_lf": "4b1a650bf82431c421f363ffdfc96b039025167192871742a038ac766ec891bd",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-FORCESOURCEOPTIMIZATION-TS-F6C0040C15CC",
       "language": "typescript",
@@ -6340,12 +6344,22 @@
         "public_surfaces": [
           {
             "kind": "export",
+            "name": "bernsteinTorque",
+            "signature": null
+          },
+          {
+            "kind": "export",
             "name": "buildCandidateSet",
             "signature": null
           },
           {
             "kind": "export",
             "name": "buildOptimizationContract",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "candidateTorqueFunction",
             "signature": null
           },
           {
@@ -6366,6 +6380,11 @@
           {
             "kind": "export",
             "name": "optimizeForceSourceComparison",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "profileDiagnostics",
             "signature": null
           },
           {
@@ -6441,10 +6460,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 5114,
+      "bytes_lf": 6040,
       "classification": "calculation",
       "classification_basis": "path-marker:force",
-      "content_sha256_lf": "e4875e49b99e47fced32138587a63774f87466c7905ca51c7aa2b936e24cbd36",
+      "content_sha256_lf": "dc5db28ca059fe87fa36da61ef90e9c669d1ea367abc4813b97b40aa1668c524",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-FORCESOURCETYPES-TS-CB8CFD999104",
       "language": "typescript",
@@ -6576,6 +6595,21 @@
           {
             "kind": "export",
             "name": "SearchThoroughness",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "TORQUE_POLYNOMIAL_DEGREE",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "TorquePolynomialCoefficients",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "TorqueProfileDiagnostics",
             "signature": null
           }
         ],
@@ -7361,10 +7395,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 3031,
+      "bytes_lf": 3202,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "2b2534a209ac2bdb515a4e336c22b2ee3d1ad608529afa93ee048f3e9fe07b90",
+      "content_sha256_lf": "60ba29c20faad01ec4c2c0331deeb2fe119e645d0679fa29f1e0c88b48cfb4dd",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-PRESETS-TS-FE59B98BFA69",
       "language": "typescript",
@@ -7418,7 +7452,8 @@
         ],
         "unit_mentions": [
           "g",
-          "kg"
+          "kg",
+          "s"
         ],
         "validation_paths": []
       }

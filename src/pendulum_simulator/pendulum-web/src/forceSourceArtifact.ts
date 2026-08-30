@@ -1,6 +1,8 @@
 import type { PendulumParams, State } from './physics';
 import {
     buildOptimizationContract,
+    candidateTorqueFunction,
+    profileDiagnostics,
     scoreForceSourceSeries,
 } from './forceSourceOptimization';
 import {
@@ -84,21 +86,45 @@ function validateCandidate(
     path: string,
     constraints: ForceSourceConstraints,
 ): void {
-    const values = [
-        ['shoulder_torque_nm', finite(raw.shoulder_torque_nm, `${path}.shoulder_torque_nm`),
+    if (raw.basis !== 'bernstein_6') throw new TypeError(`${path}.basis must be bernstein_6`);
+    const shoulder = raw.shoulder_coefficients_nm;
+    const wrist = raw.wrist_coefficients_nm;
+    if (!Array.isArray(shoulder) || shoulder.length !== 7
+        || !Array.isArray(wrist) || wrist.length !== 7) {
+        throw new TypeError(`${path} must contain seven coefficients for each degree-6 profile`);
+    }
+    const values: Array<readonly [string, number, number, number, number]> = [
+        ['profile_duration_s', finite(raw.profile_duration_s, `${path}.profile_duration_s`),
+            constraints.profileDurationS.min, constraints.profileDurationS.max,
+            constraints.profileDurationS.step],
+        ...shoulder.map((value, index) => [
+            `shoulder_coefficients_nm[${index}]`, finite(value, `${path}.shoulder_coefficients_nm[${index}]`),
             constraints.shoulderTorqueNm.min, constraints.shoulderTorqueNm.max,
-            constraints.shoulderTorqueNm.step],
-        ['wrist_drive_nm', finite(raw.wrist_drive_nm, `${path}.wrist_drive_nm`),
-            0, constraints.wristTorqueLimitNm, constraints.wristTorqueStepNm],
-        ['wrist_restrain_nm', finite(raw.wrist_restrain_nm, `${path}.wrist_restrain_nm`),
-            0, constraints.wristTorqueLimitNm, constraints.wristTorqueStepNm],
-        ['onset_s', finite(raw.onset_s, `${path}.onset_s`),
-            constraints.onsetS.min, constraints.onsetS.max, constraints.onsetS.step],
-    ] as const;
+            constraints.shoulderTorqueNm.step,
+        ] as const),
+        ...wrist.map((value, index) => [
+            `wrist_coefficients_nm[${index}]`, finite(value, `${path}.wrist_coefficients_nm[${index}]`),
+            -constraints.wristTorqueLimitNm, constraints.wristTorqueLimitNm,
+            constraints.wristTorqueStepNm,
+        ] as const),
+    ];
     for (const [name, value, min, max, step] of values) {
         if (!isRegisteredGridValue(value, min, max, step)) {
             throw new RangeError(`${path}.${name} is outside the registered search contract`);
         }
+    }
+    const candidate = raw as unknown as ForceSourceScenario['candidate'];
+    if (candidate.shoulder_coefficients_nm[6] !== 0
+        || candidate.wrist_coefficients_nm[0] !== 0
+        || candidate.wrist_coefficients_nm[6] !== 0) {
+        throw new RangeError(`${path} torque profiles must start and finish at zero`);
+    }
+    const diagnostics = profileDiagnostics(candidate, constraints.transitionTorqueNm);
+    if (diagnostics.peak_shoulder_slew_nm_s > constraints.maxTorqueSlewNmS + GRID_TOLERANCE
+        || diagnostics.peak_wrist_slew_nm_s > constraints.maxTorqueSlewNmS + GRID_TOLERANCE
+        || diagnostics.wrist_reversal_count !== 1
+        || diagnostics.wrist_transition_duration_s < constraints.minWristTransitionS - 1e-3) {
+        throw new RangeError(`${path} violates the registered continuity, slew, or wrist-transition contract`);
     }
 }
 
@@ -122,6 +148,18 @@ function validateScenario(
     const lengths = SERIES_KEYS.map(key => finiteSeries(series[key], `${path}.series.${key}`).length);
     if (!lengths.every(length => length === lengths[0])) {
         throw new TypeError(`${path} series lengths must match`);
+    }
+    const candidate = raw.candidate as unknown as ForceSourceScenario['candidate'];
+    const torque = candidateTorqueFunction(candidate);
+    const times = series.time_s as number[];
+    const shoulder = series.shoulder_torque_nm as number[];
+    const wrist = series.wrist_torque_nm as number[];
+    for (const [sampleIndex, time] of times.entries()) {
+        const expected = torque(time);
+        if (Math.abs(shoulder[sampleIndex] - expected[0]) > SCORE_TOLERANCE
+            || Math.abs(wrist[sampleIndex] - expected[1]) > SCORE_TOLERANCE) {
+            throw new TypeError(`${path} plotted torques do not match the registered polynomial`);
+        }
     }
 }
 
@@ -256,6 +294,8 @@ export function artifactWithScenarios(
             ? existing.interpretation_limits : [
             'Force-source terms depend on the declared coordinates.',
             'Hand-path impulse is signed force integrated over time; it is not hand-path work or average force over distance.',
+            'Torque controls are continuous bounded degree-6 Bernstein polynomials; coefficient bounds constrain the full curves.',
+            'The target speed is a comparison marker, not evidence that this fixed-hub model reproduces a human golfer.',
             'This synthetic planar model is exploratory, not individualized swing advice.',
         ],
     };

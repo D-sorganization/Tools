@@ -22,10 +22,10 @@ function scenario(objective: ForceSourceObjective, index: number): ForceSourceSc
         comparison_contract_id: 'force-source-search/v1-test',
         score: index + 1,
         candidate: {
-            shoulder_torque_nm: 80 + index,
-            wrist_drive_nm: 20 + index,
-            wrist_restrain_nm: 10 + index,
-            onset_s: 0.05,
+            basis: 'bernstein_6',
+            profile_duration_s: 0.5,
+            shoulder_coefficients_nm: [0, 20, 50, 80 + index, 70, 30, 0],
+            wrist_coefficients_nm: [0, -10, -8, 0, 12, 20 + index, 0],
         },
         impact_time_s: 0.1,
         robustness: {
@@ -67,7 +67,7 @@ describe('force-source comparison rendering', () => {
     it('renders all six fixed-hub animations in an identical registered frame', () => {
         for (const time of [-1, 0, 0.037, 0.1, 1]) {
             const html = renderToStaticMarkup(
-                <ForceSourceResults scenarios={scenarios} time={time} params={params} alignment="fixed_hub" />,
+                <ForceSourceResults scenarios={scenarios} time={time} params={params} alignment="fixed_hub" targetClubheadSpeedMps={50} transitionTorqueNm={3} />,
             );
             const frames = svgTags(html);
 
@@ -103,7 +103,7 @@ describe('force-source comparison rendering', () => {
 
     it('keeps the target registered in impact-aligned mode for every objective', () => {
         const html = renderToStaticMarkup(
-            <ForceSourceResults scenarios={scenarios} time={0.1} params={params} alignment="impact_aligned" />,
+            <ForceSourceResults scenarios={scenarios} time={0.1} params={params} alignment="impact_aligned" targetClubheadSpeedMps={50} transitionTorqueNm={3} />,
         );
 
         expect(html.match(/data-alignment="impact_aligned"/g)).toHaveLength(6);
@@ -111,5 +111,37 @@ describe('force-source comparison rendering', () => {
         expect(html.match(/data-impact-y="148"/g)).toHaveLength(6);
         expect(html.match(/data-role="camera-impact-target"/g)).toHaveLength(6);
         expect(html).not.toContain('data-role="reference-line"');
+    });
+
+    it('shows the full cross-objective matrix, strategy diagnostics, coefficients, and every series', () => {
+        const html = renderToStaticMarkup(
+            <ForceSourceResults scenarios={scenarios} time={0.1} params={params} alignment="fixed_hub" targetClubheadSpeedMps={52.3} transitionTorqueNm={3} />,
+        );
+
+        expect(html).toContain('Cross-objective tradeoffs and ranks');
+        expect(html).toContain('Control strategy diagnostics');
+        expect(html).toContain('Sixth-order polynomial coefficients');
+        for (const field of [
+            'clubhead_speed_m_s', 'shoulder_torque_nm', 'wrist_torque_nm',
+            'arm_angle_rad', 'wrist_cock_rad', 'arm_angular_velocity_rad_s',
+            'wrist_angular_velocity_rad_s', 'coriolis_tangent_force_n',
+            'coriolis_power_w', 'squared_speed_tangent_force_n',
+            'squared_speed_power_w', 'hand_path_tangent_force_n',
+        ]) {
+            expect(html).toContain(`data-testid="force-source-plot-${field}"`);
+        }
+    });
+
+    it('assigns equal rank to strategies with identical measured outcomes', () => {
+        const tied = scenarios.map(item => ({
+            ...item,
+            series: structuredClone(scenarios[0].series),
+        }));
+        const html = renderToStaticMarkup(
+            <ForceSourceResults scenarios={tied} time={0.1} params={params} alignment="fixed_hub" targetClubheadSpeedMps={52.3} transitionTorqueNm={3} />,
+        );
+
+        expect(html.match(/<small>#1<\/small>/g)).toHaveLength(36);
+        expect(html).not.toMatch(/<small>#[2-6]<\/small>/);
     });
 });
