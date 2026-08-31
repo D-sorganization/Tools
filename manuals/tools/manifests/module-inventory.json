@@ -363,7 +363,7 @@
       "shard_index": 16
     },
     {
-      "content_sha256_lf": "83891b1efccda50e51bf9f866f7dd740282627b4c4f57710eec4daffb15b92f7",
+      "content_sha256_lf": "7fb5ac675b6a357085e1cceb7e4c706ab3a378e256630b6ec2d85ac0a88a433e",
       "entry_count": 145,
       "first_path": "src/solar_system_model/solar_system/visualization/ui_renderer.py",
       "last_path": "wave_solver.py",
@@ -371,7 +371,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "6c4892e62bd450d0fb0ede03c625805f548e5ac0ad43ebd456142da0b4511823",
+  "source_tree_sha256": "8b3326ecbbe2d78e1df261b3c6b7dad8157aa9b51d8c9a789d2dc9455dc3e6a1",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
