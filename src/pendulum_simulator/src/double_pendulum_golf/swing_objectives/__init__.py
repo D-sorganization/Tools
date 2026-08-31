@@ -3,7 +3,8 @@
 The simulator can already optimize a swing for clubhead speed. This subpackage
 adds the ability to optimize instead for the *mechanisms* golf coaching invokes —
 centrifugal release, Coriolis kinetic-chain transfer, grip-force energy transfer,
-grip-force impulse — under an identical torque budget, and to compare the
+grip-force impulse, and signed hand-path impulse — under an identical torque
+budget, and to compare the
 resulting swings against the speed-optimal one.
 
 It is built entirely on the existing :mod:`double_pendulum_golf.physics` kernel
@@ -62,6 +63,7 @@ from double_pendulum_golf.swing_objectives.objectives import (
     CORIOLIS,
     ENERGY_TRANSFER,
     IMPULSE_TRANSFER,
+    HAND_PATH_IMPULSE,
     SWING_OBJECTIVES,
     SwingObjective,
     evaluate_all,
@@ -113,6 +115,7 @@ __all__ = [
     "CORIOLIS",
     "ENERGY_TRANSFER",
     "IMPULSE_TRANSFER",
+    "HAND_PATH_IMPULSE",
     # Downswing optimization (#4769)
     "DownswingConfig",
     "DownswingOptimizer",

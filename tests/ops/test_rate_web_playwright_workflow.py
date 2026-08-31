@@ -254,8 +254,11 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
         == "npm run test:e2e"
     )
     assert pr_commands["Install bounded PyQt render dependencies"] == (
-        'python -m pip install -e ".[gui,dev]" "scipy>=1.10,<1.18" '
-        '"pytest-benchmark==5.2.3"'
+        'python -m pip install --constraint requirements-rate-pyqt.txt -e ".[gui,dev]"'
+    )
+    assert pr_commands["Verify calibrated PyQt render environment"] == (
+        "python -m pip check && python scripts/check_rate_pyqt_environment.py "
+        "--constraints requirements-rate-pyqt.txt"
     )
     assert pr_commands["Exercise PyQt tab visibility at 100 and 150 percent DPI"] == (
         "python -m pytest "

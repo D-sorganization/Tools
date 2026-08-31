@@ -6,6 +6,7 @@ import {
   applyClubCameraAction,
   applyClubCameraDrag,
   cameraStatus,
+  type ClubCamera,
   type ClubCameraAction,
 } from "./clubCamera";
 
@@ -20,6 +21,63 @@ describe("club camera shared contract", () => {
       expect(actual.elevationDeg).toBeCloseTo(item.expected.elevation_deg, 12);
       expect(actual.zoom).toBeCloseTo(item.expected.zoom, 12);
     }
+  });
+
+  it("realizes every published field of the shared golden", () => {
+    // Only `cases` was ever asserted, in either twin; `initial`, `limits`,
+    // `orbit_step_deg` and `zoom_step` are published as the cross-runtime
+    // contract yet went unenforced. Each is derived from the public API so
+    // this pins observable behaviour, not a module-private literal.
+    expect(fixture.schema).toBe("rate-of-closure/club-camera/v1");
+    expect(DEFAULT_CLUB_CAMERA.azimuthDeg).toBeCloseTo(
+      fixture.initial.azimuth_deg,
+      12,
+    );
+    expect(DEFAULT_CLUB_CAMERA.elevationDeg).toBeCloseTo(
+      fixture.initial.elevation_deg,
+      12,
+    );
+    expect(DEFAULT_CLUB_CAMERA.zoom).toBeCloseTo(fixture.initial.zoom, 12);
+    expect(fixture.cases.map((item) => item.action)).toEqual([
+      "left",
+      "right",
+      "up",
+      "down",
+      "zoom_in",
+      "zoom_out",
+    ]);
+
+    const stepped = applyClubCameraAction(DEFAULT_CLUB_CAMERA, "right");
+    expect(stepped.azimuthDeg - DEFAULT_CLUB_CAMERA.azimuthDeg).toBeCloseTo(
+      fixture.orbit_step_deg,
+      12,
+    );
+    const zoomed = applyClubCameraAction(DEFAULT_CLUB_CAMERA, "zoom_in");
+    expect(zoomed.zoom / DEFAULT_CLUB_CAMERA.zoom).toBeCloseTo(
+      fixture.zoom_step,
+      12,
+    );
+
+    const saturated: Record<string, ClubCamera> = {
+      up: DEFAULT_CLUB_CAMERA,
+      down: DEFAULT_CLUB_CAMERA,
+      zoom_in: DEFAULT_CLUB_CAMERA,
+      zoom_out: DEFAULT_CLUB_CAMERA,
+    };
+    for (let index = 0; index < 200; index += 1) {
+      for (const action of Object.keys(saturated)) {
+        saturated[action] = applyClubCameraAction(
+          saturated[action],
+          action as ClubCameraAction,
+        );
+      }
+    }
+    expect([saturated.down.elevationDeg, saturated.up.elevationDeg]).toEqual(
+      fixture.limits.elevation_deg,
+    );
+    expect([saturated.zoom_out.zoom, saturated.zoom_in.zoom]).toEqual(
+      fixture.limits.zoom,
+    );
   });
 
   it("clamps and resets exactly", () => {
@@ -44,7 +102,9 @@ describe("club camera shared contract", () => {
       const forged = { azimuthDeg: value, elevationDeg: 0, zoom: 1 };
       expect(() => applyClubCameraAction(forged, "left")).toThrow(/finite/);
       expect(() => cameraStatus(forged, "source")).toThrow(/finite/);
-      expect(() => applyClubCameraDrag(DEFAULT_CLUB_CAMERA, value, 0)).toThrow(/finite/);
+      expect(() => applyClubCameraDrag(DEFAULT_CLUB_CAMERA, value, 0)).toThrow(
+        /finite/,
+      );
     },
   );
 

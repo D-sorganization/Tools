@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "audit:force-source": "vite-node scripts/auditForceSourceFairness.ts",
+    "generate:force-source": "vite-node scripts/generateForceSourceComparison.ts",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "vitest run",

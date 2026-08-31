@@ -33,9 +33,9 @@ describe("strike — Python parity", () => {
   it("pins the reference launch (1.8 m/s clubhead)", () => {
     const launch = strike(PUTTER, 1.8);
     expect(launch.ballSpeedMps).toBeCloseTo(2.828565312464848, 10);
-    expect(launch.launchAngleDeg).toBeCloseTo(3.5452147542505257, 8);
-    expect(launch.horizontalSpeedMps).toBeCloseTo(2.8231523192738344, 10);
-    expect(launch.spinRadS).toBeCloseTo(-3.153929533539754, 10);
+    expect(launch.launchAngleDeg).toBeCloseTo(2.4547852457494757, 8);
+    expect(launch.horizontalSpeedMps).toBeCloseTo(2.8259696302272945, 10);
+    expect(launch.spinRadS).toBeCloseTo(3.153929533539754, 10);
   });
 
   it("zero loft gives a pure 1-D COR impulse", () => {
@@ -190,9 +190,9 @@ describe("strike 2-D — analytic gates (#4800 P1, Python twin)", () => {
     const down = strike(PUTTER, 2.0, 0.0, { attackAngleDeg: -3.0 });
     const level = strike(PUTTER, 2.0);
     const up = strike(PUTTER, 2.0, 0.0, { attackAngleDeg: 2.0 });
-    expect(down.spinRadS).toBeLessThan(level.spinRadS);
-    expect(level.spinRadS).toBeLessThan(up.spinRadS);
-    expect(up.spinRadS).toBeLessThan(0.0);
+    expect(down.spinRadS).toBeGreaterThan(level.spinRadS);
+    expect(level.spinRadS).toBeGreaterThan(up.spinRadS);
+    expect(up.spinRadS).toBeGreaterThan(0.0);
   });
 
   it("energy is never created", () => {
@@ -230,7 +230,7 @@ describe("strike 2-D — analytic gates (#4800 P1, Python twin)", () => {
           PUTTER.headMassKg / (PUTTER.headMassKg + GOLF_BALL_MASS_KG);
         const legacyTransfer = (1.0 + PUTTER.cor) * massRatio;
         const vNormal = legacyTransfer * speed * Math.cos(delta);
-        const uTangential = speed * Math.sin(delta);
+        const uTangential = -speed * Math.sin(delta);
         const vTangential = CAP * uTangential;
         const spin = (-(1.0 - CAP) * uTangential) / GOLF_BALL_RADIUS_M;
         const horizontal =
@@ -352,11 +352,11 @@ describe("simulatePutt — Python parity", () => {
       3.0,
     );
     expect(result.holed).toBe(false);
-    expect(result.totalDistanceM).toBeCloseTo(4.417405938785078, 7);
-    expect(result.skidDistanceM).toBeCloseTo(0.5103817275162047, 7);
-    expect(result.timeS).toBeCloseTo(4.388, 2);
-    expect(result.breakM).toBeCloseTo(0.8176068791755766, 7);
-    expect(result.missDistanceM).toBeCloseTo(1.4994647284222105, 7);
+    expect(result.totalDistanceM).toBeCloseTo(4.562853055205739, 7);
+    expect(result.skidDistanceM).toBeCloseTo(0.49083593692889005, 7);
+    expect(result.timeS).toBeCloseTo(4.464, 2);
+    expect(result.breakM).toBeCloseTo(0.8476231786308808, 7);
+    expect(result.missDistanceM).toBeCloseTo(1.6335909610224524, 7);
   });
 
   it("pins the holed reference putt (1.6 m/s, flat stimp 10)", () => {
@@ -367,8 +367,8 @@ describe("simulatePutt — Python parity", () => {
       3.0,
     );
     expect(result.holed).toBe(true);
-    expect(result.speedAtHoleMps).toBeCloseTo(0.5903262895096224, 7);
-    expect(result.marginMps).toBeCloseTo(0.2283133618862715, 7);
+    expect(result.speedAtHoleMps).toBeCloseTo(0.6746829587276963, 7);
+    expect(result.marginMps).toBeCloseTo(0.1439566926681971, 7);
   });
 
   it("mirror aspect mirrors the break", () => {

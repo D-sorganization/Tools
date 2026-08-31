@@ -130,6 +130,42 @@ function coriolisVector(phi: number, dtheta1: number, dphi: number,
     return [h * (2 * dtheta1 * dphi + dphi ** 2), -h * dtheta1 ** 2];
 }
 
+export interface ForceSourceTerms {
+    coriolis: [number, number];
+    squaredSpeed: [number, number];
+    gravity: [number, number];
+    damping: [number, number];
+    applied: [number, number];
+}
+
+/**
+ * Coordinate-explicit generalized-force terms used by the optimization lab.
+ *
+ * ``coriolis`` is the cross-speed part and ``squaredSpeed`` is the remaining
+ * velocity-quadratic part.  Both are source terms on the right-hand side of
+ * M(q)qdd, so their signs are the negative of the corresponding C-vector
+ * terms.  This split is coordinate dependent and is not a muscle-force model.
+ */
+export function generalizedForceSources(
+    state: State,
+    p: PendulumParams,
+    applied: [number, number],
+): ForceSourceTerms {
+    state.forEach((value, index) => assertFinite(value, `state[${index}]`));
+    applied.forEach((value, index) => assertFinite(value, `applied[${index}]`));
+    const [theta1, phi, dtheta1, dphi] = state;
+    const coupling = -m2eff(p) * p.L1 * p.L2 * Math.sin(phi);
+    const gravity = gravityVector(theta1, phi, p);
+    const damping = frictionTorqueVector(dtheta1, dphi, p);
+    return {
+        coriolis: [-2 * coupling * dtheta1 * dphi, 0],
+        squaredSpeed: [-coupling * dphi ** 2, coupling * dtheta1 ** 2],
+        gravity: [-gravity[0], -gravity[1]],
+        damping,
+        applied: [...applied],
+    };
+}
+
 // ── Gravity ───────────────────────────────────────────────────────────────────
 
 function gravityVector(theta1: number, phi: number,
@@ -321,6 +357,60 @@ export function jointVelocities(state: State, p: PendulumParams): JointVelocitie
         tipSpeed: Math.sqrt(vtx ** 2 + vty ** 2),
         wristVel: [vwx, vwy],
         tipVel: [vtx, vty],
+    };
+}
+
+export interface HandPathForce {
+    forceN: [number, number];
+    handSpeedMps: number;
+    tangentForceN: number | null;
+    powerW: number;
+}
+
+/**
+ * Resolve the physical grip force along the instantaneous wrist path.
+ *
+ * The distal mass convention matches this engine's equations of motion: shaft
+ * and clubhead mass are lumped at the tip. A stationary wrist has no defined
+ * path tangent, so ``tangentForceN`` is null and its instantaneous power is 0.
+ */
+export function gripForceAlongHandPath(
+    state: State,
+    acceleration: [number, number],
+    p: PendulumParams,
+): HandPathForce {
+    state.forEach((value, index) => assertFinite(value, `state[${index}]`));
+    acceleration.forEach((value, index) => assertFinite(value, `acceleration[${index}]`));
+    const [theta1, phi, armRate, wristRate] = state;
+    const [armAcceleration, wristAcceleration] = acceleration;
+    const clubAngle = theta1 + phi;
+    const clubRate = armRate + wristRate;
+    const clubAcceleration = armAcceleration + wristAcceleration;
+    const wristAccelerationX = p.L1 * (
+        Math.cos(theta1) * armAcceleration - Math.sin(theta1) * armRate ** 2
+    );
+    const wristAccelerationY = p.L1 * (
+        Math.sin(theta1) * armAcceleration + Math.cos(theta1) * armRate ** 2
+    );
+    const tipAccelerationX = wristAccelerationX + p.L2 * (
+        Math.cos(clubAngle) * clubAcceleration - Math.sin(clubAngle) * clubRate ** 2
+    );
+    const tipAccelerationY = wristAccelerationY + p.L2 * (
+        Math.sin(clubAngle) * clubAcceleration + Math.cos(clubAngle) * clubRate ** 2
+    );
+    const effectiveDistalMass = m2eff(p);
+    const forceN: [number, number] = [
+        effectiveDistalMass * tipAccelerationX,
+        effectiveDistalMass * (tipAccelerationY + p.g),
+    ];
+    const handVelocity = jointVelocities(state, p).wristVel;
+    const handSpeedMps = Math.hypot(...handVelocity);
+    const powerW = forceN[0] * handVelocity[0] + forceN[1] * handVelocity[1];
+    return {
+        forceN,
+        handSpeedMps,
+        tangentForceN: handSpeedMps <= 1e-12 ? null : powerW / handSpeedMps,
+        powerW,
     };
 }
 

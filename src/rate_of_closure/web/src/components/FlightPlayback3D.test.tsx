@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { FlightPlayback3D } from "./FlightPlayback3D";
 import type { FlightPoint } from "../model/flight";
+import { SCRUB_STEPS } from "../model/playbackTransport";
 import { createSpatialTarget, sphereTolerance, targetPointFromFrame } from "../model/spatialTarget";
 
 const points: FlightPoint[] = [
@@ -33,7 +34,7 @@ describe("FlightPlayback3D", () => {
       .toHaveAttribute("tabindex", "0");
     expect(screen.getByRole("button", { name: "Play Ball Flight" })).toBeEnabled();
     expect(screen.getByRole("slider", { name: "Ball Flight Time" }))
-      .toHaveAttribute("max", "2");
+      .toHaveAttribute("max", String(SCRUB_STEPS));
     expect(screen.getByLabelText("Playback Speed")).toHaveValue("1");
     fireEvent.click(screen.getByRole("button", { name: "Jump to Apex" }));
     expect(screen.getByText("1.00 / 2.00 s")).toBeInTheDocument();
@@ -41,6 +42,18 @@ describe("FlightPlayback3D", () => {
     expect(screen.getByText("2.00 / 2.00 s")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Jump to Launch" }));
     expect(screen.getByText("0.00 / 2.00 s")).toBeInTheDocument();
+  });
+
+  it("scrubs through the shared quantized timeline mapping (#4800 P8)", () => {
+    render(<FlightPlayback3D points={points} />);
+
+    const slider = screen.getByRole("slider", { name: "Ball Flight Time" });
+    fireEvent.change(slider, { target: { value: String(SCRUB_STEPS / 2) } });
+    expect(screen.getByLabelText("Ball flight playback position"))
+      .toHaveTextContent("1.00 / 2.00 s");
+    fireEvent.change(slider, { target: { value: String(SCRUB_STEPS) } });
+    expect(screen.getByLabelText("Ball flight playback position"))
+      .toHaveTextContent("2.00 / 2.00 s");
   });
 
   it("replays an exact repeated selection command after manual scrubbing", () => {

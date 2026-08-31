@@ -100,7 +100,7 @@ frame-explicit, provenance-bearing `golf_club.wedge_parameters/1` input.
 `wedge_cad.py` lazily invokes the optional pinned build123d/OpenCascade kernel
 and returns one exact solid plus independently recovered datum measurements.
 
-`wedge_export.py` owns deterministic `golf_club.wedge_export/2` exports:
+`wedge_export.py` owns deterministic `golf_club.wedge_export/1` exports:
 
 - STEP and native BREP are reopened with build123d and must recover one valid
   solid with source-bounded volume and axis-aligned bounds.
@@ -113,12 +113,6 @@ and returns one exact solid plus independently recovered datum measurements.
   tolerance. Any failed check aborts before manifest publication.
 - The manifest records the canonical parameter SHA-256 plus each artifact's
   SHA-256, byte size, reader, checks, measured values, and limits.
-
-`golf_club.wedge_export/2` supersedes `/1`. There is no manifest reader or
-silent migration path: retain historical `/1` JSON as unvalidated archive
-evidence, and regenerate a `/2` export from canonical wedge-parameter JSON when
-current validation evidence is required. Never infer that a `/1` artifact
-passed checks which did not exist in its schema.
 
 These checks establish deterministic file and topology evidence. They do not
 qualify minimum wall/feature size, machining, additive processing, materials,
@@ -140,12 +134,6 @@ mypy src\shared\python\golf_club --ignore-missing-imports
 The environment lacks some root-config pytest plugins, so the focused command
 disables plugin autoload and clears `addopts`; unknown-config warnings are
 environment evidence, not failures.
-
-Latest local evidence, 2026-08-27 (after P5): `tests/shared/python/golf_club`
-+ `swing_sim/putting/tests`: **437 passed, 2 skipped**. The C1/H1 gates plus
-P3's box-inertia/twist/fallback and P5's closed-form MOI-ratio gates are in
-that run; ruff and the CI-faithful mypy batch are clean (mypy 1.13 needs
-numpy < 2.4 or `--no-incremental`: 2.4+ stubs crash its cache serializer).
 
 ## Residual #4149 / #4146 Scope
 
