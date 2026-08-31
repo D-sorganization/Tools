@@ -139,10 +139,10 @@ export function ImpactSceneCanvas({ run, scenario, club }: {
           <p className="text-xs text-slate-400">Drag to orbit · scroll to zoom · arrow keys rotate · exact event at {scene.eventTimeS.toFixed(4)} s</p>
         </div>
         <div className="flex flex-wrap gap-1">
-          <button type="button" onClick={() => setNamedView("iso")} className="rounded border border-slate-600 px-2 py-1 text-xs hover:border-sky-400">Isometric</button>
-          <button type="button" onClick={() => setNamedView("face")} className="rounded border border-slate-600 px-2 py-1 text-xs hover:border-sky-400">Face-On</button>
-          <button type="button" onClick={() => setNamedView("target")} className="rounded border border-slate-600 px-2 py-1 text-xs hover:border-sky-400">Down-the-Line</button>
-          <button type="button" onClick={() => setCamera(ISOMETRIC)} className="rounded border border-slate-600 px-2 py-1 text-xs hover:border-sky-400">Reset View</button>
+          <button type="button" onClick={() => setNamedView("iso")} className="rounded border border-slate-600 px-2 py-1 text-xs hover:border-sky-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">Isometric</button>
+          <button type="button" onClick={() => setNamedView("face")} className="rounded border border-slate-600 px-2 py-1 text-xs hover:border-sky-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">Face-On</button>
+          <button type="button" onClick={() => setNamedView("target")} className="rounded border border-slate-600 px-2 py-1 text-xs hover:border-sky-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">Down-the-Line</button>
+          <button type="button" onClick={() => setCamera(ISOMETRIC)} className="rounded border border-slate-600 px-2 py-1 text-xs hover:border-sky-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">Reset View</button>
         </div>
       </div>
       <div className="flex flex-wrap gap-3 text-xs">
@@ -189,9 +189,9 @@ export function ImpactSceneCanvas({ run, scenario, club }: {
         }}
       />
       <div className="flex flex-wrap gap-2">
-        <button type="button" onClick={() => canvasRef.current?.toBlob((blob) => { if (blob) download("wedge-impact.png", blob); }, "image/png")} className="rounded border border-slate-600 px-2 py-1 text-xs hover:border-sky-400">Export High-Resolution PNG</button>
-        <button type="button" onClick={() => download("wedge-impact.svg", new Blob([impactSceneSvg(geometry, camera)], { type: "image/svg+xml" }))} className="rounded border border-slate-600 px-2 py-1 text-xs hover:border-sky-400">Export Vector SVG</button>
-        <button type="button" onClick={() => download("wedge-impact.json", new Blob([JSON.stringify(impactSceneExportPayload(scene, visible, camera), null, 2)], { type: "application/json" }))} className="rounded border border-slate-600 px-2 py-1 text-xs hover:border-sky-400">Export Scene Data</button>
+        <button type="button" onClick={() => canvasRef.current?.toBlob((blob) => { if (blob) download("wedge-impact.png", blob); }, "image/png")} className="rounded border border-slate-600 px-2 py-1 text-xs hover:border-sky-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">Export High-Resolution PNG</button>
+        <button type="button" onClick={() => download("wedge-impact.svg", new Blob([impactSceneSvg(geometry, camera)], { type: "image/svg+xml" }))} className="rounded border border-slate-600 px-2 py-1 text-xs hover:border-sky-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">Export Vector SVG</button>
+        <button type="button" onClick={() => download("wedge-impact.json", new Blob([JSON.stringify(impactSceneExportPayload(scene, visible, camera), null, 2)], { type: "application/json" }))} className="rounded border border-slate-600 px-2 py-1 text-xs hover:border-sky-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">Export Scene Data</button>
       </div>
     </section>
   );
