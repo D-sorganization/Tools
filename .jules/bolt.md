@@ -111,3 +111,6 @@
 ## 2024-08-30 - Replace Math.min/max spread with loops for dynamic scales
 **Learning:** Using `Math.min(...spread)` and `Math.max(...spread)` on large streams of extracted subset data frequently leads to "Maximum call stack size exceeded" errors. It allocates a new array and spreads it out onto the call stack.
 **Action:** When calculating min/max bounds across historically tracked subsets, avoid the `Math.min(...spread)` syntax entirely. Use a single-pass `for` loop that computes `realMin` and `realMax` dynamically, avoiding massive call stack allocations and garbage collection pressure.
+## 2024-05-18 - Avoid array spreading and chained maps in hot chart renders
+**Learning:** Using `[...a, ...b, ...c].map(...)` combined with multiple `.map()` operations inside a high-frequency React charting render function creates severe garbage collection pressure by allocating numerous intermediate arrays on every frame.
+**Action:** Replace these declarative chaining patterns with pre-allocated arrays (`new Array(N)`) and a single-pass `for` loop to eliminate all intermediate GC allocations in hot charting paths.

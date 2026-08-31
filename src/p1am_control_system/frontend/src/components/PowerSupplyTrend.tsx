@@ -137,12 +137,27 @@ export const PowerSupplyTrend: React.FC<Props> = ({
     ? active.filter((s) => s.t >= start && s.t <= end)
     : [];
   const down = downsample(visible);
-  const iPts = down.map((s) => ({ t: s.t, v: toPct(s.i, currentFullScale) }));
-  const vPts = down.map((s) => ({ t: s.t, v: toPct(s.v, voltageFullScale) }));
-  const pPts = down.map((s) => ({ t: s.t, v: toPct(s.p, powerFullScale) }));
+  const n = down.length;
+  const iPts = new Array(n);
+  const vPts = new Array(n);
+  const pPts = new Array(n);
+  const vValues = new Array(n * 3);
+  for (let i = 0; i < n; i++) {
+    const s = down[i];
+    // ⚡ Bolt Optimization: Replace multiple .map() and array spreads with a single pass
+    const iV = toPct(s.i, currentFullScale);
+    const vV = toPct(s.v, voltageFullScale);
+    const pV = toPct(s.p, powerFullScale);
+    iPts[i] = { t: s.t, v: iV };
+    vPts[i] = { t: s.t, v: vV };
+    pPts[i] = { t: s.t, v: pV };
+    vValues[i * 3] = iV;
+    vValues[i * 3 + 1] = vV;
+    vValues[i * 3 + 2] = pV;
+  }
   const { min, max } = resolveRange(
     axis,
-    [...iPts, ...vPts, ...pPts].map((p) => p.v),
+    vValues,
     { min: 0, max: 100 },
   );
 
