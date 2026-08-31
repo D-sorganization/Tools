@@ -69,13 +69,11 @@ function drawLegend(
     ? width - (position === "outside_right" ? 170 : 185)
     : 76;
   const y = position === "outside_right" ? 52 : 46;
-  // ⚡ Bolt Optimization: Replace .forEach iterations with a standard for loop to eliminate closure allocation overhead in hot paths.
-  for (let index = 0; index < data.series.length; index++) {
-    const series = data.series[index];
+  data.series.forEach((series, index) => {
     ctx.fillStyle = PALETTE[index % PALETTE.length];
     ctx.fillRect(x, y + index * 18 - 8, 12, 3);
     ctx.fillText(series.label, x + 18, y + index * 18);
-  }
+  });
 }
 
 function drawPlot(
@@ -130,16 +128,13 @@ function drawPlot(
   }
   const projected: Array<Array<readonly [number, number]>> = [];
   const renderSeries = plan?.kind === "series" ? plan.series : data.series;
-  // ⚡ Bolt Optimization: Replace .forEach iterations with a standard for loop to eliminate closure allocation overhead in hot paths.
-  for (let seriesIndex = 0; seriesIndex < renderSeries.length; seriesIndex++) {
-    const series = renderSeries[seriesIndex];
+  renderSeries.forEach((series, seriesIndex) => {
     ctx.strokeStyle = PALETTE[seriesIndex % PALETTE.length];
     ctx.fillStyle = PALETTE[seriesIndex % PALETTE.length];
     ctx.lineWidth = 1.8;
     ctx.beginPath();
     const points: Array<readonly [number, number]> = [];
-    for (let index = 0; index < data.x.length; index++) {
-      const xValue = data.x[index];
+    data.x.forEach((xValue, index) => {
       const x = sx(xValue);
       const y = sy(series.values[index]);
       points.push([x, y]);
@@ -148,15 +143,14 @@ function drawPlot(
         ctx.arc(x, y, 2.5, 0, 2 * Math.PI);
       } else if (index === 0) ctx.moveTo(x, y);
       else ctx.lineTo(x, y);
-    }
+    });
     if (data.spec.kind === "scatter") ctx.fill();
     else ctx.stroke();
     projected.push(points);
-  }
+  });
   if (plan?.kind === "histogram") {
     ctx.fillStyle = PALETTE[0];
-    for (let index = 0; index < plan.bins.length; index++) {
-      const item = plan.bins[index];
+    plan.bins.forEach((item) => {
       const left = sx(item.lower);
       const right = sx(item.upper);
       const top = sy(item.count);
@@ -164,7 +158,7 @@ function drawPlot(
       ctx.globalAlpha = 0.85;
       ctx.fillRect(left + 0.5, top, Math.max(0, right - left - 1), bottom - top);
       ctx.globalAlpha = 1;
-    }
+    });
   }
   if (selection?.kind === "series" && plan?.kind === "series") {
     const [x, y] = projected[selection.seriesIndex][selection.rawIndex];
