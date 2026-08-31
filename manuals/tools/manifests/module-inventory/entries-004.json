@@ -9369,10 +9369,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 15710,
+      "bytes_lf": 16052,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3a013c7103ad9feb7c38b810d9bc20dbe4ae439302aeb8fda74e4246ae7366fc",
+      "content_sha256_lf": "8579f771ad00b1cc8e97296775f635d3f4a68bddf675def04b3e232cb3a3f8e7",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-COMPONENTS-POWERSUPPLYTREND-TSX-248034C0B39D",
       "language": "typescript-react",
