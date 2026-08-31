@@ -603,3 +603,49 @@ def test_run_matlab_script_dbc_non_path(tmp_path):
     checker = MATLABQualityChecker(tmp_path)
     with pytest.raises(PreconditionError):
         checker._run_matlab_script("not_a_path.m")
+
+
+# ─── exportCodeIssues DRY contract (#4867) ─────────────────────
+
+
+def test_canonical_export_code_issues_exists():
+    """Canonical exportCodeIssues must live in matlab_utilities/quality."""
+    root = Path(__file__).resolve().parents[2]
+    canonical = (
+        root / "src" / "tools" / "matlab_utilities" / "quality" / "exportCodeIssues.m"
+    )
+    assert canonical.is_file(), f"Canonical file missing at {canonical}"
+    text = canonical.read_text(encoding="utf-8")
+    assert "function T = exportCodeIssues(targetPath, varargin)" in text
+    assert "checkcode" in text
+    assert "issuesTable" in text
+
+
+def test_gui_export_code_issues_is_forwarding_shim():
+    """GUI exportCodeIssues must be a lightweight forwarding shim (DRY)."""
+    root = Path(__file__).resolve().parents[2]
+    gui_file = (
+        root / "src" / "tools" / "matlab_code_analyzer_gui" / "exportCodeIssues.m"
+    )
+    assert gui_file.is_file(), f"GUI shim file missing at {gui_file}"
+    text = gui_file.read_text(encoding="utf-8")
+    lines = [line for line in text.splitlines() if line.strip()]
+    assert len(lines) < 50, (
+        f"GUI exportCodeIssues has {len(lines)} non-empty lines; "
+        "must be a concise forwarding shim (<50 lines) to prevent code "
+        "duplication (DRY)."
+    )
+    assert "matlab_utilities" in text
+    assert "exportCodeIssues" in text
+
+
+def test_gui_setup_wires_canonical_utilities_path():
+    """setup.m in matlab_code_analyzer_gui must add matlab_utilities/quality to path."""
+    root = Path(__file__).resolve().parents[2]
+    setup_file = root / "src" / "tools" / "matlab_code_analyzer_gui" / "setup.m"
+    assert setup_file.is_file(), f"setup.m missing at {setup_file}"
+    text = setup_file.read_text(encoding="utf-8")
+    assert "matlab_utilities" in text
+    assert "quality" in text
+
+
