@@ -171,15 +171,24 @@ export function buildScalarMarginal(
   if (values.length === 0) {
     return { variable, binEdges: [], counts: [], nAvailable: 0, nMissing: dataset.success.length };
   }
-  const low = Math.min(...values);
-  const high = Math.max(...values);
+  // ⚡ Bolt Optimization: Use single-pass loop instead of Math.min/max(...spread) and eliminate Array.from overhead
+  let low = Infinity;
+  let high = -Infinity;
+  for (let i = 0; i < values.length; i++) {
+    const val = values[i];
+    if (val < low) low = val;
+    if (val > high) high = val;
+  }
   const span = high - low || Math.max(Math.abs(low), 1) * 1e-9;
-  const binEdges = Array.from({ length: binCount + 1 }, (_, index) => low + span * index / binCount);
-  const counts = Array(binCount).fill(0) as number[];
-  values.forEach((value) => {
-    const index = Math.min(Math.floor((value - low) / span * binCount), binCount - 1);
+  const binEdges = new Array(binCount + 1);
+  for (let i = 0; i <= binCount; i++) {
+    binEdges[i] = low + span * i / binCount;
+  }
+  const counts = new Array(binCount).fill(0) as number[];
+  for (let i = 0; i < values.length; i++) {
+    const index = Math.min(Math.floor((values[i] - low) / span * binCount), binCount - 1);
     counts[index] += 1;
-  });
+  }
   return {
     variable, binEdges, counts, nAvailable: values.length,
     nMissing: dataset.success.length - values.length,
@@ -313,8 +322,14 @@ const matrixScale = (
   pad: number,
   size: number,
 ): number => {
-  const low = Math.min(...values);
-  const high = Math.max(...values);
+  // ⚡ Bolt Optimization: Replace Math.min/max(...spread) with a single-pass loop for dynamic scales
+  let low = Infinity;
+  let high = -Infinity;
+  for (let i = 0; i < values.length; i++) {
+    const val = values[i];
+    if (val < low) low = val;
+    if (val > high) high = val;
+  }
   return pad + (value - low) / Math.max(high - low, 1e-12) * (size - 2 * pad);
 };
 
