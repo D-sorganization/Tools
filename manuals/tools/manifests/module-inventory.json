@@ -291,7 +291,7 @@
       "shard_index": 7
     },
     {
-      "content_sha256_lf": "70bf1606157463c7a87bc3aae04a9de545c262f838e2ff969d0613908f61da2f",
+      "content_sha256_lf": "27c289c9aa79d450417c74cfaf9cffa81cb3b9566ae092b0e2d7c12159f8d330",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/ui/pyqt6/spatial_target_panel_text.py",
       "last_path": "src/rate_of_closure/web/src/components/ManualDeliveryControls.tsx",
@@ -299,7 +299,7 @@
       "shard_index": 8
     },
     {
-      "content_sha256_lf": "3bf086c68f11b811ea66ce10a0db53ed60312c9d486f1ff8468a63cb7b3288ed",
+      "content_sha256_lf": "f538406867cf13da78843701ccf256174a2327393131daac0fb9fc8d763977d3",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/web/src/components/MorrisFactorEditor.tsx",
       "last_path": "src/rate_of_closure/web/src/model/clubMeshSource.test.ts",
@@ -307,7 +307,7 @@
       "shard_index": 9
     },
     {
-      "content_sha256_lf": "2ca2f006a4d22a541fa8a33866c34ae348a093b4fdb318d3283d19c1a0a1e0a8",
+      "content_sha256_lf": "706802fb6ba7adffa4779d21b8ab1876a0bc25a761f29c07468377df59958c51",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/web/src/model/clubMeshSource.ts",
       "last_path": "src/rate_of_closure/web/src/model/regionalGroundResultImport.test.ts",
@@ -371,7 +371,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "ec7472cb113cc2079db729e7c5ef79b2e3823ba015912edc23c9230c574a8033",
+  "source_tree_sha256": "c541736df03a42fd2d73bcccd509b7773c671b1c95bae05e2435353bc6627f8b",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
