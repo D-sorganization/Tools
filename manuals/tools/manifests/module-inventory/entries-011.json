@@ -5553,10 +5553,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11649,
+      "bytes_lf": 11955,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "bc30a1458c4aa2d21c3a68fd30c3b799e244ca32dfe17ef8753d543ca342fbc2",
+      "content_sha256_lf": "dbad6a2575389a33ab926ecc8ababf827a9a925cb6bae3ecdca12c440f9190bc",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONPLOTDATA-TS-606C1EB72857",
       "language": "typescript",
