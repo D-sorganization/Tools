@@ -596,10 +596,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 15155,
+      "bytes_lf": 15670,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0a242318770ae251465001cb0d3ad9dbd8f6c160433fe4f7d96a5309fcf12bea",
+      "content_sha256_lf": "bed6313d42884a5dbcb37f4f1068841da92791cfe0def6d75da7421ca879436a",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-PLOTCANVASCARD-TSX-85C7536DF86E",
       "language": "typescript-react",
