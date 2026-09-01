@@ -320,7 +320,7 @@ export function PlotCanvasCard({ data, label, selected, onSelect, onCanvas, noti
     onSelect();
     if (plan !== null) adoptSelection(navigatePlotSelection(plan, selection, command));
   };
-  const buttonClass = "rounded border border-slate-700 px-2 py-1 text-xs text-slate-200 hover:border-sky-400";
+  const buttonClass = "rounded border border-slate-700 px-2 py-1 text-xs text-slate-200 hover:border-sky-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500";
   return (
     <article
       role="group"

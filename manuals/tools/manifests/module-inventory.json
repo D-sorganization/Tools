@@ -291,7 +291,7 @@
       "shard_index": 7
     },
     {
-      "content_sha256_lf": "27c289c9aa79d450417c74cfaf9cffa81cb3b9566ae092b0e2d7c12159f8d330",
+      "content_sha256_lf": "a313a232b2bdd9bbcaa08bf3914445032ec161246549fc1a4264342337e8ef53",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/ui/pyqt6/spatial_target_panel_text.py",
       "last_path": "src/rate_of_closure/web/src/components/ManualDeliveryControls.tsx",
@@ -299,7 +299,7 @@
       "shard_index": 8
     },
     {
-      "content_sha256_lf": "3bf086c68f11b811ea66ce10a0db53ed60312c9d486f1ff8468a63cb7b3288ed",
+      "content_sha256_lf": "39ca6387b5fba6a7fbe83fae3d5e4473869e44bf26ddf03e1b46afa031027e8e",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/web/src/components/MorrisFactorEditor.tsx",
       "last_path": "src/rate_of_closure/web/src/model/clubMeshSource.test.ts",
@@ -371,7 +371,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "9d71b64d2fc3b3021d7442cf53769ab9ef3795c27759f656d8829ea0a53af677",
+  "source_tree_sha256": "803fab4350169893967b42b8598520a21c22d3093c27730f0dcfd00c30956086",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
