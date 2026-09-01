@@ -123,10 +123,19 @@ function MatrixCell({ dataset, xKey, yKey, diagonal, outcomes, selectedTrialInde
     </svg>;
   }
   const scatter = buildScalarScatter(dataset, xKey, yKey);
-  const xs = scatter.points.map((point) => point.x);
-  const ys = scatter.points.map((point) => point.y);
-  const scale = (value: number, values: number[]) => PAD + (value - Math.min(...values)) / Math.max(Math.max(...values) - Math.min(...values), 1e-12) * (SIZE - 2 * PAD);
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  for (let i = 0; i < scatter.points.length; i++) {
+    const p = scatter.points[i];
+    if (p.x < minX) minX = p.x;
+    if (p.x > maxX) maxX = p.x;
+    if (p.y < minY) minY = p.y;
+    if (p.y > maxY) maxY = p.y;
+  }
+  const spanX = Math.max(maxX - minX, 1e-12);
+  const spanY = Math.max(maxY - minY, 1e-12);
+  const scaleX = (value: number) => PAD + (value - minX) / spanX * (SIZE - 2 * PAD);
+  const scaleY = (value: number) => PAD + (value - minY) / spanY * (SIZE - 2 * PAD);
   return <svg viewBox={`0 0 ${SIZE} ${SIZE}`} role="img" aria-label={`${scatter.xVariable.label} versus ${scatter.yVariable.label}; ${scatter.points.length} paired trials`} className="border border-slate-800 bg-slate-950/60">
-    {scatter.points.map((point) => <circle key={point.trialIndex} cx={scale(point.x, xs)} cy={SIZE - scale(point.y, ys)} r={point.trialIndex === selectedTrialIndex ? "4" : "2.3"} fill={matrixCohortColor(outcomes?.[point.trialIndex] ?? point.cohort)} stroke={point.trialIndex === selectedTrialIndex ? "#f8fafc" : "none"} opacity="0.65" role="button" tabIndex={0} aria-label={`Select trial ${point.trialIndex + 1} in matrix`} onClick={() => onSelectedTrialChange(point.trialIndex)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") onSelectedTrialChange(point.trialIndex); }}><title>{`Trial ${point.trialIndex + 1}`}</title></circle>)}
+    {scatter.points.map((point) => <circle key={point.trialIndex} cx={scaleX(point.x)} cy={SIZE - scaleY(point.y)} r={point.trialIndex === selectedTrialIndex ? "4" : "2.3"} fill={matrixCohortColor(outcomes?.[point.trialIndex] ?? point.cohort)} stroke={point.trialIndex === selectedTrialIndex ? "#f8fafc" : "none"} opacity="0.65" role="button" tabIndex={0} aria-label={`Select trial ${point.trialIndex + 1} in matrix`} onClick={() => onSelectedTrialChange(point.trialIndex)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") onSelectedTrialChange(point.trialIndex); }}><title>{`Trial ${point.trialIndex + 1}`}</title></circle>)}
   </svg>;
 }

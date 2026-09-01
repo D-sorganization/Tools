@@ -171,8 +171,12 @@ export function buildScalarMarginal(
   if (values.length === 0) {
     return { variable, binEdges: [], counts: [], nAvailable: 0, nMissing: dataset.success.length };
   }
-  const low = Math.min(...values);
-  const high = Math.max(...values);
+  let low = Infinity, high = -Infinity;
+  for (let i = 0; i < values.length; i++) {
+    const v = values[i];
+    if (v < low) low = v;
+    if (v > high) high = v;
+  }
   const span = high - low || Math.max(Math.abs(low), 1) * 1e-9;
   const binEdges = Array.from({ length: binCount + 1 }, (_, index) => low + span * index / binCount);
   const counts = Array(binCount).fill(0) as number[];
@@ -276,10 +280,20 @@ export function distributionMatrixToSvg(
         }).join("");
       } else {
         const points = buildScalarScatter(dataset, column.key, row.key).points;
-        const xs = points.map((point) => point.x);
-        const ys = points.map((point) => point.y);
+        let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+        for (let i = 0; i < points.length; i++) {
+          const p = points[i];
+          if (p.x < minX) minX = p.x;
+          if (p.x > maxX) maxX = p.x;
+          if (p.y < minY) minY = p.y;
+          if (p.y > maxY) maxY = p.y;
+        }
+        const spanX = Math.max(maxX - minX, 1e-12);
+        const spanY = Math.max(maxY - minY, 1e-12);
+        const scaleX = (value: number) => pad + (value - minX) / spanX * (size - 2 * pad);
+        const scaleY = (value: number) => pad + (value - minY) / spanY * (size - 2 * pad);
         marks = points.map((point) =>
-          `<circle cx="${matrixScale(point.x, xs, pad, size)}" cy="${size - matrixScale(point.y, ys, pad, size)}" r="2.3" fill="${matrixCohortColor(outcomes?.[point.trialIndex] ?? point.cohort)}" opacity="0.65"><title>Trial ${point.trialIndex + 1}</title></circle>`,
+          `<circle cx="${scaleX(point.x)}" cy="${size - scaleY(point.y)}" r="2.3" fill="${matrixCohortColor(outcomes?.[point.trialIndex] ?? point.cohort)}" opacity="0.65"><title>Trial ${point.trialIndex + 1}</title></circle>`,
         ).join("");
       }
       const label = rowIndex === columnIndex
@@ -305,17 +319,6 @@ const selectedMatrixVariables = (
     if (!variable) throw new Error(`unknown matrix variable ${key}`);
     return variable;
   });
-};
-
-const matrixScale = (
-  value: number,
-  values: number[],
-  pad: number,
-  size: number,
-): number => {
-  const low = Math.min(...values);
-  const high = Math.max(...values);
-  return pad + (value - low) / Math.max(high - low, 1e-12) * (size - 2 * pad);
 };
 
 const xmlEscape = (value: string): string => value

@@ -115,6 +115,11 @@
 ## 2026-08-31 - Canvas Rendering Hot Path Optimization
 **Learning:** In heavily populated canvas plots (like PlotCanvasCard), using `.forEach` for iterating over thousands of data points adds significant closure allocation and function call overhead per point, leading to increased CPU cycles and garbage collection pressure.
 **Action:** Use standard `for` loops in canvas and SVG hot paths where large arrays of points are iterated.
+
+## 2026-09-01 - Charting Scale Array Spreads O(N^2)
+**Learning:** Computing chart bounds with `Math.max(...values)` and `Math.min(...values)` inline within a `.map()` operation over data arrays degrades rendering from O(N) to O(N^2) and generates extreme garbage collection pressure, leading to "Maximum call stack size exceeded" and UI thread blocking on large datasets.
+**Action:** Always pre-calculate charting domain bounds explicitly outside of rendering loops using a single-pass O(N) standard `for` loop.
+
 ## 2024-09-01 - Avoid Array Spread in Grouping Loops
 **Learning:** Using array spread syntax (`[...arr, item]`) inside tight loops to accumulate datasets by key degrades performance to O(N^2) and generates severe garbage collection pressure during React renders.
 **Action:** Always initialize an array for the key and use direct mutation (`group.push(item)`) inside loops to achieve O(N) performance when grouping datasets.
