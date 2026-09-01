@@ -152,10 +152,10 @@ export function LaunchMonitorAnalyticsPanel() {
               onChange={(event) => { const file = event.target.files?.[0]; if (file) void loadFile(file); }} />
             <button type="button" title="Import a local CSV or JSON launch-monitor export"
               onClick={() => input.current?.click()}
-              className="rounded-lg bg-sky-700 px-4 py-2 text-sm font-semibold hover:bg-sky-600">Import Data</button>
+              className="rounded-lg bg-sky-700 px-4 py-2 text-sm font-semibold hover:bg-sky-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">Import Data</button>
             <button type="button" title="Restore the built-in non-vendor demonstration dataset"
               onClick={() => { importEpoch.current += 1; setRows(DEMO_ROWS); setSourceName("Built-In Demonstration Data"); setOutcome("ball_speed"); setPredictors(["club_speed", "attack_angle"]); setGroupBy("monitor_vendor"); setResult(null); setSelectedRawIndex(null); setError(null); }}
-              className="rounded-lg border border-slate-700 px-4 py-2 text-sm hover:bg-slate-800">Load Demo</button>
+              className="rounded-lg border border-slate-700 px-4 py-2 text-sm hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">Load Demo</button>
           </div>
         </div>
         <p className="mt-3 text-xs text-slate-500">Source: {sourceName} · {rows.length} retained rows · {Object.keys(rows[0] ?? {}).length} source columns</p>
@@ -228,7 +228,7 @@ export function LaunchMonitorAnalyticsPanel() {
             </label>
           </div>
           <button type="button" onClick={run} title="Run the selected traceable statistical analysis"
-            className="w-full rounded-lg bg-emerald-700 px-4 py-3 font-semibold hover:bg-emerald-600">Run Analysis</button>
+            className="w-full rounded-lg bg-emerald-700 px-4 py-3 font-semibold hover:bg-emerald-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">Run Analysis</button>
           {error && <p role="alert" className="rounded border border-red-500/40 bg-red-950/30 p-3 text-sm text-red-200">{error}</p>}
         </section>
 
@@ -266,9 +266,9 @@ export function LaunchMonitorAnalyticsPanel() {
                 {result.warnings.map((warning) => <p key={warning} className="mt-2 text-sm text-amber-200">{warning}</p>)}
                 <div className="mt-4 flex flex-wrap gap-2">
                   <button type="button" title="Download every retained input record as JSON"
-                    onClick={() => download("launch-monitor-records.json", rows)} className="rounded border border-slate-700 px-3 py-2 text-sm hover:bg-slate-800">Export Retained Data</button>
+                    onClick={() => download("launch-monitor-records.json", rows)} className="rounded border border-slate-700 px-3 py-2 text-sm hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">Export Retained Data</button>
                   <button type="button" title="Download the complete request, statistics, warnings, and lineage as JSON"
-                    onClick={() => download("launch-monitor-analysis.json", result)} className="rounded border border-slate-700 px-3 py-2 text-sm hover:bg-slate-800">Export Analysis</button>
+                    onClick={() => download("launch-monitor-analysis.json", result)} className="rounded border border-slate-700 px-3 py-2 text-sm hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">Export Analysis</button>
                 </div>
               </div>
             </>
