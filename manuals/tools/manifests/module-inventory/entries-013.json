@@ -5038,6 +5038,7 @@
           "src/shared/python/swing_sim/delivery_interchange/tests/test_delivery_interchange.py",
           "src/shared/python/swing_sim/flight/tests/test_capability_optimizer.py",
           "src/shared/python/swing_sim/flight/tests/test_surface_flight_cancellation.py",
+          "src/shared/python/swing_sim/flight_interchange/tests/test_flight_interchange.py",
           "src/shared/python/swing_sim/ground/tests/test_reference_execution_contract.py",
           "src/shared/python/swing_sim/ground/tests/test_regional_plan_wire.py",
           "src/shared/python/swing_sim/ground/tests/test_regional_surfaces.py",
