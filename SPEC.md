@@ -7104,3 +7104,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-08-31: Canvas Rendering Hot Path Optimization (#4882)
 
 - **2026-08-31**: perf(rate-of-closure, #4882) — Replaced `.forEach` loops with standard `for` loops in the `drawPlot` hot path of `PlotCanvasCard` to eliminate closure allocation and function call overhead during plotting, significantly reducing garbage collection pressure when drawing massive datasets.
+
+## 2026-09-01: Dynamic Scale Single-Pass Loop Optimization (#4876)
+
+- **2026-09-01**: perf(rate-of-closure, #4876) — Replaced `Math.max(...spread)` calls with single-pass loops for dynamically scaled charts in `PlotCanvasCard` and `WindStrategyScatter`, avoiding intermediate array allocation and the JS call-stack-size limit on large datasets.
