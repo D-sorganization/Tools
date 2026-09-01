@@ -5765,10 +5765,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 23779,
+      "bytes_lf": 24047,
       "classification": "calculation",
       "classification_basis": "path-marker:force",
-      "content_sha256_lf": "9f99a21a8d7043667133651a4a3d4d0e81a24eb6bdd5d353184e0e86a02e79f1",
+      "content_sha256_lf": "ca547f94f805c493538fc3ac1c41625ab2410df4314a758fdf9a5d9c82f7340b",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-COMPONENTS-FORCESOURCERESULTS-TSX-121C5F9A2F73",
       "language": "typescript-react",

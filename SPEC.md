@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.95                                    |
+| **Spec Version**        | 1.18.96                                |
 | **Last Spec Update**    | 2026-08-30                                 |
 
 ## 2. Purpose & Mission
@@ -5679,6 +5679,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-09-01 | 1.18.96 | feat: ⚡ Bolt optimization replacing array spread with O(N) mutation for grouped datasets in React. | |
 | 2026-08-30 | 1.18.95 | refactor(matlab): DRY `exportCodeIssues` between the MATLAB code analyzer GUI and shared utilities — `src/tools/matlab_code_analyzer_gui/exportCodeIssues.m` now delegates to the shared export helper instead of carrying its own duplicate implementation, with `setup.m` and the README updated to match and new coverage in `tests/tools/test_matlab_quality_utils.py`. | #4867 |
 | 2026-08-30 | 1.18.94 | feat(pendulum): add selectable equal-speed, equal-effort, and common-bound force-source study contracts; keep speed as a feasibility band rather than a hidden component reward; register positive/net/negative actuator work, torque impulse, squared activation, peak power, cumulative work plots, and stable duplicate-profile identity; require robust high-headroom winners; and ship independent equal-output and equal-input research artifacts. |
 | 2026-08-30 | 1.18.93 | feat(pendulum): replace bang-bang force-source controls with bounded continuous degree-6 Bernstein shoulder/wrist profiles; enforce coefficient, duration, slew, endpoint, single-reversal, and low-torque-transition contracts; add deterministic physical seed families and 2/6/12-round multi-elite refinement; align the web driver to the authoritative 0.2381186694 kg inertia-equivalent club and ±250 N m hub budget; reach a certified smooth 53.7 m/s speed solution; render all sampled channels, cross-objective/Pareto ranks, strategy work/RMS/peak/slew/transition diagnostics, and polynomial coefficients; reject imported torque plots that do not reproduce the registered polynomial. |
