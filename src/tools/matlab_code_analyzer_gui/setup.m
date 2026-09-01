@@ -19,6 +19,11 @@ thisDir = fileparts(thisFile);
 % Add to path
 addpath(thisDir);
 fprintf('Added to MATLAB path: %s\n', thisDir);
+utilitiesQualityDir = fullfile(thisDir, '..', 'matlab_utilities', 'quality');
+if exist(utilitiesQualityDir, 'dir') == 7
+    addpath(utilitiesQualityDir);
+    fprintf('Added to MATLAB path: %s\n', utilitiesQualityDir);
+end
 
 % Verify components
 fprintf('\nVerifying installation...\n');
