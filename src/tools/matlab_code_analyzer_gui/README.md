@@ -16,7 +16,7 @@ A user-friendly graphical interface for analyzing MATLAB code using the built-in
 
 ## Files
 
-- `exportCodeIssues.m` - Core analysis engine (enhanced version from restore-1956-columns branch)
+- `exportCodeIssues.m` - Forwarding shim to canonical analysis engine (canonical utility in `matlab_utilities/quality`)
 - `codeIssuesGUI.m` - Interactive GUI interface
 - `launchCodeAnalyzer.m` - Simple launcher function
 - `README.md` - This documentation file

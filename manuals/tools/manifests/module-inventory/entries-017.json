@@ -2274,10 +2274,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 15023,
+      "bytes_lf": 1765,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9b834da59372a0fdec5a1228ec6afaf4abbd79dac27ac2273b347999f3de4c0b",
+      "content_sha256_lf": "f28dc88b53bedf4404089f81f3f48aee4061dc5c56e388947107064fae5586a8",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-TOOLS-MATLAB-CODE-ANALYZER-GUI-EXPORTCODEISSUES-M-426063E4AD49",
       "language": "matlab",
@@ -2314,93 +2314,12 @@
         "public_surfaces": [
           {
             "kind": "function",
-            "name": "absPathIfPossible",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "collectFilesFromDir",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "defaultExcludeDirs",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "ensureField",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "escapeMd",
-            "signature": null
-          },
-          {
-            "kind": "function",
             "name": "exportCodeIssues",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "extractIdentifierFallback",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "getCharField",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "getNumericField",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "iscellstrlike",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "issuesTable",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "listFiles",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "matchName",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "num2strOrEmpty",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "relPath",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "stripTrailingFilesep",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "writeOutput",
             "signature": null
           }
         ],
         "test_paths": [],
         "unit_mentions": [
-          "g",
           "s"
         ],
         "validation_paths": []
@@ -2461,10 +2380,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 2522,
+      "bytes_lf": 2744,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "484e6fda902d2aed4b6748ac519bb0353799360a64e5b6be7b215e741c2c9e85",
+      "content_sha256_lf": "094df024d0720ec0b62589a3ca91d15f1880c6e6b17adf22c397edc560b17176",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-TOOLS-MATLAB-CODE-ANALYZER-GUI-SETUP-M-642EAD5515D5",
       "language": "matlab",
