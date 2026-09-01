@@ -118,7 +118,15 @@ const population = (players: PlayerEstimate[], request: LongitudinalRequest) => 
 export function analyzeLongitudinalPerformance(rows: LaunchMonitorRow[], request: LongitudinalRequest) {
   validate(rows, request); const sessionPoints = sessions(rows, request);
   const byPlayer = new Map<string, SessionPoint[]>();
-  sessionPoints.forEach((point) => byPlayer.set(point.playerId, [...(byPlayer.get(point.playerId) ?? []), point]));
+  for (const point of sessionPoints) {
+    let group = byPlayer.get(point.playerId);
+    if (!group) {
+      group = [];
+      byPlayer.set(point.playerId, group);
+    }
+    // Bolt: O(N) grouping instead of O(N^2) immutable spread
+    group.push(point);
+  }
   const players = [...byPlayer.entries()].map(([playerId, points]) => playerEstimate(playerId, points, request));
   return { request, sessionPoints, players, population: population(players, request),
     formula: "Equal-weight session means; player OLS slopes; inverse-variance fixed and DerSimonian-Laird random effects.",
