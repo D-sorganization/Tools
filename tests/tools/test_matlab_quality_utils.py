@@ -647,5 +647,3 @@ def test_gui_setup_wires_canonical_utilities_path():
     text = setup_file.read_text(encoding="utf-8")
     assert "matlab_utilities" in text
     assert "quality" in text
-
-
