@@ -16,9 +16,10 @@ import {
 } from "./groundPlayback";
 
 describe("GroundPlaybackTimeline", () => {
-  const timeline = () => new GroundPlaybackTimeline(
-    parseFlightToGroundResultRecord(groundFixture.result),
-  );
+  const timeline = () =>
+    new GroundPlaybackTimeline(
+      parseFlightToGroundResultRecord(groundFixture.result),
+    );
 
   it("uses absolute time, exact steps, locked endpoints and phase-safe frames", () => {
     const value = timeline();
@@ -50,7 +51,9 @@ describe("GroundPlaybackTimeline", () => {
   it.each(["cancelled", "failed"] as const)(
     "rejects %s regional execution without a playable nested result",
     (name) => {
-      const execution = parseGroundRegionalExecutionResult(regionalFixture[name].result);
+      const execution = parseGroundRegionalExecutionResult(
+        regionalFixture[name].result,
+      );
       expect(() => timelineFromRegionalExecution(execution)).toThrow(
         "playable ground result",
       );
@@ -79,8 +82,12 @@ describe("GroundPlaybackTimeline", () => {
         return Reflect.get(target, property, receiver);
       },
     });
-    expect(adjacentPlaybackTime(observed, values[73_456], 1)).toBe(values[73_457]);
-    expect(adjacentPlaybackTime(observed, values[73_456], -1)).toBe(values[73_455]);
+    expect(adjacentPlaybackTime(observed, values[73_456], 1)).toBe(
+      values[73_457],
+    );
+    expect(adjacentPlaybackTime(observed, values[73_456], -1)).toBe(
+      values[73_455],
+    );
     expect(adjacentPlaybackTime(observed, 73.4565, 1)).toBe(values[73_457]);
     expect(adjacentPlaybackTime(observed, 73.4565, -1)).toBe(values[73_456]);
     expect(adjacentPlaybackTime(observed, values[0], -1)).toBe(values[0]);
@@ -95,26 +102,43 @@ describe("GroundPlaybackTimeline", () => {
     const trajectory = Array.from({ length: 100_000 }, (_, index) => ({
       ...base.trajectory[0],
       time_s: index * 0.001,
-      phase: index < 10 ? "impact" as const
-        : index < 50_000 ? "skid" as const : "roll" as const,
+      phase:
+        index < 10
+          ? ("impact" as const)
+          : index < 50_000
+            ? ("skid" as const)
+            : ("roll" as const),
       position_m: [index * 0.001, 0, 0] as const,
     }));
     const result = {
       ...base,
       trajectory,
       events: [
-        { ...base.events[0], time_s: 25, position_m: trajectory[25_000].position_m },
-        { ...base.events[0], sequence: 1, time_s: 75,
-          position_m: trajectory[75_000].position_m },
+        {
+          ...base.events[0],
+          time_s: 25,
+          position_m: trajectory[25_000].position_m,
+        },
+        {
+          ...base.events[0],
+          sequence: 1,
+          time_s: 75,
+          position_m: trajectory[75_000].position_m,
+        },
       ],
     };
     const visible = selectGroundPlaybackPath(result);
     const times = new Set(visible.map(({ time_s }) => time_s));
-    expect(visible.length).toBeLessThanOrEqual(GROUND_PLAYBACK_VISUAL_POINT_BUDGET);
-    expect([...times]).toEqual(expect.arrayContaining(
-      [0, 9, 10, 25_000, 49_999, 50_000, 75_000, 99_999]
-        .map((index) => trajectory[index].time_s),
-    ));
+    expect(visible.length).toBeLessThanOrEqual(
+      GROUND_PLAYBACK_VISUAL_POINT_BUDGET,
+    );
+    expect([...times]).toEqual(
+      expect.arrayContaining(
+        [0, 9, 10, 25_000, 49_999, 50_000, 75_000, 99_999].map(
+          (index) => trajectory[index].time_s,
+        ),
+      ),
+    );
   });
 
   it("exposes only the bounded evidence window with exact disclosure", () => {
@@ -126,5 +150,24 @@ describe("GroundPlaybackTimeline", () => {
     expect(window.disclosure).toBe(
       "Showing first 256 of 100000 validated rows; full result retained.",
     );
+  });
+});
+
+describe("workspace speed whitelist vs the shared playback transport", () => {
+  // SUPPORTED_PLAYBACK_SPEEDS deliberately stays its own constant: it
+  // validates a versioned, fail-closed persisted document, so what it
+  // accepts is a wire contract that must not silently follow a runtime
+  // refactor. PLAYBACK_SPEEDS is what every playback surface (Qt
+  // PlaybackTransportControls, React PlaybackTransportBar) actually offers.
+  // Today the two are equal by coincidence; this gate makes the equality a
+  // fact. If it fails, either the transport grew a speed the wire must learn
+  // to accept (a workspace wire-version question - raise it on the
+  // workspace's issue, do not just widen the whitelist) or the wire accepts
+  // a speed no player offers. Twin: test_ground_playback_workspace_v2.py.
+  it("keeps the two speed sets identical", async () => {
+    const { SUPPORTED_PLAYBACK_SPEEDS } =
+      await import("./groundPlaybackWorkspace");
+    const { PLAYBACK_SPEEDS } = await import("./playbackTransport");
+    expect([...SUPPORTED_PLAYBACK_SPEEDS]).toEqual([...PLAYBACK_SPEEDS]);
   });
 });

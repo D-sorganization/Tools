@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.96                                |
+| **Spec Version**        | 1.18.97                                |
 | **Last Spec Update**    | 2026-08-30                                 |
 
 ## 2. Purpose & Mission
@@ -5679,6 +5679,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-30 | 1.18.97 | test(playback): gate the two canonical playback-speed sets against silent drift. `playback_transport.PLAYBACK_SPEEDS` (what every Qt/React playback surface offers) and `ground_playback_workspace.SUPPORTED_PLAYBACK_SPEEDS` (what the versioned fail-closed workspace wire accepts) are equal today by coincidence, not construction - diverging them would let a saved workspace carry a speed no player offers, or reject one a player does, with nothing failing. Deliberately NOT aliased: the wire keeps its own constant because what it accepts is a persisted contract, and following a runtime refactor silently would be a wire change. Equality asserted in both runtimes (beside the existing workspace-v2 and groundPlayback suites), each gate proven red under a perturbed set before restoring. A failure names the two legitimate resolutions - a workspace wire-version discussion, or fixing the offer set - rather than inviting a whitelist widen. | #4800 |
 | 2026-09-01 | 1.18.96 | feat: ⚡ Bolt optimization replacing array spread with O(N) mutation for grouped datasets in React. | |
 | 2026-08-30 | 1.18.95 | refactor(matlab): DRY `exportCodeIssues` between the MATLAB code analyzer GUI and shared utilities — `src/tools/matlab_code_analyzer_gui/exportCodeIssues.m` now delegates to the shared export helper instead of carrying its own duplicate implementation, with `setup.m` and the README updated to match and new coverage in `tests/tools/test_matlab_quality_utils.py`. | #4867 |
 | 2026-08-30 | 1.18.94 | feat(pendulum): add selectable equal-speed, equal-effort, and common-bound force-source study contracts; keep speed as a feasibility band rather than a hidden component reward; register positive/net/negative actuator work, torque impulse, squared activation, peak power, cumulative work plots, and stable duplicate-profile identity; require robust high-headroom winners; and ship independent equal-output and equal-input research artifacts. |
