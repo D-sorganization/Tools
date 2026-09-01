@@ -3,6 +3,248 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 19524,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cc3da5640370a34eea2665340bbdcd3db14e91d02fa20e95b6248aa9fdc6db2a",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-VISUALIZATION-SCENE-EVENT-MIXIN-PY-10C29385491E",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/visualization/scene_event_mixin.py",
+      "purpose": "Event handling mixin for SolarSystemScene.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SceneEventMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 14991,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "59d62e83acdae2ba31cfcc500e0a5bae99136fbfa5b62259db4e3b0941fc6709",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-VISUALIZATION-SCENE-RENDER-MIXIN-PY-D8351B2D8DD9",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/visualization/scene_render_mixin.py",
+      "purpose": "Rendering mixin for SolarSystemScene.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SceneRenderMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "bar"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3475,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "62398c26e2d84fdb0242c940ba32b6598f206dee6addc4db1c9237d978768d4a",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-VISUALIZATION-STARFIELD-PY-A7F413394617",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/visualization/starfield.py",
+      "purpose": "Build accurate starfield geometry from catalog data.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "StarVertex",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_star_vertices",
+            "signature": "catalog: Iterable[StarEntry], radius: float=1200.0"
+          },
+          {
+            "kind": "function",
+            "name": "point_size_from_magnitude",
+            "signature": "magnitude: float, min_size: float=1.0, max_size: float=6.0"
+          }
+        ],
+        "test_paths": [
+          "src/solar_system_model/solar_system/tests/test_starfield.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5023,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f2f9f828294fc06e72cc265520e94d56db31c9515caa4e49a0e0946b9c11786e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-VISUALIZATION-TEXTURES-PY-EEA70F5CF4B9",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/visualization/textures.py",
+      "purpose": "Texture management for planet maps sourced from NASA imagery.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Pluto_in_True_Color_-_High_Res.jpg/1024px-Pluto_in_True_Color_-_High_Res.jpg",
+          "https://www.solarsystemscope.com/textures/download/2k_earth_daymap.jpg",
+          "https://www.solarsystemscope.com/textures/download/2k_jupiter.jpg",
+          "https://www.solarsystemscope.com/textures/download/2k_mars.jpg",
+          "https://www.solarsystemscope.com/textures/download/2k_mercury.jpg",
+          "https://www.solarsystemscope.com/textures/download/2k_moon.jpg",
+          "https://www.solarsystemscope.com/textures/download/2k_neptune.jpg",
+          "https://www.solarsystemscope.com/textures/download/2k_saturn.jpg",
+          "https://www.solarsystemscope.com/textures/download/2k_sun.jpg",
+          "https://www.solarsystemscope.com/textures/download/2k_uranus.jpg",
+          "https://www.solarsystemscope.com/textures/download/2k_venus_surface.jpg"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "TextureHandle",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TextureManager",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TEXTURE_MANIFEST",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 26626,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
