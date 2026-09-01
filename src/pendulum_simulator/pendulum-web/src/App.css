@@ -835,6 +835,43 @@ body {
   height: 100%;
 }
 
+.force-source-animation-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin: 0 0 8px;
+  color: #9aa7be;
+  font-size: 0.7rem;
+}
+
+.force-source-animation-key span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.force-source-marker {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #b58cff;
+}
+
+.force-source-marker--hub {
+  background: #111522;
+  border: 2px solid #eaf0ff;
+}
+
+.force-source-marker--wrist {
+  background: #ffbd4a;
+}
+
+.force-source-marker--camera {
+  border-radius: 0;
+  background: linear-gradient(45deg, transparent 43%, #8b96ad 44% 56%, transparent 57%);
+}
+
 .force-source-animation-grid dl {
   display: grid;
   gap: 5px;
@@ -868,6 +905,76 @@ body {
   grid-template-columns: repeat(3, minmax(260px, 1fr));
   gap: 12px;
   margin-top: 14px;
+}
+
+.force-source-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 16px;
+}
+
+.force-source-table-wrap h3 {
+  margin: 0 0 5px;
+  font-size: 0.95rem;
+}
+
+.force-source-table-wrap p {
+  margin: 0 0 8px;
+  color: #8997b1;
+  font-size: 0.74rem;
+}
+
+.force-source-table-wrap table {
+  width: 100%;
+  min-width: 920px;
+  border-collapse: collapse;
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.force-source-table-wrap th,
+.force-source-table-wrap td {
+  padding: 7px 8px;
+  border: 1px solid #30384e;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.force-source-table-wrap th:first-child,
+.force-source-table-wrap td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: #151927;
+  text-align: left;
+}
+
+.force-source-table-wrap thead th {
+  color: #aab7d0;
+  background: #111522;
+  font-weight: 600;
+  white-space: normal;
+}
+
+.force-source-table-wrap small {
+  display: block;
+  color: #7e8ba6;
+  font-size: 0.62rem;
+  font-weight: 400;
+}
+
+.force-source-coefficients {
+  margin-top: 16px;
+  padding: 10px 12px;
+  background: rgba(8, 11, 18, 0.35);
+  border: 1px solid #293248;
+  border-radius: 10px;
+}
+
+.force-source-coefficients summary {
+  cursor: pointer;
+  color: #a9b7d0;
+  font-size: 0.8rem;
 }
 
 .force-source-chart {

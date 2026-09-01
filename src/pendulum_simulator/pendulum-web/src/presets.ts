@@ -3,8 +3,10 @@
  *
  * Realistic defaults:
  *   Arms: m1 = 5.0 kg, L1 = 0.65 m (shoulder to wrist, typical human)
- *   Shaft: m2 = 0.30 kg, L2 = 1.10 m (golf club shaft length)
- *   Clubhead: mClub = 0.20 kg (200g driver head)
+ *   Club equivalent: m2 + mClub = 0.2381186694 kg at L2 = 1.10 m.
+ *   This is the tip mass that reproduces a real driver's wrist inertia, not
+ *   the real club's physical mass. The 60/40 split matches the Python preset;
+ *   this two-point model depends on their sum.
  */
 import type { PendulumParams, TorqueFunc } from './physics';
 import { makePolynomialTorque, makePendulumParams } from './physics';
@@ -56,7 +58,7 @@ const _preset = (
 export const PRESETS: Preset[] = [
     _preset(
         'Golf Swing (passive wrist)',
-        5.0, 0.30, 0.20,  // arms 5 kg, shaft 0.3 kg, clubhead 0.2 kg
+        5.0, 0.1428712016528925, 0.09524746776859502,
         0.65, 1.10,        // arms 0.65 m, shaft 1.10 m
         0.1, 0.05, 0.02, 0.01,
         -60, 80, 0, 0,
@@ -66,7 +68,7 @@ export const PRESETS: Preset[] = [
     ),
     _preset(
         'Golf Swing (active wrist)',
-        5.0, 0.30, 0.20,
+        5.0, 0.1428712016528925, 0.09524746776859502,
         0.65, 1.10,
         0.1, 0.05, 0.02, 0.01,
         -60, 80, 0, 0,

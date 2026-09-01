@@ -3,6 +3,92 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 4158,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a3e67443ab615296b33753a48f67ff611cd3a9d33c7f289280032dc1e7f37e4a",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-CLUBMESHSOURCE-TS-8A5AB75D6608",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/clubMeshSource.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "ClubMeshSource",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ClubMeshSourceKind",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "IMPORT_NORMALIZATION_REVISION",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "cleanSourceName",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "generatedMeshSource",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "importedMeshSource",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "proceduralMeshSource",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "sourceEnvelopeDepth",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 21839,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -6052,10 +6138,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 12578,
+      "bytes_lf": 12721,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "82f668dd2f0fb44ba7d49da84f8c455faf2a6d8dee94433acd5cd769f3e0dba7",
+      "content_sha256_lf": "73ae7126e4ef951a47391e96deb52450e9fe6ce38a9d429143cf9f70f491e5b3",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-LAUNCHMONITORCOVARIATION-TS-F3E27922A7E6",
       "language": "typescript",
@@ -6076,7 +6162,7 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "not-applicable",
-        "units": "not-applicable",
+        "units": "mapped",
         "validation": "not-applicable"
       },
       "traceability": {
@@ -6142,7 +6228,9 @@
           }
         ],
         "test_paths": [],
-        "unit_mentions": [],
+        "unit_mentions": [
+          "N"
+        ],
         "validation_paths": []
       }
     },
@@ -6657,10 +6745,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9450,
+      "bytes_lf": 9593,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c6b9fa6d4145419982ddc14847576add55097d5f9872cb222eb853aa8623984f",
+      "content_sha256_lf": "7f898e2b4364fb64752df9fd07e3595adb50d7aeb31cf18500cd0f1545879ab2",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-LAUNCHMONITORLONGITUDINAL-TS-15A523BD1A94",
       "language": "typescript",
@@ -6681,7 +6769,7 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "not-applicable",
-        "units": "not-applicable",
+        "units": "mapped",
         "validation": "not-applicable"
       },
       "traceability": {
@@ -6707,7 +6795,9 @@
           }
         ],
         "test_paths": [],
-        "unit_mentions": [],
+        "unit_mentions": [
+          "N"
+        ],
         "validation_paths": []
       }
     },
@@ -11935,10 +12025,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 12042,
+      "bytes_lf": 12504,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c336781d9e2fe396e0a9356afd20d817401ef1f2e0f2d09de635e9a8e0600a0d",
+      "content_sha256_lf": "397a54241f891c46d486eb8610732c30c488ed13afc2474b3723499f7424e7cd",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-PUTTINGSAMPLEINSPECTOR-TS-AA3AC7E2E88B",
       "language": "typescript",
@@ -13656,87 +13746,6 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 14202,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0d3fdd89261a8bd0ddf2a878a893fd2b242ed19329b4d8acf404850d808bed11",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-REGIONALGROUNDRESULTIMPORT-TS-432A844662C2",
-      "language": "typescript",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/model/regionalGroundResultImport.ts",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "MAX_REGIONAL_GROUND_RESULT_BYTES",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "MAX_REGIONAL_GROUND_RESULT_ROWS",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "RegionalGroundCohort",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "RegionalGroundResult",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "RegionalGroundResultFile",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "readRegionalGroundResultFile",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "regionalGroundResultFromJson",
-            "signature": null
-          }
-        ],
         "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []

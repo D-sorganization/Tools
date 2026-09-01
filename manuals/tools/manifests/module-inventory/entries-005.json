@@ -5052,15 +5052,15 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 1491,
+      "bytes_lf": 2826,
       "classification": "calculation",
       "classification_basis": "path-marker:force",
-      "content_sha256_lf": "f9fe28e63efbb7bf7d231eb5ddf2c83e8fd2e228cc9848da130f0dafa8b8ca8e",
+      "content_sha256_lf": "f67202fb46382c304a2eb1f584fd38d35a41558200e3dfaae6ecd56f343f3da6",
       "family": "pendulum-calculation",
-      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SCRIPTS-GENERATEFORCESOURCECOMPARISON-TS-EB8D8978E15D",
+      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SCRIPTS-AUDITFORCESOURCEFAIRNESS-TS-712B4AD4E89D",
       "language": "typescript",
       "maintainer": "Pendulum maintainers",
-      "path": "src/pendulum_simulator/pendulum-web/scripts/generateForceSourceComparison.ts",
+      "path": "src/pendulum_simulator/pendulum-web/scripts/auditForceSourceFairness.ts",
       "purpose": null,
       "review_status": "review-required",
       "risk_tags": [
@@ -5094,6 +5094,56 @@
         "public_surfaces": [],
         "test_paths": [],
         "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 2205,
+      "classification": "calculation",
+      "classification_basis": "path-marker:force",
+      "content_sha256_lf": "c369ec00e9a24754606097ac0be1e7b0100142aca5bc5916e6f5d0f4277926a5",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SCRIPTS-GENERATEFORCESOURCECOMPARISON-TS-EB8D8978E15D",
+      "language": "typescript",
+      "maintainer": "Pendulum maintainers",
+      "path": "src/pendulum_simulator/pendulum-web/scripts/generateForceSourceComparison.ts",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "ms"
+        ],
         "validation_paths": []
       }
     },
@@ -5249,10 +5299,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 18658,
+      "bytes_lf": 20542,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "890019401492352ca5d77df9a75b1695abeffaff62202c47ea9c231d438bfb57",
+      "content_sha256_lf": "9be417ed9efb6e1e95b694ecebdd2b688f8306621372e4b952b4ab03f5fa96c5",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-APP-CSS-F6FE792BCAFE",
       "language": "css",
@@ -5653,10 +5703,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 18673,
+      "bytes_lf": 24463,
       "classification": "calculation",
       "classification_basis": "path-marker:force",
-      "content_sha256_lf": "b75f3cd61d1790f5d0a6b89251505ce3fd784a5651ff8159f1af0f0e4bb19418",
+      "content_sha256_lf": "4c19e9e9a3a7a13c6b50b33a0fbcc43ee9e01fab18284b912508d0c0321ec7c4",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-COMPONENTS-FORCESOURCELAB-TSX-C5EBC30CB892",
       "language": "typescript-react",
@@ -5703,8 +5753,11 @@
         ],
         "test_paths": [],
         "unit_mentions": [
+          "J",
+          "N",
           "N m",
           "deg",
+          "m/s",
           "s"
         ],
         "validation_paths": []
@@ -5712,10 +5765,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 7995,
+      "bytes_lf": 23779,
       "classification": "calculation",
       "classification_basis": "path-marker:force",
-      "content_sha256_lf": "57fcc57def627ac31e178f3ae464795f0f05445e21ead54bd0ddc99cefdd9f62",
+      "content_sha256_lf": "9f99a21a8d7043667133651a4a3d4d0e81a24eb6bdd5d353184e0e86a02e79f1",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-COMPONENTS-FORCESOURCERESULTS-TSX-121C5F9A2F73",
       "language": "typescript-react",
@@ -5770,7 +5823,11 @@
           "J",
           "N",
           "N m",
+          "W",
+          "deg",
+          "g",
           "m/s",
+          "rad/s",
           "s"
         ],
         "validation_paths": []
@@ -6233,10 +6290,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 5478,
+      "bytes_lf": 19240,
       "classification": "calculation",
       "classification_basis": "path-marker:force",
-      "content_sha256_lf": "ab94616167f04416082f21945d5e8443c013b35b71f6100d686ba20ccfb0101b",
+      "content_sha256_lf": "3d30558b024a2a25b48052b140dba396f4290688d0dbaf81679c0408d6b3c875",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-FORCESOURCEARTIFACT-TS-20BDD5DAD377",
       "language": "typescript",
@@ -6277,7 +6334,7 @@
         "public_surfaces": [
           {
             "kind": "export",
-            "name": "artifactWithScenario",
+            "name": "artifactWithScenarios",
             "signature": null
           },
           {
@@ -6288,17 +6345,18 @@
         ],
         "test_paths": [],
         "unit_mentions": [
-          "N m"
+          "g",
+          "m/s"
         ],
         "validation_paths": []
       }
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 18276,
+      "bytes_lf": 46661,
       "classification": "calculation",
       "classification_basis": "path-marker:force",
-      "content_sha256_lf": "11967b2cf820af7b8fbbc9745667ab67194e479c6d81fada9240632710f677de",
+      "content_sha256_lf": "8c198c21bfd8816be2baa4e926962bb3a69deec4b957cfbc6d12c8a1c9bb9dde",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-FORCESOURCEOPTIMIZATION-TS-F6C0040C15CC",
       "language": "typescript",
@@ -6339,7 +6397,42 @@
         "public_surfaces": [
           {
             "kind": "export",
+            "name": "actuatorEffortMetrics",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "bernsteinTorque",
+            "signature": null
+          },
+          {
+            "kind": "export",
             "name": "buildCandidateSet",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "buildOptimizationContract",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "candidateProfileId",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "candidateTorqueFunction",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "evaluateForceSourceCandidate",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "forceSourceTransferPowers",
             "signature": null
           },
           {
@@ -6350,6 +6443,26 @@
           {
             "kind": "export",
             "name": "optimizeForceSource",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "optimizeForceSourceComparison",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "profileDiagnostics",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "scoreForceSourceSeries",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "seriesMeetsStudyContract",
             "signature": null
           },
           {
@@ -6365,7 +6478,8 @@
         ],
         "test_paths": [],
         "unit_mentions": [
-          "N m"
+          "N m",
+          "g"
         ],
         "validation_paths": []
       }
@@ -6419,10 +6533,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 4691,
+      "bytes_lf": 7150,
       "classification": "calculation",
       "classification_basis": "path-marker:force",
-      "content_sha256_lf": "ce36e44ce6a1565feefb7a0b3de65ce933174c45f2853ebb5f1481b79c90e02a",
+      "content_sha256_lf": "aaf09a6dcb5aa1f2aa1e95adb11aa6f5232aea69af4418792288356172721428",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-FORCESOURCETYPES-TS-CB8CFD999104",
       "language": "typescript",
@@ -6463,6 +6577,11 @@
         "public_surfaces": [
           {
             "kind": "export",
+            "name": "ActuatorEffortMetrics",
+            "signature": null
+          },
+          {
+            "kind": "export",
             "name": "AngleBounds",
             "signature": null
           },
@@ -6474,6 +6593,11 @@
           {
             "kind": "export",
             "name": "BrowserOptimizationProgress",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "DEFAULT_FORCE_SOURCE_INITIAL_STATE",
             "signature": null
           },
           {
@@ -6503,6 +6627,11 @@
           },
           {
             "kind": "export",
+            "name": "ForceSourceComparisonContract",
+            "signature": null
+          },
+          {
+            "kind": "export",
             "name": "ForceSourceConstraints",
             "signature": null
           },
@@ -6519,6 +6648,11 @@
           {
             "kind": "export",
             "name": "ForceSourceSeries",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ForceSourceStudyMode",
             "signature": null
           },
           {
@@ -6544,6 +6678,21 @@
           {
             "kind": "export",
             "name": "SearchThoroughness",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "TORQUE_POLYNOMIAL_DEGREE",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "TorquePolynomialCoefficients",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "TorqueProfileDiagnostics",
             "signature": null
           }
         ],
@@ -7329,10 +7478,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 3031,
+      "bytes_lf": 3202,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "2b2534a209ac2bdb515a4e336c22b2ee3d1ad608529afa93ee048f3e9fe07b90",
+      "content_sha256_lf": "60ba29c20faad01ec4c2c0331deeb2fe119e645d0679fa29f1e0c88b48cfb4dd",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-PRESETS-TS-FE59B98BFA69",
       "language": "typescript",
@@ -7386,7 +7535,8 @@
         ],
         "unit_mentions": [
           "g",
-          "kg"
+          "kg",
+          "s"
         ],
         "validation_paths": []
       }
@@ -15563,80 +15713,6 @@
         "unit_mentions": [
           "N",
           "N·m",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 11316,
-      "classification": "calculation",
-      "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "96dd57acb135ad0ee228a7974ddad1accdfee466e8ebb8cf470f8cc9060e3ad7",
-      "family": "pendulum-calculation",
-      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-DOWNSWING-CONFIG-PY-5B8D37472DAA",
-      "language": "python",
-      "maintainer": "Pendulum maintainers",
-      "path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/downswing_config.py",
-      "purpose": "Configuration for a downswing optimization, shared by every objective.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "DownswingConfig",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_TORQUE_RATE_LIMITS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "RATE_SCALE",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "N*m",
-          "N·m",
-          "kg",
-          "m/s",
-          "ms",
-          "rad",
-          "rad/s",
           "s"
         ],
         "validation_paths": []

@@ -111,3 +111,7 @@
 ## 2024-08-30 - Replace Math.min/max spread with loops for dynamic scales
 **Learning:** Using `Math.min(...spread)` and `Math.max(...spread)` on large streams of extracted subset data frequently leads to "Maximum call stack size exceeded" errors. It allocates a new array and spreads it out onto the call stack.
 **Action:** When calculating min/max bounds across historically tracked subsets, avoid the `Math.min(...spread)` syntax entirely. Use a single-pass `for` loop that computes `realMin` and `realMax` dynamically, avoiding massive call stack allocations and garbage collection pressure.
+
+## 2026-08-31 - Canvas Rendering Hot Path Optimization
+**Learning:** In heavily populated canvas plots (like PlotCanvasCard), using `.forEach` for iterating over thousands of data points adds significant closure allocation and function call overhead per point, leading to increased CPU cycles and garbage collection pressure.
+**Action:** Use standard `for` loops in canvas and SVG hot paths where large arrays of points are iterated.

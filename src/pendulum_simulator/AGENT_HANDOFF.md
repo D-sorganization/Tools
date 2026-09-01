@@ -57,26 +57,24 @@ perturbation analysis code first.
 
 ## Active Epics — #4766 objectives, #4775 actuation and realism
 
-#4766 shipped the mechanism-vs-outcome comparison on this tool's existing
-physics (merged #4774). #4775 then asked why its optima brake the arms to a
-standstill at impact. Contract:
-`docs/specs/SWING_ACTUATION_AND_REALISM.md`.
-
-The React web mirror now includes a synchronized six-objective comparison
-surface backed by a strict generated-study artifact. The sixth objective is
-signed physical grip-force impulse along the hand path, not hand-path work.
-The browser accepts direct start-pose, torque, timing, integration, impact, and
-robustness inputs; defaults to one fixed-hub comparison frame; and runs held-out
-perturbations around its winner. Keep optimization math out of React components:
-the browser engine lives in focused force-source modules while the canonical
-scientific optimizer remains independently testable. Design contract:
-`docs/specs/FORCE_SOURCE_WEB_LAB.md`.
+#4766 shipped the mechanism-vs-outcome comparison through #4774; #4775 owns
+actuation and realism (`docs/specs/SWING_ACTUATION_AND_REALISM.md`). The React
+lab's `force-source-comparison/v4` artifacts now bind initial state, model,
+constraints, integration, robustness, and search depth to one contract ID.
+Changed inputs discard stale rows; imports reject off-grid candidates and use
+declared impact thresholds. Every objective is cross-evaluated on every
+displayed winner and fails if its own row loses. The bundled research contract
+uses bounded degree-6 Bernstein shoulder/wrist torques, 2,048 global/seeded
+candidates, 16 nominal elite starts, 12 multi-elite refinement rounds, 1 ms
+integration, 0.5 N m wrist coefficient steps, 25 robustness trials, and a 60%
+minimum held-out qualification rate. Fixed-hub mode shows only physical markers in one frame; impact
+alignment alone shows a labelled camera crosshair. Design contract: `docs/specs/FORCE_SOURCE_WEB_LAB.md`.
 
 **Five results that bind future work here** (all regression-pinned):
 
-1. `P_coriolis_hub = -2 * P_centrifugal_wrist` identically, so centrifugal and
-   Coriolis _work_ are one functional. The centrifugal objective is an angular
-   impulse for that reason; do not "simplify" it back to work.
+1. `P_coriolis_to_distal = 2 * P_centrifugal_to_distal` identically. Both
+   energy rows are therefore one functional; centrifugal impulse remains the
+   independent squared-speed objective.
 2. The energy-optimal hand speed at impact is `L1*[I2 - m2*r2*(L2-r2)]`,
    identically zero for a point-mass clubhead. That is an _unconstrained ideal_,
    not a prediction about where a constrained optimum lands — a distinction that
@@ -90,13 +88,23 @@ scientific optimizer remains independently testable. Design contract:
 4. **Corrected, the model is golf-like**: 49.7 m/s clubhead, 7.26 m/s hands,
    club/arm 3.46, five of six measured observables inside their bands, with no
    hand-speed floor. A moving hub is an improvement, not a prerequisite.
-5. **The objective ranking discriminates once the club is right.** Clubhead
-   speed, Coriolis, energy and impulse transfer tie; centrifugal release impulse
-   costs ~1 m/s. Check `is_discriminating` before quoting any ranking.
+5. **The browser now separates equal-output efficiency from equal-input
+   capacity.** The corrected 0.2381186694 kg inertia-equivalent driver and
+   symmetric 250 N m hub budget remain. The default equal-speed artifact holds
+   every robust winner inside 52.30--53.05 m/s, 525 J positive work, and 7,500
+   N²m²s squared effort; it finds three distinct profile IDs. The independent
+   equal-effort artifact leaves speed unconstrained and exposes about 51.1 m/s
+   for Coriolis impulse, 34.7 m/s for centrifugal impulse, and 53.5 m/s for the
+   shared energy/speed/hand-path program. Equal profile IDs are displayed rather
+   than relabelled as different approaches. This certifies displayed candidates,
+   not a global optimum.
 
-Next open item is the **late release**: every objective releases at ~90% of the
-downswing against a measured 55-80%. A moving hub (`physics_triple.py`) is the
-most likely route. Hill-type actuation (`actuation.py`) is built and tested.
+The web lab reports wrist reversal time, low-torque transition duration, torque
+slew, positive/net/negative joint work, torque impulse, squared activation,
+peak power and utilization, all coefficients, seventeen sampled signals, stable
+profile identity, and the full cross-objective/Pareto matrix. A moving hub
+(`physics_triple.py`) remains the next structural fidelity step. Hill-type
+actuation (`actuation.py`) is built and tested.
 
 ## Must-Read Architecture Pointers
 
@@ -148,11 +156,6 @@ double-collect by also passing the embedded path.
 
 ## Roadmap (ordered)
 
-1. Finish #4430's UpstreamDrift consumer pin for the merged PyQt/React
-   surfaces and close its remaining gates; preserve every
-   scientific-promotion boundary and adverse row.
-2. If/when epic #4103 Phase 1 lands the double/triple pendulum
-   `SwingSource` integration, expect a coordinated PR here exposing any
-   additional bindings rate_of_closure needs.
-3. Watch for epic #4120 V3 PRs reusing `perturbation_analysis` — review for
-   API-stability impact on this tool's own callers.
+1. Finish #4430's UpstreamDrift consumer pin; preserve all promotion boundaries.
+2. Coordinate any #4103 Phase 1 double/triple `SwingSource` bindings here.
+3. Review #4120 V3 `perturbation_analysis` reuse for API-stability impact.

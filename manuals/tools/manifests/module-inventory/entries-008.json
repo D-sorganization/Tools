@@ -3,6 +3,94 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 3588,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d5cc03aa6491337c6d3b1f650737e38ef7e68245cbbd2885db3fe19034c13359",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-SPATIAL-TARGET-PANEL-TEXT-PY-AE5C737BC01C",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/ui/pyqt6/spatial_target_panel_text.py",
+      "purpose": "Text, labels, and scalar validation for the spatial-target editor.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "COORDINATE_LABELS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_GROUND_SOURCE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FRAME_ITEMS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "KIND_ITEMS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TOLERANCE_ITEMS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "finite_number",
+            "signature": "edit: QLineEdit, label: str, *, positive: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "miss_summary",
+            "signature": "miss: TargetMiss, *, landing: bool"
+          },
+          {
+            "kind": "function",
+            "name": "target_summary",
+            "signature": "target: SpatialTarget"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 7598,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -11690,10 +11778,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 11536,
+      "bytes_lf": 12068,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "8d9ba9c6d1b333dc4ecdefe869314bd4774034875b8843accb31e12a64489c60",
+      "content_sha256_lf": "55ef317c06abeeffe1503ca9c916a4a2dcd6931a90268c89a9fb4cc2abddbc85",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-IMPACTSCENECANVAS-TSX-947EC1A39312",
       "language": "typescript-react",
@@ -11899,10 +11987,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 18185,
+      "bytes_lf": 18565,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2467f89fe2598bfd12f9f778f79e04c5e2cf5737ce616ef5cb2d4f42bd9467c2",
+      "content_sha256_lf": "117c0db68ed8460769399bae20783b083fe9168aa7134933696c7095681d1ab3",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-LAUNCHMONITORANALYTICSPANEL-TSX-1946A419D5BD",
       "language": "typescript-react",
@@ -12102,10 +12190,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6061,
+      "bytes_lf": 6213,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ee5ca647707793e53d41e8c80b4d0c5e959593f58792093ece7ba5fcd3647788",
+      "content_sha256_lf": "a37905d682e4de3451c936479a6bb3c4cb0a8fc79cab904a36f9029f09f41db7",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-LAUNCHMONITORCOVARIATIONCONTROLS-TSX-E0458F64F362",
       "language": "typescript-react",
@@ -12638,57 +12726,6 @@
           "deg",
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3400,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "5f9190956d54017150504dc5c4fa721d3565f6c4a05e4156988667e60de21c13",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-MORRISFACTOREDITOR-TSX-336311257406",
-      "language": "typescript-react",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/components/MorrisFactorEditor.tsx",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "MorrisFactorEditor",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }
