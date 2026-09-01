@@ -291,7 +291,7 @@
       "shard_index": 7
     },
     {
-      "content_sha256_lf": "a313a232b2bdd9bbcaa08bf3914445032ec161246549fc1a4264342337e8ef53",
+      "content_sha256_lf": "df2b2577f974d7acbd2fa43a45a30f45a5dcb39bf903b762f18e1787413075a7",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/ui/pyqt6/spatial_target_panel_text.py",
       "last_path": "src/rate_of_closure/web/src/components/ManualDeliveryControls.tsx",
@@ -307,7 +307,7 @@
       "shard_index": 9
     },
     {
-      "content_sha256_lf": "706802fb6ba7adffa4779d21b8ab1876a0bc25a761f29c07468377df59958c51",
+      "content_sha256_lf": "2ca2f006a4d22a541fa8a33866c34ae348a093b4fdb318d3283d19c1a0a1e0a8",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/web/src/model/clubMeshSource.ts",
       "last_path": "src/rate_of_closure/web/src/model/regionalGroundResultImport.test.ts",
@@ -363,7 +363,7 @@
       "shard_index": 16
     },
     {
-      "content_sha256_lf": "7fb5ac675b6a357085e1cceb7e4c706ab3a378e256630b6ec2d85ac0a88a433e",
+      "content_sha256_lf": "83891b1efccda50e51bf9f866f7dd740282627b4c4f57710eec4daffb15b92f7",
       "entry_count": 145,
       "first_path": "src/solar_system_model/solar_system/visualization/ui_renderer.py",
       "last_path": "wave_solver.py",
@@ -371,7 +371,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "803fab4350169893967b42b8598520a21c22d3093c27730f0dcfd00c30956086",
+  "source_tree_sha256": "d722fec68518172b7de832d99baf51ce9996fd08af69a5781c8c714aa1974dcd",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,

@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.95                                    |
+| **Spec Version**        | 1.18.94                                    |
 | **Last Spec Update**    | 2026-08-30                                 |
 
 ## 2. Purpose & Mission
@@ -5679,7 +5679,6 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-08-30 | 1.18.95 | refactor(matlab): DRY `exportCodeIssues` between the MATLAB code analyzer GUI and shared utilities — `src/tools/matlab_code_analyzer_gui/exportCodeIssues.m` now delegates to the shared export helper instead of carrying its own duplicate implementation, with `setup.m` and the README updated to match and new coverage in `tests/tools/test_matlab_quality_utils.py`. | #4867 |
 | 2026-08-30 | 1.18.94 | feat(pendulum): add selectable equal-speed, equal-effort, and common-bound force-source study contracts; keep speed as a feasibility band rather than a hidden component reward; register positive/net/negative actuator work, torque impulse, squared activation, peak power, cumulative work plots, and stable duplicate-profile identity; require robust high-headroom winners; and ship independent equal-output and equal-input research artifacts. |
 | 2026-08-30 | 1.18.93 | feat(pendulum): replace bang-bang force-source controls with bounded continuous degree-6 Bernstein shoulder/wrist profiles; enforce coefficient, duration, slew, endpoint, single-reversal, and low-torque-transition contracts; add deterministic physical seed families and 2/6/12-round multi-elite refinement; align the web driver to the authoritative 0.2381186694 kg inertia-equivalent club and ±250 N m hub budget; reach a certified smooth 53.7 m/s speed solution; render all sampled channels, cross-objective/Pareto ranks, strategy work/RMS/peak/slew/transition diagnostics, and polynomial coefficients; reject imported torque plots that do not reproduce the registered polynomial. |
 | 2026-08-30 | 1.18.92 | fix(pendulum): replace the mixed-search artifact with a single version-2 research contract; cross-certify every objective against every displayed winner; reject stale poses, settings, score drift, and objective-dominance failures; correct Coriolis/centrifugal energy-transfer signs and their exact 2:1 interface identity; remove the misleading white target, impact ring, and dashed line from fixed-hub cards; label physical markers and the optional camera-only crosshair; regenerate all six 1 ms trajectories and extend TDD coverage. |
@@ -7100,3 +7099,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 Note on #4462 (investigated, not fixed here): the issue describes a coverage gap in `build_simulation_ensemble_request_from_samples`, an "explicit design matrix" seam in `src/rate_of_closure/variation/request_builder.py`. That function does not exist on `main` — `git log --all -S` traces it to commit `6eaba1b0f` ("feat(rate-of-closure): produce paired localized attribution"), which belongs to PR #4426, part of the 34-PR consolidation attempt #4447 that was closed unmerged. The seam issue #4462 was filed against was never landed on trunk, so there is nothing on `main` to write this coverage test against without first authoring the production seam itself, which is out of scope for a mechanical test-only fix.
 
 - **2026-08-25**: fix(variation, #4461) — Follow-up to the above: CI's `quality-gate` pins `numpy==2.3.5` / `mypy==2.3.1` (`requirements-lock.txt`), under which `np.all(...)` resolves to `numpy.bool[builtins.bool]` rather than `builtins.bool`, mismatching `require()`'s `condition: bool` parameter. This was already true at 6 pre-existing `require(np.all(...))` call sites throughout `morris_design.py`, latent because mypy's changed-file delta check had never previously run a full-file pass on this module. Touching the file for the `normalized_step` fix surfaced it in CI. Wrapped each in `bool(...)`, matching the existing `require(bool(np.all(...)))` pattern already used in `ensemble_geometry.py` and `ensemble_types.py` in the same package — a pure type-narrowing change with no behavior difference. Full `variation/tests/` suite (299 tests) still passes.
+
+## 2026-09-01: Rate of Closure Focus Visibility
+
+- **2026-09-01**: Accessibility: Added focus rings to buttons in Rate of Closure workspace.
