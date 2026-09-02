@@ -51,6 +51,11 @@ P9    :mod:`.profiles`       Header-fingerprint vendor detection and the alias
 P9    :mod:`.importer`       CSV/TSV/XLSX/JSON session import into canonical
                              units, with a provenance manifest recording how
                              each unit was established.
+P10   :mod:`.flexible_analysis`
+                             Arbitrary outcome/predictor correlation + OLS with
+                             dataset lineage. Its ``rate_of_closure`` twin was
+                             measured by UpstreamDrift#9372 (G0.1) before this
+                             moved; rulings D15/D17 land in a follow-up.
 ====  =====================  =================================================
 
 **Name-collision containment.** Symbols in this package collide by name with
@@ -68,6 +73,21 @@ from .comparison import (
     compare_monitors,
 )
 from .dispersion import DispersionResult, analyze_dispersion
+from .flexible_analysis import (
+    CONTRACT_VERSION,
+    AnalysisMode,
+    CoefficientEstimate,
+    CorrelationEstimate,
+    CorrelationMethod,
+    DatasetSummary,
+    FlexibleAnalysisRequest,
+    FlexibleAnalysisResult,
+    GroupAnalysis,
+    MissingPolicy,
+    RegressionEstimate,
+    ResidualDiagnostics,
+    analyze_variables,
+)
 from .importer import import_session
 from .modeling import PredictiveModelResult, fit_predictive_model
 from .multivariate import PCAResult, VIFResult, compute_pca, compute_vif
@@ -104,32 +124,45 @@ from .trends import ChangeCandidate, TemporalTrendResult, analyze_trend
 
 __all__ = [
     "COMMON_ALIASES",
+    "CONTRACT_VERSION",
     "IDENTITY_COLUMNS",
     "METRICS",
     "PROFILES",
+    "AnalysisMode",
     "ChangeCandidate",
+    "CoefficientEstimate",
     "ColumnMapping",
+    "CorrelationEstimate",
+    "CorrelationMethod",
     "CorrelationResult",
+    "DatasetSummary",
     "DependencyEdge",
     "DispersionResult",
     "FilterRule",
+    "FlexibleAnalysisRequest",
+    "FlexibleAnalysisResult",
+    "GroupAnalysis",
     "ImportManifest",
     "ImportOptions",
     "ImportProfile",
     "ImportedSession",
     "MetricDefinition",
+    "MissingPolicy",
     "MonitorComparisonResult",
     "MonitorSummary",
     "PCAResult",
     "PairwiseMonitorComparison",
     "PredictiveModelResult",
     "ProfileDetection",
+    "RegressionEstimate",
+    "ResidualDiagnostics",
     "TemporalTrendResult",
     "TreatmentConfig",
     "TreatmentResult",
     "VIFResult",
     "analyze_dispersion",
     "analyze_trend",
+    "analyze_variables",
     "apply_treatment",
     "compare_monitors",
     "compute_correlations",
