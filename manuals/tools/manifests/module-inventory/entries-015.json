@@ -3,6 +3,297 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 5168,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "dca24c3085183f5de7508469d0efaec18e0e9391abcc9bab68b74f0d07a39772",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-STANDALONE-ONBOARDING-PY-5CD8D60DB893",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/standalone/onboarding.py",
+      "purpose": "Standalone Sidekick first-run onboarding state machine.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "OnboardingState",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StandaloneOnboarding",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SENTINEL_FILENAME",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/unit/sidekick/test_standalone_canonical_package.py",
+          "tests/unit/sidekick/test_standalone_runtime.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6149,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f1d70dbda850536fa8118ead199df6a4dccb9b33fb8871142f4efd08c0db7722",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-STANDALONE-PREFERENCES-PY-AD3F8263AB49",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/standalone/preferences.py",
+      "purpose": "Standalone Sidekick preferences — typed getters and Design-by-Contract setters.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "StandalonePreferences",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_LLM_PROVIDER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_PROFILE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_THEME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "VALID_PROFILES",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/unit/sidekick/test_standalone_canonical_package.py",
+          "tests/unit/sidekick/test_standalone_runtime.py"
+        ],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13517,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cbe0f4de347dc3c2c0a3fc06d39b7a393f329675b4f18eeacab62274d2fe82cd",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-STANDALONE-RUNNER-PY-7524F77880B4",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/standalone/runner.py",
+      "purpose": "Headless calculator runner for ``sidekick run``.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "list_calculators",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "register",
+            "signature": "name: str"
+          },
+          {
+            "kind": "function",
+            "name": "run_calculator",
+            "signature": "calculator: str, inputs_path: str, output: str='-', format: str='json'"
+          }
+        ],
+        "test_paths": [
+          "tests/unit/ai/skills/test_runner.py",
+          "tests/unit/sidekick/test_standalone_canonical_package.py",
+          "tests/unit/sidekick/test_standalone_runtime.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8139,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f1832c46cf561508355ea2543ecaa4c8376b556e7a47dedf69f6e71a0b9814b3",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-STANDALONE-SESSION-STORE-PY-04A3E0875DDF",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/standalone/session_store.py",
+      "purpose": "Persistent standalone Sidekick profile storage.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FileSessionStore",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "InMemorySessionStore",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SessionStore",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StandaloneSessionStore",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "default_store_root",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/sidekick/ui/test_tools_sidebar_state_profiles.py",
+          "tests/unit/sidekick/test_standalone_canonical_package.py",
+          "tests/unit/sidekick/test_standalone_runtime.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 14712,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17662,367 +17953,6 @@
             "kind": "function",
             "name": "regional_ground_execution_result_from_json",
             "signature": "text: str"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1171,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a646393e0ae957c0df489b394f5a1ab5f5d475b19dfb37eab0b57f87c77966f7",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-REGIONAL-PLAN-CONTRACT-PY-3C0C6EEC158E",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/regional_plan_contract.py",
-      "purpose": "Public facade for the regional material plan v1 boundary.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "GroundRegionalMaterialPlanRequest",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "GroundRegionalMaterialPlanResult",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "GroundRegionalMaterialRegion",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "MAX_REGIONAL_PLAN_REGIONS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "MAX_REGIONAL_PLAN_WIRE_BYTES",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "REGIONAL_PLAN_GEOMETRY_MODEL",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "REGIONAL_PLAN_LIMITATIONS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "REGIONAL_PLAN_REQUEST_SCHEMA_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "REGIONAL_PLAN_RESULT_SCHEMA_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "build_regional_material_plan_result",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "regional_material_plan_request_from_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "regional_material_plan_result_from_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "regional_plan_to_surface_resolver",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 14651,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d73a0f1a95ba2ebb8cdb4b34aa16db4b142be9c01f1426e26fdb9e71dde44f48",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-REGIONAL-PLAN-RECORDS-PY-C2C0EB7D1EDC",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/regional_plan_records.py",
-      "purpose": "Validated records for the coplanar regional-material plan boundary.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "GroundRegionalMaterialPlanRequest",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundRegionalMaterialPlanResult",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundRegionalMaterialRegion",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MAX_REGIONAL_PLAN_REGIONS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MAX_REGIONAL_PLAN_WIRE_BYTES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "REGIONAL_PLAN_GEOMETRY_MODEL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "REGIONAL_PLAN_LIMITATIONS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "REGIONAL_PLAN_REQUEST_SCHEMA_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "REGIONAL_PLAN_RESULT_SCHEMA_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_regional_material_plan_result",
-            "signature": "request: GroundRegionalMaterialPlanRequest, provenance: GroundProvenance"
-          },
-          {
-            "kind": "function",
-            "name": "regional_plan_request_sha256",
-            "signature": "request: GroundRegionalMaterialPlanRequest"
-          },
-          {
-            "kind": "function",
-            "name": "regional_plan_to_surface_resolver",
-            "signature": "request: GroundRegionalMaterialPlanRequest"
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/regional_ground_target_support.py",
-          "tests/rate_of_closure/test_regional_ground_execution_qualification.py",
-          "tests/rate_of_closure/test_regional_ground_study_adapter.py",
-          "tests/rate_of_closure/test_regional_surface_plan_io.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5221,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3268b6d41216b2b57579159a1debe71941701eec47135e63c651fc51a1c6dc48",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-REGIONAL-PLAN-WIRE-PY-1C9A92CE16A6",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/regional_plan_wire.py",
-      "purpose": "Fail-closed parsers for regional material plan v1 documents.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "regional_material_plan_request_from_dict",
-            "signature": "payload: object"
-          },
-          {
-            "kind": "function",
-            "name": "regional_material_plan_request_from_json",
-            "signature": "text: str"
-          },
-          {
-            "kind": "function",
-            "name": "regional_material_plan_result_from_dict",
-            "signature": "payload: object"
-          },
-          {
-            "kind": "function",
-            "name": "regional_material_plan_result_from_json",
-            "signature": "text: str"
-          },
-          {
-            "kind": "function",
-            "name": "regional_material_region_from_dict",
-            "signature": "payload: object"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_regional_plan_wire.py",
-          "tests/rate_of_closure/test_regional_surface_plan_io.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4093,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4c56fe7eceda389f0ea242c0c0fc9c0b9803d05b4262b50016944167236fa4e9",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-REGIONAL-SURFACE-TYPES-PY-B6474B6466F9",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/regional_surface_types.py",
-      "purpose": "Typed non-wire contracts for coplanar regional material transitions.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "PlanarSurfaceRegion",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SurfaceRegionTransition",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SurfaceRegionTransitionCrossing",
-            "signature": null
           }
         ],
         "test_paths": [],

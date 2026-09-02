@@ -3,6 +3,367 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 1171,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a646393e0ae957c0df489b394f5a1ab5f5d475b19dfb37eab0b57f87c77966f7",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-REGIONAL-PLAN-CONTRACT-PY-3C0C6EEC158E",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/regional_plan_contract.py",
+      "purpose": "Public facade for the regional material plan v1 boundary.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "GroundRegionalMaterialPlanRequest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundRegionalMaterialPlanResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundRegionalMaterialRegion",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_REGIONAL_PLAN_REGIONS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_REGIONAL_PLAN_WIRE_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "REGIONAL_PLAN_GEOMETRY_MODEL",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "REGIONAL_PLAN_LIMITATIONS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "REGIONAL_PLAN_REQUEST_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "REGIONAL_PLAN_RESULT_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_regional_material_plan_result",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "regional_material_plan_request_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "regional_material_plan_result_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "regional_plan_to_surface_resolver",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 14651,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d73a0f1a95ba2ebb8cdb4b34aa16db4b142be9c01f1426e26fdb9e71dde44f48",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-REGIONAL-PLAN-RECORDS-PY-C2C0EB7D1EDC",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/regional_plan_records.py",
+      "purpose": "Validated records for the coplanar regional-material plan boundary.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GroundRegionalMaterialPlanRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundRegionalMaterialPlanResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundRegionalMaterialRegion",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_REGIONAL_PLAN_REGIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_REGIONAL_PLAN_WIRE_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REGIONAL_PLAN_GEOMETRY_MODEL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REGIONAL_PLAN_LIMITATIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REGIONAL_PLAN_REQUEST_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REGIONAL_PLAN_RESULT_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_regional_material_plan_result",
+            "signature": "request: GroundRegionalMaterialPlanRequest, provenance: GroundProvenance"
+          },
+          {
+            "kind": "function",
+            "name": "regional_plan_request_sha256",
+            "signature": "request: GroundRegionalMaterialPlanRequest"
+          },
+          {
+            "kind": "function",
+            "name": "regional_plan_to_surface_resolver",
+            "signature": "request: GroundRegionalMaterialPlanRequest"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/regional_ground_target_support.py",
+          "tests/rate_of_closure/test_regional_ground_execution_qualification.py",
+          "tests/rate_of_closure/test_regional_ground_study_adapter.py",
+          "tests/rate_of_closure/test_regional_surface_plan_io.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5221,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3268b6d41216b2b57579159a1debe71941701eec47135e63c651fc51a1c6dc48",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-REGIONAL-PLAN-WIRE-PY-1C9A92CE16A6",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/regional_plan_wire.py",
+      "purpose": "Fail-closed parsers for regional material plan v1 documents.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "regional_material_plan_request_from_dict",
+            "signature": "payload: object"
+          },
+          {
+            "kind": "function",
+            "name": "regional_material_plan_request_from_json",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "regional_material_plan_result_from_dict",
+            "signature": "payload: object"
+          },
+          {
+            "kind": "function",
+            "name": "regional_material_plan_result_from_json",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "regional_material_region_from_dict",
+            "signature": "payload: object"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/ground/tests/test_regional_plan_wire.py",
+          "tests/rate_of_closure/test_regional_surface_plan_io.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4093,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4c56fe7eceda389f0ea242c0c0fc9c0b9803d05b4262b50016944167236fa4e9",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-REGIONAL-SURFACE-TYPES-PY-B6474B6466F9",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/regional_surface_types.py",
+      "purpose": "Typed non-wire contracts for coplanar regional material transitions.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PlanarSurfaceRegion",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SurfaceRegionTransition",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SurfaceRegionTransitionCrossing",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2868,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -3594,7 +3955,8 @@
           }
         ],
         "test_paths": [
-          "src/shared/python/swing_sim/putting/tests/test_variation.py"
+          "src/shared/python/swing_sim/putting/tests/test_variation.py",
+          "tests/shared/python/launch_monitor/test_dispersion.py"
         ],
         "unit_mentions": [
           "deg",
@@ -14157,6 +14519,7 @@
           "tests/p1am_control_system/conftest.py",
           "tests/pendulum_simulator/conftest.py",
           "tests/rate_of_closure/conftest.py",
+          "tests/shared/python/launch_monitor/conftest.py",
           "tests/shared/python/sidekick/process_calculators/conftest.py",
           "tests/solar_system_model/conftest.py",
           "tests/tools/folder_tools/conftest.py",
@@ -17021,237 +17384,6 @@
         "unit_mentions": [
           "g"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2367,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7e97e6d35990fb66dcf7c0355c62b817f79dbbb6a45f759ebffcd484fc370420",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-WIDGETS-HISTORICAL-EVENTS-PANEL-PY-07B421D239AA",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/solar_system_model/solar_system/ui/widgets/historical_events_panel.py",
-      "purpose": "HistoricalEventsPanel widget.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "HistoricalEventsPanel",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4020,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2d991ce9ae7b76afd1d364ac52fdd883ff533118e287607df55b009ba09209a4",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-WIDGETS-IMMERSION-PY-0268A0AFC411",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/solar_system_model/solar_system/ui/widgets/immersion.py",
-      "purpose": "Immersion checklist widget types: ImmersionTask, ImmersionChecklistPanel.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ImmersionChecklistPanel",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ImmersionTask",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6116,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4ebb06c434fd6c12b4a0520c153a739e260ff9454d1ef3fb30bb54f0fd40aa00",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-WIDGETS-INFO-PANELS-PY-BC86A462F1B6",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/solar_system_model/solar_system/ui/widgets/info_panels.py",
-      "purpose": "Information display widgets: InfoPanel, StatusBar, EducationalInfoPanel.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "EducationalInfoPanel",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "InfoPanel",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "StatusBar",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "bar"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4117,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "69100d67327da222df728dba6f81751249f1a811e70576d10ad3370e5ad8e905",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-WIDGETS-OVERLAYS-PY-09EF1249AB26",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/solar_system_model/solar_system/ui/widgets/overlays.py",
-      "purpose": "Overlay widgets: HelpOverlay, TransferPlanner, TooltipManager.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "HelpOverlay",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TooltipManager",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TransferPlanner",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

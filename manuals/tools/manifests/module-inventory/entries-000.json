@@ -1062,6 +1062,7 @@
           "tests/pendulum_simulator/conftest.py",
           "tests/rate_of_closure/conftest.py",
           "tests/shared/python/chat/test_chat_agent_label.py",
+          "tests/shared/python/launch_monitor/conftest.py",
           "tests/shared/python/sidekick/process_calculators/conftest.py",
           "tests/solar_system_model/conftest.py",
           "tests/test_python_version_contract.py",

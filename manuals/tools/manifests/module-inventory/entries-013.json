@@ -13089,6 +13089,304 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 2859,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a530eddf8d456b7904834859262c98fab915c814f09b4336d7f730f731c3f533",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-INIT-PY-662C22BCE5D1",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/__init__.py",
+      "purpose": "Canonical launch-monitor analytics model layer (ADR-0046 Stage 1).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "ChangeCandidate",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DispersionResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PCAResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TemporalTrendResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "VIFResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "analyze_dispersion",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "analyze_trend",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compute_pca",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compute_vif",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4055,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f2468189375c1b694b12b7de82f8c6212143882e330c9dc78988b17916e6dedd",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-DISPERSION-PY-3CDC3ACDF1B2",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/dispersion.py",
+      "purpose": "Target-relative shot-dispersion statistics.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DispersionResult",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "analyze_dispersion",
+            "signature": "frame: pd.DataFrame, *, forward: str='carry_distance', lateral: str='lateral_carry'"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/launch_monitor/test_dispersion.py",
+          "tests/shared/python/launch_monitor/test_trends.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4988,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "32ada2c2f6ab49b285bf193eb3d9d5900993f1011fa1b613d1468837d0c3241c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-MULTIVARIATE-PY-E7361F70696B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/multivariate.py",
+      "purpose": "PCA and multicollinearity diagnostics for launch-monitor metrics.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PCAResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "VIFResult",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "compute_pca",
+            "signature": "frame: pd.DataFrame, *, metrics: tuple[str, ...] | list[str]"
+          },
+          {
+            "kind": "function",
+            "name": "compute_vif",
+            "signature": "frame: pd.DataFrame, *, metrics: tuple[str, ...] | list[str]"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/launch_monitor/test_multivariate.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5662,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ddf42c11b779d4b52e55bccbafde57dda926cc7af1cb6cef562819e1a98a71bf",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-TRENDS-PY-6F4F424CAD39",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/trends.py",
+      "purpose": "Longitudinal player-performance trend analysis.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ChangeCandidate",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TemporalTrendResult",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "analyze_trend",
+            "signature": "frame: pd.DataFrame, *, metric: str, time_column: str='captured_at', rolling_window: int=10, ewma_span: int | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/launch_monitor/test_dispersion.py",
+          "tests/shared/python/launch_monitor/test_trends.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 714,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -16208,267 +16506,6 @@
           "tests/shared/python/model_generation/test_validation.py",
           "tests/test_validation.py"
         ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 806,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3646a1f54a67a19424b240c970dc429080729603d917560c8e6c4e19a0119c66",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-EDITOR-INIT-PY-DEE787DC0000",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/editor/__init__.py",
-      "purpose": "URDF Editing tools.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "ComponentReference",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ComponentType",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "DiffHunk",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "DiffResult",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "FrankensteinEditor",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "URDFTextEditor",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ValidationMessage",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ValidationSeverity",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6095,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "313cfd25d8b43f9dd73fd6babd98a8b4919aa85d6faec1676d87a40c0bb3b876",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-EDITOR-EDITOR-CLIPBOARD-PY-74D67F227932",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/editor/editor_clipboard.py",
-      "purpose": "Clipboard operations mixin for the Frankenstein Editor.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ClipboardMixin",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 22376,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7677e4e05a09fb9fa25498f473b47f9f0083a2d14440c31a3dd221fd639c14cd",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-EDITOR-EDITOR-MODIFICATIONS-PY-63C4E72106AA",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/editor/editor_modifications.py",
-      "purpose": "Modification operations mixin for the Frankenstein Editor.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ModificationMixin",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1816,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e0262e59d4c8897df4ed50a82ec682cf5ba7a6bc23b2320038a73f94a151ca36",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-EDITOR-EDITOR-TYPES-PY-24B669E27866",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/editor/editor_types.py",
-      "purpose": "Data types for the Frankenstein Editor.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ComponentReference",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ComponentType",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "EditorState",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PendingOperation",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
       }
     }
   ],
