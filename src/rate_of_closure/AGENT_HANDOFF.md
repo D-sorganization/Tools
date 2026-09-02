@@ -38,10 +38,19 @@ only the outcome vocabulary and deterministic single-putt evaluation through
 transport and the `putt` block of `playback_transport_golden_v1.json`.
 **Never fork a second transport, sampler, or golden.** The PyQt putting visual
 baseline remains stale because P6/P8 deliberately changed its first viewport.
-ADR-0045 F2 (#4800 P6's "Import heightfield…" button) accepts both the
-`swing_sim.green_surface/1` wire and a UD `putting_green` topography, dispatched
-by the P9 adapter (`ud_adapter.py` / `puttingGreenUdAdapter.ts`) in both UIs; a
-weighted-slope UD document is refused by name, never approximated.
+ADR-0047 H4 (UD #9353) wired the Flight Explorer tab's "Import Trajectory
+Record…" action to replay an imported `swing_sim.ball_flight_trajectory/1`
+record (either flight-model family) through this **same** P8 transport — no
+new transport was added. The loader is
+`rate_of_closure/simulation/flight_record_playback.py` (frame-converts the
+record's closed `flight`/`app` frame enum, refusing an unrecognized one by
+name) and its TS twin `web/src/model/flightRecordPlayback.ts`; both are
+pinned by the additive `imported_trajectory` block of
+`playback_transport_golden_v1.json`. ADR-0045 F2 (#4800 P6's "Import
+heightfield…" button) accepts both the `swing_sim.green_surface/1` wire and a
+UD `putting_green` topography, dispatched by the P9 adapter (`ud_adapter.py` /
+`puttingGreenUdAdapter.ts`) in both UIs; a weighted-slope UD document is
+refused by name, never approximated.
 Clubhead-realism #4799 is complete (G1-G5): lean, offset hosels, real blade
 soles, 16 cross-runtime club gates, and toe-view acceptance gates over the
 **public** `parametric_head_mesh` (per-club tables plus a center-pivot
@@ -76,7 +85,7 @@ context. PR #4838's checklist and immutable consumer map move the audit to 10 ve
 partial; executed render, performance, decimation, approved-image and human gaps remain, and
 no pixel tolerance was loosened.
 
-### Adding a Tab: The Five-Manifest Lockstep (Read Before Starting C6/C7/H4)
+### Adding a Tab: The Five-Manifest Lockstep (Read Before Starting C6/C7)
 
 A new tab is **not** just a widget. Five packaged manifests in
 `src/rate_of_closure/` declare the tab set, cross-checked by **order-strict

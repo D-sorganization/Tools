@@ -3,6 +3,140 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 21744,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0615a2754a575eb80833a53ed3200d8d650941a465bda9d0eba354fe9d3daf69",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-EDITOR-FRANKENSTEIN-EDITOR-PY-8FA4E6444035",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/editor/frankenstein_editor.py",
+      "purpose": "Frankenstein Editor for component composition.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FrankensteinEditor",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 16854,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1aff449c1b96c874354f48b076683fdc7cb3a449e79394c3a423ff5c853755aa",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-EDITOR-TEXT-EDITOR-PY-AF9C461D2E50",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/editor/text_editor.py",
+      "purpose": "URDF Text Editor with diff view support.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DiffHunk",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DiffResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "EditorVersion",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "URDFTextEditor",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ValidationMessage",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ValidationSeverity",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/model_generation/test_gh1694_xml_security.py",
+          "tests/shared/python/model_generation/test_text_editor_hash.py"
+        ],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 6764,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17296,162 +17430,6 @@
           "tests/unit/sidekick/test_standalone_runtime.py"
         ],
         "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 14712,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "fcc9da515066efe0f9e8bbddaf399a35240d962c27b08346f0aff02754e651d6",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-STANDALONE-WINDOW-PY-DDDC2E76500C",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/standalone/window.py",
-      "purpose": "StandaloneSidekickWindow — standalone QMainWindow shell — T2 (#5980).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "StandaloneSidekickConfig",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "StandaloneSidekickWindow",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/unit/sidekick/test_standalone_runtime.py"
-        ],
-        "unit_mentions": [
-          "bar",
-          "g"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 10263,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7ac4452c719cdd0558e77202f9d4189bb789d99e79a792beb9d9b2a1926a0fc3",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-SYMBOLIC-ENGINE-PY-9E6E9E5393AE",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/symbolic_engine.py",
-      "purpose": "Symbolic math engine for the Sidekick calculator tab (issue #2934).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SymbolicEngineError",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "is_sympy_available",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "symbolic_diff",
-            "signature": "expr_str: str, symbol: str='x', order: int=1"
-          },
-          {
-            "kind": "function",
-            "name": "symbolic_expand",
-            "signature": "expr_str: str"
-          },
-          {
-            "kind": "function",
-            "name": "symbolic_integrate",
-            "signature": "expr_str: str, symbol: str='x', *, lower: str | None=None, upper: str | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "symbolic_simplify",
-            "signature": "expr_str: str"
-          },
-          {
-            "kind": "function",
-            "name": "symbolic_solve",
-            "signature": "expr_str: str, symbol: str='x'"
-          },
-          {
-            "kind": "function",
-            "name": "symbolic_to_latex",
-            "signature": "expr_str: str"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/sidekick/tests/test_symbolic_engine.py",
-          "tests/unit/sidekick/test_symbolic_engine_coverage.py",
-          "tests/unit/test_symbolic_engine.py"
-        ],
-        "unit_mentions": [
-          "g",
           "s"
         ],
         "validation_paths": []
