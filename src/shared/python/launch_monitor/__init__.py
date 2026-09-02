@@ -43,6 +43,9 @@ P6    :mod:`.treatment`      Flag-then-optionally-exclude quality pipeline with
 P7    :mod:`.relationships`  FDR-corrected correlation matrix, partial
                              correlations, and a screened dependency network.
                              Rulings D15/D17 land in a follow-up, not the port.
+P8    :mod:`.modeling`       Reproducible NumPy regressions plus an optional
+                             shallow MLP, with an identity-leakage guard. No
+                             ``rate_of_closure`` counterpart exists.
 ====  =====================  =================================================
 
 **Name-collision containment.** Symbols in this package collide by name with
@@ -60,6 +63,7 @@ from .comparison import (
     compare_monitors,
 )
 from .dispersion import DispersionResult, analyze_dispersion
+from .modeling import PredictiveModelResult, fit_predictive_model
 from .multivariate import PCAResult, VIFResult, compute_pca, compute_vif
 from .relationships import (
     CorrelationResult,
@@ -101,6 +105,7 @@ __all__ = [
     "MonitorSummary",
     "PCAResult",
     "PairwiseMonitorComparison",
+    "PredictiveModelResult",
     "TemporalTrendResult",
     "TreatmentConfig",
     "TreatmentResult",
@@ -112,5 +117,6 @@ __all__ = [
     "compute_correlations",
     "compute_pca",
     "compute_vif",
+    "fit_predictive_model",
     "numeric_metric_columns",
 ]
