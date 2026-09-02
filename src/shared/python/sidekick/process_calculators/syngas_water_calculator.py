@@ -11,6 +11,7 @@ Provides calculation methods without GUI dependencies.
 from __future__ import annotations  # noqa: E402, F404
 
 import logging  # noqa: E402
+import math  # noqa: E402
 from dataclasses import dataclass, field  # noqa: E402
 from datetime import datetime  # noqa: E402
 from typing import Any  # noqa: E402
@@ -318,12 +319,17 @@ class SyngasWaterCalculator:
         if temperature_c is None:
             raise ValueError("temperature_c must be provided")
         if temperature_c >= 0:
-            # Above freezing
+            # Above freezing. buck_pressure_pa evaluates
+            # a * exp((b - t/d) * t / (c + t)); the Buck (1981) reference
+            # curve these constants are sourced from is
+            # a * exp((b - t/c) * t / (d + t)), so c and d must be swapped
+            # at this call site (matching calculators.thermo.steam_engine's
+            # call to the same kernel) to get the correct curve (issue #3867).
             a, b, c, d = (
                 BUCK_ABOVE_FREEZING_A,
                 BUCK_ABOVE_FREEZING_B,
-                BUCK_ABOVE_FREEZING_C,
                 BUCK_ABOVE_FREEZING_D,
+                BUCK_ABOVE_FREEZING_C,
             )
         else:
             # Below freezing
@@ -406,9 +412,14 @@ class SyngasWaterCalculator:
         require_positive(total_pressure_pa, "total_pressure_pa")
         p_kpa = partial_pressure_pa / 1000
 
-        # Newton-Raphson iteration for dew point
-        T_guess = 20.0  # Initial guess
-        for _ in range(10):
+        # Use Magnus equation inverse for accurate initial guess across all
+        # temperature regimes.
+        gamma = math.log(max(1e-12, partial_pressure_pa) / 610.94)
+        denom = 17.625 - gamma
+        T_guess = (243.04 * gamma / denom) if abs(denom) > 1e-6 else 100.0
+
+        # Newton-Raphson iteration for dew point using Buck equation
+        for _ in range(15):
             p_calc = self._buck_equation(T_guess) / 1000
             if abs(p_calc - p_kpa) < 0.001:
                 break
@@ -426,7 +437,11 @@ class SyngasWaterCalculator:
             if dp_dT == 0:
                 break
 
-            T_guess = T_guess - (p_calc - p_kpa) / dp_dT
+            step = (p_calc - p_kpa) / dp_dT
+            # Damped Newton step to avoid wild overshoots
+            if abs(step) > 20.0:
+                step = 20.0 if step > 0 else -20.0
+            T_guess = T_guess - step
 
         return T_guess
 
@@ -499,8 +514,12 @@ class SyngasWaterCalculator:
         )
 
         # Calculate dew point
-        dew_point_c = self.calculate_dew_point(vapor_pressure_pa, pressure_pa)
-        dew_point_margin_c = temperature_c - dew_point_c
+        if vapor_pressure_pa >= pressure_pa:
+            dew_point_c = self.calculate_dew_point(pressure_pa, pressure_pa)
+            dew_point_margin_c = temperature_c - dew_point_c
+        else:
+            dew_point_c = temperature_c
+            dew_point_margin_c = 0.0
 
         # Relative humidity
         relative_humidity = min(
@@ -672,7 +691,7 @@ def estimate_condensation_risk(
     result = calc.calculate_water_content(temperature_c, pressure_bar)
 
     risk_level = "Low"
-    if result.dew_point_margin_c < 0:
+    if result.dew_point_margin_c < 0 or temperature_c < 0:
         risk_level = "Critical - Condensation occurring"
     elif result.dew_point_margin_c < safety_margin_c:
         risk_level = "High"
@@ -683,6 +702,6 @@ def estimate_condensation_risk(
         "dew_point_c": result.dew_point_c,
         "temperature_margin_c": result.dew_point_margin_c,
         "condensation_risk": risk_level,
-        "condensation_occurring": result.dew_point_margin_c < 0,
+        "condensation_occurring": result.dew_point_margin_c < 0 or temperature_c < 0,
         "recommended_temperature_c": result.dew_point_c + safety_margin_c,
     }

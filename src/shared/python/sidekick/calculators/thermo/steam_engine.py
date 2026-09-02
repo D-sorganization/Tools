@@ -301,6 +301,40 @@ class SteamProperties:
         }
 
 
+def _assert_finite(props: SteamProperties) -> None:
+    """DbC postcondition: every required numeric property must be finite.
+
+    Regression coverage for issue #3981: only ``enthalpy`` was checked
+    despite the postcondition comment claiming entropy too, and the two
+    ``calculate_saturated_properties_from_*`` methods had no postcondition
+    at all, letting a NaN/Inf result (e.g. an out-of-range simplified
+    correlation) reach callers silently. ``quality`` is deliberately
+    excluded: ``float("nan")`` is the documented, intentional value when
+    quality isn't applicable to a single-phase state.
+    """
+    required_fields = (
+        "temperature",
+        "pressure",
+        "density",
+        "specific_volume",
+        "enthalpy",
+        "entropy",
+        "internal_energy",
+        "cp",
+        "cv",
+        "speed_of_sound",
+        "thermal_conductivity",
+        "dynamic_viscosity",
+        "kinematic_viscosity",
+    )
+    for field_name in required_fields:
+        value = getattr(props, field_name)
+        if not np.isfinite(value):
+            raise ValueError(
+                f"SteamProperties.{field_name} must be finite, got {value}"
+            )
+
+
 class SteamCalculationEngine:
     """Core steam calculation engine using Cantera"""
 
@@ -401,9 +435,7 @@ class SteamCalculationEngine:
             result = self._calculate_simplified_properties(temperature, pressure)
             result.engine_used = "simplified"
 
-        # DbC postcondition: enthalpy and entropy should be finite
-        if not np.isfinite(result.enthalpy):
-            raise ValueError(f"Enthalpy must be finite, got {result.enthalpy}")
+        _assert_finite(result)
         return result
 
     def calculate_saturated_properties_from_temperature(
@@ -423,7 +455,6 @@ class SteamCalculationEngine:
             else:
                 result = self._calculate_saturated_simplified_from_temp(temperature)
             result.engine_used = selected_engine
-            return result
 
         except (RuntimeError, ValueError, TypeError) as e:
             _logger.exception(
@@ -433,7 +464,9 @@ class SteamCalculationEngine:
             )
             result = self._calculate_saturated_simplified_from_temp(temperature)
             result.engine_used = "simplified"
-            return result
+
+        _assert_finite(result)
+        return result
 
     def calculate_saturated_properties_from_pressure(
         self, pressure: float, engine: str = "auto"
@@ -452,7 +485,6 @@ class SteamCalculationEngine:
             else:
                 result = self._calculate_saturated_simplified_from_pressure(pressure)
             result.engine_used = selected_engine
-            return result
 
         except (RuntimeError, ValueError, TypeError) as e:
             _logger.exception(
@@ -462,7 +494,9 @@ class SteamCalculationEngine:
             )
             result = self._calculate_saturated_simplified_from_pressure(pressure)
             result.engine_used = "simplified"
-            return result
+
+        _assert_finite(result)
+        return result
 
     def calculate_water_vapor_pressure(
         self, temperature: float, method: str = "buck"

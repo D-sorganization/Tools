@@ -1,3 +1,4 @@
+import math
 from typing import Any
 
 from sidekick.process_calculators.analysis_utils import evaluate_output
@@ -42,7 +43,7 @@ def test_evaluate_output_failure() -> None:
         output_variable="test_output",
     )
 
-    assert val == 0.0
+    assert math.isnan(val)
     assert state == {}
     assert comp == {}
 
@@ -60,6 +61,6 @@ def test_evaluate_output_type_error() -> None:
         output_variable="test_output",
     )
 
-    assert val == 0.0
+    assert math.isnan(val)
     assert state == {}
     assert comp == {}

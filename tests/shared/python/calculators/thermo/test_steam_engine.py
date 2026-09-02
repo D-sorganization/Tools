@@ -38,6 +38,77 @@ def _sentinel_props(temperature: float, pressure: float, phase: str) -> SteamPro
     )
 
 
+def test_assert_finite_accepts_healthy_props() -> None:
+    steam_engine._assert_finite(_sentinel_props(400.0, 101325.0, "vapor"))
+
+
+def test_assert_finite_tolerates_nan_quality() -> None:
+    """quality=NaN is the documented value when quality isn't applicable."""
+    props = _sentinel_props(400.0, 101325.0, "vapor")
+    props.quality = math.nan
+    steam_engine._assert_finite(props)
+
+
+@pytest.mark.parametrize(
+    "field_name",
+    [
+        "temperature",
+        "pressure",
+        "density",
+        "specific_volume",
+        "enthalpy",
+        "entropy",
+        "internal_energy",
+        "cp",
+        "cv",
+        "speed_of_sound",
+        "thermal_conductivity",
+        "dynamic_viscosity",
+        "kinematic_viscosity",
+    ],
+)
+def test_assert_finite_rejects_nan_in_each_required_field(field_name: str) -> None:
+    """Regression test for issue #3981: only enthalpy was checked before."""
+    props = _sentinel_props(400.0, 101325.0, "vapor")
+    setattr(props, field_name, math.nan)
+    with pytest.raises(ValueError, match=f"{field_name} must be finite"):
+        steam_engine._assert_finite(props)
+
+
+def test_calculate_saturated_from_temperature_rejects_non_finite_result(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Regression test for issue #3981: this method had no postcondition."""
+    engine = SteamCalculationEngine()
+    monkeypatch.setattr(steam_engine, "COOLPROP_AVAILABLE", False)
+    monkeypatch.setattr(steam_engine, "CANTERA_AVAILABLE", False)
+    engine.water = None
+    bad_props = _sentinel_props(400.0, 101325.0, "simplified")
+    bad_props.enthalpy = math.nan
+    monkeypatch.setattr(
+        engine, "_calculate_saturated_simplified_from_temp", lambda *_: bad_props
+    )
+    with pytest.raises(ValueError, match="enthalpy must be finite"):
+        engine.calculate_saturated_properties_from_temperature(400.0)
+
+
+def test_calculate_saturated_from_pressure_rejects_non_finite_result(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Regression test for issue #3981: this method had no postcondition."""
+    engine = SteamCalculationEngine()
+    monkeypatch.setattr(steam_engine, "COOLPROP_AVAILABLE", False)
+    monkeypatch.setattr(steam_engine, "CANTERA_AVAILABLE", False)
+    engine.water = None
+    bad_props = _sentinel_props(400.0, 101325.0, "simplified")
+    bad_props.entropy = math.inf
+    monkeypatch.setattr(
+        engine, "_calculate_saturated_simplified_from_pressure", lambda *_: bad_props
+    )
+    with pytest.raises(ValueError, match="entropy must be finite"):
+        engine.calculate_saturated_properties_from_pressure(101325.0)
+
+
 def test_steam_properties_to_dict_contains_advanced_fields() -> None:
     props = _sentinel_props(400.0, 101325.0, "vapor")
     data = props.to_dict()

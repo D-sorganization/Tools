@@ -8358,10 +8358,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 1462,
+      "bytes_lf": 1927,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "a4ac5e3d7a92fa8427d158e3f490e635e7e5420e4adc605dcbc1abbd03d84ae7",
+      "content_sha256_lf": "249b61c6f996f72f176bf3feb0fe4c14c544fb14b66ad195f293a6395f3089e2",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-CONSTANTS-PY-3A841C52F8C0",
       "language": "python",
@@ -8404,11 +8404,6 @@
           {
             "kind": "constant",
             "name": "GRAVITY_MSS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GRAVITY_STANDARD",
             "signature": null
           },
           {

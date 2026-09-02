@@ -8,6 +8,7 @@ Covers:
 
 from __future__ import annotations
 
+import math
 from typing import Any
 from unittest.mock import MagicMock
 
@@ -145,16 +146,24 @@ class TestParameterHandling:
 
 
 class TestErrorHandling:
-    """Test that evaluate_output gracefully handles failures."""
+    """Test that evaluate_output gracefully handles failures.
 
-    def test_engine_raises_returns_zeros(self) -> None:
+    Regression coverage for issue #3976: a failed evaluation must return
+    NaN, not 0.0. Both callers (optimization.py's gradient estimator and
+    objective evaluator, multi_param_analysis's grid sweep) already check
+    ``np.isfinite(...)`` to detect a failed point and apply their own
+    fallback/penalty — a silent 0.0 masqueraded a failure as a real answer
+    and bypassed that handling entirely.
+    """
+
+    def test_engine_raises_returns_nan(self) -> None:
         value, state, comp = evaluate_output(
             _ExplodingEngine(),
             {"T_in": 500.0},
             manual_hhv=0.0,
             output_variable="efficiency",
         )
-        assert value == 0.0
+        assert math.isnan(value)
         assert state == {}
         assert comp == {}
 
@@ -167,7 +176,7 @@ class TestErrorHandling:
             manual_hhv=0.0,
             output_variable="efficiency",
         )
-        assert value == 0.0
+        assert math.isnan(value)
         assert state == {}
 
     def test_missing_state_returns_empty_dict(self) -> None:

@@ -112,8 +112,11 @@ def friction_factor_colebrook(
 
         f = f_new
 
-    _logger.warning(f"Colebrook did not converge in {max_iterations} iterations")
-    return f
+    raise ValueError(
+        f"Colebrook iteration did not converge in {max_iterations} iterations "
+        f"(reynolds_number={reynolds_number}, relative_roughness={relative_roughness}, "
+        f"last f={f})"
+    )
 
 
 def friction_factor_swamee_jain(
@@ -189,8 +192,19 @@ def friction_factor_churchill(
         raise ValueError("reynolds_number must be provided")
     Re = reynolds_number
 
-    if Re < 1:
-        return float(LAMINAR_FRICTION_CONSTANT)
+    if Re <= 0:
+        # The Churchill correlation is valid for all Re > 0 (it spans laminar
+        # through turbulent by construction); Re <= 0 is unphysical. The
+        # prior `Re < 1: return LAMINAR_FRICTION_CONSTANT` shortcut returned
+        # a flat 64 regardless of the actual Re value in (0, 1), which is
+        # wrong for any Re != 1 in that range (issue #3868).
+        raise ValueError(f"Reynolds number must be positive, got {Re}")
+
+    if Re < 1e-4:
+        # In the deep laminar regime, (8/Re)**12 algebraically and numerically
+        # dominates, reducing Churchill to 8*(8/Re) = 64/Re. Evaluating the high
+        # power terms directly would overflow IEEE 754 float range for tiny Re.
+        return float(friction_factor_laminar(Re))
 
     term1 = (7.0 / Re) ** 0.9 + 0.27 * relative_roughness
     A = (-2.457 * math.log(term1)) ** 16

@@ -117,10 +117,10 @@ class TestBuckEquationOverflow:
         """Fix must not alter results for normal operating temperatures."""
         # 50 C is well within the safe range for the Buck equation.
         result = calculator._buck_equation(50.0)
-        # Expected value from the original equation (no clamping active):
+        # Expected value from the Buck (1981) reference formula (issue #3867):
         # a=0.61121, b=18.678, c=234.5, d=257.14
         a, b, c, d = 0.61121, 18.678, 234.5, 257.14
-        exponent = (b - 50.0 / d) * 50.0 / (c + 50.0)
+        exponent = (b - 50.0 / c) * 50.0 / (d + 50.0)
         expected_kpa = a * math.exp(exponent)
         expected_pa = expected_kpa * 1000
         assert result == pytest.approx(expected_pa, rel=1e-9)
