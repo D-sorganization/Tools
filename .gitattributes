@@ -18,3 +18,13 @@
 *.sh   text eol=lf
 *.rs   text eol=lf
 src/rate_of_closure/web/** text eol=lf
+
+# Generated Tools module inventory: pure function of the tracked working
+# tree, so a conflict here carries no information -- regenerate it from the
+# merged tree instead of leaving conflict markers. Naming the driver here is
+# not enough on its own: run `python3 scripts/git/install_merge_drivers.py`
+# (or `python3 scripts/setup_hooks.py`, which does it for you) once per
+# clone/worktree to register the actual command in local git config. See
+# scripts/git/module_inventory_merge_driver.py for the full rationale.
+manuals/tools/manifests/module-inventory.json merge=module-inventory-regen
+manuals/tools/manifests/module-inventory/entries-*.json merge=module-inventory-regen

@@ -6,7 +6,9 @@ This script:
 1. Installs pre-commit if not present
 2. Installs pre-commit hooks
 3. Installs pre-push hooks
-4. Verifies the installation
+4. Installs hook dependencies
+5. Registers local-only git merge drivers (e.g. module-inventory-regen)
+6. Verifies the installation
 
 Usage:
     python scripts/setup_hooks.py
@@ -37,7 +39,7 @@ def check_pre_commit_installed() -> bool:
 
 def install_pre_commit() -> None:
     """Install pre-commit via pip."""
-    logger.info("\n[1/4] Installing pre-commit...")
+    logger.info("\n[1/5] Installing pre-commit...")
     if check_pre_commit_installed():
         logger.info("  pre-commit is already installed")
     else:
@@ -47,21 +49,21 @@ def install_pre_commit() -> None:
 
 def install_hooks() -> None:
     """Install pre-commit hooks."""
-    logger.info("\n[2/4] Installing pre-commit hooks...")
+    logger.info("\n[2/5] Installing pre-commit hooks...")
     run_command(["pre-commit", "install"])
     logger.info("  pre-commit hooks installed")
 
 
 def install_push_hooks() -> None:
     """Install pre-push hooks."""
-    logger.info("\n[3/4] Installing pre-push hooks...")
+    logger.info("\n[3/5] Installing pre-push hooks...")
     run_command(["pre-commit", "install", "--hook-type", "pre-push"])
     logger.info("  pre-push hooks installed")
 
 
 def install_dev_dependencies() -> None:
     """Install development dependencies for hooks."""
-    logger.info("\n[4/4] Installing hook dependencies...")
+    logger.info("\n[4/5] Installing hook dependencies...")
     deps = [
         "ruff>=0.14.0",
         "mypy>=1.13.0",
@@ -73,6 +75,24 @@ def install_dev_dependencies() -> None:
     ]
     run_command([sys.executable, "-m", "pip", "install"] + deps)
     logger.info("  Dependencies installed")
+
+
+def install_merge_drivers() -> None:
+    """Register local-only git merge drivers (e.g. module-inventory-regen).
+
+    .gitattributes can only name a driver; the command it runs is local
+    git config that has to be set up per clone/worktree. See
+    scripts/git/install_merge_drivers.py for why.
+    """
+    logger.info("\n[5/5] Registering git merge drivers...")
+    repo_root = Path(__file__).resolve().parent.parent
+    run_command(
+        [
+            sys.executable,
+            str(repo_root / "scripts" / "git" / "install_merge_drivers.py"),
+        ]
+    )
+    logger.info("  Merge drivers registered")
 
 
 def verify_installation() -> None:
@@ -138,6 +158,7 @@ def main() -> None:
         install_hooks()
         install_push_hooks()
         install_dev_dependencies()
+        install_merge_drivers()
         verify_installation()
         print_summary()
         logger.info("\n[SUCCESS] All hooks installed successfully!")

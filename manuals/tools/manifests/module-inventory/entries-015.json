@@ -3,6 +3,160 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 10263,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7ac4452c719cdd0558e77202f9d4189bb789d99e79a792beb9d9b2a1926a0fc3",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-SYMBOLIC-ENGINE-PY-9E6E9E5393AE",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/symbolic_engine.py",
+      "purpose": "Symbolic math engine for the Sidekick calculator tab (issue #2934).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SymbolicEngineError",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "is_sympy_available",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "symbolic_diff",
+            "signature": "expr_str: str, symbol: str='x', order: int=1"
+          },
+          {
+            "kind": "function",
+            "name": "symbolic_expand",
+            "signature": "expr_str: str"
+          },
+          {
+            "kind": "function",
+            "name": "symbolic_integrate",
+            "signature": "expr_str: str, symbol: str='x', *, lower: str | None=None, upper: str | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "symbolic_simplify",
+            "signature": "expr_str: str"
+          },
+          {
+            "kind": "function",
+            "name": "symbolic_solve",
+            "signature": "expr_str: str, symbol: str='x'"
+          },
+          {
+            "kind": "function",
+            "name": "symbolic_to_latex",
+            "signature": "expr_str: str"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/test_symbolic_engine.py",
+          "tests/unit/sidekick/test_symbolic_engine_coverage.py",
+          "tests/unit/test_symbolic_engine.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 687,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a6d32272bc0efa1211246d66627fcc0d264d1d55bdd4ec236e8042ce3fdd9e5e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-TAB-CONTEXT-MENU-PY-AAA0A637A680",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/tab_context_menu.py",
+      "purpose": "Public re-export of the tab context-menu builder (issue #2929).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "build_tab_context_menu",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "show_tab_context_menu",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/test_tab_context_menu.py",
+          "tests/unit/sidekick/test_tab_context_menu.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2936,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17864,127 +18018,6 @@
         "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 979,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "10a11c649032db741c14393c0a6fef799c5cca4a977ecfb04513a8f588730529",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-REQUEST-IDENTITY-PY-C19A968152DD",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/request_identity.py",
-      "purpose": "Canonical identity binding for internal ground-model phase results.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "ground_request_fingerprint",
-            "signature": "request: GroundSimulationRequest"
-          },
-          {
-            "kind": "function",
-            "name": "validate_request_fingerprint",
-            "signature": "value: str"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/ground/tests/_support.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2434,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ead2e11c96e13e3fd8445e5a2994433c1dde370afec36f755d11577f0fbc98d2",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-RESULT-ADAPTER-PY-E62BC7D8E0ED",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/result_adapter.py",
-      "purpose": "One-way compatibility projection into the existing flight metric DTO.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "qualified_study_to_ground_model_result",
-            "signature": "study: GroundStudyProjection"
-          },
-          {
-            "kind": "function",
-            "name": "to_ground_model_result",
-            "signature": "result: GroundSimulationResult"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_contract.py",
-          "src/shared/python/swing_sim/ground/tests/test_ground_result_composer.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_contract.py"
-        ]
       }
     }
   ],

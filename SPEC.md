@@ -7129,3 +7129,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-02: Sidekick Process Calculator Correctness (#4892)
 
 - **2026-09-02**: fix(sidekick, #4892) — Fix Buck equation argument order in `SyngasWaterCalculator` (#3867), handle non-positive Re and non-convergence in friction factors (#3868), ensure finite postconditions in `SteamCalculationEngine` (#3981), fix `evaluate_output` return value on engine failure (#3976), standardize physical constants (#3994), align saturated dew point margin, improve dew point convergence, and fix typing/formatting.
+
+## 2026-09-02: Module Inventory Merge Driver (#4818)
+
+- **2026-09-02**: feat(repository-tooling, #4818) — Add a local git merge driver (`scripts/git/module_inventory_merge_driver.py`, registered via `scripts/git/install_merge_drivers.py`) that resolves conflicts on the generated `manuals/tools/manifests/module-inventory.json` and its `module-inventory/entries-*.json` shards by regenerating from the merged tree instead of leaving conflict markers, since the inventory is a pure function of the other tracked files and never reads its own prior content. Wired into `scripts/setup_precommit.sh` and `scripts/setup_hooks.py` so it registers automatically for anyone running this repo's documented local setup, since `.gitattributes` alone cannot embed the driver command (local git config only, by design). Does not cover `auto-update-prs.yml`'s server-side `pulls.updateBranch` merges, which run entirely on GitHub's infrastructure and never consult repo-local git config.

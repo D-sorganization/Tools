@@ -3,6 +3,113 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 14380,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9e8863c8483cd1cdfcfa462e8e0f8e585e21a8c505c74ed3ba8af1139179d6b1",
+      "family": "media-processing-non-calculation",
+      "id": "TOOLS-MODULE-SRC-MEDIA-PROCESSING-VIDEO-PROCESSOR-APPS-WEB-COMPONENTS-GOLF-METRICSPANEL-TSX-527335438156",
+      "language": "typescript-react",
+      "maintainer": "Media processing maintainers",
+      "path": "src/media_processing/video_processor/apps/web/components/golf/MetricsPanel.tsx",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "MetricsPanel",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "cm"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7438,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5f96c827038908b0138e519308dbcfb2537bc8bc8b4ed3668cd8f3fdc3931750",
+      "family": "media-processing-non-calculation",
+      "id": "TOOLS-MODULE-SRC-MEDIA-PROCESSING-VIDEO-PROCESSOR-APPS-WEB-COMPONENTS-GOLF-PHASETIMELINE-TSX-7DF5EAB0A7B0",
+      "language": "typescript-react",
+      "maintainer": "Media processing maintainers",
+      "path": "src/media_processing/video_processor/apps/web/components/golf/PhaseTimeline.tsx",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "PhaseTimeline",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N",
+          "ms"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 11013,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -13793,296 +13900,6 @@
         "test_paths": [
           "tests/p1am_control_system/test_cors_config.py"
         ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 39654,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e41eee547e488dc8c69b05d54f045091fe732bd7bfc22ef76597aea1a69deb72",
-      "family": "control-systems-non-calculation",
-      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-DATA-CAPTURE-PY-690C97DD4EF4",
-      "language": "python",
-      "maintainer": "Control systems maintainers",
-      "path": "src/p1am_control_system/backend/data_capture.py",
-      "purpose": "Historian data-capture service: status + retention control.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CaptureConfig",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CaptureStats",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CaptureThrottle",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ClearResult",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RetentionResult",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TableFootprint",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "EVENTLOG_BUDGET_FRACTION",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "EVENTLOG_EST_BYTES_PER_ROW",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "EXPORT_CHUNK_ROWS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "HISTORIAN_EVENT_MAX_AGE_S",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "HISTORIAN_RETENTION_INTERVAL_S",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "HISTORIAN_VACUUM_PAGES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "TAGLOG_EST_BYTES_PER_ROW",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "TRENDS_MAX_MAX_POINTS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "TRENDS_MAX_POINTS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "TRENDS_MIN_MAX_POINTS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "TRENDS_STREAM_CHUNK_ROWS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "UTC",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "capture_stats",
-            "signature": "session: Session, *, capturing: bool=True"
-          },
-          {
-            "kind": "function",
-            "name": "clear_capture",
-            "signature": "session: Session, *, include_events: bool=False, before: _dt.datetime | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "enforce_size_cap",
-            "signature": "session: Session, max_bytes: int, *, headroom: float=0.9, event_max_age_s: float | None=HISTORIAN_EVENT_MAX_AGE_S, now: _dt.datetime | None=None, logger: logging.Logger | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "historian_footprint",
-            "signature": "session: Session, *, total_bytes: int | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "historian_max_bytes",
-            "signature": "settings: P1AMSettings | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "historian_retention_loop",
-            "signature": "*, shutdown_event: asyncio.Event, engine: Any, logger: logging.Logger, interval_s: float | None=None, settings: P1AMSettings | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "parse_query_bound",
-            "signature": "value: str"
-          },
-          {
-            "kind": "function",
-            "name": "parse_tag_names",
-            "signature": "tag_ids: str"
-          },
-          {
-            "kind": "function",
-            "name": "query_trend_series",
-            "signature": "session: Session, *, tag_name: str, start: _dt.datetime, end: _dt.datetime, max_points: int=TRENDS_MAX_POINTS"
-          },
-          {
-            "kind": "function",
-            "name": "run_retention_sweep",
-            "signature": "engine: Any, *, max_bytes: int, logger: logging.Logger, event_max_age_s: float | None=HISTORIAN_EVENT_MAX_AGE_S"
-          },
-          {
-            "kind": "function",
-            "name": "stream_tag_export_csv",
-            "signature": "bind: Any, statement: Any, *, chunk_rows: int=EXPORT_CHUNK_ROWS"
-          },
-          {
-            "kind": "function",
-            "name": "utcnow",
-            "signature": ""
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "Hz",
-          "N",
-          "g",
-          "ms",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2503,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "35c506f0b7b3e6d59220fe6ca5139e92c9c6de3c6e72fe57ced0994a938e74f2",
-      "family": "control-systems-non-calculation",
-      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-DATA-EXPLORER-ENUMS-PY-F993F4929869",
-      "language": "python",
-      "maintainer": "Control systems maintainers",
-      "path": "src/p1am_control_system/backend/data_explorer_enums.py",
-      "purpose": "Enumerations for the Data Explorer analysis suite.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "AggMethod",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CorrelationMethod",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ExportFormat",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "FilterType",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SourceKind",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SpectrumMethod",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TrendlineKind",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "WindowKind",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
         "unit_mentions": [
           "s"
         ],
