@@ -3376,6 +3376,7 @@
           "tests/p1am_control_system/conftest.py",
           "tests/pendulum_simulator/conftest.py",
           "tests/rate_of_closure/conftest.py",
+          "tests/shared/python/launch_monitor/conftest.py",
           "tests/shared/python/sidekick/process_calculators/conftest.py",
           "tests/solar_system_model/conftest.py",
           "tests/tools/folder_tools/conftest.py",

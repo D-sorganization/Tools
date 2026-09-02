@@ -227,7 +227,7 @@
   },
   "shards": [
     {
-      "content_sha256_lf": "4a53f8622657da95f3f7c93c0293d7e45133451efaa42c009e67f1b7cee945e6",
+      "content_sha256_lf": "07695bd9fe234570ee343e70fa2f407b89839168a342d844e1a2bc8831354982",
       "entry_count": 200,
       "first_path": ".docker/entrypoint.sh",
       "last_path": "scripts/check_local_only_workflows.py",
@@ -251,7 +251,7 @@
       "shard_index": 2
     },
     {
-      "content_sha256_lf": "a09b14f4a452382f9d0f790a9384e107f1743f4b0291791dc97978376359a245",
+      "content_sha256_lf": "1baa9cf169fcc99f1b8770c5ab9e36f5522a6860510e0067c3cc0aae9a271f9b",
       "entry_count": 200,
       "first_path": "src/media_processing/video_processor/apps/web/components/golf/IssuesPanel.tsx",
       "last_path": "src/p1am_control_system/backend/config_store.py",
@@ -267,7 +267,7 @@
       "shard_index": 4
     },
     {
-      "content_sha256_lf": "3045fa72013f26e83b37add18b99fff913b50e0c700194c9616caa6ca3f0b5ed",
+      "content_sha256_lf": "65a8975208ab799a1cedd1d24c6d8b3adb2f57d07185218bcdb3913f4710e164",
       "entry_count": 200,
       "first_path": "src/p1am_control_system/frontend/src/lib/curveFit.ts",
       "last_path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/downswing.py",
@@ -275,7 +275,7 @@
       "shard_index": 5
     },
     {
-      "content_sha256_lf": "fe0a27d033809db2c33cdb36d1e26f4250f7e0c9a42d2dc696f7efcfe4a11976",
+      "content_sha256_lf": "1e4debc83280f5de2049979f2824a3745313f0b735399e8b68112b4b8c72e332",
       "entry_count": 200,
       "first_path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/downswing_config.py",
       "last_path": "src/rate_of_closure/launch_monitor_v2_client.py",
@@ -331,58 +331,58 @@
       "shard_index": 12
     },
     {
-      "content_sha256_lf": "75a39d4c96a6de6200fc3a50a9d52dec0bf51a84ebe18e535fa7cc181c4a7841",
+      "content_sha256_lf": "37b7a9b74be8f3e0913ca86dae9294d93886622b7f60027b609cafd2a674370d",
       "entry_count": 200,
       "first_path": "src/shared/python/calc_backend/routers/scrubber.py",
-      "last_path": "src/shared/python/model_generation/editor/editor_types.py",
+      "last_path": "src/shared/python/model_generation/core/validation.py",
       "path": "manuals/tools/manifests/module-inventory/entries-013.json",
       "shard_index": 13
     },
     {
-      "content_sha256_lf": "3ce45e02dc12cdc8f003ed4178837f1d940734c922a108d8888106ee9063e392",
+      "content_sha256_lf": "bbb3f55b8c0499909b53d1732b1ae1105bfe4d4ba3d69576abcf9f1fa171ce7d",
       "entry_count": 200,
-      "first_path": "src/shared/python/model_generation/editor/frankenstein_editor.py",
-      "last_path": "src/shared/python/sidekick/standalone/session_store.py",
+      "first_path": "src/shared/python/model_generation/editor/__init__.py",
+      "last_path": "src/shared/python/sidekick/standalone/__init__.py",
       "path": "manuals/tools/manifests/module-inventory/entries-014.json",
       "shard_index": 14
     },
     {
-      "content_sha256_lf": "60eabf36cb79890d45132748218bfd73c20de030295a9b2a7167bcb52f9aff20",
+      "content_sha256_lf": "b73d94e2b4da028b390252a0b085df3cce35935266c133b8828efd2f01aafb7b",
       "entry_count": 200,
-      "first_path": "src/shared/python/sidekick/standalone/window.py",
-      "last_path": "src/shared/python/swing_sim/ground/regional_surface_types.py",
+      "first_path": "src/shared/python/sidekick/standalone/onboarding.py",
+      "last_path": "src/shared/python/swing_sim/ground/regional_execution_wire.py",
       "path": "manuals/tools/manifests/module-inventory/entries-015.json",
       "shard_index": 15
     },
     {
-      "content_sha256_lf": "e79646ad8a7e689da409c6f53742bcc10369f4d4c2f0297b3a2f4f3db6dd141d",
+      "content_sha256_lf": "62bb35fe76b84f7da89955738b8f364a1369f7a2d616647968c8e06535a2e5f1",
       "entry_count": 200,
-      "first_path": "src/shared/python/swing_sim/ground/regional_transition_binding.py",
-      "last_path": "src/solar_system_model/solar_system/ui/widgets/overlays.py",
+      "first_path": "src/shared/python/swing_sim/ground/regional_plan_contract.py",
+      "last_path": "src/solar_system_model/solar_system/ui/widgets/date_time.py",
       "path": "manuals/tools/manifests/module-inventory/entries-016.json",
       "shard_index": 16
     },
     {
-      "content_sha256_lf": "ad325ca0808e53721c0f5c9f41c4e598ca6260343992eead88fe96c5800adcd2",
-      "entry_count": 155,
-      "first_path": "src/solar_system_model/solar_system/ui/widgets/settings_nav.py",
+      "content_sha256_lf": "f8213aac3f97646c4a06601897230e4cf4f0d907945fed8f0cdf7826ebc4a277",
+      "entry_count": 159,
+      "first_path": "src/solar_system_model/solar_system/ui/widgets/historical_events_panel.py",
       "last_path": "wave_solver.py",
       "path": "manuals/tools/manifests/module-inventory/entries-017.json",
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "b29c4f5404f1fa2dc5a0890a499ff117117a7cb06487d8ecca9f40f36ecd5b71",
+  "source_tree_sha256": "225a518ee56e7971387a7b115f3c459e210330c3e3666475ab8368d6a3dac2b6",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
-      "not-applicable": 2709,
+      "not-applicable": 2713,
       "provisional": 845
     },
     "blocked_count": 1,
     "calculation_count": 845,
     "classification_counts": {
       "calculation": 845,
-      "non-calculation": 2710
+      "non-calculation": 2714
     },
     "family_counts": {
       "control-systems-calculation": 6,
@@ -405,17 +405,17 @@
       "shared-plotting-calculation": 1,
       "shared-plotting-non-calculation": 4,
       "shared-tools-calculation": 171,
-      "shared-tools-non-calculation": 1017,
+      "shared-tools-non-calculation": 1021,
       "signal-processing-calculation": 28,
       "swing-simulation-calculation": 63,
       "swing-simulation-non-calculation": 152
     },
-    "module_count": 3555,
-    "non_calculation_count": 2710,
+    "module_count": 3559,
+    "non_calculation_count": 2714,
     "provisional_count": 845,
     "review_status_counts": {
       "blocked": 1,
-      "inventory-baseline": 2709,
+      "inventory-baseline": 2713,
       "review-required": 845
     }
   }

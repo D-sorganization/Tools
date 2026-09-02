@@ -14466,7 +14466,8 @@
           }
         ],
         "test_paths": [
-          "tests/rate_of_closure/test_launch_monitor_performance.py"
+          "tests/rate_of_closure/test_launch_monitor_performance.py",
+          "tests/shared/python/launch_monitor/test_trends.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
