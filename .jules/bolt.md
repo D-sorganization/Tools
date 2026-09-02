@@ -123,3 +123,6 @@
 ## 2024-09-01 - Avoid Array Spread in Grouping Loops
 **Learning:** Using array spread syntax (`[...arr, item]`) inside tight loops to accumulate datasets by key degrades performance to O(N^2) and generates severe garbage collection pressure during React renders.
 **Action:** Always initialize an array for the key and use direct mutation (`group.push(item)`) inside loops to achieve O(N) performance when grouping datasets.
+## 2024-05-18 - Prevent stack overflow in dataset bounds calculation
+**Learning:** Using `Math.max(...spread)` chained with `.map()` on large chart plotting paths creates massive call stack expansions and heavy garbage collection pressure, which could even throw "Maximum call stack size exceeded" on larger dynamic arrays.
+**Action:** Use a single-pass `for` loop for minimum/maximum bound extraction in data-intensive charting paths.

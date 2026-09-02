@@ -31,19 +31,52 @@ export interface PlotAxisProjection {
 }
 
 export function projectPlotAxis(values: readonly number[]): PlotAxisProjection {
-  if (!Array.isArray(values) || values.length === 0 || values.some((value) => !Number.isFinite(value))) {
+  if (!Array.isArray(values) || values.length === 0) {
     throw new RangeError("plot axis values must be a nonempty finite number sequence");
   }
-  const scale = Math.max(...values.map(Math.abs));
-  if (scale === 0) return Object.freeze({ coordinates: Object.freeze(values.map(() => 0)), scale: 1 });
-  const low = Math.min(...values); const high = Math.max(...values);
-  if (low === high) {
-    return Object.freeze({ coordinates: Object.freeze(values.map(() => 0)), scale });
+
+  let low = values[0];
+  let high = values[0];
+  let maxAbs = Math.abs(values[0]);
+
+  if (!Number.isFinite(low)) {
+    throw new RangeError("plot axis values must be a nonempty finite number sequence");
   }
-  const basis = low < 0 && high > 0 ? values.map((value) => value / scale) : values;
-  const basisLow = Math.min(...basis); const span = Math.max(...basis) - basisLow;
+
+  // ⚡ Bolt Optimization: Replace multiple spread operators Math.max(...values) and chained map calls
+  // with a single-pass loop to avoid massive call stack expansions and heavy garbage collection pressure.
+  for (let i = 1; i < values.length; i++) {
+    const val = values[i];
+    if (!Number.isFinite(val)) {
+      throw new RangeError("plot axis values must be a nonempty finite number sequence");
+    }
+    if (val < low) low = val;
+    if (val > high) high = val;
+    const absVal = Math.abs(val);
+    if (absVal > maxAbs) maxAbs = absVal;
+  }
+
+  const scale = maxAbs;
+
+  if (scale === 0 || low === high) {
+    const coords = new Array(values.length);
+    for (let i = 0; i < values.length; i++) coords[i] = 0;
+    return Object.freeze({ coordinates: Object.freeze(coords), scale: scale === 0 ? 1 : scale });
+  }
+
+  const useScaledBasis = low < 0 && high > 0;
+  const basisLow = useScaledBasis ? low / scale : low;
+  const basisHigh = useScaledBasis ? high / scale : high;
+  const span = basisHigh - basisLow;
+
+  const coordinates = new Array(values.length);
+  for (let i = 0; i < values.length; i++) {
+    const basisVal = useScaledBasis ? values[i] / scale : values[i];
+    coordinates[i] = 2 * ((basisVal - basisLow) / span) - 1;
+  }
+
   return Object.freeze({
-    coordinates: Object.freeze(basis.map((value) => 2 * ((value - basisLow) / span) - 1)), scale,
+    coordinates: Object.freeze(coordinates), scale,
   });
 }
 
