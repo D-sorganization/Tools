@@ -7117,4 +7117,4 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 
 ## 2026-09-02: Single-Pass Dynamic Scale and Visual Evidence (#4874)
 
-- **2026-09-02**: perf(rate-of-closure, #4874) — Replace `Math.min(...spread)` and `Math.max(...spread)` with single-pass loops in `PlotCanvasCard`, `KineticsSection`, and `impactSceneGeometry`, preventing call-stack limits and avoiding intermediate allocations.
+- **2026-09-02**: perf(rate-of-closure, #4874) — Replace `Math.min(...spread)` and `Math.max(...spread)` with single-pass loops in `PlotCanvasCard`, `KineticsSection`, and `impactSceneGeometry`, preventing call-stack limits and avoiding intermediate allocations; prevent narrow viewport document overflow in `PuttingControls`.
