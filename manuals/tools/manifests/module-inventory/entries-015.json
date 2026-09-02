@@ -2,6 +2,510 @@
   "authority": "D-sorganization/Tools",
   "entries": [
     {
+      "authority_status": "provisional",
+      "bytes_lf": 2529,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "eb8dd2b9c1ed0f49b9459c7263f3cbb5a56d52325cae38943bd758fc74d84eff",
+      "family": "process-calculators-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-THERMAL-PROFILE-PREDICTOR-PY-65B6FD179556",
+      "language": "python",
+      "maintainer": "Process calculator maintainers",
+      "path": "src/shared/python/sidekick/process_calculators/thermal_profile_predictor.py",
+      "purpose": "thermal_profile_predictor.py module.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "fit_heating_parameters",
+            "signature": "times: Sequence[float], observed_temps: Sequence[float], initial_temp: float, thermal_mass_guess: float, heat_loss_guess: float, ambient_temp: float, power_func: Callable[[float], float]"
+          },
+          {
+            "kind": "function",
+            "name": "predict_temperature_profile",
+            "signature": "t_span: tuple[float, float], t_eval: Sequence[float], initial_temp: float, thermal_mass: float, heat_loss_coeff: float, ambient_temp: float, power_func: Callable[[float], float]"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/process_calculators/test_thermal_profile_predictor.py",
+          "src/shared/python/sidekick/tests/test_thermal_profile_predictor.py",
+          "tests/shared/python/sidekick/process_calculators/test_thermal_profile_predictor.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 7655,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "ad279a236ba5259209078239c3ff4b4149a70ab7feafafe516cc3f7a3069a35d",
+      "family": "process-calculators-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-WATER-VAPOR-PRESSURE-PY-D5FD51A4BC05",
+      "language": "python",
+      "maintainer": "Process calculator maintainers",
+      "path": "src/shared/python/sidekick/process_calculators/water_vapor_pressure.py",
+      "purpose": "Shared water-vapor-pressure correlation kernels.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "PA_PER_HPA",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PA_PER_KPA",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "antoine_pressure_pa",
+            "signature": "a: float, b: float, c: float, temperature_c: float"
+          },
+          {
+            "kind": "function",
+            "name": "antoine_temperature_c",
+            "signature": "a: float, b: float, c: float, pressure_pa: float"
+          },
+          {
+            "kind": "function",
+            "name": "buck_pressure_pa",
+            "signature": "a_kpa: float, b: float, c: float, d: float, temperature_c: float"
+          },
+          {
+            "kind": "function",
+            "name": "iapws_pressure_pa",
+            "signature": "temperature_c: float"
+          },
+          {
+            "kind": "function",
+            "name": "magnus_pressure_pa",
+            "signature": "temperature_c: float"
+          },
+          {
+            "kind": "function",
+            "name": "safe_exp",
+            "signature": "x: float"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/process_calculators/test_water_vapor_pressure.py",
+          "tests/shared/python/process_calculators/test_water_vapor_pressure_shared.py"
+        ],
+        "unit_mentions": [
+          "Pa",
+          "g",
+          "kPa"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 1051,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "f52c161478aed177c4deeefbf95a449486bb0896c19206f3d3a890089256caed",
+      "family": "process-calculators-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-WATER-VAPOR-PRESSURE-CALCULATOR-PY-DC1E124E49DD",
+      "language": "python",
+      "maintainer": "Process calculator maintainers",
+      "path": "src/shared/python/sidekick/process_calculators/water_vapor_pressure_calculator.py",
+      "purpose": "Water Vapor Pressure Calculator",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "WaterVaporPressureCalculator",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/process_calculators/test_syngas_water_calculator.py",
+          "src/shared/python/sidekick/tests/test_pure_calc_modules.py"
+        ],
+        "unit_mentions": [
+          "Pa"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 26860,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "4026886722664fd5c0864e0546cdf13e087a33fbfd038eaa537c29b22cd2c2af",
+      "family": "process-calculators-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-WGS-REACTOR-CALCULATOR-PY-94C4B71C226B",
+      "language": "python",
+      "maintainer": "Process calculator maintainers",
+      "path": "src/shared/python/sidekick/process_calculators/wgs_reactor_calculator.py",
+      "purpose": "Water-Gas Shift Reactor Calculator",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "WGSReactorEngine",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "create_wgs_reactor_calculator",
+            "signature": "parent: Any=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/process_calculators/test_wgs_reactor_calculator.py",
+          "tests/calc_backend/test_wgs_reactor_headless_import_3317.py",
+          "tests/shared/python/process_calculators/test_wave1_process_numerics.py",
+          "tests/shared/python/process_calculators/test_wgs_reactor_calculator.py"
+        ],
+        "unit_mentions": [
+          "J",
+          "bar",
+          "g",
+          "kg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7694,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "40b32cbc0167d4ef51e1615539ca3cd6c79224a504e1f69f7cebcd4d7c1be01d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROTOCOLS-PY-8F81D484691B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/protocols.py",
+      "purpose": "Protocol interfaces for upstream drift tools.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CalculationResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Calculator",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DataTransformer",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "InputValidator",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ProcessCalculator",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StateSerializable",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "UnitConverter",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ValidationResult",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/test_input_validator.py",
+          "src/shared/python/sidekick/tests/test_protocols.py",
+          "tests/shared/python/plot_engine/test_protocols.py",
+          "tests/shared/python/sidekick/test_protocols.py"
+        ],
+        "unit_mentions": [
+          "Pa",
+          "g"
+        ],
+        "validation_paths": [
+          "src/shared/python/sidekick/tests/test_input_validator.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 924,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7df0079495b0d087858315fb4bfcdfb057f0b7e84f74d962b926c578fbe7da4c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-SELECTED-TAB-PANEL-PY-DE2BA8B24201",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/selected_tab_panel.py",
+      "purpose": "Public re-export of the selected-tab settings panel (issue #2929).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "SIDEKICK_TAB_SETTINGS_BUTTON_OBJECT_NAME",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TabSettingsMixin",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_tab_settings_dialog",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_tab_settings_toolbar",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/test_selected_tab_panel.py",
+          "tests/unit/sidekick/test_selected_tab_panel.py",
+          "tests/unit/sidekick/test_tab_context_menu.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1193,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "134aa0a7e346ee6b08513fa6012fd8d0791e023215d12c2799d69d3bc0d77564",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-STANDALONE-INIT-PY-E95594E19507",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/standalone/__init__.py",
+      "purpose": "Sidekick standalone shell.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "not-applicable",
       "bytes_lf": 5168,
       "classification": "non-calculation",
@@ -17364,600 +17868,6 @@
           "src/shared/python/swing_sim/ground/tests/test_profile_contract.py",
           "src/shared/python/swing_sim/ground/tests/test_study_validation.py"
         ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 12113,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "55f67e09d24010e121772b021163fda0c2ff23901e696173feeb911fcfe2e17d",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-PROFILE-VALIDATION-PY-CFC2171B7F21",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/profile_validation.py",
-      "purpose": "Primitive validators shared by ground material profile value records.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ProfileDocument",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "array_value",
-            "signature": "value: object, name: str"
-          },
-          {
-            "kind": "function",
-            "name": "bounded_number",
-            "signature": "value: object, name: str, bounds: tuple[float, float]"
-          },
-          {
-            "kind": "function",
-            "name": "calibrated_model_use",
-            "signature": "profile: Any, canonical_ids: tuple[Any, ...]"
-          },
-          {
-            "kind": "function",
-            "name": "canonical_enum_subset",
-            "signature": "values: Iterable[object], enum_type: Callable[[Any], _EnumT], canonical: tuple[_EnumT, ...], name: str"
-          },
-          {
-            "kind": "function",
-            "name": "exact_fields",
-            "signature": "payload: dict[str, Any], fields: set[str], name: str"
-          },
-          {
-            "kind": "function",
-            "name": "exact_record",
-            "signature": "value: object, expected: type[_RecordT], name: str"
-          },
-          {
-            "kind": "function",
-            "name": "exact_records",
-            "signature": "values: Iterable[object], expected: type[_RecordT], name: str"
-          },
-          {
-            "kind": "function",
-            "name": "finite_number",
-            "signature": "value: object, name: str"
-          },
-          {
-            "kind": "function",
-            "name": "nonnegative_number",
-            "signature": "value: object, name: str"
-          },
-          {
-            "kind": "function",
-            "name": "object_mapping",
-            "signature": "value: object, name: str"
-          },
-          {
-            "kind": "function",
-            "name": "parameter_unit",
-            "signature": "parameter_id: str"
-          },
-          {
-            "kind": "function",
-            "name": "parameter_validity",
-            "signature": "parameter_id: str, value: float, lower: object, upper: object"
-          },
-          {
-            "kind": "function",
-            "name": "parameter_value",
-            "signature": "parameter_id: str, value: object"
-          },
-          {
-            "kind": "function",
-            "name": "positive_number",
-            "signature": "value: object, name: str"
-          },
-          {
-            "kind": "function",
-            "name": "qualification_decisions",
-            "signature": "profile: Any, canonical_ids: tuple[Any, ...]"
-          },
-          {
-            "kind": "function",
-            "name": "sha256_digest",
-            "signature": "value: object, name: str"
-          },
-          {
-            "kind": "function",
-            "name": "sorted_unique_texts",
-            "signature": "values: Iterable[object], name: str"
-          },
-          {
-            "kind": "function",
-            "name": "strict_boolean",
-            "signature": "value: object, name: str"
-          },
-          {
-            "kind": "function",
-            "name": "strict_text",
-            "signature": "value: object, name: str"
-          },
-          {
-            "kind": "function",
-            "name": "validity_source_ids",
-            "signature": "parameters: Iterable[Any]"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "Pa",
-          "g",
-          "kg"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 10245,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "de28965a40c42f9e7efbaafb253536d652590b456f5050b8e6261435175c250c",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-PROFILE-WIRE-PY-8203055C7CA3",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/profile_wire.py",
-      "purpose": "Strict canonical JSON wire boundary for ground material profile v1.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "document_from_dict",
-            "signature": "document_type: type[Any], payload: dict[str, Any]"
-          },
-          {
-            "kind": "function",
-            "name": "document_to_dict",
-            "signature": "document: object"
-          },
-          {
-            "kind": "function",
-            "name": "document_to_json",
-            "signature": "document: object"
-          },
-          {
-            "kind": "function",
-            "name": "library_from_json",
-            "signature": "text: str"
-          },
-          {
-            "kind": "function",
-            "name": "profile_from_json",
-            "signature": "text: str"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_profile_contract.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_profile_contract.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3981,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0daeb5efd3f9e4d18f2b265f5f9e8041852b12a24e32006da53e4e8bf749c33a",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-REFERENCE-EXECUTION-PY-183F7C7FA362",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/reference_execution.py",
-      "purpose": "One-shot bounded execution over the authoritative bounce and surface phases.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "run_ground_reference",
-            "signature": "request: GroundSimulationRequest, execution: GroundReferenceExecution | None=None"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_reference_execution.py",
-          "src/shared/python/swing_sim/ground/tests/test_reference_execution_contract.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_reference_execution_contract.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3472,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "57df51cc798dfc8fae14c1516d0a2f7aa2febed7e68b88b8ac37ce40d6d1f585",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-REFERENCE-EXECUTION-TYPES-PY-7375A6ACDDCF",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/reference_execution_types.py",
-      "purpose": "Typed controls and failures for the canonical ground reference executor.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "GroundReferenceCancelled",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundReferenceExecution",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundReferenceExecutionError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundReferencePhase",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GROUND_REFERENCE_EXECUTION_SCHEMA_VERSION",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 7668,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c3e038f91104f6b2627cd6df70d674a06cc003990f88f64068051f6f4a9f3f96",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-REGIONAL-EXECUTION-PY-3C71FF4C68BB",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/regional_execution.py",
-      "purpose": "Authoritative regional-plan execution binding for ground simulation.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "RegionalGroundExecutionOptions",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MAX_REGIONAL_EXECUTION_STEPS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MAX_REGIONAL_EXECUTION_TRANSITIONS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "REGIONAL_GROUND_EXECUTOR_SOURCE",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "execute_regional_ground",
-            "signature": "request: GroundSimulationRequest, prefix: RepeatedBounceResult, plan: GroundRegionalMaterialPlanRequest, options: RegionalGroundExecutionOptions | None=None"
-          },
-          {
-            "kind": "re-export",
-            "name": "REGIONAL_GROUND_EXECUTOR_ID",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "REGIONAL_GROUND_EXECUTOR_VERSION",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_regional_execution.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 11947,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7671502ae27aec47849b289525bb5f594df1c39a0882d7289bc26ab94efc0c50",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-REGIONAL-EXECUTION-RECORDS-PY-1F04503CCE14",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/regional_execution_records.py",
-      "purpose": "Immutable evidence records for regional ground execution v1.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "RegionalGroundExecutionFailureReason",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RegionalGroundExecutionResult",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RegionalGroundExecutionStatus",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MAX_REGIONAL_GROUND_EXECUTION_WIRE_BYTES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "REGIONAL_GROUND_EXECUTION_LIMITATIONS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "REGIONAL_GROUND_EXECUTION_SCHEMA_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "REGIONAL_GROUND_EXECUTOR_ID",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "REGIONAL_GROUND_EXECUTOR_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "execution_input_sha256",
-            "signature": "ground_digest: str, plan_digest: str"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4772,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "bc3adbd6b239583a7ed94787148acfae7f84f4f14957802976f8b881ff2a1be7",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-REGIONAL-EXECUTION-WIRE-PY-8BA7636E02C2",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/regional_execution_wire.py",
-      "purpose": "Fail-closed parser for regional ground execution result v1.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "regional_execution_result_from_dict",
-            "signature": "payload: object"
-          },
-          {
-            "kind": "function",
-            "name": "regional_ground_execution_result_from_json",
-            "signature": "text: str"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
       }
     }
   ],

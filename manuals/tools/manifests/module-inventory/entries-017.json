@@ -3,6 +3,593 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 2524,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "775bb5fe97fec5c3f566df936c7f3abe22cd11564b58e7c9768ccb6ba3ac4a9c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-SETUP-PY-6AC3E617426E",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/setup.py",
+      "purpose": "Setup script for Solar System Simulation package.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://github.com/your-repo/solar-system-simulation"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "src/media_processing/video_processor/apps/web/test/setup.ts",
+          "src/p1am_control_system/frontend/src/test/setup.ts",
+          "src/rate_of_closure/web/src/test/setup.ts",
+          "src/rotation_converter/web/src/test/setup.ts"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 240,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8e2cf4ca2fbe5fbdfa80c9e4b9a22788027285752869d820129fc7ccb66ed134",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-INIT-PY-8903A7B9CCAE",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/ui/__init__.py",
+      "purpose": "User interface module for the solar system simulation.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "HelpOverlay",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InfoPanel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InputHandler",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StatusBar",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10915,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8cbdb7cec35a01e1bf5d248c7f51c710a304fd9e0a166cdca3ec64d6ebc59580",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-CONTROLS-PY-21B678E21C73",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/ui/controls.py",
+      "purpose": "Input Handler",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "InputAction",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "InputHandler",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "KeyBinding",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MouseState",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/programmatic_pid/test_controls.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 32330,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6618ea991817f4dd9487d321f7ec44e1a0331103736008a9bd84e1adb75ff8d6",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-WIDGETS-PY-FC31F75A5F46",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/ui/widgets.py",
+      "purpose": "UI Widgets",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Button",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Checkbox",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DateTimePicker",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "EducationalInfoPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HelpOverlay",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HistoricalEventsPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImmersionChecklistPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImmersionTask",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "InfoPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MissionListPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "NavigationPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PanelStyle",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SettingsPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SidebarPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StatusBar",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Tab",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TimeNavigationPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TooltipManager",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TransferPlanner",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "UnifiedControlPanel",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "bar",
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1414,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a83fb128cf77e9ad82a27f4134e5388bd71f4c829eb3f7272a0460014e37b8a0",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-WIDGETS-INIT-PY-15F4885C125D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/ui/widgets/__init__.py",
+      "purpose": "UI Widgets",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "Button",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Checkbox",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DateTimePicker",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "EducationalInfoPanel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "HelpOverlay",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "HistoricalEventsPanel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImmersionChecklistPanel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImmersionTask",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InfoPanel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MissionListPanel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "NavigationPanel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PanelStyle",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SettingsPanel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SidebarPanel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StatusBar",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Tab",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TimeNavigationPanel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TooltipManager",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TransferPlanner",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "UnifiedControlPanel",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 549,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "98ae92e23bb36746159a9642b0143346a51518c1e78e1f8f2e22559d5060d923",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-WIDGETS-BASE-PY-1F4C5D74A272",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/ui/widgets/_base.py",
+      "purpose": "Shared base types for UI widgets.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PanelStyle",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7080,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "441d69f64e3ae9ff067f151b4c6da2c946ba6c82578f90551291788e4631cd02",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-WIDGETS-DATE-TIME-PY-0E66DE2E0F42",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/ui/widgets/date_time.py",
+      "purpose": "Date/time widgets: DateTimePicker, TimeNavigationPanel.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DateTimePicker",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TimeNavigationPanel",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2367,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
