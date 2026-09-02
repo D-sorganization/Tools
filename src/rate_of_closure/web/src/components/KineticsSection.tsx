@@ -45,10 +45,17 @@ function drawChart(
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
   const { width, height } = canvas;
-  ctx.clearRect(0, 0, width, height);
-  const all = traces.flatMap((trace) => trace.values);
-  const lo = Math.min(0, ...all);
-  const hi = Math.max(0, ...all);
+  // ⚡ Bolt Optimization: Compute min and max bounds in a single pass to eliminate intermediate flat-mapped array and call stack allocations
+  let lo = 0;
+  let hi = 0;
+  for (let i = 0; i < traces.length; i++) {
+    const values = traces[i].values;
+    for (let j = 0; j < values.length; j++) {
+      const val = values[j];
+      if (val < lo) lo = val;
+      if (val > hi) hi = val;
+    }
+  }
   const span = hi - lo || 1;
   const tMax = t[t.length - 1] || 1;
   const px = (x: number) => MARGIN + (x / tMax) * (width - MARGIN - 8);

@@ -14469,7 +14469,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "not-applicable"
       },
@@ -14490,7 +14490,9 @@
             "signature": null
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "src/data_processing/data_processor/python/tests/test_main_window_time_ops.py"
+        ],
         "unit_mentions": [
           "N",
           "s"

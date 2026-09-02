@@ -3,397 +3,6 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10018,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "45b3049ac9b95e271046df4d1bd0a2eb0b1d31bbca0077c20dc8202274d8e0ce",
-      "family": "control-systems-non-calculation",
-      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-CORS-CONFIG-PY-D281D30B7F27",
-      "language": "python",
-      "maintainer": "Control systems maintainers",
-      "path": "src/p1am_control_system/backend/cors_config.py",
-      "purpose": "CORS configuration and the state-change request guard for the P1AM backend.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "http://127.0.0.1:3002",
-          "http://127.0.0.1:5173",
-          "http://host/api/estop``",
-          "http://localhost:3002",
-          "http://localhost:5173"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CorsSettings",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RequestGuardMiddleware",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CSRF_HEADER_NAME",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CSRF_HEADER_VALUE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_DEV_ORIGINS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PREFLIGHT_EXEMPT_PATHS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "STATE_CHANGING_METHODS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "evaluate_state_change",
-            "signature": "*, method: str, path: str, headers: Mapping[str, str], allowed_origins: Sequence[str], preflight_exempt_paths: Sequence[str]=PREFLIGHT_EXEMPT_PATHS"
-          },
-          {
-            "kind": "function",
-            "name": "resolve_cors_settings",
-            "signature": "env: dict[str, str] | None=None"
-          }
-        ],
-        "test_paths": [
-          "tests/p1am_control_system/test_cors_config.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 39654,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e41eee547e488dc8c69b05d54f045091fe732bd7bfc22ef76597aea1a69deb72",
-      "family": "control-systems-non-calculation",
-      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-DATA-CAPTURE-PY-690C97DD4EF4",
-      "language": "python",
-      "maintainer": "Control systems maintainers",
-      "path": "src/p1am_control_system/backend/data_capture.py",
-      "purpose": "Historian data-capture service: status + retention control.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CaptureConfig",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CaptureStats",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CaptureThrottle",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ClearResult",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RetentionResult",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TableFootprint",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "EVENTLOG_BUDGET_FRACTION",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "EVENTLOG_EST_BYTES_PER_ROW",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "EXPORT_CHUNK_ROWS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "HISTORIAN_EVENT_MAX_AGE_S",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "HISTORIAN_RETENTION_INTERVAL_S",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "HISTORIAN_VACUUM_PAGES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "TAGLOG_EST_BYTES_PER_ROW",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "TRENDS_MAX_MAX_POINTS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "TRENDS_MAX_POINTS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "TRENDS_MIN_MAX_POINTS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "TRENDS_STREAM_CHUNK_ROWS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "UTC",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "capture_stats",
-            "signature": "session: Session, *, capturing: bool=True"
-          },
-          {
-            "kind": "function",
-            "name": "clear_capture",
-            "signature": "session: Session, *, include_events: bool=False, before: _dt.datetime | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "enforce_size_cap",
-            "signature": "session: Session, max_bytes: int, *, headroom: float=0.9, event_max_age_s: float | None=HISTORIAN_EVENT_MAX_AGE_S, now: _dt.datetime | None=None, logger: logging.Logger | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "historian_footprint",
-            "signature": "session: Session, *, total_bytes: int | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "historian_max_bytes",
-            "signature": "settings: P1AMSettings | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "historian_retention_loop",
-            "signature": "*, shutdown_event: asyncio.Event, engine: Any, logger: logging.Logger, interval_s: float | None=None, settings: P1AMSettings | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "parse_query_bound",
-            "signature": "value: str"
-          },
-          {
-            "kind": "function",
-            "name": "parse_tag_names",
-            "signature": "tag_ids: str"
-          },
-          {
-            "kind": "function",
-            "name": "query_trend_series",
-            "signature": "session: Session, *, tag_name: str, start: _dt.datetime, end: _dt.datetime, max_points: int=TRENDS_MAX_POINTS"
-          },
-          {
-            "kind": "function",
-            "name": "run_retention_sweep",
-            "signature": "engine: Any, *, max_bytes: int, logger: logging.Logger, event_max_age_s: float | None=HISTORIAN_EVENT_MAX_AGE_S"
-          },
-          {
-            "kind": "function",
-            "name": "stream_tag_export_csv",
-            "signature": "bind: Any, statement: Any, *, chunk_rows: int=EXPORT_CHUNK_ROWS"
-          },
-          {
-            "kind": "function",
-            "name": "utcnow",
-            "signature": ""
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "Hz",
-          "N",
-          "g",
-          "ms",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2503,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "35c506f0b7b3e6d59220fe6ca5139e92c9c6de3c6e72fe57ced0994a938e74f2",
-      "family": "control-systems-non-calculation",
-      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-DATA-EXPLORER-ENUMS-PY-F993F4929869",
-      "language": "python",
-      "maintainer": "Control systems maintainers",
-      "path": "src/p1am_control_system/backend/data_explorer_enums.py",
-      "purpose": "Enumerations for the Data Explorer analysis suite.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "AggMethod",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CorrelationMethod",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ExportFormat",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "FilterType",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SourceKind",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SpectrumMethod",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TrendlineKind",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "WindowKind",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
       "bytes_lf": 9178,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -13331,6 +12940,235 @@
         "unit_mentions": [
           "deg",
           "ms",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7731,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "dbbe50ac1f94ca149ebcc4119cbba4946eb3895444f4294650bc26616dd33092",
+      "family": "control-systems-non-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-LIB-CURVEFIT-TS-68C5CA25807F",
+      "language": "typescript",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/frontend/src/lib/curveFit.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "FIT_METHODS",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "FitMethod",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "FitPoint",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "FitResult",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "HeatUpRate",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "NO_FIT_ID",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "fitOptions",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "fitSeries",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "formatHeatUpRate",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "getFitMethod",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "heatUpRateFromFit",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "linearFit",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "pointsInLastWindow",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "deg",
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1976,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "db1b073781f6e63878369c790ba04937bd28ef7cc72485e99d01866e6c21fde9",
+      "family": "control-systems-non-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-LIB-DATAAGE-TEST-TS-1DC52DA3401F",
+      "language": "typescript",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/frontend/src/lib/dataAge.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3067,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2a422eee2dc8363646c84b1a90f328161be3e889ead562a59affa3bf6db1568d",
+      "family": "control-systems-non-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-LIB-DATAAGE-TS-9B9DF5AC92A7",
+      "language": "typescript",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/frontend/src/lib/dataAge.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "DATA_STALE_MS",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "DataFreshness",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "dataFreshness",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "formatDataAge",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "Hz",
+          "bar",
           "s"
         ],
         "validation_paths": []

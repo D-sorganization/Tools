@@ -2,162 +2,6 @@
   "authority": "D-sorganization/Tools",
   "entries": [
     {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3588,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d5cc03aa6491337c6d3b1f650737e38ef7e68245cbbd2885db3fe19034c13359",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-SPATIAL-TARGET-PANEL-TEXT-PY-AE5C737BC01C",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/spatial_target_panel_text.py",
-      "purpose": "Text, labels, and scalar validation for the spatial-target editor.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "COORDINATE_LABELS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_GROUND_SOURCE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "FRAME_ITEMS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KIND_ITEMS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "TOLERANCE_ITEMS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "finite_number",
-            "signature": "edit: QLineEdit, label: str, *, positive: bool=False"
-          },
-          {
-            "kind": "function",
-            "name": "miss_summary",
-            "signature": "miss: TargetMiss, *, landing: bool"
-          },
-          {
-            "kind": "function",
-            "name": "target_summary",
-            "signature": "target: SpatialTarget"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 7598,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7b03055d0ef5f85f9b4b0f21f90a43a7d7cc36ad00dff0af7ecbdfd29553c877",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-SPATIAL-TARGET-RENDERING-PY-0EBFF7482B55",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/spatial_target_rendering.py",
-      "purpose": "Matplotlib projection painters for canonical spatial targets.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "draw_spatial_target_3d",
-            "signature": "axes: Any, target: SpatialTarget"
-          },
-          {
-            "kind": "function",
-            "name": "draw_spatial_target_side",
-            "signature": "axes: Any, target: SpatialTarget"
-          },
-          {
-            "kind": "function",
-            "name": "draw_spatial_target_top",
-            "signature": "axes: Any, target: SpatialTarget"
-          },
-          {
-            "kind": "function",
-            "name": "spatial_target_extents",
-            "signature": "target: SpatialTarget"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
       "authority_status": "provisional",
       "bytes_lf": 6005,
       "classification": "calculation",
@@ -9188,10 +9032,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11860,
+      "bytes_lf": 11961,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f3be1f8118dbbca6bbf578d369a5024407cc8c842a5bbd268a9dc665a4d97f12",
+      "content_sha256_lf": "eaa9d1437c587f0fe8fd7dd4c4ee5d49b2a4bfd852dad33af34ce58db7e0660a",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-E2E-VISUALIZATION-TAB-VISIBILITY-SPEC-TS-9730C4E18FC5",
       "language": "typescript",
@@ -11889,10 +11733,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9738,
+      "bytes_lf": 9974,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "5f350976b1d586776ae1ac35a8c8a50cfad2d4d7893835cd17b4b2fcd48dec7c",
+      "content_sha256_lf": "1c096ab1ebf07ab247f471e941d9c0a5f78d3f52a2a3c741ca1fa349aed50c9e",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-KINETICSSECTION-TSX-4AE56669D61C",
       "language": "typescript-react",
@@ -12724,6 +12568,101 @@
         "test_paths": [],
         "unit_mentions": [
           "deg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3400,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5f9190956d54017150504dc5c4fa721d3565f6c4a05e4156988667e60de21c13",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-MORRISFACTOREDITOR-TSX-336311257406",
+      "language": "typescript-react",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/components/MorrisFactorEditor.tsx",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "MorrisFactorEditor",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2054,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "97d3a2bbce6c20edd69a07b318ee950a9d8e6347293d2314509aa4e0a247f355",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-MORRISRESULTS-TEST-TSX-5CF8778EE1E2",
+      "language": "typescript-react",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/components/MorrisResults.test.tsx",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
           "s"
         ],
         "validation_paths": []
