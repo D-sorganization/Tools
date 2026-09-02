@@ -62,19 +62,54 @@ Each retained shot must explicitly identify:
 
 Distances are converted to yards. Expected strokes are linearly interpolated
 only between bracketing distances within the exact same lie/context/target
-stratum. Extrapolation and an unknown stratum fail closed. For a complete shot:
+stratum. Extrapolation and an unknown stratum are never guessed at. For a
+complete shot:
 
 ```text
 SG = E(before lie, before distance) - 1 - E(after lie, after distance)
 ```
+
+## Error Posture: Exclude and Audit
+
+Per UpstreamDrift ADR-0048 decision G1-D3, every calculation path — canonical
+service, PyQt6 local compatibility, and React local compatibility — handles a
+malformed shot the same way: the row is **excluded**, recorded against a
+`reason_code`, and counted. A malformed row never destroys the session, and it
+is never dropped in silence.
+
+| `reason_code`          | Meaning                                                                                  |
+| ---------------------- | ---------------------------------------------------------------------------------------- |
+| `missing_course_state` | A lie, context, target, or distance cell is blank or non-numeric.                        |
+| `invalid_distance`     | A distance is negative, non-finite, or a boolean.                                        |
+| `outside_baseline`     | The stratum is absent from the baseline, or the distance is outside its supported range. |
+
+Every result carries a `status` and an exclusion summary:
+
+- `available` — every supplied row was scored.
+- `partial` — at least one row scored, at least one excluded.
+- `unavailable` — no row could be scored; the mean is null.
+
+The exclusion summary reports `input_row_count`, `included_row_count`,
+`total_excluded`, and `by_reason`, and
+`input_row_count == included_row_count + total_excluded` always holds. Each
+excluded row is listed individually with its zero-based `source_index`, so a
+caller can map an exclusion straight back to the input record. Exports carry
+the audit trail alongside the values.
+
+A caller that wants fail-closed behaviour raises on `status != "available"`;
+a caller handed an exception could not have recovered the good rows. Defects
+in the _request_ — an absent column, a distance unit that is not `yd`/`m`, or a
+baseline artifact whose table digest does not verify — remain fatal, because
+they are the caller's declaration rather than the data's content.
 
 Exports retain baseline identity/version/source/license/hash plus every course
 state, interpolated expectation, and shot SG. Radial target error and the older
 user-supplied expected-strokes bookkeeping remain separately named and cannot
 masquerade as source-backed SG.
 
-The canonical result reports structured exclusions, descriptive Student-t
-uncertainty, and optional propagation of benchmark standard errors. Player,
+The canonical result additionally reports descriptive Student-t uncertainty and
+optional propagation of benchmark standard errors; the local compatibility
+calculation reports neither and does not claim to. Player,
 session, club, and longitudinal summaries are included only for identifiers
 and order columns the user explicitly selects and attests; filename, row order,
 monitor, source partition, or inferred identity never qualify. These summaries

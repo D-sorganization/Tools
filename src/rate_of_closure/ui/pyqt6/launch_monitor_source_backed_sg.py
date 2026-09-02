@@ -38,6 +38,15 @@ from rate_of_closure.launch_monitor_v2_client import (
 ScoringResult: TypeAlias = SourceBackedStrokesGainedResult | StrokesGainedResponseV1
 
 
+def _reason_text(result: SourceBackedStrokesGainedResult) -> str:
+    """Render the exclusion audit trail for the status line (ADR-0048 G1-D3)."""
+
+    by_reason = result.exclusions.by_reason
+    if not by_reason:
+        return "no exclusions"
+    return ", ".join(f"{code} {count}" for code, count in sorted(by_reason.items()))
+
+
 class LaunchMonitorSourceBackedStrokesGainedWidget(QWidget):
     """Load a verified baseline and map explicit before/after course state."""
 
@@ -271,9 +280,23 @@ class LaunchMonitorSourceBackedStrokesGainedWidget(QWidget):
             local_result = calculate_source_backed_strokes_gained(
                 self._frame, self._baseline, request
             )
+            if local_result.mean is None:
+                raise ValueError(
+                    "local compatibility strokes-gained estimate is unavailable: "
+                    f"{local_result.exclusions.total_excluded} of "
+                    f"{local_result.exclusions.input_row_count} rows were "
+                    f"excluded ({_reason_text(local_result)})"
+                )
+            excluded = local_result.exclusions.total_excluded
+            audit = (
+                f" · {excluded} excluded ({_reason_text(local_result)})"
+                if excluded
+                else ""
+            )
             message = (
                 f"Local compatibility mean source-backed SG {local_result.mean:.3f} "
-                f"strokes across {len(local_result.values)} shots · "
+                f"strokes across {len(local_result.values)} shots"
+                f"{audit} · status {local_result.status} · "
                 f"{local_result.baseline_id} {local_result.baseline_version}."
             )
             result = local_result

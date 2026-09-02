@@ -1,10 +1,38 @@
-"""Hash-verified expected-strokes baselines and source-backed SG bookkeeping."""
+"""Hash-verified expected-strokes baselines and source-backed SG bookkeeping.
+
+Error posture — ADR-0048 decision G1-D3 (exclude-and-audit)
+-----------------------------------------------------------
+UpstreamDrift's ``docs/adr/0048-launch-monitor-port-plan.md`` decision G1-D3
+rules that "the canonical layer excludes a malformed row, records it against a
+``reason_code``, sets ``status='partial'``, and returns a result", that raising
+on a malformed row is not canonical behaviour, and that silently dropping a row
+is prohibited outright. Its *Consequence* paragraph names this module by name:
+``calculate_source_backed_strokes_gained`` "stops raising on out-of-baseline
+states, invalid distances, and unknown strata", "and the silent-drop case gains
+an exclusion record".
+
+This module implements exactly that. A malformed shot no longer destroys the
+session: it is excluded, recorded in :class:`StrokesGainedExcludedRow` against
+one of the three canonical ``reason_code`` values, counted in
+:class:`StrokesGainedExclusionSummary`, and the result's ``status`` degrades to
+``"partial"``. A caller that wants fail-closed behaviour raises on
+``status != "available"``; a caller handed an exception could not recover the
+good rows.
+
+Reason codes, the exclusion summary, and the three-valued ``status`` mirror the
+canonical layer's ``ExcludedRowV1`` / ``ExclusionSummaryV1`` /
+``StrokesGainedAnalysisResultV1`` in
+``shared.python.launch_monitor.strokes_gained_types``, so the two stacks
+classify the same malformed row identically. The TypeScript twin in
+``web/src/model/launchMonitorSourceBackedStrokesGained.ts`` carries the same
+surface under camelCase names.
+"""
 
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
-from typing import Any
+from dataclasses import dataclass, field
+from typing import Any, Literal
 
 import numpy as np
 import pandas as pd
@@ -17,6 +45,28 @@ from .launch_monitor_strokes_gained_baseline import (
 )
 
 YARDS_PER_METRE = 1.0936132983377078
+
+ExclusionReasonCode = Literal[
+    "missing_course_state",
+    "invalid_distance",
+    "outside_baseline",
+]
+ResultStatus = Literal["available", "partial", "unavailable"]
+
+EXCLUSION_REASON_CODES: tuple[ExclusionReasonCode, ...] = (
+    "missing_course_state",
+    "invalid_distance",
+    "outside_baseline",
+)
+
+
+class _RowIssue(Exception):
+    """One row's disqualifying defect, classified for the audit trail."""
+
+    def __init__(self, reason_code: ExclusionReasonCode, message: str) -> None:
+        super().__init__(message)
+        self.reason_code: ExclusionReasonCode = reason_code
+        self.message = message
 
 
 @dataclass(frozen=True)
@@ -67,13 +117,47 @@ class StrokesGainedBackingRow:
 
 
 @dataclass(frozen=True)
+class StrokesGainedExcludedRow:
+    """One shot the calculation refused, with the reason it was refused.
+
+    Mirrors the canonical ``ExcludedRowV1``. ``source_index`` is the row's
+    zero-based position in the supplied frame, so a caller can map an
+    exclusion straight back to its input record.
+    """
+
+    source_index: int
+    reason_code: ExclusionReasonCode
+    message: str
+
+
+@dataclass(frozen=True)
+class StrokesGainedExclusionSummary:
+    """Row accounting for one calculation. Mirrors ``ExclusionSummaryV1``.
+
+    ``input_row_count == included_row_count + total_excluded`` always holds:
+    no row leaves the calculation unaccounted for.
+    """
+
+    input_row_count: int
+    included_row_count: int
+    total_excluded: int
+    by_reason: dict[str, int] = field(default_factory=dict)
+
+
+@dataclass(frozen=True)
 class SourceBackedStrokesGainedResult:
-    """Traceable source-backed SG values and baseline identity."""
+    """Traceable source-backed SG values, baseline identity, and audit trail.
+
+    ``status`` is ``"available"`` when every supplied row was scored,
+    ``"partial"`` when at least one row was scored and at least one excluded,
+    and ``"unavailable"`` when no row could be scored. ``mean`` is ``None``
+    exactly when ``status == "unavailable"``.
+    """
 
     metric_name: str
     unit: str
     values: tuple[float, ...]
-    mean: float
+    mean: float | None
     baseline_id: str
     baseline_version: str
     source_url: str
@@ -81,6 +165,9 @@ class SourceBackedStrokesGainedResult:
     table_sha256: str
     backing_rows: tuple[StrokesGainedBackingRow, ...]
     formula: str
+    status: ResultStatus
+    excluded_rows: tuple[StrokesGainedExcludedRow, ...]
+    exclusions: StrokesGainedExclusionSummary
 
 
 def _baseline_document(baseline: StrokesGainedBaseline) -> dict[str, object]:
@@ -169,21 +256,38 @@ def _trusted_summary_document(spec: TrustedSummaryRequest) -> dict[str, object]:
     return output
 
 
-def _yards(value: object, unit: str) -> float | None:
+def _yards(value: object, unit: str, label: str) -> float:
+    """Convert one distance cell to yards, or classify why it cannot be.
+
+    Raises :class:`_RowIssue` (row-level, excluded and audited) for cell
+    content, and :class:`ValueError` (request-level, still fatal) for a unit
+    the request itself declared wrong.
+    """
+
+    if unit not in {"yd", "m"}:
+        raise ValueError("distance unit must be 'yd' or 'm'")
+    if isinstance(value, bool):
+        raise _RowIssue("invalid_distance", f"{label} must be numeric")
     numeric = pd.to_numeric(pd.Series([value]), errors="coerce").iloc[0]
-    if pd.isna(numeric) or not np.isfinite(numeric):
-        return None
-    if unit == "yd":
-        return float(numeric)
-    if unit == "m":
-        return float(numeric) * YARDS_PER_METRE
-    raise ValueError("distance unit must be 'yd' or 'm'")
+    if pd.isna(numeric):
+        raise _RowIssue("missing_course_state", f"{label} is missing")
+    distance = float(numeric)
+    if not np.isfinite(distance) or distance < 0.0:
+        raise _RowIssue("invalid_distance", f"{label} must be finite and nonnegative")
+    return distance * (YARDS_PER_METRE if unit == "m" else 1.0)
 
 
-def _course_state_text(value: Any) -> str:
-    """Normalize an optional course-state label without propagating pandas Any."""
+def _course_state_text(value: Any, label: str) -> str:
+    """Normalize a course-state label, classifying a blank one as an exclusion."""
 
-    return "" if pd.isna(value) else str(value).strip().lower()
+    try:
+        missing = bool(pd.isna(value))
+    except (TypeError, ValueError):
+        missing = False
+    normalized = "" if missing else str(value).strip().lower()
+    if not normalized:
+        raise _RowIssue("missing_course_state", f"{label} is missing")
+    return normalized
 
 
 def _expected(
@@ -206,9 +310,10 @@ def _expected(
         or distance < candidates[0].distance_yards
         or distance > candidates[-1].distance_yards
     ):
-        raise ValueError(
+        raise _RowIssue(
+            "outside_baseline",
             f"course state {lie}/{context}/{target}/{distance:g} yd "
-            "is outside the baseline"
+            "is outside the baseline",
         )
     return float(
         np.interp(
@@ -219,11 +324,71 @@ def _expected(
     )
 
 
-def _backing_rows(
+def _backing_row(
+    source_index: int,
+    row: pd.Series,
+    baseline: StrokesGainedBaseline,
+    request: SourceBackedStrokesGainedRequest,
+) -> StrokesGainedBackingRow:
+    """Score one shot, or raise :class:`_RowIssue` naming why it cannot be."""
+
+    before_lie = _course_state_text(row[request.before_lie_column], "start lie")
+    before_context = _course_state_text(
+        row[request.before_context_column], "start context"
+    )
+    before_target = _course_state_text(
+        row[request.before_target_column], "start target/hole"
+    )
+    after_lie = _course_state_text(row[request.after_lie_column], "finish lie")
+    after_context = _course_state_text(
+        row[request.after_context_column], "finish context"
+    )
+    after_target = _course_state_text(
+        row[request.after_target_column], "finish target/hole"
+    )
+    before_distance = _yards(
+        row[request.before_distance_column],
+        request.before_distance_unit,
+        "start distance",
+    )
+    after_distance = _yards(
+        row[request.after_distance_column],
+        request.after_distance_unit,
+        "finish distance",
+    )
+    expected_before = _expected(
+        baseline, before_lie, before_context, before_target, before_distance
+    )
+    expected_after = _expected(
+        baseline, after_lie, after_context, after_target, after_distance
+    )
+    return StrokesGainedBackingRow(
+        source_index,
+        before_lie,
+        before_context,
+        before_target,
+        before_distance,
+        after_lie,
+        after_context,
+        after_target,
+        after_distance,
+        expected_before,
+        expected_after,
+        expected_before - 1.0 - expected_after,
+    )
+
+
+def _partition_rows(
     frame: pd.DataFrame,
     baseline: StrokesGainedBaseline,
     request: SourceBackedStrokesGainedRequest,
-) -> tuple[StrokesGainedBackingRow, ...]:
+) -> tuple[tuple[StrokesGainedBackingRow, ...], tuple[StrokesGainedExcludedRow, ...]]:
+    """Split the frame into scored rows and audited exclusions (ADR-0048 G1-D3).
+
+    Postcondition: ``len(scored) + len(excluded) == len(frame)``. No row is
+    dropped without a record.
+    """
+
     columns = (
         request.before_lie_column,
         request.before_context_column,
@@ -238,68 +403,15 @@ def _backing_rows(
     if missing:
         raise ValueError(f"columns are unavailable: {missing}")
     rows: list[StrokesGainedBackingRow] = []
+    excluded: list[StrokesGainedExcludedRow] = []
     for source_index, (_, row) in enumerate(frame.iterrows()):
-        before_value = row[request.before_lie_column]
-        before_context_value = row[request.before_context_column]
-        before_target_value = row[request.before_target_column]
-        after_value = row[request.after_lie_column]
-        after_context_value = row[request.after_context_column]
-        after_target_value = row[request.after_target_column]
-        before_lie = _course_state_text(before_value)
-        before_context = _course_state_text(before_context_value)
-        before_target = _course_state_text(before_target_value)
-        after_lie = _course_state_text(after_value)
-        after_context = _course_state_text(after_context_value)
-        after_target = _course_state_text(after_target_value)
-        before_distance = _yards(
-            row[request.before_distance_column], request.before_distance_unit
-        )
-        after_distance = _yards(
-            row[request.after_distance_column], request.after_distance_unit
-        )
-        if (
-            not before_lie
-            or not before_context
-            or not before_target
-            or not after_lie
-            or not after_context
-            or not after_target
-            or before_distance is None
-            or after_distance is None
-        ):
-            continue
-        expected_before = _expected(
-            baseline,
-            before_lie,
-            before_context,
-            before_target,
-            before_distance,
-        )
-        expected_after = _expected(
-            baseline,
-            after_lie,
-            after_context,
-            after_target,
-            after_distance,
-        )
-        gained = expected_before - 1.0 - expected_after
-        rows.append(
-            StrokesGainedBackingRow(
-                source_index,
-                before_lie,
-                before_context,
-                before_target,
-                before_distance,
-                after_lie,
-                after_context,
-                after_target,
-                after_distance,
-                expected_before,
-                expected_after,
-                gained,
+        try:
+            rows.append(_backing_row(source_index, row, baseline, request))
+        except _RowIssue as issue:
+            excluded.append(
+                StrokesGainedExcludedRow(source_index, issue.reason_code, issue.message)
             )
-        )
-    return tuple(rows)
+    return tuple(rows), tuple(excluded)
 
 
 def calculate_source_backed_strokes_gained(
@@ -307,19 +419,34 @@ def calculate_source_backed_strokes_gained(
     baseline: StrokesGainedBaseline,
     request: SourceBackedStrokesGainedRequest,
 ) -> SourceBackedStrokesGainedResult:
-    """Calculate SG from verified expected-strokes course-state lookups."""
+    """Calculate SG from verified expected-strokes course-state lookups.
 
-    rows = _backing_rows(frame, baseline, request)
-    if not rows:
-        raise ValueError(
-            "source-backed strokes gained requires complete course-state rows"
-        )
+    Per ADR-0048 decision G1-D3 this never raises on row content. A malformed
+    shot is excluded, classified against a ``reason_code``, and counted in the
+    returned ``exclusions`` summary; ``status`` degrades to ``"partial"`` when
+    any row is excluded and to ``"unavailable"`` when none can be scored.
+    ``ValueError`` remains reserved for request-level defects the caller
+    declared — absent columns, or a distance unit that is not ``yd``/``m``.
+
+    Callers that need fail-closed behaviour check ``status != "available"``.
+    """
+
+    rows, excluded = _partition_rows(frame, baseline, request)
     values = tuple(row.strokes_gained for row in rows)
+    by_reason: dict[str, int] = {}
+    for item in excluded:
+        by_reason[item.reason_code] = by_reason.get(item.reason_code, 0) + 1
+    if not rows:
+        status: ResultStatus = "unavailable"
+    elif excluded:
+        status = "partial"
+    else:
+        status = "available"
     return SourceBackedStrokesGainedResult(
         "source_backed_strokes_gained",
         "strokes",
         values,
-        float(np.mean(values)),
+        float(np.mean(values)) if values else None,
         baseline.baseline_id,
         baseline.version,
         baseline.source_url,
@@ -329,14 +456,27 @@ def calculate_source_backed_strokes_gained(
         "SG = verified E(before course state) - 1 - verified E(after course "
         "state); linear interpolation occurs only within the same exact "
         "lie/context/target stratum.",
+        status,
+        excluded,
+        StrokesGainedExclusionSummary(
+            input_row_count=len(frame),
+            included_row_count=len(rows),
+            total_excluded=len(excluded),
+            by_reason=by_reason,
+        ),
     )
 
 
 __all__ = [
     "CONTRACT_VERSION",
+    "EXCLUSION_REASON_CODES",
+    "ExclusionReasonCode",
+    "ResultStatus",
     "SourceBackedStrokesGainedRequest",
     "SourceBackedStrokesGainedResult",
     "StrokesGainedBaseline",
+    "StrokesGainedExcludedRow",
+    "StrokesGainedExclusionSummary",
     "TrustedSummaryRequest",
     "baseline_table_hash",
     "build_source_backed_strokes_gained_payload",

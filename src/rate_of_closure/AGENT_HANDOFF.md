@@ -29,6 +29,15 @@ paired-device validation without real paired observations.** #4584/#4599 merged
 strokes-gained v2 into both clients; #4600 owns the PyQt reference and
 #4602/#4608/#4610/#4613 the isolated rendered gates.
 
+**Source-backed SG excludes and audits; it does not raise** (ADR-0048 G1-D3).
+`calculate_source_backed_strokes_gained` and its TS twin classify a bad row as
+`missing_course_state`/`invalid_distance`/`outside_baseline`, count it in
+`exclusions`, and set `status` `partial`/`unavailable` (`mean=None`). **Never
+restore a silent drop** — both runtimes assert `input_row_count ==
+included_row_count + total_excluded`. Request defects (absent columns, a unit
+that is not `yd`/`m`, a failed digest) stay fatal. UpstreamDrift's
+`test_strokes_gained_drift.py` pins this from the other side.
+
 Club Fitting #4549, Heavy Hit #4562, packaging #4579, and Putting #4800
 (P1-P9) are complete; physics is shared-first in
 `shared/python/{golf_club,swing_sim}`. `putting_result/2` supersedes v1 without

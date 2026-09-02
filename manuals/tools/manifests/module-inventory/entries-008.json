@@ -12633,10 +12633,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10366,
+      "bytes_lf": 11760,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d7758053a69b71a63ca3a20d4ce133b58bec82ff02f2498dee7a0babf9966216",
+      "content_sha256_lf": "a4fabf46bf07a808b6253ef04d9e7aa7fb168636f54d2acafbcd14823d05aeb6",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-LAUNCHMONITORSOURCEBACKEDSTROKESGAINED-TSX-2B90D558C11A",
       "language": "typescript-react",
@@ -12663,7 +12663,8 @@
       "traceability": {
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],

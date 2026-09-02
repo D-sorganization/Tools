@@ -16092,10 +16092,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 18835,
+      "bytes_lf": 18889,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "89f920e04f5e17737675c6e3eea8eed20e2f464bd4827c3456ef0d94c8128c35",
+      "content_sha256_lf": "4b3eca9d3b86e5b65f2fd073fa60b785c19186b35953b44bd143370752bb40f1",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-STROKES-GAINED-PY-98B26F9BFCEC",
       "language": "python",
