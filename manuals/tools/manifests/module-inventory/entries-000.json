@@ -9017,6 +9017,7 @@
         "test_paths": [
           "rust_core/tools-core/tests/flight_ground_transfer.rs",
           "rust_core/tools-core/tests/flight_ground_wire.rs",
+          "src/data_processing/data_processor/python/tests/test_main_window_time_ops.py",
           "src/data_processing/data_processor/python/tests/test_signal_processor.py",
           "src/data_processing/data_processor/python/tests/test_vectorized_filter_engine_contracts.py",
           "src/data_processing/data_processor/python/tests/test_wavelet_denoising.py",

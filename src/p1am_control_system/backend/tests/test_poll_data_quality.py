@@ -19,7 +19,7 @@ pytest.importorskip("sqlmodel")
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from models import DataSource  # noqa: E402
-from poll_runtime import DataQualityTracker, _poll_once  # noqa: E402
+from poll_runtime import DataQualityTracker, poll_once  # noqa: E402
 
 
 class _Status:
@@ -144,7 +144,7 @@ async def _scan(**overrides: Any) -> dict[str, Any]:
         "historian": _Historian(),
     }
     kwargs.update(overrides)
-    payload: dict[str, Any] = await _poll_once(**kwargs)
+    payload: dict[str, Any] = await poll_once(**kwargs)
     return payload
 
 

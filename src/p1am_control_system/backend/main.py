@@ -75,10 +75,10 @@ from poll_runtime import (
     DataQualityTracker,
     HistorianWriter,
     ThrottledHistorianSink,
-    _connect_once,
-    _poll_once,
+    connect_once,
     log_poll_failure,
     loop_diagnostics,
+    poll_once,
 )
 from power_supply_integration import PowerSupplyService, create_power_supply_router
 from project_import import import_project_archive
@@ -270,7 +270,7 @@ async def modbus_connect_background() -> None:
     logger.info("Starting background PLC connection task...")
     while not shutdown_event.is_set():
         try:
-            await _connect_once(
+            await connect_once(
                 plc=plc_client,
                 power_supply=power_supply_service,
                 temperature=temperature_service,
@@ -352,7 +352,7 @@ async def poll_plc_loop() -> None:
             failed = False
             retry_delay = period
             try:
-                frame = await _poll_once(
+                frame = await poll_once(
                     plc=plc_client,
                     backup=backup_simulator if PLC_DRIVER_IS_SIMULATED else None,
                     simulated=PLC_DRIVER_IS_SIMULATED,

@@ -1090,10 +1090,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 50662,
+      "bytes_lf": 50658,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "73574d998d42c03f755af50f79e07f4b4edcfe6ba2596482effc7bd11865ad36",
+      "content_sha256_lf": "7a5125d83c686a982c8a4460f24ed870a5453632c1e41425a90aa0bf63f9741a",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-MAIN-PY-C47A4D7AC436",
       "language": "python",
@@ -2385,10 +2385,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 16622,
+      "bytes_lf": 16618,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c038f8fb32996a85baa1fbafc8c135a43acfe276860a95b06696163c5ce6f62c",
+      "content_sha256_lf": "3f1fcd74006f9882c8c985168474146dc21317104c2c91806e0ea3fb142fee9d",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-POLL-RUNTIME-PY-FB742ACD5D2F",
       "language": "python",
@@ -2435,6 +2435,11 @@
           },
           {
             "kind": "function",
+            "name": "connect_once",
+            "signature": "*, plc: Any, power_supply: Any, apply_config: Callable[[RoutingConfig], None], estop_active: bool, temperature: Any=None, ensure_passthrough: Callable[..., Any]=ensure_power_supply_passthrough"
+          },
+          {
+            "kind": "function",
             "name": "log_poll_failure",
             "signature": "failures: int, retry_delay_s: float, err: Exception"
           },
@@ -2442,6 +2447,11 @@
             "kind": "function",
             "name": "loop_diagnostics",
             "signature": "*, scheduler: Any, perf: Any, writer: Any, ws: Any"
+          },
+          {
+            "kind": "function",
+            "name": "poll_once",
+            "signature": "*, plc: Any, latest_tag_values: dict[str, float], ws: Any, alicats: Any, power_supply: Any, alarm_engine: Any, active_alarm_map: dict[str, dict[str, Any]], estop_active: bool, backup: Any=None, simulated: bool=False, temperature: Any=None, historian: Any=None, quality_tracker: Any=None, broadcast: bool=True, diagnostics: Mapping[str, Any] | None=None, process_events: Callable[[Any, dict[str, float], dict[str, dict[str, Any]]], list[Any]]=process_alarm_events"
           },
           {
             "kind": "re-export",
@@ -3682,10 +3692,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 8638,
+      "bytes_lf": 9209,
       "classification": "calculation",
       "classification_basis": "path-marker:filter",
-      "content_sha256_lf": "f7c373396f8b6795f569bd84a0a83334303d52779441eab38c1a3c020ebb2e56",
+      "content_sha256_lf": "4b672a31555bb798186d81814b8c58092e807dea0b6e19718256e0accfbff840",
       "family": "control-systems-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-THERMOCOUPLE-FILTER-PY-5B7FA8E8D58F",
       "language": "python",
@@ -4480,10 +4490,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 2573,
+      "bytes_lf": 2572,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b8a229ff517f7fe26fea5e3c91afd4c96153511c392377c13335c9621cc11c0a",
+      "content_sha256_lf": "d46d038ba8d4e337d21fb5ac056597c0b0167dfc64a0a4b37ff3c44a3d11b8a4",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-DESKTOP-CONNECTION-STATE-PY-C7590F0B815A",
       "language": "python",

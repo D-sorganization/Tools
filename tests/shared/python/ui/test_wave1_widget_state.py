@@ -106,3 +106,28 @@ def test_set_calculator_state_handles_corrupt_profile() -> None:
 
     # Non-dict top level is also tolerated.
     CalculatorStateMixin.set_calculator_state(host, "garbage")  # type: ignore[arg-type]
+
+
+@pytest.mark.unit
+def test_state_manager_import_does_not_trigger_deprecation_warning() -> None:
+    """Regression test for issue #3950.
+
+    The mixin used to import the deprecated global `state_manager` (which
+    raises a DeprecationWarning on every access via module `__getattr__`),
+    breaking Units-tab usage under warnings-as-errors. It should go through
+    `get_state_manager()` instead -- confirmed two ways: the deprecated name
+    is no longer bound in the mixin module's namespace, and calling
+    `get_state_manager()` itself (what `__init__` now does) does not warn.
+    """
+    import warnings
+
+    import sidekick.ui.mixins.calculator_state_mixin as mixin_module
+    from sidekick.utils.state_manager import StateManager, get_state_manager
+
+    assert not hasattr(mixin_module, "state_manager")
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", DeprecationWarning)
+        manager = get_state_manager()
+
+    assert isinstance(manager, StateManager)

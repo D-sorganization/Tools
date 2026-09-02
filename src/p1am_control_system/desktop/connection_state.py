@@ -8,7 +8,7 @@ bench rig" and starts clearing E-stops on energised equipment (issue #4019).
 Mislabelling a live plant as simulated is the dangerous direction, so the frame
 must *positively* say it is simulated before the HMI claims simulation.
 
-The backend telemetry frame (``backend/poll_runtime._poll_once``) does not yet
+The backend telemetry frame (``backend/poll_runtime.poll_once``) does not yet
 carry an explicit connectivity flag; both ``plc_connected`` and ``simulated``
 are consumed defensively here so the HMI starts reporting the truth as soon as
 the backend adds one.
