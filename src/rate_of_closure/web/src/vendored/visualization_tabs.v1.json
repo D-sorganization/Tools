@@ -127,7 +127,7 @@
     {
       "surface": "react",
       "tab_id": "launch-monitor-analytics",
-      "purpose": "Evaluate governed launch-monitor observations and explicitly labeled statistical diagnostics.",
+      "purpose": "Evaluate governed launch-monitor observations and explicitly labeled statistical diagnostics, with excluded rows reported beside every result.",
       "data_prerequisites": [
         "Governed launch-monitor table or visibly labeled demonstration dataset."
       ],
@@ -317,7 +317,7 @@
     {
       "surface": "pyqt",
       "tab_id": "launch_monitor_analytics",
-      "purpose": "Evaluate governed launch-monitor observations and explicitly labeled statistical diagnostics.",
+      "purpose": "Evaluate governed launch-monitor observations and explicitly labeled statistical diagnostics, with excluded rows reported beside every result.",
       "data_prerequisites": [
         "Governed launch-monitor table or visibly labeled demonstration dataset."
       ],

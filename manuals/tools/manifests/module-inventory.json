@@ -291,7 +291,7 @@
       "shard_index": 7
     },
     {
-      "content_sha256_lf": "b86d006edada02de880784bcf00bbc0aef09a2882be8122ed3c2019b38b759d8",
+      "content_sha256_lf": "012f92986c2169945ee3c24848df3f235547ced414dcdc05ffcefdd2b52e108b",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/ui/pyqt6/spatial_target_panel_access.py",
       "last_path": "src/rate_of_closure/web/src/components/ManualDeliveryControls.test.tsx",
@@ -371,7 +371,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "fb649ce6989e10e9506ad4a2000a17db70dc43556ea1dbba15cb05ddc312316c",
+  "source_tree_sha256": "b40d2a7c1bdeca3dc62c524214b9ffe8ceca53c705b7b39f43e1ef0699a6bc98",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
