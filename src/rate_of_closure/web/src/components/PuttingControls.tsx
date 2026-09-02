@@ -227,8 +227,8 @@ export function PuttingControls({
               {importErrorMessage}
             </p>
           ) : null}
-          <div className="flex items-center gap-2">
-            <label className="flex-1 text-slate-300">
+          <div className="flex flex-wrap items-center gap-2">
+            <label className="min-w-0 flex-1 text-slate-300">
               <span className="sr-only">Import Green Document</span>
               <input
                 aria-label="Import Green Document File"
@@ -236,7 +236,7 @@ export function PuttingControls({
                 accept=".json"
                 title="Load a green heightfield: a swing_sim.green_surface/1 document, or an UpstreamDrift putting_green topography (#4800 P2/P9). The reader is chosen by the document's declared format and refuses anything it does not fully understand."
                 onChange={handleImportGreenDocument}
-                className="text-xs"
+                className="w-full text-xs"
               />
             </label>
             <button

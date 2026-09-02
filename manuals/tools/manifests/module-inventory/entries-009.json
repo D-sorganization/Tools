@@ -948,10 +948,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9551,
+      "bytes_lf": 9576,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b5420b7f816b352a34014edcf178ce20d6e38cbcfa224573c9a00657dd91ad46",
+      "content_sha256_lf": "9af417e9e8f98a52a3d1808648637ec4504202bce29c28d7c4c4e73d0e06e738",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-PUTTINGCONTROLS-TSX-42B6BEEE3B63",
       "language": "typescript-react",

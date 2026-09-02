@@ -299,7 +299,7 @@
       "shard_index": 8
     },
     {
-      "content_sha256_lf": "66f54fe9735f25f8bdd2ee9fa3734f937b3dde10c940d5ad57fd21584efb7ba3",
+      "content_sha256_lf": "894a4775ed68731b45c656257d2798b62575f6c4432183e2615bdd401aa7e681",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/web/src/components/ManualDeliveryControls.tsx",
       "last_path": "src/rate_of_closure/web/src/model/clubHeads.ts",
@@ -371,7 +371,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "9c848481f1558d00004db6104923ba57550ca3f36f16b11406a56a65fa47249b",
+  "source_tree_sha256": "74f7424d953c537412f3ac43433d9faaba8c19921b40b3c11d4ee7a0d02aa9c8",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
