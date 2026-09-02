@@ -112,10 +112,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 4634,
+      "bytes_lf": 4716,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "108d4eae1b9535bbc17fc35230f51109ae7156b3fceff4a4f609a3666fc54a76",
+      "content_sha256_lf": "45ace1c1d12525cace34a9dac76e1ad4a51daeae2c7e734e936e57d2171fe168",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-INIT-PY-143AD067C756",
       "language": "python",
@@ -274,10 +274,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 60567,
+      "bytes_lf": 62406,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6cb298149dc3f37784687465211950a22825d1468efd729e8199b4a08bbf9caf",
+      "content_sha256_lf": "5f02597c1e89aaeb8a7ace056952d7506bd40182495382019ceee206152926cf",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-CHAT-DOCK-WIDGET-QT-PY-DD8B1382BB92",
       "language": "python",
@@ -315,7 +315,22 @@
         "public_surfaces": [
           {
             "kind": "class",
+            "name": "ChatConnectionConfig",
+            "signature": null
+          },
+          {
+            "kind": "class",
             "name": "ChatDockWidget",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ChatIntegrationHooks",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ChatPresentationConfig",
             "signature": null
           },
           {
@@ -356,6 +371,7 @@
           "tests/shared/python/chat/test_default_server.py",
           "tests/shared/python/chat/test_native_websocket_contract.py",
           "tests/shared/python/chat/test_thinking_indicator.py",
+          "tests/shared/python/sidekick/ui/test_tools_sidebar_runtime_tabs.py",
           "tests/unit/chat/test_chat_dock_widget_close_reconnect.py",
           "tests/unit/chat/test_chat_dock_widget_history_browser.py",
           "tests/unit/chat/test_dock_widget_dropdowns.py",
@@ -1439,10 +1455,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9077,
+      "bytes_lf": 9260,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "53b4805ad2fdf594474487b386203cb38ec397a6667458eb97b15df7ba710351",
+      "content_sha256_lf": "ec74830bae5940b2819167aa8dbfbeb030cff65b35324f06731dea2c576c1ac2",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-CHAT-DOCK-WIDGET-PY-823BB8886AED",
       "language": "python",
@@ -2774,10 +2790,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 14879,
+      "bytes_lf": 15010,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "af1c27760e6171df24945819bebd9c2f4dc724602209d884203f28779646a59f",
+      "content_sha256_lf": "9aef4fe8176d0ae7bb733a751f03da2bab2ce997022eb69ba9036450201f5f5c",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-QUICK-BAR-PY-18859D97AADF",
       "language": "python",

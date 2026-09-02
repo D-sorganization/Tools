@@ -1949,10 +1949,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 17447,
+      "bytes_lf": 17745,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4d3bf57cf484d5d06bc6bdb742c45e606b08fcf1b0f1537ffb8898438158f02c",
+      "content_sha256_lf": "a4eefd0bae36fbdafc690c1cafb6f29e113993c75b6ad1be0d2a20fa6a746326",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-CHAT-TAB-PY-2B00A350D4EA",
       "language": "python",
