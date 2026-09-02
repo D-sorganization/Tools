@@ -37,6 +37,9 @@ P4    :mod:`.comparison`    Matched (Bland-Altman) and descriptive
 P5    :mod:`.schema`        The layer's vocabulary: 33 unit-carrying metric
                             definitions, identity columns, and the import
                             mapping/session contracts.
+P6    :mod:`.treatment`     Flag-then-optionally-exclude quality pipeline with
+                            a full audit log. Confirmed UpstreamDrift-only by
+                            the port plan.
 ====  ====================  ==================================================
 
 **Name-collision containment.** Symbols in this package collide by name with
@@ -65,6 +68,12 @@ from .schema import (
     MetricDefinition,
     numeric_metric_columns,
 )
+from .treatment import (
+    FilterRule,
+    TreatmentConfig,
+    TreatmentResult,
+    apply_treatment,
+)
 from .trends import ChangeCandidate, TemporalTrendResult, analyze_trend
 
 __all__ = [
@@ -73,6 +82,7 @@ __all__ = [
     "ChangeCandidate",
     "ColumnMapping",
     "DispersionResult",
+    "FilterRule",
     "ImportManifest",
     "ImportOptions",
     "ImportedSession",
@@ -82,9 +92,12 @@ __all__ = [
     "PCAResult",
     "PairwiseMonitorComparison",
     "TemporalTrendResult",
+    "TreatmentConfig",
+    "TreatmentResult",
     "VIFResult",
     "analyze_dispersion",
     "analyze_trend",
+    "apply_treatment",
     "compare_monitors",
     "compute_pca",
     "compute_vif",
