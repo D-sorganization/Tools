@@ -3,10 +3,15 @@
 The first case is UpstreamDrift's
 ``tests/unit/launch_monitor/test_analysis.py::test_correlations_include_counts_significance_and_derived_warning``,
 travelling verbatim with the module it exercises. The remaining cases pin the
-module's refusals and — deliberately — the two behaviours that owner rulings
-**D15** and **D17** will change in a follow-up PR. This port carries
-UpstreamDrift's behaviour unchanged; pinning today's behaviour here is what
-makes the follow-up's diff visible instead of invisible.
+module's refusals and — deliberately — the one behaviour that owner ruling
+**D15** will still change in a follow-up PR (the FDR multiplicity
+denominator; see ``test_undersampled_pair_yields_nan_and_leaves_the_fdr_denominator``
+below, which is unaffected by this change and must keep asserting today's
+under-sampling behaviour). Owner ruling **D17** — booleans analysed as 0/1
+with the projection explicitly labelled — is applied by this PR (UpstreamDrift
+PR #9392, ``docs/adr/0048-launch-monitor-port-plan.md`` "Owner Rulings
+(2026-09-02)"); ``test_boolean_column_projection_is_labelled_and_math_is_unchanged``
+below asserts the "after" contract in place of the old silent-projection pin.
 """
 
 from __future__ import annotations
@@ -151,17 +156,20 @@ def test_undersampled_pair_yields_nan_and_leaves_the_fdr_denominator(
     assert all("sparse" not in {edge.source, edge.target} for edge in result.edges)
 
 
-def test_boolean_column_is_silently_projected_to_zero_one(
+def test_boolean_column_projection_is_labelled_and_math_is_unchanged(
     shots: Callable[..., pd.DataFrame],
 ) -> None:
-    """Today's boolean handling, pinned ahead of ruling **D17**.
+    """Ruling **D17** applied: booleans are still analysed as 0/1, but labelled.
 
-    The ``float`` cast inside ``_pair_correlation`` projects a boolean column
-    to 0/1 and analyses it as numeric, and nothing in the result records that
-    a projection happened. D17 (booleans analysed as 0/1 with explicit
-    projection labelling) is accepted and lands in a follow-up PR against this
-    module; the projection stays, the silence is what changes. This assertion
-    is the "before" side of that diff.
+    UpstreamDrift PR #9392 / ``docs/adr/0048-launch-monitor-port-plan.md``
+    "Owner Rulings (2026-09-02)", D17: the boolean-analysis capability is
+    preserved (a boolean column is still projected to 0/1 and analysed), but
+    the projection must be explicit in the result — a column analysed via
+    boolean projection is labelled as such and can never read as native
+    numeric. This replaces the old silent-projection pin: the projection
+    itself, and therefore every coefficient/p-value it feeds, is bit-for-bit
+    the same as before this change (labelling changes metadata, never math);
+    only the presence of an explicit label is new.
     """
     frame = shots(40)
     frame["is_trackman"] = frame["monitor_vendor"] == "TrackMan"
@@ -170,12 +178,40 @@ def test_boolean_column_is_silently_projected_to_zero_one(
         frame.assign(is_trackman=frame["is_trackman"].astype(float)),
         metrics=("club_speed", "is_trackman"),
     )
-    assert boolean.coefficients.loc["club_speed", "is_trackman"] == pytest.approx(
-        projected.coefficients.loc["club_speed", "is_trackman"]
-    )
+
+    # Math is unchanged: the boolean-column result is identical to analysing
+    # the same values already cast to float, and matches the pinned value
+    # this module has always produced for this fixture.
+    r = boolean.coefficients.loc["club_speed", "is_trackman"]
+    assert r == pytest.approx(projected.coefficients.loc["club_speed", "is_trackman"])
+    assert r == pytest.approx(-0.04331480818242096)
     assert boolean.pair_counts.loc["club_speed", "is_trackman"] == 40
-    assert not hasattr(boolean, "projected_metrics")
-    assert not any(
-        hasattr(edge, "projection") or hasattr(edge, "projected_from")
-        for edge in boolean.edges
+
+    # The projection is now explicit: the boolean metric is named on the
+    # result, and a native-numeric column never is.
+    assert boolean.boolean_projected == ("is_trackman",)
+    assert "club_speed" not in boolean.boolean_projected
+    # Casting to float ahead of time means there is no longer a boolean
+    # column to project — nothing is labelled.
+    assert projected.boolean_projected == ()
+
+    # A native numeric-only analysis carries no boolean label at all.
+    numeric_only = compute_correlations(frame, metrics=("club_speed", "ball_speed"))
+    assert numeric_only.boolean_projected == ()
+    assert not any(edge.includes_boolean_projection for edge in numeric_only.edges)
+
+    # Any edge touching the boolean-projected metric is labelled; edges
+    # between two native-numeric metrics never are. r is small enough here
+    # that the default edge_threshold screens the pair out, so force edges
+    # through with a permissive threshold to exercise the label directly.
+    labelled = compute_correlations(
+        frame,
+        metrics=("club_speed", "ball_speed", "is_trackman"),
+        edge_threshold=0.0,
+        alpha=1.0,
     )
+    assert labelled.edges
+    for edge in labelled.edges:
+        touches_boolean = "is_trackman" in {edge.source, edge.target}
+        assert edge.includes_boolean_projection is touches_boolean
+    assert any(edge.includes_boolean_projection for edge in labelled.edges)
