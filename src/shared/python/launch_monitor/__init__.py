@@ -98,6 +98,25 @@ P15   :mod:`.longitudinal_statistics`
 P16   :mod:`.longitudinal`   Attested longitudinal analysis. Carries ruling
                              **G1-D1**: the request names the pooled estimator
                              and the result carries that name.
+P18   :mod:`.player_covariation_types`
+                             Selected-pair and pair-scan wire models. The
+                             **union port**'s base is UpstreamDrift's; the
+                             named ``MIN_FISHER_SAMPLES`` floor and the
+                             required ``method_description`` are folded in
+                             from ``rate_of_closure``.
+P18   :mod:`.player_covariation_core`
+                             Pooled / within-player / between-player /
+                             per-player estimates and the Fisher-z
+                             fixed/DerSimonian-Laird synthesis, plus the two
+                             export tables folded in from ``rate_of_closure``.
+P18   :mod:`.player_covariation`
+                             Evidence-bearing selected-pair analysis and the
+                             bounded exploratory pair scan. Carries rulings
+                             **D22** (the between-player Fisher interval is
+                             withheld below the documented degrees-of-freedom
+                             threshold, and the absence is explained) and
+                             **D23** (the column-name-suffix unit heuristic is
+                             deleted; units come from the canonical registry).
 ====  =====================  =================================================
 
 **Name-collision containment.** Symbols in this package collide by name with
@@ -183,6 +202,29 @@ from .longitudinal_types import (
 from .modeling import PredictiveModelResult, fit_predictive_model
 from .multivariate import PCAResult, VIFResult, compute_pca, compute_vif
 from .outcome_proxy import analyze_outcome_proxy
+from .player_covariation import (
+    SELECTED_PAIR_METHOD_DESCRIPTION,
+    analyze_player_covariation_v1,
+    covariation_backing_frame,
+    player_association_frame,
+    player_covariation_contract_json_schema,
+    scan_player_covariation_v1,
+)
+from .player_covariation_types import (
+    MIN_FISHER_SAMPLES,
+    PLAYER_COVARIATION_CONTRACT_VERSION,
+    AssociationEstimateV1,
+    CovariationMissingnessV1,
+    CovariationPairRankV1,
+    CovariationUncertaintyV1,
+    MetaAnalysisSummaryV1,
+    PlayerAssociationV1,
+    PlayerCovariationContractV1,
+    PlayerCovariationRequestV1,
+    PlayerCovariationResultV1,
+    PlayerCovariationScanRequestV1,
+    PlayerCovariationScanResultV1,
+)
 from .profiles import (
     COMMON_ALIASES,
     PROFILES,
@@ -250,6 +292,7 @@ __all__ = [
     "AnalysisContextV2",
     "AnalysisLineageV2",
     "AnalysisMode",
+    "AssociationEstimateV1",
     "AvailabilityV1",
     "AvailabilityV2",
     "BASELINE_CONTRACT_VERSION",
@@ -268,6 +311,9 @@ __all__ = [
     "CorrelationResult",
     "CourseStateColumnsV1",
     "CourseStateValueV1",
+    "CovariationMissingnessV1",
+    "CovariationPairRankV1",
+    "CovariationUncertaintyV1",
     "DatasetAuthorityV2",
     "DatasetSummary",
     "DependencyEdge",
@@ -301,6 +347,8 @@ __all__ = [
     "LongitudinalSessionResultV1",
     "LongitudinalSummaryV1",
     "METRICS",
+    "MIN_FISHER_SAMPLES",
+    "MetaAnalysisSummaryV1",
     "MetricDefinition",
     "MetricUnitsV2",
     "MissingPolicy",
@@ -314,9 +362,16 @@ __all__ = [
     "OutcomeProxyResultV1",
     "OutcomeProxyRowV1",
     "PCAResult",
+    "PLAYER_COVARIATION_CONTRACT_VERSION",
     "POOLED_METHOD_DESCRIPTIONS",
     "PROFILES",
     "PairwiseMonitorComparison",
+    "PlayerAssociationV1",
+    "PlayerCovariationContractV1",
+    "PlayerCovariationRequestV1",
+    "PlayerCovariationResultV1",
+    "PlayerCovariationScanRequestV1",
+    "PlayerCovariationScanResultV1",
     "PlayerIdentityV2",
     "PooledAssociationV1",
     "PooledMethod",
@@ -324,6 +379,7 @@ __all__ = [
     "ProfileDetection",
     "RegressionEstimate",
     "ResidualDiagnostics",
+    "SELECTED_PAIR_METHOD_DESCRIPTION",
     "STROKES_GAINED_CONTRACT_VERSION",
     "SessionAggregateV1",
     "SessionIdentityV2",
@@ -344,6 +400,7 @@ __all__ = [
     "analyze_dispersion",
     "analyze_longitudinal_sessions",
     "analyze_outcome_proxy",
+    "analyze_player_covariation_v1",
     "analyze_source_backed_strokes_gained",
     "analyze_trend",
     "analyze_variables",
@@ -356,6 +413,7 @@ __all__ = [
     "compute_pca",
     "compute_vif",
     "contract_v2_json_schema",
+    "covariation_backing_frame",
     "dersimonian_laird_pooled_association",
     "detect_profile",
     "fit_predictive_model",
@@ -364,7 +422,10 @@ __all__ = [
     "metric_units_v2",
     "normalize_header",
     "numeric_metric_columns",
+    "player_association_frame",
     "player_associations",
+    "player_covariation_contract_json_schema",
+    "scan_player_covariation_v1",
     "strokes_gained_contract_json_schema",
     "vendor_provenance_v2",
 ]
