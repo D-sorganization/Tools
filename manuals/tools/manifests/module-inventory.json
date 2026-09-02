@@ -291,7 +291,7 @@
       "shard_index": 7
     },
     {
-      "content_sha256_lf": "88b888665e7c1c0a25d1de91c48d2fefcca48ffcafd21b38c3e10a4e6ab5b5ea",
+      "content_sha256_lf": "c69d6c22a5056a82c87cf30e7f8676861b3be5629ff15197e53465721bb91e6d",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/ui/pyqt6/spatial_target_panel_access.py",
       "last_path": "src/rate_of_closure/web/src/components/ManualDeliveryControls.test.tsx",
@@ -299,7 +299,7 @@
       "shard_index": 8
     },
     {
-      "content_sha256_lf": "66f54fe9735f25f8bdd2ee9fa3734f937b3dde10c940d5ad57fd21584efb7ba3",
+      "content_sha256_lf": "4cb9f251d977d22ab46d1b82cbf01796e32a90a9326cf36d7d25b32307ff66e9",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/web/src/components/ManualDeliveryControls.tsx",
       "last_path": "src/rate_of_closure/web/src/model/clubHeads.ts",
@@ -371,7 +371,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "9c848481f1558d00004db6104923ba57550ca3f36f16b11406a56a65fa47249b",
+  "source_tree_sha256": "559cd1caee38da71cc09a2f994056cd558a1b12cdf2729df71fb096258d526b6",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
