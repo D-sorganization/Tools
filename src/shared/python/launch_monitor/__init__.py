@@ -56,7 +56,9 @@ P10   :mod:`.flexible_analysis`
                              Arbitrary outcome/predictor correlation + OLS with
                              dataset lineage. Its ``rate_of_closure`` twin was
                              measured by UpstreamDrift#9372 (G0.1) before this
-                             moved; rulings D15/D17 land in a follow-up.
+                             moved. D15 and D17 are still pending *here*: it
+                             drops the ``boolean_projected`` label P7 now
+                             reports. Both land in a follow-up.
 P11   :mod:`.contract_v2`    The v2 serialization boundary over P10: evidence,
                              row-level lineage, availability, and the JSON
                              Schema every static client is generated from.

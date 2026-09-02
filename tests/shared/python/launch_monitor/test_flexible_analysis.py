@@ -22,6 +22,7 @@ from shared.python.launch_monitor.flexible_analysis import (
     FlexibleAnalysisRequest,
     analyze_variables,
 )
+from shared.python.launch_monitor.relationships import compute_correlations
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
 
@@ -312,18 +313,23 @@ def test_undersampled_predictor_still_counts_in_the_fdr_denominator() -> None:
 
 
 def test_boolean_predictor_is_silently_projected_to_zero_one() -> None:
-    """D17 "before": a boolean column is analysed and nothing says so.
+    """D17 "before": the projection label exists one layer down and is dropped.
 
     ``analyze_variables`` runs the selected columns through ``pd.to_numeric``,
     which projects ``True``/``False`` to 1.0/0.0. The column then passes the
     two-distinct-value constancy screen, is correlated as though it were a
-    native numeric metric, and counts every row toward the sample count. This
-    is the capability the D17 ruling preserves.
+    native numeric metric, and counts every row toward the sample count. That
+    is the capability the D17 ruling preserves, and it is unchanged here.
 
-    What the ruling changes is the silence: today the result records **no**
-    distinction between a boolean-projected column and a native numeric one.
-    The unit map falls back to the same ``"source"`` label an unknown numeric
-    column gets, and no warning is emitted.
+    What the ruling changes is the silence — and after Tools#4901 applied D17
+    to :mod:`~shared.python.launch_monitor.relationships`, the silence is
+    specifically this module's. ``compute_correlations`` now *does* report the
+    projection in ``CorrelationResult.boolean_projected``; ``_correlations``
+    reads only ``coefficients``/``p_values``/``pair_counts`` off that result and
+    throws the label away, so nothing in
+    :class:`FlexibleAnalysisResult` distinguishes a boolean-projected column
+    from a native numeric one. The follow-up's job is to carry the existing
+    label through, not to compute a new one.
     """
     frame = _shots(60)
     frame["flagged"] = np.arange(60) % 2 == 0
@@ -344,10 +350,24 @@ def test_boolean_predictor_is_silently_projected_to_zero_one() -> None:
     assert flagged.coefficient == pytest.approx(-0.029183486713892384, rel=1e-12)
     assert result.dataset.complete_row_count == 60
 
-    # Nothing distinguishes the projected column from a native numeric one:
-    # it gets the same ``"source"`` unit label an unknown numeric column gets.
+    # The layer below already knows, and computes the identical coefficient.
+    underlying = compute_correlations(
+        frame, metrics=("ball_speed", "club_speed", "flagged")
+    )
+    assert underlying.boolean_projected == ("flagged",)
+    assert underlying.coefficients.loc["ball_speed", "flagged"] == flagged.coefficient
+
+    # This module drops that label: nothing distinguishes the projected column
+    # from a native numeric one. The unit map falls back to the same "source"
+    # label an unknown numeric column gets, and no warning is emitted.
     assert result.units["flagged"] == "source"
     assert result.warnings == ()
+    assert not any(
+        "boolean" in field.lower() for field in type(result).__dataclass_fields__
+    )
+    assert not any(
+        "boolean" in field.lower() for field in type(flagged).__dataclass_fields__
+    )
     payload = result.to_dict()
     serialised = {item["predictor"]: item for item in payload["correlations"]}
     assert set(serialised["flagged"]) == set(serialised["club_speed"])

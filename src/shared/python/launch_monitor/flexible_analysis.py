@@ -57,6 +57,12 @@ be reviewed separately. A follow-up PR applies both.
   in :class:`FlexibleAnalysisResult` records that a projection happened. The
   ruling preserves the capability and ends the silence — a boolean-projected
   column must be labelled as such and can never read as native numeric.
+  Tools#4901 already applied D17 one layer down, so
+  :class:`~shared.python.launch_monitor.relationships.CorrelationResult` now
+  reports ``boolean_projected``; ``_correlations`` reads only the coefficient,
+  p-value and pair-count frames off that result and drops the label. The
+  follow-up here therefore has to *carry an existing label through*, not
+  compute a new one, and it changes no arithmetic.
 
 Both behaviours are pinned as the "before" side of that diff by
 ``test_flexible_analysis.py``
