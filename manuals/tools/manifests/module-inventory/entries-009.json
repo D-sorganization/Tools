@@ -3,6 +3,59 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 5256,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c4e287bf75dd6f71bffc6db5a93f4b658e500436a772b67ad35d52675a8da1da",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-MORRISRESULTS-TSX-850952EE9FF3",
+      "language": "typescript-react",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/components/MorrisResults.tsx",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "MorrisResults",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 23965,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -746,10 +799,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5880,
+      "bytes_lf": 9551,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "bf8223ffd703ee48be301328ea33b0004651536afcd84216df7244d1d4364721",
+      "content_sha256_lf": "b5420b7f816b352a34014edcf178ce20d6e38cbcfa224573c9a00657dd91ad46",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-PUTTINGCONTROLS-TSX-42B6BEEE3B63",
       "language": "typescript-react",
@@ -786,6 +839,16 @@
         "public_surfaces": [
           {
             "kind": "export",
+            "name": "ImportedGreenState",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "PLANAR_GREEN_SOURCE",
+            "signature": null
+          },
+          {
+            "kind": "export",
             "name": "PuttingControls",
             "signature": null
           }
@@ -802,10 +865,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 12186,
+      "bytes_lf": 17085,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6f687c086273cc1057d46047e51613b52c7a1bdba195c21bc59936452b618332",
+      "content_sha256_lf": "033c6e5acbe4241674deab60fc8833f560e308d82944e4b3749d81753e878666",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-PUTTINGPANEL-TEST-TSX-B5FB98A11D3B",
       "language": "typescript-react",
@@ -829,7 +892,8 @@
       },
       "traceability": {
         "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -848,10 +912,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13708,
+      "bytes_lf": 14950,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0376095483aec66bf861447e24cac2aff25e45a02f46b62956619993672163f2",
+      "content_sha256_lf": "5272ea6b9b4645f2c924b54e2b6cb24d710c00af0d02801f231ce96d0ebe4ac0",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-PUTTINGPANEL-TSX-EF05B4B04CD0",
       "language": "typescript-react",
@@ -878,7 +942,8 @@
       "traceability": {
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -11746,48 +11811,6 @@
           "mm",
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4261,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "1b49e7c5fc71c4bf940a6c5746f11d98d900d380baf21829b85a67eba165a11d",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-CLUBSTLEXPORT-TEST-TS-1E6DE7F94A3B",
-      "language": "typescript",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/model/clubStlExport.test.ts",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

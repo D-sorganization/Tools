@@ -375,6 +375,13 @@ class TestPuttingGreenControls:
         label = tab.green_controls().adopt_green_document(document)
         assert "upstreamdrift" in label
         assert isinstance(tab.green_controls().surface(), GridGreenSurface)
+        # ADR-0045 F2 gate: the imported UD-authored green does not just
+        # parse - the tab auto-recomputes on the green_controls.changed
+        # signal, so a putt is actually integrated on it (never a
+        # heightfield that loads but is never struck).
+        assert tab.result() is not None
+        assert tab.document() is not None
+        assert "upstreamdrift" in tab.green_controls().green().label()
 
     def test_refused_import_keeps_the_previous_green(self, tab, tmp_path) -> None:  # type: ignore[no-untyped-def]
         document = tmp_path / "bad.json"
@@ -382,6 +389,82 @@ class TestPuttingGreenControls:
         with pytest.raises(ValueError):
             tab.green_controls().adopt_green_document(document)
         assert isinstance(tab.green_controls().surface(), PlanarGreenSurface)
+
+    def test_weighted_slope_ud_document_is_refused_by_the_adapters_named_reason(
+        self, tab, tmp_path
+    ) -> None:  # type: ignore[no-untyped-def]
+        """UD's weighted-slope field is non-conservative (#4800 P9): no
+        heightfield reproduces it, so the adapter refuses it by name
+        rather than approximating. Direct call proves the reason names
+        "slope"; keeping the previous green proves the refusal is
+        fail-closed, not a silent partial import."""
+        document = tmp_path / "ud_slopes.json"
+        document.write_text(
+            json.dumps(
+                {
+                    "contours": [
+                        {"x": x * 1.0, "y": y * 1.0, "elevation": 0.0}
+                        for y in range(2)
+                        for x in range(2)
+                    ],
+                    "slopes": [
+                        {
+                            "center": [0.5, 0.5],
+                            "radius": 1.0,
+                            "direction": [1.0, 0.0],
+                            "magnitude": 0.02,
+                        }
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
+        green = tab.green_controls()
+        with pytest.raises(ValueError, match="slope"):
+            green.adopt_green_document(document)
+        assert isinstance(green.surface(), PlanarGreenSurface)
+
+    def test_weighted_slope_refusal_reaches_the_file_dialog_surfaced_label(
+        self, tab, tmp_path, monkeypatch
+    ) -> None:  # type: ignore[no-untyped-def]
+        """The same refusal, driven through the actual file-chooser
+        path (`_choose_green_document`), must reach the user-visible
+        source label - never silence - per ADR-0045 F2's acceptance
+        criterion."""
+        from rate_of_closure.ui.pyqt6 import putting_green_controls
+
+        document = tmp_path / "ud_slopes.json"
+        document.write_text(
+            json.dumps(
+                {
+                    "contours": [
+                        {"x": x * 1.0, "y": y * 1.0, "elevation": 0.0}
+                        for y in range(2)
+                        for x in range(2)
+                    ],
+                    "slopes": [
+                        {
+                            "center": [0.5, 0.5],
+                            "radius": 1.0,
+                            "direction": [1.0, 0.0],
+                            "magnitude": 0.02,
+                        }
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
+        monkeypatch.setattr(
+            putting_green_controls.QFileDialog,
+            "getOpenFileName",
+            lambda *_args, **_kwargs: (str(document), "JSON files (*.json)"),
+        )
+        green = tab.green_controls()
+        green._choose_green_document()
+        assert isinstance(green.surface(), PlanarGreenSurface)
+        assert "slope" in green.import_error()
+        assert "ud_slopes.json" in green.import_error()
+        assert "slope" in green.source_label.text()
 
 
 class TestPuttingPlayback:

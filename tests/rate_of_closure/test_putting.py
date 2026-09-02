@@ -184,3 +184,31 @@ class TestGreenDocumentBridge:
             green_surface_from_document("[]")
         with pytest.raises(TypeError):
             green_surface_from_document(b"{}")  # type: ignore[arg-type]
+
+    def test_weighted_slope_ud_document_is_refused_with_the_adapters_named_reason(
+        self,
+    ) -> None:
+        """ADR-0045 F2 acceptance: a UD file carrying the non-
+        conservative weighted-slope field is refused through the same
+        dispatcher the Impact Explorer's "Import green…" action calls,
+        naming the P9 adapter's reason - never silence, never an
+        approximation."""
+        text = json.dumps(
+            {
+                "contours": [
+                    {"x": float(x), "y": float(y), "elevation": 0.0}
+                    for y in range(2)
+                    for x in range(2)
+                ],
+                "slopes": [
+                    {
+                        "center": [0.5, 0.5],
+                        "radius": 1.0,
+                        "direction": [1.0, 0.0],
+                        "magnitude": 0.02,
+                    }
+                ],
+            }
+        )
+        with pytest.raises(ValueError, match="slope"):
+            green_surface_from_document(text)

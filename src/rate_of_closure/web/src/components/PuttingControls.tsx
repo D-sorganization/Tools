@@ -7,6 +7,8 @@
  * refusal is shown rather than silently clamped away from the model.
  */
 
+import { type ChangeEvent } from "react";
+
 import { DecimalInput } from "./DecimalInput";
 import {
   GREEN_FIELDS,
@@ -15,8 +17,10 @@ import {
   type PaceMode,
   type PuttSetup,
 } from "./puttingSetup";
+import { readFileText } from "./variationUi";
 import type { PutterHeadDocument } from "../model/putterHead";
-import type { CaptureModel } from "../model/puttingGreen";
+import type { CaptureModel, GreenSurface } from "../model/puttingGreen";
+import { greenSurfaceFromDocument } from "../model/puttingGreenImport";
 
 const CARD =
   "rounded-xl border border-slate-800/80 bg-slate-900/60 p-5 shadow-lg " +
@@ -36,9 +40,10 @@ interface NumberFieldProps {
   readonly spec: FieldSpec;
   readonly value: number;
   readonly onCommit: (value: number) => void;
+  readonly disabled?: boolean;
 }
 
-function NumberField({ spec, value, onCommit }: NumberFieldProps) {
+function NumberField({ spec, value, onCommit, disabled = false }: NumberFieldProps) {
   return (
     <label className="mb-2 flex items-center justify-between gap-2 text-sm">
       <span className="text-slate-300">{spec.label}</span>
@@ -51,6 +56,7 @@ function NumberField({ spec, value, onCommit }: NumberFieldProps) {
           aria-label={`${spec.label} ${spec.suffix}`.trim()}
           title={spec.title}
           onCommit={onCommit}
+          disabled={disabled}
           className={INPUT}
         />
         <span className="text-slate-400">{spec.suffix}</span>
@@ -59,10 +65,26 @@ function NumberField({ spec, value, onCommit }: NumberFieldProps) {
   );
 }
 
+/** The green surface actually integrated, if it replaces the planar one. */
+export interface ImportedGreenState {
+  readonly surface: GreenSurface;
+  /** Provenance label: file name plus the wire it was read through. */
+  readonly source: string;
+}
+
+//: Displayed when no heightfield has been imported (matches the Qt
+//: `PuttingGreenControls._PLANAR_SOURCE` label).
+export const PLANAR_GREEN_SOURCE = "planar grade/aspect";
+
 interface PuttingControlsProps {
   readonly setup: PuttSetup;
   readonly onChange: (patch: Partial<PuttSetup>) => void;
   readonly putters: readonly PutterHeadDocument[];
+  readonly importedGreen: ImportedGreenState | null;
+  readonly importErrorMessage: string;
+  readonly onGreenImported: (state: ImportedGreenState) => void;
+  readonly onGreenImportError: (message: string) => void;
+  readonly onUsePlanarGreen: () => void;
 }
 
 const PACE_SPEED: FieldSpec = {
@@ -99,15 +121,38 @@ export function PuttingControls({
   setup,
   onChange,
   putters,
+  importedGreen,
+  importErrorMessage,
+  onGreenImported,
+  onGreenImportError,
+  onUsePlanarGreen,
 }: PuttingControlsProps) {
-  const field = (spec: FieldSpec) => (
+  const field = (spec: FieldSpec, disabled = false) => (
     <NumberField
       key={spec.key}
       spec={spec}
       value={setup[spec.key] as number}
       onCommit={(value) => onChange({ [spec.key]: value } as Partial<PuttSetup>)}
+      disabled={disabled}
     />
   );
+  const imported = importedGreen !== null;
+
+  const handleImportGreenDocument = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    readFileText(file)
+      .then((text) => {
+        const { surface, wire } = greenSurfaceFromDocument(text);
+        onGreenImported({ surface, source: `${file.name} via ${wire}` });
+      })
+      .catch((err: unknown) => {
+        const message = err instanceof Error ? err.message : String(err);
+        onGreenImportError(`Green import refused (${file.name}): ${message}`);
+      });
+  };
+
   return (
     <>
       <div className={CARD}>
@@ -147,12 +192,14 @@ export function PuttingControls({
 
       <div className={CARD}>
         <h2 className={HEADING}>Stroke</h2>
-        {STROKE_FIELDS.map(field)}
+        {STROKE_FIELDS.map((spec) => field(spec))}
       </div>
 
       <div className={CARD}>
         <h2 className={HEADING}>Green</h2>
-        {GREEN_FIELDS.map(field)}
+        {GREEN_FIELDS.map((spec) =>
+          field(spec, imported && (spec.key === "grade" || spec.key === "aspect")),
+        )}
         <label className="mb-2 flex items-center justify-between gap-2 text-sm">
           <span className="text-slate-300">Hole capture</span>
           <select
@@ -167,6 +214,43 @@ export function PuttingControls({
             <option value="speed_threshold">Speed threshold</option>
           </select>
         </label>
+        <div className="mt-3 flex flex-col gap-2 border-t border-slate-800 pt-3 text-sm">
+          <p
+            aria-label="Green surface source"
+            className="text-slate-400"
+            title="The green geometry actually integrated. A heightfield loaded through swing_sim.green_surface/1 or an UpstreamDrift topography (#4800 P9) replaces the planar grade and aspect above."
+          >
+            {imported ? importedGreen.source : PLANAR_GREEN_SOURCE}
+          </p>
+          {importErrorMessage ? (
+            <p role="alert" className="text-red-400">
+              {importErrorMessage}
+            </p>
+          ) : null}
+          <div className="flex items-center gap-2">
+            <label className="flex-1 text-slate-300">
+              <span className="sr-only">Import Green Document</span>
+              <input
+                aria-label="Import Green Document File"
+                type="file"
+                accept=".json"
+                title="Load a green heightfield: a swing_sim.green_surface/1 document, or an UpstreamDrift putting_green topography (#4800 P2/P9). The reader is chosen by the document's declared format and refuses anything it does not fully understand."
+                onChange={handleImportGreenDocument}
+                className="text-xs"
+              />
+            </label>
+            <button
+              type="button"
+              aria-label="Use Planar Green"
+              title="Discard an imported heightfield and return to the planar grade/aspect green above."
+              disabled={!imported}
+              onClick={onUsePlanarGreen}
+              className="rounded border border-slate-700 bg-slate-800 px-2 py-1 text-xs text-slate-200 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Use planar green
+            </button>
+          </div>
+        </div>
       </div>
     </>
   );

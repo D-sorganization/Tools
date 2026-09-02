@@ -3,6 +3,441 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 10465,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "fb155e16d26327b6e63aaf0931386cc4265eab237dc300253f3a75d04f1d2b66",
+      "family": "rotation-converter-calculation",
+      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-TWIST-SCREW-PY-F0C1D648082A",
+      "language": "python",
+      "maintainer": "Rotation converter maintainers",
+      "path": "src/rotation_converter/twist_screw.py",
+      "purpose": "Twist and screw axis conversion module.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "adjoint_representation",
+            "signature": "T: Any"
+          },
+          {
+            "kind": "function",
+            "name": "homogeneous_to_twist_angle",
+            "signature": "T: Any"
+          },
+          {
+            "kind": "function",
+            "name": "screw_to_twist",
+            "signature": "screw: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "se3_matrix_to_twist_vector",
+            "signature": "M: Any"
+          },
+          {
+            "kind": "function",
+            "name": "twist_angle_to_homogeneous",
+            "signature": "xi: Any, theta: float"
+          },
+          {
+            "kind": "function",
+            "name": "twist_to_screw",
+            "signature": "xi: Any"
+          },
+          {
+            "kind": "function",
+            "name": "twist_vector_to_se3_matrix",
+            "signature": "xi: Any"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_simulation.py",
+          "tests/rotation_converter/test_rigid_transform.py",
+          "tests/rotation_converter/test_twist_screw.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 0,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "family": "rotation-converter-calculation",
+      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-UI-INIT-PY-5EC99DBCB915",
+      "language": "python",
+      "maintainer": "Rotation converter maintainers",
+      "path": "src/rotation_converter/ui/__init__.py",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 0,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "family": "rotation-converter-calculation",
+      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-UI-PYQT6-INIT-PY-646A2AE36941",
+      "language": "python",
+      "maintainer": "Rotation converter maintainers",
+      "path": "src/rotation_converter/ui/pyqt6/__init__.py",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 6360,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "13582f6066ce7466bf9c550ee3c9ef2f00c401502ca83df37ab3129117403a14",
+      "family": "rotation-converter-calculation",
+      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-UI-PYQT6-CONSOLE-TAB-PY-A50D0DEBAC33",
+      "language": "python",
+      "maintainer": "Rotation converter maintainers",
+      "path": "src/rotation_converter/ui/pyqt6/console_tab.py",
+      "purpose": "Console UI component for interactive python execution.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "mapped",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [
+          "~/.rotation_converter_user_funcs.py"
+        ],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CommandConsoleTab",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 46689,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "0ab5d247331b10fcbc801c4bf20e17b16326a5a38d3f5e00086dce035f9561e7",
+      "family": "rotation-converter-calculation",
+      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-UI-PYQT6-MAIN-WINDOW-PY-DDE156A0A4EC",
+      "language": "python",
+      "maintainer": "Rotation converter maintainers",
+      "path": "src/rotation_converter/ui/pyqt6/main_window.py",
+      "purpose": "Rotation Converter Main Window -- PyQt6 GUI.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "RigidTransformTab",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RotationConverterMainWindow",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RotationConverterTab",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ScrewVisualiserTab",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TrajectoryPlotsTab",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_main_window.py",
+          "src/pendulum_simulator/tests/test_main_window.py",
+          "tests/ode_solver/test_main_window.py"
+        ],
+        "unit_mentions": [
+          "bar",
+          "deg",
+          "g",
+          "m/s",
+          "rad",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3685,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "0806ba7eb7134f182d980eef6977abacb2def757d0b7292101eee26281e9e0d9",
+      "family": "rotation-converter-calculation",
+      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-UI-PYQT6-PLOT-HELPERS-PY-9C9A231E84E1",
+      "language": "python",
+      "maintainer": "Rotation converter maintainers",
+      "path": "src/rotation_converter/ui/pyqt6/plot_helpers.py",
+      "purpose": "Shared plot helpers for rotation converter tabs.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "EULER_CONVENTIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_AXIS_COLORS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_DARK_ACCENT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_DARK_BG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_DARK_FG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_DARK_SURFACE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_THEME_AVAILABLE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "fmt_mat",
+            "signature": "M: np.ndarray, decimals: int=6"
+          },
+          {
+            "kind": "function",
+            "name": "fmt_vec",
+            "signature": "v: np.ndarray, decimals: int=6"
+          },
+          {
+            "kind": "function",
+            "name": "get_plot_colors",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "parse_vec",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "style_figure",
+            "signature": "fig: Figure, ax: Any=None"
+          }
+        ],
+        "test_paths": [
+          "tests/rotation_converter/test_plot_helpers.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 6547,
       "classification": "calculation",
       "classification_basis": "path-marker:rotation",
@@ -14299,487 +14734,6 @@
         "unit_mentions": [
           "Pa",
           "g"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4180,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "df9975f8201716a0b82ec1c7a2dcf5b5ff346ae3fa76f9445861f3ddc6036105",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-THERMAL-PROFILE-PY-69E799313D16",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/calc_backend/routers/thermal_profile.py",
-      "purpose": "Thermal profile predictor router.  See issue #608.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "predict_thermal_profile",
-            "signature": "request: ThermalProfileRequest"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/calc_backend/tests/test_calc_backend_gaps.py",
-          "tests/shared/python/process_calculators/test_thermal_profile.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2834,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "57ed8f6a6a0fe39c8c2156bd535c488aa5e664f2c64abf7aba866c10c5fdf455",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-WGS-REACTOR-PY-CFA5610D6D63",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/calc_backend/routers/wgs_reactor.py",
-      "purpose": "WGS Reactor calculator router.  See issue #613.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "calculate_wgs",
-            "signature": "request: WGSReactorRequest"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/calc_backend/tests/test_calc_backend_gaps.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4634,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "108d4eae1b9535bbc17fc35230f51109ae7156b3fceff4a4f609a3666fc54a76",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-INIT-PY-143AD067C756",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/__init__.py",
-      "purpose": "Shared AI chat widget, service base, and contract models.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "ChatMessage",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ChatQtDiagnostic",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ChatServiceBase",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ChatSession",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CliProviderEntry",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ProcessLaunchRequest",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TerminalAgentEvent",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TerminalAgentProviderInfo",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TerminalAgentSessionInfo",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TerminalAgentSessionRequest",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TerminalProcessAdapter",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TerminalProviderRegistry",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TerminalRegistryError",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TerminalRuntimeError",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TerminalSessionRuntime",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TerminalShellInfo",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "build_default_terminal_provider_registry",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "default_terminal_agent_providers",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "default_terminal_shells",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "diagnose_chat_qt_runtime",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "list_available_cli_providers",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "provider_probe_commands",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "redact_terminal_command",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 60567,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6cb298149dc3f37784687465211950a22825d1468efd729e8199b4a08bbf9caf",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-CHAT-DOCK-WIDGET-QT-PY-DD8B1382BB92",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/_chat_dock_widget_qt.py",
-      "purpose": "Lightweight AI Chat dock widget for embedding in any PyQt6 application.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ChatDockWidget",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ChatMessageBubble",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "HistorySidebar",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "QFileDialog",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "QWebSocket",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "QWidget",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/chat/tests/test_chat.py",
-          "tests/shared/python/chat/test_chat_agent_label.py",
-          "tests/shared/python/chat/test_chat_chunk_batching.py",
-          "tests/shared/python/chat/test_chat_dock_view_state.py",
-          "tests/shared/python/chat/test_chat_dock_widget.py",
-          "tests/shared/python/chat/test_chat_input_keybindings.py",
-          "tests/shared/python/chat/test_chat_queue_panel.py",
-          "tests/shared/python/chat/test_chat_session_helpers.py",
-          "tests/shared/python/chat/test_default_server.py",
-          "tests/shared/python/chat/test_native_websocket_contract.py",
-          "tests/shared/python/chat/test_thinking_indicator.py",
-          "tests/unit/chat/test_chat_dock_widget_close_reconnect.py",
-          "tests/unit/chat/test_chat_dock_widget_history_browser.py",
-          "tests/unit/chat/test_dock_widget_dropdowns.py",
-          "tests/unit/chat/test_memory_panel.py",
-          "tests/unit/chat/test_mid_thread_switch.py"
-        ],
-        "unit_mentions": [
-          "Hz",
-          "g",
-          "ms",
-          "s"
-        ],
-        "validation_paths": [
-          "tests/shared/python/chat/test_native_websocket_contract.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 402,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8d8472012158b2962260a1b0e5bcb9ba42f65179cefa0cdfccb810a3af9e150c",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-QT-INIT-PY-EFA33F9E3D18",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/_qt/__init__.py",
-      "purpose": "Private submodule package for ``ChatDockWidget`` internals.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 8942,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3131f431f2ca0a455364095b6b65097f5ac1590301770e56114bace5a19ecc0c",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-QT-AI-DROPDOWNS-PY-8B343CEA944F",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/_qt/ai_dropdowns.py",
-      "purpose": "AI provider / model / thinking dropdown helpers (Tools issue #2871).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "DEFAULT_PROVIDERS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "VALID_FIELDS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "VALID_THINKING_NAMES",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "g",
-          "s"
         ],
         "validation_paths": []
       }

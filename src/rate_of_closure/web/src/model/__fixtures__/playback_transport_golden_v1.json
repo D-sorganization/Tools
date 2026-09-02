@@ -211,5 +211,25 @@
         "is_landing": true
       }
     ]
+  },
+  "imported_trajectory": {
+    "comment": "Pins the ADR-0047 H4 loader's frame-conversion mapping shared by rate_of_closure/simulation/flight_record_playback.py and web/src/model/flightRecordPlayback.ts: an imported swing_sim.ball_flight_trajectory/1 record declared in the flight frame (x forward, y left, z up) converts to the app frame (x target, y up, z right) via app = (flight_x, flight_z, -flight_y) before either twin hands the samples to the shared PlaybackTimeline/TimedTrajectory the flight block above pins. No re-simulation, no resampling, no second transport.",
+    "frame_id": "flight_xfwd_yleft_zup",
+    "samples": [
+      { "time_s": 0.0, "position_m": [0.0, 0.0, 0.0] },
+      { "time_s": 0.5, "position_m": [10.0, 1.0, 3.0] },
+      { "time_s": 1.0, "position_m": [20.0, 0.5, 5.0] },
+      { "time_s": 1.5, "position_m": [30.0, -0.5, 4.0] },
+      { "time_s": 2.0, "position_m": [40.0, -1.0, 0.0] }
+    ],
+    "app_positions_m": [
+      [0.0, 0.0, 0.0],
+      [10.0, 3.0, -1.0],
+      [20.0, 5.0, -0.5],
+      [30.0, 4.0, 0.5],
+      [40.0, 0.0, 1.0]
+    ],
+    "duration_s": 2.0,
+    "apex_time_s": 1.0
   }
 }

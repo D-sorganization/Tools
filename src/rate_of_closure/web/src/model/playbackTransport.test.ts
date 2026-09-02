@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 
 import fixture from "./__fixtures__/playback_transport_golden_v1.json";
+import {
+  APP_FRAME_ID,
+  FLIGHT_FRAME_ID,
+  UnsupportedTrajectoryFrameError,
+  timedSamplesFromBallFlightRecord,
+  type BallFlightRecordSample,
+} from "./flightRecordPlayback";
 import { PlaybackTimeline, type TimedSample } from "./flightPlayback";
 import { puttPlaybackSamples } from "./puttPlayback";
 import {
@@ -142,6 +149,68 @@ describe("putt playback golden parity (#4800 P8)", () => {
     expect(() =>
       puttPlaybackSamples({ ...result, pathYM: [0] }, surface),
     ).toThrow(/one x and one y/);
+  });
+});
+
+describe("imported trajectory record playback golden parity (ADR-0047 H4)", () => {
+  const importedTrajectory = fixture.imported_trajectory;
+  const recordSamples: BallFlightRecordSample[] =
+    importedTrajectory.samples.map((sample) => ({
+      timeS: sample.time_s,
+      positionM: sample.position_m as Vec3,
+    }));
+
+  it("converts flight-frame samples to the golden app-frame positions", () => {
+    const samples = timedSamplesFromBallFlightRecord(
+      importedTrajectory.frame_id,
+      recordSamples,
+    );
+    expect(samples.map((sample) => sample.time)).toEqual(
+      importedTrajectory.samples.map((sample) => sample.time_s),
+    );
+    samples.forEach((sample, index) => {
+      sample.position.forEach((component, axis) => {
+        expect(component).toBeCloseTo(
+          importedTrajectory.app_positions_m[index][axis],
+          12,
+        );
+      });
+    });
+  });
+
+  it("reproduces the golden duration and apex time on the shared timeline", () => {
+    const samples = timedSamplesFromBallFlightRecord(
+      importedTrajectory.frame_id,
+      recordSamples,
+    );
+    const timeline = new PlaybackTimeline(samples);
+    expect(timeline.duration).toBeCloseTo(importedTrajectory.duration_s, 12);
+    expect(timeline.apexTime).toBeCloseTo(importedTrajectory.apex_time_s, 12);
+  });
+
+  it("passes app-frame samples through unconverted", () => {
+    const samples = timedSamplesFromBallFlightRecord(
+      APP_FRAME_ID,
+      recordSamples,
+    );
+    samples.forEach((sample, index) => {
+      expect(sample.position).toEqual(recordSamples[index].positionM);
+    });
+  });
+
+  it("refuses a frame id this loader does not convert", () => {
+    expect(() =>
+      timedSamplesFromBallFlightRecord("some_future_frame", recordSamples),
+    ).toThrow(UnsupportedTrajectoryFrameError);
+    expect(() =>
+      timedSamplesFromBallFlightRecord("some_future_frame", recordSamples),
+    ).toThrow(/some_future_frame/);
+  });
+
+  it("exposes the same frame ids the Python wire declares", () => {
+    expect(FLIGHT_FRAME_ID).toBe("flight_xfwd_yleft_zup");
+    expect(APP_FRAME_ID).toBe("app_xtarget_yup_zright");
+    expect(importedTrajectory.frame_id).toBe(FLIGHT_FRAME_ID);
   });
 });
 

@@ -3022,6 +3022,70 @@
     },
     {
       "authority_status": "provisional",
+      "bytes_lf": 4702,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "08bd863d70c0ada0e88e602150ca34c9dbf84b06da2bed869481f99528118f83",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-FLIGHT-RECORD-PLAYBACK-PY-2782C7D394DE",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/flight_record_playback.py",
+      "purpose": "Runtime-neutral lift of an imported trajectory record onto the shared",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "UnsupportedTrajectoryFrameError",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "timed_trajectory_from_ball_flight_record",
+            "signature": "record: BallFlightTrajectory"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_flight_record_playback.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 3992,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
@@ -6931,10 +6995,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 16596,
+      "bytes_lf": 19144,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "379f147ebd4e4b712e514fbfa7d1ca01a47bdcd4f13605e2c6e319dc6475d691",
+      "content_sha256_lf": "80d69e51b89a1fe678a46c169edae319f951f2b68b6b87b1c17e31d692f78813",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-FLIGHT-EXPLORER-TAB-PY-153D3EC45B95",
       "language": "python",
@@ -6961,7 +7025,8 @@
       "traceability": {
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -6983,7 +7048,9 @@
         "test_paths": [
           "tests/rate_of_closure/pyqt_flight_sample_inspector_probe.py",
           "tests/rate_of_closure/test_flight_explorer_atomic_gui.py",
+          "tests/rate_of_closure/test_flight_explorer_import.py",
           "tests/rate_of_closure/test_flight_sample_inspector_gui.py",
+          "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py",
           "tests/rate_of_closure/test_spatial_target_gui.py",
           "tests/rate_of_closure/test_viewers_gui.py"
         ],
@@ -13358,75 +13425,6 @@
         ],
         "test_paths": [],
         "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 6005,
-      "classification": "calculation",
-      "classification_basis": "path-marker:trajectory",
-      "content_sha256_lf": "3412e052862ad88ed63471cd1e6d631fb847e37a265041edb1705cadace8e389",
-      "family": "rate-of-closure-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-SPATIAL-TARGET-TRAJECTORY-PY-2A02EF2C0C7B",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/spatial_target_trajectory.py",
-      "purpose": "UI-facing target residual selection for a completed flight trajectory.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "LandingSurfaceResolutionError",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "trajectory_target_miss",
-            "signature": "target: SpatialTarget, positions_m: np.ndarray"
-          },
-          {
-            "kind": "function",
-            "name": "validate_landing_surface",
-            "signature": "target: SpatialTarget"
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/test_spatial_target_gui.py"
-        ],
-        "unit_mentions": [
-          "N",
           "s"
         ],
         "validation_paths": []

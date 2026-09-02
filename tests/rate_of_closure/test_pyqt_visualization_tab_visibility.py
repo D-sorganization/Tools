@@ -12,6 +12,7 @@ from typing import Any, cast
 
 import pytest
 
+from rate_of_closure.ui.pyqt6.flight_explorer_tab import FlightExplorerTab
 from rate_of_closure.ui.pyqt6.morris_tab import MorrisScreeningTab
 from rate_of_closure.ui.pyqt6.putting_tab import PuttingTab
 from rate_of_closure.ui.pyqt6.variation_tab import VariationTab
@@ -127,6 +128,28 @@ def test_initial_putting_delivery_and_green_controls_are_visible_and_named(
     assert transport.scrubber.accessibleName() == "Putt Time"
     assert transport.play_button.accessibleName() == "Play or Pause Putt"
     assert transport.time_label.accessibleName() == "Putt Playback Time"
+
+
+def test_initial_flight_explorer_import_control_is_visible_and_named(
+    qtbot,
+) -> None:  # type: ignore[no-untyped-def]
+    """ADR-0047 H4: the imported-record control is not hidden in a disclosure.
+
+    The Flight Explorer tab's existing #4800 P8 playback surface gains
+    exactly one new control -- the "Import Trajectory Record..." action
+    -- and it must be visible and named in the first viewport beside
+    the launch entry it complements, reusing the same reusable playback
+    panel/controls every solver-produced flight already drives.
+    """
+
+    tab = FlightExplorerTab()
+    qtbot.addWidget(tab)
+    tab.resize(1440, 860)
+    tab.show()
+
+    assert tab._import_button.isVisible()
+    assert tab._import_button.accessibleName() == "Import Trajectory Record"
+    assert tab._import_button.text().startswith("Import Trajectory Record")
 
 
 def _probe(

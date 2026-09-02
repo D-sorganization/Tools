@@ -227,7 +227,7 @@
   },
   "shards": [
     {
-      "content_sha256_lf": "15eb05596715a2ed9af909b1c4e02dfe8f1a656cc8fd340e586c436cc1555e1e",
+      "content_sha256_lf": "a66a3420e2cc7935c1083bcc95466c26d2e60177a680647e2746275026e32e4f",
       "entry_count": 200,
       "first_path": ".docker/entrypoint.sh",
       "last_path": "scripts/check_local_only_workflows.py",
@@ -283,106 +283,106 @@
       "shard_index": 6
     },
     {
-      "content_sha256_lf": "b1dad2bb8b0c96f2611a493fb818975b570c6a6da345a52e1ef4ab51e123566c",
+      "content_sha256_lf": "dc70828b7f91b980451a009cef5fbae0c68cfd5c740cbba35803a5f7beafdb4f",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/launch_web.py",
-      "last_path": "src/rate_of_closure/ui/pyqt6/spatial_target_trajectory.py",
+      "last_path": "src/rate_of_closure/ui/pyqt6/spatial_target_rendering.py",
       "path": "manuals/tools/manifests/module-inventory/entries-007.json",
       "shard_index": 7
     },
     {
-      "content_sha256_lf": "1561299622de65874ea58f4b1bbfe296f38287a8f8005af5cb93cc02cd86758f",
+      "content_sha256_lf": "eff958d6bcb3aa5238d83c865de17480cb0753d8adf9c340489f5b1984f6c1f8",
       "entry_count": 200,
-      "first_path": "src/rate_of_closure/ui/pyqt6/spatial_target_workflow.py",
-      "last_path": "src/rate_of_closure/web/src/components/MorrisResults.tsx",
+      "first_path": "src/rate_of_closure/ui/pyqt6/spatial_target_trajectory.py",
+      "last_path": "src/rate_of_closure/web/src/components/MorrisResults.test.tsx",
       "path": "manuals/tools/manifests/module-inventory/entries-008.json",
       "shard_index": 8
     },
     {
-      "content_sha256_lf": "59e058d2ae9a72cf625e14c88f6015428ec91c0fa87c43d3c603d7ae4d2bf6ce",
+      "content_sha256_lf": "000b812ca2306afb244b7d571e1fc5cd079f9daecf232ce03ee3923a2bf0bfe0",
       "entry_count": 200,
-      "first_path": "src/rate_of_closure/web/src/components/MorrisWorkflowPanel.test.tsx",
-      "last_path": "src/rate_of_closure/web/src/model/clubStlExport.test.ts",
+      "first_path": "src/rate_of_closure/web/src/components/MorrisResults.tsx",
+      "last_path": "src/rate_of_closure/web/src/model/clubProfileAcceptance.test.ts",
       "path": "manuals/tools/manifests/module-inventory/entries-009.json",
       "shard_index": 9
     },
     {
-      "content_sha256_lf": "77482042d77a8b8a9662bd5ee035ea3315f4e986a4a61eacfc7977a36cb180db",
+      "content_sha256_lf": "a1ef177994956bb9dee5463a4a34d6ea95e30d106294479c645e04d09eccc974",
       "entry_count": 200,
-      "first_path": "src/rate_of_closure/web/src/model/clubStlExport.ts",
-      "last_path": "src/rate_of_closure/web/src/model/regionalGroundVariationRequestFiles.ts",
+      "first_path": "src/rate_of_closure/web/src/model/clubStlExport.test.ts",
+      "last_path": "src/rate_of_closure/web/src/model/regionalGroundExecutionResultFiles.ts",
       "path": "manuals/tools/manifests/module-inventory/entries-010.json",
       "shard_index": 10
     },
     {
-      "content_sha256_lf": "489264b5f9d556539754de0bc3555da067aa92a8d40787e151bc1e5c54a614b5",
+      "content_sha256_lf": "854722feffee6448a1149ba088b2d35759c119e6ed9efb2529b63c3f9c39b3aa",
       "entry_count": 200,
-      "first_path": "src/rate_of_closure/web/src/model/regionalGroundVariationRequestWire.test.ts",
-      "last_path": "src/rotation_converter/ui/pyqt6/plot_helpers.py",
+      "first_path": "src/rate_of_closure/web/src/model/regionalGroundJobPreparationRequest.test.ts",
+      "last_path": "src/rotation_converter/spatial_algebra.py",
       "path": "manuals/tools/manifests/module-inventory/entries-011.json",
       "shard_index": 11
     },
     {
-      "content_sha256_lf": "e8af100c14c61aab4c9c30881e22395ccfcdb1fa3c3a9ea4ceba9b1badfc1b82",
+      "content_sha256_lf": "a3af572777f712ce807404ef231141f3b6bd9f29539cd60e696d1ce7a23470da",
       "entry_count": 200,
-      "first_path": "src/rotation_converter/ui/pyqt6/reference_frame_tab.py",
-      "last_path": "src/shared/python/chat/_qt/ai_dropdowns.py",
+      "first_path": "src/rotation_converter/twist_screw.py",
+      "last_path": "src/shared/python/calc_backend/routers/syngas_water.py",
       "path": "manuals/tools/manifests/module-inventory/entries-012.json",
       "shard_index": 12
     },
     {
-      "content_sha256_lf": "cc01b8ebedbf71d7a320943c693a60459e308b05c2b666b7f453d49a2c0704ba",
+      "content_sha256_lf": "81fa21cbcf7a0d2e4e6df04a23e70ce7db914a6fddaef8291bfc4f11d8f8df91",
       "entry_count": 200,
-      "first_path": "src/shared/python/chat/_qt/bubbles.py",
-      "last_path": "src/shared/python/model_generation/export/__init__.py",
+      "first_path": "src/shared/python/calc_backend/routers/thermal_profile.py",
+      "last_path": "src/shared/python/model_generation/editor/text_editor_diff_mixin.py",
       "path": "manuals/tools/manifests/module-inventory/entries-013.json",
       "shard_index": 13
     },
     {
-      "content_sha256_lf": "2f792f186ff7a9ee60def0a133e32d4351c0f3dff63831ed3a4ac7016e1ceb62",
+      "content_sha256_lf": "1b359933eb66f07c1f48e7c202d2a93b3f71546bbffdf6eff3d770745062d9c3",
       "entry_count": 200,
-      "first_path": "src/shared/python/model_generation/humanoid/__init__.py",
-      "last_path": "src/shared/python/sidekick/ui/managers/unit_preferences_manager.py",
+      "first_path": "src/shared/python/model_generation/editor/text_editor_history_mixin.py",
+      "last_path": "src/shared/python/sidekick/tab_context_menu.py",
       "path": "manuals/tools/manifests/module-inventory/entries-014.json",
       "shard_index": 14
     },
     {
-      "content_sha256_lf": "a0e4cbbe9ccef995250bac59fe18848906ae297cf19e7d67c334ef38ea82ef48",
+      "content_sha256_lf": "3a3ac766435cc521a061ddbf8ccba7172de9f32babd79347a45e27ee00e4eeaa",
       "entry_count": 200,
-      "first_path": "src/shared/python/sidekick/ui/mixins/__init__.py",
-      "last_path": "src/shared/python/swing_sim/ground/skid_roll_validation.py",
+      "first_path": "src/shared/python/sidekick/theme/__init__.py",
+      "last_path": "src/shared/python/swing_sim/ground/result_adapter.py",
       "path": "manuals/tools/manifests/module-inventory/entries-015.json",
       "shard_index": 15
     },
     {
-      "content_sha256_lf": "d0e753dfd989f598061eb257a804a12630f5d6d821b2c9117b1ba456e406a859",
+      "content_sha256_lf": "e7fe7f99d4de9ac496c236db5d2e5e95c0b965b137e4c8c5303461fc7d87f033",
       "entry_count": 200,
-      "first_path": "src/shared/python/swing_sim/ground/strict_json.py",
-      "last_path": "src/solar_system_model/solar_system/visualization/starfield.py",
+      "first_path": "src/shared/python/swing_sim/ground/result_types.py",
+      "last_path": "src/solar_system_model/solar_system/visualization/__init__.py",
       "path": "manuals/tools/manifests/module-inventory/entries-016.json",
       "shard_index": 16
     },
     {
-      "content_sha256_lf": "1c76e510bc0c83ed8f549faf2bf1cf4640e1e480bfd9265b73c01be6aeeafaf7",
-      "entry_count": 146,
-      "first_path": "src/solar_system_model/solar_system/visualization/textures.py",
+      "content_sha256_lf": "37fb5f778bae43b201fedd25f6aa47204474eda1b55726be1e8c0ce24cce114b",
+      "entry_count": 152,
+      "first_path": "src/solar_system_model/solar_system/visualization/camera.py",
       "last_path": "wave_solver.py",
       "path": "manuals/tools/manifests/module-inventory/entries-017.json",
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "b0566af2299c22166c473b2caa38e424a3e697431167908480a11da13ad0ca91",
+  "source_tree_sha256": "27156efced3dad2bfbf2a8f40b95670e4a7b3edc9aa290f4e4cdcaf1a8e8d2de",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
-      "not-applicable": 2701,
-      "provisional": 844
+      "not-applicable": 2706,
+      "provisional": 845
     },
     "blocked_count": 1,
-    "calculation_count": 844,
+    "calculation_count": 845,
     "classification_counts": {
-      "calculation": 844,
-      "non-calculation": 2702
+      "calculation": 845,
+      "non-calculation": 2707
     },
     "family_counts": {
       "control-systems-calculation": 6,
@@ -397,8 +397,8 @@
       "plot-engine-non-calculation": 8,
       "plot-theme-non-calculation": 4,
       "process-calculators-calculation": 59,
-      "rate-of-closure-calculation": 163,
-      "rate-of-closure-non-calculation": 923,
+      "rate-of-closure-calculation": 164,
+      "rate-of-closure-non-calculation": 928,
       "repository-governance-non-calculation": 5,
       "repository-tooling-non-calculation": 77,
       "rotation-converter-calculation": 132,
@@ -410,13 +410,13 @@
       "swing-simulation-calculation": 63,
       "swing-simulation-non-calculation": 152
     },
-    "module_count": 3546,
-    "non_calculation_count": 2702,
-    "provisional_count": 844,
+    "module_count": 3552,
+    "non_calculation_count": 2707,
+    "provisional_count": 845,
     "review_status_counts": {
       "blocked": 1,
-      "inventory-baseline": 2701,
-      "review-required": 844
+      "inventory-baseline": 2706,
+      "review-required": 845
     }
   }
 }
