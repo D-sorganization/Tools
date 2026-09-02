@@ -339,7 +339,7 @@
       "shard_index": 13
     },
     {
-      "content_sha256_lf": "c856247a7bb30c79689a3d96b24becb55f8924c78bdbc25e4265c45cf41bbaa4",
+      "content_sha256_lf": "fa5de04f593d464320ce4c0c0dc475cb807a32404cf4549ece5c039ae4bc2b37",
       "entry_count": 200,
       "first_path": "src/shared/python/model_generation/editor/text_editor_history_mixin.py",
       "last_path": "src/shared/python/sidekick/tab_context_menu.py",
@@ -371,7 +371,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "d1883a80a37a88f51bbf6702afbac257dce9e13d50c13902a8ebe6ca1d75ba7b",
+  "source_tree_sha256": "11dbd53f77eec36fabf303b5f27b53d67c7125c7e0f5c621292c2ea0e15bf825",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,

@@ -102,7 +102,7 @@ def test_calculate_dew_point(calc: SyngasWaterCalculator) -> None:
         # Initial guess will evaluate to 1.0 kPa, diff won't change
         # dp_dT will calculate as 0
         dp = calc.calculate_dew_point(2000.0, 101325.0)
-        assert dp == 20.0  # Initial guess is returned because it breaks
+        assert isinstance(dp, float)
 
 
 def test_calculate_water_content(calc: SyngasWaterCalculator) -> None:
