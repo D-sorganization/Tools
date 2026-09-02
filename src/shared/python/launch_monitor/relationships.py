@@ -27,21 +27,36 @@ evidence.
 
 Pending owner rulings — deliberately **not** applied here
 --------------------------------------------------------
-Two rulings, **D15** (FDR excludes under-sampled predictors before correcting)
-and **D17** (booleans analysed as 0/1 with explicit projection labelling), were
-accepted after this port was scoped and apply to this canonical module. They
-are **not** in this port, which carries UpstreamDrift's behaviour verbatim so
+One ruling, **D15** (FDR excludes under-sampled predictors before correcting),
+was accepted after this port was scoped and applies to this canonical module.
+It is **not** in this port, which carries UpstreamDrift's behaviour verbatim so
 the port diff and the behaviour diff can be reviewed separately; a follow-up PR
-applies them here. Today's behaviour, pinned by this module's tests so that the
+applies it here. Today's behaviour, pinned by this module's tests so that the
 follow-up's diff is visible:
 
 * the only under-sampling floor is the hardcoded three complete pairs (plus a
   two-distinct-value requirement on each side); a pair below it yields ``nan``
   for both coefficient and p-value, and non-finite p-values are already outside
-  the Benjamini-Hochberg denominator;
-* a boolean column is projected to 0/1 by the ``float`` cast inside
-  ``_pair_correlation`` and analysed as numeric, and the result records nothing
-  to say a projection happened.
+  the Benjamini-Hochberg denominator.
+
+Owner ruling **D17** applied here
+----------------------------------
+UD's ``pd.to_numeric``/``float`` cast projects a boolean column to 0/1 and
+analyses it as numeric; Tools' ``finite_launch_monitor_scalar`` refused
+booleans outright. Per the accepted ruling (UpstreamDrift PR #9392,
+``docs/adr/0048-launch-monitor-port-plan.md`` "Owner Rulings (2026-09-02)",
+D17), the analysis capability is preserved — a boolean column is still
+projected to 0/1 and analysed — but the projection is no longer silent: every
+selected metric backed by a boolean column is named in
+:attr:`CorrelationResult.boolean_projected`, and every :class:`DependencyEdge`
+touching one carries :attr:`DependencyEdge.includes_boolean_projection`. A
+boolean-projected column can therefore never be misread as native numeric.
+This labels the projection; it does not change it — the correlation
+coefficients and p-values for a boolean column are bit-identical to what this
+module already computed before this change. Only ``selected`` metrics are
+tracked (matrix rows/columns); a boolean ``controls`` column still
+participates in partial-correlation residualisation unlabelled, since
+``controls`` are inputs to the matrix, not entries in it.
 """
 
 from __future__ import annotations
@@ -59,7 +74,12 @@ __all__ = ["CorrelationResult", "DependencyEdge", "compute_correlations"]
 
 @dataclass(frozen=True)
 class DependencyEdge:
-    """One statistically screened dependency-network edge."""
+    """One statistically screened dependency-network edge.
+
+    ``includes_boolean_projection`` is ``True`` when ``source`` or ``target``
+    is one of the result's ``boolean_projected`` metrics (owner ruling D17;
+    see :class:`CorrelationResult`).
+    """
 
     source: str
     target: str
@@ -68,11 +88,19 @@ class DependencyEdge:
     adjusted_p_value: float
     sample_count: int
     includes_derived_metric: bool
+    includes_boolean_projection: bool
 
 
 @dataclass(frozen=True)
 class CorrelationResult:
-    """Complete pairwise and optional partial-correlation result."""
+    """Complete pairwise and optional partial-correlation result.
+
+    ``boolean_projected`` names the selected metrics whose column was boolean
+    and is analysed as 0/1 via an explicit projection (owner ruling D17). A
+    name in this tuple can never be read as native numeric —
+    ``coefficients``/``p_values``/etc. still hold the projected result, but
+    the projection is labelled rather than silent.
+    """
 
     method: str
     coefficients: pd.DataFrame
@@ -81,6 +109,7 @@ class CorrelationResult:
     pair_counts: pd.DataFrame
     partial_coefficients: pd.DataFrame | None
     derived_metrics: tuple[str, ...]
+    boolean_projected: tuple[str, ...]
     edges: tuple[DependencyEdge, ...]
 
 
@@ -159,6 +188,9 @@ def compute_correlations(
     if missing:
         raise ValueError(f"Columns not present: {sorted(missing)}")
     numeric = frame[list(selected)].apply(pd.to_numeric, errors="coerce")
+    boolean_projected = tuple(
+        metric for metric in selected if pd.api.types.is_bool_dtype(frame[metric])
+    )
     coefficients = pd.DataFrame(np.nan, index=selected, columns=selected)
     p_values = coefficients.copy()
     pair_counts = pd.DataFrame(0, index=selected, columns=selected, dtype=int)
@@ -218,6 +250,7 @@ def compute_correlations(
                     adjusted_p,
                     int(pair_counts.to_numpy(dtype=int)[i, j]),
                     left in derived or right in derived,
+                    left in boolean_projected or right in boolean_projected,
                 )
             )
     edges.sort(key=lambda edge: (-abs(edge.coefficient), edge.source, edge.target))
@@ -229,5 +262,6 @@ def compute_correlations(
         pair_counts,
         partial,
         derived,
+        boolean_projected,
         tuple(edges),
     )

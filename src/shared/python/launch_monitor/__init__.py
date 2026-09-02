@@ -42,7 +42,8 @@ P6    :mod:`.treatment`      Flag-then-optionally-exclude quality pipeline with
                              the port plan.
 P7    :mod:`.relationships`  FDR-corrected correlation matrix, partial
                              correlations, and a screened dependency network.
-                             Rulings D15/D17 land in a follow-up, not the port.
+                             Ruling D17 (explicit boolean-projection labelling)
+                             applied; D15 (FDR denominator) still pending.
 P8    :mod:`.modeling`       Reproducible NumPy regressions plus an optional
                              shallow MLP, with an identity-leakage guard. No
                              ``rate_of_closure`` counterpart exists.
