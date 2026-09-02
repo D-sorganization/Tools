@@ -117,6 +117,13 @@ P18   :mod:`.player_covariation`
                              threshold, and the absence is explained) and
                              **D23** (the column-name-suffix unit heuristic is
                              deleted; units come from the canonical registry).
+P17   :mod:`.conformance_bundle`
+                             The data-free consumer conformance bundle: ten
+                             scenarios spanning all five analysis kinds in both
+                             statuses, content-addressed at scenario and bundle
+                             level. Landed *after* P18 because its payload
+                             union imports ``PlayerCovariationResultV1`` at
+                             runtime.
 ====  =====================  =================================================
 
 **Name-collision containment.** Symbols in this package collide by name with
@@ -132,6 +139,14 @@ from .comparison import (
     MonitorSummary,
     PairwiseMonitorComparison,
     compare_monitors,
+)
+from .conformance_bundle import (
+    LAUNCH_MONITOR_CONFORMANCE_BUNDLE_VERSION,
+    LaunchMonitorConformanceBundleV1,
+    LaunchMonitorConformanceScenarioV1,
+    launch_monitor_conformance_bundle_json_schema,
+    launch_monitor_conformance_bundle_sha256,
+    launch_monitor_conformance_scenario_sha256,
 )
 from .contract_v2 import (
     CONTRACT_VERSION_V2,
@@ -337,8 +352,11 @@ __all__ = [
     "ImportProfile",
     "ImportedSession",
     "InterpolationV1",
+    "LAUNCH_MONITOR_CONFORMANCE_BUNDLE_VERSION",
     "LONGITUDINAL_SESSION_CONTRACT_VERSION",
     "LaunchMonitorAnalysisResultV2",
+    "LaunchMonitorConformanceBundleV1",
+    "LaunchMonitorConformanceScenarioV1",
     "LongitudinalClaimsV1",
     "LongitudinalDesignV1",
     "LongitudinalDimensionV1",
@@ -420,6 +438,9 @@ __all__ = [
     "detect_profile",
     "fit_predictive_model",
     "import_session",
+    "launch_monitor_conformance_bundle_json_schema",
+    "launch_monitor_conformance_bundle_sha256",
+    "launch_monitor_conformance_scenario_sha256",
     "longitudinal_session_contract_json_schema",
     "metric_units_v2",
     "normalize_header",
