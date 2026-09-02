@@ -12394,6 +12394,7 @@
           "tests/shared/python/golf_club/test_wedge_kinematics.py",
           "tests/shared/python/humanoid/test_makehuman_script_hardening.py",
           "tests/shared/python/humanoid/test_primitive_inertia.py",
+          "tests/shared/python/launch_monitor/test_relationships.py",
           "tests/shared/python/model_generation/inertia/test_primitives.py",
           "tests/shared/python/model_generation/test_urdf_parser.py",
           "tests/shared/python/process_calculators/test_acid_gas_dewpoint_edge_cases.py",
