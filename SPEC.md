@@ -7118,3 +7118,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-02: Single-Pass Dynamic Scale and Visual Evidence (#4874)
 
 - **2026-09-02**: perf(rate-of-closure, #4874) — Replace `Math.min(...spread)` and `Math.max(...spread)` with single-pass loops in `PlotCanvasCard`, `KineticsSection`, and `impactSceneGeometry`, preventing call-stack limits and avoiding intermediate allocations.
+
+## 2026-09-02: State/UI/Import Hygiene Fixes (#4893)
+
+- **2026-09-02**: fix(sidekick, #4893) — Migrate `CalculatorStateMixin` to `get_state_manager()` (#3950), clarify thermocouple filter docstrings (#3977), validate X-range parsing in trendlines (#3979), expose public `connect_once`/`poll_once` (#3990), and fix typing on mixins.

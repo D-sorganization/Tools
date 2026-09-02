@@ -2866,6 +2866,7 @@
         "public_surfaces": [],
         "test_paths": [
           "src/data_processing/data_processor/python/tests/test_data_loader_contracts.py",
+          "src/data_processing/data_processor/python/tests/test_main_window_time_ops.py",
           "src/data_processing/data_processor/python/tests/test_nn_training_worker.py",
           "src/data_processing/data_processor/python/tests/test_undo_redo.py",
           "src/data_processing/data_processor/python/tests/test_vectorized_filter_engine_contracts.py",
@@ -3031,6 +3032,7 @@
           "tests/shared/python/theme/test_theme_manager.py",
           "tests/shared/python/theme/test_typography.py",
           "tests/shared/python/theme/test_zoom.py",
+          "tests/shared/python/ui/test_wave1_widget_state.py",
           "tests/shared/python/ui/test_window_icon.py",
           "tests/test_data_processor_tab_export.py",
           "tests/test_folder_packer_pro.py",
@@ -3446,6 +3448,7 @@
         ],
         "test_paths": [
           "src/data_processing/data_processor/python/tests/test_data_loader_contracts.py",
+          "src/data_processing/data_processor/python/tests/test_main_window_time_ops.py",
           "src/data_processing/data_processor/python/tests/test_nn_training_worker.py",
           "src/data_processing/data_processor/python/tests/test_undo_redo.py",
           "src/data_processing/data_processor/python/tests/test_vectorized_filter_engine_contracts.py",
@@ -3611,6 +3614,7 @@
           "tests/shared/python/theme/test_theme_manager.py",
           "tests/shared/python/theme/test_typography.py",
           "tests/shared/python/theme/test_zoom.py",
+          "tests/shared/python/ui/test_wave1_widget_state.py",
           "tests/shared/python/ui/test_window_icon.py",
           "tests/test_data_processor_tab_export.py",
           "tests/test_folder_packer_pro.py",

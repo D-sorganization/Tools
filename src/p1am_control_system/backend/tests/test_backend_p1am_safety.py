@@ -376,7 +376,7 @@ async def test_poll_plc_loop_backs_off_and_surfaces_degraded_status(
         if len(sleeps) == 4:
             backend_main.shutdown_event.set()
 
-    monkeypatch.setattr(backend_main, "_poll_once", failing_poll_once)
+    monkeypatch.setattr(backend_main, "poll_once", failing_poll_once)
     monkeypatch.setattr(backend_main.asyncio, "sleep", fake_sleep)
     monkeypatch.setattr(backend_main.settings, "poll_interval_s", 0.1)
 

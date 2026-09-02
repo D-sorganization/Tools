@@ -14446,10 +14446,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9633,
+      "bytes_lf": 10304,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0c7b2c45de6b2dbda4c2fd0ebfecba9fad58299366bae2b840ac96f4b6816ed8",
+      "content_sha256_lf": "1ba3330d0e17f19cecb0878cfdcd9a5a33854f89cbdde8bdf5fde8fd3144ebdf",
       "family": "data-processing-non-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-UI-PYQT6-MAIN-WINDOW-TIME-OPS-PY-EC7A7115E22C",
       "language": "python",
@@ -14469,7 +14469,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "not-applicable"
       },
@@ -14490,7 +14490,9 @@
             "signature": null
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "src/data_processing/data_processor/python/tests/test_main_window_time_ops.py"
+        ],
         "unit_mentions": [
           "N",
           "s"

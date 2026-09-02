@@ -35,7 +35,7 @@ from PyQt6.QtWidgets import (
 )
 
 # CHANGED: Import from shared library utils
-from ...utils.state_manager import state_manager
+from ...utils.state_manager import get_state_manager
 
 __all__ = [
     "CalculatorStateMixin",
@@ -68,7 +68,7 @@ class CalculatorStateMixin:
 
         """
         self.calculator_name = calculator_name or "UnknownCalculator"
-        self.state_manager = state_manager
+        self.state_manager = get_state_manager()
 
         # State management
         self.auto_save_enabled = True
@@ -530,7 +530,7 @@ class CalculatorStateMixin:
                 self.set_calculator_state(state_data)
                 _logger.info("✓ Calculator state loaded: %s", state_name)
 
-            return cast(dict[str, Any] | None, state_data)
+            return state_data
 
         except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             return None

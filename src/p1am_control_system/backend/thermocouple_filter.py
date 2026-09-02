@@ -13,8 +13,12 @@ This filter sits between the raw tag->deg C conversion and the controller. It:
 
   * accepts plausible readings unchanged;
   * rejects an implausible jump toward EITHER rail (~0 or ~full scale), or any
-    non-physical single-scan step, HOLDING the last-good instead so the control
-    law never acts on a glitch — whichever burnout direction is configured;
+    non-physical single-scan DROP that isn't quite to 0 (a partial low-side
+    burnout), HOLDING the last-good instead so the control law never acts on
+    a glitch — whichever burnout direction is configured. A large single-scan
+    RISE to a mid-scale value is deliberately NOT rejected on magnitude alone
+    (issue #3977): it isn't a burnout signature, and could be a legitimate
+    fast change or a channel switch to a different probe;
   * if the fault PERSISTS past a timeout, declares a hard fault so the caller can
     trip the heater — holding a stale value forever would let it heat blind.
 
@@ -48,7 +52,9 @@ _ZERO_FLOOR_C = 5.0  # a reading at/below this is a candidate LOW-side burnout "
 _MIN_JUMP_C = 30.0  # ...only if it jumped at least this far from last-good
 # Public so callers can scale it to a channel whose range differs from the
 # firmware default (see TemperatureService._build_filter).
-DEFAULT_MAX_STEP_C = 250.0  # single-scan change this large (either way) is non-physical
+# Single-scan DROP this large is non-physical. Rises are NOT gated by this
+# threshold -- see update()'s docstring (issue #3977).
+DEFAULT_MAX_STEP_C = 250.0
 _MAX_STEP_C = DEFAULT_MAX_STEP_C
 # Range top; a reading near here is a HIGH-side burnout rail. Sourced from the
 # firmware contract rather than re-declared, so it cannot drift (issue #3998).
@@ -99,8 +105,11 @@ class ThermocoupleDeglitchFilter:
             min_jump_c: minimum jump from last-good for a near-rail reading to count
                 as a glitch (so genuine near-ambient or near-full-scale operation is
                 never rejected).
-            max_step_c: any single-scan change this large, in EITHER direction, is
-                non-physical for a crucible and is rejected even away from a rail.
+            max_step_c: any single-scan DROP this large is non-physical for a
+                crucible and is rejected even away from a rail. A rise this
+                large is NOT gated by this threshold (issue #3977) -- it could
+                be a legitimate fast change or a channel switch to a different
+                probe, so only the burnout-rail checks apply to rises.
             full_scale_c: the channel range top; a reading within ``rail_margin_c``
                 of it is a candidate high-side burnout rail.
             rail_margin_c: how close to full scale counts as the high rail.

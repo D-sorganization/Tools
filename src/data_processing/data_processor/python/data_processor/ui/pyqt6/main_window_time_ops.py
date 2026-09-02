@@ -28,7 +28,7 @@ class TimeOpsMixin:
                 time_col = self.time_column  # type: ignore[attr-defined]
             if not time_col:
                 QMessageBox.warning(
-                    self,
+                    self,  # type: ignore[arg-type]
                     "No Time Column",
                     "Please select a time column.",
                 )
@@ -166,7 +166,7 @@ class TimeOpsMixin:
             x_col = self.x_axis_combo.currentText()  # type: ignore[attr-defined]
             if not x_col:
                 QMessageBox.warning(
-                    self,
+                    self,  # type: ignore[arg-type]
                     "No X-Axis",
                     "Please select an X-axis signal.",
                 )
@@ -175,7 +175,7 @@ class TimeOpsMixin:
             selected = self.signal_list.get_selected_signals()  # type: ignore[attr-defined]
             if not selected:
                 QMessageBox.warning(
-                    self,
+                    self,  # type: ignore[arg-type]
                     "No Y-Signals",
                     "Please select Y-axis signals.",
                 )
@@ -184,7 +184,7 @@ class TimeOpsMixin:
             trend_type = self.trendline_type_combo.currentText()  # type: ignore[attr-defined]
             if trend_type == "None":
                 QMessageBox.warning(
-                    self,
+                    self,  # type: ignore[arg-type]
                     "No Trendline",
                     "Please select a trendline type.",
                 )
@@ -194,13 +194,28 @@ class TimeOpsMixin:
 
             x_min = None
             x_max = None
-            try:
-                if self.trend_x_min_edit.text().strip():  # type: ignore[attr-defined]
-                    x_min = float(self.trend_x_min_edit.text().strip())  # type: ignore[attr-defined]
-                if self.trend_x_max_edit.text().strip():  # type: ignore[attr-defined]
-                    x_max = float(self.trend_x_max_edit.text().strip())  # type: ignore[attr-defined]
-            except ValueError:
-                pass
+            x_min_text = self.trend_x_min_edit.text().strip()  # type: ignore[attr-defined]
+            x_max_text = self.trend_x_max_edit.text().strip()  # type: ignore[attr-defined]
+            if x_min_text:
+                try:
+                    x_min = float(x_min_text)
+                except ValueError:
+                    QMessageBox.warning(
+                        self,  # type: ignore[arg-type]
+                        "Invalid X Range",
+                        f"'{x_min_text}' is not a valid number for the X minimum.",
+                    )
+                    return
+            if x_max_text:
+                try:
+                    x_max = float(x_max_text)
+                except ValueError:
+                    QMessageBox.warning(
+                        self,  # type: ignore[arg-type]
+                        "Invalid X Range",
+                        f"'{x_max_text}' is not a valid number for the X maximum.",
+                    )
+                    return
 
             y_col = selected[0]
 
@@ -228,7 +243,7 @@ class TimeOpsMixin:
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.error("Trendline error: %s", e, exc_info=True)
             QMessageBox.critical(
-                self,
+                self,  # type: ignore[arg-type]
                 "Error",
                 f"Trendline calculation failed:\n{e}",
             )

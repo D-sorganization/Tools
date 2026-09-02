@@ -47,8 +47,8 @@ __all__ = [
     "_WriterCounters",
     "_apply_write_seam_interlocks",
     "_beat_watchdog",
-    "_connect_once",
-    "_poll_once",
+    "connect_once",
+    "poll_once",
     "_read_scan_tags",
     "_reengage_service_estop",
     "_resolve_source",
@@ -154,7 +154,7 @@ def loop_diagnostics(
     }
 
 
-async def _connect_once(
+async def connect_once(
     *,
     plc: Any,
     power_supply: Any,
@@ -283,7 +283,7 @@ def _apply_write_seam_interlocks(
         set_plc_flag(estop_active or not data_trusted)
 
 
-async def _poll_once(
+async def poll_once(
     *,
     plc: Any,
     latest_tag_values: dict[str, float],
