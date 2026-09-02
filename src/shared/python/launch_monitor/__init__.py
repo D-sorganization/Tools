@@ -20,27 +20,30 @@ rather than a symbol remap.
 
 Landed so far
 -------------
-====  ====================  ==================================================
-Step  Module                Notes
-====  ====================  ==================================================
-P1    :mod:`.dispersion`    2-D target-relative dispersion. Shares a name with
-                            ``rate_of_closure`` and nothing else — G0 pinned
-                            the gap as divergences D6-D9.
-P2    :mod:`.multivariate`  PCA and variance-inflation diagnostics. No
-                            ``rate_of_closure`` counterpart exists.
-P3    :mod:`.trends`        Per-calendar-day robust trend, EWMA, and ranked
-                            change candidates. ``TrendResult`` is renamed
-                            ``TemporalTrendResult`` here — see that module.
-P4    :mod:`.comparison`    Matched (Bland-Altman) and descriptive
-                            cross-monitor comparison. Confirmed
-                            UpstreamDrift-only by the port plan.
-P5    :mod:`.schema`        The layer's vocabulary: 33 unit-carrying metric
-                            definitions, identity columns, and the import
-                            mapping/session contracts.
-P6    :mod:`.treatment`     Flag-then-optionally-exclude quality pipeline with
-                            a full audit log. Confirmed UpstreamDrift-only by
-                            the port plan.
-====  ====================  ==================================================
+====  =====================  =================================================
+Step  Module                 Notes
+====  =====================  =================================================
+P1    :mod:`.dispersion`     2-D target-relative dispersion. Shares a name with
+                             ``rate_of_closure`` and nothing else — G0 pinned
+                             the gap as divergences D6-D9.
+P2    :mod:`.multivariate`   PCA and variance-inflation diagnostics. No
+                             ``rate_of_closure`` counterpart exists.
+P3    :mod:`.trends`         Per-calendar-day robust trend, EWMA, and ranked
+                             change candidates. ``TrendResult`` is renamed
+                             ``TemporalTrendResult`` here — see that module.
+P4    :mod:`.comparison`     Matched (Bland-Altman) and descriptive
+                             cross-monitor comparison. Confirmed
+                             UpstreamDrift-only by the port plan.
+P5    :mod:`.schema`         The layer's vocabulary: 33 unit-carrying metric
+                             definitions, identity columns, and the import
+                             mapping/session contracts.
+P6    :mod:`.treatment`      Flag-then-optionally-exclude quality pipeline with
+                             a full audit log. Confirmed UpstreamDrift-only by
+                             the port plan.
+P7    :mod:`.relationships`  FDR-corrected correlation matrix, partial
+                             correlations, and a screened dependency network.
+                             Rulings D15/D17 land in a follow-up, not the port.
+====  =====================  =================================================
 
 **Name-collision containment.** Symbols in this package collide by name with
 ``rate_of_closure`` symbols that compute something else — ``analyze_dispersion``
@@ -58,6 +61,11 @@ from .comparison import (
 )
 from .dispersion import DispersionResult, analyze_dispersion
 from .multivariate import PCAResult, VIFResult, compute_pca, compute_vif
+from .relationships import (
+    CorrelationResult,
+    DependencyEdge,
+    compute_correlations,
+)
 from .schema import (
     IDENTITY_COLUMNS,
     METRICS,
@@ -81,6 +89,8 @@ __all__ = [
     "METRICS",
     "ChangeCandidate",
     "ColumnMapping",
+    "CorrelationResult",
+    "DependencyEdge",
     "DispersionResult",
     "FilterRule",
     "ImportManifest",
@@ -99,6 +109,7 @@ __all__ = [
     "analyze_trend",
     "apply_treatment",
     "compare_monitors",
+    "compute_correlations",
     "compute_pca",
     "compute_vif",
     "numeric_metric_columns",
