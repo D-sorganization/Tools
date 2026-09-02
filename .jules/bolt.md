@@ -126,3 +126,7 @@
 ## 2024-05-18 - Prevent stack overflow in dataset bounds calculation
 **Learning:** Using `Math.max(...spread)` chained with `.map()` on large chart plotting paths creates massive call stack expansions and heavy garbage collection pressure, which could even throw "Maximum call stack size exceeded" on larger dynamic arrays.
 **Action:** Use a single-pass `for` loop for minimum/maximum bound extraction in data-intensive charting paths.
+
+## 2024-05-19 - Array map Math.abs spread overhead
+**Learning:** Using `Math.max(...array.map(Math.abs))` creates an intermediate array and passes all items to the call stack via the spread operator, causing noticeable GC pressure and risking call stack size exceeded errors on large datasets.
+**Action:** Replace `Math.max(...array.map(Math.abs))` with a standard O(N) single-pass `for` loop in numerical hotspots.
