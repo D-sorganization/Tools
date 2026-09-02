@@ -14396,7 +14396,7 @@
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "not-applicable",
-        "validation": "not-applicable"
+        "validation": "mapped"
       },
       "traceability": {
         "adr_paths": [
@@ -14467,10 +14467,13 @@
         ],
         "test_paths": [
           "tests/rate_of_closure/test_launch_monitor_performance.py",
+          "tests/shared/python/launch_monitor/test_strokes_gained_contract.py",
           "tests/shared/python/launch_monitor/test_trends.py"
         ],
         "unit_mentions": [],
-        "validation_paths": []
+        "validation_paths": [
+          "tests/shared/python/launch_monitor/test_strokes_gained_contract.py"
+        ]
       }
     },
     {
@@ -14669,7 +14672,7 @@
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "not-applicable",
-        "validation": "not-applicable"
+        "validation": "mapped"
       },
       "traceability": {
         "adr_paths": [
@@ -14710,10 +14713,13 @@
         ],
         "test_paths": [
           "tests/rate_of_closure/test_launch_monitor_provenance_and_unavailable.py",
-          "tests/rate_of_closure/test_launch_monitor_strokes_gained.py"
+          "tests/rate_of_closure/test_launch_monitor_strokes_gained.py",
+          "tests/shared/python/launch_monitor/test_strokes_gained_contract.py"
         ],
         "unit_mentions": [],
-        "validation_paths": []
+        "validation_paths": [
+          "tests/shared/python/launch_monitor/test_strokes_gained_contract.py"
+        ]
       }
     },
     {

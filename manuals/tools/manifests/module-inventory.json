@@ -275,7 +275,7 @@
       "shard_index": 5
     },
     {
-      "content_sha256_lf": "1e4debc83280f5de2049979f2824a3745313f0b735399e8b68112b4b8c72e332",
+      "content_sha256_lf": "dc8a00231a11c9e4476a0249935d6744daaa74be3702796c5cefa9b12bb71776",
       "entry_count": 200,
       "first_path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/downswing_config.py",
       "last_path": "src/rate_of_closure/launch_monitor_v2_client.py",
@@ -331,58 +331,58 @@
       "shard_index": 12
     },
     {
-      "content_sha256_lf": "111d008d36287d531c2b3f13d112d4d0d5bfb6de5c2959f6baf35d225e0fce90",
+      "content_sha256_lf": "37c4fab72dee4db809e006351252a393113e57c099ec2df7cf810af105be1694",
       "entry_count": 200,
       "first_path": "src/shared/python/calc_backend/routers/scrubber.py",
-      "last_path": "src/shared/python/model_generation/converters/simscape/__init__.py",
+      "last_path": "src/shared/python/model_generation/builders/parametric_builder.py",
       "path": "manuals/tools/manifests/module-inventory/entries-013.json",
       "shard_index": 13
     },
     {
-      "content_sha256_lf": "c2e7cbf224c9ac63d44bc26b37789e3107840559a1535d49d031c3dc5939608c",
+      "content_sha256_lf": "e0e32e61883aab1feb190d6f6115afd30bcdf655638251c32c9e602224d23e7d",
       "entry_count": 200,
-      "first_path": "src/shared/python/model_generation/converters/simscape/mdl_parser.py",
-      "last_path": "src/shared/python/sidekick/process_calculators/syngas_compression_calculator.py",
+      "first_path": "src/shared/python/model_generation/builders/urdf_writer.py",
+      "last_path": "src/shared/python/sidekick/process_calculators/psa_package/ui/sensitivity_plot.py",
       "path": "manuals/tools/manifests/module-inventory/entries-014.json",
       "shard_index": 14
     },
     {
-      "content_sha256_lf": "6913ba5cf36e0ff07dd2f6a1c74b890f392042cd1af586707076b2de6adaddb7",
+      "content_sha256_lf": "055f0ce1fc50ea16190540fc2fa696dde2cb6863dc2764459b9a8e34f91b1be3",
       "entry_count": 200,
-      "first_path": "src/shared/python/sidekick/process_calculators/syngas_compression_engine.py",
-      "last_path": "src/shared/python/swing_sim/ground/profile_store.py",
+      "first_path": "src/shared/python/sidekick/process_calculators/scrubber/__init__.py",
+      "last_path": "src/shared/python/swing_sim/ground/impact_types.py",
       "path": "manuals/tools/manifests/module-inventory/entries-015.json",
       "shard_index": 15
     },
     {
-      "content_sha256_lf": "40516bc1d43360107a9db03db1deaeb7f797457ce24319f918dea8210b0156cc",
+      "content_sha256_lf": "35a4b36eb0e0bdd299289a5cfd76be2dc1f1b0d9316f37407196b6bb112d2fc4",
       "entry_count": 200,
-      "first_path": "src/shared/python/swing_sim/ground/profile_store_platform.py",
-      "last_path": "src/solar_system_model/solar_system/physics/__init__.py",
+      "first_path": "src/shared/python/swing_sim/ground/json_schema.py",
+      "last_path": "src/solar_system_model/solar_system/data/historical_events/planetary_missions.py",
       "path": "manuals/tools/manifests/module-inventory/entries-016.json",
       "shard_index": 16
     },
     {
-      "content_sha256_lf": "1879bd940bf0e5247b488061fc0b167418952b973ea9bffaf174ca7b6f6118e1",
-      "entry_count": 168,
-      "first_path": "src/solar_system_model/solar_system/physics/orbital_mechanics.py",
+      "content_sha256_lf": "aec5f3c89af2ee366b12fc124c881774b11150479fd552e863232ec4a6a86f43",
+      "entry_count": 175,
+      "first_path": "src/solar_system_model/solar_system/data/moon_systems.py",
       "last_path": "wave_solver.py",
       "path": "manuals/tools/manifests/module-inventory/entries-017.json",
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "2bf7d785df8b3a38398fa82f3ce4925317068715fba474e5d2dea42b1a854a40",
+  "source_tree_sha256": "a96da2f761c525fa84537c6cfa65d442ddbecf6e883e6df7ccf13f211851af1e",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
-      "not-applicable": 2722,
-      "provisional": 845
+      "not-applicable": 2727,
+      "provisional": 847
     },
     "blocked_count": 1,
-    "calculation_count": 845,
+    "calculation_count": 847,
     "classification_counts": {
-      "calculation": 845,
-      "non-calculation": 2723
+      "calculation": 847,
+      "non-calculation": 2728
     },
     "family_counts": {
       "control-systems-calculation": 6,
@@ -404,19 +404,19 @@
       "rotation-converter-calculation": 132,
       "shared-plotting-calculation": 1,
       "shared-plotting-non-calculation": 4,
-      "shared-tools-calculation": 171,
-      "shared-tools-non-calculation": 1030,
+      "shared-tools-calculation": 173,
+      "shared-tools-non-calculation": 1035,
       "signal-processing-calculation": 28,
       "swing-simulation-calculation": 63,
       "swing-simulation-non-calculation": 152
     },
-    "module_count": 3568,
-    "non_calculation_count": 2723,
-    "provisional_count": 845,
+    "module_count": 3575,
+    "non_calculation_count": 2728,
+    "provisional_count": 847,
     "review_status_counts": {
       "blocked": 1,
-      "inventory-baseline": 2722,
-      "review-required": 845
+      "inventory-baseline": 2727,
+      "review-required": 847
     }
   }
 }

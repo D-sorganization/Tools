@@ -13089,10 +13089,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8771,
+      "bytes_lf": 13741,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d5a6aa5e041df2547db29c4b3cca2f39e999c16144386e450ee0eb9094d53499",
+      "content_sha256_lf": "39c0b31cac2be92935afff38df6d20120c5a9d65adefe108c26c177069610b35",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-INIT-PY-662C22BCE5D1",
       "language": "python",
@@ -13146,12 +13146,27 @@
           },
           {
             "kind": "re-export",
+            "name": "AvailabilityV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "AvailabilityV2",
             "signature": null
           },
           {
             "kind": "re-export",
+            "name": "BASELINE_CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "BackingRecordV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BaselineProvenanceV1",
             "signature": null
           },
           {
@@ -13191,6 +13206,11 @@
           },
           {
             "kind": "re-export",
+            "name": "ConfidenceIntervalV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "CorrelationEstimate",
             "signature": null
           },
@@ -13202,6 +13222,16 @@
           {
             "kind": "re-export",
             "name": "CorrelationResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CourseStateColumnsV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CourseStateValueV1",
             "signature": null
           },
           {
@@ -13226,6 +13256,31 @@
           },
           {
             "kind": "re-export",
+            "name": "EstimateSummaryV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ExcludedRowV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ExclusionSummaryV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ExpectedStrokesBaselineLike",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ExpectedStrokesStateLike",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "FilterRule",
             "signature": null
           },
@@ -13242,6 +13297,16 @@
           {
             "kind": "re-export",
             "name": "GroupAnalysis",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroupSummaryV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroupingDimensionV1",
             "signature": null
           },
           {
@@ -13271,7 +13336,62 @@
           },
           {
             "kind": "re-export",
+            "name": "InterpolationV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LONGITUDINAL_SESSION_CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "LaunchMonitorAnalysisResultV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LongitudinalClaimsV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LongitudinalDesignV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LongitudinalDimensionV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LongitudinalMethod",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LongitudinalMissingnessV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LongitudinalPlayerAssociationV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LongitudinalSessionRequestV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LongitudinalSessionResultV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LongitudinalSummaryV1",
             "signature": null
           },
           {
@@ -13316,12 +13436,37 @@
           },
           {
             "kind": "re-export",
+            "name": "OUTCOME_PROXY_CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "OrderEvidenceV2",
             "signature": null
           },
           {
             "kind": "re-export",
+            "name": "OutcomeProxyRequestV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "OutcomeProxyResultV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "OutcomeProxyRowV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "PCAResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "POOLED_METHOD_DESCRIPTIONS",
             "signature": null
           },
           {
@@ -13337,6 +13482,16 @@
           {
             "kind": "re-export",
             "name": "PlayerIdentityV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PooledAssociationV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PooledMethod",
             "signature": null
           },
           {
@@ -13361,12 +13516,42 @@
           },
           {
             "kind": "re-export",
+            "name": "STROKES_GAINED_CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SessionAggregateV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "SessionIdentityV2",
             "signature": null
           },
           {
             "kind": "re-export",
             "name": "SourceFileReferenceV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StrokesGainedAnalysisResultV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StrokesGainedRequestV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StrokesGainedRowV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StrokesGainedUncertaintyV1",
             "signature": null
           },
           {
@@ -13421,6 +13606,21 @@
           },
           {
             "kind": "re-export",
+            "name": "analyze_longitudinal_sessions",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "analyze_outcome_proxy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "analyze_source_backed_strokes_gained",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "analyze_trend",
             "signature": null
           },
@@ -13442,6 +13642,11 @@
           {
             "kind": "re-export",
             "name": "build_analysis_lineage_v2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "clustered_pooled_association",
             "signature": null
           },
           {
@@ -13471,6 +13676,11 @@
           },
           {
             "kind": "re-export",
+            "name": "dersimonian_laird_pooled_association",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "detect_profile",
             "signature": null
           },
@@ -13482,6 +13692,11 @@
           {
             "kind": "re-export",
             "name": "import_session",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "longitudinal_session_contract_json_schema",
             "signature": null
           },
           {
@@ -13501,8 +13716,87 @@
           },
           {
             "kind": "re-export",
+            "name": "player_associations",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "strokes_gained_contract_json_schema",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "vendor_provenance_v2",
             "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 6726,
+      "classification": "calculation",
+      "classification_basis": "path-marker:statistics",
+      "content_sha256_lf": "d1af19f7d129cee19e11817e7f8d20b69f56be9701aece3903bace5ffe782af7",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-SCORING-STATISTICS-PY-BFA93507E687",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/_scoring_statistics.py",
+      "purpose": "Shared descriptive uncertainty and trusted grouping helpers.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "estimate_summary",
+            "signature": "values: list[float], confidence_level: float"
+          },
+          {
+            "kind": "function",
+            "name": "group_summaries",
+            "signature": "rows: tuple[StrokesGainedRowV1, ...], specs: tuple[GroupingDimensionV1, ...], confidence_level: float"
+          },
+          {
+            "kind": "function",
+            "name": "longitudinal_summaries",
+            "signature": "rows: tuple[StrokesGainedRowV1, ...], spec: LongitudinalDimensionV1 | None"
           }
         ],
         "test_paths": [],
@@ -13998,6 +14292,238 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 13272,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7f3a0c6c19113409546c208f455162a0dabd9b4ff0b820c36f6f4357da35877d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-LONGITUDINAL-PY-ECE9AB39FB74",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/longitudinal.py",
+      "purpose": "Attested longitudinal analysis with player-session as the inference unit.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "mapped",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [
+          "analysis",
+          "pooled_association"
+        ],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "analyze_longitudinal_sessions",
+            "signature": "frame: pd.DataFrame, request: LongitudinalSessionRequestV1, *, context: AnalysisContextV2"
+          },
+          {
+            "kind": "function",
+            "name": "longitudinal_session_contract_json_schema",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 11042,
+      "classification": "calculation",
+      "classification_basis": "path-marker:statistics",
+      "content_sha256_lf": "3cb533117550785fef11a53c4ecd7f976cf98e7b4a891cd2d246b045f696bbef",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-LONGITUDINAL-STATISTICS-PY-69E2C503DEDD",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/longitudinal_statistics.py",
+      "purpose": "Session-unit descriptive and player-clustered longitudinal statistics.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "clustered_pooled_association",
+            "signature": "cells: pd.DataFrame, request: LongitudinalSessionRequestV1"
+          },
+          {
+            "kind": "function",
+            "name": "dersimonian_laird_pooled_association",
+            "signature": "cells: pd.DataFrame, associations: tuple[LongitudinalPlayerAssociationV1, ...], request: LongitudinalSessionRequestV1"
+          },
+          {
+            "kind": "function",
+            "name": "player_associations",
+            "signature": "cells: pd.DataFrame, request: LongitudinalSessionRequestV1"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9795,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d66eab20afefc6aeba48be7d3f398ca4e67505843e5e2cf4cbdec7eff22e2b77",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-LONGITUDINAL-TYPES-PY-19A6F6AF95A0",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/longitudinal_types.py",
+      "purpose": "Wire types for attested session-unit longitudinal analysis.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "LongitudinalClaimsV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LongitudinalDesignV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LongitudinalMissingnessV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LongitudinalPlayerAssociationV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LongitudinalSessionRequestV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LongitudinalSessionResultV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PooledAssociationV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SessionAggregateV1",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LONGITUDINAL_SESSION_CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "POOLED_METHOD_DESCRIPTIONS",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 10668,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -14124,6 +14650,61 @@
         "test_paths": [
           "tests/shared/python/launch_monitor/test_multivariate.py"
         ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5737,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2c8f3aea3e89cb97ae1e8bc5566fd53bb5233866e1856c25b03e823602cb26fb",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-OUTCOME-PROXY-PY-820177378BFB",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/outcome_proxy.py",
+      "purpose": "Explicit non-strokes-gained launch-outcome proximity proxy.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "analyze_outcome_proxy",
+            "signature": "frame: pd.DataFrame, request: OutcomeProxyRequestV1"
+          }
+        ],
+        "test_paths": [],
         "unit_mentions": [
           "s"
         ],
@@ -14383,6 +14964,246 @@
           "rad",
           "rad/s",
           "rpm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 18835,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "89f920e04f5e17737675c6e3eea8eed20e2f464bd4827c3456ef0d94c8128c35",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-STROKES-GAINED-PY-98B26F9BFCEC",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/strokes_gained.py",
+      "purpose": "Canonical source-backed strokes-gained analysis.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "YARDS_PER_METRE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "analyze_source_backed_strokes_gained",
+            "signature": "frame: pd.DataFrame, baseline: ExpectedStrokesBaselineLike, request: StrokesGainedRequestV1, *, context: AnalysisContextV2 | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "strokes_gained_contract_json_schema",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13468,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "bf224159d8d3432f87e438ca0944ebde6cadd6052813a2dfeb52bcf68f043e2d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-STROKES-GAINED-TYPES-PY-CCED0B327F89",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/strokes_gained_types.py",
+      "purpose": "Wire models for governed launch-monitor scoring analyses.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AvailabilityV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "BaselineProvenanceV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ConfidenceIntervalV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CourseStateColumnsV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CourseStateValueV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "EstimateSummaryV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ExcludedRowV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ExclusionSummaryV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ExpectedStrokesBaselineLike",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ExpectedStrokesStateLike",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroupSummaryV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroupingDimensionV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "InterpolationV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LongitudinalDimensionV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LongitudinalSummaryV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "OutcomeProxyRequestV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "OutcomeProxyResultV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "OutcomeProxyRowV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StrokesGainedAnalysisResultV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StrokesGainedRequestV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StrokesGainedRowV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StrokesGainedUncertaintyV1",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BASELINE_CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "OUTCOME_PROXY_CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "STROKES_GAINED_CONTRACT_VERSION",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
           "s"
         ],
         "validation_paths": []
@@ -16056,590 +16877,6 @@
           "kg",
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 25102,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "43c197064021d6a6e4439a9c93af5185f9ed04caa1132f440abcf38c0a041319",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-BUILDERS-URDF-WRITER-PY-A5EF7298E957",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/builders/urdf_writer.py",
-      "purpose": "URDF XML writer.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "URDFWriter",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/model_generation/tests/test_unified_loader.py",
-          "tests/test_review_fixes_2026_03_09.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 441,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4073b7b5bdb7703f3cdc84ab4255958a9f8dc97809dbe77ea32c4111fe80620d",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-CLI-INIT-PY-8E8CD5148C85",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/cli/__init__.py",
-      "purpose": "Command-line interface for model_generation.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "create_parser",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "main",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 28491,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0983750974c04e84d9840bb99b75fb397ff0d8b0167a3ae6ef5e9f1f83301ce1",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-CLI-MAIN-PY-5220EF2A5398",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/cli/main.py",
-      "purpose": "Command-line interface for model_generation package.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "https://github.com/{repo"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "cmd_convert",
-            "signature": "args: argparse.Namespace"
-          },
-          {
-            "kind": "function",
-            "name": "cmd_diff",
-            "signature": "args: argparse.Namespace"
-          },
-          {
-            "kind": "function",
-            "name": "cmd_edit_compose",
-            "signature": "args: argparse.Namespace"
-          },
-          {
-            "kind": "function",
-            "name": "cmd_generate",
-            "signature": "args: argparse.Namespace"
-          },
-          {
-            "kind": "function",
-            "name": "cmd_inertia",
-            "signature": "args: argparse.Namespace"
-          },
-          {
-            "kind": "function",
-            "name": "cmd_info",
-            "signature": "args: argparse.Namespace"
-          },
-          {
-            "kind": "function",
-            "name": "cmd_library_add",
-            "signature": "args: argparse.Namespace"
-          },
-          {
-            "kind": "function",
-            "name": "cmd_library_download",
-            "signature": "args: argparse.Namespace"
-          },
-          {
-            "kind": "function",
-            "name": "cmd_library_import_github",
-            "signature": "args: argparse.Namespace"
-          },
-          {
-            "kind": "function",
-            "name": "cmd_library_list",
-            "signature": "args: argparse.Namespace"
-          },
-          {
-            "kind": "function",
-            "name": "cmd_validate",
-            "signature": "args: argparse.Namespace"
-          },
-          {
-            "kind": "function",
-            "name": "create_parser",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "main",
-            "signature": "argv: list[str] | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "setup_logging",
-            "signature": "verbose: bool=False, quiet: bool=False"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/model_generation/tests/test_cli.py",
-          "tests/shared/python/model_generation/test_cli_main.py"
-        ],
-        "unit_mentions": [
-          "N",
-          "kg",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 774,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ea3c7a419a7547526c6c90c18836128861989aaaf4d4a764a3bedd10e045c61f",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-CONVERTERS-INIT-PY-F1F7F181B91A",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/converters/__init__.py",
-      "purpose": "Format converters for model generation.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "MJCFConverter",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ModelFormat",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ParsedModel",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "URDFParser",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "convert_mjcf_to_urdf",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "convert_urdf_to_mjcf",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "detect_format",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 8078,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6d2a8dfc4577ea631a30a2b7df038fca0688124f2d026f8c47baf6ea48e7fbf5",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-CONVERTERS-FORMAT-UTILS-PY-716F7AC474CD",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/converters/format_utils.py",
-      "purpose": "Format detection and conversion utilities.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "mapped",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [
-          "robot.urdf",
-          "robot.xml"
-        ],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ModelFormat",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "convert",
-            "signature": "source: str | Path, target_format: ModelFormat | str, output_path: Path | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "convert_mjcf_to_urdf",
-            "signature": "source: str | Path, output_path: Path | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "convert_urdf_to_mjcf",
-            "signature": "source: str | Path, output_path: Path | None=None, **config_options: Any"
-          },
-          {
-            "kind": "function",
-            "name": "detect_format",
-            "signature": "source: str | Path"
-          },
-          {
-            "kind": "function",
-            "name": "validate_mjcf",
-            "signature": "source: str | Path"
-          },
-          {
-            "kind": "function",
-            "name": "validate_urdf",
-            "signature": "source: str | Path"
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/model_generation/test_format_utils.py",
-          "tests/shared/python/model_generation/test_gh1694_xml_security.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 21758,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "60d3a1e84d2b4aae4eddd0eb6386cbbfb9dcb2e2c0c4ccdd41a790aa0ca86a99",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-CONVERTERS-MJCF-CONVERTER-PY-2F79FEE07FBF",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/converters/mjcf_converter.py",
-      "purpose": "MJCF (MuJoCo) format converter.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "MJCFConfig",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "MJCFConverter",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MJCF_TO_URDF_JOINT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "URDF_TO_MJCF_JOINT",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/model_generation/tests/test_unified_loader.py",
-          "src/shared/python/model_generation/tests/test_urdf_roundtrip.py",
-          "tests/shared/python/model_generation/test_gh1694_xml_security.py",
-          "tests/test_review_fixes_2026_03_09.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 817,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "fddf90ef4b4caa5accef6d246d05d4edd02220acc22b02f77b41ee0ee7ddd261",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-CONVERTERS-SIMSCAPE-INIT-PY-4BAE3E10710C",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/converters/simscape/__init__.py",
-      "purpose": "SimScape Multibody conversion tools.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "ConversionConfig",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ConversionResult",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "MDLParser",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SimscapeBlock",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SimscapeBlockType",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SimscapeConnection",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SimscapeModel",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SimscapeParameter",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SimscapeToURDFConverter",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "convert_simscape_to_urdf",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }
