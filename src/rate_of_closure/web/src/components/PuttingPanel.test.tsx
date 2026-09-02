@@ -1,11 +1,14 @@
 // @vitest-environment jsdom
 
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { PuttingPanel } from "./PuttingPanel";
 import { SCRUB_STEPS } from "../model/playbackTransport";
 import { evaluatePuttWithTrajectory } from "../model/puttingScenario";
+import { greenSurfaceToJson } from "../model/puttingGreenWire";
+import { planarSurface } from "../model/puttingGreen";
+import udGreenFixture from "../model/__fixtures__/ud_green_topography.json";
 
 type Authority = typeof evaluatePuttWithTrajectory;
 
@@ -297,5 +300,128 @@ describe("PuttingPanel playback on the shared transport (#4800 P8)", () => {
     expect(screen.getByLabelText("Putt playback position")).toHaveTextContent(
       /^0\.00 \//,
     );
+  });
+});
+
+describe("PuttingPanel green import (ADR-0045 F2)", () => {
+  it("imports a swing_sim.green_surface/1 document and putts on it", async () => {
+    render(<PuttingPanel distanceUnit="m" />);
+    const before = screen.getByRole("button", { name: /Roll-Out Distance/ })
+      .textContent;
+    const text = greenSurfaceToJson(planarSurface(4.0, 90.0));
+    const input = screen.getByLabelText("Import Green Document File");
+    fireEvent.change(input, {
+      target: { files: [new File([text], "custom.json")] },
+    });
+    await waitFor(() =>
+      expect(screen.getByLabelText("Green surface source")).toHaveTextContent(
+        "swing_sim.green_surface/1",
+      ),
+    );
+    expect(screen.getByLabelText("Green surface source")).toHaveTextContent(
+      "custom.json",
+    );
+    // The imported heightfield replaces the planar green outright: the
+    // grade/aspect spins are disabled rather than silently ignored.
+    expect(screen.getByRole("textbox", { name: "Slope grade %" })).toBeDisabled();
+    expect(
+      screen.getByRole("textbox", { name: "Downhill direction °" }),
+    ).toBeDisabled();
+    expect(screen.queryByRole("alert")).toBeNull();
+    expect(
+      screen.getByRole("button", { name: /Roll-Out Distance/ }).textContent,
+    ).not.toBe(before);
+  });
+
+  it("imports an UpstreamDrift putting_green topography through the P9 adapter and putts on it", async () => {
+    render(<PuttingPanel distanceUnit="m" />);
+    const text = JSON.stringify(udGreenFixture);
+    const input = screen.getByLabelText("Import Green Document File");
+    fireEvent.change(input, {
+      target: { files: [new File([text], "ud_green.json")] },
+    });
+    await waitFor(() =>
+      expect(screen.getByLabelText("Green surface source")).toHaveTextContent(
+        "upstreamdrift",
+      ),
+    );
+    expect(screen.getByLabelText("Green surface source")).toHaveTextContent(
+      "ud_green.json",
+    );
+    expect(screen.queryByRole("alert")).toBeNull();
+    for (const label of [/Roll-Out Distance/, /Ball Speed/, /Apex Break/]) {
+      expect(
+        screen.getByRole("button", { name: label }),
+      ).not.toHaveTextContent("—");
+    }
+  });
+
+  it("refuses a weighted-slope UD document with the adapter's named reason and keeps the previous green", async () => {
+    render(<PuttingPanel distanceUnit="m" />);
+    const text = JSON.stringify({
+      contours: [
+        { x: 0.0, y: 0.0, elevation: 0.0 },
+        { x: 1.0, y: 0.0, elevation: 0.0 },
+        { x: 0.0, y: 1.0, elevation: 0.0 },
+        { x: 1.0, y: 1.0, elevation: 0.0 },
+      ],
+      slopes: [
+        {
+          center: [0.5, 0.5],
+          radius: 1.0,
+          direction: [1.0, 0.0],
+          magnitude: 0.02,
+        },
+      ],
+    });
+    const input = screen.getByLabelText("Import Green Document File");
+    fireEvent.change(input, {
+      target: { files: [new File([text], "ud_slopes.json")] },
+    });
+    await waitFor(() =>
+      expect(screen.getByRole("alert")).toHaveTextContent(/slope/),
+    );
+    expect(screen.getByRole("alert")).toHaveTextContent("ud_slopes.json");
+    // Fail-closed: the previously integrated planar green is untouched.
+    expect(
+      screen.getByLabelText("Green surface source"),
+    ).toHaveTextContent("planar grade/aspect");
+    expect(screen.getByRole("textbox", { name: "Slope grade %" })).toBeEnabled();
+  });
+
+  it("refuses an unrecognized document format", async () => {
+    render(<PuttingPanel distanceUnit="m" />);
+    const input = screen.getByLabelText("Import Green Document File");
+    fireEvent.change(input, {
+      target: {
+        files: [
+          new File(
+            ['{"format": "swing_sim.green_surface/9"}'],
+            "bad.json",
+          ),
+        ],
+      },
+    });
+    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("bad.json"));
+    expect(
+      screen.getByLabelText("Green surface source"),
+    ).toHaveTextContent("planar grade/aspect");
+  });
+
+  it("Use planar green reverts an imported heightfield", async () => {
+    render(<PuttingPanel distanceUnit="m" />);
+    const text = greenSurfaceToJson(planarSurface(4.0, 90.0));
+    const input = screen.getByLabelText("Import Green Document File");
+    fireEvent.change(input, {
+      target: { files: [new File([text], "custom.json")] },
+    });
+    await waitFor(() =>
+      expect(screen.getByRole("textbox", { name: "Slope grade %" })).toBeDisabled(),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Use Planar Green" }));
+    expect(screen.getByLabelText("Green surface source")).toHaveTextContent(
+      "planar grade/aspect",
+    );
+    expect(screen.getByRole("textbox", { name: "Slope grade %" })).toBeEnabled();
   });
 });

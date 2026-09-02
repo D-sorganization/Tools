@@ -46,7 +46,11 @@ new transport was added. The loader is
 record's closed `flight`/`app` frame enum, refusing an unrecognized one by
 name) and its TS twin `web/src/model/flightRecordPlayback.ts`; both are
 pinned by the additive `imported_trajectory` block of
-`playback_transport_golden_v1.json`.
+`playback_transport_golden_v1.json`. ADR-0045 F2 (#4800 P6's "Import
+heightfield…" button) accepts both the `swing_sim.green_surface/1` wire and a
+UD `putting_green` topography, dispatched by the P9 adapter (`ud_adapter.py` /
+`puttingGreenUdAdapter.ts`) in both UIs; a weighted-slope UD document is
+refused by name, never approximated.
 Clubhead-realism #4799 is complete (G1-G5): lean, offset hosels, real blade
 soles, 16 cross-runtime club gates, and toe-view acceptance gates over the
 **public** `parametric_head_mesh` (per-club tables plus a center-pivot
@@ -57,33 +61,29 @@ PyQt visual baselines to fix #4799**: all ten drift 924-2660 microunits against
 a 250 limit, including tabs with no clubhead, from glyph re-rasterization no
 repo change explains (#4844).
 
-#4142 remains Python-authoritative; PyQt6 and React do not reimplement physics.
-R10.3, R10.4, R11.1 and R11.3 are protected-merged through `4ddec9175`. The
-complete-trial authority and `swing-trace-time-linear-contiguous/v1` preserve
-stable trial/point/frame identity, missing intervals, outcomes, failure
-semantics and approximate impact-marker error; the inherited 3-source by
-4-adapter matrix has two verified double-pendulum cells and ten unavailable.
+#4142 remains Python-authoritative; PyQt6 and React do not reimplement physics. R10.3, R10.4,
+R11.1 and R11.3 are protected-merged through `4ddec9175`. The complete-trial authority and
+`swing-trace-time-linear-contiguous/v1` preserve stable trial/point/frame identity, missing
+intervals, outcomes, failure semantics and approximate impact-marker error; the inherited
+3-source by 4-adapter matrix has two verified double-pendulum cells and ten unavailable.
 
-R12.3 (#4782, `a1b00db14`) and R13.3 (#4784, `d6c8a0a67`) are
-protected-squash-merged; the paired-attribution schema binds one independently
-estimable source and optional exact locus to state, impact and shot scalars,
-preserving ten unsupported cells. R13.5 (#4794, `35853199b`) binds
-`morris-target-selection` v1 over kind/name/unit/point/time/frame. R14.3 (#4792)
-replays from that base; its governed matrix proves PyQt/React parity from
-authoring through export. The ledger is 30 verified / 1 partial, all
-model-scenario screening views, not global main effects, causal anatomy,
-governed human validation or coaching authority.
+R12.3 (#4782, `a1b00db14`) and R13.3 (#4784, `d6c8a0a67`) are protected-squash-merged; the
+paired-attribution schema binds one independently estimable source and optional exact locus
+to state, impact and shot scalars, preserving ten unsupported cells. R13.5 (#4794,
+`35853199b`) binds `morris-target-selection` v1 over kind/name/unit/point/time/frame. R14.3
+(#4792) replays from that base; its governed matrix proves PyQt/React parity from authoring
+through export. The ledger is 30 verified / 1 partial, all model-scenario screening views,
+not global main effects, causal anatomy, governed human validation or coaching authority.
 
-PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
-the initial React/PyQt visibility, accessibility, performance and baseline
-tier. #4733 merged V0.1 with purpose, prerequisites and reciprocal counterparts;
-#4736 merged strict TypeScript-reader parity as `34a809d9` and #4738 merged
-V5.2's fail-closed changed-path governance as `4b4aec421`. PRs #4835/#4837 are
-protected-merged through `d7a95e2a4`; the fifth manifest expands all 20 tabs
-over registered states/reference cases and binds scientific/nonvisual context.
-PR #4838's checklist and immutable consumer map move the audit to 10 verified /
-21 partial; executed render, performance, decimation, approved-image and human
-gaps remain, and no pixel tolerance was loosened.
+PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only the initial
+React/PyQt visibility, accessibility, performance and baseline tier. #4733 merged V0.1 with
+purpose, prerequisites and reciprocal counterparts; #4736 merged strict TypeScript-reader
+parity as `34a809d9` and #4738 merged V5.2's fail-closed changed-path governance as
+`4b4aec421`. PRs #4835/#4837 are protected-merged through `d7a95e2a4`; the fifth manifest
+expands all 20 tabs over registered states/reference cases and binds scientific/nonvisual
+context. PR #4838's checklist and immutable consumer map move the audit to 10 verified / 21
+partial; executed render, performance, decimation, approved-image and human gaps remain, and
+no pixel tolerance was loosened.
 
 ### Adding a Tab: The Five-Manifest Lockstep (Read Before Starting C6/C7)
 

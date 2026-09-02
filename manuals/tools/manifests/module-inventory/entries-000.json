@@ -12990,6 +12990,7 @@
           "tests/p1am_control_system/test_backend_security.py",
           "tests/p1am_control_system/test_desktop_tab_labels.py",
           "tests/rate_of_closure/test_capability_worker.py",
+          "tests/rate_of_closure/test_putting_gui.py",
           "tests/shared/python/ai/test_adapter_contract.py",
           "tests/shared/python/ai/test_providers_tab_signal.py",
           "tests/shared/python/ai/test_rust_adapter.py",
