@@ -179,6 +179,24 @@ test("every registered React tab exposes its primary visual in the initial viewp
           }
           await expect(page.getByRole("slider", { name: "Putt Time" })).toBeVisible();
         }
+        if (entry.tabId === "launch-monitor-analytics") {
+          // ADR-0048 G1-D3: source-backed strokes gained reports its excluded
+          // rows (status plus per-reason counts) beside the result rather than
+          // dropping them in silence. That line is deliberately NOT asserted
+          // here: it only renders once a *licensed* expected-strokes baseline
+          // artifact has been loaded and every course-state column mapped, and
+          // this repository bundles no baseline table by design (see
+          // docs/rate_of_closure/SOURCE_BACKED_STROKES_GAINED.md, "Availability
+          // Boundary"). Its coverage lives in the runtime-parity suites —
+          // launchMonitorSourceBackedStrokesGained.test.ts and
+          // tests/rate_of_closure/test_launch_monitor_strokes_gained.py — which
+          // assert the same nine malformed-row cases in both runtimes. What the
+          // authority viewport does own is the panel itself staying visible and
+          // labelled as the local compatibility path.
+          await expect(
+            page.getByRole("heading", { name: "Source-Backed Strokes Gained" }),
+          ).toBeVisible();
+        }
         const file = `initial-${entry.tabId}-1440x900.png`;
         const image = await captureStablePage(page);
         await writeFile(resolve(reactCandidateRoot, file), image);
