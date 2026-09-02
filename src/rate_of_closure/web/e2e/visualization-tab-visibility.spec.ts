@@ -1,3 +1,6 @@
+/**
+ * E2E tests verifying visibility and viewport bounds for all registered visualization tabs.
+ */
 import { createHash } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";

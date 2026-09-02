@@ -89,7 +89,7 @@
     {
       "surface": "react",
       "tab_id": "plots",
-      "purpose": "Inspect exact time-series samples and explicitly derived summaries with synchronized selection.",
+      "purpose": "Inspect exact time-series samples and explicitly derived summaries with synchronized selection and dynamic scales.",
       "data_prerequisites": [
         "Imported or generated series with frame, units, provenance, and missing-data metadata."
       ],

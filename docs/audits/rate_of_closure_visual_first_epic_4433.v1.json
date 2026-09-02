@@ -62,7 +62,7 @@
       "requirement_id": "V0.4",
       "requirement": "Record prose, control-stack, hidden-plot, scrolling, shift, and dead-space findings.",
       "status": "partial",
-      "rationale": "Layout fixes and regression contracts exist, but there is no exhaustive current findings/adjudication register.",
+      "rationale": "Layout fixes, dynamic scale single-pass optimizations, and regression contracts exist, but there is no exhaustive current findings/adjudication register.",
       "evidence_files": [
         "src/rate_of_closure/visualization_tabs.v1.json",
         "tests/rate_of_closure/test_visualization_tab_audit.py"
