@@ -25,19 +25,26 @@ carries ``includes_derived_metric=True``, because a correlation between
 ``smash_factor`` and ``ball_speed`` is partly an algebraic identity, not
 evidence.
 
-Pending owner rulings — deliberately **not** applied here
---------------------------------------------------------
-One ruling, **D15** (FDR excludes under-sampled predictors before correcting),
-was accepted after this port was scoped and applies to this canonical module.
-It is **not** in this port, which carries UpstreamDrift's behaviour verbatim so
-the port diff and the behaviour diff can be reviewed separately; a follow-up PR
-applies it here. Today's behaviour, pinned by this module's tests so that the
-follow-up's diff is visible:
-
-* the only under-sampling floor is the hardcoded three complete pairs (plus a
-  two-distinct-value requirement on each side); a pair below it yields ``nan``
-  for both coefficient and p-value, and non-finite p-values are already outside
-  the Benjamini-Hochberg denominator.
+Owner ruling **D15** does not apply here
+-----------------------------------------
+ADR-0048's "Owner Rulings (2026-09-02)" section reads as though D15 (FDR
+excludes under-sampled predictors before correcting) reaches both this module
+and :mod:`~shared.python.launch_monitor.flexible_analysis`. Empirically it
+does not reach this one: this module has no separate, configurable
+``min_samples`` tier above its own hardcoded three-complete-pairs floor, so
+there is no second, later blanking step for the ruling's defect (a predictor
+that clears the floor, contributes a finite p to the correction, and is only
+*afterwards* blanked) to exist in. The only under-sampling floor here is the
+hardcoded three complete pairs (plus a two-distinct-value requirement on each
+side); a pair below it yields ``nan`` for both coefficient and p-value
+directly out of :func:`_pair_correlation`, and non-finite p-values are already
+excluded from the Benjamini-Hochberg denominator by
+:func:`_benjamini_hochberg`'s own finite-value filter. This module's behaviour
+already matches the ruling by construction; there is no follow-up to land
+here. D15's actual fix is in
+:func:`~shared.python.launch_monitor.flexible_analysis._correlations`, which
+*does* have a separate ``min_samples`` above the floor this module reads
+values through.
 
 Owner ruling **D17** applied here
 ----------------------------------
