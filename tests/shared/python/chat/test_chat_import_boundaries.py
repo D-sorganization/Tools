@@ -25,7 +25,15 @@ def test_chat_dock_widget_has_no_top_level_ai_session_manager_import() -> None:
 
 
 def test_chat_dock_widget_constructor_exposes_session_manager_injection() -> None:
-    """Dependency inversion keeps host-owned session persistence out of chat."""
+    """Dependency inversion keeps host-owned session persistence out of chat.
+
+    Tools #4896: ``session_manager`` moved from a flat ``ChatDockWidget.__init__``
+    keyword-only param into a field of the ``ChatIntegrationHooks`` dataclass
+    accepted via the ``integrations`` param. The injection guarantee this test
+    protects — hosts can supply their own session manager instead of chat
+    importing the concrete AI implementation — still holds; only the shape of
+    where that injection point lives has changed.
+    """
     tree = ast.parse(CHAT_DOCK_WIDGET.read_text(encoding="utf-8"))
     widget_class = next(
         node
@@ -37,6 +45,17 @@ def test_chat_dock_widget_constructor_exposes_session_manager_injection() -> Non
         for node in widget_class.body
         if isinstance(node, ast.FunctionDef) and node.name == "__init__"
     )
+    init_arg_names = [arg.arg for arg in init_method.args.args]
+    assert "integrations" in init_arg_names
 
-    keyword_only_names = [arg.arg for arg in init_method.args.kwonlyargs]
-    assert "session_manager" in keyword_only_names
+    hooks_class = next(
+        node
+        for node in tree.body
+        if isinstance(node, ast.ClassDef) and node.name == "ChatIntegrationHooks"
+    )
+    hooks_field_names = [
+        stmt.target.id
+        for stmt in hooks_class.body
+        if isinstance(stmt, ast.AnnAssign) and isinstance(stmt.target, ast.Name)
+    ]
+    assert "session_manager" in hooks_field_names

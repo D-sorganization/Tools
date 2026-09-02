@@ -16,7 +16,10 @@ import pytest
 from PyQt6.QtWidgets import QApplication
 
 from src.shared.python.chat import chat_dock_widget
-from src.shared.python.chat._chat_dock_widget_qt import ChatDockWidget
+from src.shared.python.chat._chat_dock_widget_qt import (
+    ChatConnectionConfig,
+    ChatDockWidget,
+)
 
 
 @pytest.fixture(scope="module")
@@ -145,9 +148,11 @@ def test_chat_connect_uses_origin_and_runtime_capability(
             socket = MagicMock()
             socket_class.return_value = socket
             widget = ChatDockWidget(
-                app_context="test",
-                app_name="test-sidekick",
-                server_url="ws://127.0.0.1:8123",
+                connection=ChatConnectionConfig(
+                    app_context="test",
+                    app_name="test-sidekick",
+                    server_url="ws://127.0.0.1:8123",
+                )
             )
             widget._status_label = MagicMock()
 

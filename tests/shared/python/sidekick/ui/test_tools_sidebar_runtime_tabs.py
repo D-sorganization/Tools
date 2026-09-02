@@ -439,8 +439,17 @@ def _install_fake_chat_module(
             super().__init__("AI Chat", kwargs.get("parent"))
             _ChatDockSpy.last_kwargs = dict(kwargs)
 
+    from chat._chat_dock_widget_qt import (
+        ChatConnectionConfig,
+        ChatIntegrationHooks,
+        ChatPresentationConfig,
+    )
+
     module = types.ModuleType("chat.chat_dock_widget")
     module.ChatDockWidget = _SpyChatDockWidget  # type: ignore[attr-defined]
+    module.ChatConnectionConfig = ChatConnectionConfig  # type: ignore[attr-defined]
+    module.ChatPresentationConfig = ChatPresentationConfig  # type: ignore[attr-defined]
+    module.ChatIntegrationHooks = ChatIntegrationHooks  # type: ignore[attr-defined]
 
     chat_pkg = sys.modules.get("chat")
     if chat_pkg is None or not isinstance(chat_pkg, types.ModuleType):
@@ -483,15 +492,18 @@ def test_chat_dock_forwards_sidebar_params(
     dock = runtime_tabs._build_pyqt_chat_dock(sidebar)
     assert dock is not None
     kwargs = spy_cls.last_kwargs
+    connection = kwargs["connection"]
+    presentation = kwargs["presentation"]
+    integrations = kwargs["integrations"]
 
-    assert kwargs["terminal_registry"] is sentinel_registry
-    assert kwargs["auto_index_on_open"] is True
-    assert kwargs["session_id"] == "abc"
-    assert kwargs["accent_color"] == "#ABCDEF"
+    assert integrations.terminal_registry is sentinel_registry
+    assert presentation.auto_index_on_open is True
+    assert connection.session_id == "abc"
+    assert presentation.accent_color == "#ABCDEF"
     # Existing forwarded params remain intact.
-    assert kwargs["project_root"] == tmp_path
-    assert kwargs["app_context"] == "sidekick"
-    assert kwargs["app_name"] == "sidekick"
+    assert connection.project_root == tmp_path
+    assert connection.app_context == "sidekick"
+    assert connection.app_name == "sidekick"
 
 
 def test_chat_dock_accent_color_falls_back_when_theme_missing(
@@ -517,7 +529,7 @@ def test_chat_dock_accent_color_falls_back_when_theme_missing(
 
     dock = runtime_tabs._build_pyqt_chat_dock(sidebar)
     assert dock is not None
-    assert spy_cls.last_kwargs["accent_color"] == "#FF8800"
+    assert spy_cls.last_kwargs["presentation"].accent_color == "#FF8800"
 
 
 def _wrap_import_module(

@@ -8,7 +8,10 @@ from pathlib import Path
 
 from PyQt6.QtWidgets import QApplication
 
-from src.shared.python.chat._chat_dock_widget_qt import ChatDockWidget
+from src.shared.python.chat._chat_dock_widget_qt import (
+    ChatConnectionConfig,
+    ChatDockWidget,
+)
 from src.shared.python.chat._qt.ui_builder import ChatDockView
 
 ROOT = Path(__file__).resolve().parents[4]
@@ -34,7 +37,11 @@ def test_ai_dropdowns_use_view_state_for_combo_widgets() -> None:
 
 def test_chat_dock_widget_exposes_populated_view_state() -> None:
     _app = QApplication.instance() or QApplication([])
-    widget = ChatDockWidget(app_context="test", app_name="test_chat_view_state")
+    widget = ChatDockWidget(
+        connection=ChatConnectionConfig(
+            app_context="test", app_name="test_chat_view_state"
+        )
+    )
 
     assert isinstance(widget._view, ChatDockView)
     for field_info in fields(ChatDockView):
