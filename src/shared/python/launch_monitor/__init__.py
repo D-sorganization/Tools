@@ -34,6 +34,9 @@ P3    :mod:`.trends`        Per-calendar-day robust trend, EWMA, and ranked
 P4    :mod:`.comparison`    Matched (Bland-Altman) and descriptive
                             cross-monitor comparison. Confirmed
                             UpstreamDrift-only by the port plan.
+P5    :mod:`.schema`        The layer's vocabulary: 33 unit-carrying metric
+                            definitions, identity columns, and the import
+                            mapping/session contracts.
 ====  ====================  ==================================================
 
 **Name-collision containment.** Symbols in this package collide by name with
@@ -52,11 +55,28 @@ from .comparison import (
 )
 from .dispersion import DispersionResult, analyze_dispersion
 from .multivariate import PCAResult, VIFResult, compute_pca, compute_vif
+from .schema import (
+    IDENTITY_COLUMNS,
+    METRICS,
+    ColumnMapping,
+    ImportedSession,
+    ImportManifest,
+    ImportOptions,
+    MetricDefinition,
+    numeric_metric_columns,
+)
 from .trends import ChangeCandidate, TemporalTrendResult, analyze_trend
 
 __all__ = [
+    "IDENTITY_COLUMNS",
+    "METRICS",
     "ChangeCandidate",
+    "ColumnMapping",
     "DispersionResult",
+    "ImportManifest",
+    "ImportOptions",
+    "ImportedSession",
+    "MetricDefinition",
     "MonitorComparisonResult",
     "MonitorSummary",
     "PCAResult",
@@ -68,4 +88,5 @@ __all__ = [
     "compare_monitors",
     "compute_pca",
     "compute_vif",
+    "numeric_metric_columns",
 ]
