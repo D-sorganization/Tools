@@ -14557,10 +14557,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10778,
+      "bytes_lf": 16330,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4daf9b8b5033faa69b5cb4e068dc5543930ed70f938f9a28caf40b53ba24add5",
+      "content_sha256_lf": "6e7b281301695f2ea7bb2dc578ef356a6bcf4ba8ac3f4eb94ae5e16f46bc17cc",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-LAUNCH-MONITOR-STROKES-GAINED-PY-B22AE4F7A2F7",
       "language": "python",
@@ -14587,7 +14587,8 @@
       "traceability": {
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -14607,7 +14608,22 @@
           },
           {
             "kind": "class",
+            "name": "StrokesGainedExcludedRow",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StrokesGainedExclusionSummary",
+            "signature": null
+          },
+          {
+            "kind": "class",
             "name": "TrustedSummaryRequest",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXCLUSION_REASON_CODES",
             "signature": null
           },
           {
@@ -14646,7 +14662,8 @@
           "tests/rate_of_closure/test_launch_monitor_strokes_gained.py"
         ],
         "unit_mentions": [
-          "g"
+          "g",
+          "s"
         ],
         "validation_paths": []
       }

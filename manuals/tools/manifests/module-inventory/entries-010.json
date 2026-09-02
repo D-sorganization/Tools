@@ -7243,10 +7243,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3981,
+      "bytes_lf": 8261,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "19714c93918397c8195f35a379ca7a382a7daeaa835532b6d74d7b71737e9c31",
+      "content_sha256_lf": "030a9c00ea1e0a06e95caba7a475d605284eb6902384cf152cc318a1194c8988",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-LAUNCHMONITORSOURCEBACKEDSTROKESGAINED-TEST-TS-37D03310C091",
       "language": "typescript",
@@ -7265,12 +7265,13 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "not-applicable",
-        "units": "not-applicable",
+        "units": "mapped",
         "validation": "not-applicable"
       },
       "traceability": {
         "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -7281,16 +7282,18 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [],
-        "unit_mentions": [],
+        "unit_mentions": [
+          "s"
+        ],
         "validation_paths": []
       }
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10858,
+      "bytes_lf": 13848,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f9b30ed87dd658dc70e9b22757946caeec8e1821c38c425154f11ae60fe24433",
+      "content_sha256_lf": "99ff2aadbad4de12ce6f9d6a91071873c915af87453d80a12745521a138edc81",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-LAUNCHMONITORSOURCEBACKEDSTROKESGAINED-TS-D56FA85CB7B8",
       "language": "typescript",
@@ -7311,13 +7314,14 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "not-applicable",
-        "units": "not-applicable",
+        "units": "mapped",
         "validation": "not-applicable"
       },
       "traceability": {
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -7332,12 +7336,37 @@
           },
           {
             "kind": "export",
+            "name": "STROKES_GAINED_EXCLUSION_REASONS",
+            "signature": null
+          },
+          {
+            "kind": "export",
             "name": "SourceBackedStrokesGainedRequest",
             "signature": null
           },
           {
             "kind": "export",
             "name": "StrokesGainedBaseline",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "StrokesGainedExcludedRow",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "StrokesGainedExclusionReason",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "StrokesGainedExclusionSummary",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "StrokesGainedResultStatus",
             "signature": null
           },
           {
@@ -7362,7 +7391,9 @@
           }
         ],
         "test_paths": [],
-        "unit_mentions": [],
+        "unit_mentions": [
+          "s"
+        ],
         "validation_paths": []
       }
     },

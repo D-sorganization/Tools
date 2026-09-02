@@ -122,16 +122,58 @@ export async function parseStrokesGainedBaseline(source: string): Promise<Stroke
   };
 }
 
-const yards = (value: unknown, unit: "yd" | "m") => {
+/**
+ * Error posture — ADR-0048 decision G1-D3 (exclude-and-audit).
+ *
+ * A malformed shot no longer destroys the session and is never dropped in
+ * silence: it is excluded, classified against one of the three canonical
+ * reason codes, counted in the returned `exclusions` summary, and reflected in
+ * `status`. These names mirror the Python twin
+ * (`rate_of_closure.launch_monitor_strokes_gained`) and the canonical layer's
+ * `ExcludedRowV1` / `ExclusionSummaryV1`, so all three classify the same
+ * malformed row identically.
+ */
+export type StrokesGainedExclusionReason = "missing_course_state" | "invalid_distance" | "outside_baseline";
+export type StrokesGainedResultStatus = "available" | "partial" | "unavailable";
+export const STROKES_GAINED_EXCLUSION_REASONS: readonly StrokesGainedExclusionReason[] =
+  ["missing_course_state", "invalid_distance", "outside_baseline"];
+
+export interface StrokesGainedExcludedRow {
+  sourceIndex: number; reasonCode: StrokesGainedExclusionReason; message: string;
+}
+
+export interface StrokesGainedExclusionSummary {
+  inputRowCount: number; includedRowCount: number; totalExcluded: number;
+  byReason: Record<string, number>;
+}
+
+class RowIssue extends Error {
+  constructor(readonly reasonCode: StrokesGainedExclusionReason, message: string) {
+    super(message);
+    this.name = "RowIssue";
+  }
+}
+
+const courseStateText = (value: unknown, label: string) => {
+  const normalized = String(value ?? "").trim().toLowerCase();
+  if (!normalized) throw new RowIssue("missing_course_state", `${label} is missing`);
+  return normalized;
+};
+
+const yards = (value: unknown, unit: "yd" | "m", label: string) => {
+  if (typeof value === "boolean") throw new RowIssue("invalid_distance", `${label} must be numeric`);
   const numeric = finiteLaunchMonitorScalar(value as never);
-  return numeric === null ? null : numeric * (unit === "m" ? YARDS_PER_METRE : 1);
+  if (numeric === null) throw new RowIssue("missing_course_state", `${label} is missing`);
+  if (numeric < 0) throw new RowIssue("invalid_distance", `${label} must be finite and nonnegative`);
+  return numeric * (unit === "m" ? YARDS_PER_METRE : 1);
 };
 
 const expected = (baseline: StrokesGainedBaseline, lie: string, context: string, target: string, distance: number) => {
   const matches = baseline.states.filter((item) => item.lie === lie && item.context === context && item.target === target)
     .sort((left, right) => left.distance_yards - right.distance_yards);
   if (!matches.length || distance < matches[0].distance_yards || distance > matches[matches.length - 1].distance_yards) {
-    throw new RangeError(`Course state ${lie}/${context}/${target}/${distance} yd is outside the baseline`);
+    throw new RowIssue("outside_baseline",
+      `Course state ${lie}/${context}/${target}/${distance} yd is outside the baseline`);
   }
   const upperIndex = matches.findIndex((item) => item.distance_yards >= distance);
   const upper = matches[upperIndex];
@@ -141,32 +183,58 @@ const expected = (baseline: StrokesGainedBaseline, lie: string, context: string,
   return lower.expected_strokes + fraction * (upper.expected_strokes - lower.expected_strokes);
 };
 
+const backingRow = (row: LaunchMonitorRow, sourceIndex: number,
+  baseline: StrokesGainedBaseline, request: SourceBackedStrokesGainedRequest) => {
+  const beforeLie = courseStateText(row[request.beforeLieColumn], "start lie");
+  const beforeContext = courseStateText(row[request.beforeContextColumn], "start context");
+  const beforeTarget = courseStateText(row[request.beforeTargetColumn], "start target/hole");
+  const afterLie = courseStateText(row[request.afterLieColumn], "finish lie");
+  const afterContext = courseStateText(row[request.afterContextColumn], "finish context");
+  const afterTarget = courseStateText(row[request.afterTargetColumn], "finish target/hole");
+  const beforeDistanceYards = yards(row[request.beforeDistanceColumn], request.beforeDistanceUnit, "start distance");
+  const afterDistanceYards = yards(row[request.afterDistanceColumn], request.afterDistanceUnit, "finish distance");
+  const expectedBefore = expected(baseline, beforeLie, beforeContext, beforeTarget, beforeDistanceYards);
+  const expectedAfter = expected(baseline, afterLie, afterContext, afterTarget, afterDistanceYards);
+  return { sourceIndex, beforeLie, beforeContext, beforeTarget, beforeDistanceYards,
+    afterLie, afterContext, afterTarget, afterDistanceYards,
+    expectedBefore, expectedAfter, strokesGained: expectedBefore - 1 - expectedAfter };
+};
+
+/**
+ * Score every complete shot and audit every incomplete one (ADR-0048 G1-D3).
+ *
+ * Never throws on row content: a malformed shot is excluded with a
+ * `reasonCode`, `status` degrades to `"partial"`, and `mean` is `null` exactly
+ * when `status === "unavailable"`. `RangeError` stays reserved for
+ * request-level defects the caller declared.
+ */
 export function calculateSourceBackedStrokesGained(
   rows: LaunchMonitorRow[], baseline: StrokesGainedBaseline, request: SourceBackedStrokesGainedRequest,
 ) {
-  const backingRows = rows.flatMap((row, sourceIndex) => {
-    const beforeLie = String(row[request.beforeLieColumn] ?? "").trim().toLowerCase();
-    const beforeContext = String(row[request.beforeContextColumn] ?? "").trim().toLowerCase();
-    const beforeTarget = String(row[request.beforeTargetColumn] ?? "").trim().toLowerCase();
-    const afterLie = String(row[request.afterLieColumn] ?? "").trim().toLowerCase();
-    const afterContext = String(row[request.afterContextColumn] ?? "").trim().toLowerCase();
-    const afterTarget = String(row[request.afterTargetColumn] ?? "").trim().toLowerCase();
-    const beforeDistanceYards = yards(row[request.beforeDistanceColumn], request.beforeDistanceUnit);
-    const afterDistanceYards = yards(row[request.afterDistanceColumn], request.afterDistanceUnit);
-    if (!beforeLie || !beforeContext || !beforeTarget || !afterLie || !afterContext || !afterTarget || beforeDistanceYards === null || afterDistanceYards === null) return [];
-    const expectedBefore = expected(baseline, beforeLie, beforeContext, beforeTarget, beforeDistanceYards);
-    const expectedAfter = expected(baseline, afterLie, afterContext, afterTarget, afterDistanceYards);
-    return [{ sourceIndex, beforeLie, beforeContext, beforeTarget, beforeDistanceYards, afterLie, afterContext, afterTarget, afterDistanceYards,
-      expectedBefore, expectedAfter, strokesGained: expectedBefore - 1 - expectedAfter }];
+  const backingRows: ReturnType<typeof backingRow>[] = [];
+  const excludedRows: StrokesGainedExcludedRow[] = [];
+  rows.forEach((row, sourceIndex) => {
+    try {
+      backingRows.push(backingRow(row, sourceIndex, baseline, request));
+    } catch (caught) {
+      if (!(caught instanceof RowIssue)) throw caught;
+      excludedRows.push({ sourceIndex, reasonCode: caught.reasonCode, message: caught.message });
+    }
   });
-  if (!backingRows.length) throw new RangeError("Source-backed strokes gained requires complete course-state rows");
   const values = backingRows.map((row) => row.strokesGained);
+  const byReason: Record<string, number> = {};
+  for (const excluded of excludedRows) byReason[excluded.reasonCode] = (byReason[excluded.reasonCode] ?? 0) + 1;
+  const status: StrokesGainedResultStatus = !backingRows.length ? "unavailable"
+    : excludedRows.length ? "partial" : "available";
   return {
     metricName: "source_backed_strokes_gained" as const, unit: "strokes" as const, values,
-    mean: values.reduce((sum, value) => sum + value, 0) / values.length,
+    mean: values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : null,
     baselineId: baseline.baselineId, baselineVersion: baseline.version,
     sourceUrl: baseline.sourceUrl, license: baseline.license, tableSha256: baseline.tableSha256,
     backingRows,
     formula: "SG = verified E(before course state) - 1 - verified E(after course state); interpolation stays within an exact lie/context/target stratum.",
+    status, excludedRows,
+    exclusions: { inputRowCount: rows.length, includedRowCount: backingRows.length,
+      totalExcluded: excludedRows.length, byReason } satisfies StrokesGainedExclusionSummary,
   };
 }

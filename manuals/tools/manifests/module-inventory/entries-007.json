@@ -9385,10 +9385,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 12453,
+      "bytes_lf": 13452,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c8d22ba152ce1d44eab1ba8772e784f307195d5708832fee4cde81dad52b46fa",
+      "content_sha256_lf": "251c89062eca35f9c6d14c8ffc8fce28c35e9fe728972a325524199ca149cbb5",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-LAUNCH-MONITOR-SOURCE-BACKED-SG-PY-4416222E3024",
       "language": "python",
@@ -9415,7 +9415,8 @@
       "traceability": {
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],

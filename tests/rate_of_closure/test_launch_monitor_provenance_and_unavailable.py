@@ -156,8 +156,16 @@ def test_bundle_export_handles_authorized_and_unauthorized_paths(
     assert len(join_content.strip().split("\n")) == 5
 
 
-def test_strokes_gained_fails_closed_when_course_state_unmet() -> None:
-    """Verify source-backed strokes gained fails closed when course-state is missing."""
+def test_strokes_gained_reports_unavailable_when_course_state_unmet() -> None:
+    """Verify source-backed SG excludes and audits instead of raising.
+
+    ADR-0048 decision G1-D3 makes exclude-and-audit the canonical error
+    posture, and its Consequence names this calculator: it stops raising on
+    out-of-baseline states. Both rows here name a lie the baseline does not
+    carry, so nothing is scorable — but the caller is handed a result with a
+    full exclusion audit, not an exception, and still fails closed by checking
+    ``status``.
+    """
     frame = pd.DataFrame(
         {
             "shot_id": ["s1", "s2"],
@@ -182,8 +190,18 @@ def test_strokes_gained_fails_closed_when_course_state_unmet() -> None:
         before_distance_unit="yd",
         after_distance_unit="yd",
     )
-    with pytest.raises(ValueError, match="outside the baseline"):
-        calculate_source_backed_strokes_gained(frame, _baseline(), request)
+    result = calculate_source_backed_strokes_gained(frame, _baseline(), request)
+
+    assert result.status == "unavailable"
+    assert result.mean is None
+    assert result.values == ()
+    assert result.exclusions.input_row_count == 2
+    assert result.exclusions.included_row_count == 0
+    assert result.exclusions.by_reason == {"outside_baseline": 2}
+    assert [row.reason_code for row in result.excluded_rows] == [
+        "outside_baseline",
+        "outside_baseline",
+    ]
 
 
 def test_player_covariation_returns_insufficient_samples_unavailable() -> None:

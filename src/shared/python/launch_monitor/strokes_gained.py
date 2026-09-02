@@ -42,13 +42,14 @@ the canonical layer satisfies G1-D3 as ported, with no edit.
 
 G1-D3's *Consequence* paragraph additionally requires the legacy
 ``rate_of_closure.launch_monitor_strokes_gained.calculate_source_backed_strokes_gained``
-to stop raising. That change is **not** in this PR, and the reason is
-mechanical rather than editorial: it is a cross-repository, cross-runtime
-change this PR cannot make atomically. See the PR body for the evidence — in
-short, UpstreamDrift's G0 gate pins ``SourceBackedStrokesGainedResult``'s
-dataclass field set *exactly* (D2) and pins the raise itself (D1), the result
-has a TypeScript twin with pinned cross-runtime goldens, and the gate file
-lives in UpstreamDrift where a Tools PR cannot re-pin it.
+to stop raising. **That deferred half has now landed.** The legacy calculator
+and its TypeScript twin classify a malformed row against the same three
+``reason_code`` values this module uses, report a
+``StrokesGainedExclusionSummary`` mirroring :class:`ExclusionSummaryV1`, and
+carry the same three-valued ``status``. The result dataclass gained ``status``,
+``excluded_rows`` and ``exclusions`` additively — nothing was removed — and
+UpstreamDrift's G0 gate re-pins D1 (the raise) and D2 (the field set) to the
+resolved contract in the paired vendor-bump PR.
 
 The baseline argument is structural
 ------------------------------------

@@ -14,7 +14,14 @@ import { createLaunchMonitorStrokesGainedClient } from "../model/launchMonitorV2
 const field = "rounded border border-slate-700 bg-slate-950 px-2 py-1 text-sm";
 const button = "rounded border border-slate-700 px-3 py-2 text-sm disabled:opacity-40";
 type Unit = "yd" | "m";
-interface DisplayResult { mean: number; count: number; formula: string; sourceUrl: string; payload: unknown; canonical: boolean }
+interface DisplayResult { mean: number; count: number; formula: string; sourceUrl: string; payload: unknown; canonical: boolean;
+  status: string; excluded: number; exclusionReasons: string }
+
+/** Render the ADR-0048 G1-D3 exclusion audit trail for the status line. */
+const reasonText = (byReason: Record<string, number>) => {
+  const entries = Object.entries(byReason).sort(([left], [right]) => left.localeCompare(right));
+  return entries.length ? entries.map(([code, count]) => `${code} ${count}`).join(", ") : "no exclusions";
+};
 interface Selection extends Omit<SourceBackedStrokesGainedRequest, "trustedSummary"> {
   authorityUrl: string; playerGroup: string; sessionGroup: string; clubGroup: string;
   orderColumn: string; summaryAttested: boolean;
@@ -40,8 +47,15 @@ async function score(rows: LaunchMonitorRow[], baseline: StrokesGainedBaseline, 
   const request = requestOf(selection);
   if (!selection.authorityUrl.trim()) {
     const local = calculateSourceBackedStrokesGained(rows, baseline, request);
+    if (local.mean === null) {
+      throw new RangeError(`Local compatibility strokes-gained estimate is unavailable: ${
+        local.exclusions.totalExcluded} of ${local.exclusions.inputRowCount} rows were excluded (${
+        reasonText(local.exclusions.byReason)})`);
+    }
     return { mean: local.mean, count: local.values.length, formula: local.formula,
-      sourceUrl: local.sourceUrl, payload: local, canonical: false } satisfies DisplayResult;
+      sourceUrl: local.sourceUrl, payload: local, canonical: false,
+      status: local.status, excluded: local.exclusions.totalExcluded,
+      exclusionReasons: reasonText(local.exclusions.byReason) } satisfies DisplayResult;
   }
   const canonical = await createLaunchMonitorStrokesGainedClient(selection.authorityUrl.trim())(
     buildSourceBackedStrokesGainedPayload(rows, baseline, request),
@@ -49,7 +63,11 @@ async function score(rows: LaunchMonitorRow[], baseline: StrokesGainedBaseline, 
   if (canonical.mean === null) throw new RangeError("Canonical strokes-gained estimate is unavailable");
   return { mean: canonical.mean, count: canonical.count,
     formula: String(canonical.payload.formula), sourceUrl: baseline.sourceUrl,
-    payload: canonical.payload, canonical: true } satisfies DisplayResult;
+    payload: canonical.payload, canonical: true,
+    status: String(canonical.payload.status ?? "available"),
+    excluded: Number((canonical.payload.exclusions as { total_excluded?: number } | undefined)?.total_excluded ?? 0),
+    exclusionReasons: reasonText(((canonical.payload.exclusions as { by_reason?: Record<string, number> } | undefined)?.by_reason) ?? {}),
+  } satisfies DisplayResult;
 }
 
 function useScoring(rows: LaunchMonitorRow[]) {
@@ -136,6 +154,7 @@ function UnitSelect({ label, value, update }: { label: string; value: Unit; upda
 
 function ResultView({ result }: { result: DisplayResult }) {
   return <div className="text-sm"><p>{result.canonical ? "Canonical" : "Local compatibility"} mean source-backed SG: {result.mean.toFixed(3)} strokes across {result.count} complete shots.</p>
+    <p className={result.excluded ? "text-xs text-amber-200" : "text-xs text-slate-400"}>Status {result.status} · {result.excluded} rows excluded ({result.exclusionReasons}). Excluded rows are recorded against a reason code, never dropped in silence.</p>
     <p className="text-xs text-slate-400">{result.formula} <a className="underline" href={result.sourceUrl} target="_blank" rel="noreferrer">Baseline source</a></p>
     <button type="button" className={button} title="Export baseline identity, formula, every lookup, and shot result."
       onClick={() => downloadJson("source-backed-strokes-gained.json", result.payload)}>Export Source-Backed SG</button></div>;
