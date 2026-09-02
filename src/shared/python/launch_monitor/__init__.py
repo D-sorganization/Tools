@@ -124,6 +124,29 @@ P17   :mod:`.conformance_bundle`
                              level. Landed *after* P18 because its payload
                              union imports ``PlayerCovariationResultV1`` at
                              runtime.
+P19   :mod:`.corpus`         The private shot corpus. A **merge**, not a port:
+                             UpstreamDrift's ADR-0031 canonicalisation, shot
+                             identity and selection pushdown, plus
+                             ``rate_of_closure``'s manifest validation, desktop
+                             row cap and content-addressed provenance — now
+                             mandatory rather than optional, closing G0.1's
+                             D30 governance hole.
+P20   :mod:`.dataset_reference`
+                             Stable facade for immutable, aggregate-only
+                             private-dataset jobs.
+P20   :mod:`.dataset_reference_contract`
+                             The job request: a content-addressed reference
+                             plus one allow-listed aggregate operation, and no
+                             place to put an observation.
+P20   :mod:`.dataset_reference_verification`
+                             Fail-closed identity verification — remote,
+                             commit, committed layout, manifest digest, row
+                             counts, content digest, qualification — before any
+                             observation is read.
+P20   :mod:`.dataset_reference_operations`
+                             Bounded aggregate execution over a verified
+                             reference. **The ladder ends here: P1-P20 have
+                             landed.**
 ====  =====================  =================================================
 
 **Name-collision containment.** Symbols in this package collide by name with
@@ -188,6 +211,20 @@ from .corpus import (
     read_corpus_manifest,
     resolve_private_corpus_path,
     validate_corpus_manifest,
+)
+from .dataset_reference import (
+    DATASET_JOB_CONTRACT_VERSION,
+    MAX_PAGE_SIZE,
+    DatasetJobRequestV1,
+    DatasetOperationV1,
+    DatasetReferenceV1,
+    DatasetUnavailableError,
+    DatasetUnavailableStateV1,
+    VerifiedDataset,
+    dataset_content_sha256,
+    dataset_job_contract_json_schema,
+    execute_dataset_operation,
+    verify_dataset_reference,
 )
 from .dispersion import DispersionResult, analyze_dispersion
 from .flexible_analysis import (
@@ -349,8 +386,14 @@ __all__ = [
     "CovariationMissingnessV1",
     "CovariationPairRankV1",
     "CovariationUncertaintyV1",
+    "DATASET_JOB_CONTRACT_VERSION",
     "DatasetAuthorityV2",
+    "DatasetJobRequestV1",
+    "DatasetOperationV1",
+    "DatasetReferenceV1",
     "DatasetSummary",
+    "DatasetUnavailableError",
+    "DatasetUnavailableStateV1",
     "DependencyEdge",
     "DispersionResult",
     "EstimateSummaryV1",
@@ -384,6 +427,7 @@ __all__ = [
     "LongitudinalSessionRequestV1",
     "LongitudinalSessionResultV1",
     "LongitudinalSummaryV1",
+    "MAX_PAGE_SIZE",
     "MAX_RETAINED_ROWS",
     "METRICS",
     "MIN_FISHER_SAMPLES",
@@ -435,6 +479,7 @@ __all__ = [
     "UncertaintyV2",
     "VIFResult",
     "VendorProvenanceV2",
+    "VerifiedDataset",
     "adapt_v2_to_v1",
     "analysis_lineage_v2",
     "analyze_dispersion",
@@ -455,8 +500,11 @@ __all__ = [
     "contract_v2_json_schema",
     "corpus_dataset_path",
     "covariation_backing_frame",
+    "dataset_content_sha256",
+    "dataset_job_contract_json_schema",
     "dersimonian_laird_pooled_association",
     "detect_profile",
+    "execute_dataset_operation",
     "fit_predictive_model",
     "import_session",
     "launch_monitor_conformance_bundle_json_schema",
@@ -477,4 +525,5 @@ __all__ = [
     "strokes_gained_contract_json_schema",
     "validate_corpus_manifest",
     "vendor_provenance_v2",
+    "verify_dataset_reference",
 ]
