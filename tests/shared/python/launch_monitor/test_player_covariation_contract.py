@@ -40,6 +40,7 @@ import pytest
 from pydantic import ValidationError
 
 from shared.python.launch_monitor import (
+    BETWEEN_PLAYER_INTERVAL_MIN_GROUPS,
     CONTRACT_VERSION,
     CONTRACT_VERSION_V2,
     MIN_FISHER_SAMPLES,
@@ -103,12 +104,12 @@ G0_Q_STATISTIC = 0.574044790862
 G0_SCAN_PAIR_COUNT = 6
 G0_DIRECTION_CONSISTENCY = (1.0, 0.75, 0.75, 0.5, 0.5, 0.25)
 
-# Union pin: the between-player Fisher interval this repository's
-# ``rate_of_closure`` trio reports, which G0.1 pinned as the D22 divergence at
-# raw precision ``(-0.6655142653044201, 0.9960866924324187)``. The union
-# carries the behaviour through UpstreamDrift's 12-decimal reporting quantum,
-# so the canonical value is that interval rounded.
-UNION_BETWEEN_CI = (-0.665514265304, 0.996086692432)
+# D22 pin, flipped from the union's carried ``rate_of_closure`` posture. The
+# interval below is the one G0.1 pinned as ``TOOLS_ONLY_BETWEEN_CI``
+# ``(-0.6655142653044201, 0.9960866924324187)``, which the union reproduced
+# through UpstreamDrift's 12-decimal reporting quantum as the value below.
+# Ruling D22 withholds it: it is what the canonical layer must NOT return.
+WITHHELD_BETWEEN_CI = (-0.665514265304, 0.996086692432)
 
 
 def _context() -> AnalysisContextV2:
@@ -783,20 +784,104 @@ def test_union_refuses_to_raise_when_no_row_survives() -> None:
     assert result.missingness.excluded_by_reason["pairwise_incomplete"] == 4
 
 
-def test_union_between_player_interval_is_reported() -> None:
-    """The ``rate_of_closure`` posture the union carried, pending ruling D22.
+def test_d22_between_player_interval_is_withheld_below_the_threshold() -> None:
+    """D22: the ``rate_of_closure`` always-report posture does not survive.
 
-    G0.1 pinned this interval as the D22 divergence: with four player means it
-    is a Fisher-z interval on ``n - 3 = 1`` degree of freedom.
+    On the G0.1 fixture ``rate_of_closure`` returns
+    ``(-0.6655142653044201, 0.9960866924324187)`` from four player means. The
+    union reproduced it as :data:`WITHHELD_BETWEEN_CI` through the 12-decimal
+    reporting quantum; the ruling withholds it and explains the absence.
     """
     result = analyze_player_covariation_v1(
         _cross_stack_frame(), _g0_request(), context=_cross_stack_context()
     )
+    between = result.between_player
 
-    assert result.between_player.state == "available"
-    assert result.between_player.sample_count == G0_PLAYER_COUNT
-    assert result.between_player.ci_lower == UNION_BETWEEN_CI[0]
-    assert result.between_player.ci_upper == UNION_BETWEEN_CI[1]
+    # The point estimate is unchanged; only the interval is withheld.
+    assert between.state == "available"
+    assert between.sample_count == G0_PLAYER_COUNT
+    assert between.pearson_r == G0_BETWEEN_PEARSON
+
+    assert between.ci_lower is None
+    assert between.ci_upper is None
+    assert WITHHELD_BETWEEN_CI[0] < 0 < WITHHELD_BETWEEN_CI[1]
+
+    # The absence is explained, not silent: on the estimate, in the
+    # uncertainty block, and in prose.
+    assert between.interval_withheld_reason == "insufficient_degrees_of_freedom"
+    assert (
+        result.uncertainty.between_player_interval_min_groups
+        == BETWEEN_PLAYER_INTERVAL_MIN_GROUPS
+    )
+    assert result.uncertainty.between_player_interval == "fisher-z-above-min-groups"
+    withheld = [
+        warning
+        for warning in result.warnings
+        if "between-player Fisher interval is withheld" in warning
+    ]
+    assert len(withheld) == 1
+    assert "4 player means leave 1 degrees of freedom" in withheld[0]
+    assert "below the 2 required" in withheld[0]
+
+
+def test_d22_between_player_interval_is_reported_at_the_threshold() -> None:
+    """D22 withholds below the threshold; it does not delete the interval."""
+    frame = pd.DataFrame(
+        {
+            "source_id": ["synthetic-source"] * 25,
+            "player_id": [f"P{index // 5}" for index in range(25)],
+            "x": [float(index) for index in range(25)],
+            "y": [float(index) * 1.5 + (index % 5) for index in range(25)],
+        }
+    )
+    result = analyze_player_covariation_v1(
+        frame,
+        PlayerCovariationRequestV1(
+            x_column="x", y_column="y", player_column="player_id"
+        ),
+        context=_context(),
+    )
+    between = result.between_player
+
+    assert between.sample_count == BETWEEN_PLAYER_INTERVAL_MIN_GROUPS
+    assert between.ci_lower is not None
+    assert between.ci_upper is not None
+    assert between.interval_withheld_reason is None
+    assert not any(
+        "between-player Fisher interval is withheld" in warning
+        for warning in result.warnings
+    )
+
+
+def test_d22_within_player_absence_is_explained_by_clustering() -> None:
+    """Both stacks withheld this one; neither said why. D22's field does."""
+    result = analyze_player_covariation_v1(
+        _cross_stack_frame(), _g0_request(), context=_cross_stack_context()
+    )
+
+    assert result.within_player.state == "available"
+    assert result.within_player.ci_lower is None
+    assert result.within_player.interval_withheld_reason == "clustered_observations"
+    assert result.uncertainty.within_player_interval == "unavailable-clustered"
+    # The pooled scope, by contrast, does report one.
+    assert result.pooled.ci_lower is not None
+    assert result.pooled.interval_withheld_reason is None
+
+
+def test_d22_an_available_estimate_cannot_be_silent_about_a_missing_interval() -> None:
+    """The contract refuses the posture the ruling replaced."""
+    result = analyze_player_covariation_v1(
+        _cross_stack_frame(), _g0_request(), context=_cross_stack_context()
+    )
+    payload = result.between_player.model_dump(mode="json")
+    payload["interval_withheld_reason"] = None
+    with pytest.raises(ValidationError, match="reason it was withheld"):
+        type(result.between_player).model_validate(payload)
+
+    both = result.pooled.model_dump(mode="json")
+    both["interval_withheld_reason"] = "clustered_observations"
+    with pytest.raises(ValidationError, match="reason it was withheld"):
+        type(result.pooled).model_validate(both)
 
 
 def test_union_does_not_carry_the_column_name_suffix_unit_heuristic() -> None:

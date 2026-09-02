@@ -34,16 +34,20 @@ Units are **not** resolved by column-name suffix
     guessing third. The keys are the caller's real column names, not
     ``rate_of_closure``'s positional ``"x"``/``"y"``.
 
-Pending owner rulings
----------------------
-This module lands the union first and the rulings on top of it, one commit
-each, so the deltas each ruling makes are reviewable rather than blended into
-the port. As of this commit the **between-player Fisher interval is still
-reported unconditionally**, which is ``rate_of_closure``'s posture and the
-subject of ruling **D22** — G0.1 pinned it as ``[-0.6655142653044201,
-0.9960866924324187]`` on four player means, a Fisher-z interval on
-``n - 3 = 1`` degree of freedom. D22 rules that posture out; the next commit
-applies it.
+Owner ruling D22 — applied
+--------------------------
+The union carried ``rate_of_closure``'s always-reported between-player Fisher
+interval — G0.1 pinned it as ``[-0.6655142653044201, 0.9960866924324187]`` on
+four player means, an interval on ``n - 3 = 1`` degree of freedom. That
+posture does not survive: the canonical layer withholds the interval below
+the documented ``BETWEEN_PLAYER_INTERVAL_MIN_GROUPS`` threshold and explains
+the absence in the result. The rule reaches the wire document through
+:class:`~shared.python.launch_monitor.player_covariation_types.
+CovariationUncertaintyV1`, whose ``between_player_interval_min_groups``
+states the threshold beside the named uncertainty methods, and through a
+warning naming the degrees of freedom that fell short. See
+:mod:`shared.python.launch_monitor.player_covariation_types` for the ruling
+and the reasoning behind the threshold.
 """
 
 from __future__ import annotations
@@ -68,6 +72,7 @@ from shared.python.launch_monitor.player_covariation_core import (
     player_association_frame,
 )
 from shared.python.launch_monitor.player_covariation_types import (
+    BETWEEN_PLAYER_INTERVAL_MIN_GROUPS,
     CovariationPairRankV1,
     CovariationUncertaintyV1,
     PlayerCovariationContractV1,
@@ -183,6 +188,10 @@ def _uncertainty(request: PlayerCovariationRequestV1) -> CovariationUncertaintyV
             "The pooled interval is not adjusted for repeated shots by player.",
             "DerSimonian-Laird estimates between-player effect heterogeneity.",
             "Population generalization requires a representative player sample.",
+            "The between-player interval is withheld below "
+            f"{BETWEEN_PLAYER_INTERVAL_MIN_GROUPS} player means, where its "
+            "degrees of freedom describe the Fisher transform rather than "
+            "the coefficient.",
         ),
     )
 

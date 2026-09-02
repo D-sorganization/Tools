@@ -52,6 +52,43 @@ Union decisions carried by this module
 The second D26 field, ``backing_data``, is folded in as well but deliberately
 not as a wire field — see :func:`~shared.python.launch_monitor.
 player_covariation.covariation_backing_frame` for that decision.
+
+Owner ruling D22 — low-degrees-of-freedom Fisher intervals
+----------------------------------------------------------
+ADR-0048's "Owner Rulings (2026-09-02)" settles the one place the two stacks
+disagreed about what to *publish* rather than what to compute. On the shared
+fixture ``rate_of_closure`` returns a between-player Fisher-z interval of
+``[-0.6655142653044201, 0.9960866924324187]`` from four player means — an
+interval on ``n - 3 = 1`` degree of freedom that covers 83% of the coefficient
+range and would read the same way for almost any point estimate.
+UpstreamDrift withholds it. **Ruling: the canonical layer withholds the
+between-player Fisher interval when degrees of freedom make it uninformative —
+UpstreamDrift's posture — with the threshold documented and the absence
+explained in the result rather than silently ``None``.**
+
+Three things carry that ruling here, so a reader of a result never has to
+infer why a bound is missing:
+
+``BETWEEN_PLAYER_INTERVAL_MIN_GROUPS``
+    The documented threshold. Five player means, because the Fisher-z standard
+    error is ``1 / sqrt(n - 3)``: at ``n = 4`` that is exactly 1.0, a full unit
+    of Fisher-z, and ``tanh(+/-1.96)`` then spans ``[-0.96, +0.96]`` whatever
+    the estimate. Requiring ``n - 3 >= 2`` is the first sample size at which
+    the interval carries information about the coefficient rather than about
+    the transform.
+
+``AssociationEstimateV1.interval_withheld_reason``
+    The explanation, on the estimate itself. An *available* estimate now
+    carries either an interval or a typed reason it has none — never neither,
+    enforced by the validator. That also names the within-player scope's
+    long-standing absence, which both stacks withheld but neither explained:
+    the centred observations are clustered by player, so an unclustered
+    Fisher-z interval would be too narrow.
+
+``CovariationUncertaintyV1.between_player_interval_min_groups``
+    The threshold restated in the result's own uncertainty block, next to the
+    named methods, so a consumer reading only the wire document can check the
+    rule that was applied without reading this source.
 """
 
 from __future__ import annotations
@@ -81,7 +118,17 @@ Folded in from ``rate_of_closure._player_covariation_types``; see the module
 docstring's union decisions.
 """
 
+BETWEEN_PLAYER_INTERVAL_MIN_GROUPS: Final[int] = 5
+"""Fewest player means that earn a between-player Fisher interval (ruling D22).
+
+``n - 3 >= 2``. See the module docstring for why four means do not qualify.
+"""
+
 AssociationState = Literal["available", "unavailable"]
+IntervalWithheldReason = Literal[
+    "insufficient_degrees_of_freedom",
+    "clustered_observations",
+]
 AssociationUnavailableReason = Literal[
     "insufficient_samples",
     "insufficient_groups",
@@ -146,6 +193,7 @@ class AssociationEstimateV1(_CovariationModel):
     r_squared: float | None = Field(default=None, ge=0, le=1)
     ci_lower: float | None = Field(default=None, ge=-1, le=1)
     ci_upper: float | None = Field(default=None, ge=-1, le=1)
+    interval_withheld_reason: IntervalWithheldReason | None = None
 
     @model_validator(mode="after")
     def require_consistent_state(self) -> AssociationEstimateV1:
@@ -168,6 +216,17 @@ class AssociationEstimateV1(_CovariationModel):
             )
         if (self.ci_lower is None) != (self.ci_upper is None):
             raise ValueError("association interval bounds must be supplied together")
+        if self.state == "available" and (self.ci_lower is None) == (
+            self.interval_withheld_reason is None
+        ):
+            raise ValueError(
+                "available association requires either an interval or exactly one "
+                "reason it was withheld"
+            )
+        if self.state == "unavailable" and self.interval_withheld_reason is not None:
+            raise ValueError(
+                "unavailable association cannot withhold an interval it never had"
+            )
         return self
 
 
@@ -252,7 +311,12 @@ class CovariationUncertaintyV1(_CovariationModel):
     per_player_interval: Literal["fisher-z"] = "fisher-z"
     pooled_interval: Literal["fisher-z-unclustered"] = "fisher-z-unclustered"
     within_player_interval: Literal["unavailable-clustered"] = "unavailable-clustered"
-    between_player_interval: Literal["fisher-z"] = "fisher-z"
+    between_player_interval: Literal["fisher-z-above-min-groups"] = (
+        "fisher-z-above-min-groups"
+    )
+    between_player_interval_min_groups: int = Field(
+        default=BETWEEN_PLAYER_INTERVAL_MIN_GROUPS, ge=MIN_FISHER_SAMPLES
+    )
     fixed_effect_method: Literal["inverse-variance-fisher-z"] = (
         "inverse-variance-fisher-z"
     )
@@ -384,12 +448,14 @@ class PlayerCovariationContractV1(RootModel[CovariationResultUnion]):
 
 
 __all__ = [
+    "BETWEEN_PLAYER_INTERVAL_MIN_GROUPS",
     "MIN_FISHER_SAMPLES",
     "PLAYER_COVARIATION_CONTRACT_VERSION",
     "AssociationEstimateV1",
     "CovariationMissingnessV1",
     "CovariationPairRankV1",
     "CovariationUncertaintyV1",
+    "IntervalWithheldReason",
     "MetaAnalysisSummaryV1",
     "PlayerAssociationV1",
     "PlayerCovariationContractV1",

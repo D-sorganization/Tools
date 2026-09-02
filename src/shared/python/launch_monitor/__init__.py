@@ -211,6 +211,7 @@ from .player_covariation import (
     scan_player_covariation_v1,
 )
 from .player_covariation_types import (
+    BETWEEN_PLAYER_INTERVAL_MIN_GROUPS,
     MIN_FISHER_SAMPLES,
     PLAYER_COVARIATION_CONTRACT_VERSION,
     AssociationEstimateV1,
@@ -296,6 +297,7 @@ __all__ = [
     "AvailabilityV1",
     "AvailabilityV2",
     "BASELINE_CONTRACT_VERSION",
+    "BETWEEN_PLAYER_INTERVAL_MIN_GROUPS",
     "BackingRecordV2",
     "BaselineProvenanceV1",
     "COMMON_ALIASES",

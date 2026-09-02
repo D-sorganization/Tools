@@ -55,10 +55,12 @@ import pandas as pd
 from scipy import stats
 
 from shared.python.launch_monitor.player_covariation_types import (
+    BETWEEN_PLAYER_INTERVAL_MIN_GROUPS,
     MIN_FISHER_SAMPLES,
     AssociationEstimateV1,
     AssociationUnavailableReason,
     CovariationMissingnessV1,
+    IntervalWithheldReason,
     MetaAnalysisSummaryV1,
     PlayerAssociationV1,
     PlayerCovariationRequestV1,
@@ -230,6 +232,7 @@ def _estimate(
     minimum: int,
     confidence: float,
     include_interval: bool,
+    withheld_reason: IntervalWithheldReason = "insufficient_degrees_of_freedom",
     insufficient_reason: AssociationUnavailableReason = "insufficient_samples",
 ) -> AssociationEstimateV1:
     reason = _estimate_reason(values_x, values_y, minimum, insufficient_reason)
@@ -242,9 +245,10 @@ def _estimate(
         np.clip(stats.spearmanr(values_x, values_y).statistic, -1, 1)
     )
     slope, intercept = np.polyfit(values_x, values_y, deg=1)
+    reportable = include_interval and len(values_x) >= MIN_FISHER_SAMPLES
     interval = (
         _fisher_interval(pearson, len(values_x), confidence)
-        if include_interval and len(values_x) >= MIN_FISHER_SAMPLES
+        if reportable
         else (None, None)
     )
     return AssociationEstimateV1(
@@ -258,6 +262,7 @@ def _estimate(
         r_squared=_reported_float(min(1.0, pearson**2)),
         ci_lower=interval[0],
         ci_upper=interval[1],
+        interval_withheld_reason=None if reportable else withheld_reason,
     )
 
 
@@ -267,6 +272,7 @@ def _frame_estimate(
     *,
     minimum: int | None = None,
     include_interval: bool = True,
+    withheld_reason: IntervalWithheldReason = "insufficient_degrees_of_freedom",
     insufficient_reason: AssociationUnavailableReason = "insufficient_samples",
 ) -> AssociationEstimateV1:
     return _estimate(
@@ -276,6 +282,7 @@ def _frame_estimate(
         minimum=request.min_samples if minimum is None else minimum,
         confidence=request.confidence_level,
         include_interval=include_interval,
+        withheld_reason=withheld_reason,
         insufficient_reason=insufficient_reason,
     )
 
@@ -399,13 +406,23 @@ def _centered(complete: pd.DataFrame) -> pd.DataFrame:
 def _between(
     complete: pd.DataFrame, request: PlayerCovariationRequestV1
 ) -> AssociationEstimateV1:
+    """Estimate over unweighted player means, per ruling **D22**.
+
+    The Fisher-z interval is withheld below
+    :data:`~shared.python.launch_monitor.player_covariation_types.
+    BETWEEN_PLAYER_INTERVAL_MIN_GROUPS` player means, where ``n - 3`` leaves
+    too little information for the interval to describe the coefficient
+    rather than the transform.
+    """
+
     means = complete.groupby("player_id", sort=True)[["x", "y"]].mean()
     means = means.reset_index()
     return _frame_estimate(
         means,
         request,
         minimum=2,
-        include_interval=True,
+        include_interval=len(means) >= BETWEEN_PLAYER_INTERVAL_MIN_GROUPS,
+        withheld_reason="insufficient_degrees_of_freedom",
         insufficient_reason="insufficient_groups",
     )
 
@@ -436,12 +453,27 @@ def _missingness(
     )
 
 
+def _withheld_interval_warning(between: AssociationEstimateV1) -> str | None:
+    """Say in prose why the between-player interval is absent (ruling D22)."""
+
+    if between.interval_withheld_reason != "insufficient_degrees_of_freedom":
+        return None
+    return (
+        f"The between-player Fisher interval is withheld: "
+        f"{between.sample_count} player means leave "
+        f"{max(between.sample_count - 3, 0)} degrees of freedom, below the "
+        f"{BETWEEN_PLAYER_INTERVAL_MIN_GROUPS - 3} required by the "
+        f"{BETWEEN_PLAYER_INTERVAL_MIN_GROUPS}-group threshold."
+    )
+
+
 def _warnings(
     frame: pd.DataFrame,
     prepared: _PreparedPair,
     per_player: tuple[PlayerAssociationV1, ...],
     pooled: AssociationEstimateV1,
     within: AssociationEstimateV1,
+    between: AssociationEstimateV1,
     meta: MetaAnalysisSummaryV1,
 ) -> tuple[str, ...]:
     warnings = [
@@ -466,6 +498,9 @@ def _warnings(
             "Possible aggregation reversal: pooled and within-player Pearson "
             "correlations have opposite signs; inspect group structure."
         )
+    withheld = _withheld_interval_warning(between)
+    if withheld is not None:
+        warnings.append(withheld)
     return tuple(warnings)
 
 
@@ -479,7 +514,10 @@ def compute_pair_statistics(
     meta, per_player = _meta_analysis(per_player, request.confidence_level)
     pooled = _frame_estimate(prepared.complete, request)
     within = _frame_estimate(
-        _centered(prepared.complete), request, include_interval=False
+        _centered(prepared.complete),
+        request,
+        include_interval=False,
+        withheld_reason="clustered_observations",
     )
     between = _between(prepared.complete, request)
     return PairStatistics(
@@ -489,7 +527,7 @@ def compute_pair_statistics(
         per_player=per_player,
         meta_analysis=meta,
         missingness=_missingness(frame, prepared, per_player),
-        warnings=_warnings(frame, prepared, per_player, pooled, within, meta),
+        warnings=_warnings(frame, prepared, per_player, pooled, within, between, meta),
     )
 
 
