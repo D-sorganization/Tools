@@ -156,6 +156,21 @@ class TestDewPointEdgeCases:
         dp = calculator.calculate_dew_point(vp_20c, 101325.0)
         assert dp == pytest.approx(20.0, abs=1.0)
 
+    def test_buck_equation_matches_buck_1981_reference(self, calculator):
+        """_buck_equation must match the Buck (1981) reference curve it cites.
+
+        Regression test for issue #3867: the above-freezing branch passed its
+        C and D coefficients to the shared ``buck_pressure_pa`` kernel in the
+        kernel's native "syngas" argument order, which computes
+        ``(b - t/d) * t / (c + t)`` rather than the standard Buck formula
+        ``(b - t/c) * t / (d + t)``. That produced 2636.34 Pa at 20 C instead
+        of the correct ~2338.34 Pa (a ~12.7% error). ``steam_engine.py``
+        already swaps C and D at its call site to get the correct curve from
+        the same kernel; this asserts ``SyngasWaterCalculator`` does too.
+        """
+        vp_20c = calculator._buck_equation(20.0)
+        assert vp_20c == pytest.approx(2338.34, rel=1e-4)
+
     def test_high_partial_pressure(self, calculator):
         """High partial pressure should give a high dew point."""
         # Saturated at ~80 C -> ~47 kPa

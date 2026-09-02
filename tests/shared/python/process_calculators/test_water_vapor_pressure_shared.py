@@ -186,8 +186,16 @@ class TestConsumersDelegate:
             legacy = a_kpa * math.exp((BUCK_B - t / BUCK_C) * t / (t + BUCK_D)) * 1000.0
             assert engine._buck_equation(t) == pytest.approx(legacy, rel=1e-12)
 
-    def test_syngas_buck_preserves_legacy_curve(self) -> None:
-        """Syngas Buck delegation must reproduce the pre-refactor syngas curve."""
+    def test_syngas_buck_matches_buck_1981_reference_curve(self) -> None:
+        """Syngas Buck delegation must reproduce the Buck (1981) reference curve.
+
+        Was ``test_syngas_buck_preserves_legacy_curve``, pinned to the
+        pre-fix transposed-coefficient curve. Issue #3867 found that curve
+        was ~12.7% off the Buck (1981) source the constants cite (confirmed
+        against steam-table values, e.g. ~2338 Pa not ~2636 Pa at 20 C) and
+        fixed the call site to swap C and D, matching how
+        ``calculators.thermo.steam_engine`` already calls the same kernel.
+        """
         from shared.python.sidekick.process_calculators.constants import (
             BUCK_ABOVE_FREEZING_A,
             BUCK_ABOVE_FREEZING_B,
@@ -200,16 +208,16 @@ class TestConsumersDelegate:
 
         calc = SyngasWaterCalculator()
         for t in (10.0, 20.0, 50.0, 80.0):
-            legacy = (
+            reference = (
                 BUCK_ABOVE_FREEZING_A
                 * math.exp(
-                    (BUCK_ABOVE_FREEZING_B - t / BUCK_ABOVE_FREEZING_D)
+                    (BUCK_ABOVE_FREEZING_B - t / BUCK_ABOVE_FREEZING_C)
                     * t
-                    / (BUCK_ABOVE_FREEZING_C + t)
+                    / (BUCK_ABOVE_FREEZING_D + t)
                 )
                 * 1000.0
             )
-            assert calc._buck_equation(t) == pytest.approx(legacy, rel=1e-12)
+            assert calc._buck_equation(t) == pytest.approx(reference, rel=1e-12)
 
     def test_acid_gas_water_antoine_equals_shared(self) -> None:
         from shared.python.sidekick.process_calculators.acid_gas_dewpoint_calculator import (  # noqa: E501

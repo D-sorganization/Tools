@@ -132,6 +132,39 @@ class TestFrictionFactorColebrook:
         f_rough = friction_factor_colebrook(re, 0.01)
         assert f_rough > f_smooth
 
+    def test_churchill_zero_reynolds_raises(self) -> None:
+        """Re=0 is unphysical; Churchill must raise, not return a flat constant.
+
+        Regression test for issue #3868: the prior `Re < 1: return
+        LAMINAR_FRICTION_CONSTANT` shortcut silently returned 64 for any Re
+        in (0, 1), which is wrong for every value except Re=1 (Churchill is
+        documented to be valid for all Re > 0, so it should just compute).
+        """
+        with pytest.raises(ValueError, match="Reynolds number must be positive"):
+            friction_factor_churchill(0.0, 0.0002)
+
+    def test_churchill_negative_reynolds_raises(self) -> None:
+        with pytest.raises(ValueError, match="Reynolds number must be positive"):
+            friction_factor_churchill(-100.0, 0.0002)
+
+    def test_churchill_small_positive_reynolds_computes_not_flat(self) -> None:
+        """Re in (0, 1) must use the real Churchill formula, not a flat 64."""
+        f_half = friction_factor_churchill(0.5, 0.0002)
+        f_tenth = friction_factor_churchill(0.1, 0.0002)
+        assert f_half != pytest.approx(64.0)
+        assert f_tenth != pytest.approx(64.0)
+        assert f_half != pytest.approx(f_tenth)
+
+    def test_colebrook_non_convergence_raises(self) -> None:
+        """Colebrook must raise, not silently return an unconverged iterate.
+
+        Regression test for issue #3868: previously logged a warning and
+        returned the last (unconverged) f, giving a wrong ΔP with no error.
+        max_iterations=0 forces immediate non-convergence.
+        """
+        with pytest.raises(ValueError, match="did not converge"):
+            friction_factor_colebrook(100_000.0, 0.0002, max_iterations=0)
+
 
 class TestClassifyFlowRegime:
     def test_laminar_below_2300(self) -> None:

@@ -9,7 +9,17 @@ from typing import Final, TypeAlias
 import numpy as np
 from numpy.typing import NDArray
 
-GRAVITY_M_S2: Final[float] = 9.80665
+try:
+    # Prefer the fleet-canonical constant (issue #3994) so this stays in
+    # sync with the rest of the fleet instead of drifting independently.
+    from shared.python.sidekick.utils.unit_constants import (
+        STANDARD_GRAVITY as GRAVITY_M_S2,
+    )
+except ImportError:
+    # Not importable in a bare/standalone environment (e.g. a wheel install
+    # without the monorepo's shared.python on the path) -- same value.
+    GRAVITY_M_S2: Final[float] = 9.80665  # type: ignore[no-redef]
+
 DEFAULT_SEGMENT_COUNT: Final[int] = 12
 DEFAULT_SEGMENT_LENGTH_M: Final[float] = 0.18
 DEFAULT_LINK_MASS_KG: Final[float] = 0.12

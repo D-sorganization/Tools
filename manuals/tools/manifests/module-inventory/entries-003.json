@@ -8375,10 +8375,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 13404,
+      "bytes_lf": 13863,
       "classification": "calculation",
       "classification_basis": "path-marker:dynamics",
-      "content_sha256_lf": "c0ba9d9f897c000f7533173c55d8174b717e84340b03122f1c9c411e5cd25b16",
+      "content_sha256_lf": "90f72fd9198b15d6719ba5176df7df2874e0ee73fdabf83b0453bc050940ba9a",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-MODELS-CHAIN-DYNAMICS-PY-8588C6BF379E",
       "language": "python",
@@ -8402,7 +8402,7 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "unavailable",
+        "units": "mapped",
         "validation": "unavailable"
       },
       "traceability": {
@@ -8464,11 +8464,6 @@
           {
             "kind": "constant",
             "name": "DEFAULT_SEGMENT_LENGTH_M",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GRAVITY_M_S2",
             "signature": null
           },
           {
@@ -8541,7 +8536,10 @@
           "src/movement_optimizer/tests/test_chain_forces.py",
           "src/movement_optimizer/tests/test_swingset_chain_models.py"
         ],
-        "unit_mentions": [],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
         "validation_paths": []
       }
     },

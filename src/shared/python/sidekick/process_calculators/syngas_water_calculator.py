@@ -318,12 +318,17 @@ class SyngasWaterCalculator:
         if temperature_c is None:
             raise ValueError("temperature_c must be provided")
         if temperature_c >= 0:
-            # Above freezing
+            # Above freezing. buck_pressure_pa evaluates
+            # a * exp((b - t/d) * t / (c + t)); the Buck (1981) reference
+            # curve these constants are sourced from is
+            # a * exp((b - t/c) * t / (d + t)), so c and d must be swapped
+            # at this call site (matching calculators.thermo.steam_engine's
+            # call to the same kernel) to get the correct curve (issue #3867).
             a, b, c, d = (
                 BUCK_ABOVE_FREEZING_A,
                 BUCK_ABOVE_FREEZING_B,
-                BUCK_ABOVE_FREEZING_C,
                 BUCK_ABOVE_FREEZING_D,
+                BUCK_ABOVE_FREEZING_C,
             )
         else:
             # Below freezing

@@ -7,6 +7,7 @@ This module provides the ``evaluate_output`` helper that both
 from __future__ import annotations
 
 import logging
+import math
 from typing import Any
 
 _logger = logging.getLogger(__name__)
@@ -55,11 +56,17 @@ def evaluate_output(
     try:
         result = engine.calculate(**params)
     except (TypeError, ValueError, ZeroDivisionError, OverflowError) as exc:
+        # NaN, not 0.0 (issue #3976): both callers (optimization.py's
+        # gradient estimator and objective evaluator, multi_param_analysis's
+        # grid sweep) already check `np.isfinite(...)` / rely on NaN to
+        # detect a failed evaluation and apply their own fallback/penalty.
+        # Returning 0.0 silently masqueraded a failure as "the answer is
+        # exactly zero", bypassing that existing handling.
         _logger.warning("Engine calculation failed: %s", exc)
-        return 0.0, {}, {}
+        return math.nan, {}, {}
 
     if not isinstance(result, dict):
-        return 0.0, {}, {}
+        return math.nan, {}, {}
 
     output_value = float(result.get(output_variable, 0.0))
 

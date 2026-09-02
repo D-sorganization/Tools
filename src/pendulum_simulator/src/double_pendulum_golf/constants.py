@@ -24,7 +24,16 @@ GRAVITY_MSS: float = 9.81
 
 #: Standard acceleration of gravity (m/s²) — exact SI definition.
 #: Used for unit conversions (e.g. kgf → N) where the precise value matters.
-GRAVITY_STANDARD: float = 9.80665
+try:
+    # Prefer the fleet-canonical constant (issue #3994) so this stays in
+    # sync with the rest of the fleet instead of drifting independently.
+    from shared.python.sidekick.utils.unit_constants import (
+        STANDARD_GRAVITY as GRAVITY_STANDARD,
+    )
+except ImportError:
+    # pendulum_simulator ships as a standalone wheel (see Tools CLAUDE.md);
+    # shared.python isn't guaranteed to be on the path there. Same value.
+    GRAVITY_STANDARD: float = 9.80665  # type: ignore[no-redef]
 
 # ── Conversion Factors ──────────────────────────────────────────────────
 

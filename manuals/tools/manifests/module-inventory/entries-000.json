@@ -12388,6 +12388,7 @@
           "tests/shared/python/model_generation/inertia/test_primitives.py",
           "tests/shared/python/model_generation/test_urdf_parser.py",
           "tests/shared/python/process_calculators/test_acid_gas_dewpoint_edge_cases.py",
+          "tests/shared/python/process_calculators/test_analysis_utils.py",
           "tests/shared/python/process_calculators/test_baghouse_calculator.py",
           "tests/shared/python/process_calculators/test_financial_calculator_edge_cases.py",
           "tests/shared/python/process_calculators/test_flare_calculator.py",
