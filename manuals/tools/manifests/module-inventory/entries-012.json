@@ -3,6 +3,292 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 9625,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "645cee47c23a5d479627ae0bb6c4bd3d313c097ec8c40aa40c76f15b87be29f6",
+      "family": "rotation-converter-calculation",
+      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-SPATIAL-ALGEBRA-PY-787BAD7A639A",
+      "language": "python",
+      "maintainer": "Rotation converter maintainers",
+      "path": "src/rotation_converter/spatial_algebra.py",
+      "purpose": "Featherstone Spatial Algebra and Dynamics Algorithms.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SpatialModel",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "FDab",
+            "signature": "model: SpatialModel, q: Any, qd: Any, tau: Any, f_ext: Sequence[np.ndarray] | None=None, grav_accn: Any=None"
+          },
+          {
+            "kind": "function",
+            "name": "ID",
+            "signature": "model: SpatialModel, q: Any, qd: Any, qdd: Any, f_ext: Sequence[np.ndarray] | None=None, grav_accn: Any=None"
+          },
+          {
+            "kind": "function",
+            "name": "Xrotx",
+            "signature": "theta: float"
+          },
+          {
+            "kind": "function",
+            "name": "Xroty",
+            "signature": "theta: float"
+          },
+          {
+            "kind": "function",
+            "name": "Xrotz",
+            "signature": "theta: float"
+          },
+          {
+            "kind": "function",
+            "name": "Xtrans",
+            "signature": "r: Any"
+          },
+          {
+            "kind": "function",
+            "name": "crf",
+            "signature": "v: Any"
+          },
+          {
+            "kind": "function",
+            "name": "crm",
+            "signature": "v: Any"
+          },
+          {
+            "kind": "function",
+            "name": "jcalc",
+            "signature": "pitch: float, q: float"
+          }
+        ],
+        "test_paths": [
+          "tests/rotation_converter/test_spatial_algebra.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 10465,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "fb155e16d26327b6e63aaf0931386cc4265eab237dc300253f3a75d04f1d2b66",
+      "family": "rotation-converter-calculation",
+      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-TWIST-SCREW-PY-F0C1D648082A",
+      "language": "python",
+      "maintainer": "Rotation converter maintainers",
+      "path": "src/rotation_converter/twist_screw.py",
+      "purpose": "Twist and screw axis conversion module.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "adjoint_representation",
+            "signature": "T: Any"
+          },
+          {
+            "kind": "function",
+            "name": "homogeneous_to_twist_angle",
+            "signature": "T: Any"
+          },
+          {
+            "kind": "function",
+            "name": "screw_to_twist",
+            "signature": "screw: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "se3_matrix_to_twist_vector",
+            "signature": "M: Any"
+          },
+          {
+            "kind": "function",
+            "name": "twist_angle_to_homogeneous",
+            "signature": "xi: Any, theta: float"
+          },
+          {
+            "kind": "function",
+            "name": "twist_to_screw",
+            "signature": "xi: Any"
+          },
+          {
+            "kind": "function",
+            "name": "twist_vector_to_se3_matrix",
+            "signature": "xi: Any"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_simulation.py",
+          "tests/rotation_converter/test_rigid_transform.py",
+          "tests/rotation_converter/test_twist_screw.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 0,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "family": "rotation-converter-calculation",
+      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-UI-INIT-PY-5EC99DBCB915",
+      "language": "python",
+      "maintainer": "Rotation converter maintainers",
+      "path": "src/rotation_converter/ui/__init__.py",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 0,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "family": "rotation-converter-calculation",
+      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-UI-PYQT6-INIT-PY-646A2AE36941",
+      "language": "python",
+      "maintainer": "Rotation converter maintainers",
+      "path": "src/rotation_converter/ui/pyqt6/__init__.py",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 6360,
       "classification": "calculation",
       "classification_basis": "path-marker:rotation",
@@ -14496,334 +14782,6 @@
           "g",
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5434,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b7d9abee3a850a91d6cd5013783ad59e1be3657ead5c035579eb7a094e3ca130",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-SYNGAS-WATER-PY-C52D9CF2DC26",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/calc_backend/routers/syngas_water.py",
-      "purpose": "Syngas water calculator router.  See issue #608.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "calculate_syngas_water",
-            "signature": "request: SyngasWaterRequest"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/calc_backend/tests/test_calc_backend.py"
-        ],
-        "unit_mentions": [
-          "Pa",
-          "g"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4180,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "df9975f8201716a0b82ec1c7a2dcf5b5ff346ae3fa76f9445861f3ddc6036105",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-THERMAL-PROFILE-PY-69E799313D16",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/calc_backend/routers/thermal_profile.py",
-      "purpose": "Thermal profile predictor router.  See issue #608.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "predict_thermal_profile",
-            "signature": "request: ThermalProfileRequest"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/calc_backend/tests/test_calc_backend_gaps.py",
-          "tests/shared/python/process_calculators/test_thermal_profile.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2834,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "57ed8f6a6a0fe39c8c2156bd535c488aa5e664f2c64abf7aba866c10c5fdf455",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-WGS-REACTOR-PY-CFA5610D6D63",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/calc_backend/routers/wgs_reactor.py",
-      "purpose": "WGS Reactor calculator router.  See issue #613.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "calculate_wgs",
-            "signature": "request: WGSReactorRequest"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/calc_backend/tests/test_calc_backend_gaps.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4634,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "108d4eae1b9535bbc17fc35230f51109ae7156b3fceff4a4f609a3666fc54a76",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-INIT-PY-143AD067C756",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/__init__.py",
-      "purpose": "Shared AI chat widget, service base, and contract models.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "ChatMessage",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ChatQtDiagnostic",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ChatServiceBase",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ChatSession",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CliProviderEntry",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ProcessLaunchRequest",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TerminalAgentEvent",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TerminalAgentProviderInfo",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TerminalAgentSessionInfo",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TerminalAgentSessionRequest",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TerminalProcessAdapter",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TerminalProviderRegistry",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TerminalRegistryError",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TerminalRuntimeError",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TerminalSessionRuntime",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TerminalShellInfo",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "build_default_terminal_provider_registry",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "default_terminal_agent_providers",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "default_terminal_shells",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "diagnose_chat_qt_runtime",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "list_available_cli_providers",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "provider_probe_commands",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "redact_terminal_command",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

@@ -38,7 +38,10 @@ const FOOT_M = 0.3048;
 const DT_S = 0.002;
 const STOP_SPEED_MPS = 0.005;
 const MAX_TIME_S = 60.0;
-const MAX_GRID_NODES = 2048;
+//: Maximum grid nodes per axis (keeps hostile wires bounded); shared
+//: with `puttingGreenUdAdapter.ts`, mirroring `ud_adapter.py`'s import
+//: of `_MAX_GRID_NODES` from `.surface`.
+export const MAX_GRID_NODES = 2048;
 const MAX_LOCAL_GRADE = 0.25;
 
 /** Stimpmeter release speed [m/s] — USGA ramp geometry derivation. */
