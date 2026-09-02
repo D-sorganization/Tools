@@ -227,7 +227,7 @@
   },
   "shards": [
     {
-      "content_sha256_lf": "2a9b294be6cbbf5b74514dab4274ccbf24b76a030c318a207a3f834f8b39c2e3",
+      "content_sha256_lf": "6c68da2fcf2b4dee8352035a4e3e90e0819ca196f2cf59f36f878e376de12c0c",
       "entry_count": 200,
       "first_path": ".docker/entrypoint.sh",
       "last_path": "scripts/check_local_only_workflows.py",
@@ -275,7 +275,7 @@
       "shard_index": 5
     },
     {
-      "content_sha256_lf": "dc8a00231a11c9e4476a0249935d6744daaa74be3702796c5cefa9b12bb71776",
+      "content_sha256_lf": "265f1101c5f114c2f368c8792c284e682ef9653a28d1a4663fcd305a241c2994",
       "entry_count": 200,
       "first_path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/downswing_config.py",
       "last_path": "src/rate_of_closure/launch_monitor_v2_client.py",
@@ -283,7 +283,7 @@
       "shard_index": 6
     },
     {
-      "content_sha256_lf": "43995e9fae664ff16c92592b0ad003557b13b70ea4683ccda07d2c93c399d209",
+      "content_sha256_lf": "04f39ee4d12ad390a5e272f419f7f3b566ae5bec05c6081390d121647e42add3",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/launch_monitor_workspace.py",
       "last_path": "src/rate_of_closure/ui/pyqt6/spatial_target_panel.py",
@@ -331,58 +331,58 @@
       "shard_index": 12
     },
     {
-      "content_sha256_lf": "37c4fab72dee4db809e006351252a393113e57c099ec2df7cf810af105be1694",
+      "content_sha256_lf": "a40ad557eb45f862bad7e03b6d89904841958583c0f990af10f6ba83819bbfb4",
       "entry_count": 200,
       "first_path": "src/shared/python/calc_backend/routers/scrubber.py",
-      "last_path": "src/shared/python/model_generation/builders/parametric_builder.py",
+      "last_path": "src/shared/python/model_generation/builders/__init__.py",
       "path": "manuals/tools/manifests/module-inventory/entries-013.json",
       "shard_index": 13
     },
     {
-      "content_sha256_lf": "e0e32e61883aab1feb190d6f6115afd30bcdf655638251c32c9e602224d23e7d",
+      "content_sha256_lf": "9c503d0023b7633bb07068a9313afa466a2d144204d9230774d4908d858a81ec",
       "entry_count": 200,
-      "first_path": "src/shared/python/model_generation/builders/urdf_writer.py",
-      "last_path": "src/shared/python/sidekick/process_calculators/psa_package/ui/sensitivity_plot.py",
+      "first_path": "src/shared/python/model_generation/builders/base_builder.py",
+      "last_path": "src/shared/python/sidekick/process_calculators/psa_package/ui/main_window.py",
       "path": "manuals/tools/manifests/module-inventory/entries-014.json",
       "shard_index": 14
     },
     {
-      "content_sha256_lf": "055f0ce1fc50ea16190540fc2fa696dde2cb6863dc2764459b9a8e34f91b1be3",
+      "content_sha256_lf": "e132341ffac351762fcb6bc0bd03e54011ae8d3f20daeeb2a54493287918e3df",
       "entry_count": 200,
-      "first_path": "src/shared/python/sidekick/process_calculators/scrubber/__init__.py",
-      "last_path": "src/shared/python/swing_sim/ground/impact_types.py",
+      "first_path": "src/shared/python/sidekick/process_calculators/psa_package/ui/pfd_widget.py",
+      "last_path": "src/shared/python/swing_sim/ground/contract_wire.py",
       "path": "manuals/tools/manifests/module-inventory/entries-015.json",
       "shard_index": 15
     },
     {
-      "content_sha256_lf": "35a4b36eb0e0bdd299289a5cfd76be2dc1f1b0d9316f37407196b6bb112d2fc4",
+      "content_sha256_lf": "0a333acbc2b06a21dcec2359b8bd02108f0ba35e70e10e09a58ff3862755faf5",
       "entry_count": 200,
-      "first_path": "src/shared/python/swing_sim/ground/json_schema.py",
-      "last_path": "src/solar_system_model/solar_system/data/historical_events/planetary_missions.py",
+      "first_path": "src/shared/python/swing_sim/ground/ground_result_composer.py",
+      "last_path": "src/solar_system_model/solar_system/data/historical_events/crewed_programs.py",
       "path": "manuals/tools/manifests/module-inventory/entries-016.json",
       "shard_index": 16
     },
     {
-      "content_sha256_lf": "aec5f3c89af2ee366b12fc124c881774b11150479fd552e863232ec4a6a86f43",
-      "entry_count": 175,
-      "first_path": "src/solar_system_model/solar_system/data/moon_systems.py",
+      "content_sha256_lf": "5a0119eb371437409d6fbe9db08de242e725776cba3555e8328d6233aa6fae93",
+      "entry_count": 178,
+      "first_path": "src/solar_system_model/solar_system/data/historical_events/international_missions.py",
       "last_path": "wave_solver.py",
       "path": "manuals/tools/manifests/module-inventory/entries-017.json",
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "a96da2f761c525fa84537c6cfa65d442ddbecf6e883e6df7ccf13f211851af1e",
+  "source_tree_sha256": "259b9cf8cef5e4d5df27be3ec40c937af9a689f0c4822fad10acb6c695daf56a",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
-      "not-applicable": 2727,
+      "not-applicable": 2730,
       "provisional": 847
     },
     "blocked_count": 1,
     "calculation_count": 847,
     "classification_counts": {
       "calculation": 847,
-      "non-calculation": 2728
+      "non-calculation": 2731
     },
     "family_counts": {
       "control-systems-calculation": 6,
@@ -405,17 +405,17 @@
       "shared-plotting-calculation": 1,
       "shared-plotting-non-calculation": 4,
       "shared-tools-calculation": 173,
-      "shared-tools-non-calculation": 1035,
+      "shared-tools-non-calculation": 1038,
       "signal-processing-calculation": 28,
       "swing-simulation-calculation": 63,
       "swing-simulation-non-calculation": 152
     },
-    "module_count": 3575,
-    "non_calculation_count": 2728,
+    "module_count": 3578,
+    "non_calculation_count": 2731,
     "provisional_count": 847,
     "review_status_counts": {
       "blocked": 1,
-      "inventory-baseline": 2727,
+      "inventory-baseline": 2730,
       "review-required": 847
     }
   }

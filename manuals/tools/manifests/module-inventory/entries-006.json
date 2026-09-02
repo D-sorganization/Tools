@@ -6399,9 +6399,9 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "not-applicable",
-        "validation": "not-applicable"
+        "validation": "mapped"
       },
       "traceability": {
         "adr_paths": [
@@ -6445,9 +6445,13 @@
             "signature": null
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/shared/python/launch_monitor/test_player_covariation_contract.py"
+        ],
         "unit_mentions": [],
-        "validation_paths": []
+        "validation_paths": [
+          "tests/shared/python/launch_monitor/test_player_covariation_contract.py"
+        ]
       }
     },
     {

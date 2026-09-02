@@ -723,7 +723,7 @@
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "mapped"
       },
       "traceability": {
         "adr_paths": [
@@ -779,7 +779,8 @@
         ],
         "test_paths": [
           "tests/rate_of_closure/test_launch_monitor_provenance_and_unavailable.py",
-          "tests/rate_of_closure/test_player_covariation.py"
+          "tests/rate_of_closure/test_player_covariation.py",
+          "tests/shared/python/launch_monitor/test_player_covariation_contract.py"
         ],
         "unit_mentions": [
           "deg",
@@ -787,7 +788,9 @@
           "rpm",
           "s"
         ],
-        "validation_paths": []
+        "validation_paths": [
+          "tests/shared/python/launch_monitor/test_player_covariation_contract.py"
+        ]
       }
     },
     {
