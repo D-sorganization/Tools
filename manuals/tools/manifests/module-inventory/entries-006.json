@@ -3,6 +3,80 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 11316,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "96dd57acb135ad0ee228a7974ddad1accdfee466e8ebb8cf470f8cc9060e3ad7",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-DOWNSWING-CONFIG-PY-5B8D37472DAA",
+      "language": "python",
+      "maintainer": "Pendulum maintainers",
+      "path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/downswing_config.py",
+      "purpose": "Configuration for a downswing optimization, shared by every objective.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DownswingConfig",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_TORQUE_RATE_LIMITS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "RATE_SCALE",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N*m",
+          "N·m",
+          "kg",
+          "m/s",
+          "ms",
+          "rad",
+          "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 8452,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
@@ -14775,111 +14849,6 @@
         "test_paths": [
           "tests/rate_of_closure/test_launch_monitor_conformance_golden.py",
           "tests/rate_of_closure/test_launch_monitor_v2_client.py",
-          "tests/rate_of_closure/test_launch_monitor_workspace.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 13879,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4dcfcae34f7771e0a4f58f0a8aa15179afe109c9365b7e5c32e5c8577f434ce4",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-LAUNCH-MONITOR-WORKSPACE-PY-7C09AA564695",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/launch_monitor_workspace.py",
-      "purpose": "Reference-only project and export seam for launch-monitor analytics.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "AnalysisSelection",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "DatasetReference",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "LaunchMonitorProject",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PlayerIdentityBinding",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CONTRACT_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_player_covariation_request",
-            "signature": "project: LaunchMonitorProject"
-          },
-          {
-            "kind": "function",
-            "name": "dataset_reference_for_frame",
-            "signature": "frame: pd.DataFrame, source_name: str"
-          },
-          {
-            "kind": "function",
-            "name": "export_analysis_bundle",
-            "signature": "destination: str | Path, project: LaunchMonitorProject, result: dict[str, Any], backing_rows: pd.DataFrame, authorization: WorkspaceExportAuthorization | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "load_project",
-            "signature": "source: str | Path"
-          },
-          {
-            "kind": "function",
-            "name": "load_project_versioned",
-            "signature": "source: str | Path"
-          },
-          {
-            "kind": "function",
-            "name": "save_project",
-            "signature": "destination: str | Path, project: LaunchMonitorProject"
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/test_launch_monitor_forbidden_identity.py",
-          "tests/rate_of_closure/test_launch_monitor_performance.py",
           "tests/rate_of_closure/test_launch_monitor_workspace.py"
         ],
         "unit_mentions": [],

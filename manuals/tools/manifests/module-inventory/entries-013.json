@@ -2,6 +2,81 @@
   "authority": "D-sorganization/Tools",
   "entries": [
     {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6393,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "27bc8af4fd759a18b15e575606aaa43fde99b00f9dde2e9b549ab8c374164684",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-SCRUBBER-PY-121489E149F4",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/routers/scrubber.py",
+      "purpose": "Scrubber calculator router.  See issue #613.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_FLUX_AREA_REL_TOL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_FLUX_AREA_SEED_M2",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_FLUX_MAX_ITERATIONS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "calculate_scrubber",
+            "signature": "request: ScrubberRequest"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/calc_backend/tests/test_calc_backend.py",
+          "src/shared/python/calc_backend/tests/test_calc_backend_gaps.py",
+          "src/shared/python/calc_backend/tests/test_scrubber_convergence_3181.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "kg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "provisional",
       "bytes_lf": 6806,
       "classification": "calculation",
@@ -16388,58 +16463,6 @@
           {
             "kind": "class",
             "name": "PendingOperation",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 21744,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0615a2754a575eb80833a53ed3200d8d650941a465bda9d0eba354fe9d3daf69",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-EDITOR-FRANKENSTEIN-EDITOR-PY-8FA4E6444035",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/editor/frankenstein_editor.py",
-      "purpose": "Frankenstein Editor for component composition.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "FrankensteinEditor",
             "signature": null
           }
         ],

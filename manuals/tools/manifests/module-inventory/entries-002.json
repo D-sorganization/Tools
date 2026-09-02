@@ -3,6 +3,48 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 81,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e32657baf631d7c5f4dc67b4b2ee0ec8e7d5b3c41860e09cddce7c0377cd80bc",
+      "family": "data-processing-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-WEB-POSTCSS-CONFIG-JS-C1325B05888E",
+      "language": "javascript",
+      "maintainer": "Data processing maintainers",
+      "path": "src/data_processing/data_processor/web/postcss.config.js",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 39,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -13687,57 +13729,6 @@
           {
             "kind": "export",
             "name": "AudioRecorder",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 8018,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "33ebb49a42a92a39987a49bafc2573ea98c21ba073c5d09f8655ba7bc916378a",
-      "family": "media-processing-non-calculation",
-      "id": "TOOLS-MODULE-SRC-MEDIA-PROCESSING-VIDEO-PROCESSOR-APPS-WEB-COMPONENTS-GOLF-ISSUESPANEL-TSX-11CE4E23D882",
-      "language": "typescript-react",
-      "maintainer": "Media processing maintainers",
-      "path": "src/media_processing/video_processor/apps/web/components/golf/IssuesPanel.tsx",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "IssuesPanel",
             "signature": null
           }
         ],

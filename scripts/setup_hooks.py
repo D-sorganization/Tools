@@ -6,9 +6,10 @@ This script:
 1. Installs pre-commit if not present
 2. Installs pre-commit hooks
 3. Installs pre-push hooks
-4. Installs hook dependencies
-5. Registers local-only git merge drivers (e.g. module-inventory-regen)
-6. Verifies the installation
+4. Installs pre-merge-commit hooks
+5. Installs hook dependencies
+6. Registers local-only git merge drivers (e.g. module-inventory-regen)
+7. Verifies the installation
 
 Usage:
     python scripts/setup_hooks.py
@@ -56,14 +57,28 @@ def install_hooks() -> None:
 
 def install_push_hooks() -> None:
     """Install pre-push hooks."""
-    logger.info("\n[3/5] Installing pre-push hooks...")
+    logger.info("\n[3/6] Installing pre-push hooks...")
     run_command(["pre-commit", "install", "--hook-type", "pre-push"])
     logger.info("  pre-push hooks installed")
 
 
+def install_merge_commit_hooks() -> None:
+    """Install pre-merge-commit hooks.
+
+    Distinct from the default `pre-commit` hook type: plain `pre-commit`
+    does NOT fire for merge commits (confirmed empirically while building
+    #4818), which is exactly why the module-inventory merge fixup
+    (scripts/git/regenerate_module_inventory_during_merge.py) needs this
+    hook type registered explicitly.
+    """
+    logger.info("\n[4/6] Installing pre-merge-commit hooks...")
+    run_command(["pre-commit", "install", "--hook-type", "pre-merge-commit"])
+    logger.info("  pre-merge-commit hooks installed")
+
+
 def install_dev_dependencies() -> None:
     """Install development dependencies for hooks."""
-    logger.info("\n[4/5] Installing hook dependencies...")
+    logger.info("\n[5/6] Installing hook dependencies...")
     deps = [
         "ruff>=0.14.0",
         "mypy>=1.13.0",
@@ -84,7 +99,7 @@ def install_merge_drivers() -> None:
     git config that has to be set up per clone/worktree. See
     scripts/git/install_merge_drivers.py for why.
     """
-    logger.info("\n[5/5] Registering git merge drivers...")
+    logger.info("\n[6/6] Registering git merge drivers...")
     repo_root = Path(__file__).resolve().parent.parent
     run_command(
         [
@@ -157,6 +172,7 @@ def main() -> None:
         install_pre_commit()
         install_hooks()
         install_push_hooks()
+        install_merge_commit_hooks()
         install_dev_dependencies()
         install_merge_drivers()
         verify_installation()

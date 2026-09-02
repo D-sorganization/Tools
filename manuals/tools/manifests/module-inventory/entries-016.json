@@ -3,6 +3,58 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 2868,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b7bad56fbd0b27a15dac92ca92c9e32f2c3cd245c3fe6ae0bd34ca220b85e0be",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-REGIONAL-TRANSITION-BINDING-PY-D27C4B2BC76C",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/regional_transition_binding.py",
+      "purpose": "Validate regional transition identities against an embedded plan.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "validate_transition_against_plan",
+            "signature": "plan: GroundRegionalMaterialPlanRequest, transition: SurfaceRegionTransition, axis_velocity_m_s: float"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 979,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17195,67 +17247,6 @@
           {
             "kind": "class",
             "name": "TransferPlanner",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2757,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4112b47e048b233aca155c382377e00df862168ca5afccb80dae42bfdf7e9edb",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-WIDGETS-SETTINGS-NAV-PY-32CBD6E27013",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/solar_system_model/solar_system/ui/widgets/settings_nav.py",
-      "purpose": "Settings/navigation widgets: Checkbox, SettingsPanel, NavigationPanel.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "Checkbox",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "NavigationPanel",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SettingsPanel",
             "signature": null
           }
         ],

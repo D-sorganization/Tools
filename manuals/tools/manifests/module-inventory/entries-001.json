@@ -2249,6 +2249,69 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 4965,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2b7cee4c559cf099d9502707bd27447c8fcd319e614d772cc2723f4ee88de03b",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-GIT-REGENERATE-MODULE-INVENTORY-DURING-MERGE-PY-39E4E540FFD2",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/git/regenerate_module_inventory_during_merge.py",
+      "purpose": "``pre-merge-commit`` hook: fix up a stale module inventory after a merge.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_REGEN_MODULE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "fixup",
+            "signature": "root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 1853,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -3589,10 +3652,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5380,
+      "bytes_lf": 6063,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "fc73be8a1499bfc03eb37b3a180ec27dfea792d142d4751c5f3059a0528d3efb",
+      "content_sha256_lf": "e2d269ff70e96c5847cf36c3c18f855a2c86f72130c7bc2d7dd579d7749a2ca8",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-SETUP-HOOKS-PY-1CF532C894D3",
       "language": "python",
@@ -3643,6 +3706,11 @@
           },
           {
             "kind": "function",
+            "name": "install_merge_commit_hooks",
+            "signature": ""
+          },
+          {
+            "kind": "function",
             "name": "install_merge_drivers",
             "signature": ""
           },
@@ -3686,10 +3754,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 661,
+      "bytes_lf": 1027,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c963402e0d7fed0df5844cdcaa0cb527a9c652cbfb5f57e060db935a3bd5d072",
+      "content_sha256_lf": "ae3a5963bda8b582d7fa27ece4f59f921785be83a8b716e1ab498e6b73cb41b3",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-SETUP-PRECOMMIT-SH-45939F4371A0",
       "language": "shell",
@@ -15099,48 +15167,6 @@
       "language": "html",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/web/index.html",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 81,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e32657baf631d7c5f4dc67b4b2ee0ec8e7d5b3c41860e09cddce7c0377cd80bc",
-      "family": "data-processing-non-calculation",
-      "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-WEB-POSTCSS-CONFIG-JS-C1325B05888E",
-      "language": "javascript",
-      "maintainer": "Data processing maintainers",
-      "path": "src/data_processing/data_processor/web/postcss.config.js",
       "purpose": null,
       "review_status": "inventory-baseline",
       "risk_tags": [],

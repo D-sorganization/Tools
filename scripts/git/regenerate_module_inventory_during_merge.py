@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Pre-commit hook: fix up a stale module inventory while a merge is landing.
+"""``pre-merge-commit`` hook: fix up a stale module inventory after a merge.
 
 Why this exists (and why the merge driver alone isn't enough)
 ---------------------------------------------------------------
@@ -18,18 +18,20 @@ By the time git is about to create the merge commit, that limitation is
 gone: the *whole* merged tree is checked out on disk, which is exactly what
 ``scripts/build_tools_module_inventory.py`` needs to produce a correct
 result (it scans ``git ls-files`` plus on-disk content, nothing else). This
-hook runs at that moment -- the ``pre-commit`` git hook stage, i.e. right
-before a commit (including a merge commit) is created -- detects whether a
-merge is in progress, and if the inventory is stale, regenerates and
-re-stages it so the merge commit that's about to be created already carries
-a fresh, correct inventory. On an ordinary (non-merge) commit this is a
-fast no-op: existing pre-commit hooks (``tools-module-inventory-freshness``)
-still enforce that contributors regenerate and review the diff themselves,
-unchanged.
+script runs at exactly that moment via git's ``pre-merge-commit`` hook --
+note this is a *distinct* hook from plain ``pre-commit``, which git does
+NOT invoke for merge commits at all (confirmed empirically: a raw
+``.git/hooks/pre-commit`` script produced zero output across a real
+``git merge``, while a raw ``.git/hooks/pre-merge-commit`` script fired
+every time, with the full merged tree already on disk). If the inventory
+is stale, this regenerates and re-stages it so the merge commit that's
+about to be created already carries a fresh, correct inventory.
 
-Registered like any other local pre-commit hook (see
-``.pre-commit-config.yaml``); no separate installation step beyond the
-repo's existing ``pre-commit install``.
+Registered as a local pre-commit-framework hook (see
+``.pre-commit-config.yaml``, ``stages: [pre-merge-commit]``), which needs
+its own install step beyond the default ``pre-commit install`` --
+``pre-commit install --hook-type pre-merge-commit`` -- already wired into
+``scripts/setup_precommit.sh`` and ``scripts/setup_hooks.py``.
 """
 
 from __future__ import annotations
@@ -54,9 +56,10 @@ def _repo_root() -> Path:
 def _merge_in_progress(root: Path) -> bool:
     """Return whether a ``git merge`` (or merge-like ``git pull``) is landing.
 
-    ``MERGE_HEAD`` exists from the moment conflict resolution finishes
-    until the merge commit is created, which is exactly this hook's
-    window.
+    Always true when git invokes this script (it is only ever installed
+    as a ``pre-merge-commit`` hook), but checked explicitly rather than
+    assumed: it's a cheap, self-documenting guard against this function
+    ever being reused from a context where that isn't guaranteed.
     """
     result = subprocess.run(
         ["git", "rev-parse", "--git-path", "MERGE_HEAD"],

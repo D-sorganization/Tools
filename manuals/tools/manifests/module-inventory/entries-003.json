@@ -3,6 +3,57 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 8018,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "33ebb49a42a92a39987a49bafc2573ea98c21ba073c5d09f8655ba7bc916378a",
+      "family": "media-processing-non-calculation",
+      "id": "TOOLS-MODULE-SRC-MEDIA-PROCESSING-VIDEO-PROCESSOR-APPS-WEB-COMPONENTS-GOLF-ISSUESPANEL-TSX-11CE4E23D882",
+      "language": "typescript-react",
+      "maintainer": "Media processing maintainers",
+      "path": "src/media_processing/video_processor/apps/web/components/golf/IssuesPanel.tsx",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "IssuesPanel",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 14380,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -13800,107 +13851,6 @@
         ],
         "unit_mentions": [
           "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 10018,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "45b3049ac9b95e271046df4d1bd0a2eb0b1d31bbca0077c20dc8202274d8e0ce",
-      "family": "control-systems-non-calculation",
-      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-CORS-CONFIG-PY-D281D30B7F27",
-      "language": "python",
-      "maintainer": "Control systems maintainers",
-      "path": "src/p1am_control_system/backend/cors_config.py",
-      "purpose": "CORS configuration and the state-change request guard for the P1AM backend.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "http://127.0.0.1:3002",
-          "http://127.0.0.1:5173",
-          "http://host/api/estop``",
-          "http://localhost:3002",
-          "http://localhost:5173"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CorsSettings",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RequestGuardMiddleware",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CSRF_HEADER_NAME",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CSRF_HEADER_VALUE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_DEV_ORIGINS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PREFLIGHT_EXEMPT_PATHS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "STATE_CHANGING_METHODS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "evaluate_state_change",
-            "signature": "*, method: str, path: str, headers: Mapping[str, str], allowed_origins: Sequence[str], preflight_exempt_paths: Sequence[str]=PREFLIGHT_EXEMPT_PATHS"
-          },
-          {
-            "kind": "function",
-            "name": "resolve_cors_settings",
-            "signature": "env: dict[str, str] | None=None"
-          }
-        ],
-        "test_paths": [
-          "tests/p1am_control_system/test_cors_config.py"
-        ],
-        "unit_mentions": [
           "s"
         ],
         "validation_paths": []

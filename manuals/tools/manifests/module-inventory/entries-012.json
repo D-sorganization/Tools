@@ -3,6 +3,68 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 26790,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "b6fd9c9e4c44c8e83b30d0b15ff321e7ee057e946fef06d130eeb10317b6f5f0",
+      "family": "rotation-converter-calculation",
+      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-RIGID-TRANSFORM-PY-A57C7E57B7C5",
+      "language": "python",
+      "maintainer": "Rotation converter maintainers",
+      "path": "src/rotation_converter/rigid_transform.py",
+      "purpose": "Frame-aware rigid body transformation (SE(3) with source/target labels).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FrameError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RigidTransform",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/rotation_converter/test_rigid_transform.py",
+          "tests/rotation_converter/test_scripting_env.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 16963,
       "classification": "calculation",
       "classification_basis": "path-marker:rotation",
@@ -14673,81 +14735,6 @@
           "matlab/test_rotation_converter.m"
         ],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6393,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "27bc8af4fd759a18b15e575606aaa43fde99b00f9dde2e9b549ab8c374164684",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-SCRUBBER-PY-121489E149F4",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/calc_backend/routers/scrubber.py",
-      "purpose": "Scrubber calculator router.  See issue #613.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "_FLUX_AREA_REL_TOL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_FLUX_AREA_SEED_M2",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_FLUX_MAX_ITERATIONS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "calculate_scrubber",
-            "signature": "request: ScrubberRequest"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/calc_backend/tests/test_calc_backend.py",
-          "src/shared/python/calc_backend/tests/test_calc_backend_gaps.py",
-          "src/shared/python/calc_backend/tests/test_scrubber_convergence_3181.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "kg",
-          "s"
-        ],
         "validation_paths": []
       }
     }
