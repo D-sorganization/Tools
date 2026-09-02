@@ -222,9 +222,9 @@ export function profileDiagnostics(
         transitionSamples = right - left;
     }
     const rms = (values: number[]) => Math.sqrt(values.reduce((sum, value) => sum + value * value, 0) / values.length);
-    return {
-        peak_shoulder_torque_nm: Math.max(...shoulder.map(Math.abs)),
-        peak_wrist_torque_nm: Math.max(...wrist.map(Math.abs)),
+    const result = {
+        peak_shoulder_torque_nm: 0,
+        peak_wrist_torque_nm: 0,
         rms_shoulder_torque_nm: rms(shoulder),
         rms_wrist_torque_nm: rms(wrist),
         peak_shoulder_slew_nm_s: derivativeBound(candidate.shoulder_coefficients_nm, candidate.profile_duration_s),
@@ -233,6 +233,14 @@ export function profileDiagnostics(
         wrist_reversal_time_s: reversalIndex === null ? null : samples[reversalIndex].time,
         wrist_transition_duration_s: candidate.profile_duration_s * transitionSamples / (sampleCount - 1),
     };
+    // ⚡ Bolt Optimization: Use single-pass loop instead of chained map/max spreads
+    for (let i = 0; i < shoulder.length; i++) {
+        const s = Math.abs(shoulder[i]);
+        if (s > result.peak_shoulder_torque_nm) result.peak_shoulder_torque_nm = s;
+        const w = Math.abs(wrist[i]);
+        if (w > result.peak_wrist_torque_nm) result.peak_wrist_torque_nm = w;
+    }
+    return result;
 }
 
 function quantizeValue(value: number, range: NumericRange): number {
@@ -487,7 +495,7 @@ export function actuatorEffortMetrics(series: ForceSourceSeries): ActuatorEffort
         Math.min(value, 0) + Math.min(series.wrist_actuator_power_w[index], 0));
     const shoulderNet = trapezoid(series.shoulder_actuator_power_w, series.time_s);
     const wristNet = trapezoid(series.wrist_actuator_power_w, series.time_s);
-    return {
+    const result = {
         shoulder_net_work_j: shoulderNet,
         wrist_net_work_j: wristNet,
         total_net_work_j: shoulderNet + wristNet,
@@ -497,10 +505,21 @@ export function actuatorEffortMetrics(series: ForceSourceSeries): ActuatorEffort
             Math.abs(value) + Math.abs(series.wrist_torque_nm[index])), series.time_s),
         squared_torque_effort_nm2_s: trapezoid(series.shoulder_torque_nm.map((value, index) =>
             value * value + series.wrist_torque_nm[index] ** 2), series.time_s),
-        peak_shoulder_power_w: Math.max(...series.shoulder_actuator_power_w.map(Math.abs)),
-        peak_wrist_power_w: Math.max(...series.wrist_actuator_power_w.map(Math.abs)),
-        peak_total_power_w: Math.max(...series.total_actuator_power_w.map(Math.abs)),
+        peak_shoulder_power_w: 0,
+        peak_wrist_power_w: 0,
+        peak_total_power_w: 0,
     };
+    // ⚡ Bolt Optimization: Use a single-pass loop for max calculations to avoid
+    // spreading massive arrays on the call stack and creating intermediate allocations.
+    for (let i = 0; i < series.shoulder_actuator_power_w.length; i++) {
+        const s = Math.abs(series.shoulder_actuator_power_w[i]);
+        if (s > result.peak_shoulder_power_w) result.peak_shoulder_power_w = s;
+        const w = Math.abs(series.wrist_actuator_power_w[i]);
+        if (w > result.peak_wrist_power_w) result.peak_wrist_power_w = w;
+        const t = Math.abs(series.total_actuator_power_w[i]);
+        if (t > result.peak_total_power_w) result.peak_total_power_w = t;
+    }
+    return result;
 }
 
 /** Apply the selected equal-input or equal-output feasibility contract. */

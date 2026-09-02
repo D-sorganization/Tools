@@ -6126,10 +6126,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 46661,
+      "bytes_lf": 47530,
       "classification": "calculation",
       "classification_basis": "path-marker:force",
-      "content_sha256_lf": "8c198c21bfd8816be2baa4e926962bb3a69deec4b957cfbc6d12c8a1c9bb9dde",
+      "content_sha256_lf": "346ba2a181184eb98ae64652d63bf75e4eccb6f8816191b2fbc4a712da9e9bac",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-FORCESOURCEOPTIMIZATION-TS-F6C0040C15CC",
       "language": "typescript",
@@ -6252,7 +6252,8 @@
         "test_paths": [],
         "unit_mentions": [
           "N m",
-          "g"
+          "g",
+          "s"
         ],
         "validation_paths": []
       }

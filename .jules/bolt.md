@@ -123,3 +123,6 @@
 ## 2024-09-01 - Avoid Array Spread in Grouping Loops
 **Learning:** Using array spread syntax (`[...arr, item]`) inside tight loops to accumulate datasets by key degrades performance to O(N^2) and generates severe garbage collection pressure during React renders.
 **Action:** Always initialize an array for the key and use direct mutation (`group.push(item)`) inside loops to achieve O(N) performance when grouping datasets.
+## 2024-05-19 - Array map Math.abs spread overhead
+**Learning:** Using `Math.max(...array.map(Math.abs))` creates an intermediate array and passes all items to the call stack via the spread operator, causing noticeable GC pressure and risking call stack size exceeded errors on large datasets.
+**Action:** Replace `Math.max(...array.map(Math.abs))` with a standard O(N) single-pass `for` loop in numerical hotspots.
