@@ -38,37 +38,44 @@ across a gap.
 separate package is the containment; do not add a convenience alias between
 them.
 
-Pending owner rulings — deliberately **not** applied here
---------------------------------------------------------
-Two of the rulings recorded in ADR-0048's "Owner Rulings (2026-09-02)" section
-reach this module, and neither is applied by this port, which carries
-UpstreamDrift's behaviour verbatim so the port diff and the behaviour diff can
-be reviewed separately. A follow-up PR applies both.
+Owner rulings applied here (ADR-0048, "Owner Rulings (2026-09-02)")
+--------------------------------------------------------------------
+The port that landed this module carried UpstreamDrift's behaviour verbatim
+and pinned two "before" cases so a follow-up's diff would be visible rather
+than silent. This module now *is* that follow-up; both rulings are applied.
 
-* **D15 — FDR multiplicity denominator.** ``_correlations`` computes the
-  Benjamini-Hochberg adjustment over *every* requested predictor's raw p value
-  and only afterwards blanks the estimates whose pair count fell below
-  ``min_samples``. An under-sampled predictor therefore inflates the
-  denominator of the predictors that survive. The ruling is that the canonical
-  layer excludes under-sampled predictors *before* correcting; the count-all
-  behaviour is a defect, not a preserved method.
-* **D17 — boolean columns.** ``pd.to_numeric`` projects ``True``/``False`` to
-  1.0/0.0 and the column is analysed as though it were native numeric; nothing
-  in :class:`FlexibleAnalysisResult` records that a projection happened. The
-  ruling preserves the capability and ends the silence — a boolean-projected
-  column must be labelled as such and can never read as native numeric.
-  Tools#4901 already applied D17 one layer down, so
-  :class:`~shared.python.launch_monitor.relationships.CorrelationResult` now
-  reports ``boolean_projected``; ``_correlations`` reads only the coefficient,
-  p-value and pair-count frames off that result and drops the label. The
-  follow-up here therefore has to *carry an existing label through*, not
-  compute a new one, and it changes no arithmetic.
+* **D15 — FDR multiplicity denominator.** ``_correlations`` used to compute
+  the Benjamini-Hochberg adjustment over *every* requested predictor's raw p
+  value and only afterwards blank the estimates whose pair count fell below
+  ``min_samples``. An under-sampled predictor therefore inflated the
+  denominator of the predictors that survived. Per the ruling, the canonical
+  layer now excludes under-sampled predictors from the correction pool
+  *before* correcting — UD's count-all behaviour was a defect, not a
+  preserved method — by feeding ``_adjust_p_values`` ``nan`` in place of an
+  under-sampled predictor's raw p; ``_adjust_p_values`` already drops
+  non-finite entries from its pool, so no change was needed there. Coefficient
+  and p-value arithmetic for adequately sampled predictors is unaffected;
+  only the correction denominator moves.
+* **D17 — boolean columns.** ``pd.to_numeric`` still projects ``True``/
+  ``False`` to 1.0/0.0 and the column is still analysed as though it were
+  native numeric — the ruling preserves that capability. What changes is the
+  silence: Tools#4901 already applied D17 one layer down, so
+  :class:`~shared.python.launch_monitor.relationships.CorrelationResult`
+  reports ``boolean_projected``; ``_correlations`` now reads that label off
+  the ``compute_correlations`` result it already holds and carries it onto
+  each :class:`CorrelationEstimate` as ``is_boolean_projected`` rather than
+  computing a new one. No arithmetic changes. Scope: this only covers
+  correlation-mode predictors and the outcome-vs-predictor pairs
+  ``_correlations`` produces — ``_regression`` performs its own independent
+  ``pd.to_numeric`` cast and is unaffected (out of scope for this ruling as
+  applied here; a boolean predictor entering ``analysis_mode="regression"``
+  is still analysed, still unlabelled).
 
-Both behaviours are pinned as the "before" side of that diff by
+Both behaviours were pinned as the "before" side of this diff by
 ``test_flexible_analysis.py``
 (``test_undersampled_predictor_still_counts_in_the_fdr_denominator`` and
-``test_boolean_predictor_is_silently_projected_to_zero_one``), so the follow-up
-cannot land invisibly.
+``test_boolean_predictor_is_silently_projected_to_zero_one``); those two
+tests now assert the "after" contract instead.
 """
 
 from __future__ import annotations
@@ -154,6 +161,17 @@ class DatasetSummary:
 
 @dataclass(frozen=True)
 class CorrelationEstimate:
+    """One predictor's correlation against the request's outcome.
+
+    ``is_boolean_projected`` is ``True`` when ``predictor`` was a boolean
+    column analysed via the explicit 0/1 projection (owner ruling D17). The
+    label is carried through from
+    :attr:`~shared.python.launch_monitor.relationships.CorrelationResult.boolean_projected`
+    — computed one layer down, in
+    :func:`~shared.python.launch_monitor.relationships.compute_correlations` —
+    not recomputed here.
+    """
+
     predictor: str
     coefficient: float
     p_value: float
@@ -162,6 +180,7 @@ class CorrelationEstimate:
     ci_upper: float
     sample_count: int
     method: str
+    is_boolean_projected: bool
 
 
 @dataclass(frozen=True)
@@ -301,13 +320,35 @@ def _correlations(
     raw_p = [
         float(result.p_values.loc[request.outcome, item]) for item in request.predictors
     ]
-    adjusted = _adjust_p_values(raw_p)
+    counts = [
+        int(result.pair_counts.loc[request.outcome, item])
+        for item in request.predictors
+    ]
+    # D17 (ADR-0048 owner ruling, Tools#4901): compute_correlations already
+    # labels a boolean-projected metric one layer down; carry that label
+    # through rather than recomputing it.
+    boolean_projected = {
+        predictor: predictor in result.boolean_projected
+        for predictor in request.predictors
+    }
+    # D15 (ADR-0048 owner ruling): exclude under-sampled predictors from the
+    # Benjamini-Hochberg denominator *before* correcting, rather than
+    # correcting over every requested predictor and only afterwards blanking
+    # the ones whose pair count fell below min_samples (UD's behaviour,
+    # which inflates the adjusted p value of every predictor that *does*
+    # survive). _adjust_p_values already excludes non-finite entries from its
+    # pool, so replacing an under-sampled predictor's raw p with nan here is
+    # sufficient - no change to _adjust_p_values itself.
+    correction_input = [
+        raw if count >= request.min_samples else float("nan")
+        for raw, count in zip(raw_p, counts, strict=True)
+    ]
+    adjusted = _adjust_p_values(correction_input)
     estimates: list[CorrelationEstimate] = []
-    for predictor, p_value, adjusted_p in zip(
-        request.predictors, raw_p, adjusted, strict=True
+    for predictor, p_value, adjusted_p, count in zip(
+        request.predictors, raw_p, adjusted, counts, strict=True
     ):
         coefficient = float(result.coefficients.loc[request.outcome, predictor])
-        count = int(result.pair_counts.loc[request.outcome, predictor])
         if count < request.min_samples:
             coefficient = p_value = adjusted_p = float("nan")
         if request.correlation_method == "pearson":
@@ -326,6 +367,7 @@ def _correlations(
                 upper,
                 count,
                 request.correlation_method,
+                boolean_projected[predictor],
             )
         )
     return tuple(estimates)

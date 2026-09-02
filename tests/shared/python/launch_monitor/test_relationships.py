@@ -3,15 +3,17 @@
 The first case is UpstreamDrift's
 ``tests/unit/launch_monitor/test_analysis.py::test_correlations_include_counts_significance_and_derived_warning``,
 travelling verbatim with the module it exercises. The remaining cases pin the
-module's refusals and — deliberately — the one behaviour that owner ruling
-**D15** will still change in a follow-up PR (the FDR multiplicity
-denominator; see ``test_undersampled_pair_yields_nan_and_leaves_the_fdr_denominator``
-below, which is unaffected by this change and must keep asserting today's
-under-sampling behaviour). Owner ruling **D17** — booleans analysed as 0/1
-with the projection explicitly labelled — is applied by this PR (UpstreamDrift
-PR #9392, ``docs/adr/0048-launch-monitor-port-plan.md`` "Owner Rulings
-(2026-09-02)"); ``test_boolean_column_projection_is_labelled_and_math_is_unchanged``
-below asserts the "after" contract in place of the old silent-projection pin.
+module's refusals. Owner ruling **D17** — booleans analysed as 0/1 with the
+projection explicitly labelled — is applied (UpstreamDrift PR #9392,
+``docs/adr/0048-launch-monitor-port-plan.md`` "Owner Rulings (2026-09-02)");
+``test_boolean_column_projection_is_labelled_and_math_is_unchanged`` below
+asserts the "after" contract in place of the old silent-projection pin. Owner
+ruling **D15** (FDR excludes under-sampled predictors before correcting) does
+**not** reach this module —
+``test_undersampled_pair_yields_nan_and_leaves_the_fdr_denominator`` below is
+not a "before" pin; it asserts final, ruling-compliant behaviour that was
+already correct by construction (see the module docstring for why). D15's
+actual application is in :mod:`~shared.python.launch_monitor.flexible_analysis`.
 """
 
 from __future__ import annotations
@@ -133,15 +135,21 @@ def test_relationships_refuse_one_metric_absent_columns_and_unknown_methods(
 def test_undersampled_pair_yields_nan_and_leaves_the_fdr_denominator(
     shots: Callable[..., pd.DataFrame],
 ) -> None:
-    """Today's under-sampling rule, pinned ahead of ruling **D15**.
+    """This module's under-sampling rule already satisfies ruling **D15**.
 
     The only floor in this port is the hardcoded three complete pairs plus a
     two-distinct-value requirement per side. A pair below it returns ``nan``
     for coefficient and p-value, and because the Benjamini-Hochberg pass keeps
     only finite p-values, such a pair is already outside the correction's
     denominator. D15 (FDR excludes under-sampled predictors before correcting)
-    is accepted and lands in a follow-up PR against this module; this
-    assertion is the "before" side of that diff.
+    reads, on a first pass over ADR-0048, as though it reaches this module —
+    it does not: there is no separate, larger ``min_samples`` tier here for
+    the ruling's defect (a predictor that clears the floor, pollutes the
+    correction, and is only afterwards blanked) to exist in. This is
+    permanent, ruling-compliant behaviour, not a "before" pin; D15's actual
+    fix lands in
+    :mod:`~shared.python.launch_monitor.flexible_analysis`, which has exactly
+    that second, configurable tier.
     """
     frame = shots(20)
     frame["sparse"] = np.nan
