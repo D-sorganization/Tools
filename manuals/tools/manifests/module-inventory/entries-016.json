@@ -3,6 +3,550 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 9764,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "de876ad6d8775aecd0a503954383676acd00e8bd857ce171e983269af721240b",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-JSON-SCHEMA-PY-109459C415A0",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/json_schema.py",
+      "purpose": "Machine-readable JSON Schema documents for flight-to-ground v1.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://d-sorganization.github.io/schemas/{schema_id",
+          "https://json-schema.org/draft/2020-12/schema"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "JSON_SCHEMA_DIALECT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "request_json_schema",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "result_json_schema",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "schema_json",
+            "signature": "schema: dict[str, Any]"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 834,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "59bbe594f5dbeff85c41230329c00952d568037be0d4d204ce1c2571ea207e06",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-MIGRATION-PY-330C7157A0CD",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/migration.py",
+      "purpose": "Fail-closed canonical migration gateways for ground contract payloads.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "migrate_request_to_current",
+            "signature": "payload: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "migrate_result_to_current",
+            "signature": "payload: dict[str, Any]"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9519,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "007880601f8f9b429607697394fdfa2273e43727f024e40241f586eedec79452",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-PROFILE-BINDING-PY-1ED9EF64E6A3",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/profile_binding.py",
+      "purpose": "Bind versioned ground material profiles to explicit solver geometry.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "BoundGroundSurface",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ProfileOperatingCondition",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SurfacePlacement",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PROFILE_ILLUSTRATIVE_WARNING",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PROFILE_UNQUALIFIED_WARNING",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "bind_material_profile",
+            "signature": "profile: GroundMaterialProfile, placement: SurfacePlacement, operating_condition: ProfileOperatingCondition"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/ground/tests/test_profile_binding.py",
+          "src/shared/python/swing_sim/ground/tests/test_study_projection.py",
+          "src/shared/python/swing_sim/ground/tests/test_study_validation.py",
+          "tests/rate_of_closure/test_ground_study_scalar_adapter.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "src/shared/python/swing_sim/ground/tests/test_study_validation.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2458,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2cc50d68c6d84bb75eea0f23fa5b6c929db63c6c0086b981a8a2fa4d00d7aa23",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-PROFILE-ENUMS-PY-866A04BB3D1D",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/profile_enums.py",
+      "purpose": "Stable identifiers and schema versions for ground material profiles.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GroundEvidenceKind",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundModelUseStatus",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundParameterId",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundQualificationGateId",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundQualificationStatus",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CANONICAL_GROUND_PARAMETER_IDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GROUND_MATERIAL_PROFILE_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GROUND_PROFILE_LIBRARY_SCHEMA_VERSION",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 822,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "85619b7237bc6c51e803ebef093f219e055b79765b606d422b91c0c7016b4712",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-PROFILE-MIGRATION-PY-A603CF430B06",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/profile_migration.py",
+      "purpose": "Fail-closed v1-only migration gateways for ground profile documents.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "migrate_library_to_current",
+            "signature": "payload: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "migrate_profile_to_current",
+            "signature": "payload: dict[str, Any]"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/ground/tests/test_profile_schema.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9637,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9e46fd852f70b85863076cf5d8eadee7c33b58569117299d10118e973a86ebb2",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-PROFILE-SCHEMA-PY-69D907DF12C2",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/profile_schema.py",
+      "purpose": "Draft 2020-12 JSON Schemas for ground material profile v1 documents.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://d-sorganization.github.io/schemas/{schema_id",
+          "https://json-schema.org/draft/2020-12/schema"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "JSON_SCHEMA_DIALECT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "library_json_schema",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "profile_json_schema",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "schema_json",
+            "signature": "schema: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "validate_library_payload",
+            "signature": "payload: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "validate_profile_payload",
+            "signature": "payload: dict[str, Any]"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/ground/tests/test_profile_schema.py"
+        ],
+        "unit_mentions": [
+          "Pa",
+          "kg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 14905,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "09c4d66b16d5a11cb8d94e55e2f2cf12870a9d7fc0e39f8d28cd5d49825c9ea5",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-PROFILE-STORE-PY-20BE776D8DDD",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/profile_store.py",
+      "purpose": "Fail-closed cooperative persistence for strict ground profile libraries.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GroundProfileLibraryStore",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ProfileStoreConflictError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ProfileStoreCorruptionError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ProfileStoreError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ProfileStoreIndeterminateCommitError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ProfileStoreLockError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ProfileStorePathError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StoredGroundProfileLibrary",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_PROFILE_LIBRARY_FILENAME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_PROFILE_LIBRARY_MAX_BYTES",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/ground/tests/test_profile_store.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2984,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -16971,457 +17515,6 @@
         "unit_mentions": [
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6516,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6abc7c94af33a38770645df10e6cacbfa7f6cd8f0dd926e9324fe44e7d35e5cc",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-DATA-MOON-SYSTEMS-PY-4B09A73AEEA0",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/solar_system_model/solar_system/data/moon_systems.py",
-      "purpose": "Curated moon system data for gas giants and Earth.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "MoonDescriptor",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MOONS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "moons_by_parent",
-            "signature": ""
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 7731,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2c5acb99c448dea2aece9017bd6090226a015749ad899ce623b99f9aca3372a9",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-DATA-PLANET-INFO-PY-D5DC17DD650A",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/solar_system_model/solar_system/data/planet_info.py",
-      "purpose": "Educational Information about Planets",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "ORBITAL_MECHANICS_GLOSSARY",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PLANET_DESCRIPTIONS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "TRANSFER_INFO",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 23555,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "520e3c1395b5f73fcd1a91e97c360124f2a711189f17b5f8da4273267146ff49",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-DATA-SPACE-EVENTS-DATA-PY-930A0FABA21A",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/solar_system_model/solar_system/data/space_events_data.py",
-      "purpose": "Historical Space Events — Data Module",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "SPACE_EVENTS",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 7083,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f913813d1e101b8a5b1abb5c178ffbf759ee0f052b44cd464df98a02d613fe5d",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-DATA-STAR-CATALOG-PY-990B09AD3DA0",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/solar_system_model/solar_system/data/star_catalog.py",
-      "purpose": "Bright star catalog for accurate sky rendering.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "StarEntry",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "STAR_CATALOG",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "equatorial_to_cartesian",
-            "signature": "ra_hours: float, dec_degrees: float"
-          },
-          {
-            "kind": "function",
-            "name": "iter_catalog",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "star_count",
-            "signature": ""
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4164,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "260e3ccc353fd26985c5bde634c1a52297119e0ddf4466718deadd97d39c9bae",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-LAUNCHER-PY-306FEA008B01",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/solar_system_model/solar_system/launcher.py",
-      "purpose": "Quick-launch helpers for the Solar System Simulation.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "DependencyStatus",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_HEIGHT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_WIDTH",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_launch_command",
-            "signature": "*, width: int=DEFAULT_WIDTH, height: int=DEFAULT_HEIGHT, fullscreen: bool=False, start_date: str | None=None, enable_antialiasing: bool=True"
-          },
-          {
-            "kind": "function",
-            "name": "check_dependencies",
-            "signature": "spec_finder: Callable[[str], object]=find_spec"
-          },
-          {
-            "kind": "function",
-            "name": "launch_quickstart",
-            "signature": "*, width: int=DEFAULT_WIDTH, height: int=DEFAULT_HEIGHT, fullscreen: bool=False, start_date: str | None=None, enable_antialiasing: bool=True"
-          }
-        ],
-        "test_paths": [
-          "src/solar_system_model/solar_system/tests/test_launcher.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6695,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ab937a841cd7f97dbb64df718d3de26ec4d0eae856b6a0d7cad9bd65c1c0f492",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-MAIN-PY-FF6C152747F1",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/solar_system_model/solar_system/main.py",
-      "purpose": "Solar System Simulation",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "main",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "parse_arguments",
-            "signature": ""
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "N",
-          "W",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 269,
-      "classification": "calculation",
-      "classification_basis": "path-marker:physics",
-      "content_sha256_lf": "ba5f4dacc93f19d871a347b13395ac01bf8aa1120a691a44cdc43ea65f1cfdbc",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-PHYSICS-INIT-PY-C19D9D24DC1C",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/solar_system_model/solar_system/physics/__init__.py",
-      "purpose": "Physics module for orbital mechanics and trajectory calculations.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "OrbitalMechanics",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TrajectoryPlanner",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TransferType",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

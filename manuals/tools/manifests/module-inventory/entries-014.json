@@ -3,6 +3,590 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 25102,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "43c197064021d6a6e4439a9c93af5185f9ed04caa1132f440abcf38c0a041319",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-BUILDERS-URDF-WRITER-PY-A5EF7298E957",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/builders/urdf_writer.py",
+      "purpose": "URDF XML writer.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "URDFWriter",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/model_generation/tests/test_unified_loader.py",
+          "tests/test_review_fixes_2026_03_09.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 441,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4073b7b5bdb7703f3cdc84ab4255958a9f8dc97809dbe77ea32c4111fe80620d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-CLI-INIT-PY-8E8CD5148C85",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/cli/__init__.py",
+      "purpose": "Command-line interface for model_generation.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "create_parser",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "main",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 28491,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0983750974c04e84d9840bb99b75fb397ff0d8b0167a3ae6ef5e9f1f83301ce1",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-CLI-MAIN-PY-5220EF2A5398",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/cli/main.py",
+      "purpose": "Command-line interface for model_generation package.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://github.com/{repo"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "cmd_convert",
+            "signature": "args: argparse.Namespace"
+          },
+          {
+            "kind": "function",
+            "name": "cmd_diff",
+            "signature": "args: argparse.Namespace"
+          },
+          {
+            "kind": "function",
+            "name": "cmd_edit_compose",
+            "signature": "args: argparse.Namespace"
+          },
+          {
+            "kind": "function",
+            "name": "cmd_generate",
+            "signature": "args: argparse.Namespace"
+          },
+          {
+            "kind": "function",
+            "name": "cmd_inertia",
+            "signature": "args: argparse.Namespace"
+          },
+          {
+            "kind": "function",
+            "name": "cmd_info",
+            "signature": "args: argparse.Namespace"
+          },
+          {
+            "kind": "function",
+            "name": "cmd_library_add",
+            "signature": "args: argparse.Namespace"
+          },
+          {
+            "kind": "function",
+            "name": "cmd_library_download",
+            "signature": "args: argparse.Namespace"
+          },
+          {
+            "kind": "function",
+            "name": "cmd_library_import_github",
+            "signature": "args: argparse.Namespace"
+          },
+          {
+            "kind": "function",
+            "name": "cmd_library_list",
+            "signature": "args: argparse.Namespace"
+          },
+          {
+            "kind": "function",
+            "name": "cmd_validate",
+            "signature": "args: argparse.Namespace"
+          },
+          {
+            "kind": "function",
+            "name": "create_parser",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "setup_logging",
+            "signature": "verbose: bool=False, quiet: bool=False"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/model_generation/tests/test_cli.py",
+          "tests/shared/python/model_generation/test_cli_main.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "kg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 774,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ea3c7a419a7547526c6c90c18836128861989aaaf4d4a764a3bedd10e045c61f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-CONVERTERS-INIT-PY-F1F7F181B91A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/converters/__init__.py",
+      "purpose": "Format converters for model generation.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "MJCFConverter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ModelFormat",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ParsedModel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "URDFParser",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "convert_mjcf_to_urdf",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "convert_urdf_to_mjcf",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "detect_format",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8078,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6d2a8dfc4577ea631a30a2b7df038fca0688124f2d026f8c47baf6ea48e7fbf5",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-CONVERTERS-FORMAT-UTILS-PY-716F7AC474CD",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/converters/format_utils.py",
+      "purpose": "Format detection and conversion utilities.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "mapped",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [
+          "robot.urdf",
+          "robot.xml"
+        ],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ModelFormat",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "convert",
+            "signature": "source: str | Path, target_format: ModelFormat | str, output_path: Path | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "convert_mjcf_to_urdf",
+            "signature": "source: str | Path, output_path: Path | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "convert_urdf_to_mjcf",
+            "signature": "source: str | Path, output_path: Path | None=None, **config_options: Any"
+          },
+          {
+            "kind": "function",
+            "name": "detect_format",
+            "signature": "source: str | Path"
+          },
+          {
+            "kind": "function",
+            "name": "validate_mjcf",
+            "signature": "source: str | Path"
+          },
+          {
+            "kind": "function",
+            "name": "validate_urdf",
+            "signature": "source: str | Path"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/model_generation/test_format_utils.py",
+          "tests/shared/python/model_generation/test_gh1694_xml_security.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 21758,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "60d3a1e84d2b4aae4eddd0eb6386cbbfb9dcb2e2c0c4ccdd41a790aa0ca86a99",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-CONVERTERS-MJCF-CONVERTER-PY-2F79FEE07FBF",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/converters/mjcf_converter.py",
+      "purpose": "MJCF (MuJoCo) format converter.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MJCFConfig",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MJCFConverter",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MJCF_TO_URDF_JOINT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "URDF_TO_MJCF_JOINT",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/model_generation/tests/test_unified_loader.py",
+          "src/shared/python/model_generation/tests/test_urdf_roundtrip.py",
+          "tests/shared/python/model_generation/test_gh1694_xml_security.py",
+          "tests/test_review_fixes_2026_03_09.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 817,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "fddf90ef4b4caa5accef6d246d05d4edd02220acc22b02f77b41ee0ee7ddd261",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-CONVERTERS-SIMSCAPE-INIT-PY-4BAE3E10710C",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/converters/simscape/__init__.py",
+      "purpose": "SimScape Multibody conversion tools.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "ConversionConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ConversionResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MDLParser",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SimscapeBlock",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SimscapeBlockType",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SimscapeConnection",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SimscapeModel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SimscapeParameter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SimscapeToURDFConverter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "convert_simscape_to_urdf",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 21112,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17078,674 +17662,6 @@
         ],
         "test_paths": [],
         "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 237,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "080fa6cf8eb1d49e65257866802278b123e8c7e443174ad14440809ce8b51e0e",
-      "family": "process-calculators-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-SCRUBBER-INIT-PY-7B4D6655AE66",
-      "language": "python",
-      "maintainer": "Process calculator maintainers",
-      "path": "src/shared/python/sidekick/process_calculators/scrubber/__init__.py",
-      "purpose": "Scrubber Calculator Package.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "ScrubberEngine",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ScrubberInputs",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ScrubberResults",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 48,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "e44ba1375b0b633c9b5841279e1679513425ea0b135eb16bc2bb4b20a98517ec",
-      "family": "process-calculators-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-SCRUBBER-ENGINE-INIT-PY-D61D23AE1CC4",
-      "language": "python",
-      "maintainer": "Process calculator maintainers",
-      "path": "src/shared/python/sidekick/process_calculators/scrubber/engine/__init__.py",
-      "purpose": "Package: engine.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 10352,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "2c1f1871ad98aa4b6a05f2829a5bf8293049d94a77008610e89be22472a08083",
-      "family": "process-calculators-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-SCRUBBER-ENGINE-SCRUBBER-ENGINE-PY-B0E61E53CF0C",
-      "language": "python",
-      "maintainer": "Process calculator maintainers",
-      "path": "src/shared/python/sidekick/process_calculators/scrubber/engine/scrubber_engine.py",
-      "purpose": "Scrubber Calculation Engine.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ScrubberEngine",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/sidekick/tests/process_calculators/test_scrubber_engine.py",
-          "tests/shared/python/sidekick/process_calculators/scrubber/test_scrubber_engine.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 48,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "1e5a0a1cc1ff6ca43f9de69938f0d8a27d167205f030000f2325b054e7e1c4b4",
-      "family": "process-calculators-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-SCRUBBER-MODELS-INIT-PY-6A30B26227F8",
-      "language": "python",
-      "maintainer": "Process calculator maintainers",
-      "path": "src/shared/python/sidekick/process_calculators/scrubber/models/__init__.py",
-      "purpose": "Package: models.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 1277,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "fc451498653c265894ed389a98214a0654b1702ed012a386d60290663e1a9a8f",
-      "family": "process-calculators-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-SCRUBBER-MODELS-SCRUBBER-MODELS-PY-8E34D7BA7D87",
-      "language": "python",
-      "maintainer": "Process calculator maintainers",
-      "path": "src/shared/python/sidekick/process_calculators/scrubber/models/scrubber_models.py",
-      "purpose": "Data models for Scrubber Calculator.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ScrubberInputs",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ScrubberResults",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/sidekick/tests/process_calculators/test_scrubber_engine.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 30142,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "c06c980185785c76e9e5592ed038d04c4102fd72ed01bc04537f19d31b996e45",
-      "family": "process-calculators-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-SCRUBBER-CALCULATOR-PY-70A6AB502C83",
-      "language": "python",
-      "maintainer": "Process calculator maintainers",
-      "path": "src/shared/python/sidekick/process_calculators/scrubber_calculator.py",
-      "purpose": "Packed Bed Scrubber Calculator Module",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "https://webbook.nist.gov"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "HenryConstant",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PackingProperties",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CAUSTIC_EXCESS_FACTOR",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CHLORIDE_CONVERSION",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GRAVITY",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "HENRY_CONSTANTS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KG_TO_MG",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KG_TO_MG_PER_L",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "LATENT_HEAT_WATER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "LB_PER_KG",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MINUTES_TO_HOURS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_CARBONATE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_CHLORIDE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_CO2",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_FLUORIDE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_H2O",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_H2S",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_HCL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_HF",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_NA2CO3",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_NA2S",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_NA2SO4",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_NACL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_NAF",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_NAOH",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_SO2",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_SULFATE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_SULFIDE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "NAOH_STOICH_CO2",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "NAOH_STOICH_H2S",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "NAOH_STOICH_HCL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "NAOH_STOICH_HF",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "NAOH_STOICH_SO2",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PACKING_DATABASE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "R_GAS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SULFATE_CONVERSION",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "WATER_CP",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "WATER_DENSITY",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "WATER_VISCOSITY",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "calculate_caustic_requirement",
-            "signature": "acid_gas_removed: dict[str, float], caustic_concentration: float, excess_factor: float=CAUSTIC_EXCESS_FACTOR"
-          },
-          {
-            "kind": "function",
-            "name": "calculate_column_diameter",
-            "signature": "gas_flow_kg_hr: float, gas_density: float, flooding_velocity: float, percent_of_flood: float=70.0"
-          },
-          {
-            "kind": "function",
-            "name": "calculate_cooling_water_requirement",
-            "signature": "heat_duty_kw: float, water_inlet_temp_c: float, approach_temp_c: float=COOLING_WATER_APPROACH_TEMP, outlet_gas_temp_c: float=SCRUBBER_OUTLET_GAS_TEMP"
-          },
-          {
-            "kind": "function",
-            "name": "calculate_flooding_velocity",
-            "signature": "liquid_mass_flux: float, gas_density: float, liquid_density: float, packing: PackingProperties, liquid_viscosity: float=WATER_VISCOSITY"
-          },
-          {
-            "kind": "function",
-            "name": "calculate_gas_density",
-            "signature": "temperature_k: float, pressure_pa: float, molecular_weight: float"
-          },
-          {
-            "kind": "function",
-            "name": "calculate_gas_viscosity",
-            "signature": "temperature_k: float, molecular_weight: float"
-          },
-          {
-            "kind": "function",
-            "name": "calculate_heat_transfer_duty",
-            "signature": "gas_flow_kg_hr: float, inlet_temp_c: float, outlet_temp_c: float, water_condensed_kg_hr: float, gas_cp: float=SYNGAS_CP_DEFAULT"
-          },
-          {
-            "kind": "function",
-            "name": "calculate_htu",
-            "signature": "gas_mass_flux: float, liquid_mass_flux: float, gas_density: float, packing: PackingProperties, kla: float"
-          },
-          {
-            "kind": "function",
-            "name": "calculate_ntu_removal",
-            "signature": "inlet_conc: float, outlet_conc: float"
-          },
-          {
-            "kind": "function",
-            "name": "calculate_pressure_drop",
-            "signature": "gas_velocity: float, gas_density: float, liquid_mass_flux: float, liquid_density: float, packing: PackingProperties, packed_height: float, liquid_viscosity: float=WATER_VISCOSITY"
-          },
-          {
-            "kind": "function",
-            "name": "calculate_required_packed_height",
-            "signature": "ntu: float, htu: float, safety_factor: float=1.2"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/calc_backend/tests/test_scrubber_convergence_3181.py",
-          "src/shared/python/sidekick/tests/process_calculators/test_scrubber_calculator.py",
-          "tests/shared/python/process_calculators/test_scrubber_calculator.py"
-        ],
-        "unit_mentions": [
-          "J",
-          "Pa",
-          "W",
-          "g",
-          "kPa",
-          "kg",
-          "m/s",
-          "mm",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 33404,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "103f1b18bdff4902244ad716e24908739bc55c86a207f54f9eaac8084d4ee5a3",
-      "family": "process-calculators-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-SYNGAS-COMPRESSION-CALCULATOR-PY-9F725CAED96C",
-      "language": "python",
-      "maintainer": "Process calculator maintainers",
-      "path": "src/shared/python/sidekick/process_calculators/syngas_compression_calculator.py",
-      "purpose": "Advanced Syngas Compression Calculator — GUI widget and worker thread.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CompressionCalculationWorker",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "create_syngas_compression_calculator",
-            "signature": "parent: Any=None"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/sidekick/tests/process_calculators/test_syngas_compression_dedup.py",
-          "src/shared/python/sidekick/tests/process_calculators/test_syngas_compression_engine.py",
-          "tests/shared/python/sidekick/process_calculators/test_syngas_compression_calculator.py"
-        ],
-        "unit_mentions": [
-          "Pa",
-          "bar",
-          "deg",
-          "g",
-          "kg",
           "s"
         ],
         "validation_paths": []
