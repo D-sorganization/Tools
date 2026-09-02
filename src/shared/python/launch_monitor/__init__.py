@@ -31,6 +31,9 @@ P2    :mod:`.multivariate`  PCA and variance-inflation diagnostics. No
 P3    :mod:`.trends`        Per-calendar-day robust trend, EWMA, and ranked
                             change candidates. ``TrendResult`` is renamed
                             ``TemporalTrendResult`` here — see that module.
+P4    :mod:`.comparison`    Matched (Bland-Altman) and descriptive
+                            cross-monitor comparison. Confirmed
+                            UpstreamDrift-only by the port plan.
 ====  ====================  ==================================================
 
 **Name-collision containment.** Symbols in this package collide by name with
@@ -41,6 +44,12 @@ containment lasts exactly as long as nobody adds a convenience re-export
 between the two packages. Do not add one.
 """
 
+from .comparison import (
+    MonitorComparisonResult,
+    MonitorSummary,
+    PairwiseMonitorComparison,
+    compare_monitors,
+)
 from .dispersion import DispersionResult, analyze_dispersion
 from .multivariate import PCAResult, VIFResult, compute_pca, compute_vif
 from .trends import ChangeCandidate, TemporalTrendResult, analyze_trend
@@ -48,11 +57,15 @@ from .trends import ChangeCandidate, TemporalTrendResult, analyze_trend
 __all__ = [
     "ChangeCandidate",
     "DispersionResult",
+    "MonitorComparisonResult",
+    "MonitorSummary",
     "PCAResult",
+    "PairwiseMonitorComparison",
     "TemporalTrendResult",
     "VIFResult",
     "analyze_dispersion",
     "analyze_trend",
+    "compare_monitors",
     "compute_pca",
     "compute_vif",
 ]
