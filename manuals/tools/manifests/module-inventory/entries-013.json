@@ -13089,10 +13089,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13741,
+      "bytes_lf": 16451,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "39c0b31cac2be92935afff38df6d20120c5a9d65adefe108c26c177069610b35",
+      "content_sha256_lf": "d50aeafd88508073a07e907b2f9354c1290ba95de382734292085887ef600e9c",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-INIT-PY-662C22BCE5D1",
       "language": "python",
@@ -13146,6 +13146,11 @@
           },
           {
             "kind": "re-export",
+            "name": "AssociationEstimateV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "AvailabilityV1",
             "signature": null
           },
@@ -13157,6 +13162,11 @@
           {
             "kind": "re-export",
             "name": "BASELINE_CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BETWEEN_PLAYER_INTERVAL_MIN_GROUPS",
             "signature": null
           },
           {
@@ -13232,6 +13242,21 @@
           {
             "kind": "re-export",
             "name": "CourseStateValueV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CovariationMissingnessV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CovariationPairRankV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CovariationUncertaintyV1",
             "signature": null
           },
           {
@@ -13401,6 +13426,16 @@
           },
           {
             "kind": "re-export",
+            "name": "MIN_FISHER_SAMPLES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MetaAnalysisSummaryV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "MetricDefinition",
             "signature": null
           },
@@ -13466,6 +13501,11 @@
           },
           {
             "kind": "re-export",
+            "name": "PLAYER_COVARIATION_CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "POOLED_METHOD_DESCRIPTIONS",
             "signature": null
           },
@@ -13477,6 +13517,36 @@
           {
             "kind": "re-export",
             "name": "PairwiseMonitorComparison",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlayerAssociationV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlayerCovariationContractV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlayerCovariationRequestV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlayerCovariationResultV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlayerCovariationScanRequestV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlayerCovariationScanResultV1",
             "signature": null
           },
           {
@@ -13512,6 +13582,11 @@
           {
             "kind": "re-export",
             "name": "ResidualDiagnostics",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SELECTED_PAIR_METHOD_DESCRIPTION",
             "signature": null
           },
           {
@@ -13616,6 +13691,11 @@
           },
           {
             "kind": "re-export",
+            "name": "analyze_player_covariation_v1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "analyze_source_backed_strokes_gained",
             "signature": null
           },
@@ -13676,6 +13756,11 @@
           },
           {
             "kind": "re-export",
+            "name": "covariation_backing_frame",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "dersimonian_laird_pooled_association",
             "signature": null
           },
@@ -13716,7 +13801,22 @@
           },
           {
             "kind": "re-export",
+            "name": "player_association_frame",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "player_associations",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "player_covariation_contract_json_schema",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "scan_player_covariation_v1",
             "signature": null
           },
           {
@@ -14709,6 +14809,293 @@
           "s"
         ],
         "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 16947,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cc4533d7076e434b1964196d3f54737d8982ea107d94b03aa5836cb622e92102",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-PLAYER-COVARIATION-PY-32B3F73C69B6",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/player_covariation.py",
+      "purpose": "Canonical evidence-bearing player covariation and population analysis.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "SELECTED_PAIR_METHOD_DESCRIPTION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "analyze_player_covariation_v1",
+            "signature": "frame: pd.DataFrame, request: PlayerCovariationRequestV1, *, context: AnalysisContextV2 | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "player_covariation_contract_json_schema",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "scan_player_covariation_v1",
+            "signature": "frame: pd.DataFrame, request: PlayerCovariationScanRequestV1, *, context: AnalysisContextV2 | None=None"
+          },
+          {
+            "kind": "re-export",
+            "name": "covariation_backing_frame",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "player_association_frame",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_player_covariation.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 22026,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "14126920042837530dbd7c312b7c2c80de3bc97a4b581ae4b8792628d18a9509",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-PLAYER-COVARIATION-CORE-PY-DEC3483735FA",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/player_covariation_core.py",
+      "purpose": "Pure numerical core for identity-safe player covariation analysis.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PairStatistics",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BACKING_FRAME_COLUMNS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PLAYER_ASSOCIATION_FRAME_COLUMNS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "compute_pair_statistics",
+            "signature": "frame: pd.DataFrame, request: PlayerCovariationRequestV1"
+          },
+          {
+            "kind": "function",
+            "name": "covariation_backing_frame",
+            "signature": "frame: pd.DataFrame, request: PlayerCovariationRequestV1"
+          },
+          {
+            "kind": "function",
+            "name": "player_association_frame",
+            "signature": "per_player: tuple[PlayerAssociationV1, ...]"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "deg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 19772,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4dbb54b58c6a5fa21a5f9225fad77a24b6f79390649e8b031e5ad15bf0a61e8d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-PLAYER-COVARIATION-TYPES-PY-75949B6CCAF7",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/player_covariation_types.py",
+      "purpose": "Versioned wire models for player covariation and population synthesis.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AssociationEstimateV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CovariationMissingnessV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CovariationPairRankV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CovariationUncertaintyV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MetaAnalysisSummaryV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlayerAssociationV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlayerCovariationContractV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlayerCovariationRequestV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlayerCovariationResultV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlayerCovariationScanRequestV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlayerCovariationScanResultV1",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BETWEEN_PLAYER_INTERVAL_MIN_GROUPS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MIN_FISHER_SAMPLES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PLAYER_COVARIATION_CONTRACT_VERSION",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/launch_monitor/test_player_covariation_contract.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "tests/shared/python/launch_monitor/test_player_covariation_contract.py"
+        ]
       }
     },
     {
@@ -16700,183 +17087,6 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 7312,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7335989f017a3c1648f7ead560939c2c2a71d38d08c705e1262db101949da734",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-BUILDERS-BASE-BUILDER-PY-9658C7EF3CD9",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/builders/base_builder.py",
-      "purpose": "Base builder interface for URDF generation.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "BaseURDFBuilder",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "BuildResult",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 18450,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ec86608d9fa6e55e11eea0f3fc86ff862bdbe540cce9fbbd7fa1155fd37d8d3e",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-BUILDERS-MANUAL-BUILDER-PY-043D927B6F1D",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/builders/manual_builder.py",
-      "purpose": "Manual URDF builder for segment-by-segment construction.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "Handedness",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ManualBuilder",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "g"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 21887,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a9b38814d1c51381fde997acbd857f3f09044daf4517a436313729fe2bb84c19",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-BUILDERS-PARAMETRIC-BUILDER-PY-FF5F5B854B29",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/builders/parametric_builder.py",
-      "purpose": "Parametric URDF builder for parameter-driven model generation.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ParametricBuilder",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ParametricConfig",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "g",
-          "kg",
-          "s"
-        ],
         "validation_paths": []
       }
     }
