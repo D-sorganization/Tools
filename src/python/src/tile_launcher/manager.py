@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 from collections.abc import Iterable, Sequence
 from pathlib import Path
 
@@ -13,13 +14,41 @@ from . import DEFAULT_LAYOUT_PATH
 
 logger = logging.getLogger(__name__)
 
+#: Canonical launcher registry, shared with every other Tools entry point.
+#: This is the single source of truth for launchable apps -- do not
+#: reintroduce a hand-maintained duplicate (see #3982).
+TOOLS_REGISTRY_FILENAME = "tools.json"
+
+_SLUG_NON_ALNUM = re.compile(r"[^a-z0-9]+")
+
+
+def _slugify(name: str) -> str:
+    """Derive a stable, catalog-safe id from a human-readable app name."""
+
+    slug = _SLUG_NON_ALNUM.sub("_", name.strip().lower()).strip("_")
+    return slug or "app"
+
+
+def _finalize_catalog(entries: list[AppDefinition]) -> list[AppDefinition]:
+    """Validate a catalog's id uniqueness before handing it back."""
+
+    ids = [app.id for app in entries]
+    if len(set(ids)) != len(ids):
+        raise AppCatalogError("Catalog contains duplicate app ids")
+
+    return entries
+
 
 class AppCatalogError(Exception):
     """Raised when the catalog cannot be loaded correctly."""
 
 
 def load_catalog(catalog_path: Path) -> list[AppDefinition]:
-    """Load the application catalog from JSON."""
+    """Load the application catalog from a flat JSON list.
+
+    Each entry must provide ``id``, ``name``, ``relative_path`` and
+    ``launch_type``; ``logo`` and ``description`` are optional.
+    """
 
     if not catalog_path.exists():
         message = f"Catalog file not found: {catalog_path}"
@@ -39,11 +68,51 @@ def load_catalog(catalog_path: Path) -> list[AppDefinition]:
         )
         catalog.append(app)
 
-    ids = [app.id for app in catalog]
-    if len(set(ids)) != len(ids):
-        raise AppCatalogError("Catalog contains duplicate app ids")
+    return _finalize_catalog(catalog)
 
-    return catalog
+
+def load_tools_registry(registry_path: Path) -> list[AppDefinition]:
+    """Load the canonical launcher catalog from the root ``tools.json``.
+
+    ``tools.json`` groups apps by category::
+
+        {"Category": [{"name": ..., "path": ..., "type": ..., "desc": ...}]}
+
+    This is the single registry every launch surface in the repository
+    (the CLI, the unified launcher window, and this tile launcher) should
+    read from -- see #3982.
+    """
+
+    if not registry_path.exists():
+        message = f"Tools registry file not found: {registry_path}"
+        logger.error(message)
+        raise AppCatalogError(message)
+
+    registry_data = json.loads(registry_path.read_text(encoding="utf-8"))
+    catalog: list[AppDefinition] = []
+    seen_ids: set[str] = set()
+    for entries in registry_data.values():
+        for entry in entries:
+            app_id = _slugify(entry["name"])
+            suffix = 2
+            unique_id = app_id
+            while unique_id in seen_ids:
+                unique_id = f"{app_id}_{suffix}"
+                suffix += 1
+            seen_ids.add(unique_id)
+
+            catalog.append(
+                AppDefinition(
+                    id=unique_id,
+                    name=entry["name"],
+                    relative_path=entry["path"],
+                    launch_type=LaunchType(entry["type"]),
+                    logo=entry.get("logo"),
+                    description=entry.get("desc"),
+                )
+            )
+
+    return _finalize_catalog(catalog)
 
 
 class AppManager:
@@ -67,9 +136,10 @@ class AppManager:
     @classmethod
     def from_default_paths(cls) -> AppManager:
         """Create an AppManager using default paths for catalog and layout."""
-        base_path = Path(__file__).resolve().parents[3]
-        catalog_path = Path(__file__).resolve().parent / "app_catalog.json"
-        catalog = load_catalog(catalog_path)
+        # manager.py lives at <repo_root>/src/python/src/tile_launcher/manager.py
+        base_path = Path(__file__).resolve().parents[4]
+        registry_path = base_path / TOOLS_REGISTRY_FILENAME
+        catalog = load_tools_registry(registry_path)
         layout_store = cls._default_store()
         return cls(
             catalog=catalog, repository_root=base_path, layout_store=layout_store
