@@ -3,6 +3,166 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 21112,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "eadeecb6ccfb2dcfd4fccd042ec94a4f51fa9046de80176b47f9cb14e2418ea7",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-CONVERTERS-SIMSCAPE-MDL-PARSER-PY-327D98D630F2",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/converters/simscape/mdl_parser.py",
+      "purpose": "SimScape MDL/SLX file parser.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MDLParser",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SimscapeBlock",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SimscapeBlockType",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SimscapeConnection",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SimscapeModel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SimscapeParameter",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SimscapePort",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/model_generation/test_gh1694_xml_security.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 28842,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f329a12065f5c4f237ff45f15223dbe0e097155466607bcf4000382f4e9bc308",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-CONVERTERS-SIMSCAPE-SIMSCAPE-CONVERTER-PY-A84ED57BF0C8",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/converters/simscape/simscape_converter.py",
+      "purpose": "SimScape Multibody to URDF converter.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ConversionConfig",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ConversionResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SimscapeToURDFConverter",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "convert_simscape_to_urdf",
+            "signature": "source: str | Path, output_path: Path | None=None, robot_name: str | None=None, **config_kwargs: Any"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "cm",
+          "deg",
+          "g",
+          "kg",
+          "mm",
+          "rad"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 22419,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17586,166 +17746,6 @@
           "deg",
           "g",
           "kg",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 14889,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "15d3cadbc73f384c830406cc9f15f28951075e45931007b4388688c20cb38904",
-      "family": "process-calculators-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-SYNGAS-COMPRESSION-ENGINE-PY-C481B6083F52",
-      "language": "python",
-      "maintainer": "Process calculator maintainers",
-      "path": "src/shared/python/sidekick/process_calculators/syngas_compression_engine.py",
-      "purpose": "Syngas Compression Calculation Engine.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CompressionStage",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SyngasCompressionEngine",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/sidekick/tests/process_calculators/test_syngas_compression_engine.py",
-          "tests/shared/python/process_calculators/test_syngas_compression_engine.py"
-        ],
-        "unit_mentions": [
-          "Pa",
-          "bar",
-          "kg",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 23622,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "db8312634dfe429b4d1ab83268ff6f91a020c1e78a098178e807089e4c628508",
-      "family": "process-calculators-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-SYNGAS-WATER-CALCULATOR-PY-68CB6AC70ACE",
-      "language": "python",
-      "maintainer": "Process calculator maintainers",
-      "path": "src/shared/python/sidekick/process_calculators/syngas_water_calculator.py",
-      "purpose": "Syngas Water Calculator",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SyngasComposition",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SyngasWaterCalculator",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "WaterContentResult",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SYNGAS_PRESETS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "estimate_condensation_risk",
-            "signature": "temperature_c: float, pressure_bar: float, safety_margin_c: float=10.0"
-          },
-          {
-            "kind": "function",
-            "name": "quick_water_content",
-            "signature": "temperature_c: float, pressure_bar: float"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/sidekick/tests/process_calculators/test_syngas_water_calculator.py",
-          "src/shared/python/sidekick/tests/test_hypothesis_calculators.py",
-          "src/shared/python/sidekick/tests/test_syngas_water_calculator.py",
-          "tests/shared/python/process_calculators/test_water_vapor_pressure_shared.py"
-        ],
-        "unit_mentions": [
-          "MPa",
-          "Nm",
-          "Pa",
-          "bar",
-          "g",
           "s"
         ],
         "validation_paths": []

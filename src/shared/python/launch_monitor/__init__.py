@@ -52,6 +52,16 @@ P9    :mod:`.profiles`       Header-fingerprint vendor detection and the alias
 P9    :mod:`.importer`       CSV/TSV/XLSX/JSON session import into canonical
                              units, with a provenance manifest recording how
                              each unit was established.
+P10   :mod:`.flexible_analysis`
+                             Arbitrary outcome/predictor correlation + OLS with
+                             dataset lineage. Its ``rate_of_closure`` twin was
+                             measured by UpstreamDrift#9372 (G0.1) before this
+                             moved. D15 and D17 are still pending *here*: it
+                             drops the ``boolean_projected`` label P7 now
+                             reports. Both land in a follow-up.
+P11   :mod:`.contract_v2`    The v2 serialization boundary over P10: evidence,
+                             row-level lineage, availability, and the JSON
+                             Schema every static client is generated from.
 ====  =====================  =================================================
 
 **Name-collision containment.** Symbols in this package collide by name with
@@ -68,7 +78,49 @@ from .comparison import (
     PairwiseMonitorComparison,
     compare_monitors,
 )
+from .contract_v2 import (
+    CONTRACT_VERSION_V2,
+    AnalysisContextV2,
+    AnalysisLineageV2,
+    AvailabilityV2,
+    BackingRecordV2,
+    ClaimsV2,
+    DatasetAuthorityV2,
+    LaunchMonitorAnalysisResultV2,
+    MetricUnitsV2,
+    MissingnessV2,
+    ModelProvenanceV2,
+    OrderEvidenceV2,
+    PlayerIdentityV2,
+    SessionIdentityV2,
+    SourceFileReferenceV2,
+    TransformRecordV2,
+    UncertaintyV2,
+    VendorProvenanceV2,
+    adapt_v2_to_v1,
+    analysis_lineage_v2,
+    analyze_variables_v2,
+    build_analysis_lineage_v2,
+    contract_v2_json_schema,
+    metric_units_v2,
+    vendor_provenance_v2,
+)
 from .dispersion import DispersionResult, analyze_dispersion
+from .flexible_analysis import (
+    CONTRACT_VERSION,
+    AnalysisMode,
+    CoefficientEstimate,
+    CorrelationEstimate,
+    CorrelationMethod,
+    DatasetSummary,
+    FlexibleAnalysisRequest,
+    FlexibleAnalysisResult,
+    GroupAnalysis,
+    MissingPolicy,
+    RegressionEstimate,
+    ResidualDiagnostics,
+    analyze_variables,
+)
 from .importer import import_session
 from .modeling import PredictiveModelResult, fit_predictive_model
 from .multivariate import PCAResult, VIFResult, compute_pca, compute_vif
@@ -105,40 +157,78 @@ from .trends import ChangeCandidate, TemporalTrendResult, analyze_trend
 
 __all__ = [
     "COMMON_ALIASES",
+    "CONTRACT_VERSION",
+    "CONTRACT_VERSION_V2",
     "IDENTITY_COLUMNS",
     "METRICS",
     "PROFILES",
+    "AnalysisContextV2",
+    "AnalysisLineageV2",
+    "AnalysisMode",
+    "AvailabilityV2",
+    "BackingRecordV2",
     "ChangeCandidate",
+    "ClaimsV2",
+    "CoefficientEstimate",
     "ColumnMapping",
+    "CorrelationEstimate",
+    "CorrelationMethod",
     "CorrelationResult",
+    "DatasetAuthorityV2",
+    "DatasetSummary",
     "DependencyEdge",
     "DispersionResult",
     "FilterRule",
+    "FlexibleAnalysisRequest",
+    "FlexibleAnalysisResult",
+    "GroupAnalysis",
     "ImportManifest",
     "ImportOptions",
     "ImportProfile",
     "ImportedSession",
+    "LaunchMonitorAnalysisResultV2",
     "MetricDefinition",
+    "MetricUnitsV2",
+    "MissingnessV2",
+    "MissingPolicy",
     "MonitorComparisonResult",
     "MonitorSummary",
+    "ModelProvenanceV2",
+    "OrderEvidenceV2",
     "PCAResult",
     "PairwiseMonitorComparison",
+    "PlayerIdentityV2",
     "PredictiveModelResult",
     "ProfileDetection",
+    "RegressionEstimate",
+    "ResidualDiagnostics",
+    "SessionIdentityV2",
+    "SourceFileReferenceV2",
     "TemporalTrendResult",
+    "TransformRecordV2",
     "TreatmentConfig",
     "TreatmentResult",
+    "UncertaintyV2",
     "VIFResult",
+    "VendorProvenanceV2",
+    "adapt_v2_to_v1",
+    "analysis_lineage_v2",
     "analyze_dispersion",
     "analyze_trend",
+    "analyze_variables",
+    "analyze_variables_v2",
+    "build_analysis_lineage_v2",
     "apply_treatment",
     "compare_monitors",
     "compute_correlations",
     "compute_pca",
     "compute_vif",
+    "contract_v2_json_schema",
     "detect_profile",
     "fit_predictive_model",
     "import_session",
+    "metric_units_v2",
     "normalize_header",
     "numeric_metric_columns",
+    "vendor_provenance_v2",
 ]
