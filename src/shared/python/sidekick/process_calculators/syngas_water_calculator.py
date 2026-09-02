@@ -412,7 +412,8 @@ class SyngasWaterCalculator:
         require_positive(total_pressure_pa, "total_pressure_pa")
         p_kpa = partial_pressure_pa / 1000
 
-        # Use Magnus equation inverse for accurate initial guess across all temperature regimes
+        # Use Magnus equation inverse for accurate initial guess across all
+        # temperature regimes.
         gamma = math.log(max(1e-12, partial_pressure_pa) / 610.94)
         denom = 17.625 - gamma
         T_guess = (243.04 * gamma / denom) if abs(denom) > 1e-6 else 100.0

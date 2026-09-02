@@ -18,7 +18,7 @@ try:
 except ImportError:
     # Not importable in a bare/standalone environment (e.g. a wheel install
     # without the monorepo's shared.python on the path) -- same value.
-    GRAVITY_M_S2: Final[float] = 9.80665  # type: ignore[no-redef]
+    GRAVITY_M_S2: float = 9.80665  # type: ignore[no-redef]
 
 DEFAULT_SEGMENT_COUNT: Final[int] = 12
 DEFAULT_SEGMENT_LENGTH_M: Final[float] = 0.18
@@ -205,9 +205,7 @@ def initial_catenary_angles(segment_count: int, sag_rad: float) -> FloatArray:
     return np.linspace(-sag_rad, sag_rad, segment_count, dtype=np.float64)
 
 
-def initial_tip_kick_velocities(
-    segment_count: int, amplitude_rad_s: float
-) -> FloatArray:
+def initial_tip_kick_velocities(segment_count: int, amplitude_rad_s: float) -> FloatArray:
     """Return a smooth initial angular-velocity profile concentrated at the tip.
 
     Preconditions:
@@ -243,12 +241,8 @@ def random_wadded_chain_state(
         raise ValueError("velocity_span_rad_s must be non-negative")
     rng = np.random.default_rng(seed)
     angles = rng.uniform(-angle_span_rad, angle_span_rad, config.segment_count)
-    velocities = rng.uniform(
-        -velocity_span_rad_s, velocity_span_rad_s, config.segment_count
-    )
-    return ChainState(
-        angles.astype(np.float64), velocities.astype(np.float64)
-    ).validated(config)
+    velocities = rng.uniform(-velocity_span_rad_s, velocity_span_rad_s, config.segment_count)
+    return ChainState(angles.astype(np.float64), velocities.astype(np.float64)).validated(config)
 
 
 def _angular_acceleration(
@@ -282,11 +276,7 @@ def _angular_acceleration(
     )
     bend_damping_torque = config.bend_damping * neighbor_velocity_sum
     return (
-        gravity_torque
-        + damping_torque
-        + coupling_torque
-        + bend_damping_torque
-        + torques
+        gravity_torque + damping_torque + coupling_torque + bend_damping_torque + torques
     ) / inertia
 
 
