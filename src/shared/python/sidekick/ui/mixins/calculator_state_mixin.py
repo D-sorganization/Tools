@@ -530,7 +530,7 @@ class CalculatorStateMixin:
                 self.set_calculator_state(state_data)
                 _logger.info("✓ Calculator state loaded: %s", state_name)
 
-            return cast(dict[str, Any] | None, state_data)
+            return state_data
 
         except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             return None

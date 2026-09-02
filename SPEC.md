@@ -7121,4 +7121,4 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 
 ## 2026-09-02: State/UI/Import Hygiene Fixes (#4893)
 
-- **2026-09-02**: fix(sidekick, #4893) — Migrate `CalculatorStateMixin` to `get_state_manager()` (#3950), clarify thermocouple filter docstrings (#3977), validate X-range parsing in trendlines (#3979), and expose public `connect_once`/`poll_once` (#3990).
+- **2026-09-02**: fix(sidekick, #4893) — Migrate `CalculatorStateMixin` to `get_state_manager()` (#3950), clarify thermocouple filter docstrings (#3977), validate X-range parsing in trendlines (#3979), expose public `connect_once`/`poll_once` (#3990), and fix typing on mixins.
