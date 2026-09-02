@@ -89,9 +89,9 @@
         "frame": "Dataset-declared launch and target frame.",
         "units": "Column-declared launch-monitor units.",
         "provenance": "Governed table identity or explicit demonstration-data label.",
-        "limitations": "Statistical diagnostics do not establish vendor equivalence or causal technique.",
+        "limitations": "Statistical diagnostics do not establish vendor equivalence or causal technique. Excluded rows are reported with a reason code and a result status, never dropped in silence.",
         "keyboard_path": "Tab navigation reaches data source, analysis contract, plot, and results.",
-        "nonvisual_alternative": "Observation counts, diagnostics, exclusions, and selected rows are tabular."
+        "nonvisual_alternative": "Observation counts, diagnostics, exclusion status and per-reason counts, and selected rows are tabular."
       }
     },
     {
@@ -209,9 +209,9 @@
         "frame": "Dataset-declared launch and target frame.",
         "units": "Column-declared launch-monitor units.",
         "provenance": "Governed table identity or explicit demonstration-data label.",
-        "limitations": "Statistical diagnostics do not establish vendor equivalence or causal technique.",
+        "limitations": "Statistical diagnostics do not establish vendor equivalence or causal technique. Excluded rows are reported with a reason code and a result status, never dropped in silence.",
         "keyboard_path": "Primary tabs and named controls reach source, contract, plot, and results.",
-        "nonvisual_alternative": "Observation counts, diagnostics, exclusions, and selected rows are tabular."
+        "nonvisual_alternative": "Observation counts, diagnostics, exclusion status and per-reason counts, and selected rows are tabular."
       }
     },
     {

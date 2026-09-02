@@ -221,7 +221,7 @@
       "requirement_id": "V3.3",
       "requirement": "Keep frame, units, counts, cohorts, provenance, and missing-data treatment beside visuals.",
       "status": "partial",
-      "rationale": "Individual scientific views expose these fields, and the PyQt Putting surface now names its putter-head provenance kind and green-surface origin in the displayed authority beside the visual (#4800 P6); no all-tab evidence authority verifies every applicable field and placement.",
+      "rationale": "Individual scientific views expose these fields; the PyQt Putting surface names its putter-head provenance kind and green-surface origin in the displayed authority beside the visual (#4800 P6), and both source-backed strokes-gained surfaces now state the result status and per-reason excluded-row counts beside the result (ADR-0048 G1-D3), so missing-data treatment is displayed rather than implied there; no all-tab evidence authority verifies every applicable field and placement.",
       "evidence_files": [
         "src/rate_of_closure/visualization_tabs.v1.json",
         "src/rate_of_closure/putting_result_contract.py",

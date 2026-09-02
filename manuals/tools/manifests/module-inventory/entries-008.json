@@ -9239,10 +9239,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11961,
+      "bytes_lf": 13149,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "eaa9d1437c587f0fe8fd7dd4c4ee5d49b2a4bfd852dad33af34ce58db7e0660a",
+      "content_sha256_lf": "8ffa1e78d62332a2cd3c153aff44f7e389efad3d131bc93af145c726682b136d",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-E2E-VISUALIZATION-TAB-VISIBILITY-SPEC-TS-9730C4E18FC5",
       "language": "typescript",
@@ -9266,7 +9266,8 @@
       },
       "traceability": {
         "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
