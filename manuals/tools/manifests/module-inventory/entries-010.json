@@ -6554,10 +6554,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5383,
+      "bytes_lf": 6238,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0748bc43ae94493330cb6a1b0abded3b30bf4c17c42bccc7e0fbf85d02a1d6cb",
+      "content_sha256_lf": "f219ab5d0e347832eb4940de57eb4761b6bf07886fff70ce3eeb3c2c5a11a96c",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-LAUNCHMONITORLINKEDSCATTER-TS-937B8CF6FA23",
       "language": "typescript",
