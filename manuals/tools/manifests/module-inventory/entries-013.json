@@ -13089,10 +13089,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5794,
+      "bytes_lf": 8414,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "42a56848b65cfe9c9dbfbe017d2f779ee13acc265c77b6a19663bca7df2895d7",
+      "content_sha256_lf": "cf9f7f70a9fe6c29d0b38760e6d40bfb6f5afc5b727429d2c834c0dd556d8ef9",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-INIT-PY-662C22BCE5D1",
       "language": "python",
@@ -13131,7 +13131,42 @@
         "public_surfaces": [
           {
             "kind": "re-export",
+            "name": "AnalysisContextV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AnalysisLineageV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AnalysisMode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AvailabilityV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BackingRecordV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "COMMON_ALIASES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CONTRACT_VERSION_V2",
             "signature": null
           },
           {
@@ -13141,12 +13176,42 @@
           },
           {
             "kind": "re-export",
+            "name": "ClaimsV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CoefficientEstimate",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "ColumnMapping",
             "signature": null
           },
           {
             "kind": "re-export",
+            "name": "CorrelationEstimate",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CorrelationMethod",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "CorrelationResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DatasetAuthorityV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DatasetSummary",
             "signature": null
           },
           {
@@ -13162,6 +13227,21 @@
           {
             "kind": "re-export",
             "name": "FilterRule",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FlexibleAnalysisRequest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FlexibleAnalysisResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroupAnalysis",
             "signature": null
           },
           {
@@ -13191,6 +13271,11 @@
           },
           {
             "kind": "re-export",
+            "name": "LaunchMonitorAnalysisResultV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "METRICS",
             "signature": null
           },
@@ -13201,12 +13286,37 @@
           },
           {
             "kind": "re-export",
+            "name": "MetricUnitsV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MissingPolicy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MissingnessV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ModelProvenanceV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "MonitorComparisonResult",
             "signature": null
           },
           {
             "kind": "re-export",
             "name": "MonitorSummary",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "OrderEvidenceV2",
             "signature": null
           },
           {
@@ -13226,6 +13336,11 @@
           },
           {
             "kind": "re-export",
+            "name": "PlayerIdentityV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "PredictiveModelResult",
             "signature": null
           },
@@ -13236,7 +13351,32 @@
           },
           {
             "kind": "re-export",
+            "name": "RegressionEstimate",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ResidualDiagnostics",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SessionIdentityV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SourceFileReferenceV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "TemporalTrendResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TransformRecordV2",
             "signature": null
           },
           {
@@ -13251,7 +13391,27 @@
           },
           {
             "kind": "re-export",
+            "name": "UncertaintyV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "VIFResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "VendorProvenanceV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "adapt_v2_to_v1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "analysis_lineage_v2",
             "signature": null
           },
           {
@@ -13266,7 +13426,22 @@
           },
           {
             "kind": "re-export",
+            "name": "analyze_variables",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "analyze_variables_v2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "apply_treatment",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_analysis_lineage_v2",
             "signature": null
           },
           {
@@ -13291,6 +13466,11 @@
           },
           {
             "kind": "re-export",
+            "name": "contract_v2_json_schema",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "detect_profile",
             "signature": null
           },
@@ -13306,12 +13486,22 @@
           },
           {
             "kind": "re-export",
+            "name": "metric_units_v2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "normalize_header",
             "signature": null
           },
           {
             "kind": "re-export",
             "name": "numeric_metric_columns",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "vendor_provenance_v2",
             "signature": null
           }
         ],
@@ -13397,6 +13587,182 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 30669,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8bfdc3112b384cbae747a0ad0d42b721d1571512ad5e9a014a3e9f8e49b08062",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-CONTRACT-V2-PY-4F36FB1EAE4C",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/contract_v2.py",
+      "purpose": "Version 2 wire contract for traceable launch-monitor analysis.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "mapped",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [
+          "regression"
+        ],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AnalysisContextV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "AnalysisLineageV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "AvailabilityV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "BackingRecordV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ClaimsV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DatasetAuthorityV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LaunchMonitorAnalysisResultV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MetricUnitsV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ModelProvenanceV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "OrderEvidenceV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlayerIdentityV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SessionIdentityV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SourceFileReferenceV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TransformRecordV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "UncertaintyV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "VendorProvenanceV2",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CONTRACT_VERSION_V2",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "adapt_v2_to_v1",
+            "signature": "result: LaunchMonitorAnalysisResultV2"
+          },
+          {
+            "kind": "function",
+            "name": "analysis_lineage_v2",
+            "signature": "frame: pd.DataFrame, context: AnalysisContextV2, selected_columns: tuple[str, ...]"
+          },
+          {
+            "kind": "function",
+            "name": "analyze_variables_v2",
+            "signature": "frame: pd.DataFrame, request: FlexibleAnalysisRequest, *, context: AnalysisContextV2 | None=None, model_provenance: tuple[ModelProvenanceV2, ...]=()"
+          },
+          {
+            "kind": "function",
+            "name": "build_analysis_lineage_v2",
+            "signature": "frame: pd.DataFrame, context: AnalysisContextV2, *, dataset_fingerprint_sha256: str | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "contract_v2_json_schema",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "metric_units_v2",
+            "signature": "metric: str, context: AnalysisContextV2"
+          },
+          {
+            "kind": "function",
+            "name": "vendor_provenance_v2",
+            "signature": "frame: pd.DataFrame, selected: tuple[str, ...]"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/launch_monitor/test_contract_v2.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "tests/shared/python/launch_monitor/test_contract_v2.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 4055,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -13456,6 +13822,111 @@
           "s"
         ],
         "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 19354,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ed488333ce6de00a43c08803f0133c25dc06c467007be528b262a9def7ef856d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-FLEXIBLE-ANALYSIS-PY-C490C412CE8B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/flexible_analysis.py",
+      "purpose": "Flexible, provenance-preserving correlation and OLS analysis.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CoefficientEstimate",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CorrelationEstimate",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DatasetSummary",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FlexibleAnalysisRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FlexibleAnalysisResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroupAnalysis",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RegressionEstimate",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ResidualDiagnostics",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "analyze_variables",
+            "signature": "frame: pd.DataFrame, request: FlexibleAnalysisRequest"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/launch_monitor/test_contract_v2.py",
+          "tests/shared/python/launch_monitor/test_flexible_analysis.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "tests/shared/python/launch_monitor/test_contract_v2.py"
+        ]
       }
     },
     {
@@ -13806,6 +14277,7 @@
           }
         ],
         "test_paths": [
+          "tests/shared/python/launch_monitor/test_flexible_analysis.py",
           "tests/shared/python/launch_monitor/test_relationships.py"
         ],
         "unit_mentions": [
@@ -16167,166 +16639,6 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 21112,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "eadeecb6ccfb2dcfd4fccd042ec94a4f51fa9046de80176b47f9cb14e2418ea7",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-CONVERTERS-SIMSCAPE-MDL-PARSER-PY-327D98D630F2",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/converters/simscape/mdl_parser.py",
-      "purpose": "SimScape MDL/SLX file parser.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "MDLParser",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SimscapeBlock",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SimscapeBlockType",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SimscapeConnection",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SimscapeModel",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SimscapeParameter",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SimscapePort",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/model_generation/test_gh1694_xml_security.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 28842,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f329a12065f5c4f237ff45f15223dbe0e097155466607bcf4000382f4e9bc308",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-CONVERTERS-SIMSCAPE-SIMSCAPE-CONVERTER-PY-A84ED57BF0C8",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/converters/simscape/simscape_converter.py",
-      "purpose": "SimScape Multibody to URDF converter.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ConversionConfig",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ConversionResult",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SimscapeToURDFConverter",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "convert_simscape_to_urdf",
-            "signature": "source: str | Path, output_path: Path | None=None, robot_name: str | None=None, **config_kwargs: Any"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "cm",
-          "deg",
-          "g",
-          "kg",
-          "mm",
-          "rad"
-        ],
         "validation_paths": []
       }
     }

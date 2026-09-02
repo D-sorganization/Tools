@@ -331,58 +331,58 @@
       "shard_index": 12
     },
     {
-      "content_sha256_lf": "3c72b3d53eded1cdbc6f36a00322576fa871a894fbb53c53a19518bae19a1422",
+      "content_sha256_lf": "d2a712cdcf03607957d882882ad18d0fc04a514fb1cd46928b305febf28fecc8",
       "entry_count": 200,
       "first_path": "src/shared/python/calc_backend/routers/scrubber.py",
-      "last_path": "src/shared/python/model_generation/converters/simscape/simscape_converter.py",
+      "last_path": "src/shared/python/model_generation/converters/simscape/__init__.py",
       "path": "manuals/tools/manifests/module-inventory/entries-013.json",
       "shard_index": 13
     },
     {
-      "content_sha256_lf": "3f7a10aad4aeadb1bfdc5cae7b0a94a0b6ec61a72c1060e2ef5a22411bfa6411",
+      "content_sha256_lf": "c2e7cbf224c9ac63d44bc26b37789e3107840559a1535d49d031c3dc5939608c",
       "entry_count": 200,
-      "first_path": "src/shared/python/model_generation/converters/urdf_parser.py",
-      "last_path": "src/shared/python/sidekick/process_calculators/syngas_water_calculator.py",
+      "first_path": "src/shared/python/model_generation/converters/simscape/mdl_parser.py",
+      "last_path": "src/shared/python/sidekick/process_calculators/syngas_compression_calculator.py",
       "path": "manuals/tools/manifests/module-inventory/entries-014.json",
       "shard_index": 14
     },
     {
-      "content_sha256_lf": "ee7da5c6a82050ca95313dc063a8ee474e5eb31053a17e32b49ca8e89e5c51ef",
+      "content_sha256_lf": "6913ba5cf36e0ff07dd2f6a1c74b890f392042cd1af586707076b2de6adaddb7",
       "entry_count": 200,
-      "first_path": "src/shared/python/sidekick/process_calculators/thermal_profile_predictor.py",
-      "last_path": "src/shared/python/swing_sim/ground/profile_types.py",
+      "first_path": "src/shared/python/sidekick/process_calculators/syngas_compression_engine.py",
+      "last_path": "src/shared/python/swing_sim/ground/profile_store.py",
       "path": "manuals/tools/manifests/module-inventory/entries-015.json",
       "shard_index": 15
     },
     {
-      "content_sha256_lf": "4bb2d6133bf72fb199d34ff42c8087b1dd893fef744d000b49381318a9a40897",
+      "content_sha256_lf": "40516bc1d43360107a9db03db1deaeb7f797457ce24319f918dea8210b0156cc",
       "entry_count": 200,
-      "first_path": "src/shared/python/swing_sim/ground/profile_validation.py",
-      "last_path": "src/solar_system_model/solar_system/physics/trajectory_planner.py",
+      "first_path": "src/shared/python/swing_sim/ground/profile_store_platform.py",
+      "last_path": "src/solar_system_model/solar_system/physics/__init__.py",
       "path": "manuals/tools/manifests/module-inventory/entries-016.json",
       "shard_index": 16
     },
     {
-      "content_sha256_lf": "60cf07fdcf924e7929f8d9f131230e7b7b2715ce328a7836823dea10d85ff3bb",
-      "entry_count": 166,
-      "first_path": "src/solar_system_model/solar_system/setup.py",
+      "content_sha256_lf": "1879bd940bf0e5247b488061fc0b167418952b973ea9bffaf174ca7b6f6118e1",
+      "entry_count": 168,
+      "first_path": "src/solar_system_model/solar_system/physics/orbital_mechanics.py",
       "last_path": "wave_solver.py",
       "path": "manuals/tools/manifests/module-inventory/entries-017.json",
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "d253592b6e45f8818fca3085bd8e129bb606ffde8bf883af9a9fbb4999c5498c",
+  "source_tree_sha256": "3137ad61c97deb0c99d3f94d86bee704a4155152484d68bfc27afe5385fe80bb",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
-      "not-applicable": 2720,
+      "not-applicable": 2722,
       "provisional": 845
     },
     "blocked_count": 1,
     "calculation_count": 845,
     "classification_counts": {
       "calculation": 845,
-      "non-calculation": 2721
+      "non-calculation": 2723
     },
     "family_counts": {
       "control-systems-calculation": 6,
@@ -405,17 +405,17 @@
       "shared-plotting-calculation": 1,
       "shared-plotting-non-calculation": 4,
       "shared-tools-calculation": 171,
-      "shared-tools-non-calculation": 1028,
+      "shared-tools-non-calculation": 1030,
       "signal-processing-calculation": 28,
       "swing-simulation-calculation": 63,
       "swing-simulation-non-calculation": 152
     },
-    "module_count": 3566,
-    "non_calculation_count": 2721,
+    "module_count": 3568,
+    "non_calculation_count": 2723,
     "provisional_count": 845,
     "review_status_counts": {
       "blocked": 1,
-      "inventory-baseline": 2720,
+      "inventory-baseline": 2722,
       "review-required": 845
     }
   }

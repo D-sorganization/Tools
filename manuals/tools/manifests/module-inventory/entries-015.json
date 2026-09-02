@@ -3,6 +3,166 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 14889,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "15d3cadbc73f384c830406cc9f15f28951075e45931007b4388688c20cb38904",
+      "family": "process-calculators-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-SYNGAS-COMPRESSION-ENGINE-PY-C481B6083F52",
+      "language": "python",
+      "maintainer": "Process calculator maintainers",
+      "path": "src/shared/python/sidekick/process_calculators/syngas_compression_engine.py",
+      "purpose": "Syngas Compression Calculation Engine.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CompressionStage",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SyngasCompressionEngine",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/process_calculators/test_syngas_compression_engine.py",
+          "tests/shared/python/process_calculators/test_syngas_compression_engine.py"
+        ],
+        "unit_mentions": [
+          "Pa",
+          "bar",
+          "kg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 23622,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "db8312634dfe429b4d1ab83268ff6f91a020c1e78a098178e807089e4c628508",
+      "family": "process-calculators-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-SYNGAS-WATER-CALCULATOR-PY-68CB6AC70ACE",
+      "language": "python",
+      "maintainer": "Process calculator maintainers",
+      "path": "src/shared/python/sidekick/process_calculators/syngas_water_calculator.py",
+      "purpose": "Syngas Water Calculator",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SyngasComposition",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SyngasWaterCalculator",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WaterContentResult",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SYNGAS_PRESETS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "estimate_condensation_risk",
+            "signature": "temperature_c: float, pressure_bar: float, safety_margin_c: float=10.0"
+          },
+          {
+            "kind": "function",
+            "name": "quick_water_content",
+            "signature": "temperature_c: float, pressure_bar: float"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/process_calculators/test_syngas_water_calculator.py",
+          "src/shared/python/sidekick/tests/test_hypothesis_calculators.py",
+          "src/shared/python/sidekick/tests/test_syngas_water_calculator.py",
+          "tests/shared/python/process_calculators/test_water_vapor_pressure_shared.py"
+        ],
+        "unit_mentions": [
+          "MPa",
+          "Nm",
+          "Pa",
+          "bar",
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 2529,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
@@ -17693,181 +17853,6 @@
         ],
         "unit_mentions": [],
         "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2984,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "11a2e0452e305eae608ba67abe7cea5a592148f9678e6f659a1b74b17a67738c",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-PROFILE-STORE-PLATFORM-PY-BA98942AFBCD",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/profile_store_platform.py",
-      "purpose": "Small platform primitives for the ground profile store.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "atomic_replace",
-            "signature": "source: Path, destination: Path"
-          },
-          {
-            "kind": "function",
-            "name": "is_link_like",
-            "signature": "path: Path"
-          },
-          {
-            "kind": "function",
-            "name": "validated_digest",
-            "signature": "value: str, name: str"
-          },
-          {
-            "kind": "function",
-            "name": "validated_filename",
-            "signature": "filename: str"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_profile_store.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 15172,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a254f6b7da2df084a6aa3974f16a4839fe3538b77f6ad93a3399fc5ddb877483",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-PROFILE-TYPES-PY-76209B401929",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/profile_types.py",
-      "purpose": "Immutable value contracts for qualified ground material profile libraries.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "GroundApplicability",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundCalibrationRecord",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundMaterialParameter",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundMaterialProfile",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundProfileEvidence",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundProfileLibrary",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundProfileProvenance",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundProfileQualification",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundProfileRights",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundQualificationGate",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_profile_binding.py",
-          "src/shared/python/swing_sim/ground/tests/test_profile_contract.py",
-          "src/shared/python/swing_sim/ground/tests/test_profile_store.py",
-          "src/shared/python/swing_sim/ground/tests/test_study_validation.py",
-          "tests/rate_of_closure/test_ground_study_scalar_adapter.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_profile_contract.py",
-          "src/shared/python/swing_sim/ground/tests/test_study_validation.py"
-        ]
       }
     }
   ],
