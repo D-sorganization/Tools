@@ -43,23 +43,22 @@ function axisCoordinate(value: number, logarithmic: boolean): number {
 function fittedRange(
   values: readonly number[], zoom: number, logarithmic: boolean,
 ): [number, number] {
-  const transformed = values
-    .filter((value) => Number.isFinite(value) && (!logarithmic || value > 0))
-    .map((value) => axisCoordinate(value, logarithmic));
-
-  if (transformed.length === 0) return [0, 1];
-
-  // ⚡ Bolt Optimization: Replace Math.min/max spread with single pass loop to avoid massive
-  // intermediate allocations on the call stack and "Maximum call stack size exceeded" errors
-  let min = transformed[0] as number;
-  let max = transformed[0] as number;
-  for (let i = 1; i < transformed.length; i++) {
-    const v = transformed[i] as number;
-    if (v < min) min = v;
-    if (v > max) max = v;
+  // ⚡ Bolt Optimization: Compute min/max in a single pass to eliminate intermediate
+  // array allocations and avoid call stack spread limits on large datasets.
+  let min = Infinity;
+  let max = -Infinity;
+  let found = false;
+  for (let i = 0; i < values.length; i++) {
+    const value = values[i];
+    if (Number.isFinite(value) && (!logarithmic || value > 0)) {
+      const transformed = axisCoordinate(value, logarithmic);
+      if (transformed < min) min = transformed;
+      if (transformed > max) max = transformed;
+      found = true;
+    }
   }
 
-  if (!Number.isFinite(min) || !Number.isFinite(max)) return [0, 1];
+  if (!found || !Number.isFinite(min) || !Number.isFinite(max)) return [0, 1];
   if (min === max) {
     min -= 0.5;
     max += 0.5;

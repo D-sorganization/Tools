@@ -2,7 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
-  LAST_UPDATED: 2026-06-01
+  LAST_UPDATED: 2026-09-02
 
   This is the canonical specification template for all repositories in the
   D-sorganization fleet. Every repo MUST have a SPEC.md at its root.
@@ -7114,3 +7114,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-01: Dynamic Scale Single-Pass Loop Optimization (#4876)
 
 - **2026-09-01**: perf(rate-of-closure, #4876) — Replaced `Math.max(...spread)` calls with single-pass loops for dynamically scaled charts in `PlotCanvasCard` and `WindStrategyScatter`, avoiding intermediate array allocation and the JS call-stack-size limit on large datasets.
+
+## 2026-09-02: Single-Pass Dynamic Scale and Visual Evidence (#4874)
+
+- **2026-09-02**: perf(rate-of-closure, #4874) — Replace `Math.min(...spread)` and `Math.max(...spread)` with single-pass loops in `PlotCanvasCard`, `KineticsSection`, and `impactSceneGeometry`, preventing call-stack limits and avoiding intermediate allocations.
