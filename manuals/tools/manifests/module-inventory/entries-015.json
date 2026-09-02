@@ -3,6 +3,156 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 2936,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "569fbb0a01cdeacc8489c36d63b0ae20d8aaedc97a7f3642a5c825beefbe9db8",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-THEME-INIT-PY-89662AC69551",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/theme/__init__.py",
+      "purpose": "Theme management system for the UpstreamDrift fleet.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 73,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c4f5aa6bba402f12836ac9f382f14fd02dd7ebedb063ed4766b6194d745b365e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-INIT-PY-155138CBEA52",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/__init__.py",
+      "purpose": "UI Components for Upstream Drift Tools.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 395,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e350912bcc03183d6fad3964234205360f323a4266f047f47d9f5bea5a6429f8",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-CATPPUCCIN-THEME-PY-7BE844263280",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/catppuccin_theme.py",
+      "purpose": "Catppuccin Mocha theme - shared color palette and stylesheet.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "COLORS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_stylesheet",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/ui/test_catppuccin_theme.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 3368,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17834,259 +17984,6 @@
         "validation_paths": [
           "src/shared/python/swing_sim/ground/tests/test_contract.py"
         ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2803,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "24a1e168af66e8728220dd93a1d740d756ba52934e50fae44dd9e1e7af230566",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-RESULT-TYPES-PY-3CCD1C3A63D4",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/result_types.py",
-      "purpose": "Result-only value types for the flight-to-ground v1 contract.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "GroundSummary",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundTermination",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundWarning",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/test_ground_study_scalar_adapter.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 11274,
-      "classification": "calculation",
-      "classification_basis": "path-marker:dynamics",
-      "content_sha256_lf": "0e123b3ac9d32d2074335f6efcce07b3d50b261fff7667616f949fd67eb25c97",
-      "family": "swing-simulation-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-SKID-ROLL-DYNAMICS-PY-62308B2F7047",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/skid_roll_dynamics.py",
-      "purpose": "Rigid-sphere skid and no-slip roll dynamics on one arbitrary plane.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "advance_constant_motion",
-            "signature": "state: GroundContactState, motion: RigidMotion, duration_s: float"
-          },
-          {
-            "kind": "function",
-            "name": "bounded_closing_duration",
-            "signature": "value: Vector3, rate: Vector3, requested_duration_s: float"
-          },
-          {
-            "kind": "function",
-            "name": "constant_motion_endpoint",
-            "signature": "state: GroundContactState, motion: RigidMotion, duration_s: float"
-          },
-          {
-            "kind": "function",
-            "name": "constant_motion_energy_balance",
-            "signature": "state: GroundContactState, motion: RigidMotion, duration_s: float, body: SphereProperties, gravity_m_s2: Vector3, surface_velocity_m_s: Vector3"
-          },
-          {
-            "kind": "function",
-            "name": "contact_slip_velocity",
-            "signature": "state: GroundContactState, surface: GroundSurfaceProfile, body: SphereProperties"
-          },
-          {
-            "kind": "function",
-            "name": "holding_kinematics",
-            "signature": "surface: GroundSurfaceProfile, body: SphereProperties, gravity_m_s2: Vector3=STANDARD_GRAVITY_M_S2"
-          },
-          {
-            "kind": "function",
-            "name": "holding_state",
-            "signature": "state: GroundContactState, surface: GroundSurfaceProfile"
-          },
-          {
-            "kind": "function",
-            "name": "kinetic_energy",
-            "signature": "state: GroundContactState, body: SphereProperties"
-          },
-          {
-            "kind": "function",
-            "name": "kinetic_energy_vectors",
-            "signature": "velocity_m_s: Vector3, angular_velocity_rad_s: Vector3, body: SphereProperties"
-          },
-          {
-            "kind": "function",
-            "name": "relative_path_distance",
-            "signature": "initial_velocity: Vector3, acceleration: Vector3, duration_s: float"
-          },
-          {
-            "kind": "function",
-            "name": "rolling_kinematics",
-            "signature": "state: GroundContactState, surface: GroundSurfaceProfile, body: SphereProperties, gravity_m_s2: Vector3=STANDARD_GRAVITY_M_S2"
-          },
-          {
-            "kind": "function",
-            "name": "rolling_state",
-            "signature": "state: GroundContactState, surface: GroundSurfaceProfile, body: SphereProperties"
-          },
-          {
-            "kind": "function",
-            "name": "skid_kinematics",
-            "signature": "state: GroundContactState, surface: GroundSurfaceProfile, body: SphereProperties, gravity_m_s2: Vector3=STANDARD_GRAVITY_M_S2"
-          },
-          {
-            "kind": "function",
-            "name": "stable_at_zero_speed",
-            "signature": "surface: GroundSurfaceProfile, body: SphereProperties, gravity_m_s2: Vector3=STANDARD_GRAVITY_M_S2"
-          },
-          {
-            "kind": "function",
-            "name": "static_rolling_feasible",
-            "signature": "surface: GroundSurfaceProfile, body: SphereProperties, gravity_m_s2: Vector3=STANDARD_GRAVITY_M_S2"
-          },
-          {
-            "kind": "function",
-            "name": "tangent",
-            "signature": "vector: Vector3, normal: Vector3"
-          },
-          {
-            "kind": "function",
-            "name": "time_to_vector_zero",
-            "signature": "value: Vector3, rate: Vector3, *, tolerance: float"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_skid_roll_dynamics.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6183,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6350547f492fd4f9a65d8fda3b5397c047947cc58f84fd7449fe232e9418836d",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-SKID-ROLL-RESULT-TYPES-PY-53ECEC44311B",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/skid_roll_result_types.py",
-      "purpose": "Validated internal result contracts for the ground skid/roll suffix.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SkidRollResult",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
       }
     }
   ],

@@ -66,7 +66,7 @@
         "units": "Per-series declared units.",
         "provenance": "Imported or generated series identity and derivation metadata.",
         "limitations": "Derived bins and summaries remain distinguishable from exact samples.",
-        "keyboard_path": "Tab navigation reaches plot management, selectors, inspector, and export.",
+        "keyboard_path": "Tab navigation reaches plot management, selectors, dynamic scale controls, inspector, and export.",
         "nonvisual_alternative": "Exact selected samples and derived summaries are available in semantic tables."
       }
     },
@@ -198,8 +198,8 @@
         "units": "Declared launch, distance, time, and speed units.",
         "provenance": "Launch state, environment, and identified flight-model authority.",
         "limitations": "Trajectory is model-conditional and not paired-device validation.",
-        "keyboard_path": "Primary tabs and named controls reach inputs, execution, inspector, and export.",
-        "nonvisual_alternative": "Synchronized trajectory samples and outcomes are available as labeled values."
+        "keyboard_path": "Primary tabs and named controls reach inputs, execution, inspector, import, and export.",
+        "nonvisual_alternative": "Synchronized trajectory samples and outcomes are available as labeled values; an imported record's provenance is a labeled status value."
       }
     },
     {

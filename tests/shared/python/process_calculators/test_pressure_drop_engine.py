@@ -155,6 +155,11 @@ class TestFrictionFactorColebrook:
         assert f_tenth != pytest.approx(64.0)
         assert f_half != pytest.approx(f_tenth)
 
+    def test_churchill_tiny_positive_reynolds_does_not_overflow(self) -> None:
+        """Tiny positive Re must return 64/Re without float overflow."""
+        f_tiny = friction_factor_churchill(1e-10, 0.0002)
+        assert f_tiny == pytest.approx(6.4e11)
+
     def test_colebrook_non_convergence_raises(self) -> None:
         """Colebrook must raise, not silently return an unconverged iterate.
 

@@ -330,7 +330,9 @@ def _assert_finite(props: SteamProperties) -> None:
     for field_name in required_fields:
         value = getattr(props, field_name)
         if not np.isfinite(value):
-            raise ValueError(f"SteamProperties.{field_name} must be finite, got {value}")
+            raise ValueError(
+                f"SteamProperties.{field_name} must be finite, got {value}"
+            )
 
 
 class SteamCalculationEngine:

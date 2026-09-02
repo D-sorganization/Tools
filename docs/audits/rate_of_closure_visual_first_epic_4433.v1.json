@@ -62,7 +62,7 @@
       "requirement_id": "V0.4",
       "requirement": "Record prose, control-stack, hidden-plot, scrolling, shift, and dead-space findings.",
       "status": "partial",
-      "rationale": "Layout fixes and regression contracts exist, but there is no exhaustive current findings/adjudication register.",
+      "rationale": "Layout fixes, dynamic scale single-pass optimizations, and regression contracts exist, but there is no exhaustive current findings/adjudication register.",
       "evidence_files": [
         "src/rate_of_closure/visualization_tabs.v1.json",
         "tests/rate_of_closure/test_visualization_tab_audit.py"
@@ -286,7 +286,7 @@
       "requirement_id": "V4.3",
       "requirement": "Use rendered PyQt tests for every tab at 100/150 percent scaling, overlap, keyboard, and resize.",
       "status": "partial",
-      "rationale": "All initial tabs render at both scales with visibility and overlap checks, and the widened PyQt Putting surface (#4800 P6) re-renders at both scales through its own inspector probe, with the shared playback transport bound to its 3-D view (#4800 P8) asserted visible and named in the first viewport; all-state and keyboard-path coverage is separate and incomplete.",
+      "rationale": "All initial tabs render at both scales with visibility and overlap checks, and the widened PyQt Putting surface (#4800 P6) re-renders at both scales through its own inspector probe, with the shared playback transport bound to its 3-D view (#4800 P8) asserted visible and named in the first viewport; the Flight Explorer tab's new imported-trajectory-record control (ADR-0047 H4) is likewise asserted visible and named in the first viewport, reusing that same shared playback transport rather than a second one; all-state and keyboard-path coverage is separate and incomplete.",
       "evidence_files": [
         "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py",
         "tests/rate_of_closure/test_visualization_accessibility.py",

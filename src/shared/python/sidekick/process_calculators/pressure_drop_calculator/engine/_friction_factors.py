@@ -200,6 +200,12 @@ def friction_factor_churchill(
         # wrong for any Re != 1 in that range (issue #3868).
         raise ValueError(f"Reynolds number must be positive, got {Re}")
 
+    if Re < 1e-4:
+        # In the deep laminar regime, (8/Re)**12 algebraically and numerically
+        # dominates, reducing Churchill to 8*(8/Re) = 64/Re. Evaluating the high
+        # power terms directly would overflow IEEE 754 float range for tiny Re.
+        return float(friction_factor_laminar(Re))
+
     term1 = (7.0 / Re) ** 0.9 + 0.27 * relative_roughness
     A = (-2.457 * math.log(term1)) ** 16
 

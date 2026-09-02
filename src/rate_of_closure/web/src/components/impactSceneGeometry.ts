@@ -109,7 +109,12 @@ export function impactSceneGeometry(
       { key: `ground-z-${offset}`, label: "Ground", points: [[offset, -center[1], -0.15], [offset, -center[1], 0.15]], color: COLORS.ground, width: 1 },
     );
   }
-  const maxSpeed = Math.max(...scene.vectors.map((vector) => norm(vector.vectorMps)), 1e-12);
+  // ⚡ Bolt Optimization: Calculate maxSpeed using a single-pass loop to eliminate intermediate array allocations
+  let maxSpeed = 1e-12;
+  for (let i = 0; i < scene.vectors.length; i++) {
+    const speed = norm(scene.vectors[i].vectorMps);
+    if (speed > maxSpeed) maxSpeed = speed;
+  }
   for (const vector of scene.vectors) {
     if (!visibleVectors.has(vector.key)) continue;
     lines.push({
