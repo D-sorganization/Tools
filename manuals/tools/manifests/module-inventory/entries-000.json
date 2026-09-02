@@ -12290,6 +12290,8 @@
           "src/shared/python/humanoid_character_builder/tests/test_inertia_calculator.py",
           "src/shared/python/sidekick/tests/calculators/electrical/test_electrical_model.py",
           "src/shared/python/sidekick/tests/calculators/mechanical/test_trc_geometry.py",
+          "src/shared/python/sidekick/tests/process_calculators/test_analysis_utils.py",
+          "src/shared/python/sidekick/tests/test_analysis_utils.py",
           "src/shared/python/sidekick/tests/test_calculator_plotting.py",
           "src/shared/python/sidekick/tests/test_hypothesis_calculators.py",
           "src/shared/python/sidekick/tests/test_pure_calc_modules.py",

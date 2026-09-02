@@ -504,8 +504,12 @@ class SyngasWaterCalculator:
         )
 
         # Calculate dew point
-        dew_point_c = self.calculate_dew_point(vapor_pressure_pa, pressure_pa)
-        dew_point_margin_c = temperature_c - dew_point_c
+        if vapor_pressure_pa >= pressure_pa:
+            dew_point_c = self.calculate_dew_point(pressure_pa, pressure_pa)
+            dew_point_margin_c = temperature_c - dew_point_c
+        else:
+            dew_point_c = temperature_c
+            dew_point_margin_c = 0.0
 
         # Relative humidity
         relative_humidity = min(

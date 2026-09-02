@@ -227,7 +227,7 @@
   },
   "shards": [
     {
-      "content_sha256_lf": "ac60173ec7fefb5580a88fd3e854e3d8434ce207f17c840b0bdbd5e331a6c293",
+      "content_sha256_lf": "c40d30404100dee3b40461370b2f422575a8e7956b8537e3ba67225640b5ed20",
       "entry_count": 200,
       "first_path": ".docker/entrypoint.sh",
       "last_path": "scripts/check_local_only_workflows.py",
@@ -339,7 +339,7 @@
       "shard_index": 13
     },
     {
-      "content_sha256_lf": "b735cc68f47243338f1355bf5a7e4bb96b16977befca1529e0a6bac579f37f06",
+      "content_sha256_lf": "c856247a7bb30c79689a3d96b24becb55f8924c78bdbc25e4265c45cf41bbaa4",
       "entry_count": 200,
       "first_path": "src/shared/python/model_generation/editor/text_editor_history_mixin.py",
       "last_path": "src/shared/python/sidekick/tab_context_menu.py",
@@ -371,7 +371,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "c89a9a9f92847e299519096bf571e619c0d0851dab7e835694f30844232fe12e",
+  "source_tree_sha256": "d1883a80a37a88f51bbf6702afbac257dce9e13d50c13902a8ebe6ca1d75ba7b",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,

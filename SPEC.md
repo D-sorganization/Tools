@@ -7121,4 +7121,4 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 
 ## 2026-09-02: Sidekick Process Calculator Correctness (#4892)
 
-- **2026-09-02**: fix(sidekick, #4892) — Fix Buck equation argument order in `SyngasWaterCalculator` (#3867), handle non-positive Re and non-convergence in friction factors (#3868), ensure finite postconditions in `SteamCalculationEngine` (#3981), fix `evaluate_output` return value on engine failure (#3976), and standardize physical constants (#3994).
+- **2026-09-02**: fix(sidekick, #4892) — Fix Buck equation argument order in `SyngasWaterCalculator` (#3867), handle non-positive Re and non-convergence in friction factors (#3868), ensure finite postconditions in `SteamCalculationEngine` (#3981), fix `evaluate_output` return value on engine failure (#3976), standardize physical constants (#3994), and align saturated dew point margin.

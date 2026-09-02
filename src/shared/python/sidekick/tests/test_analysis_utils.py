@@ -6,6 +6,7 @@ non-dict result, overrides, HHV injection.
 
 from __future__ import annotations
 
+import math
 from unittest.mock import MagicMock
 
 import pytest
@@ -80,40 +81,46 @@ class TestEvaluateOutput:
         assert composition == {}
 
     def test_engine_raises_type_error_returns_zeros(self):
-        """TypeError from engine is caught and returns (0.0, {}, {})."""
+        """TypeError from engine is caught and returns (nan, {}, {})."""
         self.engine.calculate.side_effect = TypeError("bad args")
         value, state, composition = evaluate_output(self.engine, {}, 0.0, "out")
-        assert value == pytest.approx(0.0)
+        assert math.isnan(value)
         assert state == {}
         assert composition == {}
 
     def test_engine_raises_value_error_returns_zeros(self):
         self.engine.calculate.side_effect = ValueError("invalid params")
         value, state, composition = evaluate_output(self.engine, {}, 0.0, "out")
-        assert value == pytest.approx(0.0)
+        assert math.isnan(value)
+        assert state == {}
+        assert composition == {}
 
     def test_engine_raises_zero_division_returns_zeros(self):
         self.engine.calculate.side_effect = ZeroDivisionError("division by zero")
         value, state, composition = evaluate_output(self.engine, {}, 0.0, "out")
-        assert value == pytest.approx(0.0)
+        assert math.isnan(value)
+        assert state == {}
+        assert composition == {}
 
     def test_engine_raises_overflow_returns_zeros(self):
         self.engine.calculate.side_effect = OverflowError("overflow")
         value, state, composition = evaluate_output(self.engine, {}, 0.0, "out")
-        assert value == pytest.approx(0.0)
+        assert math.isnan(value)
+        assert state == {}
+        assert composition == {}
 
     def test_engine_returns_non_dict_returns_zeros(self):
-        """When calculate returns a non-dict (e.g. None), returns (0.0, {}, {})."""
+        """When calculate returns a non-dict (e.g. None), returns (nan, {}, {})."""
         self.engine.calculate.return_value = None
         value, state, composition = evaluate_output(self.engine, {}, 0.0, "out")
-        assert value == pytest.approx(0.0)
+        assert math.isnan(value)
         assert state == {}
         assert composition == {}
 
     def test_engine_returns_list_returns_zeros(self):
         self.engine.calculate.return_value = [1, 2, 3]
         value, _, _ = evaluate_output(self.engine, {}, 0.0, "out")
-        assert value == pytest.approx(0.0)
+        assert math.isnan(value)
 
     def test_base_params_not_mutated(self):
         """Base params dict should not be mutated by the function."""
