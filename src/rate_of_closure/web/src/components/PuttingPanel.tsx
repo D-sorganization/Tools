@@ -18,7 +18,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import { PlaybackTransportBar } from "./PlaybackTransportBar";
-import { PuttingControls } from "./PuttingControls";
+import { PuttingControls, type ImportedGreenState } from "./PuttingControls";
 import { DEFAULT_PUTT_SETUP, type PuttSetup } from "./puttingSetup";
 import { PuttingVisuals } from "./PuttingVisuals";
 import {
@@ -87,11 +87,20 @@ function formatDistance(value: number, unit: string): string {
   return formatDistanceM(value, unit, 2);
 }
 
-/** Build the fully specified scenario one accepted putt is run from. */
+/**
+ * Build the fully specified scenario one accepted putt is run from.
+ *
+ * `surface` is supplied by the caller rather than derived here: the
+ * planar grade/aspect green from `setup`, or a heightfield imported
+ * through `greenSurfaceFromDocument` (ADR-0045 F2's "Import green…"
+ * action) that replaces it outright — the same authority rule the Qt
+ * `PuttingGreenControls.surface()` follows.
+ */
 function puttScenario(
   head: PutterHeadDocument,
   clubheadSpeedMps: number,
   setup: PuttSetup,
+  surface: GreenSurface,
 ): PuttScenario {
   const libraryName = head.provenance.library_name ?? head.name;
   return {
@@ -106,7 +115,7 @@ function puttScenario(
       strikeOffsetToeMm: setup.strikeOffsetToeMm,
       strikeOffsetHighMm: setup.strikeOffsetHighMm,
     }),
-    surface: planarSurface(setup.grade, setup.aspect),
+    surface,
     stimpFt: setup.stimp,
     holeDistanceM: setup.distance,
     provenance: {
@@ -191,6 +200,15 @@ export function PuttingPanel({
   } | null>(null);
   const acceptedStudy = useRef<AcceptedStudy | null>(null);
   const [playbackTimeS, setPlaybackTimeS] = useState(0);
+  /**
+   * A heightfield imported through the green-import action (ADR-0045
+   * F2), replacing the planar grade/aspect green outright — the React
+   * analogue of the Qt `PuttingGreenControls._imported` field.
+   */
+  const [importedGreen, setImportedGreen] = useState<ImportedGreenState | null>(
+    null,
+  );
+  const [importErrorMessage, setImportErrorMessage] = useState("");
 
   const candidate = useMemo(() => {
     const head =
@@ -200,7 +218,9 @@ export function PuttingPanel({
         setup.paceMode === "backstroke"
           ? clubheadSpeedFromBackstroke(setup.backstrokeCm / 100)
           : setup.speed;
-      const scenario = puttScenario(head, clubheadSpeed, setup);
+      const surface =
+        importedGreen?.surface ?? planarSurface(setup.grade, setup.aspect);
+      const scenario = puttScenario(head, clubheadSpeed, setup, surface);
       const evaluated = executeStudy(scenario);
       const result = snapshotPuttingResult(evaluated.result);
       const plan = planPuttingSamples(puttingSampleSource(result));
@@ -236,7 +256,7 @@ export function PuttingPanel({
       const message = error instanceof Error ? error.message : String(error);
       return { accepted: null, error: message.slice(0, 512) };
     }
-  }, [executeStudy, putters, setup]);
+  }, [executeStudy, putters, setup, importedGreen]);
 
   const accepted =
     candidate.accepted ??
@@ -289,6 +309,17 @@ export function PuttingPanel({
           setup={setup}
           putters={putters}
           onChange={(patch) => setSetup((current) => ({ ...current, ...patch }))}
+          importedGreen={importedGreen}
+          importErrorMessage={importErrorMessage}
+          onGreenImported={(state) => {
+            setImportedGreen(state);
+            setImportErrorMessage("");
+          }}
+          onGreenImportError={setImportErrorMessage}
+          onUsePlanarGreen={() => {
+            setImportedGreen(null);
+            setImportErrorMessage("");
+          }}
         />
 
         <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-5 shadow-lg shadow-black/20 backdrop-blur">

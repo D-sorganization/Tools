@@ -3,6 +3,253 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 240,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ea67ac5d4de1c60fce89723022a4c72b9448c078f5457fc8e38610413011a9d2",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-VISUALIZATION-INIT-PY-44CA9BEB57FC",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/visualization/__init__.py",
+      "purpose": "Visualization module for 3D rendering of the solar system.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "Camera",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CameraMode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Renderer",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SolarSystemScene",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 19111,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b465658d4d6d25c962fe5aef8fef31dff87de701b7a442f372e355594f3e1198",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-VISUALIZATION-CAMERA-PY-F83E71621A17",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/visualization/camera.py",
+      "purpose": "Camera System",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Camera",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CameraMode",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CameraState",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 30920,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c8fb4fd2324650e1342bf0d0aa004ba115e63d1dbd7de9373ceac2471629b369",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-VISUALIZATION-RENDERER-PY-8DF0B3CC165D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/visualization/renderer.py",
+      "purpose": "3D Renderer",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "RenderSettings",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Renderer",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "bar",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 21989,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4b9b8e526954a9f1c4157eacb189c8a16b5ffce07258c42589bf3df032ca7986",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-VISUALIZATION-SCENE-PY-D45AAEBA8A0D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/visualization/scene.py",
+      "purpose": "Solar System scene controller.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SolarSystemScene",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ViewState",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N",
+          "bar"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 19524,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",

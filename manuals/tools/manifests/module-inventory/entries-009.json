@@ -894,10 +894,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5880,
+      "bytes_lf": 9551,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "bf8223ffd703ee48be301328ea33b0004651536afcd84216df7244d1d4364721",
+      "content_sha256_lf": "b5420b7f816b352a34014edcf178ce20d6e38cbcfa224573c9a00657dd91ad46",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-PUTTINGCONTROLS-TSX-42B6BEEE3B63",
       "language": "typescript-react",
@@ -934,6 +934,16 @@
         "public_surfaces": [
           {
             "kind": "export",
+            "name": "ImportedGreenState",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "PLANAR_GREEN_SOURCE",
+            "signature": null
+          },
+          {
+            "kind": "export",
             "name": "PuttingControls",
             "signature": null
           }
@@ -950,10 +960,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 12186,
+      "bytes_lf": 17085,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6f687c086273cc1057d46047e51613b52c7a1bdba195c21bc59936452b618332",
+      "content_sha256_lf": "033c6e5acbe4241674deab60fc8833f560e308d82944e4b3749d81753e878666",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-PUTTINGPANEL-TEST-TSX-B5FB98A11D3B",
       "language": "typescript-react",
@@ -977,7 +987,8 @@
       },
       "traceability": {
         "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -996,10 +1007,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13708,
+      "bytes_lf": 14950,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0376095483aec66bf861447e24cac2aff25e45a02f46b62956619993672163f2",
+      "content_sha256_lf": "5272ea6b9b4645f2c924b54e2b6cb24d710c00af0d02801f231ce96d0ebe4ac0",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-PUTTINGPANEL-TSX-EF05B4B04CD0",
       "language": "typescript-react",
@@ -1026,7 +1037,8 @@
       "traceability": {
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],

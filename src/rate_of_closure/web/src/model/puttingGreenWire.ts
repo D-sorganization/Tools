@@ -61,7 +61,13 @@ export function greenSurfaceToJson(surface: GreenSurface): string {
   });
 }
 
-function finiteNumber(value: unknown, name: string): number {
+/**
+ * A strict JSON number: finite, and never a bare boolean (`typeof
+ * true !== "number"` already excludes it, unlike Python where `bool`
+ * subclasses `int`). Shared with `puttingGreenUdAdapter.ts`, mirroring
+ * `ud_adapter.py`'s import of `_finite_number` from `.surface`.
+ */
+export function finiteNumber(value: unknown, name: string): number {
   if (typeof value !== "number" || !Number.isFinite(value)) {
     throw new Error(`${name} must be a finite number`);
   }
