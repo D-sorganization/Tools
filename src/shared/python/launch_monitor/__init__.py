@@ -43,7 +43,10 @@ P6    :mod:`.treatment`      Flag-then-optionally-exclude quality pipeline with
 P7    :mod:`.relationships`  FDR-corrected correlation matrix, partial
                              correlations, and a screened dependency network.
                              Ruling D17 (explicit boolean-projection labelling)
-                             applied; D15 (FDR denominator) still pending.
+                             applied. D15 (FDR denominator) does not reach
+                             this module — no separate ``min_samples`` tier
+                             above its own three-pair floor for the ruling's
+                             defect to exist in; see the module docstring.
 P8    :mod:`.modeling`       Reproducible NumPy regressions plus an optional
                              shallow MLP, with an identity-leakage guard. No
                              ``rate_of_closure`` counterpart exists.
@@ -56,9 +59,11 @@ P10   :mod:`.flexible_analysis`
                              Arbitrary outcome/predictor correlation + OLS with
                              dataset lineage. Its ``rate_of_closure`` twin was
                              measured by UpstreamDrift#9372 (G0.1) before this
-                             moved. D15 and D17 are still pending *here*: it
-                             drops the ``boolean_projected`` label P7 now
-                             reports. Both land in a follow-up.
+                             moved. Rulings D15 (FDR excludes under-sampled
+                             predictors before correcting) and D17 (carries P7's
+                             ``boolean_projected`` label through as
+                             ``CorrelationEstimate.is_boolean_projected``) are
+                             applied.
 P11   :mod:`.contract_v2`    The v2 serialization boundary over P10: evidence,
                              row-level lineage, availability, and the JSON
                              Schema every static client is generated from.

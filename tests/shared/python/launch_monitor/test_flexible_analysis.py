@@ -3,10 +3,12 @@
 The first eight cases are UpstreamDrift's
 ``tests/unit/launch_monitor/test_flexible_analysis.py``, travelling verbatim
 with the module they exercise. The remaining cases pin the module's refusals
-per this repo's design-by-contract standard, and — deliberately — the two
-behaviours that owner rulings **D15** and **D17** will change in a follow-up
-PR. This port carries UpstreamDrift's behaviour unchanged; pinning today's
-behaviour here is what makes the follow-up's diff visible instead of invisible.
+per this repo's design-by-contract standard. Two of them,
+``test_undersampled_predictor_excluded_from_the_fdr_denominator`` and
+``test_boolean_predictor_projection_is_labelled_and_math_is_unchanged``,
+used to pin the "before" side of owner rulings **D15** and **D17** (ADR-0048,
+"Owner Rulings (2026-09-02)"); this module now applies both, so they assert
+the "after" contract instead.
 """
 
 from __future__ import annotations
@@ -225,27 +227,29 @@ def test_invalid_analysis_contracts_fail_closed(
 
 
 # ---------------------------------------------------------------------------
-# "Before" pins for owner rulings D15 and D17 (ADR-0048, 2026-09-02)
+# Owner rulings D15 and D17 applied (ADR-0048, "Owner Rulings (2026-09-02)")
 # ---------------------------------------------------------------------------
 
 
-def test_undersampled_predictor_still_counts_in_the_fdr_denominator() -> None:
-    """D15 "before": an under-sampled predictor inflates everyone else's FDR.
+def test_undersampled_predictor_excluded_from_the_fdr_denominator() -> None:
+    """D15 applied: an under-sampled predictor no longer inflates the FDR.
 
-    This is the divergence UpstreamDrift#9372 pinned as **D15**. ``_correlations``
-    reads every requested predictor's raw p value out of
+    This is the divergence UpstreamDrift#9372 pinned as **D15**. Before this
+    ruling landed, ``_correlations`` read every requested predictor's raw p
+    value out of
     :func:`~shared.python.launch_monitor.relationships.compute_correlations`
-    and runs Benjamini-Hochberg over the whole pool *before* blanking the
+    and ran Benjamini-Hochberg over the whole pool *before* blanking the
     estimates whose pair count fell below ``min_samples``. A predictor with
-    five complete pairs therefore clears ``relationships``' own three-pair
-    floor, contributes a finite raw p to the correction, and only afterwards
-    reports ``nan`` — so the three fully sampled predictors are corrected
-    against k=4 instead of k=3 and their adjusted p values come back inflated
-    by exactly 4/3.
-
-    The ruling is that the canonical layer excludes under-sampled predictors
-    from the denominator *before* correcting. Applying it will move the two
-    inflated numbers below; that is the point of pinning them.
+    five complete pairs cleared ``relationships``' own three-pair floor,
+    contributed a finite raw p to the correction, and only afterwards reported
+    ``nan`` — so the three fully sampled predictors were corrected against k=4
+    instead of k=3 and their adjusted p values came back inflated by exactly
+    4/3. The ruling excludes under-sampled predictors from the denominator
+    *before* correcting, so requesting the under-sampled predictor alongside
+    the sampled ones must no longer change the sampled ones' adjusted p
+    values at all — asking for a fourth, unusable predictor is now a no-op
+    for the three that matter, which is the property this test now proves
+    instead of the inflation it used to pin.
     """
     frame = _shots(60)
     frame["sparse_metric"] = np.nan
@@ -271,65 +275,70 @@ def test_undersampled_predictor_still_counts_in_the_fdr_denominator() -> None:
         item.predictor: item for item in without_sparse.correlations
     }
 
-    # The under-sampled predictor reports nothing at all ...
+    # The under-sampled predictor still reports nothing at all ...
     sparse = with_by_predictor["sparse_metric"]
     assert sparse.sample_count == 5
     assert np.isnan(sparse.coefficient)
     assert np.isnan(sparse.p_value)
     assert np.isnan(sparse.adjusted_p_value)
+    assert not sparse.is_boolean_projected
 
-    # ... yet it is still in the denominator that corrected the other three.
+    # ... and, after this ruling, it no longer moves anyone else's denominator:
+    # the fourth predictor's presence is now invisible to the other three.
     for predictor in sampled:
         included = with_by_predictor[predictor]
         excluded = without_by_predictor[predictor]
         assert included.sample_count == excluded.sample_count == 60
-        # Identical raw p values on both sides: only the denominator moved.
+        # Identical raw p values on both sides: this was already true, and
+        # still is - only the correction denominator was ever in play.
         assert included.p_value - excluded.p_value == 0.0
+        # The math this ruling is about: the adjusted p value is now
+        # unaffected by whether the under-sampled predictor was requested.
+        assert included.adjusted_p_value == excluded.adjusted_p_value
 
-    assert with_by_predictor["club_speed"].adjusted_p_value == pytest.approx(
-        8.469051116887315e-82, rel=1e-12
-    )
+    # The two surviving pins are unchanged by this ruling - they were always
+    # the k=3, exclude-the-sparse-one values; only the "with_sparse" side
+    # used to diverge from them, by exactly 4/3.
     assert without_by_predictor["club_speed"].adjusted_p_value == pytest.approx(
         6.351788337665487e-82, rel=1e-12
     )
-    assert with_by_predictor["carry_distance"].adjusted_p_value == pytest.approx(
-        6.412509854093493e-75, rel=1e-12
+    assert with_by_predictor["club_speed"].adjusted_p_value == pytest.approx(
+        6.351788337665487e-82, rel=1e-12
     )
     assert without_by_predictor["carry_distance"].adjusted_p_value == pytest.approx(
         4.809382390570119e-75, rel=1e-12
     )
-    for predictor in ("club_speed", "carry_distance"):
-        inflation = (
-            with_by_predictor[predictor].adjusted_p_value
-            / without_by_predictor[predictor].adjusted_p_value
-        )
-        assert inflation == pytest.approx(4.0 / 3.0, rel=1e-12)
+    assert with_by_predictor["carry_distance"].adjusted_p_value == pytest.approx(
+        4.809382390570119e-75, rel=1e-12
+    )
 
-    # The blanked estimate serialises as JSON null, so the inflation is the
-    # only trace a wire consumer ever sees of the fourth predictor.
+    # The blanked estimate still serialises as JSON null.
     payload = with_sparse.to_dict()
     serialised = {item["predictor"]: item for item in payload["correlations"]}
     assert serialised["sparse_metric"]["adjusted_p_value"] is None
 
 
-def test_boolean_predictor_is_silently_projected_to_zero_one() -> None:
-    """D17 "before": the projection label exists one layer down and is dropped.
+def test_boolean_predictor_projection_is_labelled_and_math_is_unchanged() -> None:
+    """D17 applied: the projection label now survives up from ``relationships``.
 
-    ``analyze_variables`` runs the selected columns through ``pd.to_numeric``,
-    which projects ``True``/``False`` to 1.0/0.0. The column then passes the
-    two-distinct-value constancy screen, is correlated as though it were a
-    native numeric metric, and counts every row toward the sample count. That
-    is the capability the D17 ruling preserves, and it is unchanged here.
+    ``analyze_variables`` still runs the selected columns through
+    ``pd.to_numeric``, which still projects ``True``/``False`` to 1.0/0.0. The
+    column still passes the two-distinct-value constancy screen, is still
+    correlated as though it were a native numeric metric, and still counts
+    every row toward the sample count — the capability D17 preserves, and the
+    coefficient below is bit-identical to what this test pinned before the
+    ruling landed.
 
-    What the ruling changes is the silence — and after Tools#4901 applied D17
-    to :mod:`~shared.python.launch_monitor.relationships`, the silence is
-    specifically this module's. ``compute_correlations`` now *does* report the
-    projection in ``CorrelationResult.boolean_projected``; ``_correlations``
-    reads only ``coefficients``/``p_values``/``pair_counts`` off that result and
-    throws the label away, so nothing in
-    :class:`FlexibleAnalysisResult` distinguishes a boolean-projected column
-    from a native numeric one. The follow-up's job is to carry the existing
-    label through, not to compute a new one.
+    What changed is the silence. Tools#4901 applied D17 to
+    :mod:`~shared.python.launch_monitor.relationships`, so
+    ``compute_correlations`` reports the projection in
+    ``CorrelationResult.boolean_projected``; ``_correlations`` now reads that
+    label off the result it already holds and carries it onto each
+    :class:`CorrelationEstimate` as ``is_boolean_projected`` instead of
+    dropping it. Deliberately unchanged by this ruling: the unit map (``units``
+    resolution is D23's territory, applied elsewhere) and ``warnings`` (a
+    boolean projection is not treated as an error condition, matching the
+    ruling's "capability preserved" framing).
     """
     frame = _shots(60)
     frame["flagged"] = np.arange(60) % 2 == 0
@@ -346,6 +355,9 @@ def test_boolean_predictor_is_silently_projected_to_zero_one() -> None:
     )
 
     flagged = next(item for item in result.correlations if item.predictor == "flagged")
+    club_speed = next(
+        item for item in result.correlations if item.predictor == "club_speed"
+    )
     assert flagged.sample_count == 60
     assert flagged.coefficient == pytest.approx(-0.029183486713892384, rel=1e-12)
     assert result.dataset.complete_row_count == 60
@@ -357,20 +369,22 @@ def test_boolean_predictor_is_silently_projected_to_zero_one() -> None:
     assert underlying.boolean_projected == ("flagged",)
     assert underlying.coefficients.loc["ball_speed", "flagged"] == flagged.coefficient
 
-    # This module drops that label: nothing distinguishes the projected column
-    # from a native numeric one. The unit map falls back to the same "source"
-    # label an unknown numeric column gets, and no warning is emitted.
+    # The label is now explicit: the boolean-projected predictor is marked,
+    # a native-numeric predictor never is, and the unit/warning surfaces this
+    # ruling does not touch are unchanged.
+    assert flagged.is_boolean_projected is True
+    assert club_speed.is_boolean_projected is False
     assert result.units["flagged"] == "source"
     assert result.warnings == ()
+    assert "is_boolean_projected" in type(flagged).__dataclass_fields__
     assert not any(
         "boolean" in field.lower() for field in type(result).__dataclass_fields__
-    )
-    assert not any(
-        "boolean" in field.lower() for field in type(flagged).__dataclass_fields__
     )
     payload = result.to_dict()
     serialised = {item["predictor"]: item for item in payload["correlations"]}
     assert set(serialised["flagged"]) == set(serialised["club_speed"])
+    assert serialised["flagged"]["is_boolean_projected"] is True
+    assert serialised["club_speed"]["is_boolean_projected"] is False
 
 
 # ---------------------------------------------------------------------------

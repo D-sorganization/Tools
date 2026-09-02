@@ -13089,10 +13089,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8414,
+      "bytes_lf": 8771,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "cf9f7f70a9fe6c29d0b38760e6d40bfb6f5afc5b727429d2c834c0dd556d8ef9",
+      "content_sha256_lf": "d5a6aa5e041df2547db29c4b3cca2f39e999c16144386e450ee0eb9094d53499",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-INIT-PY-662C22BCE5D1",
       "language": "python",
@@ -13826,10 +13826,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 19354,
+      "bytes_lf": 21602,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ed488333ce6de00a43c08803f0133c25dc06c467007be528b262a9def7ef856d",
+      "content_sha256_lf": "bbe551197e6c7eb4732250f4562147f1ecefec740f9c7a5cd5a4e95ad9068c55",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-FLEXIBLE-ANALYSIS-PY-C490C412CE8B",
       "language": "python",
@@ -13919,7 +13919,8 @@
         ],
         "test_paths": [
           "tests/shared/python/launch_monitor/test_contract_v2.py",
-          "tests/shared/python/launch_monitor/test_flexible_analysis.py"
+          "tests/shared/python/launch_monitor/test_flexible_analysis.py",
+          "tests/shared/python/launch_monitor/test_relationships.py"
         ],
         "unit_mentions": [
           "s"
@@ -14220,10 +14221,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11262,
+      "bytes_lf": 11756,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d843074927a9f34b782061f6c82d21bd0c98e12b60a379c87836b9e909c48ca4",
+      "content_sha256_lf": "5c5c56862f973f0a1d1ceb87dc12d5032d3ada2831a65c40d62215c3c04641a9",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-RELATIONSHIPS-PY-9529831967A8",
       "language": "python",
