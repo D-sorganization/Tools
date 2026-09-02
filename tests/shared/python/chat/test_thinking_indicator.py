@@ -51,6 +51,7 @@ sys.modules.setdefault("src.shared.python.logging_pkg", logging_pkg)
 sys.modules.setdefault("src.shared.python.logging_pkg.logging_config", logging_config)
 
 from src.shared.python.chat._chat_dock_widget_qt import (  # noqa: E402
+    ChatConnectionConfig,
     ChatDockWidget,
 )
 from src.shared.python.chat._thinking_indicator import (  # noqa: E402
@@ -143,7 +144,7 @@ def test_indicator_tick_cycles_frames(qapp: QApplication) -> None:
 
 
 def _make_dock() -> ChatDockWidget:
-    return ChatDockWidget(app_context="test")
+    return ChatDockWidget(connection=ChatConnectionConfig(app_context="test"))
 
 
 def test_dock_exposes_thinking_indicator(qapp: QApplication) -> None:

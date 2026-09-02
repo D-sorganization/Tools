@@ -49,7 +49,10 @@ logging_config.setup_logging = lambda *a, **kw: None  # type: ignore[attr-define
 sys.modules.setdefault("src.shared.python.logging_pkg", logging_pkg)
 sys.modules.setdefault("src.shared.python.logging_pkg.logging_config", logging_config)
 
-from src.shared.python.chat._chat_dock_widget_qt import ChatDockWidget  # noqa: E402
+from src.shared.python.chat._chat_dock_widget_qt import (  # noqa: E402
+    ChatConnectionConfig,
+    ChatDockWidget,
+)
 
 _APP: QApplication | None = None
 
@@ -57,7 +60,7 @@ _APP: QApplication | None = None
 def _make_widget() -> ChatDockWidget:
     global _APP
     _APP = QApplication.instance() or QApplication([])
-    w = ChatDockWidget(app_context="test")
+    w = ChatDockWidget(connection=ChatConnectionConfig(app_context="test"))
     w._send_ws = MagicMock()  # type: ignore[method-assign]
     w._current_bubble = MagicMock()
     return w

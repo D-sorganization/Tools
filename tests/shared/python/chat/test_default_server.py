@@ -94,11 +94,14 @@ def test_chat_dock_widget_resolves_default_server_at_instantiation_time(
         monkeypatch.delenv(var, raising=False)
 
     from src.shared.python.chat import chat_dock_widget
-    from src.shared.python.chat._chat_dock_widget_qt import ChatDockWidget
+    from src.shared.python.chat._chat_dock_widget_qt import (
+        ChatConnectionConfig,
+        ChatDockWidget,
+    )
 
     monkeypatch.setenv("GOLF_API_PORT", "9012")
     _ = QApplication.instance() or QApplication([])
-    dock = ChatDockWidget(app_context="test")
+    dock = ChatDockWidget(connection=ChatConnectionConfig(app_context="test"))
 
     assert chat_dock_widget._resolve_default_server() == "ws://127.0.0.1:9012"
     assert dock._server_url == "ws://127.0.0.1:9012"

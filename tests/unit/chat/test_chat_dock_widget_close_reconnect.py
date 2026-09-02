@@ -20,7 +20,10 @@ pytest.importorskip("PyQt6.QtWebSockets")
 
 from typing import cast
 
-from chat._chat_dock_widget_qt import ChatDockWidget  # noqa: E402
+from chat._chat_dock_widget_qt import (  # noqa: E402
+    ChatConnectionConfig,
+    ChatDockWidget,
+)
 from PyQt6.QtWidgets import QApplication  # noqa: E402
 
 
@@ -45,7 +48,9 @@ def test_close_event_disables_reconnect(qapp: QApplication) -> None:
             return_value=Path("dummy_session_file"),
         ),
     ):
-        widget = ChatDockWidget(app_context="test", app_name="test_app")
+        widget = ChatDockWidget(
+            connection=ChatConnectionConfig(app_context="test", app_name="test_app")
+        )
         widget._status_label = MagicMock()
         widget._send_btn = MagicMock()
 

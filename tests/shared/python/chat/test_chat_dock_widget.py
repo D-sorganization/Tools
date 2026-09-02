@@ -40,7 +40,11 @@ logging_config.setup_logging = lambda *a, **kw: None  # type: ignore[attr-define
 sys.modules.setdefault("src.shared.python.logging_pkg", logging_pkg)
 sys.modules.setdefault("src.shared.python.logging_pkg.logging_config", logging_config)
 
-from src.shared.python.chat._chat_dock_widget_qt import ChatDockWidget
+from src.shared.python.chat._chat_dock_widget_qt import (
+    ChatConnectionConfig,
+    ChatDockWidget,
+    ChatIntegrationHooks,
+)
 
 
 class _FakeSessionManager:
@@ -54,9 +58,11 @@ def test_chat_dock_widget_accepts_injected_session_manager() -> None:
     manager = _FakeSessionManager()
 
     widget = ChatDockWidget(
-        app_context="test",
-        app_name="test_chat_session_injection",
-        session_manager=manager,
+        connection=ChatConnectionConfig(
+            app_context="test",
+            app_name="test_chat_session_injection",
+        ),
+        integrations=ChatIntegrationHooks(session_manager=manager),
     )
 
     assert widget._session_manager is manager
@@ -65,7 +71,7 @@ def test_chat_dock_widget_accepts_injected_session_manager() -> None:
 def test_chat_dock_widget_collapse() -> None:
     """Test ChatDockWidget collapse and size hint overrides."""
     _app = QApplication.instance() or QApplication([])
-    widget = ChatDockWidget(app_context="test")
+    widget = ChatDockWidget(connection=ChatConnectionConfig(app_context="test"))
 
     # Test initial collapsed state
     initial_collapsed = widget.collapsed
@@ -102,7 +108,7 @@ def test_chat_dock_widget_collapse() -> None:
 def test_chat_dock_widget_switch_provider() -> None:
     """Test switch_provider and its DbC contracts."""
     _app = QApplication.instance() or QApplication([])
-    widget = ChatDockWidget(app_context="test")
+    widget = ChatDockWidget(connection=ChatConnectionConfig(app_context="test"))
 
     # Initial state
     assert widget._current_provider in ("gemini", "ollama")
@@ -132,7 +138,7 @@ def test_chat_dock_widget_switch_provider() -> None:
 def test_chat_dock_widget_apply_settings_change() -> None:
     """Test _apply_settings_change and _combo_for_field methods."""
     _app = QApplication.instance() or QApplication([])
-    widget = ChatDockWidget(app_context="test")
+    widget = ChatDockWidget(connection=ChatConnectionConfig(app_context="test"))
 
     # Test combo mapping
     assert widget._combo_for_field("provider") is widget._ai_provider_combo
@@ -163,7 +169,7 @@ def test_chat_dock_widget_apply_settings_change() -> None:
 def test_chat_dock_widget_mode_handling() -> None:
     """Test modes (chat vs terminal) and status syncing."""
     _app = QApplication.instance() or QApplication([])
-    widget = ChatDockWidget(app_context="test")
+    widget = ChatDockWidget(connection=ChatConnectionConfig(app_context="test"))
 
     assert widget._mode_combo.findData("terminal") == -1
     assert widget._current_mode() == "chat"
@@ -185,7 +191,7 @@ def test_chat_dock_widget_mode_handling() -> None:
 def test_chat_dock_widget_session_info_enables_terminal_mode() -> None:
     """Terminal mode is available only when the server advertises a runtime."""
     _app = QApplication.instance() or QApplication([])
-    widget = ChatDockWidget(app_context="test")
+    widget = ChatDockWidget(connection=ChatConnectionConfig(app_context="test"))
 
     assert widget._mode_combo.findData("terminal") == -1
 
@@ -200,7 +206,7 @@ def test_chat_dock_widget_session_info_enables_terminal_mode() -> None:
 def test_chat_dock_widget_adapter_refreshes() -> None:
     """Test refreshing combos dynamically when active adapter changes."""
     _app = QApplication.instance() or QApplication([])
-    widget = ChatDockWidget(app_context="test")
+    widget = ChatDockWidget(connection=ChatConnectionConfig(app_context="test"))
 
     mock_adapter = MagicMock()
     mock_adapter.list_models.return_value = ["model1", "model2"]
