@@ -20,13 +20,15 @@ rather than a symbol remap.
 
 Landed so far
 -------------
-====  ==================  ====================================================
-Step  Module              Notes
-====  ==================  ====================================================
-P1    :mod:`.dispersion`  2-D target-relative dispersion. Shares a name with
-                          ``rate_of_closure`` and nothing else — G0 pinned the
-                          gap as divergences D6-D9.
-====  ==================  ====================================================
+====  ====================  ==================================================
+Step  Module                Notes
+====  ====================  ==================================================
+P1    :mod:`.dispersion`    2-D target-relative dispersion. Shares a name with
+                            ``rate_of_closure`` and nothing else — G0 pinned
+                            the gap as divergences D6-D9.
+P2    :mod:`.multivariate`  PCA and variance-inflation diagnostics. No
+                            ``rate_of_closure`` counterpart exists.
+====  ====================  ==================================================
 
 **Name-collision containment.** Symbols in this package collide by name with
 ``rate_of_closure`` symbols that compute something else — ``analyze_dispersion``
@@ -36,8 +38,13 @@ re-export between the two packages. Do not add one.
 """
 
 from .dispersion import DispersionResult, analyze_dispersion
+from .multivariate import PCAResult, VIFResult, compute_pca, compute_vif
 
 __all__ = [
     "DispersionResult",
+    "PCAResult",
+    "VIFResult",
     "analyze_dispersion",
+    "compute_pca",
+    "compute_vif",
 ]
