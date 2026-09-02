@@ -62,7 +62,7 @@ async def test_lightweight_mode_does_not_slow_the_scan(
         if len(sleeps) == 40:
             backend_main.shutdown_event.set()
 
-    monkeypatch.setattr(backend_main, "_poll_once", fake_poll_once)
+    monkeypatch.setattr(backend_main, "poll_once", fake_poll_once)
     monkeypatch.setattr(backend_main.asyncio, "sleep", fake_sleep)
     monkeypatch.setattr(backend_main.settings, "poll_interval_s", 0.1)
     monkeypatch.setattr(
@@ -104,7 +104,7 @@ async def test_performance_mode_broadcasts_every_scan(
         if calls["n"] == 5:
             backend_main.shutdown_event.set()
 
-    monkeypatch.setattr(backend_main, "_poll_once", fake_poll_once)
+    monkeypatch.setattr(backend_main, "poll_once", fake_poll_once)
     monkeypatch.setattr(backend_main.asyncio, "sleep", fake_sleep)
 
     backend_main.shutdown_event.clear()

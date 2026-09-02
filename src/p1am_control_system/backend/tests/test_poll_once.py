@@ -1,6 +1,6 @@
 """Single-scan poll-loop tests for the P1AM backend.
 
-The infinite poll loop delegates one scan to ``_poll_once`` so safety,
+The infinite poll loop delegates one scan to ``poll_once`` so safety,
 broadcast, historian, and alarm commit behavior can be tested without sleeping
 or starting background tasks.
 """
@@ -18,7 +18,7 @@ pytest.importorskip("fastapi")
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from main import _connect_once, _poll_once  # noqa: E402
+from main import connect_once, poll_once  # noqa: E402
 from models import RoutingConfig  # noqa: E402
 
 
@@ -127,7 +127,7 @@ async def test_poll_once_offline_falls_back_to_simulator_and_broadcasts_payload(
     power = _FakePowerSupply()
     ws = _FakeWsManager()
 
-    payload = await _poll_once(
+    payload = await poll_once(
         plc=plc,
         backup=simulator,
         simulated=True,
@@ -166,7 +166,7 @@ async def test_poll_once_connected_read_hiccup_holds_last_good() -> None:
     power = _FakePowerSupply()
     ws = _FakeWsManager()
 
-    payload = await _poll_once(
+    payload = await poll_once(
         plc=plc,
         backup=simulator,
         latest_tag_values=latest,
@@ -191,7 +191,7 @@ async def test_poll_once_connected_read_hiccup_holds_last_good() -> None:
 async def test_poll_once_reasserts_estop_every_connected_scan() -> None:
     plc = _FakePLC(connected=True, tags={"TAG_0": 1.0})
 
-    await _poll_once(
+    await poll_once(
         plc=plc,
         backup=_FakeSimulator({"TAG_0": 9.0}),
         latest_tag_values={"TAG_0": 0.0},
@@ -211,7 +211,7 @@ async def test_poll_once_never_touches_a_database_session() -> None:
     """#4023: persistence is queued for the writer task, not done inline."""
     hist = _FakeHistorian()
 
-    await _poll_once(
+    await poll_once(
         plc=_FakePLC(connected=False, tags=None),
         backup=_FakeSimulator({"TAG_1": 10.0}),
         simulated=True,
@@ -255,7 +255,7 @@ async def test_connect_once_syncs_routing_and_reasserts_estop(
         passthrough_calls.append(config)
         return config
 
-    synced = await _connect_once(
+    synced = await connect_once(
         plc=plc,
         power_supply=_FakePowerSupply(),
         apply_config=applied.append,

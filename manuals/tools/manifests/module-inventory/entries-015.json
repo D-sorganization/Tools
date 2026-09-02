@@ -337,10 +337,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 31010,
+      "bytes_lf": 31020,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "8c78203601bb6433f440c78bfcc3d7021b678a847c2e31f22b3d88148bb035d8",
+      "content_sha256_lf": "2f24320cdf590c745aac7ecbeea7576be98496c9635c6d1961da8fe7d11723ae",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-MIXINS-CALCULATOR-STATE-MIXIN-PY-347B160C8554",
       "language": "python",
@@ -5997,6 +5997,7 @@
           "src/shared/python/sidekick/tests/test_state_manager.py",
           "src/shared/python/sidekick/tests/test_state_manager_atomic.py",
           "src/shared/python/sidekick/tests/test_state_manager_side_effects.py",
+          "tests/shared/python/ui/test_wave1_widget_state.py",
           "tests/shared/python/utils/test_state_manager.py"
         ],
         "unit_mentions": [

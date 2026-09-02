@@ -2,7 +2,7 @@
 
 Covers the hardening added on the heater / power-supply write path:
 
-    * ``_connect_once`` / ``_poll_once`` re-engage the process-local controller
+    * ``connect_once`` / ``poll_once`` re-engage the process-local controller
       latches (and arm the write-seam interlocks) while ``estop_active`` is set,
       so a PLC reconnect can never let the next scan re-energize an output
       before the hardware E-stop is re-asserted.
@@ -29,7 +29,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import hardware  # noqa: E402
-from poll_runtime import _connect_once, _poll_once  # noqa: E402
+from poll_runtime import connect_once, poll_once  # noqa: E402
 from power_supply_integration import PowerSupplyService  # noqa: E402
 from temperature_integration import TemperatureService  # noqa: E402
 
@@ -149,7 +149,7 @@ class TestReconnectReengagesLatches:
             plc = _ConnectPLC()
             power = _RecordingService()
             temp = _RecordingService()
-            await _connect_once(
+            await connect_once(
                 plc=plc,
                 power_supply=power,
                 apply_config=lambda _c: None,
@@ -170,7 +170,7 @@ class TestReconnectReengagesLatches:
             plc = _ConnectPLC()
             power = _RecordingService()
             temp = _RecordingService()
-            await _connect_once(
+            await connect_once(
                 plc=plc,
                 power_supply=power,
                 apply_config=lambda _c: None,
@@ -188,7 +188,7 @@ class TestReconnectReengagesLatches:
             plc = _PollPLC({"TAG_0": 1.0})
             power = _RecordingService()
             temp = _RecordingService()
-            await _poll_once(
+            await poll_once(
                 plc=plc,
                 backup=_Sim(),
                 latest_tag_values={"TAG_0": 0.0},
@@ -216,7 +216,7 @@ class TestReconnectReengagesLatches:
             plc = _PollPLC({"TAG_0": 1.0})
             power = _RecordingService()
             temp = _RecordingService()
-            await _poll_once(
+            await poll_once(
                 plc=plc,
                 backup=_Sim(),
                 latest_tag_values={"TAG_0": 0.0},

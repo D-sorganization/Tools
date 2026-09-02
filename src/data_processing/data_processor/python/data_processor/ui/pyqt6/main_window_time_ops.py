@@ -194,13 +194,28 @@ class TimeOpsMixin:
 
             x_min = None
             x_max = None
-            try:
-                if self.trend_x_min_edit.text().strip():  # type: ignore[attr-defined]
-                    x_min = float(self.trend_x_min_edit.text().strip())  # type: ignore[attr-defined]
-                if self.trend_x_max_edit.text().strip():  # type: ignore[attr-defined]
-                    x_max = float(self.trend_x_max_edit.text().strip())  # type: ignore[attr-defined]
-            except ValueError:
-                pass
+            x_min_text = self.trend_x_min_edit.text().strip()  # type: ignore[attr-defined]
+            x_max_text = self.trend_x_max_edit.text().strip()  # type: ignore[attr-defined]
+            if x_min_text:
+                try:
+                    x_min = float(x_min_text)
+                except ValueError:
+                    QMessageBox.warning(
+                        self,
+                        "Invalid X Range",
+                        f"'{x_min_text}' is not a valid number for the X minimum.",
+                    )
+                    return
+            if x_max_text:
+                try:
+                    x_max = float(x_max_text)
+                except ValueError:
+                    QMessageBox.warning(
+                        self,
+                        "Invalid X Range",
+                        f"'{x_max_text}' is not a valid number for the X maximum.",
+                    )
+                    return
 
             y_col = selected[0]
 

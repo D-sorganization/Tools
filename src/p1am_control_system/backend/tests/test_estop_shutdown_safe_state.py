@@ -279,7 +279,7 @@ class TestConnectLoopShutdownLatency:
         # module global at call time, so patching the attribute is sufficient.
         with (
             patch.object(backend_main, "shutdown_event", asyncio.Event()),
-            patch.object(backend_main, "_connect_once", AsyncMock(return_value=None)),
+            patch.object(backend_main, "connect_once", AsyncMock(return_value=None)),
             patch.object(backend_main.settings, "connect_retry_interval_s", 30.0),
         ):
             task = asyncio.create_task(backend_main.modbus_connect_background())
