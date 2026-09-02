@@ -3,6 +3,235 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 7731,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "dbbe50ac1f94ca149ebcc4119cbba4946eb3895444f4294650bc26616dd33092",
+      "family": "control-systems-non-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-LIB-CURVEFIT-TS-68C5CA25807F",
+      "language": "typescript",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/frontend/src/lib/curveFit.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "FIT_METHODS",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "FitMethod",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "FitPoint",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "FitResult",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "HeatUpRate",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "NO_FIT_ID",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "fitOptions",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "fitSeries",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "formatHeatUpRate",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "getFitMethod",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "heatUpRateFromFit",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "linearFit",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "pointsInLastWindow",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "deg",
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1976,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "db1b073781f6e63878369c790ba04937bd28ef7cc72485e99d01866e6c21fde9",
+      "family": "control-systems-non-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-LIB-DATAAGE-TEST-TS-1DC52DA3401F",
+      "language": "typescript",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/frontend/src/lib/dataAge.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3067,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2a422eee2dc8363646c84b1a90f328161be3e889ead562a59affa3bf6db1568d",
+      "family": "control-systems-non-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-LIB-DATAAGE-TS-9B9DF5AC92A7",
+      "language": "typescript",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/frontend/src/lib/dataAge.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "DATA_STALE_MS",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "DataFreshness",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "dataFreshness",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "formatDataAge",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "Hz",
+          "bar",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2497,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -15482,240 +15711,6 @@
         "unit_mentions": [
           "N",
           "N·m",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 11316,
-      "classification": "calculation",
-      "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "96dd57acb135ad0ee228a7974ddad1accdfee466e8ebb8cf470f8cc9060e3ad7",
-      "family": "pendulum-calculation",
-      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-DOWNSWING-CONFIG-PY-5B8D37472DAA",
-      "language": "python",
-      "maintainer": "Pendulum maintainers",
-      "path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/downswing_config.py",
-      "purpose": "Configuration for a downswing optimization, shared by every objective.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "DownswingConfig",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_TORQUE_RATE_LIMITS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "RATE_SCALE",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "N*m",
-          "N·m",
-          "kg",
-          "m/s",
-          "ms",
-          "rad",
-          "rad/s",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 8452,
-      "classification": "calculation",
-      "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "a2a0525d74f360968fa075c0aed40d32fe5479aee4256443d36d2a9255c879d6",
-      "family": "pendulum-calculation",
-      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-IMPACT-OPTIMALITY-PY-46372125DFAF",
-      "language": "python",
-      "maintainer": "Pendulum maintainers",
-      "path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/impact_optimality.py",
-      "purpose": "Why a speed-optimal downswing stops the hands, in closed form.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "10.1007/BF02844309",
-          "10.1098/rspb.1938.0050",
-          "10.1119/1.1976419",
-          "https://doi.org/10.1007/BF02844309",
-          "https://doi.org/10.1098/rspb.1938.0050",
-          "https://doi.org/10.1119/1.1976419",
-          "https://www.jssm.org/jssm-04-499.xml.xml"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "EnergyOptimalRates",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "energy_optimal_rates",
-            "signature": "params: PendulumParams, kinetic_energy_j: float"
-          },
-          {
-            "kind": "function",
-            "name": "impact_hand_speed_coefficient",
-            "signature": "params: PendulumParams, club_mass_kg: float | None=None, club_com_m: float | None=None, club_inertia_kgm2: float | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "optimal_hand_speed_sign",
-            "signature": "params: PendulumParams, club_mass_kg: float | None=None, club_com_m: float | None=None, club_inertia_kgm2: float | None=None"
-          }
-        ],
-        "test_paths": [
-          "src/pendulum_simulator/tests/test_impact_optimality.py"
-        ],
-        "unit_mentions": [
-          "kg",
-          "m/s",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 9207,
-      "classification": "calculation",
-      "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "72f16b40cebe7703d6192938baeb0bee98ff0eeb326cd5c31fe8e1bff07d3b6e",
-      "family": "pendulum-calculation",
-      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-MODEL-ADEQUACY-PY-E5B09834B73A",
-      "language": "python",
-      "maintainer": "Pendulum maintainers",
-      "path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/model_adequacy.py",
-      "purpose": "Measuring what the two-link model can and cannot be asked to do.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "10.1007/BF02844309",
-          "https://doi.org/10.1007/BF02844309"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "FrontierPoint",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "HandSpeedFrontier",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "hand_speed_frontier",
-            "signature": "config: DownswingConfig, floors_ms: Sequence[float], bands: tuple[ObservableBand, ...]=TOUR_DRIVER_BANDS"
-          },
-          {
-            "kind": "function",
-            "name": "swing_observables",
-            "signature": "states: FloatArray, clubhead_speed: FloatArray, duration_s: float, arm_length_m: float"
-          }
-        ],
-        "test_paths": [
-          "src/pendulum_simulator/tests/test_model_adequacy.py"
-        ],
-        "unit_mentions": [
-          "N",
-          "deg",
-          "m/s",
           "s"
         ],
         "validation_paths": []

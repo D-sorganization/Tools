@@ -3,6 +3,204 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 2757,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4112b47e048b233aca155c382377e00df862168ca5afccb80dae42bfdf7e9edb",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-WIDGETS-SETTINGS-NAV-PY-32CBD6E27013",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/ui/widgets/settings_nav.py",
+      "purpose": "Settings/navigation widgets: Checkbox, SettingsPanel, NavigationPanel.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Checkbox",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "NavigationPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SettingsPanel",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6100,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "49212ec41bc3554e2df29e07f38ad56a58d47f3865061a0cf68f804fd1e415d8",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-WIDGETS-SIDEBAR-CONTROLS-PY-AF192A7D0D5E",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/ui/widgets/sidebar_controls.py",
+      "purpose": "Sidebar and bottom control widgets:",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Button",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MissionListPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SidebarPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Tab",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "UnifiedControlPanel",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 240,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ea67ac5d4de1c60fce89723022a4c72b9448c078f5457fc8e38610413011a9d2",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-VISUALIZATION-INIT-PY-44CA9BEB57FC",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/visualization/__init__.py",
+      "purpose": "Visualization module for 3D rendering of the solar system.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "Camera",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CameraMode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Renderer",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SolarSystemScene",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 19111,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",

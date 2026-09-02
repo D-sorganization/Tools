@@ -93,6 +93,29 @@ repos:
         pass_filenames: false
         files: ^(manuals/tools/|config/design_manual_governance\.json$|scripts/(lint_tools_textbook_chapters|tools_textbook_chapter_contract|tools_textbook_chapter_lint)\.py$|tests/architecture/test_tools_textbook_chapter_contract\.py$)
 
+      # Companion to the module-inventory-regen git merge driver (#4818):
+      # the driver stops a merge from halting on conflict markers in the
+      # generated inventory, but only runs while the merge is still being
+      # computed, before git has necessarily finished writing every other
+      # path to the working tree -- so its regeneration can still be
+      # stale. `pre-merge-commit` (a distinct git hook from `pre-commit`;
+      # plain `pre-commit` does NOT fire for merge commits, confirmed
+      # empirically) fires right before the merge commit is created, once
+      # the full merged tree is actually checked out on disk, which is
+      # what scripts/build_tools_module_inventory.py needs to produce a
+      # correct result. Needs `pre-commit install --hook-type
+      # pre-merge-commit` in addition to the default install (both are
+      # already wired into scripts/setup_precommit.sh and
+      # scripts/setup_hooks.py). See
+      # scripts/git/regenerate_module_inventory_during_merge.py.
+      - id: regenerate-module-inventory-during-merge
+        name: "Tools module inventory merge fixup"
+        entry: python -m scripts.git.regenerate_module_inventory_during_merge
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-merge-commit]
+
       - id: tools-module-inventory-freshness
         name: "Tools module inventory freshness"
         entry: python -m scripts.build_tools_module_inventory --check
