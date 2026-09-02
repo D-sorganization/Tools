@@ -18,21 +18,38 @@ Union decisions carried by this module
     :class:`~shared.python.launch_monitor.player_covariation_types.
     PlayerCovariationResultV1`.
 
-Units are **not** resolved by column-name suffix
-    ``rate_of_closure.player_covariation`` carries a ``UNIT_SUFFIXES`` table
-    and an ``_infer_unit`` helper that guesses a unit from how a column is
-    spelled. That capability is deliberately the one thing in the
-    ``rate_of_closure`` trio the union does **not** fold in, because owner
-    ruling **D23** (ADR-0048, "Owner Rulings (2026-09-02)") deletes it: on
-    G0.1's own fixture the heuristic labels ``start_distance_yards`` as
-    ``"s"`` — seconds — because the name ends in an ``s``, and
-    ``session_order`` likewise. Units here come from
-    :func:`~shared.python.launch_monitor.contract_v2.metric_units_v2`, which
-    resolves the canonical registry first, an explicit
-    ``AnalysisContextV2.source_units`` declaration second, and returns
-    ``canonical_unit="unknown"`` with ``authority="unknown"`` rather than
-    guessing third. The keys are the caller's real column names, not
-    ``rate_of_closure``'s positional ``"x"``/``"y"``.
+The one ``rate_of_closure`` capability the union refuses is the unit
+heuristic — see the D23 section below.
+
+Owner ruling D23 — applied
+--------------------------
+``rate_of_closure.player_covariation`` carries a ``UNIT_SUFFIXES`` table and
+an ``_infer_unit`` helper that guess a unit from how a column is *spelled*.
+On G0.1's own fixture that heuristic labels ``start_distance_yards`` as
+``"s"`` — seconds — because the name ends in an ``s``, and ``session_order``
+likewise. **Ruling: the suffix heuristic is a defect and is deleted. The
+canonical layer resolves units from the canonical registry and returns
+unknown rather than guessing.**
+
+So the union does not fold it in, and nothing here reintroduces it. Units
+come from :func:`~shared.python.launch_monitor.contract_v2.metric_units_v2`,
+the same registry mechanism every other canonical result already uses,
+resolving in three steps and stopping honestly:
+
+1. the canonical metric registry in
+   :mod:`shared.python.launch_monitor.schema` (``authority=
+   "canonical_registry"``);
+2. an explicit ``AnalysisContextV2.source_units`` declaration by whoever
+   owns the data (``authority="source_declared"``);
+3. ``canonical_unit="unknown"``, ``authority="unknown"`` — a refusal, never
+   a guess.
+
+The keys are the caller's real column names, not ``rate_of_closure``'s
+positional ``"x"``/``"y"``, so a reader can tell which column a unit belongs
+to. Step 3 is reported the same way ruling D22 reports a withheld interval:
+a result that resolved nothing says so in a warning naming the columns and
+the declaration that would fix it, rather than leaving a bare ``"unknown"``
+for a consumer to misread as a unit.
 
 Owner ruling D22 — applied
 --------------------------
@@ -61,6 +78,7 @@ from shared.python.launch_monitor.contract_v2 import (
     AnalysisContextV2,
     AvailabilityState,
     AvailabilityV2,
+    MetricUnitsV2,
     analysis_lineage_v2,
     metric_units_v2,
     vendor_provenance_v2,
@@ -97,6 +115,26 @@ SELECTED_PAIR_METHOD_DESCRIPTION = (
 Folded in verbatim from ``rate_of_closure.player_covariation``; see the module
 docstring's union decisions.
 """
+
+
+def _unresolved_unit_warnings(units: dict[str, MetricUnitsV2]) -> tuple[str, ...]:
+    """Name the columns whose units the registry could not resolve (D23).
+
+    The ruling replaced a guess with a refusal. A refusal that is not stated
+    reads like an answer, so it is stated.
+    """
+
+    unresolved = sorted(
+        column for column, unit in units.items() if unit.authority == "unknown"
+    )
+    if not unresolved:
+        return ()
+    return (
+        "Units are unresolved for "
+        + ", ".join(unresolved)
+        + ": the canonical registry has no entry and the analysis context "
+        "declares no source unit. Units are never inferred from column names.",
+    )
 
 
 def _assert_player_identity(player_column: str, context: AnalysisContextV2) -> None:
@@ -213,6 +251,10 @@ def analyze_player_covariation_v1(
     statistics = compute_pair_statistics(frame, request)
     availability = _availability(statistics, request)
     selected = (request.player_column, request.x_column, request.y_column)
+    units = {
+        request.x_column: metric_units_v2(request.x_column, resolved_context),
+        request.y_column: metric_units_v2(request.y_column, resolved_context),
+    }
     return PlayerCovariationResultV1(
         status=_overall_status(availability),
         request=request,
@@ -222,10 +264,7 @@ def analyze_player_covariation_v1(
         per_player=statistics.per_player,
         meta_analysis=statistics.meta_analysis,
         missingness=statistics.missingness,
-        units={
-            request.x_column: metric_units_v2(request.x_column, resolved_context),
-            request.y_column: metric_units_v2(request.y_column, resolved_context),
-        },
+        units=units,
         lineage=analysis_lineage_v2(frame, resolved_context, selected),
         availability=availability,
         uncertainty=_uncertainty(request),
@@ -241,7 +280,7 @@ def analyze_player_covariation_v1(
                 "Fixed and DerSimonian-Laird random effects in Fisher-z space."
             ),
         },
-        warnings=statistics.warnings,
+        warnings=statistics.warnings + _unresolved_unit_warnings(units),
         method_description=SELECTED_PAIR_METHOD_DESCRIPTION,
     )
 
@@ -359,6 +398,7 @@ def scan_player_covariation_v1(
         for x_column, y_column in combinations(columns, 2)
     ]
     ranking = _rank_pairs(items)
+    units = {column: metric_units_v2(column, resolved_context) for column in columns}
     available = sum(item.state == "available" for item in ranking)
     unavailable = len(ranking) - available
     status: AvailabilityState = (
@@ -386,7 +426,8 @@ def scan_player_covariation_v1(
             "Multiplicity increases false-positive risk; validate selected "
             "relationships on held-out data.",
             "Correlation does not imply causality or population generalizability.",
-        ),
+        )
+        + _unresolved_unit_warnings(units),
         method_description=(
             "Pairs rank by absolute random-effects Pearson correlation, then "
             "eligible-player count and lexical variable names."

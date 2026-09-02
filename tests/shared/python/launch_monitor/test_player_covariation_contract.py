@@ -884,26 +884,97 @@ def test_d22_an_available_estimate_cannot_be_silent_about_a_missing_interval() -
         type(result.pooled).model_validate(both)
 
 
-def test_union_does_not_carry_the_column_name_suffix_unit_heuristic() -> None:
-    """D23: units come from the registry, never from how a column is spelled.
+def test_d23_units_are_resolved_from_the_registry_not_the_column_name() -> None:
+    """D23: the suffix heuristic is deleted; unknown beats a guess.
 
     ``rate_of_closure.player_covariation``'s ``UNIT_SUFFIXES`` table labels
     ``start_distance_yards`` ``"s"`` — seconds — because the name ends in an
-    ``s``. Nothing here does that.
+    ``s``, and ``session_order`` likewise. It reports
+    ``{"x": "s", "y": "m"}`` for this pair. Nothing here does that.
     """
     result = analyze_player_covariation_v1(
         _cross_stack_frame(), _g0_request(), context=_cross_stack_context()
     )
 
+    # Keyed by real column names, not rate_of_closure's positional x/y.
     assert set(result.units) == {G0_X_COLUMN, G0_Y_COLUMN}
-    assert result.units[G0_X_COLUMN].canonical_unit == "unknown"
-    assert result.units[G0_X_COLUMN].authority == "unknown"
-    assert result.units[G0_Y_COLUMN].canonical_unit == "unknown"
-    assert result.units[G0_Y_COLUMN].authority == "unknown"
+    for column in (G0_X_COLUMN, G0_Y_COLUMN):
+        assert result.units[column].canonical_unit == "unknown"
+        assert result.units[column].display_unit == "unknown"
+        assert result.units[column].authority == "unknown"
+        # Not the heuristic's answers, whatever else it is.
+        assert result.units[column].canonical_unit not in {"s", "m", "yd"}
 
-    # The heuristic is absent as code, not merely unused: no module defines a
-    # suffix table or a name-based unit guesser. Checked structurally so a
-    # docstring that names the deleted construct cannot satisfy it.
+    # The refusal is stated, not left as a bare "unknown" to be misread.
+    unresolved = [
+        warning for warning in result.warnings if "Units are unresolved" in warning
+    ]
+    assert len(unresolved) == 1
+    assert G0_X_COLUMN in unresolved[0]
+    assert G0_Y_COLUMN in unresolved[0]
+    assert "never inferred from column names" in unresolved[0]
+
+
+def test_d23_registry_and_source_declaration_are_the_only_authorities() -> None:
+    """The three resolution steps, and nothing else."""
+    frame = _confounded_frame()
+    request = PlayerCovariationRequestV1(
+        x_column="face_angle", y_column="club_path", player_column="player_id"
+    )
+
+    registry = analyze_player_covariation_v1(frame, request, context=_context())
+    assert registry.units["face_angle"].authority == "canonical_registry"
+    assert registry.units["face_angle"].canonical_unit == "rad"
+    assert not any("Units are unresolved" in w for w in registry.warnings)
+
+    named = frame.rename(columns={"face_angle": "face_angle_seconds"})
+    unnamed_request = PlayerCovariationRequestV1(
+        x_column="face_angle_seconds", y_column="club_path", player_column="player_id"
+    )
+    declared = analyze_player_covariation_v1(
+        named,
+        unnamed_request,
+        context=_context().model_copy(
+            update={"source_units": {"face_angle_seconds": "deg"}}
+        ),
+    )
+    # A column whose name ends in "seconds" takes the owner's declared unit,
+    # not a unit read off the name.
+    assert declared.units["face_angle_seconds"].authority == "source_declared"
+    assert declared.units["face_angle_seconds"].canonical_unit == "deg"
+
+    guessable = analyze_player_covariation_v1(
+        named, unnamed_request, context=_context()
+    )
+    assert guessable.units["face_angle_seconds"].authority == "unknown"
+    assert guessable.units["face_angle_seconds"].canonical_unit == "unknown"
+
+
+def test_d23_scan_units_and_warning_follow_the_same_rule() -> None:
+    result = scan_player_covariation_v1(
+        _cross_stack_frame(),
+        PlayerCovariationScanRequestV1(
+            player_column=G0_PLAYER_COLUMN, numeric_columns=G0_SCAN_COLUMNS
+        ),
+        context=_cross_stack_context(),
+    )
+
+    for pair in result.ranking:
+        assert pair.x_unit.authority == "unknown"
+        assert pair.y_unit.authority == "unknown"
+    unresolved = [
+        warning for warning in result.warnings if "Units are unresolved" in warning
+    ]
+    assert len(unresolved) == 1
+    assert "session_order" in unresolved[0]
+
+
+def test_d23_no_column_name_suffix_heuristic_exists_in_the_p18_modules() -> None:
+    """The heuristic is absent as code, not merely unused.
+
+    Checked structurally, so a docstring that names the deleted construct
+    cannot satisfy it.
+    """
     for module in P18_MODULES:
         tree = ast.parse(PACKAGE_DIR.joinpath(module).read_text(encoding="utf-8"))
         defined = {
@@ -915,6 +986,7 @@ def test_union_does_not_carry_the_column_name_suffix_unit_heuristic() -> None:
         } | {node.name for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)}
         assert "UNIT_SUFFIXES" not in defined, module
         assert not any("infer_unit" in name for name in defined), module
+        assert not any("suffix" in name.lower() for name in defined), module
 
 
 def test_p18_modules_import_nothing_from_rate_of_closure() -> None:
