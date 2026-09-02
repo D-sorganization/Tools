@@ -13089,10 +13089,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 16451,
+      "bytes_lf": 13720,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d50aeafd88508073a07e907b2f9354c1290ba95de382734292085887ef600e9c",
+      "content_sha256_lf": "11a5a992c941ce0076f875f72825e0b2641ed123b3d3f0af1408e87e8d2e8e09",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-INIT-PY-662C22BCE5D1",
       "language": "python",
@@ -13196,6 +13196,21 @@
           },
           {
             "kind": "re-export",
+            "name": "CORPUS_COLUMN_MAP",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CORPUS_RELATIVE_PATH",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CanonicalPrivateCorpus",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "ChangeCandidate",
             "signature": null
           },
@@ -13217,6 +13232,11 @@
           {
             "kind": "re-export",
             "name": "ConfidenceIntervalV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CorpusManifest",
             "signature": null
           },
           {
@@ -13261,12 +13281,42 @@
           },
           {
             "kind": "re-export",
+            "name": "DATASET_JOB_CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "DatasetAuthorityV2",
             "signature": null
           },
           {
             "kind": "re-export",
+            "name": "DatasetJobRequestV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DatasetOperationV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DatasetReferenceV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "DatasetSummary",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DatasetUnavailableError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DatasetUnavailableStateV1",
             "signature": null
           },
           {
@@ -13366,12 +13416,27 @@
           },
           {
             "kind": "re-export",
+            "name": "LAUNCH_MONITOR_CONFORMANCE_BUNDLE_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "LONGITUDINAL_SESSION_CONTRACT_VERSION",
             "signature": null
           },
           {
             "kind": "re-export",
             "name": "LaunchMonitorAnalysisResultV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LaunchMonitorConformanceBundleV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LaunchMonitorConformanceScenarioV1",
             "signature": null
           },
           {
@@ -13417,6 +13482,16 @@
           {
             "kind": "re-export",
             "name": "LongitudinalSummaryV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_PAGE_SIZE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_RETAINED_ROWS",
             "signature": null
           },
           {
@@ -13507,6 +13582,11 @@
           {
             "kind": "re-export",
             "name": "POOLED_METHOD_DESCRIPTIONS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PRIVATE_DATA_ENV",
             "signature": null
           },
           {
@@ -13666,6 +13746,11 @@
           },
           {
             "kind": "re-export",
+            "name": "VerifiedDataset",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "adapt_v2_to_v1",
             "signature": null
           },
@@ -13756,7 +13841,22 @@
           },
           {
             "kind": "re-export",
+            "name": "corpus_dataset_path",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "covariation_backing_frame",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "dataset_content_sha256",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "dataset_job_contract_json_schema",
             "signature": null
           },
           {
@@ -13771,12 +13871,42 @@
           },
           {
             "kind": "re-export",
+            "name": "execute_dataset_operation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "fit_predictive_model",
             "signature": null
           },
           {
             "kind": "re-export",
             "name": "import_session",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "launch_monitor_conformance_bundle_json_schema",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "launch_monitor_conformance_bundle_sha256",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "launch_monitor_conformance_scenario_sha256",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "load_private_corpus",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "load_private_corpus_with_provenance",
             "signature": null
           },
           {
@@ -13816,6 +13946,16 @@
           },
           {
             "kind": "re-export",
+            "name": "read_corpus_manifest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "resolve_private_corpus_path",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "scan_player_covariation_v1",
             "signature": null
           },
@@ -13826,7 +13966,17 @@
           },
           {
             "kind": "re-export",
+            "name": "validate_corpus_manifest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "vendor_provenance_v2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "verify_dataset_reference",
             "signature": null
           }
         ],
@@ -13972,6 +14122,88 @@
         "test_paths": [
           "src/movement_optimizer/tests/test_comparison.py",
           "tests/shared/python/launch_monitor/test_comparison.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10192,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "37a9e277f6365611a2f08431857b5172f8297109fcccf7a0ab2d2a842552972a",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-CONFORMANCE-BUNDLE-PY-9C2D3FFE0375",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/conformance_bundle.py",
+      "purpose": "Versioned, data-free conformance bundle for launch-monitor consumers.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "LaunchMonitorConformanceBundleV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LaunchMonitorConformanceScenarioV1",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LAUNCH_MONITOR_CONFORMANCE_BUNDLE_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "launch_monitor_conformance_bundle_json_schema",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "launch_monitor_conformance_bundle_sha256",
+            "signature": "bundle: LaunchMonitorConformanceBundleV1 | dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "launch_monitor_conformance_scenario_sha256",
+            "signature": "scenario: LaunchMonitorConformanceScenarioV1 | dict[str, Any]"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/launch_monitor/test_conformance_bundle.py"
         ],
         "unit_mentions": [
           "s"
@@ -14153,6 +14385,508 @@
         "validation_paths": [
           "tests/shared/python/launch_monitor/test_contract_v2.py"
         ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 21399,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8cbb3af03317bbf0eb5ae14817fee498bba57c2fedfff7149d09c3d6bedb0c15",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-CORPUS-PY-3F32E3071587",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/corpus.py",
+      "purpose": "Load the private launch-monitor shot corpus as validated canonical frames.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CanonicalPrivateCorpus",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CorpusManifest",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CORPUS_COLUMN_MAP",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CORPUS_RELATIVE_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MANIFEST_FILENAME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_RETAINED_ROWS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "OPTIONAL_IDENTITY_COLUMNS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PRIVATE_DATA_ENV",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SUPPORTED_MANIFEST_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "corpus_dataset_path",
+            "signature": "root: str | Path | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "load_private_corpus",
+            "signature": "root: str | Path | None=None, sources: list[str] | None=None, metrics: list[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "load_private_corpus_with_provenance",
+            "signature": "root: str | Path | None=None, sources: list[str] | None=None, metrics: list[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "read_corpus_manifest",
+            "signature": "dataset_dir: Path"
+          },
+          {
+            "kind": "function",
+            "name": "resolve_private_corpus_path",
+            "signature": "root: str | Path | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "validate_corpus_manifest",
+            "signature": "manifest: CorpusManifest, *, observed_rows: int, observed_sources: set[str]"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/launch_monitor/test_corpus.py",
+          "tests/shared/python/launch_monitor/test_dataset_reference_jobs.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "m/s",
+          "rad/s",
+          "rpm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1944,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a5bcceec4bdddeaf6a570147bcc4f8d9a4c37006b17227f59ccf0d5b36c4d15c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-DATASET-REFERENCE-PY-2F060F31084E",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/dataset_reference.py",
+      "purpose": "Stable facade for immutable, aggregate-only private-dataset jobs.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "DATASET_JOB_CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DatasetJobRequestV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DatasetOperationV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DatasetReferenceV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DatasetUnavailableError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DatasetUnavailableStateV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_PAGE_SIZE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "VerifiedDataset",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "dataset_content_sha256",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "dataset_job_contract_json_schema",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "execute_dataset_operation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "verify_dataset_reference",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/launch_monitor/test_dataset_reference_jobs.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5897,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "da80a2659bfddce3427329bbeb1a895b4c8db3c7ae4985adbc73f4555eb067d8",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-DATASET-REFERENCE-CONTRACT-PY-3D447898ED9B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/dataset_reference_contract.py",
+      "purpose": "Versioned contracts for immutable private-dataset analysis jobs.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DatasetJobRequestV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DatasetOperationV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DatasetReferenceV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DatasetUnavailableError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DatasetUnavailableStateV1",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DATASET_JOB_CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_PAGE_SIZE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_RESULT_ITEMS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "dataset_job_contract_json_schema",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "unavailable",
+            "signature": "code: UnavailableCode, message: str, *, retryable: bool=False"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10976,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "770e809c8e5af31da64af2f6546657ae583f7992742324f7c7481193b9426650",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-DATASET-REFERENCE-OPERATIONS-PY-8FC774529B90",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/dataset_reference_operations.py",
+      "purpose": "Bounded aggregate operations over a verified private-dataset reference.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "execute_dataset_operation",
+            "signature": "dataset: VerifiedDataset, operation: DatasetOperationV1"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13240,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "263724db970b9ddecf69f7fddc231091aacee050c155feb60d1d3224c928a255",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-DATASET-REFERENCE-VERIFICATION-PY-68AB9EF69EB7",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/dataset_reference_verification.py",
+      "purpose": "Fail-closed verification of an immutable private-dataset reference.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://github.com/",
+          "https://github.com/"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "VerifiedDataset",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ACQUISITION_MANIFEST_RELATIVE_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SOURCE_SUMMARY_RELATIVE_PATH",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "dataset_content_sha256",
+            "signature": "dataset_path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "normalize_repository",
+            "signature": "remote_url: str"
+          },
+          {
+            "kind": "function",
+            "name": "open_parquet_dataset",
+            "signature": "dataset_path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "parse_json_bytes",
+            "signature": "payload: bytes, *, label: str"
+          },
+          {
+            "kind": "function",
+            "name": "safe_fixed_child",
+            "signature": "root: Path, relative: Path"
+          },
+          {
+            "kind": "function",
+            "name": "sha256_file",
+            "signature": "path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "verify_dataset_reference",
+            "signature": "root: Path, reference: DatasetReferenceV1"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
       }
     },
     {
@@ -16670,423 +17404,6 @@
         "unit_mentions": [
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2585,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2a513d4fbbb2d8a9abf4cfd45f62555145e3a66d03cafb5184f652932ee7694f",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-API-REST-API-FLASK-PY-B7079257A4D4",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/api/rest_api_flask.py",
-      "purpose": "Flask adapter for the model generation REST API.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "FlaskAdapter",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/model_generation/tests/test_api_adapters.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 8854,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f93e6156eca2facf7629cc1229be0fe468b58e39017f5c379e0ed1dbd912ff37",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-API-REST-API-GENERATION-PY-4D6C98EB359E",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/api/rest_api_generation.py",
-      "purpose": "Generation, conversion, validation, and parsing route handlers.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "GenerationConversionRoutesMixin",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 39913,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "90d51fe28834d48dd1da4f0163aed605a34a9d2d3114a6aa1bad97a04d0fd172",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-API-REST-API-ROUTES-PY-1F4E1F0EA76D",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/api/rest_api_routes.py",
-      "purpose": "ModelGenerationAPI class with all route handler methods.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ModelGenerationAPI",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ALLOWED_MESH_SUFFIXES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MAX_MESH_UPLOAD_BYTES",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/model_generation/test_mesh_upload_hardening.py",
-          "tests/shared/python/model_generation/test_rest_api_routes.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3735,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7a819a9c87b214add9ebedc4273c28d48e919072cbca79dcd744bc2044bcea75",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-API-REST-API-SUPPORT-PY-9F07B57E4277",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/api/rest_api_support.py",
-      "purpose": "Shared helpers for model_generation API route handlers.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "ALLOWED_MESH_SUFFIXES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MAX_MESH_UPLOAD_BYTES",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "download_requested",
-            "signature": "request: APIRequest"
-          },
-          {
-            "kind": "function",
-            "name": "ensure_request",
-            "signature": "request: APIRequest | None"
-          },
-          {
-            "kind": "function",
-            "name": "inertia_payload",
-            "signature": "inertia: Any"
-          },
-          {
-            "kind": "function",
-            "name": "maybe_file_response",
-            "signature": "request: APIRequest, *, content: str | bytes, filename: str, payload: dict[str, Any], content_type: str='application/xml'"
-          },
-          {
-            "kind": "function",
-            "name": "request_body",
-            "signature": "request: APIRequest"
-          },
-          {
-            "kind": "function",
-            "name": "request_content",
-            "signature": "request: APIRequest, *, body_key: str='content', file_key: str='file'"
-          },
-          {
-            "kind": "function",
-            "name": "request_file_text",
-            "signature": "request: APIRequest, *, file_key: str='file', encoding: str='utf-8'"
-          },
-          {
-            "kind": "function",
-            "name": "temporary_payload_file",
-            "signature": "*, payload: str | bytes, suffix: str, text_mode: bool=False"
-          },
-          {
-            "kind": "function",
-            "name": "validate_mesh_upload",
-            "signature": "*, payload: bytes, filename: str | None=None"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2689,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "13d04dd77ab9b4c46ff5506c2e53891547ce83fb087083413af2b0bf2300cd9e",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-API-REST-API-TYPES-PY-D2633A9C8D67",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/api/rest_api_types.py",
-      "purpose": "HTTP protocol types and data structures for the model generation REST API.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "APIRequest",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "APIResponse",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "HTTPMethod",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "Route",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/model_generation/test_mesh_upload_hardening.py",
-          "tests/shared/python/model_generation/test_rest_api_routes.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 769,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7f89ee51e7579d5e3c0bf3e187864f7d8ef37e77c5851a6e91691a1d22c2f06b",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-BUILDERS-INIT-PY-CFC55A355242",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/builders/__init__.py",
-      "purpose": "Model builders for URDF generation.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "BaseURDFBuilder",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "BuildResult",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ManualBuilder",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ParametricBuilder",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "URDFWriter",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }
