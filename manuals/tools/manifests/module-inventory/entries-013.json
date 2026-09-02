@@ -3,216 +3,6 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 60567,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6cb298149dc3f37784687465211950a22825d1468efd729e8199b4a08bbf9caf",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-CHAT-DOCK-WIDGET-QT-PY-DD8B1382BB92",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/_chat_dock_widget_qt.py",
-      "purpose": "Lightweight AI Chat dock widget for embedding in any PyQt6 application.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ChatDockWidget",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ChatMessageBubble",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "HistorySidebar",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "QFileDialog",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "QWebSocket",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "QWidget",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/chat/tests/test_chat.py",
-          "tests/shared/python/chat/test_chat_agent_label.py",
-          "tests/shared/python/chat/test_chat_chunk_batching.py",
-          "tests/shared/python/chat/test_chat_dock_view_state.py",
-          "tests/shared/python/chat/test_chat_dock_widget.py",
-          "tests/shared/python/chat/test_chat_input_keybindings.py",
-          "tests/shared/python/chat/test_chat_queue_panel.py",
-          "tests/shared/python/chat/test_chat_session_helpers.py",
-          "tests/shared/python/chat/test_default_server.py",
-          "tests/shared/python/chat/test_native_websocket_contract.py",
-          "tests/shared/python/chat/test_thinking_indicator.py",
-          "tests/unit/chat/test_chat_dock_widget_close_reconnect.py",
-          "tests/unit/chat/test_chat_dock_widget_history_browser.py",
-          "tests/unit/chat/test_dock_widget_dropdowns.py",
-          "tests/unit/chat/test_memory_panel.py",
-          "tests/unit/chat/test_mid_thread_switch.py"
-        ],
-        "unit_mentions": [
-          "Hz",
-          "g",
-          "ms",
-          "s"
-        ],
-        "validation_paths": [
-          "tests/shared/python/chat/test_native_websocket_contract.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 402,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8d8472012158b2962260a1b0e5bcb9ba42f65179cefa0cdfccb810a3af9e150c",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-QT-INIT-PY-EFA33F9E3D18",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/_qt/__init__.py",
-      "purpose": "Private submodule package for ``ChatDockWidget`` internals.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 8942,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3131f431f2ca0a455364095b6b65097f5ac1590301770e56114bace5a19ecc0c",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-QT-AI-DROPDOWNS-PY-8B343CEA944F",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/_qt/ai_dropdowns.py",
-      "purpose": "AI provider / model / thinking dropdown helpers (Tools issue #2871).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "DEFAULT_PROVIDERS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "VALID_FIELDS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "VALID_THINKING_NAMES",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
       "bytes_lf": 6771,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -16276,6 +16066,183 @@
           {
             "kind": "re-export",
             "name": "DISPLAY_OPTIONS",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 486,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4b50d65b4f84a26881aaf4f6418e4590d1c351bbcb8454b2cdbbd97e1f06925a",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-EXPLORER-DISPLAY-CONFIG-PY-9AFC5B5F75F3",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/explorer/display_config.py",
+      "purpose": "Display configuration constants for the Model Explorer.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "DISPLAY_OPTIONS",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/model_generation/tests/test_unified_loader.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 19104,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "545bc0b95f2094acfec8b3b5ca4570c9c5e16bc9eedeb6cd691d0df35e7f357c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-EXPLORER-MODEL-EXPLORER-PY-D719A4430D24",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/explorer/model_explorer.py",
+      "purpose": "Model Explorer PyQt6 Main Window.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DisplayPreviewPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ModelExplorerWindow",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ModelFileSelectionRequiredError",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N",
+          "bar",
+          "kg"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 238,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a0da1c07b7d176e2dc4c4a22f1f5beec337e7d84b9986242f4e9594f055b81c5",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-EXPORT-INIT-PY-0D8E6E8BEC04",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/export/__init__.py",
+      "purpose": "Export utilities for model generation.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "URDFWriter",
             "signature": null
           }
         ],

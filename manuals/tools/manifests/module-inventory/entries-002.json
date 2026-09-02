@@ -2878,8 +2878,7 @@
           }
         ],
         "test_paths": [
-          "src/document_processing/pdf_renamer/tests/test_renamer.py",
-          "src/document_processing/pdf_renamer/tests_pdf_renamer/test_renamer.py"
+          "src/document_processing/pdf_renamer/tests/test_renamer.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
@@ -3147,120 +3146,6 @@
           }
         ],
         "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 0,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-DOCUMENT-PROCESSING-PDF-RENAMER-TESTS-PDF-RENAMER-INIT-PY-167DE7667C34",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/document_processing/pdf_renamer/tests_pdf_renamer/__init__.py",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 222,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e673ed3eaa338fae8813eb831fd06f1042633ef40d4784393957c43790ebd6b3",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-DOCUMENT-PROCESSING-PDF-RENAMER-TESTS-PDF-RENAMER-CONFTEST-PY-7CF484A2FF41",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/document_processing/pdf_renamer/tests_pdf_renamer/conftest.py",
-      "purpose": "Pytest configuration for pdf_renamer tests.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [
-          "src/data_processing/data_processor/python/tests/conftest.py",
-          "src/document_processing/pdf_renamer/tests/conftest.py",
-          "src/movement_optimizer/tests/conftest.py",
-          "src/p1am_control_system/backend/tests/conftest.py",
-          "src/pendulum_simulator/tests/conftest.py",
-          "src/shared/python/sidekick/tests/conftest.py",
-          "src/signal_processing_studio/tests/conftest.py",
-          "src/urdf_builder_gui/tests/conftest.py",
-          "src/vessel_drafter/tests/conftest.py",
-          "src/web_applications/urdf_viewer/tests/conftest.py",
-          "tests/benchmarks/conftest.py",
-          "tests/conftest.py",
-          "tests/e2e/conftest.py",
-          "tests/integration/conftest.py",
-          "tests/ode_solver/conftest.py",
-          "tests/p1am_control_system/conftest.py",
-          "tests/pendulum_simulator/conftest.py",
-          "tests/rate_of_closure/conftest.py",
-          "tests/shared/python/sidekick/process_calculators/conftest.py",
-          "tests/solar_system_model/conftest.py",
-          "tests/tools/folder_tools/conftest.py",
-          "tests/unit/ai/integrations/conftest.py",
-          "tests/unit/ai/integrations/github_mcp/conftest.py",
-          "tests/unit/ai/mcp/conftest.py",
-          "tests/unit/chat/conftest.py",
-          "tests/unit/codemap/conftest.py",
-          "tests/unit/lower_body_model/conftest.py",
-          "tests/unit/sidekick/conftest.py",
-          "tests/vessel_drafter/conftest.py"
-        ],
         "unit_mentions": [],
         "validation_paths": []
       }
@@ -13758,6 +13643,113 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 14380,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9e8863c8483cd1cdfcfa462e8e0f8e585e21a8c505c74ed3ba8af1139179d6b1",
+      "family": "media-processing-non-calculation",
+      "id": "TOOLS-MODULE-SRC-MEDIA-PROCESSING-VIDEO-PROCESSOR-APPS-WEB-COMPONENTS-GOLF-METRICSPANEL-TSX-527335438156",
+      "language": "typescript-react",
+      "maintainer": "Media processing maintainers",
+      "path": "src/media_processing/video_processor/apps/web/components/golf/MetricsPanel.tsx",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "MetricsPanel",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "cm"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7438,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5f96c827038908b0138e519308dbcfb2537bc8bc8b4ed3668cd8f3fdc3931750",
+      "family": "media-processing-non-calculation",
+      "id": "TOOLS-MODULE-SRC-MEDIA-PROCESSING-VIDEO-PROCESSOR-APPS-WEB-COMPONENTS-GOLF-PHASETIMELINE-TSX-7DF5EAB0A7B0",
+      "language": "typescript-react",
+      "maintainer": "Media processing maintainers",
+      "path": "src/media_processing/video_processor/apps/web/components/golf/PhaseTimeline.tsx",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "PhaseTimeline",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N",
+          "ms"
+        ],
         "validation_paths": []
       }
     }

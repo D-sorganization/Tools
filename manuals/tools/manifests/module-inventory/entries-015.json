@@ -3,239 +3,6 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3368,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b7c14247ae01b1093d6ca504c532a80ea1bad03401ded1af7d35c6feeb18224e",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-DESIGN-TOKENS-PY-011466A20CA4",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/design_tokens.py",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "apply_tokens_to_qss",
-            "signature": "qss_content: str, theme_name: str='light'"
-          },
-          {
-            "kind": "function",
-            "name": "get_qss_variables",
-            "signature": "theme_name: str='light'"
-          },
-          {
-            "kind": "function",
-            "name": "get_token_dict",
-            "signature": "theme_name: str='light'"
-          },
-          {
-            "kind": "function",
-            "name": "get_tokens_path",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "load_design_tokens",
-            "signature": ""
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "g"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 312,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d9652e301435303104aba2919bf8d1a22d26aac19eca48b4d5d3dd7324f22c50",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-MANAGERS-INIT-PY-5D2B6D7062AF",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/managers/__init__.py",
-      "purpose": "UI managers for Upstream Drift Tools.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "UNIT_CATEGORIES",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "UnitCategory",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "UnitPreferencesManager",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "get_unit_preferences_manager",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 12878,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ae89ba02bd7a20adda50758b2563607034ebba26faf35b1e6184c7353bee4394",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-MANAGERS-UNIT-PREFERENCES-MANAGER-PY-75E58CCC4EAB",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/managers/unit_preferences_manager.py",
-      "purpose": "Unit Preferences Manager - Global unit preferences management for the application.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "UnitCategory",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "UnitPreferencesManager",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "UNIT_CATEGORIES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "UNIT_PRESETS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "get_unit_preferences_manager",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/sidekick/tests/test_unit_aware_input.py",
-          "src/shared/python/sidekick/tests/test_unit_preferences_manager.py"
-        ],
-        "unit_mentions": [
-          "J",
-          "MPa",
-          "Nm",
-          "N·m",
-          "Pa",
-          "W",
-          "bar",
-          "cm",
-          "deg",
-          "g",
-          "kPa",
-          "kg",
-          "mm",
-          "rad/s",
-          "rpm",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
       "bytes_lf": 69,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -18082,6 +17849,180 @@
             "kind": "class",
             "name": "SkidRollResult",
             "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 14003,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c4543b6b37d97d70f7658fe922ab939c2c187f1bd64cbfe72415d8d632fce0fc",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-SKID-ROLL-RUNTIME-PY-8A8C54F600B0",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/skid_roll_runtime.py",
+      "purpose": "Mutable runtime ledger isolated from the skid/roll state-machine policy.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AdvanceResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SurfaceRun",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/ground/tests/test_skid_roll_passivity.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 11804,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "e0008f114b5a94f68db2afb2433fd785e9fc5f93bb90396958df0cc43bc65281",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-SKID-ROLL-SIMULATION-PY-53EDC3FD90C3",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/skid_roll_simulation.py",
+      "purpose": "Deterministic bounded skid-to-roll solver for coplanar material regions.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SkidRollExecution",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "simulate_skid_roll",
+            "signature": "request: GroundSimulationRequest, prefix: RepeatedBounceResult, execution: SkidRollExecution | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/ground/tests/test_skid_roll_simulation.py",
+          "src/shared/python/swing_sim/ground/tests/test_study_projection.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2687,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "561b31b216503809593eb9b8de21e352a18d483e0237dd8c9665aa6ac8dcf190",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-SKID-ROLL-VALIDATION-PY-C1EA9CFE0768",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/skid_roll_validation.py",
+      "purpose": "Fail-closed preconditions for the #4270 to #4271 physical handoff.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "validate_surface_run_inputs",
+            "signature": "request: GroundSimulationRequest, prefix: RepeatedBounceResult, resolver: SurfaceResolver, settings: SkidRollSettings"
           }
         ],
         "test_paths": [],

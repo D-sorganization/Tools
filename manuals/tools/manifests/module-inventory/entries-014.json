@@ -3,183 +3,6 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 486,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4b50d65b4f84a26881aaf4f6418e4590d1c351bbcb8454b2cdbbd97e1f06925a",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-EXPLORER-DISPLAY-CONFIG-PY-9AFC5B5F75F3",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/explorer/display_config.py",
-      "purpose": "Display configuration constants for the Model Explorer.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "DISPLAY_OPTIONS",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/model_generation/tests/test_unified_loader.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 19104,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "545bc0b95f2094acfec8b3b5ca4570c9c5e16bc9eedeb6cd691d0df35e7f357c",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-EXPLORER-MODEL-EXPLORER-PY-D719A4430D24",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/explorer/model_explorer.py",
-      "purpose": "Model Explorer PyQt6 Main Window.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "DisplayPreviewPanel",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ModelExplorerWindow",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ModelFileSelectionRequiredError",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "main",
-            "signature": ""
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "N",
-          "bar",
-          "kg"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 238,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a0da1c07b7d176e2dc4c4a22f1f5beec337e7d84b9986242f4e9594f055b81c5",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-EXPORT-INIT-PY-0D8E6E8BEC04",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/export/__init__.py",
-      "purpose": "Export utilities for model generation.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "URDFWriter",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
       "bytes_lf": 2509,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -15629,7 +15452,6 @@
           }
         ],
         "test_paths": [
-          "src/shared/python/sidekick/process_calculators/scrubber/tests/test_scrubber_engine.py",
           "src/shared/python/sidekick/tests/process_calculators/test_scrubber_engine.py",
           "tests/shared/python/sidekick/process_calculators/scrubber/test_scrubber_engine.py"
         ],
@@ -17451,6 +17273,239 @@
           "src/shared/python/sidekick/tests/ui/test_catppuccin_theme.py"
         ],
         "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3368,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b7c14247ae01b1093d6ca504c532a80ea1bad03401ded1af7d35c6feeb18224e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-DESIGN-TOKENS-PY-011466A20CA4",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/design_tokens.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "apply_tokens_to_qss",
+            "signature": "qss_content: str, theme_name: str='light'"
+          },
+          {
+            "kind": "function",
+            "name": "get_qss_variables",
+            "signature": "theme_name: str='light'"
+          },
+          {
+            "kind": "function",
+            "name": "get_token_dict",
+            "signature": "theme_name: str='light'"
+          },
+          {
+            "kind": "function",
+            "name": "get_tokens_path",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "load_design_tokens",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 312,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d9652e301435303104aba2919bf8d1a22d26aac19eca48b4d5d3dd7324f22c50",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-MANAGERS-INIT-PY-5D2B6D7062AF",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/managers/__init__.py",
+      "purpose": "UI managers for Upstream Drift Tools.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "UNIT_CATEGORIES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "UnitCategory",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "UnitPreferencesManager",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_unit_preferences_manager",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 12878,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ae89ba02bd7a20adda50758b2563607034ebba26faf35b1e6184c7353bee4394",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-MANAGERS-UNIT-PREFERENCES-MANAGER-PY-75E58CCC4EAB",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/managers/unit_preferences_manager.py",
+      "purpose": "Unit Preferences Manager - Global unit preferences management for the application.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "UnitCategory",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "UnitPreferencesManager",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "UNIT_CATEGORIES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "UNIT_PRESETS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_unit_preferences_manager",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/test_unit_aware_input.py",
+          "src/shared/python/sidekick/tests/test_unit_preferences_manager.py"
+        ],
+        "unit_mentions": [
+          "J",
+          "MPa",
+          "Nm",
+          "N·m",
+          "Pa",
+          "W",
+          "bar",
+          "cm",
+          "deg",
+          "g",
+          "kPa",
+          "kg",
+          "mm",
+          "rad/s",
+          "rpm",
+          "s"
+        ],
         "validation_paths": []
       }
     }
