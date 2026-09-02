@@ -3,6 +3,129 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 5413,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b24ef842b5e7f3b3cf878b477921b9950cecc2784183aefc22959ca75d17a408",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-REGIONALGROUNDEXECUTIONRESULT-TS-EF7E51C3A1A3",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/regionalGroundExecutionResult.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "MAX_REGIONAL_GROUND_EXECUTION_RESULT_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "REGIONAL_GROUND_EXECUTION_RESULT_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "RegionalGroundExecutionResult",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "assertRegionalGroundExecutionResultMatchesJob",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "parseRegionalGroundExecutionResult",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "regionalGroundExecutionResultFromJson",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "stableRegionalGroundExecutionResultJson",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1791,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1406e6f95fb9470bf60bcad6b0d1a655006f3f4d1a61ebaa5d7bf901e68d5b4a",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-REGIONALGROUNDEXECUTIONRESULTFILES-TEST-TS-DE98AFA68481",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/regionalGroundExecutionResultFiles.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 1498,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -14751,145 +14874,6 @@
           "tests/rotation_converter/test_reference_frame_operations.py"
         ],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 26790,
-      "classification": "calculation",
-      "classification_basis": "path-marker:rotation",
-      "content_sha256_lf": "b6fd9c9e4c44c8e83b30d0b15ff321e7ee057e946fef06d130eeb10317b6f5f0",
-      "family": "rotation-converter-calculation",
-      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-RIGID-TRANSFORM-PY-A57C7E57B7C5",
-      "language": "python",
-      "maintainer": "Rotation converter maintainers",
-      "path": "src/rotation_converter/rigid_transform.py",
-      "purpose": "Frame-aware rigid body transformation (SE(3) with source/target labels).",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "FrameError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RigidTransform",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/rotation_converter/test_rigid_transform.py",
-          "tests/rotation_converter/test_scripting_env.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 16963,
-      "classification": "calculation",
-      "classification_basis": "path-marker:rotation",
-      "content_sha256_lf": "42de070e0aff56d31c2fc4ab40b81a92fde620f25ee6feeed7376c4e83ff9042",
-      "family": "rotation-converter-calculation",
-      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-SCREW-VISUALIZATION-PY-13D04051C2A7",
-      "language": "python",
-      "maintainer": "Rotation converter maintainers",
-      "path": "src/rotation_converter/screw_visualization.py",
-      "purpose": "Screw axis visualization for rigid-body motions.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ScrewAxisAnimator",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_BODY_AXIS_LENGTH",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_animation_frames",
-            "signature": "trajectory: list[np.ndarray], body_axis_length: float=_BODY_AXIS_LENGTH"
-          },
-          {
-            "kind": "function",
-            "name": "extract_screw_axes_from_trajectory",
-            "signature": "trajectory: list[np.ndarray]"
-          }
-        ],
-        "test_paths": [
-          "tests/rotation_converter/test_screw_visualization.py"
-        ],
-        "unit_mentions": [
-          "N",
-          "deg",
-          "g",
-          "rad",
-          "s"
-        ],
         "validation_paths": []
       }
     }
