@@ -3,6 +3,222 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 2834,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "57ed8f6a6a0fe39c8c2156bd535c488aa5e664f2c64abf7aba866c10c5fdf455",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-WGS-REACTOR-PY-CFA5610D6D63",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/routers/wgs_reactor.py",
+      "purpose": "WGS Reactor calculator router.  See issue #613.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "calculate_wgs",
+            "signature": "request: WGSReactorRequest"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/calc_backend/tests/test_calc_backend_gaps.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4634,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "108d4eae1b9535bbc17fc35230f51109ae7156b3fceff4a4f609a3666fc54a76",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-INIT-PY-143AD067C756",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/__init__.py",
+      "purpose": "Shared AI chat widget, service base, and contract models.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "ChatMessage",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ChatQtDiagnostic",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ChatServiceBase",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ChatSession",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CliProviderEntry",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ProcessLaunchRequest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TerminalAgentEvent",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TerminalAgentProviderInfo",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TerminalAgentSessionInfo",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TerminalAgentSessionRequest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TerminalProcessAdapter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TerminalProviderRegistry",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TerminalRegistryError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TerminalRuntimeError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TerminalSessionRuntime",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TerminalShellInfo",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_default_terminal_provider_registry",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "default_terminal_agent_providers",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "default_terminal_shells",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "diagnose_chat_qt_runtime",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "list_available_cli_providers",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "provider_probe_commands",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "redact_terminal_command",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 60567,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -16167,115 +16383,6 @@
           {
             "kind": "class",
             "name": "EditorHistoryMixin",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 13343,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "de9a47ba1d4f122881b0c6434aa1ef70909fc870950b858ba7251393144d63c1",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-EDITOR-TEXT-EDITOR-VALIDATION-MIXIN-PY-22DBC7981392",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/editor/text_editor_validation_mixin.py",
-      "purpose": "URDF validation mixin for URDFTextEditor.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "URDFValidationMixin",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 817,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "25d33abf243465526162450fd125e21bc0247789bb43e326dedc3e9cb4053322",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-EXPLORER-INIT-PY-88FA44F1BD54",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/explorer/__init__.py",
-      "purpose": "Model Explorer GUI for browsing, loading, and previewing URDF/MJCF models.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "get_explorer_window",
-            "signature": ""
-          },
-          {
-            "kind": "re-export",
-            "name": "DISPLAY_OPTIONS",
             "signature": null
           }
         ],

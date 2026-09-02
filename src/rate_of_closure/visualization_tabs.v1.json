@@ -310,7 +310,7 @@
       "states": {
         "empty": "placeholder-canvas",
         "loading": "synchronous",
-        "result": "bounded-synchronized-sample-inspector",
+        "result": "bounded-synchronized-sample-inspector;imported-trajectory-record-without-sample-inspector",
         "error": "status-and-prior-or-empty-inspector;stale-warning-on-restoration-failure"
       }
     },

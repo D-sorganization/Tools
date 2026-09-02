@@ -35,7 +35,9 @@ _EXPECTED_REGISTERED_CONTROL_RANGES = {
     "plots": (19, 19),
     "calculation_description": (0, 0),
     "simulation": (182, 182),
-    "flight_explorer": (59, 59),
+    # ADR-0047 H4 adds one named control: "Import Trajectory Record...",
+    # wired to the existing #4800 P8 transport (no new transport controls).
+    "flight_explorer": (60, 60),
     # A reachable configured AI provider contributes one additional named
     # control beyond the static-provider catalogue used by hosted CI.
     "launch_monitor_analytics": (59, 111),

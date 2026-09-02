@@ -2,6 +2,195 @@
   "authority": "D-sorganization/Tools",
   "entries": [
     {
+      "authority_status": "provisional",
+      "bytes_lf": 11274,
+      "classification": "calculation",
+      "classification_basis": "path-marker:dynamics",
+      "content_sha256_lf": "0e123b3ac9d32d2074335f6efcce07b3d50b261fff7667616f949fd67eb25c97",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-SKID-ROLL-DYNAMICS-PY-62308B2F7047",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/skid_roll_dynamics.py",
+      "purpose": "Rigid-sphere skid and no-slip roll dynamics on one arbitrary plane.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "advance_constant_motion",
+            "signature": "state: GroundContactState, motion: RigidMotion, duration_s: float"
+          },
+          {
+            "kind": "function",
+            "name": "bounded_closing_duration",
+            "signature": "value: Vector3, rate: Vector3, requested_duration_s: float"
+          },
+          {
+            "kind": "function",
+            "name": "constant_motion_endpoint",
+            "signature": "state: GroundContactState, motion: RigidMotion, duration_s: float"
+          },
+          {
+            "kind": "function",
+            "name": "constant_motion_energy_balance",
+            "signature": "state: GroundContactState, motion: RigidMotion, duration_s: float, body: SphereProperties, gravity_m_s2: Vector3, surface_velocity_m_s: Vector3"
+          },
+          {
+            "kind": "function",
+            "name": "contact_slip_velocity",
+            "signature": "state: GroundContactState, surface: GroundSurfaceProfile, body: SphereProperties"
+          },
+          {
+            "kind": "function",
+            "name": "holding_kinematics",
+            "signature": "surface: GroundSurfaceProfile, body: SphereProperties, gravity_m_s2: Vector3=STANDARD_GRAVITY_M_S2"
+          },
+          {
+            "kind": "function",
+            "name": "holding_state",
+            "signature": "state: GroundContactState, surface: GroundSurfaceProfile"
+          },
+          {
+            "kind": "function",
+            "name": "kinetic_energy",
+            "signature": "state: GroundContactState, body: SphereProperties"
+          },
+          {
+            "kind": "function",
+            "name": "kinetic_energy_vectors",
+            "signature": "velocity_m_s: Vector3, angular_velocity_rad_s: Vector3, body: SphereProperties"
+          },
+          {
+            "kind": "function",
+            "name": "relative_path_distance",
+            "signature": "initial_velocity: Vector3, acceleration: Vector3, duration_s: float"
+          },
+          {
+            "kind": "function",
+            "name": "rolling_kinematics",
+            "signature": "state: GroundContactState, surface: GroundSurfaceProfile, body: SphereProperties, gravity_m_s2: Vector3=STANDARD_GRAVITY_M_S2"
+          },
+          {
+            "kind": "function",
+            "name": "rolling_state",
+            "signature": "state: GroundContactState, surface: GroundSurfaceProfile, body: SphereProperties"
+          },
+          {
+            "kind": "function",
+            "name": "skid_kinematics",
+            "signature": "state: GroundContactState, surface: GroundSurfaceProfile, body: SphereProperties, gravity_m_s2: Vector3=STANDARD_GRAVITY_M_S2"
+          },
+          {
+            "kind": "function",
+            "name": "stable_at_zero_speed",
+            "signature": "surface: GroundSurfaceProfile, body: SphereProperties, gravity_m_s2: Vector3=STANDARD_GRAVITY_M_S2"
+          },
+          {
+            "kind": "function",
+            "name": "static_rolling_feasible",
+            "signature": "surface: GroundSurfaceProfile, body: SphereProperties, gravity_m_s2: Vector3=STANDARD_GRAVITY_M_S2"
+          },
+          {
+            "kind": "function",
+            "name": "tangent",
+            "signature": "vector: Vector3, normal: Vector3"
+          },
+          {
+            "kind": "function",
+            "name": "time_to_vector_zero",
+            "signature": "value: Vector3, rate: Vector3, *, tolerance: float"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/ground/tests/test_skid_roll_dynamics.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6183,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6350547f492fd4f9a65d8fda3b5397c047947cc58f84fd7449fe232e9418836d",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-SKID-ROLL-RESULT-TYPES-PY-53ECEC44311B",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/skid_roll_result_types.py",
+      "purpose": "Validated internal result contracts for the ground skid/roll suffix.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SkidRollResult",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "not-applicable",
       "bytes_lf": 14003,
       "classification": "non-calculation",
@@ -17086,124 +17275,6 @@
         "test_paths": [],
         "unit_mentions": [
           "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 30920,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c8fb4fd2324650e1342bf0d0aa004ba115e63d1dbd7de9373ceac2471629b369",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-VISUALIZATION-RENDERER-PY-8DF0B3CC165D",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/solar_system_model/solar_system/visualization/renderer.py",
-      "purpose": "3D Renderer",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "RenderSettings",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "Renderer",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "bar",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 21989,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4b9b8e526954a9f1c4157eacb189c8a16b5ffce07258c42589bf3df032ca7986",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-VISUALIZATION-SCENE-PY-D45AAEBA8A0D",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/solar_system_model/solar_system/visualization/scene.py",
-      "purpose": "Solar System scene controller.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SolarSystemScene",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ViewState",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "N",
-          "bar"
         ],
         "validation_paths": []
       }

@@ -106,7 +106,10 @@ def test_flight_manifest_names_synchronous_atomic_inspector_states() -> None:
             "error": "alert-and-prior-or-empty-inspector",
         }
     )
-    assert pyqt.states["result"] == "bounded-synchronized-sample-inspector"
+    assert pyqt.states["result"] == (
+        "bounded-synchronized-sample-inspector;"
+        "imported-trajectory-record-without-sample-inspector"
+    )
     assert pyqt.states["error"] == (
         "status-and-prior-or-empty-inspector;stale-warning-on-restoration-failure"
     )
