@@ -10057,10 +10057,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6133,
+      "bytes_lf": 8511,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6261edbd45bdee9bcdde296834f04b3013139d9aa762fefd38e1cb57d8df9c80",
+      "content_sha256_lf": "b90ba1615ce5f8ab9aa53fd2dc782c3923f1b0d3d694d656d2d9ec7e40b98f35",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-PLAYBACKTRANSPORT-TEST-TS-011CAC7C4694",
       "language": "typescript",
@@ -10084,7 +10084,8 @@
       },
       "traceability": {
         "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],

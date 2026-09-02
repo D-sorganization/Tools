@@ -7171,10 +7171,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 16596,
+      "bytes_lf": 19144,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "379f147ebd4e4b712e514fbfa7d1ca01a47bdcd4f13605e2c6e319dc6475d691",
+      "content_sha256_lf": "80d69e51b89a1fe678a46c169edae319f951f2b68b6b87b1c17e31d692f78813",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-FLIGHT-EXPLORER-TAB-PY-153D3EC45B95",
       "language": "python",
@@ -7201,7 +7201,8 @@
       "traceability": {
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],

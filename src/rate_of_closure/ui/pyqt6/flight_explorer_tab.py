@@ -9,6 +9,7 @@ explanations, and timestamp-accurate 3D playback. Physics remains in
 from __future__ import annotations
 
 import logging
+from pathlib import Path
 from typing import cast
 
 from PyQt6.QtCore import pyqtSignal
@@ -16,6 +17,7 @@ from PyQt6.QtGui import QStandardItemModel
 from PyQt6.QtWidgets import (
     QComboBox,
     QDoubleSpinBox,
+    QFileDialog,
     QFormLayout,
     QFrame,
     QGroupBox,
@@ -34,6 +36,9 @@ from rate_of_closure.derivation import LAUNCH_EXPLANATIONS
 from rate_of_closure.flight_accepted_study import AcceptedFlightStudy
 from rate_of_closure.model import MPH_PER_MPS
 from rate_of_closure.simulation import FlightExploration, WindComparison
+from rate_of_closure.simulation.flight_record_playback import (
+    timed_trajectory_from_ball_flight_record,
+)
 from rate_of_closure.ui.pyqt6.flight_explorer_controls import (
     DELIVERY_FIELDS,
     DIRECT_FIELDS,
@@ -57,6 +62,7 @@ from shared.python.swing_sim.flight import (
     launch_direction_sign_labels,
 )
 from shared.python.swing_sim.flight.registry import FlightModelType
+from shared.python.swing_sim.flight_interchange import ball_flight_trajectory_from_json
 
 logger = logging.getLogger(__name__)
 
@@ -120,9 +126,18 @@ class FlightExplorerTab(FlightExplorerRunMixin, QWidget):
         )
         self._sample_status.setAccessibleName("Selected flight sample")
         self._sample_status.setWordWrap(True)
+        self._import_button = QPushButton("Import Trajectory Record…")
+        self._import_button.setAccessibleName("Import Trajectory Record")
+        self._import_button.setToolTip(
+            "Load a swing_sim.ball_flight_trajectory/1 record (ADR-0047) from "
+            "either flight-model family and replay it on this 3D playback "
+            "through the existing transport."
+        )
+        self._import_button.clicked.connect(self._import_trajectory_record)
         right_layout.addWidget(self._error_status)
         right_layout.addWidget(self._context_status)
         right_layout.addWidget(self._sample_status)
+        right_layout.addWidget(self._import_button)
         right_layout.addWidget(self._flight_panel, stretch=1)
         splitter.addWidget(right)
         splitter.setStretchFactor(0, 0)
@@ -296,6 +311,47 @@ class FlightExplorerTab(FlightExplorerRunMixin, QWidget):
         return self._accepted
 
     # ── internals ──────────────────────────────────────────────────
+    def _import_trajectory_record(self) -> None:
+        """Import a ``ball_flight_trajectory/1`` record (ADR-0047 H4).
+
+        Wiring only: the record is parsed and frame-converted by
+        :mod:`~rate_of_closure.simulation.flight_record_playback`, and
+        the resulting samples are handed to
+        :meth:`FlightView.set_timed_trajectory`, the same entry point
+        every solver-produced flight already uses — no new transport,
+        scrub, or speed logic is introduced here.
+        """
+        path, _filter = QFileDialog.getOpenFileName(
+            self, "Import Trajectory Record", "", "Ball Flight Trajectory (*.json)"
+        )
+        if not path:
+            return
+        try:
+            text = Path(path).read_text(encoding="utf-8")
+            record = ball_flight_trajectory_from_json(text)
+            timed = timed_trajectory_from_ball_flight_record(record)
+        except Exception as exc:
+            self._show_error(exc, origin="import")
+            return
+        self._accepted = None
+        self._exploration = None
+        self.wind_comparison = None
+        self._generation = 0
+        for row in self._rows.values():
+            row.value_label.setText("—")
+        self.wind_controls.set_comparison(None)
+        self._flight_view.set_timed_trajectory(timed.times_s, timed.positions_m)
+        self._flight_panel.controls.jump_to_time(0.0)
+        self._context_status.setText(
+            f"Imported trajectory: {record.provenance.model_family} / "
+            f"{record.provenance.model_name} (source {record.source_id})"
+        )
+        self._sample_status.setText(
+            "Imported trajectory record — sample inspection is unavailable."
+        )
+        self._error_status.clear()
+        self._error_origin = None
+
     def _on_mode_changed(self, index: int) -> None:
         self._stack.setCurrentIndex(index)
         label = "Ball Speed" if index == 0 else "Clubhead Speed"
