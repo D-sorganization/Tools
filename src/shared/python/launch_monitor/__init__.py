@@ -46,6 +46,11 @@ P7    :mod:`.relationships`  FDR-corrected correlation matrix, partial
 P8    :mod:`.modeling`       Reproducible NumPy regressions plus an optional
                              shallow MLP, with an identity-leakage guard. No
                              ``rate_of_closure`` counterpart exists.
+P9    :mod:`.profiles`       Header-fingerprint vendor detection and the alias
+                             and unit-default tables it detects with.
+P9    :mod:`.importer`       CSV/TSV/XLSX/JSON session import into canonical
+                             units, with a provenance manifest recording how
+                             each unit was established.
 ====  =====================  =================================================
 
 **Name-collision containment.** Symbols in this package collide by name with
@@ -63,8 +68,17 @@ from .comparison import (
     compare_monitors,
 )
 from .dispersion import DispersionResult, analyze_dispersion
+from .importer import import_session
 from .modeling import PredictiveModelResult, fit_predictive_model
 from .multivariate import PCAResult, VIFResult, compute_pca, compute_vif
+from .profiles import (
+    COMMON_ALIASES,
+    PROFILES,
+    ImportProfile,
+    ProfileDetection,
+    detect_profile,
+    normalize_header,
+)
 from .relationships import (
     CorrelationResult,
     DependencyEdge,
@@ -89,8 +103,10 @@ from .treatment import (
 from .trends import ChangeCandidate, TemporalTrendResult, analyze_trend
 
 __all__ = [
+    "COMMON_ALIASES",
     "IDENTITY_COLUMNS",
     "METRICS",
+    "PROFILES",
     "ChangeCandidate",
     "ColumnMapping",
     "CorrelationResult",
@@ -99,6 +115,7 @@ __all__ = [
     "FilterRule",
     "ImportManifest",
     "ImportOptions",
+    "ImportProfile",
     "ImportedSession",
     "MetricDefinition",
     "MonitorComparisonResult",
@@ -106,6 +123,7 @@ __all__ = [
     "PCAResult",
     "PairwiseMonitorComparison",
     "PredictiveModelResult",
+    "ProfileDetection",
     "TemporalTrendResult",
     "TreatmentConfig",
     "TreatmentResult",
@@ -117,6 +135,9 @@ __all__ = [
     "compute_correlations",
     "compute_pca",
     "compute_vif",
+    "detect_profile",
     "fit_predictive_model",
+    "import_session",
+    "normalize_header",
     "numeric_metric_columns",
 ]
