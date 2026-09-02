@@ -3,6 +3,510 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 40729,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "513d0f9351b5de3974d42732727b9f0eafee1ddc49be812ceb995c0459b8d8bd",
+      "family": "process-calculators-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-PSA-PACKAGE-PSA-GUI-PY-5EBDDDBA753D",
+      "language": "python",
+      "maintainer": "Process calculator maintainers",
+      "path": "src/shared/python/sidekick/process_calculators/psa_package/psa_gui.py",
+      "purpose": "PyQt6 GUI for Two-Stage PSA System Analysis.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://colab.research.google.com/"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "InputPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MplCanvas",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PFDWidget",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PSAMainWindow",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ResultsPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SensitivityPlotWidget",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "create_slider",
+            "signature": "min_value: int, max_value: int, default_value: int, orientation: Qt.Orientation, value_changed_callback: Callable[[int], None] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/process_calculators/test_psa_gui.py"
+        ],
+        "unit_mentions": [
+          "J",
+          "W",
+          "bar",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 16477,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "2d59a239415998e3c8d5a52b7758db9cc7b8ac3d11fb1da49d1be0db4e8acf3c",
+      "family": "process-calculators-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-PSA-PACKAGE-PSA-MODEL-PY-F25B14631C29",
+      "language": "python",
+      "maintainer": "Process calculator maintainers",
+      "path": "src/shared/python/sidekick/process_calculators/psa_package/psa_model.py",
+      "purpose": "Two-Stage PSA (Pressure Swing Adsorption) Model.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ComponentData",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PSAModel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PSAResults",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StreamCompositions",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StreamFlows",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_COMPONENTS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "calculate_o2_safety_analysis",
+            "signature": "inlet_o2_pcts: NDArray[np.float64] | None=None, stage1_o2_removal_range: NDArray[np.float64] | None=None, total_feed: float=1100.0, components: list[ComponentData] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "calculate_sensitivity",
+            "signature": "total_feed: float=1100.0, s2_tail_recycle_range: NDArray[np.float64] | None=None, product_recycle_range: NDArray[np.float64] | None=None, components: list[ComponentData] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "get_flammability_status",
+            "signature": "h2_pct: float, o2_pct: float"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/process_calculators/test_psa_model.py",
+          "tests/shared/python/process_calculators/test_wave1_psa_logic.py"
+        ],
+        "unit_mentions": [
+          "J"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 21850,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "98bbc25d14575839581dbcc29b00019cc7d9e213f68e28c94ea2eab933d8b626",
+      "family": "process-calculators-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-PSA-PACKAGE-PSA-WEBAPP-PY-948C909A976C",
+      "language": "python",
+      "maintainer": "Process calculator maintainers",
+      "path": "src/shared/python/sidekick/process_calculators/psa_package/psa_webapp.py",
+      "purpose": "Streamlit Web App for Two-Stage PSA System Analysis.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ComponentData",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PSAModel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PSAResults",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StreamCompositions",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StreamFlows",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_COMPONENTS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_flammability_status",
+            "signature": "h2_pct: float, o2_pct: float"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/process_calculators/test_psa_webapp.py",
+          "tests/shared/python/process_calculators/test_wave1_psa_logic.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 385,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "24fcac4f4727676ceaa49f4099049101b17ac8c9726429ad0e1fdae841d59132",
+      "family": "process-calculators-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-PSA-PACKAGE-UI-INIT-PY-ED852D204038",
+      "language": "python",
+      "maintainer": "Process calculator maintainers",
+      "path": "src/shared/python/sidekick/process_calculators/psa_package/ui/__init__.py",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "InputPanel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MplCanvas",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PFDWidget",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PSAMainWindow",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ResultsPanel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SensitivityPlotWidget",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "create_slider",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 6213,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "db725c747aacacbc1bc92f5bdb0c3220f91ff7f3be57de3fc4768ff3f7d9a459",
+      "family": "process-calculators-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-PSA-PACKAGE-UI-INPUT-PANEL-PY-A481C9441660",
+      "language": "python",
+      "maintainer": "Process calculator maintainers",
+      "path": "src/shared/python/sidekick/process_calculators/psa_package/ui/input_panel.py",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "InputPanel",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "create_slider",
+            "signature": "min_value: int, max_value: int, default_value: int, orientation: Qt.Orientation, value_changed_callback: Callable[[int], None] | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/process_calculators/test_psa_gui.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 9390,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "52c55408c3871ca31649edb38c8c27de47406deebcf3c5aa21d403dc755bf62b",
+      "family": "process-calculators-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-PSA-PACKAGE-UI-MAIN-WINDOW-PY-3A95829C9903",
+      "language": "python",
+      "maintainer": "Process calculator maintainers",
+      "path": "src/shared/python/sidekick/process_calculators/psa_package/ui/main_window.py",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://colab.research.google.com/"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PSAMainWindow",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_main_window.py",
+          "src/pendulum_simulator/tests/test_main_window.py",
+          "src/shared/python/sidekick/tests/process_calculators/test_psa_gui.py",
+          "tests/ode_solver/test_main_window.py"
+        ],
+        "unit_mentions": [
+          "J",
+          "W",
+          "bar"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 2813,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
@@ -17436,522 +17940,6 @@
         "unit_mentions": [
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 10419,
-      "classification": "calculation",
-      "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "9b7a964a6f0ffc715b9ec1cf8b280657cd49f3ceb68fb53cd92d6cd7645c31de",
-      "family": "swing-simulation-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-BOUNCE-SIMULATION-PY-7F66BB96328A",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/bounce_simulation.py",
-      "purpose": "Deterministic bounded state machine for repeated sphere-plane impacts.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "simulate_repeated_bounce",
-            "signature": "request: GroundSimulationRequest, settings: BounceModelSettings | None=None, *, is_cancelled: CancellationCheck | None=None"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_repeated_bounce.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 19256,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "92eb55e713e452d59c79d7db4313beb7a58d8530b57f3e3049e9346fa02e31f9",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-BOUNCE-TYPES-PY-452125C474DE",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/bounce_types.py",
-      "purpose": "Typed configuration and prefix result for repeated rigid impacts.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "BounceAirSegment",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "BounceModelSettings",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "BounceTermination",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "BounceTerminationReason",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RepeatedBounceResult",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "BOUNCE_EVIDENCE_ABSOLUTE_TOLERANCE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "BOUNCE_EVIDENCE_RELATIVE_TOLERANCE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "BOUNCE_HANDOFF_NOTICE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "BOUNCE_MATERIAL_LIMITATION",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GROUND_IMPACT_MODEL_ID",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GROUND_IMPACT_MODEL_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "STANDARD_GRAVITY_M_S2",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_ground_result_composer.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 8643,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d3282490e72dba9e57b6ba19be34251192b9fab50e804601eb1afaf406a9c79f",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-BOUNCE-WIRE-PY-A03AC883CA17",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/bounce_wire.py",
-      "purpose": "Strict deterministic wire boundary for repeated-bounce prefix evidence.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "MAX_REPEATED_BOUNCE_WIRE_BYTES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "REPEATED_BOUNCE_SCHEMA_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "repeated_bounce_result_from_dict",
-            "signature": "payload: object"
-          },
-          {
-            "kind": "function",
-            "name": "repeated_bounce_result_from_json",
-            "signature": "text: str"
-          },
-          {
-            "kind": "function",
-            "name": "repeated_bounce_result_to_dict",
-            "signature": "result: RepeatedBounceResult"
-          },
-          {
-            "kind": "function",
-            "name": "repeated_bounce_result_to_json",
-            "signature": "result: RepeatedBounceResult"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_bounce_wire.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 14679,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0ab241006db2d1491c6bd7c0d3280c45ea920afba0eaabb369708ff7a7bdc16a",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-CONTRACT-RECORDS-PY-29AE1612EBB0",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/contract_records.py",
-      "purpose": "Top-level request and result records for flight-to-ground v1.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "GroundSimulationRequest",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundSimulationResult",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 14095,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "5736bcc17c21b62220c8ec9c939f0d049ac9c4d87d2ca03991669fd8e33a1adf",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-CONTRACT-TYPES-PY-6F06D7C96DA7",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/contract_types.py",
-      "purpose": "Validated value types for the flight-to-ground v1 boundary.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CalibrationKind",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundCalibration",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundContactState",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundEvent",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundEventType",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundFrame",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundPhase",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundProvenance",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundResultStatus",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundSurfaceProfile",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundTerminationReason",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundTrajectoryPoint",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundWarningSeverity",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "REQUEST_SCHEMA_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "RESULT_SCHEMA_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "UNIT_SYSTEM_SI",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_MIN_CANONICAL_POSITIVE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_TEXT_EDGE_WHITESPACE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_UNIT_TOLERANCE",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_profile_binding.py",
-          "tests/rate_of_closure/test_ground_study_scalar_adapter.py"
-        ],
-        "unit_mentions": [
-          "g"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 11958,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "63c1fee50017530a4a16aae9a25fb349695398102733c14a948186b1a753a65c",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-CONTRACT-WIRE-PY-F2F3A301F8E7",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/contract_wire.py",
-      "purpose": "Strict deterministic wire parsers for flight-to-ground v1 records.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "record_from_dict",
-            "signature": "record_type: type[Any], payload: dict[str, Any]"
-          },
-          {
-            "kind": "function",
-            "name": "record_to_dict",
-            "signature": "record: object"
-          },
-          {
-            "kind": "function",
-            "name": "request_from_json",
-            "signature": "text: str"
-          },
-          {
-            "kind": "function",
-            "name": "result_from_json",
-            "signature": "text: str"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

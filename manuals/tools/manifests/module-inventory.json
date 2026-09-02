@@ -227,7 +227,7 @@
   },
   "shards": [
     {
-      "content_sha256_lf": "6c68da2fcf2b4dee8352035a4e3e90e0819ca196f2cf59f36f878e376de12c0c",
+      "content_sha256_lf": "acb467bde1b7005ee232e97668f0d52770d36ec813188129e778cef97b40d8d9",
       "entry_count": 200,
       "first_path": ".docker/entrypoint.sh",
       "last_path": "scripts/check_local_only_workflows.py",
@@ -275,7 +275,7 @@
       "shard_index": 5
     },
     {
-      "content_sha256_lf": "265f1101c5f114c2f368c8792c284e682ef9653a28d1a4663fcd305a241c2994",
+      "content_sha256_lf": "13eef2e939895e1ee66c3db9305bf26c3cf077b5edf6792a28af71288b92fd21",
       "entry_count": 200,
       "first_path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/downswing_config.py",
       "last_path": "src/rate_of_closure/launch_monitor_v2_client.py",
@@ -331,58 +331,58 @@
       "shard_index": 12
     },
     {
-      "content_sha256_lf": "a40ad557eb45f862bad7e03b6d89904841958583c0f990af10f6ba83819bbfb4",
+      "content_sha256_lf": "5d15759c2939ebae22040a90586333da2ccef621735805ac50d6495a35547738",
       "entry_count": 200,
       "first_path": "src/shared/python/calc_backend/routers/scrubber.py",
-      "last_path": "src/shared/python/model_generation/builders/__init__.py",
+      "last_path": "src/shared/python/model_generation/api/rest_api_fastapi.py",
       "path": "manuals/tools/manifests/module-inventory/entries-013.json",
       "shard_index": 13
     },
     {
-      "content_sha256_lf": "9c503d0023b7633bb07068a9313afa466a2d144204d9230774d4908d858a81ec",
+      "content_sha256_lf": "59d464fd5487aa3a76ca632e05ea1158517e0d905a11071d26e33acbffa8d552",
       "entry_count": 200,
-      "first_path": "src/shared/python/model_generation/builders/base_builder.py",
-      "last_path": "src/shared/python/sidekick/process_calculators/psa_package/ui/main_window.py",
+      "first_path": "src/shared/python/model_generation/api/rest_api_flask.py",
+      "last_path": "src/shared/python/sidekick/process_calculators/psa_package/psa_calculator.html",
       "path": "manuals/tools/manifests/module-inventory/entries-014.json",
       "shard_index": 14
     },
     {
-      "content_sha256_lf": "e132341ffac351762fcb6bc0bd03e54011ae8d3f20daeeb2a54493287918e3df",
+      "content_sha256_lf": "1f31fcb56cb669207f93d92767e2873861ff3dbf70625ffc1b88bcffda44e55e",
       "entry_count": 200,
-      "first_path": "src/shared/python/sidekick/process_calculators/psa_package/ui/pfd_widget.py",
-      "last_path": "src/shared/python/swing_sim/ground/contract_wire.py",
+      "first_path": "src/shared/python/sidekick/process_calculators/psa_package/psa_gui.py",
+      "last_path": "src/shared/python/swing_sim/ground/bounce_request_wire.py",
       "path": "manuals/tools/manifests/module-inventory/entries-015.json",
       "shard_index": 15
     },
     {
-      "content_sha256_lf": "0a333acbc2b06a21dcec2359b8bd02108f0ba35e70e10e09a58ff3862755faf5",
+      "content_sha256_lf": "72a73e739d12224f9cf656fa76a9a11d415af57e8ff4e820ed1403512dd08a61",
       "entry_count": 200,
-      "first_path": "src/shared/python/swing_sim/ground/ground_result_composer.py",
-      "last_path": "src/solar_system_model/solar_system/data/historical_events/crewed_programs.py",
+      "first_path": "src/shared/python/swing_sim/ground/bounce_simulation.py",
+      "last_path": "src/solar_system_model/solar_system/data/asteroids.py",
       "path": "manuals/tools/manifests/module-inventory/entries-016.json",
       "shard_index": 16
     },
     {
-      "content_sha256_lf": "5a0119eb371437409d6fbe9db08de242e725776cba3555e8328d6233aa6fae93",
-      "entry_count": 178,
-      "first_path": "src/solar_system_model/solar_system/data/historical_events/international_missions.py",
+      "content_sha256_lf": "a9a1f21dd7a0161c2f720822de6245947557e35861ac5f314bbedd1248de0b15",
+      "entry_count": 184,
+      "first_path": "src/solar_system_model/solar_system/data/comets.py",
       "last_path": "wave_solver.py",
       "path": "manuals/tools/manifests/module-inventory/entries-017.json",
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "259b9cf8cef5e4d5df27be3ec40c937af9a689f0c4822fad10acb6c695daf56a",
+  "source_tree_sha256": "38977900db1f4a154624d9e74c46089dfaf4bc0eccfb8854e1c7999dbe4b5297",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
-      "not-applicable": 2730,
+      "not-applicable": 2736,
       "provisional": 847
     },
     "blocked_count": 1,
     "calculation_count": 847,
     "classification_counts": {
       "calculation": 847,
-      "non-calculation": 2731
+      "non-calculation": 2737
     },
     "family_counts": {
       "control-systems-calculation": 6,
@@ -405,17 +405,17 @@
       "shared-plotting-calculation": 1,
       "shared-plotting-non-calculation": 4,
       "shared-tools-calculation": 173,
-      "shared-tools-non-calculation": 1038,
+      "shared-tools-non-calculation": 1044,
       "signal-processing-calculation": 28,
       "swing-simulation-calculation": 63,
       "swing-simulation-non-calculation": 152
     },
-    "module_count": 3578,
-    "non_calculation_count": 2731,
+    "module_count": 3584,
+    "non_calculation_count": 2737,
     "provisional_count": 847,
     "review_status_counts": {
       "blocked": 1,
-      "inventory-baseline": 2730,
+      "inventory-baseline": 2736,
       "review-required": 847
     }
   }

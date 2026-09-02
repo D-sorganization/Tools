@@ -14250,7 +14250,8 @@
           }
         ],
         "test_paths": [
-          "tests/rate_of_closure/test_launch_monitor_linked_scatter.py"
+          "tests/rate_of_closure/test_launch_monitor_linked_scatter.py",
+          "tests/shared/python/launch_monitor/test_corpus.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
@@ -14547,7 +14548,8 @@
           }
         ],
         "test_paths": [
-          "tests/rate_of_closure/test_launch_monitor_private_corpus.py"
+          "tests/rate_of_closure/test_launch_monitor_private_corpus.py",
+          "tests/shared/python/launch_monitor/test_corpus.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
@@ -14718,6 +14720,7 @@
         "test_paths": [
           "tests/rate_of_closure/test_launch_monitor_provenance_and_unavailable.py",
           "tests/rate_of_closure/test_launch_monitor_strokes_gained.py",
+          "tests/shared/python/launch_monitor/test_conformance_bundle.py",
           "tests/shared/python/launch_monitor/test_strokes_gained_contract.py"
         ],
         "unit_mentions": [],

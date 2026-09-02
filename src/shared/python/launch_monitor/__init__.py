@@ -18,113 +18,49 @@ UpstreamDrift workbench is a mechanical import rewrite
 (``src.shared.python.launch_monitor.X`` → ``shared.python.launch_monitor.X``)
 rather than a symbol remap.
 
-Landed so far
--------------
-====  =====================  =================================================
-Step  Module                 Notes
-====  =====================  =================================================
-P1    :mod:`.dispersion`     2-D target-relative dispersion. Shares a name with
-                             ``rate_of_closure`` and nothing else — G0 pinned
-                             the gap as divergences D6-D9.
-P2    :mod:`.multivariate`   PCA and variance-inflation diagnostics. No
-                             ``rate_of_closure`` counterpart exists.
-P3    :mod:`.trends`         Per-calendar-day robust trend, EWMA, and ranked
-                             change candidates. ``TrendResult`` is renamed
-                             ``TemporalTrendResult`` here — see that module.
-P4    :mod:`.comparison`     Matched (Bland-Altman) and descriptive
-                             cross-monitor comparison. Confirmed
-                             UpstreamDrift-only by the port plan.
-P5    :mod:`.schema`         The layer's vocabulary: 33 unit-carrying metric
-                             definitions, identity columns, and the import
-                             mapping/session contracts.
-P6    :mod:`.treatment`      Flag-then-optionally-exclude quality pipeline with
-                             a full audit log. Confirmed UpstreamDrift-only by
-                             the port plan.
-P7    :mod:`.relationships`  FDR-corrected correlation matrix, partial
-                             correlations, and a screened dependency network.
-                             Ruling D17 (explicit boolean-projection labelling)
-                             applied. D15 (FDR denominator) does not reach
-                             this module — no separate ``min_samples`` tier
-                             above its own three-pair floor for the ruling's
-                             defect to exist in; see the module docstring.
-P8    :mod:`.modeling`       Reproducible NumPy regressions plus an optional
-                             shallow MLP, with an identity-leakage guard. No
-                             ``rate_of_closure`` counterpart exists.
-P9    :mod:`.profiles`       Header-fingerprint vendor detection and the alias
-                             and unit-default tables it detects with.
-P9    :mod:`.importer`       CSV/TSV/XLSX/JSON session import into canonical
-                             units, with a provenance manifest recording how
-                             each unit was established.
-P10   :mod:`.flexible_analysis`
-                             Arbitrary outcome/predictor correlation + OLS with
-                             dataset lineage. Its ``rate_of_closure`` twin was
-                             measured by UpstreamDrift#9372 (G0.1) before this
-                             moved. Rulings D15 (FDR excludes under-sampled
-                             predictors before correcting) and D17 (carries P7's
-                             ``boolean_projected`` label through as
-                             ``CorrelationEstimate.is_boolean_projected``) are
-                             applied.
-P11   :mod:`.contract_v2`    The v2 serialization boundary over P10: evidence,
-                             row-level lineage, availability, and the JSON
-                             Schema every static client is generated from.
-P12   :mod:`.strokes_gained_types`
-                             Request/result/uncertainty wire models for governed
-                             scoring, **minus the expected-strokes baseline
-                             half** - that half is already home in
-                             ``rate_of_closure.launch_monitor_strokes_gained_baseline``
-                             and is reached structurally instead.
-P12   :mod:`._scoring_statistics`
-                             The uncertainty, grouping and trend helpers behind
-                             G0 divergences D2, D3 and D4. ADR-0046's module
-                             list omits this file; the port plan's third
-                             correction restores it.
-P13   :mod:`.outcome_proxy`  Target-relative radial dispersion that is
-                             explicitly *not* strokes gained. Its new
-                             target-error gate landed with it.
-P14   :mod:`.strokes_gained` Source-backed SG from hash-verified expected-
-                             strokes lookups. Carries ruling **G1-D2**: the
-                             canonical estimand is the session cell, and the
-                             shot-level fit survives as
-                             ``shot-level-sg-trend/1``.
-P15   :mod:`.longitudinal_types`
-                             Session-unit longitudinal wire types, widened by
-                             **G1-D1** to the union of both pooled estimators'
-                             outputs and the six per-player uncertainty fields
-                             that close D11.
-P15   :mod:`.longitudinal_statistics`
-                             Per-player slopes plus **both** named pooled
-                             estimators - ``ud-cluster-robust-fe/1`` and
-                             ``dl-random-effects/1``.
-P16   :mod:`.longitudinal`   Attested longitudinal analysis. Carries ruling
-                             **G1-D1**: the request names the pooled estimator
-                             and the result carries that name.
-P18   :mod:`.player_covariation_types`
-                             Selected-pair and pair-scan wire models. The
-                             **union port**'s base is UpstreamDrift's; the
-                             named ``MIN_FISHER_SAMPLES`` floor and the
-                             required ``method_description`` are folded in
-                             from ``rate_of_closure``.
-P18   :mod:`.player_covariation_core`
-                             Pooled / within-player / between-player /
-                             per-player estimates and the Fisher-z
-                             fixed/DerSimonian-Laird synthesis, plus the two
-                             export tables folded in from ``rate_of_closure``.
-P18   :mod:`.player_covariation`
-                             Evidence-bearing selected-pair analysis and the
-                             bounded exploratory pair scan. Carries rulings
-                             **D22** (the between-player Fisher interval is
-                             withheld below the documented degrees-of-freedom
-                             threshold, and the absence is explained) and
-                             **D23** (the column-name-suffix unit heuristic is
-                             deleted; units come from the canonical registry).
-====  =====================  =================================================
+The ladder is complete: **P1 through P20 have landed.** Each module's own
+docstring carries its step number, its line count, what travelled and what did
+not, and any ruling it implements. Read that first; this file only re-exports.
+
+Rows that are not plain ports
+-----------------------------
+Three modules changed shape on the way, and none of it is recoverable from a
+diff:
+
+* **P3** :mod:`.trends` renamed ``TrendResult`` to ``TemporalTrendResult``,
+  deliberately with no back-compat alias, because ``rate_of_closure`` exports
+  the same name for a different estimand. Stage 2's import rewrite must
+  special-case this symbol.
+* **P12** :mod:`.strokes_gained_types` landed **minus the expected-strokes
+  baseline half**, which the plan names as the one sub-module already home in
+  ``rate_of_closure.launch_monitor_strokes_gained_baseline``. Two structural
+  protocols reach it instead of an import.
+* **P18** :mod:`.player_covariation` and **P19** :mod:`.corpus` are **merges,
+  not ports** (ADR-0046 Amendment 1): ``rate_of_closure`` carries a
+  same-shaped counterpart for each, and neither side was a subset.
+  UpstreamDrift is the base and every ``rate_of_closure``-only capability is
+  folded in explicitly. P19's merge is the one that changes behaviour:
+  manifest validation is now **mandatory**, so the canonical loader refuses
+  corpora UpstreamDrift's accepted.
+
+Owner rulings applied here
+--------------------------
+**D15** and **D17** in :mod:`.relationships` / :mod:`.flexible_analysis`;
+**D22** and **D23** in :mod:`.player_covariation*`; **G1-D1** in
+:mod:`.longitudinal*` (the named pooled-estimator pair); **G1-D2** in
+:mod:`.strokes_gained` (the session cell is the canonical estimand);
+**G1-D3** as ported (exclude-and-audit). Each ruling's *legacy* half — the
+matching change to ``rate_of_closure`` — is a coordinated cross-repo change
+that UpstreamDrift's drift gates pin, and is tracked rather than smuggled into
+a Tools-only PR.
 
 **Name-collision containment.** Symbols in this package collide by name with
 ``rate_of_closure`` symbols that compute something else — ``analyze_dispersion``
 and ``DispersionResult`` already do, and ``TrendResult`` would have, which is
 why P3 renamed it. The separate package is what keeps the rest apart, and that
 containment lasts exactly as long as nobody adds a convenience re-export
-between the two packages. Do not add one.
+between the two packages. Do not add one. Every module in this package carries
+an AST pin asserting it does not import ``rate_of_closure``.
 """
 
 from .comparison import (
@@ -132,6 +68,14 @@ from .comparison import (
     MonitorSummary,
     PairwiseMonitorComparison,
     compare_monitors,
+)
+from .conformance_bundle import (
+    LAUNCH_MONITOR_CONFORMANCE_BUNDLE_VERSION,
+    LaunchMonitorConformanceBundleV1,
+    LaunchMonitorConformanceScenarioV1,
+    launch_monitor_conformance_bundle_json_schema,
+    launch_monitor_conformance_bundle_sha256,
+    launch_monitor_conformance_scenario_sha256,
 )
 from .contract_v2 import (
     CONTRACT_VERSION_V2,
@@ -159,6 +103,34 @@ from .contract_v2 import (
     contract_v2_json_schema,
     metric_units_v2,
     vendor_provenance_v2,
+)
+from .corpus import (
+    CORPUS_COLUMN_MAP,
+    CORPUS_RELATIVE_PATH,
+    MAX_RETAINED_ROWS,
+    PRIVATE_DATA_ENV,
+    CanonicalPrivateCorpus,
+    CorpusManifest,
+    corpus_dataset_path,
+    load_private_corpus,
+    load_private_corpus_with_provenance,
+    read_corpus_manifest,
+    resolve_private_corpus_path,
+    validate_corpus_manifest,
+)
+from .dataset_reference import (
+    DATASET_JOB_CONTRACT_VERSION,
+    MAX_PAGE_SIZE,
+    DatasetJobRequestV1,
+    DatasetOperationV1,
+    DatasetReferenceV1,
+    DatasetUnavailableError,
+    DatasetUnavailableStateV1,
+    VerifiedDataset,
+    dataset_content_sha256,
+    dataset_job_contract_json_schema,
+    execute_dataset_operation,
+    verify_dataset_reference,
 )
 from .dispersion import DispersionResult, analyze_dispersion
 from .flexible_analysis import (
@@ -303,11 +275,15 @@ __all__ = [
     "COMMON_ALIASES",
     "CONTRACT_VERSION",
     "CONTRACT_VERSION_V2",
+    "CORPUS_COLUMN_MAP",
+    "CORPUS_RELATIVE_PATH",
+    "CanonicalPrivateCorpus",
     "ChangeCandidate",
     "ClaimsV2",
     "CoefficientEstimate",
     "ColumnMapping",
     "ConfidenceIntervalV1",
+    "CorpusManifest",
     "CorrelationEstimate",
     "CorrelationMethod",
     "CorrelationResult",
@@ -316,8 +292,14 @@ __all__ = [
     "CovariationMissingnessV1",
     "CovariationPairRankV1",
     "CovariationUncertaintyV1",
+    "DATASET_JOB_CONTRACT_VERSION",
     "DatasetAuthorityV2",
+    "DatasetJobRequestV1",
+    "DatasetOperationV1",
+    "DatasetReferenceV1",
     "DatasetSummary",
+    "DatasetUnavailableError",
+    "DatasetUnavailableStateV1",
     "DependencyEdge",
     "DispersionResult",
     "EstimateSummaryV1",
@@ -337,8 +319,11 @@ __all__ = [
     "ImportProfile",
     "ImportedSession",
     "InterpolationV1",
+    "LAUNCH_MONITOR_CONFORMANCE_BUNDLE_VERSION",
     "LONGITUDINAL_SESSION_CONTRACT_VERSION",
     "LaunchMonitorAnalysisResultV2",
+    "LaunchMonitorConformanceBundleV1",
+    "LaunchMonitorConformanceScenarioV1",
     "LongitudinalClaimsV1",
     "LongitudinalDesignV1",
     "LongitudinalDimensionV1",
@@ -348,6 +333,8 @@ __all__ = [
     "LongitudinalSessionRequestV1",
     "LongitudinalSessionResultV1",
     "LongitudinalSummaryV1",
+    "MAX_PAGE_SIZE",
+    "MAX_RETAINED_ROWS",
     "METRICS",
     "MIN_FISHER_SAMPLES",
     "MetaAnalysisSummaryV1",
@@ -366,6 +353,7 @@ __all__ = [
     "PCAResult",
     "PLAYER_COVARIATION_CONTRACT_VERSION",
     "POOLED_METHOD_DESCRIPTIONS",
+    "PRIVATE_DATA_ENV",
     "PROFILES",
     "PairwiseMonitorComparison",
     "PlayerAssociationV1",
@@ -397,6 +385,7 @@ __all__ = [
     "UncertaintyV2",
     "VIFResult",
     "VendorProvenanceV2",
+    "VerifiedDataset",
     "adapt_v2_to_v1",
     "analysis_lineage_v2",
     "analyze_dispersion",
@@ -415,11 +404,20 @@ __all__ = [
     "compute_pca",
     "compute_vif",
     "contract_v2_json_schema",
+    "corpus_dataset_path",
     "covariation_backing_frame",
+    "dataset_content_sha256",
+    "dataset_job_contract_json_schema",
     "dersimonian_laird_pooled_association",
     "detect_profile",
+    "execute_dataset_operation",
     "fit_predictive_model",
     "import_session",
+    "launch_monitor_conformance_bundle_json_schema",
+    "launch_monitor_conformance_bundle_sha256",
+    "launch_monitor_conformance_scenario_sha256",
+    "load_private_corpus",
+    "load_private_corpus_with_provenance",
     "longitudinal_session_contract_json_schema",
     "metric_units_v2",
     "normalize_header",
@@ -427,7 +425,11 @@ __all__ = [
     "player_association_frame",
     "player_associations",
     "player_covariation_contract_json_schema",
+    "read_corpus_manifest",
+    "resolve_private_corpus_path",
     "scan_player_covariation_v1",
     "strokes_gained_contract_json_schema",
+    "validate_corpus_manifest",
     "vendor_provenance_v2",
+    "verify_dataset_reference",
 ]
