@@ -125,6 +125,7 @@ src/shared/python/humanoid_character_builder/mesh/inertia_calculator.py
 src/shared/python/humanoid_character_builder/mesh/mesh_processor.py
 src/shared/python/launch_monitor/contract_v2.py
 src/shared/python/launch_monitor/flexible_analysis.py
+src/shared/python/launch_monitor/strokes_gained.py
 src/shared/python/model_generation/api/rest_api_routes.py
 src/shared/python/model_generation/builders/manual_builder.py
 src/shared/python/model_generation/builders/parametric_builder.py

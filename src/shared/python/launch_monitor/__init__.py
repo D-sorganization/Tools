@@ -62,6 +62,37 @@ P10   :mod:`.flexible_analysis`
 P11   :mod:`.contract_v2`    The v2 serialization boundary over P10: evidence,
                              row-level lineage, availability, and the JSON
                              Schema every static client is generated from.
+P12   :mod:`.strokes_gained_types`
+                             Request/result/uncertainty wire models for governed
+                             scoring, **minus the expected-strokes baseline
+                             half** - that half is already home in
+                             ``rate_of_closure.launch_monitor_strokes_gained_baseline``
+                             and is reached structurally instead.
+P12   :mod:`._scoring_statistics`
+                             The uncertainty, grouping and trend helpers behind
+                             G0 divergences D2, D3 and D4. ADR-0046's module
+                             list omits this file; the port plan's third
+                             correction restores it.
+P13   :mod:`.outcome_proxy`  Target-relative radial dispersion that is
+                             explicitly *not* strokes gained. Its new
+                             target-error gate landed with it.
+P14   :mod:`.strokes_gained` Source-backed SG from hash-verified expected-
+                             strokes lookups. Carries ruling **G1-D2**: the
+                             canonical estimand is the session cell, and the
+                             shot-level fit survives as
+                             ``shot-level-sg-trend/1``.
+P15   :mod:`.longitudinal_types`
+                             Session-unit longitudinal wire types, widened by
+                             **G1-D1** to the union of both pooled estimators'
+                             outputs and the six per-player uncertainty fields
+                             that close D11.
+P15   :mod:`.longitudinal_statistics`
+                             Per-player slopes plus **both** named pooled
+                             estimators - ``ud-cluster-robust-fe/1`` and
+                             ``dl-random-effects/1``.
+P16   :mod:`.longitudinal`   Attested longitudinal analysis. Carries ruling
+                             **G1-D1**: the request names the pooled estimator
+                             and the result carries that name.
 ====  =====================  =================================================
 
 **Name-collision containment.** Symbols in this package collide by name with
@@ -122,8 +153,31 @@ from .flexible_analysis import (
     analyze_variables,
 )
 from .importer import import_session
+from .longitudinal import (
+    analyze_longitudinal_sessions,
+    longitudinal_session_contract_json_schema,
+)
+from .longitudinal_statistics import (
+    clustered_pooled_association,
+    dersimonian_laird_pooled_association,
+    player_associations,
+)
+from .longitudinal_types import (
+    LONGITUDINAL_SESSION_CONTRACT_VERSION,
+    POOLED_METHOD_DESCRIPTIONS,
+    LongitudinalClaimsV1,
+    LongitudinalDesignV1,
+    LongitudinalMissingnessV1,
+    LongitudinalPlayerAssociationV1,
+    LongitudinalSessionRequestV1,
+    LongitudinalSessionResultV1,
+    PooledAssociationV1,
+    PooledMethod,
+    SessionAggregateV1,
+)
 from .modeling import PredictiveModelResult, fit_predictive_model
 from .multivariate import PCAResult, VIFResult, compute_pca, compute_vif
+from .outcome_proxy import analyze_outcome_proxy
 from .profiles import (
     COMMON_ALIASES,
     PROFILES,
@@ -147,6 +201,38 @@ from .schema import (
     MetricDefinition,
     numeric_metric_columns,
 )
+from .strokes_gained import (
+    analyze_source_backed_strokes_gained,
+    strokes_gained_contract_json_schema,
+)
+from .strokes_gained_types import (
+    BASELINE_CONTRACT_VERSION,
+    OUTCOME_PROXY_CONTRACT_VERSION,
+    STROKES_GAINED_CONTRACT_VERSION,
+    AvailabilityV1,
+    BaselineProvenanceV1,
+    ConfidenceIntervalV1,
+    CourseStateColumnsV1,
+    CourseStateValueV1,
+    EstimateSummaryV1,
+    ExcludedRowV1,
+    ExclusionSummaryV1,
+    ExpectedStrokesBaselineLike,
+    ExpectedStrokesStateLike,
+    GroupingDimensionV1,
+    GroupSummaryV1,
+    InterpolationV1,
+    LongitudinalDimensionV1,
+    LongitudinalMethod,
+    LongitudinalSummaryV1,
+    OutcomeProxyRequestV1,
+    OutcomeProxyResultV1,
+    OutcomeProxyRowV1,
+    StrokesGainedAnalysisResultV1,
+    StrokesGainedRequestV1,
+    StrokesGainedRowV1,
+    StrokesGainedUncertaintyV1,
+)
 from .treatment import (
     FilterRule,
     TreatmentConfig,
@@ -156,54 +242,91 @@ from .treatment import (
 from .trends import ChangeCandidate, TemporalTrendResult, analyze_trend
 
 __all__ = [
-    "COMMON_ALIASES",
-    "CONTRACT_VERSION",
-    "CONTRACT_VERSION_V2",
-    "IDENTITY_COLUMNS",
-    "METRICS",
-    "PROFILES",
     "AnalysisContextV2",
     "AnalysisLineageV2",
     "AnalysisMode",
+    "AvailabilityV1",
     "AvailabilityV2",
+    "BASELINE_CONTRACT_VERSION",
     "BackingRecordV2",
+    "BaselineProvenanceV1",
+    "COMMON_ALIASES",
+    "CONTRACT_VERSION",
+    "CONTRACT_VERSION_V2",
     "ChangeCandidate",
     "ClaimsV2",
     "CoefficientEstimate",
     "ColumnMapping",
+    "ConfidenceIntervalV1",
     "CorrelationEstimate",
     "CorrelationMethod",
     "CorrelationResult",
+    "CourseStateColumnsV1",
+    "CourseStateValueV1",
     "DatasetAuthorityV2",
     "DatasetSummary",
     "DependencyEdge",
     "DispersionResult",
+    "EstimateSummaryV1",
+    "ExcludedRowV1",
+    "ExclusionSummaryV1",
+    "ExpectedStrokesBaselineLike",
+    "ExpectedStrokesStateLike",
     "FilterRule",
     "FlexibleAnalysisRequest",
     "FlexibleAnalysisResult",
     "GroupAnalysis",
+    "GroupSummaryV1",
+    "GroupingDimensionV1",
+    "IDENTITY_COLUMNS",
     "ImportManifest",
     "ImportOptions",
     "ImportProfile",
     "ImportedSession",
+    "InterpolationV1",
+    "LONGITUDINAL_SESSION_CONTRACT_VERSION",
     "LaunchMonitorAnalysisResultV2",
+    "LongitudinalClaimsV1",
+    "LongitudinalDesignV1",
+    "LongitudinalDimensionV1",
+    "LongitudinalMethod",
+    "LongitudinalMissingnessV1",
+    "LongitudinalPlayerAssociationV1",
+    "LongitudinalSessionRequestV1",
+    "LongitudinalSessionResultV1",
+    "LongitudinalSummaryV1",
+    "METRICS",
     "MetricDefinition",
     "MetricUnitsV2",
-    "MissingnessV2",
     "MissingPolicy",
+    "MissingnessV2",
+    "ModelProvenanceV2",
     "MonitorComparisonResult",
     "MonitorSummary",
-    "ModelProvenanceV2",
+    "OUTCOME_PROXY_CONTRACT_VERSION",
     "OrderEvidenceV2",
+    "OutcomeProxyRequestV1",
+    "OutcomeProxyResultV1",
+    "OutcomeProxyRowV1",
     "PCAResult",
+    "POOLED_METHOD_DESCRIPTIONS",
+    "PROFILES",
     "PairwiseMonitorComparison",
     "PlayerIdentityV2",
+    "PooledAssociationV1",
+    "PooledMethod",
     "PredictiveModelResult",
     "ProfileDetection",
     "RegressionEstimate",
     "ResidualDiagnostics",
+    "STROKES_GAINED_CONTRACT_VERSION",
+    "SessionAggregateV1",
     "SessionIdentityV2",
     "SourceFileReferenceV2",
+    "StrokesGainedAnalysisResultV1",
+    "StrokesGainedRequestV1",
+    "StrokesGainedRowV1",
+    "StrokesGainedUncertaintyV1",
     "TemporalTrendResult",
     "TransformRecordV2",
     "TreatmentConfig",
@@ -214,21 +337,29 @@ __all__ = [
     "adapt_v2_to_v1",
     "analysis_lineage_v2",
     "analyze_dispersion",
+    "analyze_longitudinal_sessions",
+    "analyze_outcome_proxy",
+    "analyze_source_backed_strokes_gained",
     "analyze_trend",
     "analyze_variables",
     "analyze_variables_v2",
-    "build_analysis_lineage_v2",
     "apply_treatment",
+    "build_analysis_lineage_v2",
+    "clustered_pooled_association",
     "compare_monitors",
     "compute_correlations",
     "compute_pca",
     "compute_vif",
     "contract_v2_json_schema",
+    "dersimonian_laird_pooled_association",
     "detect_profile",
     "fit_predictive_model",
     "import_session",
+    "longitudinal_session_contract_json_schema",
     "metric_units_v2",
     "normalize_header",
     "numeric_metric_columns",
+    "player_associations",
+    "strokes_gained_contract_json_schema",
     "vendor_provenance_v2",
 ]
