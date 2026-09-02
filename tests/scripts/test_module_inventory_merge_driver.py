@@ -156,31 +156,23 @@ class TestInstallMergeDrivers:
 
 
 class TestMergeFixup:
-    """The pre-commit-stage fixup is the authoritative correctness layer.
+    """The pre-merge-commit-stage fixup is the authoritative correctness layer.
 
-    It must be a no-op outside a merge (existing regular-commit behavior
-    is unchanged) and must regenerate + re-stage only when a merge is
-    landing and the inventory is actually stale.
+    It is only ever invoked by git's ``pre-merge-commit`` hook (see
+    ``.pre-commit-config.yaml``'s ``stages: [pre-merge-commit]``), which by
+    definition only fires while a merge commit is being created -- so
+    ``fixup()`` has no "is this actually a merge" branch to test. An
+    earlier version of this script tried to gate on ``MERGE_HEAD``, but
+    that file was confirmed (via a raw, framework-free hook script) to not
+    exist yet at the point ``pre-merge-commit`` fires; that guard always
+    read false and silently no-op'd the entire hook.
     """
 
-    def test_noop_when_no_merge_is_in_progress(self, tmp_path):
-        with (
-            patch.object(merge_fixup, "_merge_in_progress", return_value=False),
-            patch.object(merge_fixup.subprocess, "run") as mock_run,
-        ):
-            exit_code = merge_fixup.fixup(tmp_path)
-
-        assert exit_code == 0
-        mock_run.assert_not_called()
-
-    def test_noop_when_merge_in_progress_but_already_fresh(self, tmp_path):
+    def test_noop_when_already_fresh(self, tmp_path):
         fresh_check = subprocess.CompletedProcess(args=[], returncode=0)
-        with (
-            patch.object(merge_fixup, "_merge_in_progress", return_value=True),
-            patch.object(
-                merge_fixup.subprocess, "run", return_value=fresh_check
-            ) as mock_run,
-        ):
+        with patch.object(
+            merge_fixup.subprocess, "run", return_value=fresh_check
+        ) as mock_run:
             exit_code = merge_fixup.fixup(tmp_path)
 
         assert exit_code == 0
@@ -188,19 +180,16 @@ class TestMergeFixup:
         mock_run.assert_called_once()
         assert "--check" in mock_run.call_args.args[0]
 
-    def test_regenerates_and_stages_when_merge_in_progress_and_stale(self, tmp_path):
+    def test_regenerates_and_stages_when_stale(self, tmp_path):
         stale_check = subprocess.CompletedProcess(args=[], returncode=1)
         successful_regen = subprocess.CompletedProcess(args=[], returncode=0)
         successful_add = subprocess.CompletedProcess(args=[], returncode=0)
 
-        with (
-            patch.object(merge_fixup, "_merge_in_progress", return_value=True),
-            patch.object(
-                merge_fixup.subprocess,
-                "run",
-                side_effect=[stale_check, successful_regen, successful_add],
-            ) as mock_run,
-        ):
+        with patch.object(
+            merge_fixup.subprocess,
+            "run",
+            side_effect=[stale_check, successful_regen, successful_add],
+        ) as mock_run:
             exit_code = merge_fixup.fixup(tmp_path)
 
         assert exit_code == 0
@@ -216,13 +205,10 @@ class TestMergeFixup:
             args=[], returncode=1, stdout="", stderr="boom"
         )
 
-        with (
-            patch.object(merge_fixup, "_merge_in_progress", return_value=True),
-            patch.object(
-                merge_fixup.subprocess,
-                "run",
-                side_effect=[stale_check, failed_regen],
-            ),
+        with patch.object(
+            merge_fixup.subprocess,
+            "run",
+            side_effect=[stale_check, failed_regen],
         ):
             exit_code = merge_fixup.fixup(tmp_path)
 

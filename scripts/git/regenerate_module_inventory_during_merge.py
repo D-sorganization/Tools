@@ -27,6 +27,15 @@ every time, with the full merged tree already on disk). If the inventory
 is stale, this regenerates and re-stages it so the merge commit that's
 about to be created already carries a fresh, correct inventory.
 
+This script does *not* check ``MERGE_HEAD`` to confirm a merge is
+happening: empirically (confirmed with a raw, framework-free hook script),
+``MERGE_HEAD`` does not exist yet at the point ``pre-merge-commit`` fires
+-- git writes it later, as part of actually creating the commit. That
+guard would always read false and silently no-op the whole hook. It isn't
+needed anyway: this script is only ever invoked by the ``pre-merge-commit``
+git hook, which by definition only fires while a merge commit is being
+created.
+
 Registered as a local pre-commit-framework hook (see
 ``.pre-commit-config.yaml``, ``stages: [pre-merge-commit]``), which needs
 its own install step beyond the default ``pre-commit install`` --
@@ -53,34 +62,13 @@ def _repo_root() -> Path:
     return Path(result.stdout.strip())
 
 
-def _merge_in_progress(root: Path) -> bool:
-    """Return whether a ``git merge`` (or merge-like ``git pull``) is landing.
-
-    Always true when git invokes this script (it is only ever installed
-    as a ``pre-merge-commit`` hook), but checked explicitly rather than
-    assumed: it's a cheap, self-documenting guard against this function
-    ever being reused from a context where that isn't guaranteed.
-    """
-    result = subprocess.run(
-        ["git", "rev-parse", "--git-path", "MERGE_HEAD"],
-        cwd=root,
-        check=True,
-        capture_output=True,
-        text=True,
-    )
-    return (root / result.stdout.strip()).is_file()
-
-
 def fixup(root: Path) -> int:
-    """Regenerate and re-stage the inventory if it is stale mid-merge.
+    """Regenerate and re-stage the inventory if it is stale.
 
     Returns a process exit code: 0 to let the commit proceed, non-zero to
     block it (regeneration itself failed, which is a real problem worth
     surfacing rather than silently committing broken output).
     """
-    if not _merge_in_progress(root):
-        return 0
-
     check = subprocess.run(
         [sys.executable, "-m", _REGEN_MODULE, "--check"],
         cwd=root,

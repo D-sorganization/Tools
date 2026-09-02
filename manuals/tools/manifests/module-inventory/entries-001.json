@@ -2249,10 +2249,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 4965,
+      "bytes_lf": 4769,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2b7cee4c559cf099d9502707bd27447c8fcd319e614d772cc2723f4ee88de03b",
+      "content_sha256_lf": "2c981dd1c6f87f846705c100ee80a93cf420a5f75ae1acf1d59e80b571d41190",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-GIT-REGENERATE-MODULE-INVENTORY-DURING-MERGE-PY-39E4E540FFD2",
       "language": "python",

@@ -235,7 +235,7 @@
       "shard_index": 0
     },
     {
-      "content_sha256_lf": "71191cf2644902c7453b0067dd0826ec945d0888bc00d82adc7256179a7441ad",
+      "content_sha256_lf": "79c109b6510b1a678d3b5c812a2a3332f1d06a569051bd4c7f6984627007a662",
       "entry_count": 200,
       "first_path": "scripts/check_minimum_test_contract.py",
       "last_path": "src/data_processing/data_processor/web/index.html",
@@ -371,7 +371,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "5742b3f5b0e83e583c8ae443be5fb81ae14e062835817a22ce448e0015f63b22",
+  "source_tree_sha256": "b29c4f5404f1fa2dc5a0890a499ff117117a7cb06487d8ecca9f40f36ecd5b71",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
