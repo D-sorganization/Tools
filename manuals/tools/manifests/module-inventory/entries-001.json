@@ -2184,10 +2184,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 4514,
+      "bytes_lf": 5121,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "47b9903c3ef4628d06c98196da0563dbd41705d950010039e17f10304a54d4cb",
+      "content_sha256_lf": "667f5629f5ca743919ae1a05b104f9bff34c50ad3246b74f04748d0f2e9f4f61",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-GIT-MODULE-INVENTORY-MERGE-DRIVER-PY-FFB9B2E82C49",
       "language": "python",

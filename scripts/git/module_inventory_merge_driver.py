@@ -29,6 +29,16 @@ This script is invoked by git as a custom merge driver, per the contract in
 Exit 0 for a clean resolve (git uses whatever is now in %A); exit non-zero
 to fall back to git's normal conflicted merge for that path.
 
+Best-effort, not authoritative: git invokes merge drivers while the merge
+is still being computed, before every other path's merged content has
+necessarily been written to the working tree, so the regeneration here can
+legitimately still be stale for concurrent changes elsewhere in the same
+merge (confirmed empirically while building #4818). Its job is only to
+stop the merge from halting on conflict markers.
+``scripts/git/regenerate_module_inventory_during_merge.py``, a pre-commit
+hook that runs once the full merged tree is actually on disk, is what
+guarantees the merge commit itself ends up fresh.
+
 The driver command itself is registered as *local* git config by
 ``scripts/git/install_merge_drivers.py`` -- see that script's docstring for
 why ``.gitattributes`` alone cannot do this.

@@ -19,6 +19,7 @@ from unittest.mock import patch
 
 from scripts.git import install_merge_drivers
 from scripts.git import module_inventory_merge_driver as driver
+from scripts.git import regenerate_module_inventory_during_merge as merge_fixup
 
 
 class TestResolve:
@@ -152,3 +153,77 @@ class TestInstallMergeDrivers:
         # unmodified for git to substitute.
         assert '"/usr/bin/python3"' in driver_command
         assert "module_inventory_merge_driver.py %O %A %B %L %P" in driver_command
+
+
+class TestMergeFixup:
+    """The pre-commit-stage fixup is the authoritative correctness layer.
+
+    It must be a no-op outside a merge (existing regular-commit behavior
+    is unchanged) and must regenerate + re-stage only when a merge is
+    landing and the inventory is actually stale.
+    """
+
+    def test_noop_when_no_merge_is_in_progress(self, tmp_path):
+        with (
+            patch.object(merge_fixup, "_merge_in_progress", return_value=False),
+            patch.object(merge_fixup.subprocess, "run") as mock_run,
+        ):
+            exit_code = merge_fixup.fixup(tmp_path)
+
+        assert exit_code == 0
+        mock_run.assert_not_called()
+
+    def test_noop_when_merge_in_progress_but_already_fresh(self, tmp_path):
+        fresh_check = subprocess.CompletedProcess(args=[], returncode=0)
+        with (
+            patch.object(merge_fixup, "_merge_in_progress", return_value=True),
+            patch.object(
+                merge_fixup.subprocess, "run", return_value=fresh_check
+            ) as mock_run,
+        ):
+            exit_code = merge_fixup.fixup(tmp_path)
+
+        assert exit_code == 0
+        # Only the --check call, no write-mode regeneration and no `git add`.
+        mock_run.assert_called_once()
+        assert "--check" in mock_run.call_args.args[0]
+
+    def test_regenerates_and_stages_when_merge_in_progress_and_stale(self, tmp_path):
+        stale_check = subprocess.CompletedProcess(args=[], returncode=1)
+        successful_regen = subprocess.CompletedProcess(args=[], returncode=0)
+        successful_add = subprocess.CompletedProcess(args=[], returncode=0)
+
+        with (
+            patch.object(merge_fixup, "_merge_in_progress", return_value=True),
+            patch.object(
+                merge_fixup.subprocess,
+                "run",
+                side_effect=[stale_check, successful_regen, successful_add],
+            ) as mock_run,
+        ):
+            exit_code = merge_fixup.fixup(tmp_path)
+
+        assert exit_code == 0
+        assert mock_run.call_count == 3
+        check_cmd, regen_cmd, add_cmd = (c.args[0] for c in mock_run.call_args_list)
+        assert "--check" in check_cmd
+        assert "--check" not in regen_cmd
+        assert add_cmd[:2] == ["git", "add"]
+
+    def test_regeneration_failure_blocks_the_commit(self, tmp_path):
+        stale_check = subprocess.CompletedProcess(args=[], returncode=1, stdout="")
+        failed_regen = subprocess.CompletedProcess(
+            args=[], returncode=1, stdout="", stderr="boom"
+        )
+
+        with (
+            patch.object(merge_fixup, "_merge_in_progress", return_value=True),
+            patch.object(
+                merge_fixup.subprocess,
+                "run",
+                side_effect=[stale_check, failed_regen],
+            ),
+        ):
+            exit_code = merge_fixup.fixup(tmp_path)
+
+        assert exit_code == 1
