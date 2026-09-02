@@ -3,6 +3,854 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 22419,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ab688038e0979ae28bee48d423c797da049c3e5d1d101856a018c2bb7d67b77c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-CONVERTERS-URDF-PARSER-PY-CD02EE73CD78",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/converters/urdf_parser.py",
+      "purpose": "URDF parser for loading and editing existing URDF files.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ParsedModel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "URDFParser",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/model_generation/tests/test_urdf_roundtrip.py",
+          "tests/shared/python/model_generation/test_gh1694_xml_security.py",
+          "tests/shared/python/model_generation/test_unified_loader_edges.py",
+          "tests/shared/python/model_generation/test_urdf_parser.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1331,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0d2ad4a7204587d0552becd791523525b2b78f6b55a129a1a6c909b33774d905",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-CORE-INIT-PY-A785FD5C637B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/core/__init__.py",
+      "purpose": "Core types and utilities for model generation.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_DENSITY_KG_M3",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_INERTIA_KG_M2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_JOINT_DAMPING",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_JOINT_EFFORT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_JOINT_FRICTION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_JOINT_VELOCITY",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GRAVITY_M_S2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Geometry",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GeometryType",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "INTERMEDIATE_LINK_MASS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Inertia",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Joint",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "JointDynamics",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "JointLimits",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "JointType",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Link",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Material",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Origin",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ValidationError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ValidationResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ValidationWarning",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Validator",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4010,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f860f3632b42d103e30534c411732fbf04eb048571931d36243b344431c516b9",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-CORE-CONSTANTS-PY-8DCFBCC458A8",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/core/constants.py",
+      "purpose": "Physical and default constants for model generation.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "BONE_DENSITY_KG_M3",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "COLLISION_MESH_SIMPLIFICATION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_DENSITY_KG_M3",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_HEIGHT_M",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_INERTIA_KG_M2",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_JOINT_DAMPING",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_JOINT_EFFORT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_JOINT_FRICTION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_JOINT_VELOCITY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_MASS_KG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_ROBOT_NAME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FAT_DENSITY_KG_M3",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FLOAT_TOLERANCE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FULL_ROTATION_RAD",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "HUMANOID_SEGMENT_COUNT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "INTERMEDIATE_LINK_MASS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "JOINT_LIMIT_FULL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "JOINT_LIMIT_LARGE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "JOINT_LIMIT_MEDIUM",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "JOINT_LIMIT_SMALL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_VISUAL_FACES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MIN_COLLISION_FACES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MIN_INERTIA_KG_M2",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MIN_MASS_KG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TISSUE_DENSITY_KG_M3",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "URDF_INDENT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "URDF_XML_DECLARATION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "WATER_DENSITY_KG_M3",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N*m",
+          "kg",
+          "rad",
+          "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1580,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2c7ca6233c94e5adc7661fc77c46c80c65eb0c7a2135a725730ad1f10d025e76",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-CORE-CONTRACTS-PY-76C0979C6558",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/core/contracts.py",
+      "purpose": "Design by Contract Decorators for URDF Model Generation.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "CONTRACTS_ENABLED",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ContractViolationError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InvariantError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PostconditionError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PreconditionError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "contract",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ensure_valid_result",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "has_finite_elements",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "invariant",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "is_non_negative",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "is_positive",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "is_valid_result",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "postcondition",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "precondition",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "require_finite",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "require_positive",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "require_unit_vector",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "set_contracts_enabled",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
+          "src/shared/python/model_generation/tests/test_contracts.py",
+          "tests/rate_of_closure/test_contracts.py",
+          "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/model_generation/inertia/test_calculator.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
+          "tests/shared/python/test_contracts.py",
+          "tests/test_phase2_critical_bugs.py",
+          "tests/unit/ai/mcp/test_contracts.py",
+          "tests/unit/ai/peer_review/test_contracts.py",
+          "tests/unit/ai/skills/test_contracts.py",
+          "tests/unit/test_contracts.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
+          "src/shared/python/model_generation/tests/test_contracts.py",
+          "tests/rate_of_closure/test_contracts.py",
+          "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
+          "tests/shared/python/test_contracts.py",
+          "tests/unit/ai/mcp/test_contracts.py",
+          "tests/unit/ai/peer_review/test_contracts.py",
+          "tests/unit/ai/skills/test_contracts.py",
+          "tests/unit/test_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 19572,
+      "classification": "calculation",
+      "classification_basis": "path-marker:physics",
+      "content_sha256_lf": "711dce6a7f22c23d1290e1a5170dd0e38cd0f4d6e90ac4d99f7fd4f48b070ec3",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-CORE-PHYSICS-VALIDATION-PY-F37EEE99B218",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/core/physics_validation.py",
+      "purpose": "Physics Validation for URDF Models.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CollisionCheckResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "InertiaValidationResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PhysicsValidationResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PhysicsValidator",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StabilityResult",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/model_generation/tests/test_physics_validation.py"
+        ],
+        "unit_mentions": [
+          "m/s",
+          "s"
+        ],
+        "validation_paths": [
+          "src/shared/python/model_generation/tests/test_physics_validation.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 23768,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "dd2309372d396b4d8cc4d13fffe8abb900859b29f5a100b0fe959c956367e087",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-CORE-TYPES-PY-0AD6B3ACC2BF",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/core/types.py",
+      "purpose": "Core data types for model generation.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Geometry",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GeometryType",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Inertia",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Joint",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "JointDynamics",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "JointLimits",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "JointType",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Link",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Material",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Origin",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/model_generation/tests/test_unified_loader.py",
+          "src/shared/python/model_generation/tests/test_urdf_roundtrip.py",
+          "tests/shared/python/model_generation/inertia/test_calculator.py",
+          "tests/shared/python/model_generation/test_types.py",
+          "tests/shared/python/model_generation/test_urdf_parser.py",
+          "tests/shared/python/model_generation/test_validation.py",
+          "tests/test_phase2_critical_bugs.py",
+          "tests/test_review_fixes_2026_03_09.py"
+        ],
+        "unit_mentions": [
+          "kg",
+          "s"
+        ],
+        "validation_paths": [
+          "tests/shared/python/model_generation/test_validation.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 16150,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5c089625af298196e5cef8d8106cab490fee6df4d0f400288a0b45c93ede9ce3",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-CORE-VALIDATION-PY-55DFA2BEC91C",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/core/validation.py",
+      "purpose": "Centralized validation for model generation.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ValidationError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ValidationResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ValidationWarning",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Validator",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/programmatic_pid/tests/test_validation.py",
+          "tests/programmatic_pid/test_validation.py",
+          "tests/python/utils/test_validation.py",
+          "tests/shared/python/model_generation/test_validation.py",
+          "tests/test_validation.py"
+        ],
+        "unit_mentions": [
+          "kg",
+          "s"
+        ],
+        "validation_paths": [
+          "src/shared/python/programmatic_pid/tests/test_validation.py",
+          "tests/programmatic_pid/test_validation.py",
+          "tests/python/utils/test_validation.py",
+          "tests/shared/python/model_generation/test_validation.py",
+          "tests/test_validation.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 806,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -4787,7 +5635,8 @@
         ],
         "test_paths": [
           "tests/programmatic_pid/test_profiles.py",
-          "tests/programmatic_pid/test_profiles_extra.py"
+          "tests/programmatic_pid/test_profiles_extra.py",
+          "tests/shared/python/launch_monitor/test_profiles.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
@@ -11036,6 +11885,7 @@
         ],
         "test_paths": [
           "tests/integration/sidekick/test_standalone_wheel.py",
+          "tests/shared/python/launch_monitor/test_schema.py",
           "tests/shared/python/sidekick/lab/mocap/test_schema.py",
           "tests/unit/sidekick/test_standalone_canonical_package.py",
           "tests/unit/sidekick/test_standalone_runtime.py"
@@ -16898,510 +17748,6 @@
           "g",
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 2529,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "eb8dd2b9c1ed0f49b9459c7263f3cbb5a56d52325cae38943bd758fc74d84eff",
-      "family": "process-calculators-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-THERMAL-PROFILE-PREDICTOR-PY-65B6FD179556",
-      "language": "python",
-      "maintainer": "Process calculator maintainers",
-      "path": "src/shared/python/sidekick/process_calculators/thermal_profile_predictor.py",
-      "purpose": "thermal_profile_predictor.py module.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "fit_heating_parameters",
-            "signature": "times: Sequence[float], observed_temps: Sequence[float], initial_temp: float, thermal_mass_guess: float, heat_loss_guess: float, ambient_temp: float, power_func: Callable[[float], float]"
-          },
-          {
-            "kind": "function",
-            "name": "predict_temperature_profile",
-            "signature": "t_span: tuple[float, float], t_eval: Sequence[float], initial_temp: float, thermal_mass: float, heat_loss_coeff: float, ambient_temp: float, power_func: Callable[[float], float]"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/sidekick/tests/process_calculators/test_thermal_profile_predictor.py",
-          "src/shared/python/sidekick/tests/test_thermal_profile_predictor.py",
-          "tests/shared/python/sidekick/process_calculators/test_thermal_profile_predictor.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 7655,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "ad279a236ba5259209078239c3ff4b4149a70ab7feafafe516cc3f7a3069a35d",
-      "family": "process-calculators-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-WATER-VAPOR-PRESSURE-PY-D5FD51A4BC05",
-      "language": "python",
-      "maintainer": "Process calculator maintainers",
-      "path": "src/shared/python/sidekick/process_calculators/water_vapor_pressure.py",
-      "purpose": "Shared water-vapor-pressure correlation kernels.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "PA_PER_HPA",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PA_PER_KPA",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "antoine_pressure_pa",
-            "signature": "a: float, b: float, c: float, temperature_c: float"
-          },
-          {
-            "kind": "function",
-            "name": "antoine_temperature_c",
-            "signature": "a: float, b: float, c: float, pressure_pa: float"
-          },
-          {
-            "kind": "function",
-            "name": "buck_pressure_pa",
-            "signature": "a_kpa: float, b: float, c: float, d: float, temperature_c: float"
-          },
-          {
-            "kind": "function",
-            "name": "iapws_pressure_pa",
-            "signature": "temperature_c: float"
-          },
-          {
-            "kind": "function",
-            "name": "magnus_pressure_pa",
-            "signature": "temperature_c: float"
-          },
-          {
-            "kind": "function",
-            "name": "safe_exp",
-            "signature": "x: float"
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/process_calculators/test_water_vapor_pressure.py",
-          "tests/shared/python/process_calculators/test_water_vapor_pressure_shared.py"
-        ],
-        "unit_mentions": [
-          "Pa",
-          "g",
-          "kPa"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 1051,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "f52c161478aed177c4deeefbf95a449486bb0896c19206f3d3a890089256caed",
-      "family": "process-calculators-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-WATER-VAPOR-PRESSURE-CALCULATOR-PY-DC1E124E49DD",
-      "language": "python",
-      "maintainer": "Process calculator maintainers",
-      "path": "src/shared/python/sidekick/process_calculators/water_vapor_pressure_calculator.py",
-      "purpose": "Water Vapor Pressure Calculator",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "WaterVaporPressureCalculator",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/sidekick/tests/process_calculators/test_syngas_water_calculator.py",
-          "src/shared/python/sidekick/tests/test_pure_calc_modules.py"
-        ],
-        "unit_mentions": [
-          "Pa"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 26860,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "4026886722664fd5c0864e0546cdf13e087a33fbfd038eaa537c29b22cd2c2af",
-      "family": "process-calculators-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-WGS-REACTOR-CALCULATOR-PY-94C4B71C226B",
-      "language": "python",
-      "maintainer": "Process calculator maintainers",
-      "path": "src/shared/python/sidekick/process_calculators/wgs_reactor_calculator.py",
-      "purpose": "Water-Gas Shift Reactor Calculator",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "WGSReactorEngine",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "create_wgs_reactor_calculator",
-            "signature": "parent: Any=None"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/sidekick/tests/process_calculators/test_wgs_reactor_calculator.py",
-          "tests/calc_backend/test_wgs_reactor_headless_import_3317.py",
-          "tests/shared/python/process_calculators/test_wave1_process_numerics.py",
-          "tests/shared/python/process_calculators/test_wgs_reactor_calculator.py"
-        ],
-        "unit_mentions": [
-          "J",
-          "bar",
-          "g",
-          "kg",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 7694,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "40b32cbc0167d4ef51e1615539ca3cd6c79224a504e1f69f7cebcd4d7c1be01d",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROTOCOLS-PY-8F81D484691B",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/protocols.py",
-      "purpose": "Protocol interfaces for upstream drift tools.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CalculationResult",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "Calculator",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "DataTransformer",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "InputValidator",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ProcessCalculator",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "StateSerializable",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "UnitConverter",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ValidationResult",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/sidekick/tests/test_input_validator.py",
-          "src/shared/python/sidekick/tests/test_protocols.py",
-          "tests/shared/python/plot_engine/test_protocols.py",
-          "tests/shared/python/sidekick/test_protocols.py"
-        ],
-        "unit_mentions": [
-          "Pa",
-          "g"
-        ],
-        "validation_paths": [
-          "src/shared/python/sidekick/tests/test_input_validator.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 924,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7df0079495b0d087858315fb4bfcdfb057f0b7e84f74d962b926c578fbe7da4c",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-SELECTED-TAB-PANEL-PY-DE2BA8B24201",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/selected_tab_panel.py",
-      "purpose": "Public re-export of the selected-tab settings panel (issue #2929).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "SIDEKICK_TAB_SETTINGS_BUTTON_OBJECT_NAME",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TabSettingsMixin",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "build_tab_settings_dialog",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "build_tab_settings_toolbar",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/sidekick/tests/test_selected_tab_panel.py",
-          "tests/unit/sidekick/test_selected_tab_panel.py",
-          "tests/unit/sidekick/test_tab_context_menu.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1193,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "134aa0a7e346ee6b08513fa6012fd8d0791e023215d12c2799d69d3bc0d77564",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-STANDALONE-INIT-PY-E95594E19507",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/standalone/__init__.py",
-      "purpose": "Sidekick standalone shell.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

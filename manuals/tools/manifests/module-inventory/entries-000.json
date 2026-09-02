@@ -1615,6 +1615,7 @@
           "tests/scripts/test_generate_tools_json.py",
           "tests/shared/python/chat/test_terminal_runtime.py",
           "tests/shared/python/golf_club/test_putter_head.py",
+          "tests/shared/python/launch_monitor/test_importer.py",
           "tests/test_asteroid_jumper/test_physics.py",
           "tests/test_data_processor_embedding.py",
           "tests/test_launch_cli_output.py",
@@ -6571,6 +6572,7 @@
           "tests/shared/python/file_watcher/test_file_watcher.py",
           "tests/shared/python/gui_launcher/test_launcher_factories.py",
           "tests/shared/python/gui_launcher/test_registry.py",
+          "tests/shared/python/launch_monitor/test_treatment.py",
           "tests/shared/python/plotting/test_identity_export.py",
           "tests/shared/python/theme/test_zoom.py",
           "tests/shared/python/utils/test_launcher_factory.py",
@@ -7340,6 +7342,7 @@
           }
         ],
         "test_paths": [
+          "tests/shared/python/launch_monitor/test_schema.py",
           "tests/shared/python/sidekick/lab/mocap/test_schema.py"
         ],
         "unit_mentions": [

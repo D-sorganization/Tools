@@ -3,6 +3,600 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 12113,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "55f67e09d24010e121772b021163fda0c2ff23901e696173feeb911fcfe2e17d",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-PROFILE-VALIDATION-PY-CFC2171B7F21",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/profile_validation.py",
+      "purpose": "Primitive validators shared by ground material profile value records.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ProfileDocument",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "array_value",
+            "signature": "value: object, name: str"
+          },
+          {
+            "kind": "function",
+            "name": "bounded_number",
+            "signature": "value: object, name: str, bounds: tuple[float, float]"
+          },
+          {
+            "kind": "function",
+            "name": "calibrated_model_use",
+            "signature": "profile: Any, canonical_ids: tuple[Any, ...]"
+          },
+          {
+            "kind": "function",
+            "name": "canonical_enum_subset",
+            "signature": "values: Iterable[object], enum_type: Callable[[Any], _EnumT], canonical: tuple[_EnumT, ...], name: str"
+          },
+          {
+            "kind": "function",
+            "name": "exact_fields",
+            "signature": "payload: dict[str, Any], fields: set[str], name: str"
+          },
+          {
+            "kind": "function",
+            "name": "exact_record",
+            "signature": "value: object, expected: type[_RecordT], name: str"
+          },
+          {
+            "kind": "function",
+            "name": "exact_records",
+            "signature": "values: Iterable[object], expected: type[_RecordT], name: str"
+          },
+          {
+            "kind": "function",
+            "name": "finite_number",
+            "signature": "value: object, name: str"
+          },
+          {
+            "kind": "function",
+            "name": "nonnegative_number",
+            "signature": "value: object, name: str"
+          },
+          {
+            "kind": "function",
+            "name": "object_mapping",
+            "signature": "value: object, name: str"
+          },
+          {
+            "kind": "function",
+            "name": "parameter_unit",
+            "signature": "parameter_id: str"
+          },
+          {
+            "kind": "function",
+            "name": "parameter_validity",
+            "signature": "parameter_id: str, value: float, lower: object, upper: object"
+          },
+          {
+            "kind": "function",
+            "name": "parameter_value",
+            "signature": "parameter_id: str, value: object"
+          },
+          {
+            "kind": "function",
+            "name": "positive_number",
+            "signature": "value: object, name: str"
+          },
+          {
+            "kind": "function",
+            "name": "qualification_decisions",
+            "signature": "profile: Any, canonical_ids: tuple[Any, ...]"
+          },
+          {
+            "kind": "function",
+            "name": "sha256_digest",
+            "signature": "value: object, name: str"
+          },
+          {
+            "kind": "function",
+            "name": "sorted_unique_texts",
+            "signature": "values: Iterable[object], name: str"
+          },
+          {
+            "kind": "function",
+            "name": "strict_boolean",
+            "signature": "value: object, name: str"
+          },
+          {
+            "kind": "function",
+            "name": "strict_text",
+            "signature": "value: object, name: str"
+          },
+          {
+            "kind": "function",
+            "name": "validity_source_ids",
+            "signature": "parameters: Iterable[Any]"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "Pa",
+          "g",
+          "kg"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10245,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "de28965a40c42f9e7efbaafb253536d652590b456f5050b8e6261435175c250c",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-PROFILE-WIRE-PY-8203055C7CA3",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/profile_wire.py",
+      "purpose": "Strict canonical JSON wire boundary for ground material profile v1.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "document_from_dict",
+            "signature": "document_type: type[Any], payload: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "document_to_dict",
+            "signature": "document: object"
+          },
+          {
+            "kind": "function",
+            "name": "document_to_json",
+            "signature": "document: object"
+          },
+          {
+            "kind": "function",
+            "name": "library_from_json",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "profile_from_json",
+            "signature": "text: str"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/ground/tests/test_profile_contract.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "src/shared/python/swing_sim/ground/tests/test_profile_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3981,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0daeb5efd3f9e4d18f2b265f5f9e8041852b12a24e32006da53e4e8bf749c33a",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-REFERENCE-EXECUTION-PY-183F7C7FA362",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/reference_execution.py",
+      "purpose": "One-shot bounded execution over the authoritative bounce and surface phases.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "run_ground_reference",
+            "signature": "request: GroundSimulationRequest, execution: GroundReferenceExecution | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/ground/tests/test_reference_execution.py",
+          "src/shared/python/swing_sim/ground/tests/test_reference_execution_contract.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "src/shared/python/swing_sim/ground/tests/test_reference_execution_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3472,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "57df51cc798dfc8fae14c1516d0a2f7aa2febed7e68b88b8ac37ce40d6d1f585",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-REFERENCE-EXECUTION-TYPES-PY-7375A6ACDDCF",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/reference_execution_types.py",
+      "purpose": "Typed controls and failures for the canonical ground reference executor.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GroundReferenceCancelled",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundReferenceExecution",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundReferenceExecutionError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundReferencePhase",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GROUND_REFERENCE_EXECUTION_SCHEMA_VERSION",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7668,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c3e038f91104f6b2627cd6df70d674a06cc003990f88f64068051f6f4a9f3f96",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-REGIONAL-EXECUTION-PY-3C71FF4C68BB",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/regional_execution.py",
+      "purpose": "Authoritative regional-plan execution binding for ground simulation.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "RegionalGroundExecutionOptions",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_REGIONAL_EXECUTION_STEPS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_REGIONAL_EXECUTION_TRANSITIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REGIONAL_GROUND_EXECUTOR_SOURCE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "execute_regional_ground",
+            "signature": "request: GroundSimulationRequest, prefix: RepeatedBounceResult, plan: GroundRegionalMaterialPlanRequest, options: RegionalGroundExecutionOptions | None=None"
+          },
+          {
+            "kind": "re-export",
+            "name": "REGIONAL_GROUND_EXECUTOR_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "REGIONAL_GROUND_EXECUTOR_VERSION",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/ground/tests/test_regional_execution.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11947,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7671502ae27aec47849b289525bb5f594df1c39a0882d7289bc26ab94efc0c50",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-REGIONAL-EXECUTION-RECORDS-PY-1F04503CCE14",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/regional_execution_records.py",
+      "purpose": "Immutable evidence records for regional ground execution v1.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "RegionalGroundExecutionFailureReason",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RegionalGroundExecutionResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RegionalGroundExecutionStatus",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_REGIONAL_GROUND_EXECUTION_WIRE_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REGIONAL_GROUND_EXECUTION_LIMITATIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REGIONAL_GROUND_EXECUTION_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REGIONAL_GROUND_EXECUTOR_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REGIONAL_GROUND_EXECUTOR_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "execution_input_sha256",
+            "signature": "ground_digest: str, plan_digest: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4772,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "bc3adbd6b239583a7ed94787148acfae7f84f4f14957802976f8b881ff2a1be7",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-REGIONAL-EXECUTION-WIRE-PY-8BA7636E02C2",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/regional_execution_wire.py",
+      "purpose": "Fail-closed parser for regional ground execution result v1.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "regional_execution_result_from_dict",
+            "signature": "payload: object"
+          },
+          {
+            "kind": "function",
+            "name": "regional_ground_execution_result_from_json",
+            "signature": "text: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 1171,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -16796,593 +17390,6 @@
         "unit_mentions": [
           "m/s",
           "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2524,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "775bb5fe97fec5c3f566df936c7f3abe22cd11564b58e7c9768ccb6ba3ac4a9c",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-SETUP-PY-6AC3E617426E",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/solar_system_model/solar_system/setup.py",
-      "purpose": "Setup script for Solar System Simulation package.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "https://github.com/your-repo/solar-system-simulation"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [
-          "src/media_processing/video_processor/apps/web/test/setup.ts",
-          "src/p1am_control_system/frontend/src/test/setup.ts",
-          "src/rate_of_closure/web/src/test/setup.ts",
-          "src/rotation_converter/web/src/test/setup.ts"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 240,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8e2cf4ca2fbe5fbdfa80c9e4b9a22788027285752869d820129fc7ccb66ed134",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-INIT-PY-8903A7B9CCAE",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/solar_system_model/solar_system/ui/__init__.py",
-      "purpose": "User interface module for the solar system simulation.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "HelpOverlay",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "InfoPanel",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "InputHandler",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "StatusBar",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 10915,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8cbdb7cec35a01e1bf5d248c7f51c710a304fd9e0a166cdca3ec64d6ebc59580",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-CONTROLS-PY-21B678E21C73",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/solar_system_model/solar_system/ui/controls.py",
-      "purpose": "Input Handler",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "InputAction",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "InputHandler",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "KeyBinding",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "MouseState",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/programmatic_pid/test_controls.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 32330,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6618ea991817f4dd9487d321f7ec44e1a0331103736008a9bd84e1adb75ff8d6",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-WIDGETS-PY-FC31F75A5F46",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/solar_system_model/solar_system/ui/widgets.py",
-      "purpose": "UI Widgets",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "Button",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "Checkbox",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "DateTimePicker",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "EducationalInfoPanel",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "HelpOverlay",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "HistoricalEventsPanel",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ImmersionChecklistPanel",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ImmersionTask",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "InfoPanel",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "MissionListPanel",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "NavigationPanel",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PanelStyle",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SettingsPanel",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SidebarPanel",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "StatusBar",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "Tab",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TimeNavigationPanel",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TooltipManager",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TransferPlanner",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "UnifiedControlPanel",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "bar",
-          "g"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1414,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a83fb128cf77e9ad82a27f4134e5388bd71f4c829eb3f7272a0460014e37b8a0",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-WIDGETS-INIT-PY-15F4885C125D",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/solar_system_model/solar_system/ui/widgets/__init__.py",
-      "purpose": "UI Widgets",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "Button",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "Checkbox",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "DateTimePicker",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "EducationalInfoPanel",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "HelpOverlay",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "HistoricalEventsPanel",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ImmersionChecklistPanel",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ImmersionTask",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "InfoPanel",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "MissionListPanel",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "NavigationPanel",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PanelStyle",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SettingsPanel",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SidebarPanel",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "StatusBar",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "Tab",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TimeNavigationPanel",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TooltipManager",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TransferPlanner",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "UnifiedControlPanel",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 549,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "98ae92e23bb36746159a9642b0143346a51518c1e78e1f8f2e22559d5060d923",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-WIDGETS-BASE-PY-1F4C5D74A272",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/solar_system_model/solar_system/ui/widgets/_base.py",
-      "purpose": "Shared base types for UI widgets.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "PanelStyle",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 7080,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "441d69f64e3ae9ff067f151b4c6da2c946ba6c82578f90551291788e4631cd02",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-WIDGETS-DATE-TIME-PY-0E66DE2E0F42",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/solar_system_model/solar_system/ui/widgets/date_time.py",
-      "purpose": "Date/time widgets: DateTimePicker, TimeNavigationPanel.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "DateTimePicker",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TimeNavigationPanel",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "g"
         ],
         "validation_paths": []
       }

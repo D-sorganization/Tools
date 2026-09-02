@@ -11,15 +11,25 @@ into each split file.
 The construction is UpstreamDrift's, unchanged — same seed, same columns, same
 coefficients — so the split files assert against exactly the frames the
 original suite asserted against.
+
+``fixtures_dir`` serves the same purpose for step P9: UpstreamDrift's
+``tests/unit/launch_monitor/test_importer.py`` splits across
+:mod:`shared.python.launch_monitor.profiles` and
+:mod:`shared.python.launch_monitor.importer`, and both halves read the six
+synthetic vendor exports that travelled with them from
+``tests/fixtures/launch_monitor/``.
 """
 
 from __future__ import annotations
 
 from collections.abc import Callable
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import pytest
+
+FIXTURE_DIR = Path(__file__).parent / "fixtures"
 
 
 def build_shots(n: int = 80) -> pd.DataFrame:
@@ -48,3 +58,9 @@ def build_shots(n: int = 80) -> pd.DataFrame:
 def shots() -> Callable[..., pd.DataFrame]:
     """Expose :func:`build_shots` as a fixture for the split test files."""
     return build_shots
+
+
+@pytest.fixture(scope="session")
+def fixtures_dir() -> Path:
+    """Return the vendor-export fixtures that travelled with step P9."""
+    return FIXTURE_DIR

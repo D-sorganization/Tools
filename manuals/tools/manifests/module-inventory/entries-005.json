@@ -15640,7 +15640,8 @@
           }
         ],
         "test_paths": [
-          "src/movement_optimizer/tests/test_comparison.py"
+          "src/movement_optimizer/tests/test_comparison.py",
+          "tests/shared/python/launch_monitor/test_comparison.py"
         ],
         "unit_mentions": [
           "s"
