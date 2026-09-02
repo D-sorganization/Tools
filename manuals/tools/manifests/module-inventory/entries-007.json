@@ -4337,6 +4337,7 @@
           }
         ],
         "test_paths": [
+          "tests/rate_of_closure/test_ground_playback_workspace_v2.py",
           "tests/rate_of_closure/test_playback_transport.py",
           "tests/rate_of_closure/test_putting_gui.py"
         ],

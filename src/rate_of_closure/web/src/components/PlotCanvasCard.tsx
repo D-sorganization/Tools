@@ -46,8 +46,19 @@ function fittedRange(
   const transformed = values
     .filter((value) => Number.isFinite(value) && (!logarithmic || value > 0))
     .map((value) => axisCoordinate(value, logarithmic));
-  let min = Math.min(...transformed);
-  let max = Math.max(...transformed);
+
+  if (transformed.length === 0) return [0, 1];
+
+  // ⚡ Bolt Optimization: Replace Math.min/max spread with single pass loop to avoid massive
+  // intermediate allocations on the call stack and "Maximum call stack size exceeded" errors
+  let min = transformed[0] as number;
+  let max = transformed[0] as number;
+  for (let i = 1; i < transformed.length; i++) {
+    const v = transformed[i] as number;
+    if (v < min) min = v;
+    if (v > max) max = v;
+  }
+
   if (!Number.isFinite(min) || !Number.isFinite(max)) return [0, 1];
   if (min === max) {
     min -= 0.5;
@@ -69,11 +80,13 @@ function drawLegend(
     ? width - (position === "outside_right" ? 170 : 185)
     : 76;
   const y = position === "outside_right" ? 52 : 46;
-  data.series.forEach((series, index) => {
+  // ⚡ Bolt Optimization: Replace .forEach iterations with a standard for loop to eliminate closure allocation overhead in hot paths.
+  for (let index = 0; index < data.series.length; index++) {
+    const series = data.series[index];
     ctx.fillStyle = PALETTE[index % PALETTE.length];
     ctx.fillRect(x, y + index * 18 - 8, 12, 3);
     ctx.fillText(series.label, x + 18, y + index * 18);
-  });
+  }
 }
 
 function drawPlot(
@@ -128,13 +141,16 @@ function drawPlot(
   }
   const projected: Array<Array<readonly [number, number]>> = [];
   const renderSeries = plan?.kind === "series" ? plan.series : data.series;
-  renderSeries.forEach((series, seriesIndex) => {
+  // ⚡ Bolt Optimization: Replace .forEach iterations with a standard for loop to eliminate closure allocation overhead in hot paths.
+  for (let seriesIndex = 0; seriesIndex < renderSeries.length; seriesIndex++) {
+    const series = renderSeries[seriesIndex];
     ctx.strokeStyle = PALETTE[seriesIndex % PALETTE.length];
     ctx.fillStyle = PALETTE[seriesIndex % PALETTE.length];
     ctx.lineWidth = 1.8;
     ctx.beginPath();
     const points: Array<readonly [number, number]> = [];
-    data.x.forEach((xValue, index) => {
+    for (let index = 0; index < data.x.length; index++) {
+      const xValue = data.x[index];
       const x = sx(xValue);
       const y = sy(series.values[index]);
       points.push([x, y]);
@@ -143,14 +159,15 @@ function drawPlot(
         ctx.arc(x, y, 2.5, 0, 2 * Math.PI);
       } else if (index === 0) ctx.moveTo(x, y);
       else ctx.lineTo(x, y);
-    });
+    }
     if (data.spec.kind === "scatter") ctx.fill();
     else ctx.stroke();
     projected.push(points);
-  });
+  }
   if (plan?.kind === "histogram") {
     ctx.fillStyle = PALETTE[0];
-    plan.bins.forEach((item) => {
+    for (let index = 0; index < plan.bins.length; index++) {
+      const item = plan.bins[index];
       const left = sx(item.lower);
       const right = sx(item.upper);
       const top = sy(item.count);
@@ -158,7 +175,7 @@ function drawPlot(
       ctx.globalAlpha = 0.85;
       ctx.fillRect(left + 0.5, top, Math.max(0, right - left - 1), bottom - top);
       ctx.globalAlpha = 1;
-    });
+    }
   }
   if (selection?.kind === "series" && plan?.kind === "series") {
     const [x, y] = projected[selection.seriesIndex][selection.rawIndex];
@@ -314,7 +331,7 @@ export function PlotCanvasCard({ data, label, selected, onSelect, onCanvas, noti
     onSelect();
     if (plan !== null) adoptSelection(navigatePlotSelection(plan, selection, command));
   };
-  const buttonClass = "rounded border border-slate-700 px-2 py-1 text-xs text-slate-200 hover:border-sky-400";
+  const buttonClass = "rounded border border-slate-700 px-2 py-1 text-xs text-slate-200 hover:border-sky-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500";
   return (
     <article
       role="group"

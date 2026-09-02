@@ -252,8 +252,14 @@ function StrategyTable({ scenarios, constraints }: {
     scenarios: ForceSourceScenario[]; constraints: ForceSourceConstraints;
 }) {
     const profileGroups = new Map<string, ForceSourceScenario[]>();
+    // ⚡ Bolt Optimization: Use direct mutation instead of array spread to achieve O(N) complexity and avoid O(N^2) garbage collection pressure when grouping.
     for (const scenario of scenarios) {
-        profileGroups.set(scenario.profile_id, [...(profileGroups.get(scenario.profile_id) ?? []), scenario]);
+        let group = profileGroups.get(scenario.profile_id);
+        if (group === undefined) {
+            group = [];
+            profileGroups.set(scenario.profile_id, group);
+        }
+        group.push(scenario);
     }
     const shoulderLimit = Math.max(Math.abs(constraints.shoulderTorqueNm.min), Math.abs(constraints.shoulderTorqueNm.max));
     const speedValue = (scenario: ForceSourceScenario) => scenario.series.clubhead_speed_m_s[

@@ -216,3 +216,25 @@ def test_v2_shared_golden_is_byte_identical_and_sha_pinned() -> None:
     load = load_ground_workspace_versioned_json(golden)
     assert load.source_schema_version == GROUND_PLAYBACK_WORKSPACE_SCHEMA_V2
     assert not load.migrated_from_v1
+
+
+def test_supported_speeds_match_the_shared_playback_transport() -> None:
+    """The workspace wire's speed whitelist must equal the transport's speeds.
+
+    ``SUPPORTED_PLAYBACK_SPEEDS`` deliberately stays its own constant: it
+    validates a versioned, fail-closed persisted document, so what it accepts
+    is a wire contract that must not silently follow a runtime refactor.
+    ``PLAYBACK_SPEEDS`` is what every playback surface (Qt
+    ``PlaybackTransportControls``, React ``PlaybackTransportBar``) actually
+    offers. Today the two are equal by coincidence; this gate is what makes
+    the equality a fact. If it fails, either the transport grew a speed the
+    wire must learn to accept (a workspace wire-version question - raise it
+    on the workspace's issue, do not just widen the whitelist) or the wire
+    accepts a speed no player offers.
+    """
+    from rate_of_closure.simulation.ground_playback_workspace import (
+        SUPPORTED_PLAYBACK_SPEEDS,
+    )
+    from rate_of_closure.simulation.playback_transport import PLAYBACK_SPEEDS
+
+    assert tuple(SUPPORTED_PLAYBACK_SPEEDS) == tuple(PLAYBACK_SPEEDS)

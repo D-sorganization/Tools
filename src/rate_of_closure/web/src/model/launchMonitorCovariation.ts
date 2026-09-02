@@ -133,7 +133,15 @@ const summarize = (
 
 const groupPairs = (pairs: Pair[]) => {
   const grouped = new Map<string, Pair[]>();
-  pairs.forEach((pair) => grouped.set(pair.playerId, [...(grouped.get(pair.playerId) ?? []), pair]));
+  for (const pair of pairs) {
+    let group = grouped.get(pair.playerId);
+    if (!group) {
+      group = [];
+      grouped.set(pair.playerId, group);
+    }
+    // Bolt: O(N) grouping instead of O(N^2) immutable spread
+    group.push(pair);
+  }
   return grouped;
 };
 

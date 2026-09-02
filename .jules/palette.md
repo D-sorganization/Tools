@@ -67,3 +67,6 @@
 ## 2024-05-15 - [Dynamic Grid Accessibility]
 **Learning:** Mathematical matrices often lack space for explicit labels for each element. Using contextual `aria-label`s like `aria-label={'Row ${i + 1}, Column ${j + 1}'}` provides screen readers the necessary context without compromising visual design.
 **Action:** Always add contextual `aria-label`s to inputs in dynamically generated grid systems where space constraints prohibit explicit `<label>` elements.
+## 2026-08-31 - Focus Rings on Rate of Closure Buttons
+**Learning:** Found an accessibility issue pattern where buttons in Rate of Closure use standard utility classes or `.buttonClass` but lack focus indicators, making keyboard navigation difficult.
+**Action:** Append `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500` to utility classes and hardcoded button classes to preserve keyboard accessibility while styling interactive elements.

@@ -13561,6 +13561,365 @@
       }
     },
     {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1658,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3b29af737cdd7d552616081e1aa201678a25df070f9a3ba2ea04bb91868fdce1",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-INTERCHANGE-INIT-PY-14887019CAD3",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight_interchange/__init__.py",
+      "purpose": "Neutral ball-flight trajectory interchange (ADR-0047 H1, UD #9350).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "APP_FRAME_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BALL_FLIGHT_TRAJECTORY_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BallFlightSample",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BallFlightTrajectory",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FLIGHT_FRAME_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FRAME_IDS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "OPTIONAL_CHANNELS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TOOLS_FLIGHT_FAMILY",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TrajectoryProvenance",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ball_flight_trajectory_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ball_flight_trajectory_to_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "flight_model_parameters",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "from_samples",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "parameter_digest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "trajectory_from_flight_result",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7172,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1e1efe68f9eb2fa11d38c700c2bf06de7a0bff71b9a105defb1227fa05db05f2",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-INTERCHANGE-ADAPTERS-PY-EE20BE89A52B",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight_interchange/adapters.py",
+      "purpose": "Tools-side exporter for the ball-flight wire (ADR-0047 H1, UD #9350).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "TOOLS_FLIGHT_FAMILY",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "flight_model_parameters",
+            "signature": "model: BallFlightModel"
+          },
+          {
+            "kind": "function",
+            "name": "trajectory_from_flight_result",
+            "signature": "result: FlightResult, model: BallFlightModel, *, source_id: str | None=None"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6091,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9d346d7dfcedc090b306895ad1151bf79f24d3fde4f39b12e7e27bad0e8152e2",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-INTERCHANGE-SERIALIZATION-PY-C3180309F067",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight_interchange/serialization.py",
+      "purpose": "JSON codec for ``swing_sim.ball_flight_trajectory/1`` (ADR-0047 H1).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "ball_flight_trajectory_from_json",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "ball_flight_trajectory_to_json",
+            "signature": "trajectory: BallFlightTrajectory"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_serialization.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 16050,
+      "classification": "calculation",
+      "classification_basis": "path-marker:trajectory",
+      "content_sha256_lf": "dfc2ce1e5acee8853c693222fc0cda1207c333bb69e5200f53be8a0b2e9303d3",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-INTERCHANGE-TRAJECTORY-PY-21A59BF8CAF9",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight_interchange/trajectory.py",
+      "purpose": "The ``swing_sim.ball_flight_trajectory/1`` wire (ADR-0047 H1, UD #9350).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "BallFlightSample",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "BallFlightTrajectory",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TrajectoryProvenance",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "APP_FRAME_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BALL_FLIGHT_TRAJECTORY_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FLIGHT_FRAME_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FRAME_IDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "OPTIONAL_CHANNELS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "from_samples",
+            "signature": "*, source_id: str, frame_id: str, provenance: TrajectoryProvenance, times_s: Sequence[float], positions_m: Sequence[Sequence[float]], velocities_mps: Sequence[Sequence[float]] | None=None, spins_rad_s: Sequence[Sequence[float]] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "parameter_digest",
+            "signature": "parameters: Mapping[str, float | int | str]"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "m/s",
+          "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "provisional",
       "bytes_lf": 16521,
       "classification": "calculation",
@@ -17723,232 +18082,6 @@
             "kind": "class",
             "name": "SkidRollResult",
             "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 14003,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c4543b6b37d97d70f7658fe922ab939c2c187f1bd64cbfe72415d8d632fce0fc",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-SKID-ROLL-RUNTIME-PY-8A8C54F600B0",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/skid_roll_runtime.py",
-      "purpose": "Mutable runtime ledger isolated from the skid/roll state-machine policy.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "AdvanceResult",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SurfaceRun",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_skid_roll_passivity.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 11804,
-      "classification": "calculation",
-      "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "e0008f114b5a94f68db2afb2433fd785e9fc5f93bb90396958df0cc43bc65281",
-      "family": "swing-simulation-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-SKID-ROLL-SIMULATION-PY-53EDC3FD90C3",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/skid_roll_simulation.py",
-      "purpose": "Deterministic bounded skid-to-roll solver for coplanar material regions.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SkidRollExecution",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "simulate_skid_roll",
-            "signature": "request: GroundSimulationRequest, prefix: RepeatedBounceResult, execution: SkidRollExecution | None=None"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_skid_roll_simulation.py",
-          "src/shared/python/swing_sim/ground/tests/test_study_projection.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2687,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "561b31b216503809593eb9b8de21e352a18d483e0237dd8c9665aa6ac8dcf190",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-SKID-ROLL-VALIDATION-PY-C1EA9CFE0768",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/skid_roll_validation.py",
-      "purpose": "Fail-closed preconditions for the #4270 to #4271 physical handoff.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "validate_surface_run_inputs",
-            "signature": "request: GroundSimulationRequest, prefix: RepeatedBounceResult, resolver: SurfaceResolver, settings: SkidRollSettings"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 966,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "11d7636ef83e1ecacb7e0ec42e4e34abb7564400c828be6a54f95e097da16fc0",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-STRICT-JSON-PY-222081EBFA9D",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/strict_json.py",
-      "purpose": "Fail-closed JSON document parsing for ground contracts.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "strict_json_object",
-            "signature": "text: str"
           }
         ],
         "test_paths": [],
