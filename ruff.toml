@@ -30,7 +30,6 @@ exclude = [
     # quality bar (ruff line-length 100) and CI history; linted in its origin repo.
     "src/movement_optimizer",
     "tests/data_processor",
-    "python/src/tile_launcher/app_catalog.json",
     "python/tests",
 ]
 

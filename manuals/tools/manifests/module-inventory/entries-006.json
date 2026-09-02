@@ -3,240 +3,6 @@
   "entries": [
     {
       "authority_status": "provisional",
-      "bytes_lf": 11316,
-      "classification": "calculation",
-      "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "96dd57acb135ad0ee228a7974ddad1accdfee466e8ebb8cf470f8cc9060e3ad7",
-      "family": "pendulum-calculation",
-      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-DOWNSWING-CONFIG-PY-5B8D37472DAA",
-      "language": "python",
-      "maintainer": "Pendulum maintainers",
-      "path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/downswing_config.py",
-      "purpose": "Configuration for a downswing optimization, shared by every objective.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "DownswingConfig",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_TORQUE_RATE_LIMITS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "RATE_SCALE",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "N*m",
-          "N·m",
-          "kg",
-          "m/s",
-          "ms",
-          "rad",
-          "rad/s",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 8452,
-      "classification": "calculation",
-      "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "a2a0525d74f360968fa075c0aed40d32fe5479aee4256443d36d2a9255c879d6",
-      "family": "pendulum-calculation",
-      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-IMPACT-OPTIMALITY-PY-46372125DFAF",
-      "language": "python",
-      "maintainer": "Pendulum maintainers",
-      "path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/impact_optimality.py",
-      "purpose": "Why a speed-optimal downswing stops the hands, in closed form.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "10.1007/BF02844309",
-          "10.1098/rspb.1938.0050",
-          "10.1119/1.1976419",
-          "https://doi.org/10.1007/BF02844309",
-          "https://doi.org/10.1098/rspb.1938.0050",
-          "https://doi.org/10.1119/1.1976419",
-          "https://www.jssm.org/jssm-04-499.xml.xml"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "EnergyOptimalRates",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "energy_optimal_rates",
-            "signature": "params: PendulumParams, kinetic_energy_j: float"
-          },
-          {
-            "kind": "function",
-            "name": "impact_hand_speed_coefficient",
-            "signature": "params: PendulumParams, club_mass_kg: float | None=None, club_com_m: float | None=None, club_inertia_kgm2: float | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "optimal_hand_speed_sign",
-            "signature": "params: PendulumParams, club_mass_kg: float | None=None, club_com_m: float | None=None, club_inertia_kgm2: float | None=None"
-          }
-        ],
-        "test_paths": [
-          "src/pendulum_simulator/tests/test_impact_optimality.py"
-        ],
-        "unit_mentions": [
-          "kg",
-          "m/s",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 9207,
-      "classification": "calculation",
-      "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "72f16b40cebe7703d6192938baeb0bee98ff0eeb326cd5c31fe8e1bff07d3b6e",
-      "family": "pendulum-calculation",
-      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-MODEL-ADEQUACY-PY-E5B09834B73A",
-      "language": "python",
-      "maintainer": "Pendulum maintainers",
-      "path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/model_adequacy.py",
-      "purpose": "Measuring what the two-link model can and cannot be asked to do.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "10.1007/BF02844309",
-          "https://doi.org/10.1007/BF02844309"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "FrontierPoint",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "HandSpeedFrontier",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "hand_speed_frontier",
-            "signature": "config: DownswingConfig, floors_ms: Sequence[float], bands: tuple[ObservableBand, ...]=TOUR_DRIVER_BANDS"
-          },
-          {
-            "kind": "function",
-            "name": "swing_observables",
-            "signature": "states: FloatArray, clubhead_speed: FloatArray, duration_s: float, arm_length_m: float"
-          }
-        ],
-        "test_paths": [
-          "src/pendulum_simulator/tests/test_model_adequacy.py"
-        ],
-        "unit_mentions": [
-          "N",
-          "deg",
-          "m/s",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
       "bytes_lf": 6846,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
@@ -3828,10 +3594,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5497,
+      "bytes_lf": 7906,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4fa579732c6ba54741e4daba787fbd75d7b696bcdeb4e04c4e16a89d4154f197",
+      "content_sha256_lf": "56b23e2ed28e347a55bf6bf0b4dac755d0e60197852d42b682432386d728803d",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-PYTHON-SRC-TILE-LAUNCHER-MANAGER-PY-D8C3865D39C2",
       "language": "python",
@@ -3877,9 +3643,24 @@
             "signature": null
           },
           {
+            "kind": "constant",
+            "name": "TOOLS_REGISTRY_FILENAME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SLUG_NON_ALNUM",
+            "signature": null
+          },
+          {
             "kind": "function",
             "name": "load_catalog",
             "signature": "catalog_path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "load_tools_registry",
+            "signature": "registry_path: Path"
           }
         ],
         "test_paths": [
@@ -14833,6 +14614,246 @@
           "tests/rate_of_closure/test_launch_monitor_conformance_golden.py",
           "tests/rate_of_closure/test_launch_monitor_v2_client.py",
           "tests/rate_of_closure/test_launch_monitor_workspace.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13879,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4dcfcae34f7771e0a4f58f0a8aa15179afe109c9365b7e5c32e5c8577f434ce4",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-LAUNCH-MONITOR-WORKSPACE-PY-7C09AA564695",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/launch_monitor_workspace.py",
+      "purpose": "Reference-only project and export seam for launch-monitor analytics.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AnalysisSelection",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DatasetReference",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LaunchMonitorProject",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlayerIdentityBinding",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_player_covariation_request",
+            "signature": "project: LaunchMonitorProject"
+          },
+          {
+            "kind": "function",
+            "name": "dataset_reference_for_frame",
+            "signature": "frame: pd.DataFrame, source_name: str"
+          },
+          {
+            "kind": "function",
+            "name": "export_analysis_bundle",
+            "signature": "destination: str | Path, project: LaunchMonitorProject, result: dict[str, Any], backing_rows: pd.DataFrame, authorization: WorkspaceExportAuthorization | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "load_project",
+            "signature": "source: str | Path"
+          },
+          {
+            "kind": "function",
+            "name": "load_project_versioned",
+            "signature": "source: str | Path"
+          },
+          {
+            "kind": "function",
+            "name": "save_project",
+            "signature": "destination: str | Path, project: LaunchMonitorProject"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_launch_monitor_forbidden_identity.py",
+          "tests/rate_of_closure/test_launch_monitor_performance.py",
+          "tests/rate_of_closure/test_launch_monitor_workspace.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11142,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e62804bf5e39a6b5ca5b8c170ad088918c6639a8b742c427e33a5a6dabd9a37f",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-LAUNCH-MONITOR-WORKSPACE-V3-PY-F8163B751655",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/launch_monitor_workspace_v3.py",
+      "purpose": "Portable, row-free launch-monitor workspace v3 persistence and export.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "WorkspaceExportAuthorization",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WorkspaceProject",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_CLASSIFICATIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ROW_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "create_workspace_bundle",
+            "signature": "output_directory: str | Path, project: Mapping[str, Any], backing_rows: Any=(), authorization: WorkspaceExportAuthorization | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "parse_workspace_project",
+            "signature": "value: str | bytes | Mapping[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "serialize_workspace_project",
+            "signature": "project: Mapping[str, Any]"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_launch_monitor_forbidden_identity.py",
+          "tests/rate_of_closure/test_launch_monitor_provenance_and_unavailable.py",
+          "tests/rate_of_closure/test_launch_monitor_workspace.py",
+          "tests/rate_of_closure/test_launch_monitor_workspace_v3.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 565,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3115ae96acbfd4f7f2469b2175c614b05deba01ffc03ad25441da764e1cedac8",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-LAUNCH-PYQT6-PY-0C554127EC22",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/launch_pyqt6.py",
+      "purpose": "Standalone PyQt6 launcher for Rate of Closure Impact Explorer.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/folder_tool/test_launch_pyqt6.py"
         ],
         "unit_mentions": [],
         "validation_paths": []

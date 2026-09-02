@@ -3,249 +3,6 @@
   "entries": [
     {
       "authority_status": "provisional",
-      "bytes_lf": 26790,
-      "classification": "calculation",
-      "classification_basis": "path-marker:rotation",
-      "content_sha256_lf": "b6fd9c9e4c44c8e83b30d0b15ff321e7ee057e946fef06d130eeb10317b6f5f0",
-      "family": "rotation-converter-calculation",
-      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-RIGID-TRANSFORM-PY-A57C7E57B7C5",
-      "language": "python",
-      "maintainer": "Rotation converter maintainers",
-      "path": "src/rotation_converter/rigid_transform.py",
-      "purpose": "Frame-aware rigid body transformation (SE(3) with source/target labels).",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "FrameError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RigidTransform",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/rotation_converter/test_rigid_transform.py",
-          "tests/rotation_converter/test_scripting_env.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 16963,
-      "classification": "calculation",
-      "classification_basis": "path-marker:rotation",
-      "content_sha256_lf": "42de070e0aff56d31c2fc4ab40b81a92fde620f25ee6feeed7376c4e83ff9042",
-      "family": "rotation-converter-calculation",
-      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-SCREW-VISUALIZATION-PY-13D04051C2A7",
-      "language": "python",
-      "maintainer": "Rotation converter maintainers",
-      "path": "src/rotation_converter/screw_visualization.py",
-      "purpose": "Screw axis visualization for rigid-body motions.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ScrewAxisAnimator",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_BODY_AXIS_LENGTH",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_animation_frames",
-            "signature": "trajectory: list[np.ndarray], body_axis_length: float=_BODY_AXIS_LENGTH"
-          },
-          {
-            "kind": "function",
-            "name": "extract_screw_axes_from_trajectory",
-            "signature": "trajectory: list[np.ndarray]"
-          }
-        ],
-        "test_paths": [
-          "tests/rotation_converter/test_screw_visualization.py"
-        ],
-        "unit_mentions": [
-          "N",
-          "deg",
-          "g",
-          "rad",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 9625,
-      "classification": "calculation",
-      "classification_basis": "path-marker:rotation",
-      "content_sha256_lf": "645cee47c23a5d479627ae0bb6c4bd3d313c097ec8c40aa40c76f15b87be29f6",
-      "family": "rotation-converter-calculation",
-      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-SPATIAL-ALGEBRA-PY-787BAD7A639A",
-      "language": "python",
-      "maintainer": "Rotation converter maintainers",
-      "path": "src/rotation_converter/spatial_algebra.py",
-      "purpose": "Featherstone Spatial Algebra and Dynamics Algorithms.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SpatialModel",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "FDab",
-            "signature": "model: SpatialModel, q: Any, qd: Any, tau: Any, f_ext: Sequence[np.ndarray] | None=None, grav_accn: Any=None"
-          },
-          {
-            "kind": "function",
-            "name": "ID",
-            "signature": "model: SpatialModel, q: Any, qd: Any, qdd: Any, f_ext: Sequence[np.ndarray] | None=None, grav_accn: Any=None"
-          },
-          {
-            "kind": "function",
-            "name": "Xrotx",
-            "signature": "theta: float"
-          },
-          {
-            "kind": "function",
-            "name": "Xroty",
-            "signature": "theta: float"
-          },
-          {
-            "kind": "function",
-            "name": "Xrotz",
-            "signature": "theta: float"
-          },
-          {
-            "kind": "function",
-            "name": "Xtrans",
-            "signature": "r: Any"
-          },
-          {
-            "kind": "function",
-            "name": "crf",
-            "signature": "v: Any"
-          },
-          {
-            "kind": "function",
-            "name": "crm",
-            "signature": "v: Any"
-          },
-          {
-            "kind": "function",
-            "name": "jcalc",
-            "signature": "pitch: float, q: float"
-          }
-        ],
-        "test_paths": [
-          "tests/rotation_converter/test_spatial_algebra.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
       "bytes_lf": 10465,
       "classification": "calculation",
       "classification_basis": "path-marker:rotation",
@@ -14731,6 +14488,253 @@
           "matlab/test_rotation_converter.m"
         ],
         "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6393,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "27bc8af4fd759a18b15e575606aaa43fde99b00f9dde2e9b549ab8c374164684",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-SCRUBBER-PY-121489E149F4",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/routers/scrubber.py",
+      "purpose": "Scrubber calculator router.  See issue #613.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_FLUX_AREA_REL_TOL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_FLUX_AREA_SEED_M2",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_FLUX_MAX_ITERATIONS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "calculate_scrubber",
+            "signature": "request: ScrubberRequest"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/calc_backend/tests/test_calc_backend.py",
+          "src/shared/python/calc_backend/tests/test_calc_backend_gaps.py",
+          "src/shared/python/calc_backend/tests/test_scrubber_convergence_3181.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "kg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 6806,
+      "classification": "calculation",
+      "classification_basis": "path-marker:solver",
+      "content_sha256_lf": "9d2c1b78aa22601be390feb3166f212c88dfc0d4e99d0bcd631bac92de61ab5a",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-SYMBOLIC-SOLVER-PY-F8C824FA5CED",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/routers/symbolic_solver.py",
+      "purpose": "Symbolic solver router with optional SymPy support. See issue #2682.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "mapped",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [
+          "/derivative",
+          "/help",
+          "/simplify",
+          "/solve"
+        ],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SymbolicDerivativeRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SymbolicDerivativeResponse",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SymbolicHelpResponse",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SymbolicSimplifyRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SymbolicSimplifyResponse",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SymbolicSolveRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SymbolicSolveResponse",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "compute_derivative",
+            "signature": "request: SymbolicDerivativeRequest"
+          },
+          {
+            "kind": "function",
+            "name": "get_symbolic_help",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "simplify_expression",
+            "signature": "request: SymbolicSimplifyRequest"
+          },
+          {
+            "kind": "function",
+            "name": "solve_equation",
+            "signature": "request: SymbolicSolveRequest"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/calc_backend/tests/test_symbolic_solver.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5434,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b7d9abee3a850a91d6cd5013783ad59e1be3657ead5c035579eb7a094e3ca130",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-SYNGAS-WATER-PY-C52D9CF2DC26",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/routers/syngas_water.py",
+      "purpose": "Syngas water calculator router.  See issue #608.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "calculate_syngas_water",
+            "signature": "request: SyngasWaterRequest"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/calc_backend/tests/test_calc_backend.py"
+        ],
+        "unit_mentions": [
+          "Pa",
+          "g"
+        ],
         "validation_paths": []
       }
     }
