@@ -58,13 +58,15 @@ only the outcome vocabulary and deterministic single-putt evaluation through
 `evaluatePuttWithTrajectory`. Both clients consume the one shared playback
 transport and the `putt` block of `playback_transport_golden_v1.json`.
 **Never fork a second transport, sampler, or golden.** P6-P8 deliberately
-rebuilt the putting first viewport, so both putting baselines are stale: the
-React one is refreshed from the first trusted run that includes RM #1507's
-green-import-row fix (the fix changes the 1440x900 render, so earlier
-candidates are unusable); the PyQt one must wait for #4844's environment fix —
-re-approving it now would launder that glyph drift. The 390x844 overflow had
-TWO 6 px sources: the P8 transport row (#4927) and F2's green-import row,
-whose file input's font-dependent intrinsic width blocked shrinking.
+rebuilt the putting first viewport, so both putting baselines went stale: the
+React one is re-approved here from a trusted-run candidate; the PyQt one must
+wait for #4844's environment fix — re-approving it now would launder that
+glyph drift. The 390x844 overflow had TWO 6 px sources: the P8 transport row
+(#4927) and F2's green-import row (#4936), whose file input's font-dependent
+intrinsic width blocked shrinking. **Correcting #4936's own claim:** that fix
+does *not* change the approved 1440x900 image — baselines are viewport-only
+screenshots and the import row sits near y=1149, below the fold — so it was
+the 390x844 document width, not the captured first viewport, that it fixed.
 ADR-0047 H4 (UD #9353) wired the Flight Explorer tab's "Import Trajectory
 Record…" action to replay an imported `swing_sim.ball_flight_trajectory/1`
 record (either flight-model family) through this **same** P8 transport — no
