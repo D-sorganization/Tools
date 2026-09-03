@@ -59,6 +59,17 @@ import sys
 from pathlib import Path
 
 DRIVER_NAME = "spec-rows"
+#: Path to the driver, RELATIVE to the top of the worktree.
+#:
+#: Git runs a merge driver with its working directory at the top of the
+#: worktree being merged, so a relative path resolves to that worktree's own
+#: copy of the script. An absolute path would pin the config -- which is shared
+#: by every worktree of the clone -- to whichever worktree happened to run the
+#: installer, and once that worktree is removed the script is gone. Per the
+#: table above that is the graceful case (exit 1, an ordinary conflict), not a
+#: fatal one, but it silently disables the driver and emits a confusing
+#: interpreter error, so the relative path is still correct.
+#: (Observed during the AffineDrift rollout, then measured.)
 DRIVER_SCRIPT = "scripts/spec_rows_merge_driver.py"
 ATTRIBUTE_LINE = f"SPEC.md merge={DRIVER_NAME}"
 ATTRIBUTE_BLOCK = f"""# Union SPEC.md change-log rows instead of conflicting on
