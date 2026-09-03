@@ -171,22 +171,6 @@ test("every registered React tab exposes its primary visual in the initial viewp
         expect.soft(readoutRect.x + readoutRect.width, `${label} playback readout right edge`)
           .toBeLessThanOrEqual(viewport.width);
       }
-      if (viewport.width < 1280 && entry.tabId === "putting" && audited.horizontalOverflowPx > 0) {
-        // TEMPORARY DIAGNOSTIC (RM #1507) - removed before merge.
-        const offenders = await page.evaluate(() => {
-          const vw = window.innerWidth;
-          const rows: string[] = [`innerWidth=${vw} docClient=${document.documentElement.clientWidth} docScroll=${document.documentElement.scrollWidth} bodyScroll=${document.body.scrollWidth} bodyClient=${document.body.clientWidth}`];
-          for (const el of Array.from(document.querySelectorAll("*"))) {
-            const r = el.getBoundingClientRect();
-            const cs = getComputedStyle(el);
-            if (r.right > vw + 0.5 && cs.display !== "none") {
-              rows.push(`${el.tagName}#${el.id}.${String(el.className).slice(0, 80)} left=${r.left.toFixed(1)} right=${r.right.toFixed(1)} w=${r.width.toFixed(1)} sw=${el.scrollWidth} pos=${cs.position}`);
-            }
-          }
-          return rows.join("\n");
-        });
-        console.log(`RM1507-DIAG ${label}\n${offenders}`);
-      }
       if (viewport.width === 1440 && viewport.height === 900) {
         if (entry.tabId === "explorer") {
           await expect(page.getByRole("button", { name: "Play" })).toBeVisible();
