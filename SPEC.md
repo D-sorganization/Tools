@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.114                                   |
+| **Spec Version**        | 1.18.115                                   |
 | **Last Spec Update**    | 2026-09-02                                 |
 
 ## 2. Purpose & Mission
