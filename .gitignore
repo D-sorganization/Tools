@@ -226,3 +226,7 @@ dcs_scada.db-shm
 # survive between jobs and detect-secrets scans them as if they were source.
 playwright-report/
 test-results/
+
+# Generated CI evidence / reports (never tracked)
+coverage_reports/
+rate-pyqt-screenshots/
