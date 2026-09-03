@@ -92,13 +92,15 @@ def driver_command(repo_root: Path) -> str:
 
     The script path is **worktree-relative on purpose**. Git config is shared by
     every worktree of a clone, so an absolute path would pin the driver to
-    whichever worktree happened to run the installer -- and when that worktree
-    is removed the attribute names a driver git cannot run, which aborts every
-    SPEC.md merge in the clone (`fatal: custom merge driver spec-rows lacks
-    command line`). That is strictly worse than the conflict the driver exists
-    to prevent. Git runs a merge driver with its working directory at the top
-    of the worktree being merged, so a relative path resolves to that
-    worktree's own copy and is correct for all of them.
+    whichever worktree happened to run the installer; once that worktree is
+    removed the script is gone and the driver silently stops working. Per the
+    measured table in the module docstring that is the *graceful* failure
+    (exit 1, an ordinary conflict) rather than the fatal one -- but it disables
+    the driver while leaving it configured, and emits a confusing interpreter
+    error that nobody will connect to this campaign. Git runs a merge driver
+    with its working directory at the top of the worktree being merged, so a
+    relative path resolves to that worktree's own copy and is correct for all
+    of them.
     """
     del repo_root  # deliberately unused: the command must not be worktree-specific
     interpreter = Path(sys.executable).as_posix()
