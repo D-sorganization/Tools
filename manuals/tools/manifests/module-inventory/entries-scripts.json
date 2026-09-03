@@ -4316,10 +4316,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 17593,
+      "bytes_lf": 22763,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7f49d51fa85e2a2d4f648954f2e1a8cb45926f7dcaee6c1f5c87d83ff78a3224",
+      "content_sha256_lf": "72d49b553e672cf4a71142a89eb03a3402eb1269be2dd91d59d1a4ab7c6d3326",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-GENERATE-TOOLS-JSON-PY-4CB9321263B8",
       "language": "python",
@@ -4380,7 +4380,22 @@
           },
           {
             "kind": "constant",
+            "name": "_MIN_COLUMN_WIDTH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SEPARATOR_CELL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
             "name": "_SKIP_DIRS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_TABLE_CELL_SPLIT",
             "signature": null
           },
           {

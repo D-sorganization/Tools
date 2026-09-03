@@ -32,7 +32,9 @@ import argparse
 import importlib.util
 import json
 import logging
+import re
 import sys
+import unicodedata
 from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
@@ -45,6 +47,14 @@ MATURITIES = ("stable", "beta", "experimental")
 README_START = "<!-- tool-catalog:start -->"
 README_END = "<!-- tool-catalog:end -->"
 _SKIP_DIRS = {"node_modules", "dist", "build", ".git"}
+
+# Cells are separated by pipes that are not backslash-escaped: a description
+# containing a literal "|" is emitted as "\|" and must not split its row.
+_TABLE_CELL_SPLIT = re.compile(r"(?<!\\)\|")
+# A GFM delimiter-row cell: dashes with optional alignment colons.
+_SEPARATOR_CELL = re.compile(r"^:?-+:?$")
+# Prettier never renders a delimiter cell narrower than three dashes.
+_MIN_COLUMN_WIDTH = 3
 
 
 def _emit_stdout(message: str) -> None:
@@ -298,8 +308,104 @@ def _surfaces_label(reg: ToolRegistration) -> str:
     return " + ".join(labels)
 
 
+def _display_width(text: str) -> int:
+    """Rendered column width of ``text``, counting East Asian wide cells as two.
+
+    This is the same width rule Prettier's markdown table printer uses, so a
+    table padded with it survives the pre-commit formatter untouched.
+    """
+    return sum(2 if unicodedata.east_asian_width(char) in "WF" else 1 for char in text)
+
+
+def _split_table_row(line: str) -> list[str]:
+    """Split one pipe table row into stripped cells.
+
+    Pre-condition: ``line`` is a pipe table row delimited by leading and
+    trailing pipes. Raises ``ValueError`` otherwise.
+    """
+    stripped = line.strip()
+    if not (stripped.startswith("|") and stripped.endswith("|")):
+        raise ValueError(f"not a pipe table row: {line!r}")
+    return [cell.strip() for cell in _TABLE_CELL_SPLIT.split(stripped[1:-1])]
+
+
+def _align_markdown_table(table: str) -> str:
+    """Pad a pipe table's cells to Prettier's markdown table layout.
+
+    Every column is widened to its widest cell (minimum three characters) and
+    the delimiter row is filled with dashes to the same width, which is exactly
+    what the repo's ``prettier`` pre-commit hook produces. Generating the table
+    in this shape keeps the committed README byte-identical to the formatter's
+    output, so the freshness gate is not fighting the formatter.
+
+    Post-condition: the result is idempotent under a second call.
+    """
+    rows = [_split_table_row(line) for line in table.strip("\n").split("\n")]
+    if len(rows) < 2:
+        raise ValueError("markdown table needs a header and a delimiter row")
+    columns = len(rows[0])
+    if any(len(row) != columns for row in rows):
+        raise ValueError("markdown table rows disagree on column count")
+    widths = [
+        max(
+            _MIN_COLUMN_WIDTH,
+            *(
+                _display_width(row[index])
+                for position, row in enumerate(rows)
+                if position != 1
+            ),
+        )
+        for index in range(columns)
+    ]
+    lines = []
+    for position, row in enumerate(rows):
+        if position == 1:
+            cells = ["-" * widths[index] for index in range(columns)]
+        else:
+            cells = [
+                row[index] + " " * (widths[index] - _display_width(row[index]))
+                for index in range(columns)
+            ]
+        lines.append("| " + " | ".join(cells) + " |")
+    return "\n".join(lines) + "\n"
+
+
+def _normalise_markdown_table(table: str) -> tuple[tuple[str, ...], ...]:
+    """Reduce a pipe table to its content, ignoring padding only.
+
+    Cell padding, internal runs of whitespace and delimiter-row dash counts are
+    normalised away; cell text, column count, column order and row order are
+    all preserved, so two tables compare equal exactly when they say the same
+    thing in the same order.
+
+    Raises ``ValueError`` when ``table`` is not a well-formed pipe table.
+    """
+    lines = [line for line in table.strip("\n").split("\n") if line.strip()]
+    if len(lines) < 2:
+        raise ValueError("markdown table needs a header and a delimiter row")
+    rows = [
+        tuple(" ".join(cell.split()) for cell in _split_table_row(line))
+        for line in lines
+    ]
+    columns = len(rows[0])
+    if any(len(row) != columns for row in rows):
+        raise ValueError("markdown table rows disagree on column count")
+    separator = rows[1]
+    if not all(_SEPARATOR_CELL.match(cell) for cell in separator):
+        raise ValueError(f"markdown table delimiter row is malformed: {separator!r}")
+    canonical_separator = tuple(
+        f"{':' if cell.startswith(':') else ''}-{':' if cell.endswith(':') else ''}"
+        for cell in separator
+    )
+    return (rows[0], canonical_separator, *rows[2:])
+
+
 def generate_readme_catalog(repo_root: Path) -> str:
-    """Render the README tool catalog table (one row per launcher-registered tool)."""
+    """Render the README tool catalog table (one row per launcher-registered tool).
+
+    Post-condition: the table is padded to Prettier's layout, so writing it and
+    then running the pre-commit markdown formatter is a no-op.
+    """
     registrations = _discover_registrations(repo_root)
     lines = [
         "| Tool | Category | Surfaces | Maturity | What it does | Help |",
@@ -312,7 +418,7 @@ def generate_readme_catalog(repo_root: Path) -> str:
             f"| `{reg.id}` | {reg.category} | {_surfaces_label(reg)} | "
             f"{reg.maturity} | {description} | {help_cell} |"
         )
-    return "\n".join(lines) + "\n"
+    return _align_markdown_table("\n".join(lines) + "\n")
 
 
 def _readme_split(text: str) -> tuple[str, str, str]:
@@ -328,22 +434,39 @@ def _readme_split(text: str) -> tuple[str, str, str]:
 
 
 def readme_catalog_is_fresh(repo_root: Path) -> bool:
+    """Whether the committed README catalog table says what the registry says.
+
+    The comparison is on normalised table structure, not on bytes: the
+    pre-commit markdown formatter owns cell padding and the blank lines around
+    the table, so comparing raw strings would make the gate unpassable
+    regardless of content. Content, column count and row order are still
+    compared exactly, so a changed, added, removed or reordered tool is stale.
+    """
     readme = repo_root / "README.md"
     if not readme.is_file():
         return False
     _head, body, _tail = _readme_split(
         readme.read_text(encoding="utf-8").replace("\r\n", "\n")
     )
-    return body == generate_readme_catalog(repo_root)
+    try:
+        committed = _normalise_markdown_table(body)
+    except ValueError:
+        return False
+    return committed == _normalise_markdown_table(generate_readme_catalog(repo_root))
 
 
 def write_readme_catalog(repo_root: Path) -> None:
+    """Rewrite the README catalog table in the formatter's own layout.
+
+    The table is surrounded by blank lines and padded to Prettier's widths so
+    the pre-commit markdown hook has nothing left to change.
+    """
     readme = repo_root / "README.md"
     head, _body, tail = _readme_split(
         readme.read_text(encoding="utf-8").replace("\r\n", "\n")
     )
     readme.write_text(
-        head + generate_readme_catalog(repo_root) + tail,
+        head + "\n" + generate_readme_catalog(repo_root) + "\n" + tail,
         encoding="utf-8",
         newline="\n",
     )

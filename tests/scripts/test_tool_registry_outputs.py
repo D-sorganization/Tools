@@ -118,16 +118,129 @@ def test_contract_key_set_is_frozen(gen: ModuleType, repo: Path) -> None:
         assert set(tool["surfaces"]) == {"pyqt6", "web", "legacy_gui"}
 
 
+def _squash_table_padding(text: str) -> str:
+    """Re-pad every table row to a single space per cell (content untouched)."""
+    lines = []
+    for line in text.split("\n"):
+        stripped = line.strip()
+        if stripped.startswith("|") and stripped.endswith("|"):
+            cells = [cell.strip() for cell in stripped[1:-1].split("|")]
+            if all(set(cell) <= {"-", ":"} and cell for cell in cells):
+                cells = ["-" * (index + 1) for index in range(len(cells))]
+            lines.append("| " + " | ".join(cells) + " |")
+        else:
+            lines.append(line)
+    return "\n".join(lines)
+
+
 def test_readme_catalog_round_trip_and_check(gen: ModuleType, repo: Path) -> None:
     assert "README.md tool catalog table is stale" in gen.check(repo)
     gen.write_readme_catalog(repo)
-    table = gen.generate_readme_catalog(repo)
-    alpha_row = (
-        "| `alpha` | Cat | PyQt6 + Web | beta | A | [docs](src/alpha/README.md) |"
-    )
-    assert alpha_row in table
-    assert "| `beta` | Cat | PyQt6 | stable | B | — |" in table
+    rows = gen._normalise_markdown_table(gen.generate_readme_catalog(repo))
+    assert (
+        "`alpha`",
+        "Cat",
+        "PyQt6 + Web",
+        "beta",
+        "A",
+        "[docs](src/alpha/README.md)",
+    ) in rows
+    assert ("`beta`", "Cat", "PyQt6", "stable", "B", "—") in rows
     assert gen.readme_catalog_is_fresh(repo)
+
+
+def test_generated_catalog_is_prettier_aligned_and_idempotent(
+    gen: ModuleType, repo: Path
+) -> None:
+    """The generator emits the formatter's own layout, so re-padding is a no-op."""
+    table = gen.generate_readme_catalog(repo)
+    assert gen._align_markdown_table(table) == table
+    header, delimiter = table.split("\n")[:2]
+    # Aligned means every row is the same rendered width as the header.
+    assert all(len(line) == len(header) for line in table.strip("\n").split("\n")), (
+        table
+    )
+    assert set(delimiter) <= {"|", " ", "-"}
+
+
+def test_reformatting_padding_keeps_the_gate_green(gen: ModuleType, repo: Path) -> None:
+    """Regression (#4916): the markdown formatter owns padding, not the gate.
+
+    The old gate string-compared the committed table against the generated one,
+    so any re-padding by the pre-commit markdown hook made it permanently red.
+    """
+    assert gen.main(["--root", str(repo)]) == 0
+    assert gen.check(repo) == []
+    readme = repo / "README.md"
+    original = readme.read_text(encoding="utf-8")
+    readme.write_text(_squash_table_padding(original), encoding="utf-8", newline="\n")
+    assert readme.read_text(encoding="utf-8") != original, "padding was not changed"
+    assert gen.readme_catalog_is_fresh(repo)
+    assert gen.check(repo) == []
+
+
+def test_changing_a_row_content_makes_the_gate_red(gen: ModuleType, repo: Path) -> None:
+    """The gate stays strict about content, column count and row order."""
+    gen.write_readme_catalog(repo)
+    readme = repo / "README.md"
+    fresh = readme.read_text(encoding="utf-8")
+
+    # (a) a changed cell
+    readme.write_text(fresh.replace("beta ", "gamma"), encoding="utf-8", newline="\n")
+    assert not gen.readme_catalog_is_fresh(repo)
+
+    # (b) a dropped row
+    lines = fresh.split("\n")
+    dropped = [line for line in lines if not line.startswith("| `beta`")]
+    assert len(dropped) < len(lines)
+    readme.write_text("\n".join(dropped), encoding="utf-8", newline="\n")
+    assert not gen.readme_catalog_is_fresh(repo)
+
+    # (c) reordered rows
+    body = [index for index, line in enumerate(lines) if line.startswith("| `")]
+    reordered = list(lines)
+    reordered[body[0]], reordered[body[-1]] = (
+        reordered[body[-1]],
+        reordered[body[0]],
+    )
+    readme.write_text("\n".join(reordered), encoding="utf-8", newline="\n")
+    assert not gen.readme_catalog_is_fresh(repo)
+
+    # (d) a dropped column
+    narrowed = [
+        (
+            "| " + " | ".join(line.strip()[1:-1].split("|")[:-1]).strip() + " |"
+            if line.startswith("| ")
+            else line
+        )
+        for line in lines
+    ]
+    readme.write_text("\n".join(narrowed), encoding="utf-8", newline="\n")
+    assert not gen.readme_catalog_is_fresh(repo)
+
+    readme.write_text(fresh, encoding="utf-8", newline="\n")
+    assert gen.readme_catalog_is_fresh(repo)
+
+
+def test_escaped_pipe_in_a_description_does_not_split_its_row(
+    gen: ModuleType, tmp_path: Path
+) -> None:
+    """A description containing "|" is escaped and must stay one cell."""
+    tool = tmp_path / "src" / "piped"
+    _write_registration(
+        tool,
+        '{"name": "Piped", "tool_name": "piped", "description": "a | b", '
+        '"category": "Cat", "pyqt6": {"module": "m", "class": "C"}}',
+    )
+    (tool / "launch_pyqt6.py").touch()
+    (tmp_path / "README.md").write_text(
+        f"# R\n\n{gen.README_START}\n{gen.README_END}\n", encoding="utf-8"
+    )
+    gen.write_readme_catalog(tmp_path)
+    rows = gen._normalise_markdown_table(gen.generate_readme_catalog(tmp_path))
+    assert all(len(row) == 6 for row in rows)
+    assert ("`piped`", "Cat", "PyQt6", "stable", "a \\| b", "—") in rows
+    assert gen.readme_catalog_is_fresh(tmp_path)
 
 
 def test_web_false_marks_package_json_reachable(gen: ModuleType, repo: Path) -> None:
