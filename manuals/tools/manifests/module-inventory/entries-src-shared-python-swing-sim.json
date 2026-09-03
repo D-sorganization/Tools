@@ -16217,7 +16217,7 @@
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "mapped"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -16322,7 +16322,6 @@
           "tests/rate_of_closure/test_kinetics.py",
           "tests/rate_of_closure/test_localized_torque_web_golden.py",
           "tests/rate_of_closure/test_morris_pyqt_workflow.py",
-          "tests/rate_of_closure/test_morris_ui_contract.py",
           "tests/rate_of_closure/test_simulation.py",
           "tests/rate_of_closure/test_variation_simulation_request.py"
         ],
@@ -16333,9 +16332,7 @@
           "rad/s",
           "s"
         ],
-        "validation_paths": [
-          "tests/rate_of_closure/test_morris_ui_contract.py"
-        ]
+        "validation_paths": []
       }
     },
     {
