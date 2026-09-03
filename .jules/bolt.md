@@ -130,6 +130,9 @@
 ## 2024-05-19 - Array map Math.abs spread overhead
 **Learning:** Using `Math.max(...array.map(Math.abs))` creates an intermediate array and passes all items to the call stack via the spread operator, causing noticeable GC pressure and risking call stack size exceeded errors on large datasets.
 **Action:** Replace `Math.max(...array.map(Math.abs))` with a standard O(N) single-pass `for` loop in numerical hotspots.
+## 2024-11-20 - Chart Bounds Calculation O(N^2) Optimization
+**Learning:** Using `Math.max(...spread)` and `Math.min(...spread)` mapped over large numerical arrays (e.g., inside `VariationScatter`'s `plotBounds`) causes extreme GC pressure and can trigger "Maximum call stack size exceeded" errors due to V8's argument limits.
+**Action:** Always use a single-pass `for` loop to compute array extents when dealing with large visualization or numeric datasets.
 
 ## 2026-09-03 - Prevent stack overflows and GC pressure in tight loops
 **Learning:** Using `Math.min(...arr)` or `Math.max(...arr)` on dynamically mapped arrays within render loops is an anti-pattern. It generates significant garbage collection overhead and risks stack overflows for large arrays.

@@ -168,12 +168,12 @@ class RigidBodyImpactModel(ImpactModel):
             raise ValueError("pre_state must be provided")
         m_club = pre_state.clubhead_mass
         if pre_state.impact_offset is None:
-            return m_club
+            return float(m_club)
 
         offset = np.asarray(pre_state.impact_offset, dtype=float).reshape(-1)
         r_offset = _norm(offset)
         if r_offset <= 1e-6:
-            return m_club
+            return float(m_club)
 
         if pre_state.clubhead_moi_tensor is not None:
             tensor = np.asarray(pre_state.clubhead_moi_tensor, dtype=float)
@@ -182,11 +182,11 @@ class RigidBodyImpactModel(ImpactModel):
             r_vec = offset_to_face_vector(offset, n)
             r_cross_n = np.cross(r_vec, n)
             angular_term = float(r_cross_n @ np.linalg.solve(tensor, r_cross_n))
-            return 1.0 / (1.0 / m_club + angular_term)
+            return float(1.0 / (1.0 / m_club + angular_term))
 
         if pre_state.clubhead_moi > 0:
-            return 1.0 / (1.0 / m_club + r_offset**2 / pre_state.clubhead_moi)
-        return m_club
+            return float(1.0 / (1.0 / m_club + r_offset**2 / pre_state.clubhead_moi))
+        return float(m_club)
 
     def _compute_impulse(
         self,
@@ -269,7 +269,7 @@ class RigidBodyImpactModel(ImpactModel):
             * GOLF_BALL_MASS_KG
             * float(np.dot(post_ball_velocity, post_ball_velocity))
         )
-        return ke_post - ke_pre
+        return float(ke_post - ke_pre)
 
     @precondition(
         lambda self, pre_state, params: pre_state.clubhead_mass > 0,

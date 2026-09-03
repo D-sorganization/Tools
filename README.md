@@ -117,7 +117,7 @@ Installing the package with `pip install -e .` provides these console scripts:
 
 ### Prerequisites
 
-- Python 3.11 or 3.12. Python 3.13 is not yet validated.
+- **Python**: Version **3.11+** required (3.12 recommended for best performance); Python 3.13 is not yet validated.
 - Git with Git LFS installed.
 - MATLAB R2020a or later, only for the tools under `matlab/`.
 - Node.js, only for the browser-based utilities.

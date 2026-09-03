@@ -665,10 +665,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 14033,
+      "bytes_lf": 14873,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6ed4f884c4df376c69eee7404464581c67cce3841ffb08502bc4200327b72732",
+      "content_sha256_lf": "c1c69a76ad0967643cb1413066600d676f6023200851eb0ed8cbc807c8c3c0a7",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-E2E-VISUALIZATION-TAB-VISIBILITY-SPEC-TS-9730C4E18FC5",
       "language": "typescript",
@@ -693,6 +693,7 @@
       "traceability": {
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-0045-putting-integration-one-experience-two-preserved-stacks.md",
           "docs/adr/ADR-0048-launch-monitor-port-plan.md"
         ],
         "artifact_sha256": [],
