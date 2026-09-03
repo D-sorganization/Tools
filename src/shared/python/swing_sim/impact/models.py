@@ -43,6 +43,7 @@ from .constants import (
     GOLF_BALL_MOMENT_OF_INERTIA_KG_M2,
     GOLF_BALL_RADIUS_M,
 )
+from .contact import KelvinVoigtContactLaw
 from .types import ImpactModelType, ImpactParameters, PostImpactState, PreImpactState
 
 # Rolling-without-slip tangential-impulse factor for a uniform solid sphere.
@@ -167,12 +168,12 @@ class RigidBodyImpactModel(ImpactModel):
             raise ValueError("pre_state must be provided")
         m_club = pre_state.clubhead_mass
         if pre_state.impact_offset is None:
-            return m_club
+            return float(m_club)
 
         offset = np.asarray(pre_state.impact_offset, dtype=float).reshape(-1)
         r_offset = _norm(offset)
         if r_offset <= 1e-6:
-            return m_club
+            return float(m_club)
 
         if pre_state.clubhead_moi_tensor is not None:
             tensor = np.asarray(pre_state.clubhead_moi_tensor, dtype=float)
@@ -181,11 +182,11 @@ class RigidBodyImpactModel(ImpactModel):
             r_vec = offset_to_face_vector(offset, n)
             r_cross_n = np.cross(r_vec, n)
             angular_term = float(r_cross_n @ np.linalg.solve(tensor, r_cross_n))
-            return 1.0 / (1.0 / m_club + angular_term)
+            return float(1.0 / (1.0 / m_club + angular_term))
 
         if pre_state.clubhead_moi > 0:
-            return 1.0 / (1.0 / m_club + r_offset**2 / pre_state.clubhead_moi)
-        return m_club
+            return float(1.0 / (1.0 / m_club + r_offset**2 / pre_state.clubhead_moi))
+        return float(m_club)
 
     def _compute_impulse(
         self,
@@ -268,7 +269,7 @@ class RigidBodyImpactModel(ImpactModel):
             * GOLF_BALL_MASS_KG
             * float(np.dot(post_ball_velocity, post_ball_velocity))
         )
-        return ke_post - ke_pre
+        return float(ke_post - ke_pre)
 
     @precondition(
         lambda self, pre_state, params: pre_state.clubhead_mass > 0,
@@ -374,7 +375,11 @@ class SpringDamperImpactModel(ImpactModel):
         contact_time = 0.0
         max_time = 0.005  # 5 ms max contact time [s]
         max_steps = int(max_time / self.dt)
-        max_force = 1e5  # [N] limit to prevent numerical blow-up
+        contact_law = KelvinVoigtContactLaw(
+            stiffness_n_per_m=params.contact_stiffness,
+            damping_n_s_per_m=params.contact_damping,
+            maximum_force_n=1e5,
+        )
 
         for _ in range(max_steps):
             gap = float(np.dot(x_ball - x_club, n)) - GOLF_BALL_RADIUS_M
@@ -382,9 +387,7 @@ class SpringDamperImpactModel(ImpactModel):
             if gap < 0:  # In contact (penetration)
                 penetration = -gap
                 v_rel_normal = float(np.dot(v_ball - v_club, n))
-                f_spring = params.contact_stiffness * penetration
-                f_damper = -params.contact_damping * v_rel_normal
-                f_magnitude = max(0.0, min(f_spring + f_damper, max_force))
+                f_magnitude = contact_law.normal_force(penetration, -v_rel_normal)
                 f_contact = f_magnitude * n
 
                 # Semi-implicit Euler: velocities first, then positions.

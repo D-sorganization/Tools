@@ -19,6 +19,10 @@ This directory contains detailed documentation for the AffineDrift Tools reposit
 - **[Tools Inventory & Platform Parity](tools/TOOLS_INVENTORY.md)**: Complete inventory of all applications with platform support matrix (PyQt6, Web, Tauri) and identified parity gaps.
 - **[Enhanced Tools](tools/ENHANCED_TOOLS.md)**: Detailed overview and comparison of the "Pro" tools (Folder Fix Pro, Folder Packer Pro) versus their legacy counterparts.
 
+## 🧪 Physics & Models
+
+- **[Impact-Interval Club Dynamics](physics/IMPACT_INTERVAL_DYNAMICS.md)**: Formulation, publication boundary, and binding validation program for the six-DOF club/ball contact-interval solver (`src/shared/python/swing_sim/impact_interval/`).
+
 ## 📅 Release & History
 
 - **[Changelog](release/CHANGELOG.md)**: Record of all notable changes to the project.

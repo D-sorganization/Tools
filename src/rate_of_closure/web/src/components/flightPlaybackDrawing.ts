@@ -67,10 +67,18 @@ function extents(
       center.map((value, axis) => value + half[axis]) as Vec3,
     );
   }
-  return {
-    min: [0, 1, 2].map((axis) => Math.min(...positions.map((value) => value[axis]))) as Vec3,
-    max: [0, 1, 2].map((axis) => Math.max(...positions.map((value) => value[axis]))) as Vec3,
-  };
+  // ⚡ Bolt: Single-pass min/max bounds calculation to prevent GC pressure and stack overflows
+  const min: Vec3 = [Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY];
+  const max: Vec3 = [Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY];
+  for (const pos of positions) {
+    if (pos[0] < min[0]) min[0] = pos[0];
+    if (pos[1] < min[1]) min[1] = pos[1];
+    if (pos[2] < min[2]) min[2] = pos[2];
+    if (pos[0] > max[0]) max[0] = pos[0];
+    if (pos[1] > max[1]) max[1] = pos[1];
+    if (pos[2] > max[2]) max[2] = pos[2];
+  }
+  return { min, max };
 }
 
 function createProjection(
@@ -92,10 +100,17 @@ function createProjection(
     }
   }
   const rotated = corners.map((position) => rotate(position, camera, center));
-  const minX = Math.min(...rotated.map((point) => point.x));
-  const maxX = Math.max(...rotated.map((point) => point.x));
-  const minY = Math.min(...rotated.map((point) => point.y));
-  const maxY = Math.max(...rotated.map((point) => point.y));
+  // ⚡ Bolt: Compute bounds dynamically without mapping + spreading to reduce overhead
+  let minX = Number.POSITIVE_INFINITY;
+  let maxX = Number.NEGATIVE_INFINITY;
+  let minY = Number.POSITIVE_INFINITY;
+  let maxY = Number.NEGATIVE_INFINITY;
+  for (const point of rotated) {
+    if (point.x < minX) minX = point.x;
+    if (point.x > maxX) maxX = point.x;
+    if (point.y < minY) minY = point.y;
+    if (point.y > maxY) maxY = point.y;
+  }
   const scaleX = (width - 2 * PADDING_PX) / Math.max(maxX - minX, MIN_EXTENT_M);
   const scaleY = (height - 2 * PADDING_PX) / Math.max(maxY - minY, MIN_EXTENT_M);
   const pixelsPerMeter = Math.min(scaleX, scaleY) * camera.zoom;
