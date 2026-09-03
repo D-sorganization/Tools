@@ -10,6 +10,8 @@
 #include "StorageManager.h"
 #include "CommsWatchdog.h"
 
+#include <math.h>
+
 // Ethernet Configuration (P1AM-ETH shield)
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 IPAddress ip(192, 168, 1, 100);
@@ -29,9 +31,16 @@ unsigned long lastScanTime = 0;
 const unsigned long kScanIntervalMs = 100;
 
 // Modbus coil 2 = heater relay command from the temperature controller.
-// (Coil 0 = save-to-flash, coil 1 = E-stop reset, coil 3 = THM burnout
-// direction -- see kThmBurnoutCoil in P1AMHardware.h.)
+// (Coil 0 = save-to-flash, coil 1 = interlock/E-stop reset, coil 3 = THM
+// burnout direction -- see kThmBurnoutCoil in P1AMHardware.h.)
 const int kHeaterRelayCoil = 2;
+
+// Modbus coil 1 = host-requested interlock reset (issue #4001). The host
+// pulses it high; the firmware consumes the pulse (writes it back to 0) and
+// asks the interlock to clear its latch. The latch clears ONLY if no tag is
+// still violating its band -- see SafetyInterlock::ClearTrip. The outcome is
+// visible to the host in kInterlockTrippedReg / kInterlockTripTagReg.
+const int kInterlockResetCoil = 1;
 
 // Dead-man timer on the SCADA link (issue #3999). Without it the heater relay
 // and analog outputs held their last command forever once the host died, with
@@ -48,6 +57,15 @@ const int kHeaterRelayCoil = 2;
 // configured holding-register map -- see configureHoldingRegisters() in setup.
 const int kHostHeartbeatReg = 560;
 const unsigned long kCommsTimeoutMs = 2000;  // 20 scans at the nominal 100 ms
+
+// Interlock status read-back (issue #4001 item 3/4): the trip used to be
+// anonymous and invisible, so the host had no way to confirm a reset took.
+//   561 = 1 while the interlock latch is set, else 0.
+//   562 = broker tag id that latched the trip, or 255 (kUnmappedTag) when
+//         no trip is latched.
+// Written by the firmware every scan; the host must treat them read-only.
+const int kInterlockTrippedReg = 561;
+const int kInterlockTripTagReg = 562;
 CommsWatchdog commsWatchdog(kCommsTimeoutMs);
 uint16_t lastHeartbeatValue = 0;
 bool commsLostLatched = false;
@@ -203,9 +221,10 @@ void setup() {
   modbusServer.configureCoils(0, 10);
   // Holding-register window: tag values (0..63), input routing (100..105),
   // output routing (110..111), PID config (200..239), 4-limit interlocks
-  // (300..555 = 32 tags x 8 regs), host heartbeat (560).
-  // Count is one past the highest address, so 561 makes 560 addressable.
-  modbusServer.configureHoldingRegisters(0, kHostHeartbeatReg + 1);
+  // (300..555 = 32 tags x 8 regs), host heartbeat (560), interlock status
+  // read-back (561..562).
+  // Count is one past the highest address, so 563 makes 562 addressable.
+  modbusServer.configureHoldingRegisters(0, kInterlockTripTagReg + 1);
   Serial.println(F("[mb] Modbus TCP server started"));
 
   // Load saved NVRAM configuration; fall back to defaults on first boot.
@@ -324,6 +343,22 @@ void loop() {
     hw.Update();
     broker.ReadHardwareInputs(hw);
 
+    // Host interlock reset (coil 1). Consumed as a pulse so a stale coil can
+    // never keep re-clearing a trip; evaluated against the inputs just read so
+    // a reset while the cause is still present is refused and stays latched.
+    if (modbusServer.coilRead(kInterlockResetCoil) == 1) {
+      modbusServer.coilWrite(kInterlockResetCoil, 0);
+      if (interlock.IsTripped()) {
+        if (interlock.ClearTrip(broker)) {
+          Serial.println(F("[interlock] trip latch cleared by host reset"));
+        } else {
+          Serial.print(F("[interlock] host reset REFUSED -- tag "));
+          Serial.print(interlock.GetTripTagId());
+          Serial.println(F(" still outside its trip band"));
+        }
+      }
+    }
+
     // Comms watchdog. A tripped interlock and a dead host are different
     // conditions but demand the same output state, so both drive the same
     // safe-state path below.
@@ -395,6 +430,11 @@ void loop() {
       float cmdPct = (srcTag >= 0 && srcTag < SignalBroker::kNumTags)
                          ? broker.GetTag(srcTag)
                          : 0.0f;
+      // A bad-quality source is driven to 0 % by WriteHardwareOutputs; show
+      // the same on the diagnostic channel rather than a NaN.
+      if (!std::isfinite(cmdPct)) {
+        cmdPct = 0.0f;
+      }
       broker.SetTag(24 + ch, cmdPct * (5.0f / 100.0f));
     }
     // TAG_26 = number of signed-on backplane modules (read over Modbus to
@@ -404,5 +444,15 @@ void loop() {
     for (int i = 0; i < SignalBroker::kNumTags; ++i) {
       WriteFloatToModbus(i * 2, broker.GetTag(i));
     }
+
+    // Interlock status read-back so the host can see WHICH tag tripped and
+    // whether its reset request was honoured.
+    modbusServer.holdingRegisterWrite(kInterlockTrippedReg,
+                                      interlock.IsTripped() ? 1 : 0);
+    const int trip_tag = interlock.GetTripTagId();
+    modbusServer.holdingRegisterWrite(
+        kInterlockTripTagReg,
+        trip_tag == SafetyInterlock::kNoTripTag ? SignalBroker::kUnmappedTag
+                                                : trip_tag);
   }
 }

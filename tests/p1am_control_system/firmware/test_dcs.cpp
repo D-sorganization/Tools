@@ -242,20 +242,33 @@ void TestSoftFailRuntimeContracts() {
   assert(broker.GetInputRouting(-1) == SignalBroker::kUnmappedTag);
   assert(broker.GetOutputRouting(99) == SignalBroker::kUnmappedTag);
 
-  // Bad hardware samples must not store NaN or trip DbC abort paths.
+  // Bad hardware samples are kept as NaN (bad quality), never coerced to a
+  // 0.0 that reads as a valid cold measurement (#4032). Finite values still
+  // clamp to the percent-of-span domain.
   broker.SetTag(1, nan);
   broker.SetTag(2, -10.0f);
   broker.SetTag(3, 140.0f);
   broker.SetTag(999, 50.0f);
-  assert(FloatEquals(broker.GetTag(1), 0.0f));
+  assert(std::isnan(broker.GetTag(1)));
+  assert(!broker.IsTagValid(1));
   assert(FloatEquals(broker.GetTag(2), 0.0f));
+  assert(broker.IsTagValid(2));
   assert(FloatEquals(broker.GetTag(3), 100.0f));
   assert(FloatEquals(broker.GetTag(999), 0.0f));
+  assert(!broker.IsTagValid(999));
 
   hw.SetThermocouple(0, nan);
   broker.SetInputRouting(0, 4);
   broker.ReadHardwareInputs(hw);
-  assert(FloatEquals(broker.GetTag(4), 0.0f));
+  assert(std::isnan(broker.GetTag(4)));
+
+  // A bad-quality source tag never reaches the DAC: the output is driven to
+  // the safe 0.0 % (MockHardware asserts the DAC contract itself).
+  broker.SetOutputRouting(0, 4);
+  broker.SetTag(4, nan);
+  broker.WriteHardwareOutputs(hw);
+  assert(FloatEquals(hw.GetAnalogOutput(0), 0.0f));
+  broker.SetOutputRouting(0, SignalBroker::kUnmappedTag);
 
   // Invalid PID configuration or scan timing skips/normalizes safely.
   pid.SetPvTagId(999);
@@ -283,10 +296,129 @@ void TestSoftFailRuntimeContracts() {
   interlock.SetLowLimit(-1, 1.0f);
   interlock.SetHighLimit(0, nan);
   interlock.SetLowLimit(0, nan);
-  assert(FloatEquals(interlock.GetHighLimit(0), 99999.0f));
-  assert(FloatEquals(interlock.GetLowLimit(0), -99999.0f));
+  assert(FloatEquals(interlock.GetHighLimit(0), SafetyInterlock::kDisabledHighLimit));
+  assert(FloatEquals(interlock.GetLowLimit(0), SafetyInterlock::kDisabledLowLimit));
+  assert(!interlock.IsInterlocked(0));
+
+  // A NaN PV must de-energize the loop's CV, not drive it with NaN math.
+  pid.SetPvTagId(4);
+  pid.SetCvTagId(6);
+  pid.SetSetpoint(50.0f);
+  pid.SetKp(1.0f);
+  broker.SetTag(4, nan);
+  broker.SetTag(6, 42.0f);
+  pid.Compute(broker, 0.1f);
+  assert(FloatEquals(broker.GetTag(6), 0.0f));
 
   std::cout << "TestSoftFailRuntimeContracts PASSED!" << std::endl;
+}
+
+void TestInterlockDefaultsDoNotTrip() {
+  std::cout << "Running TestInterlockDefaultsDoNotTrip..." << std::endl;
+  MockHardware hw;
+  SignalBroker broker;
+  SafetyInterlock interlock;
+
+  // Power-on state: every tag at 0.0 %, every limit at the disabled sentinel.
+  // This is the "simulated boot with default config" of issue #4001/#4911:
+  // unrouted tags sitting at 0.0 must not be able to trip the plant.
+  broker.SetOutputRouting(0, 10);
+  broker.SetTag(10, 80.0f);
+  for (int i = 0; i < SignalBroker::kNumTags; ++i) {
+    assert(!interlock.IsInterlocked(i));
+  }
+  interlock.Evaluate(broker, hw);
+  assert(!interlock.IsTripped());
+  assert(interlock.GetTripTagId() == SafetyInterlock::kNoTripTag);
+  assert(FloatEquals(hw.GetAnalogOutput(0), 80.0f));
+
+  // A room-temperature type-K channel (25 C -> 1.8 %) with only a high-side
+  // limit configured is inside its band.
+  interlock.SetHighLimit(0, 95.0f);
+  assert(interlock.IsInterlocked(0));
+  broker.SetTag(0, 25.0f * (100.0f / SignalBroker::kThermocoupleFullScaleC));
+  interlock.Evaluate(broker, hw);
+  assert(!interlock.IsTripped());
+
+  // NaN on a NON-interlocked tag is ignored ...
+  const float nan = std::numeric_limits<float>::quiet_NaN();
+  broker.SetTag(7, nan);
+  interlock.Evaluate(broker, hw);
+  assert(!interlock.IsTripped());
+
+  // ... but NaN on an interlocked tag is a sensor fault and trips (fail safe),
+  // and the trip names the tag.
+  broker.SetTag(0, nan);
+  interlock.Evaluate(broker, hw);
+  assert(interlock.IsTripped());
+  assert(interlock.GetTripTagId() == 0);
+  assert(hw.GetInhibitActive());
+  assert(FloatEquals(hw.GetAnalogOutput(0), 0.0f));
+
+  std::cout << "TestInterlockDefaultsDoNotTrip PASSED!" << std::endl;
+}
+
+void TestInterlockResetLatch() {
+  std::cout << "Running TestInterlockResetLatch..." << std::endl;
+  MockHardware hw;
+  SignalBroker broker;
+  SafetyInterlock interlock;
+
+  broker.SetOutputRouting(0, 10);
+  interlock.SetLowLimit(5, 10.0f);
+  interlock.SetHighLimit(5, 75.0f);
+
+  // Trip on a high violation of tag 5.
+  broker.SetTag(10, 80.0f);
+  broker.SetTag(5, 80.0f);
+  interlock.Evaluate(broker, hw);
+  assert(interlock.IsTripped());
+  assert(interlock.GetTripTagId() == 5);
+  assert(FloatEquals(hw.GetAnalogOutput(0), 0.0f));
+  assert(hw.GetInhibitActive());
+
+  // 1. Reset requested while the cause is still present: REFUSED. The latch
+  //    and the forced-safe outputs are untouched.
+  assert(!interlock.ClearTrip(broker));
+  assert(interlock.IsTripped());
+  assert(interlock.GetTripTagId() == 5);
+  broker.SetTag(10, 80.0f);
+  interlock.Evaluate(broker, hw);
+  assert(FloatEquals(hw.GetAnalogOutput(0), 0.0f));
+  assert(hw.GetInhibitActive());
+
+  // 2. Cause clears WITHOUT a reset: the trip stays latched. A plant that
+  //    un-trips itself the moment the reading dips back into band is exactly
+  //    the behaviour an interlock exists to prevent.
+  broker.SetTag(5, 50.0f);
+  broker.SetTag(10, 80.0f);
+  interlock.Evaluate(broker, hw);
+  assert(interlock.IsTripped());
+  assert(FloatEquals(hw.GetAnalogOutput(0), 0.0f));
+  assert(hw.GetInhibitActive());
+
+  // 3. Cause clear AND reset asserted: the latch clears and the next scan
+  //    restores normal output routing.
+  assert(interlock.ClearTrip(broker));
+  assert(!interlock.IsTripped());
+  assert(interlock.GetTripTagId() == SafetyInterlock::kNoTripTag);
+  broker.SetTag(10, 80.0f);
+  interlock.Evaluate(broker, hw);
+  assert(!interlock.IsTripped());
+  assert(FloatEquals(hw.GetAnalogOutput(0), 80.0f));
+  assert(!hw.GetInhibitActive());
+
+  // 4. Reset with nothing latched is a harmless no-op that reports "clear".
+  assert(interlock.ClearTrip(broker));
+  assert(!interlock.IsTripped());
+
+  // 5. The interlock re-trips immediately if the violation returns.
+  broker.SetTag(5, 3.0f);  // below the low limit
+  interlock.Evaluate(broker, hw);
+  assert(interlock.IsTripped());
+  assert(interlock.GetTripTagId() == 5);
+
+  std::cout << "TestInterlockResetLatch PASSED!" << std::endl;
 }
 
 
@@ -417,6 +549,8 @@ int main() {
   TestSafetyInterlock();
   TestStorageManager();
   TestSoftFailRuntimeContracts();
+  TestInterlockDefaultsDoNotTrip();
+  TestInterlockResetLatch();
   TestPidResetsIntegralOnSetpointZeroed();
   TestPidKeepsIntegralAcrossNonZeroSetpointChange();
   TestPidDoesNotIntegrateWhileTripped();
