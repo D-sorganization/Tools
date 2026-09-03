@@ -1,0 +1,1187 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 2329,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "676470800418e86cca02c01506d51c202b348fb9c51ede63f806cca1ca69a0bd",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-INIT-PY-F62B8452803B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/pressure_drop_calculator/__init__.py",
+      "purpose": "Pressure Drop Calculator Module.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 863,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "0cb6d4933dd67f511fdeb1c8a22190542b1d47e64fd6724844f51f3f4727ea4a",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-GUI-REGISTRATION-PY-77306FCCFF5B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/pressure_drop_calculator/gui_registration.py",
+      "purpose": "GUI registration for Pressure Drop Calculator.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "GUI_INFO",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_gui_info",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_gui_registration.py",
+          "tests/rate_of_closure/test_gui_registration.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 369,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "9e91af0d1586b853f2d3135ca667e97482b34979b107dc5c45e1885d71a7cd56",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-LAUNCH-PYQT6-PY-5459A6A44AC5",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/pressure_drop_calculator/launch_pyqt6.py",
+      "purpose": "Standalone PyQt6 launcher for Pressure Drop Calculator.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/folder_tool/test_launch_pyqt6.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 447,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "bbc4f1d5ad3566e0473f276a1d9512a25891d0d14be750b5c450368b95b2b9e5",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-LAUNCH-WEB-PY-0BFDCD416F70",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/pressure_drop_calculator/launch_web.py",
+      "purpose": "Launch the Pressure Drop Calculator React web application.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_REPO_ROOT",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 7183,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "af0cfd19fe88a3a23b53463db2e73053f76d083b3e7c4227fae49dc9d03f9baa",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-MODELS-PY-80A3F3AE8848",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/pressure_drop_calculator/models.py",
+      "purpose": "Pydantic data models for Pressure Drop Calculator API.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PressureDropInput",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PressureDropOutput",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "Pa",
+          "bar",
+          "kg",
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 24,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "7b3c9b3153c1ece16e535c78e20d189cb0e95159e75f9f06b4933775f9a1c3a3",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-PYTHON-INIT-PY-E7A1EAAD944F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/pressure_drop_calculator/python/__init__.py",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "src/data_processing/data_processor/python/tests/test_data_loader_contracts.py",
+          "src/data_processing/data_processor/python/tests/test_main_window_time_ops.py",
+          "src/data_processing/data_processor/python/tests/test_nn_training_worker.py",
+          "src/data_processing/data_processor/python/tests/test_undo_redo.py",
+          "src/data_processing/data_processor/python/tests/test_vectorized_filter_engine_contracts.py",
+          "src/document_processing/pdf_renamer/tests/test_cache.py",
+          "src/financial_calculator/tests/test_financial_calculator_gui.py",
+          "src/financial_calculator/tests/test_financial_calculator_gui_contracts.py",
+          "src/function_generator/tests/test_function_generator_gui.py",
+          "src/inertia_calculator/tests/test_inertia_calculator_gui.py",
+          "src/movement_optimizer/tests/test_cli.py",
+          "src/movement_optimizer/tests/test_commands.py",
+          "src/movement_optimizer/tests/test_main_window.py",
+          "src/movement_optimizer/tests/test_session_state.py",
+          "src/movement_optimizer/tests/test_thread_safety.py",
+          "src/movement_optimizer/tests/test_undo_redo_menu.py",
+          "src/p1am_control_system/backend/tests/test_alarm_ack_engine.py",
+          "src/p1am_control_system/backend/tests/test_alarm_processing.py",
+          "src/p1am_control_system/backend/tests/test_backend_p1am_safety.py",
+          "src/p1am_control_system/backend/tests/test_data_capture_core.py",
+          "src/p1am_control_system/backend/tests/test_estop_reconnect.py",
+          "src/p1am_control_system/backend/tests/test_estop_shutdown_safe_state.py",
+          "src/p1am_control_system/backend/tests/test_estop_write_seams.py",
+          "src/p1am_control_system/backend/tests/test_historian_writer.py",
+          "src/p1am_control_system/backend/tests/test_modbus_client.py",
+          "src/p1am_control_system/backend/tests/test_modbus_estop.py",
+          "src/p1am_control_system/backend/tests/test_passthrough.py",
+          "src/p1am_control_system/backend/tests/test_poll_data_quality.py",
+          "src/p1am_control_system/backend/tests/test_poll_loop_cadence.py",
+          "src/p1am_control_system/backend/tests/test_poll_once.py",
+          "src/p1am_control_system/backend/tests/test_power_supply_integration.py",
+          "src/p1am_control_system/backend/tests/test_power_supply_persistence.py",
+          "src/p1am_control_system/backend/tests/test_safety_state_machine.py",
+          "src/p1am_control_system/backend/tests/test_scan_scheduler.py",
+          "src/p1am_control_system/backend/tests/test_temperature_integration.py",
+          "src/p1am_control_system/backend/tests/test_temperature_persistence.py",
+          "src/p1am_control_system/backend/tests/test_validation_guards_3745.py",
+          "src/p1am_control_system/backend/tests/test_ws_backpressure.py",
+          "src/pendulum_simulator/signal_test.py",
+          "src/pendulum_simulator/tests/test_controls_utils.py",
+          "src/pendulum_simulator/tests/test_controls_widget.py",
+          "src/pendulum_simulator/tests/test_controls_widget_base.py",
+          "src/pendulum_simulator/tests/test_controls_widget_golfer.py",
+          "src/pendulum_simulator/tests/test_controls_widget_triple.py",
+          "src/pendulum_simulator/tests/test_issue_fixes.py",
+          "src/pendulum_simulator/tests/test_main_window.py",
+          "src/pendulum_simulator/tests/test_overlay_state_sync.py",
+          "src/pendulum_simulator/tests/test_panel_builders.py",
+          "src/pendulum_simulator/tests/test_simulation_golfer_gpu.py",
+          "src/pendulum_simulator/tests/test_simulation_panel.py",
+          "src/pendulum_simulator/tests/test_simulation_result_base.py",
+          "src/pendulum_simulator/tests/test_torque_widgets.py",
+          "src/pid_generator/tests/test_pid_generator_gui.py",
+          "src/shared/python/ai/tests/test_access_policy.py",
+          "src/shared/python/chat/tests/test_chat.py",
+          "src/shared/python/chat/tests/test_chat_routing_lifecycle.py",
+          "src/shared/python/chat/tests/test_service_base.py",
+          "src/shared/python/chat/tests/test_workspace_bridge.py",
+          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
+          "src/shared/python/humanoid_character_builder/tests/test_inertia_calculator.py",
+          "src/shared/python/model_generation/tests/test_api_adapters.py",
+          "src/shared/python/model_generation/tests/test_contracts.py",
+          "src/shared/python/plot_theme/tests/test_plot_theme.py",
+          "src/shared/python/sidekick/tests/process_calculators/test_acid_gas_dewpoint_calculator.py",
+          "src/shared/python/sidekick/tests/process_calculators/test_multi_param_analysis.py",
+          "src/shared/python/sidekick/tests/process_calculators/test_psa_gui.py",
+          "src/shared/python/sidekick/tests/process_calculators/test_syngas_compression_engine.py",
+          "src/shared/python/sidekick/tests/process_calculators/test_wgs_reactor_calculator.py",
+          "src/shared/python/sidekick/tests/test_base_calculator_mixin.py",
+          "src/shared/python/sidekick/tests/test_calculator_state_mixin.py",
+          "src/shared/python/sidekick/tests/test_data_processor_engine_errors.py",
+          "src/shared/python/sidekick/tests/test_ode_solver.py",
+          "src/shared/python/sidekick/tests/test_selected_tab_panel.py",
+          "src/shared/python/sidekick/tests/test_state_manager.py",
+          "src/shared/python/sidekick/tests/test_tab_context_menu.py",
+          "src/shared/python/tests/test_contracts_shared.py",
+          "src/web_applications/calculator/tests/test_security_validation.py",
+          "tests/architecture/test_import_resolvability.py",
+          "tests/architecture/test_sidekick_external_imports_3316.py",
+          "tests/data_processing/data_processor/test_background_thread_errors.py",
+          "tests/data_processing/data_processor/test_ui_thread_workers.py",
+          "tests/document_processing/test_pdf_renamer_config_security.py",
+          "tests/folder_packer_pro/test_operations.py",
+          "tests/folder_tool/test_archive_ops.py",
+          "tests/folder_tool/test_backup_copy.py",
+          "tests/folder_tool/test_file_validation.py",
+          "tests/folder_tool/test_folder_ops.py",
+          "tests/folder_tool/test_folder_tool_analysis.py",
+          "tests/folder_tool/test_folder_tool_archive.py",
+          "tests/folder_tool/test_folder_tool_processing.py",
+          "tests/folder_tool/test_folder_tool_ui.py",
+          "tests/folder_tool/test_folder_tool_ui_processing.py",
+          "tests/p1am_control_system/test_calibrate_safe_shutdown.py",
+          "tests/p1am_control_system/test_desktop.py",
+          "tests/p1am_control_system/test_desktop_alarm_state.py",
+          "tests/p1am_control_system/test_desktop_hmi_annunciation.py",
+          "tests/p1am_control_system/test_desktop_tab_labels.py",
+          "tests/p1am_control_system/test_event_logger_filter_error_logging.py",
+          "tests/p1am_control_system/test_plc_write_confirmation.py",
+          "tests/project_packer_fixes/test_folder_packer_gui_lod.py",
+          "tests/python/test_performance_utils.py",
+          "tests/rate_of_closure/pyqt_flight_sample_inspector_probe.py",
+          "tests/rate_of_closure/pyqt_plot_point_inspector_probe.py",
+          "tests/rate_of_closure/pyqt_putting_sample_inspector_probe.py",
+          "tests/rate_of_closure/pyqt_simulation_scrub_probe.py",
+          "tests/rate_of_closure/pyqt_variation_visual_state_probe.py",
+          "tests/rate_of_closure/pyqt_visualization_tab_probe.py",
+          "tests/rate_of_closure/test_authority_state_security.py",
+          "tests/rate_of_closure/test_browser_companion_harness.py",
+          "tests/rate_of_closure/test_confidence_ellipsoid_mesh.py",
+          "tests/rate_of_closure/test_durable_ensemble_pyqt_workflow.py",
+          "tests/rate_of_closure/test_morris_authority_child.py",
+          "tests/rate_of_closure/test_morris_authority_host.py",
+          "tests/rate_of_closure/test_morris_authority_router.py",
+          "tests/rate_of_closure/test_morris_authority_runtime.py",
+          "tests/rate_of_closure/test_morris_pyqt_workflow.py",
+          "tests/rate_of_closure/test_morris_pyqt_workspace.py",
+          "tests/rate_of_closure/test_morris_ui_client.py",
+          "tests/rate_of_closure/test_pyqt_variation_probe_lifecycle.py",
+          "tests/rate_of_closure/test_rate_launch_pyqt_authority.py",
+          "tests/rate_of_closure/test_rate_launch_web_authority.py",
+          "tests/rate_of_closure/test_regional_ground_authority_transport.py",
+          "tests/rate_of_closure/test_regional_ground_loopback_submitter.py",
+          "tests/rate_of_closure/test_regional_ground_variation_request_io.py",
+          "tests/rate_of_closure/test_variation_complete_trial_record.py",
+          "tests/rate_of_closure/test_variation_ensemble_chunks.py",
+          "tests/rate_of_closure/test_variation_gui_execution.py",
+          "tests/rate_of_closure/test_variation_module_importability.py",
+          "tests/rate_of_closure/test_visual_layout_gui.py",
+          "tests/rate_of_closure/test_visual_layout_preferences.py",
+          "tests/rate_of_closure/test_web_companion_app.py",
+          "tests/shared/python/ai/test_ai_hardening_3179.py",
+          "tests/shared/python/ai/test_bitnet_adapter.py",
+          "tests/shared/python/ai/test_provider_config_registry.py",
+          "tests/shared/python/ai/test_rust_adapter.py",
+          "tests/shared/python/chat/test_chat_agent_label.py",
+          "tests/shared/python/chat/test_chat_import_boundaries.py",
+          "tests/shared/python/chat/test_export.py",
+          "tests/shared/python/chat/test_ollama_latency_tuning.py",
+          "tests/shared/python/chat/test_quick_bar.py",
+          "tests/shared/python/chat/test_quick_bar_widget.py",
+          "tests/shared/python/chat/test_router_error_logging.py",
+          "tests/shared/python/chat/test_router_factory.py",
+          "tests/shared/python/chat/test_terminal_protocol.py",
+          "tests/shared/python/chat/test_terminal_runtime.py",
+          "tests/shared/python/chat/test_websocket_protocol.py",
+          "tests/shared/python/file_watcher/test_file_watcher.py",
+          "tests/shared/python/logging_pkg/test_logging_pkg.py",
+          "tests/shared/python/model_generation/test_cli_main.py",
+          "tests/shared/python/model_generation/test_mesh_upload_hardening.py",
+          "tests/shared/python/model_generation/test_rate_limiter.py",
+          "tests/shared/python/model_generation/test_repository.py",
+          "tests/shared/python/model_generation/test_rest_api_routes.py",
+          "tests/shared/python/notes/test_integration.py",
+          "tests/shared/python/plot_engine/test_matplotlib_renderer.py",
+          "tests/shared/python/plot_engine/test_protocols.py",
+          "tests/shared/python/plot_engine/test_pyqt6_widget.py",
+          "tests/shared/python/plotting/test_identity_export.py",
+          "tests/shared/python/process_calculators/test_analysis_utils.py",
+          "tests/shared/python/sidekick/ui/test_tools_sidebar_runtime_tabs.py",
+          "tests/shared/python/test_contracts.py",
+          "tests/shared/python/theme/test_api.py",
+          "tests/shared/python/theme/test_colors.py",
+          "tests/shared/python/theme/test_icon_utils.py",
+          "tests/shared/python/theme/test_theme_manager.py",
+          "tests/shared/python/theme/test_typography.py",
+          "tests/shared/python/theme/test_zoom.py",
+          "tests/shared/python/ui/test_wave1_widget_state.py",
+          "tests/shared/python/ui/test_window_icon.py",
+          "tests/test_data_processor_tab_export.py",
+          "tests/test_folder_packer_pro.py",
+          "tests/test_gui_launcher_web.py",
+          "tests/test_launch_cli_output.py",
+          "tests/test_sidekick_public_api_stability.py",
+          "tests/test_src_package_import_contract.py",
+          "tests/tools/test_matlab_quality_utils.py",
+          "tests/unit/ai/integrations/github_mcp/test_integration.py",
+          "tests/unit/ai/mcp/test_client.py",
+          "tests/unit/ai/mcp/test_pool.py",
+          "tests/unit/ai/mcp/test_tool_registry_refresh.py",
+          "tests/unit/ai/peer_review/test_chat_integration.py",
+          "tests/unit/ai/peer_review/test_coordinator.py",
+          "tests/unit/ai/test_gemini_adapter.py",
+          "tests/unit/ai/test_peer_review.py",
+          "tests/unit/chat/export/test_copy_clipboard.py",
+          "tests/unit/chat/test_ai_settings_controller.py",
+          "tests/unit/chat/test_dock_widget_dropdowns.py",
+          "tests/unit/chat/test_mid_thread_switch.py",
+          "tests/unit/chat/test_workspace_command_handler.py",
+          "tests/unit/codemap/test_codemap_js_parser.py",
+          "tests/unit/codemap/test_codemap_markdown_parser.py",
+          "tests/unit/codemap/test_codemap_mcp_server.py",
+          "tests/unit/codemap/test_codemap_python_parser.py",
+          "tests/unit/codemap/test_codemap_rust_parser.py",
+          "tests/unit/codemap/test_codemap_ts_common.py",
+          "tests/unit/codemap/test_codemap_watcher.py",
+          "tests/unit/sidekick/agent/test_action_service.py",
+          "tests/unit/sidekick/agent/test_host_adapter.py",
+          "tests/unit/sidekick/agent/test_subtab_adapter.py",
+          "tests/unit/sidekick/conftest.py",
+          "tests/unit/sidekick/test_chat_settings.py",
+          "tests/unit/sidekick/test_notes_tab.py",
+          "tests/unit/sidekick/test_os_terminal_widget.py",
+          "tests/unit/sidekick/test_python_repl_cancel_namespace_3715.py",
+          "tests/unit/sidekick/test_python_repl_widget.py",
+          "tests/unit/sidekick/test_reporting_tab_context_gathering.py",
+          "tests/unit/sidekick/test_runtime_split_coverage.py",
+          "tests/unit/sidekick/test_runtime_tab_settings.py",
+          "tests/unit/sidekick/test_sidekick_ux_hardening.py",
+          "tests/unit/test_contracts.py",
+          "tests/vessel_drafter/test_dbc_lod.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "src/data_processing/data_processor/python/tests/test_data_loader_contracts.py",
+          "src/data_processing/data_processor/python/tests/test_vectorized_filter_engine_contracts.py",
+          "src/financial_calculator/tests/test_financial_calculator_gui_contracts.py",
+          "src/p1am_control_system/backend/tests/test_validation_guards_3745.py",
+          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
+          "src/shared/python/model_generation/tests/test_contracts.py",
+          "src/shared/python/tests/test_contracts_shared.py",
+          "src/web_applications/calculator/tests/test_security_validation.py",
+          "tests/folder_tool/test_file_validation.py",
+          "tests/shared/python/test_contracts.py",
+          "tests/test_src_package_import_contract.py",
+          "tests/unit/test_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 381,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "2b83d9104eb7798e60ba304b1e971a9ca4b230fbef138bc268591f1facee3676",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-PYTHON-PRESSURE-DROP-CALCULATOR-INIT-PY-8322CAAA3521",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/pressure_drop_calculator/python/pressure_drop_calculator/__init__.py",
+      "purpose": "Pressure Drop Calculator Python Package.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "PressureDropCalculationEngine",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PressureDropInputs",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PressureDropResults",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "calculate_pressure_drop",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 20,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "4733088425bd5dde26a826e84ccde946777469a4b3e0ee8f4b4ca3a29eab7332",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-PYTHON-PRESSURE-DROP-CALCULATOR-UI-INIT-PY-F01774975391",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/pressure_drop_calculator/python/pressure_drop_calculator/ui/__init__.py",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 155,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "8bd39e0d3e7ccc8c8ba932c3cae00ae4f8d133acb1e5fa1c856a204282d415fa",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-PYTHON-PRESSURE-DROP-CALCULATOR-UI-PYQT6-INIT-PY-7C7E3C8C357D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/pressure_drop_calculator/python/pressure_drop_calculator/ui/pyqt6/__init__.py",
+      "purpose": "PyQt6 UI components for Pressure Drop Calculator.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "PressureDropCalculatorWidget",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 18326,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "37364f4c4e2dc8a46e940627b73683eb54f4d9bbe469fd2fa4cfa3845fa96570",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-PYTHON-PRESSURE-DROP-CALCULATOR-UI-PYQT6-MAIN-WINDOW-PY-6F04AE2E7C05",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/pressure_drop_calculator/python/pressure_drop_calculator/ui/pyqt6/main_window.py",
+      "purpose": "Pressure Drop Calculator PyQt6 Main Window.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PressureDropCalculatorWidget",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_main_window.py",
+          "src/pendulum_simulator/tests/test_main_window.py",
+          "src/pressure_drop_calculator/tests/test_pressure_drop_calculator_gui.py",
+          "tests/ode_solver/test_main_window.py"
+        ],
+        "unit_mentions": [
+          "Nm",
+          "Pa",
+          "bar",
+          "kg",
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 311,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "ddf275403a6914c6e7800edee3e810f8ab364d9f54e820df836d69a71ef13691",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-WEB-INDEX-HTML-0A4775A2D654",
+      "language": "html",
+      "maintainer": "Tools module maintainers",
+      "path": "src/pressure_drop_calculator/web/index.html",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 70,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "f13fcd62daab31b54fe65a6d42368509ff4bd8c7d6319d38e69967fff955db8f",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-WEB-POSTCSS-CONFIG-JS-EF0F31D713E9",
+      "language": "javascript",
+      "maintainer": "Tools module maintainers",
+      "path": "src/pressure_drop_calculator/web/postcss.config.js",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 604,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "283ebf6751a278cd7d98779d6d545b7c6f26e3a4adc94c70d2a7523c3e1476ca",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-WEB-SRC-APP-TSX-6A19FA46C2DF",
+      "language": "typescript-react",
+      "maintainer": "Tools module maintainers",
+      "path": "src/pressure_drop_calculator/web/src/App.tsx",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 21530,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "9be255b1e8ef0faca404197e11894ec412cea95dee8d632c6a44a1d34132209d",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-WEB-SRC-COMPONENTS-PRESSUREDROPCALCULATOR-TSX-E0693191E68C",
+      "language": "typescript-react",
+      "maintainer": "Tools module maintainers",
+      "path": "src/pressure_drop_calculator/web/src/components/PressureDropCalculator.tsx",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://localhost:8010"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "PressureDropCalculator",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "J",
+          "Nm",
+          "bar",
+          "kPa",
+          "kg",
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 346,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "1cb6127ee9fecae9fb122516822cbd4a8b5745d36fcbc19a21305a6aecbf30b2",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-WEB-SRC-INDEX-CSS-E7422A0974AD",
+      "language": "css",
+      "maintainer": "Tools module maintainers",
+      "path": "src/pressure_drop_calculator/web/src/index.css",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 236,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "abe0edc1f91f5d414bbfb8f335f8871b4bf4edf07a861ab225e368a8319cdb6b",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-WEB-SRC-MAIN-TSX-A753DF4163CB",
+      "language": "typescript-react",
+      "maintainer": "Tools module maintainers",
+      "path": "src/pressure_drop_calculator/web/src/main.tsx",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 163,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "5f53e1e26756d565c50daa4f6b2895980907536041553b4bfcf813860652f6eb",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-WEB-TAILWIND-CONFIG-JS-B5339179617A",
+      "language": "javascript",
+      "maintainer": "Tools module maintainers",
+      "path": "src/pressure_drop_calculator/web/tailwind.config.js",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 218,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "881583f8f6a6cee83072c2863ac13f77663c0d9cb3ac4611c39cbfc8815908e7",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-WEB-VITE-CONFIG-TS-FBC91F9E12DE",
+      "language": "typescript",
+      "maintainer": "Tools module maintainers",
+      "path": "src/pressure_drop_calculator/web/vite.config.ts",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/pressure_drop_calculator",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

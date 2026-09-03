@@ -1,0 +1,1785 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6179,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "72ff00068ba1e3bd23e7dac98603a0951fa6961db69f08571b7fa5196b09b0f7",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-INIT-PY-7E8BDC5230D7",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/theme/__init__.py",
+      "purpose": "Fleet-wide shared theme management system.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "BUILTIN_THEMES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CHART_COLORS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CSS_FONT_DISPLAY",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CSS_FONT_MONO",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CSS_FONT_UI",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Colors",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DARK_THEME",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FONT_STACK_DISPLAY",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FONT_STACK_MONO",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FONT_STACK_UI",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FontSizes",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FontWeights",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SEMANTIC_ALIASES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SEMANTIC_COLOR_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Sizes",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StylesheetGenerator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "THEME_COLOR_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ThemePalette",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ThemeProvider",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ThemeSwitcher",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Weights",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "generate_minimal_stylesheet",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "generate_stylesheet",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_current_colors",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_display_font",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_matplotlib_colors",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_mono_font",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_qfont",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_rgba",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "is_dark_theme",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "is_valid_hex_color",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "normalise_hex_color",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/ui/test_headless_import.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9069,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "24d6b183a1147376248f69f017b0a5b45ef0f029fa1dd17dd055e46325ef10fd",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-API-PY-C02598C3E4DF",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/theme/api.py",
+      "purpose": "Shared theme REST API router for FastAPI applications.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ActiveThemeResponse",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SaveCustomThemeRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SetActiveThemeRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ThemeColors",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ThemeDefinition",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ThemeListResponse",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ThemeOperationResponse",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "create_theme_router",
+            "signature": "theme_manager: Any"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/theme/test_api.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5490,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "eca9b33110b87043a152abc7f47e8d56bf3964dbd360f96380d8ca3900c4169e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-CATPPUCCIN-PY-900F2C170DBF",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/theme/catppuccin.py",
+      "purpose": "Catppuccin Mocha theme - shared color palette and stylesheet.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "CATPPUCCIN_MOCHA",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_stylesheet",
+            "signature": "palette: dict[str, str] | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/urdf_builder_gui/tests/test_urdf_builder_gui.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 16795,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "87e0492dff6c7e8252981f5469f4f9a1116937751377323a85653dd08f538d03",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-COLORS-PY-DF1E277BD476",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/theme/colors.py",
+      "purpose": "Unified color definitions for the fleet-wide theme system.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "BUILTIN_THEMES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CHART_COLORS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SEMANTIC_COLOR_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "THEME_COLOR_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_matplotlib_colors",
+            "signature": "theme: dict[str, str]"
+          },
+          {
+            "kind": "function",
+            "name": "get_qcolor",
+            "signature": "hex_color: str"
+          },
+          {
+            "kind": "function",
+            "name": "get_rgba",
+            "signature": "hex_color: str, alpha: float=1.0"
+          },
+          {
+            "kind": "function",
+            "name": "is_dark_theme",
+            "signature": "theme_name: str"
+          },
+          {
+            "kind": "function",
+            "name": "is_valid_hex_color",
+            "signature": "value: str"
+          },
+          {
+            "kind": "function",
+            "name": "normalise_hex_color",
+            "signature": "value: str"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/theme/test_colors.py",
+          "tests/shared/python/theme/test_fallback_drift.py",
+          "tests/shared/python/theme/test_matplotlib_style.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 806,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1ad59cf2d761eeabcac2dea20979c291fcf4004756a30906747cc49324e313ba",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-DIALOGS-INIT-PY-6F73FD52CF1B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/theme/dialogs/__init__.py",
+      "purpose": "Shared custom theme dialogs for PyQt6 applications.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "ColorFieldEditor",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ColorPickerButton",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CustomThemeDialog",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CustomThemeEditor",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ThemeListItem",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ThemeManagerDialog",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ThemePreviewWidget",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13576,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "34e9f66953b698180ce5bd777844e3abfdbc8671032a2037b4a80804b27288a7",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-DIALOGS-CUSTOM-THEME-DIALOG-PY-6721FC95BF9D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/theme/dialogs/custom_theme_dialog.py",
+      "purpose": "Dialog for designing and saving custom colour themes.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ColorFieldEditor",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CustomThemeDialog",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BRIGHTNESS_THRESHOLD",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LUMA_BLUE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LUMA_GREEN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LUMA_RED",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 16567,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ef5aa7fc0d07607757d0371278032936e82dbd4173ffb0b03089b3090dd38550",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-DIALOGS-CUSTOM-THEME-EDITOR-PY-87B35D781FC6",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/theme/dialogs/custom_theme_editor.py",
+      "purpose": "Custom Theme Editor Dialog",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ColorPickerButton",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CustomThemeEditor",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ThemePreviewWidget",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 18580,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7613d649e058799e46b07f33a72cebf33b720424513d2aaf6c5fdad4eb38c34d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-DIALOGS-THEME-MANAGER-DIALOG-PY-57B6C3F4F8B1",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/theme/dialogs/theme_manager_dialog.py",
+      "purpose": "Theme Manager Dialog",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ThemeListItem",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ThemeManagerDialog",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10093,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "57d9cb071aaddcce7234879667d9f0c93f67eddb830ead8fdaf48eee8d6777fa",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-FLEET-ADAPTER-PY-9EE66C632445",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/theme/fleet_adapter.py",
+      "purpose": "Fleet-wide theme adapter for UpstreamDrift.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "fleet_to_theme_colors",
+            "signature": "theme_name: str"
+          },
+          {
+            "kind": "function",
+            "name": "get_fleet_theme_names",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "is_fleet_available",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5043,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "931bdee4de6c2bb33648d155710303c35d913134716538b2e9b64422443b22cb",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-FONT-MANAGER-PY-F36B1D114FCB",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/theme/font_manager.py",
+      "purpose": "Fleet-wide shared font management system.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FontManager",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BUILTIN_FONTS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_font_manager",
+            "signature": "app_context: str | None=None, settings_org: str | None=None, settings_app: str | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/theme/test_font_manager.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8539,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "bf37935348313610d78a3f542cb81a378fa0b8b9676b5ccc3b1c86da4565c320",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-ICON-UTILS-PY-4C2F3060AC1C",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/theme/icon_utils.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://www.w3.org/2000/svg"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "IconColorizer",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SVG_REGISTRY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SVG_ACCESSIBILITY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SVG_BIOMECHANICS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SVG_BUILD",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SVG_CHAT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SVG_CLOSE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SVG_COMPUTER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SVG_DIRECTIONS_RUN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SVG_HELP",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SVG_HOME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SVG_MAXIMIZE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SVG_MENU",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SVG_MINIMIZE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SVG_SEARCH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SVG_SETTINGS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SVG_SPORTS_GOLF",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SVG_VIDEOCAM",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/theme/test_icon_utils.py",
+          "tests/test_icon_utils.py",
+          "tests/tools/test_icon_utils.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11940,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "90656b8c5be7cc3fe52c32fffc32f9079b9776dda4c49e15018029d113ed3922",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-INTEGRATION-PY-7A4DF8C89A68",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/theme/integration.py",
+      "purpose": "Theme integration helpers for PyQt6 applications.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ThemedDialogMixin",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ThemedWindowMixin",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "apply_theme_to_window",
+            "signature": "window: QMainWindow, theme_name: str | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "create_theme_menu",
+            "signature": "window: QMainWindow, parent_menu: QMenuBar | QMenu | None=None, show_custom_options: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "get_theme_manager",
+            "signature": "window: QMainWindow | None=None, settings_org: str='D-sorganization', settings_app: str='FleetTheme'"
+          },
+          {
+            "kind": "function",
+            "name": "setup_themed_app",
+            "signature": "app: QApplication, window: QMainWindow, add_menu: bool=True, show_custom_options: bool=False, settings_org: str='D-sorganization', settings_app: str | None=None, base_icon_path: str | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/pendulum_simulator/signal_test.py",
+          "src/pendulum_simulator/tests/test_panel_builders.py",
+          "tests/calc_backend/test_wgs_reactor_headless_import_3317.py",
+          "tests/rate_of_closure/test_compact_simulation_layout.py",
+          "tests/shared/python/notes/test_integration.py",
+          "tests/shared/python/plot_theme/test_integration.py",
+          "tests/shared/python/signal_toolkit/test_widget_mixins.py",
+          "tests/unit/ai/integrations/github_mcp/test_integration.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3703,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "82f3109c50a3b861209b5230f78226fee9bf25de9da9c4a92b0209c1d5416dae",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-MATPLOTLIB-STYLE-PY-C240486ED476",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/theme/matplotlib_style.py",
+      "purpose": "Professional matplotlib styling for the repository fleet.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "apply_global_style",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "apply_plot_theme",
+            "signature": "fig: Figure, theme: dict[str, str]"
+          },
+          {
+            "kind": "function",
+            "name": "create_styled_figure",
+            "signature": "nrows: int=1, ncols: int=1, figsize: tuple[float, float] | None=None, **kwargs: Any"
+          },
+          {
+            "kind": "function",
+            "name": "get_chart_color",
+            "signature": "index: int"
+          }
+        ],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_shared_theme_dependency.py",
+          "tests/rate_of_closure/test_course.py",
+          "tests/shared/python/signal_toolkit/test_widget_mixins.py",
+          "tests/shared/python/theme/test_matplotlib_style.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7989,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f9b320a5dab8641e2f9875fb49967eb2c0b8fbf68bc55c0b082df6703b89c7e8",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-PALETTE-PY-3808B5653A96",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/theme/palette.py",
+      "purpose": "Theme palette mapping with semantic attribute aliases (issue #8972, #9037).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Colors",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ThemePalette",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DARK_THEME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SEMANTIC_ALIASES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_current_colors",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/theme/test_palette.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2057,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "bc0004bf5ef642adc70da0063ccf73bbb5f03d1892b4d674a252226b0f88273c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-PROTOCOLS-PY-15512C933221",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/theme/protocols.py",
+      "purpose": "Protocol interfaces for the theme system.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "StylesheetGenerator",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ThemeProvider",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ThemeSwitcher",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/test_protocols.py",
+          "tests/shared/python/plot_engine/test_protocols.py",
+          "tests/shared/python/sidekick/test_protocols.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4511,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7d3d89ba58a1fd13eb3d753f6e16269b2d0200a36dddbb03855143be2715577a",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-RESPONSIVE-PY-26CEA3AE1DB0",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/theme/responsive.py",
+      "purpose": "Responsive PyQt6 sizing helpers for fleet desktop applications.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "TextWidthSpec",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "configure_form_layout_for_readability",
+            "signature": "layout: QFormLayout"
+          },
+          {
+            "kind": "function",
+            "name": "derive_text_candidates",
+            "signature": "widget: QWidget"
+          },
+          {
+            "kind": "function",
+            "name": "readable_text_width",
+            "signature": "metrics: QFontMetrics, texts: Sequence[str], spec: TextWidthSpec"
+          },
+          {
+            "kind": "function",
+            "name": "set_text_minimum_width",
+            "signature": "widget: QWidget, spec: TextWidthSpec | None=None, texts: Iterable[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "wrap_in_scroll_area",
+            "signature": "widget: QWidget, minimum_width: int=0"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/theme/test_responsive.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 32244,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f82ce238101558e054b613d067c6b7800c3551fd3d352235758763eb6a1e721d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-STYLE-CONSTANTS-PY-6DDBDB5762F9",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/theme/style_constants.py",
+      "purpose": "Centralized style constants for UpstreamDrift Qt widgets.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Styles",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/theme/test_style_constants.py",
+          "tests/unit/ai/gui/test_chat_export.py"
+        ],
+        "unit_mentions": [
+          "bar",
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 17493,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a1cf2e4515b4c3cfb9296f6344d947b6eebec4ff37a32eb113c80a8c0e8b6bc0",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-STYLESHEETS-PY-F98EAE8F0B24",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/theme/stylesheets.py",
+      "purpose": "Qt stylesheet generation for the fleet-wide theme system.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "generate_minimal_stylesheet",
+            "signature": "theme: dict[str, str]"
+          },
+          {
+            "kind": "function",
+            "name": "generate_stylesheet",
+            "signature": "theme: dict[str, str]"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/theme/test_stylesheets.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 20093,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "fff3628f7214ccc5e9184415b3938400d4ce6106a820b0af465b16039eb553e5",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-THEME-MANAGER-PY-8E402C04BDB8",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/theme/theme_manager.py",
+      "purpose": "Theme manager for fleet-wide theme control.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ThemeManager",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_theme_manager",
+            "signature": "main_window: QWidget | None=None, app_context: str | None=None, settings_org: str | None=None, settings_app: str | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/financial_calculator/tests/test_financial_calculator_gui.py",
+          "src/financial_calculator/tests/test_financial_calculator_gui_contracts.py",
+          "tests/architecture/test_shared_import_aliases_3316.py",
+          "tests/ode_solver/test_main_window.py",
+          "tests/p1am_control_system/test_desktop.py",
+          "tests/rate_of_closure/test_compact_simulation_layout.py",
+          "tests/shared/python/sidekick/ui/test_tools_sidebar_runtime_tabs.py",
+          "tests/shared/python/theme/test_theme_manager.py",
+          "tests/unit/ai/gui/test_chat_export.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "src/financial_calculator/tests/test_financial_calculator_gui_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5805,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9bd8598df74a18f63f83397691ceca903727aa004d958f11dbd4f221b6f5aa63",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-TYPOGRAPHY-PY-18FD58473101",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/theme/typography.py",
+      "purpose": "Typography system for Golf Modeling Suite.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FontSizes",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FontWeights",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CSS_FONT_DISPLAY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CSS_FONT_MONO",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CSS_FONT_UI",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FONT_STACK_DISPLAY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FONT_STACK_MONO",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FONT_STACK_UI",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_display_font",
+            "signature": "size: int=Sizes.XL, weight: int=Weights.BOLD"
+          },
+          {
+            "kind": "function",
+            "name": "get_mono_font",
+            "signature": "size: int=Sizes.BASE, weight: int=Weights.NORMAL"
+          },
+          {
+            "kind": "function",
+            "name": "get_qfont",
+            "signature": "size: int=Sizes.BASE, weight: int=Weights.NORMAL, family: str | None=None, italic: bool=False"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/theme/test_typography.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7990,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "51b825bf351dd6ecff459ccbcaedc4349c502576cd4247b28317aa7a88fe9c98",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-ZOOM-PY-F079BA35EAD1",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/theme/zoom.py",
+      "purpose": "Application-level zoom support for fleet PyQt6 desktop applications.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ApplicationZoomController",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ZoomConfig",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ZoomSettings",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ZoomTokenSet",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ZOOM_IN_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "install_application_zoom",
+            "signature": "app: QApplication, config: ZoomConfig | None=None, settings: ZoomSettings | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "scale_px",
+            "signature": "value: int, zoom_percent: int"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/theme/test_zoom.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/shared/python/theme",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

@@ -1,0 +1,228 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 496,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "48440c55328953d6c063001713d64ad983c0b449fce11fb6ddd672f8a41d9016",
+      "family": "shared-plotting-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOTTING-INIT-PY-2B0EF7FC304B",
+      "language": "python",
+      "maintainer": "Plotting and visualization maintainers",
+      "path": "src/shared/python/plotting/__init__.py",
+      "purpose": "Plotting and export utilities with identity context support.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "ExportConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlotIdentity",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "apply_identity_footer",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "export_all_figures",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "export_figure",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "export_plot_data",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "resolve_and_apply_identity_footer",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7224,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1f15074c15892e65710e4c58cfa9900d51827a35e4490cbc92bb4ea9141f34d6",
+      "family": "shared-plotting-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOTTING-EXPORT-PY-27B1E24DCA5E",
+      "language": "python",
+      "maintainer": "Plotting and visualization maintainers",
+      "path": "src/shared/python/plotting/export.py",
+      "purpose": "Figure and data export helpers with metadata injection (Issue #4740).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ExportConfig",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "export_all_figures",
+            "signature": "figures: dict[str, Figure], config: ExportConfig | None=None, formats: list[str] | None=None, identity: PlotIdentity | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "export_figure",
+            "signature": "fig: Figure, name: str, config: ExportConfig | None=None, formats: list[str] | None=None, identity: PlotIdentity | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "export_plot_data",
+            "signature": "data: dict[str, Any], name: str, config: ExportConfig | None=None, fmt: str='json', identity: PlotIdentity | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_export.py",
+          "tests/shared/python/chat/test_export.py",
+          "tests/shared/python/plotting/test_identity_export.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5224,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1e80b415508fd2ab502c4e5b8b0083dea1ee7b829a2b4f3a998e45e5aa1cf400",
+      "family": "shared-plotting-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOTTING-IDENTITY-PY-94267542D9A2",
+      "language": "python",
+      "maintainer": "Plotting and visualization maintainers",
+      "path": "src/shared/python/plotting/identity.py",
+      "purpose": "Identity context for plots and exports (issue #4740, mirrors UpstreamDrift #8828).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PlotIdentity",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "apply_identity_footer",
+            "signature": "fig: Figure, identity: PlotIdentity | None"
+          },
+          {
+            "kind": "function",
+            "name": "resolve_and_apply_identity_footer",
+            "signature": "fig: Figure, recorder: Any, identity: PlotIdentity | None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/plot_engine/tests/test_pyqt6_widget_export_identity.py",
+          "tests/shared/python/plotting/test_identity_export.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/shared/python/plotting",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

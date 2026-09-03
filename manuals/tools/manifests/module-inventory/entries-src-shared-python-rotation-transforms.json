@@ -1,0 +1,226 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 794,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "e51c2f13e02bc4b44c68d0a83fd5c91c9b9a9205f6b0def235fe3d1e83c8f12a",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-ROTATION-TRANSFORMS-INIT-PY-913AAA810A67",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/rotation_transforms/__init__.py",
+      "purpose": "Shared rotation and reference-frame primitives.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "OperationName",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ReferenceFrameResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Rotation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compute_homogeneous_transform",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compute_reference_frame_operation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compute_so3_so3_maps",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compute_twist_frame_conversion",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 7066,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "7022e14f40a6695b433f5e71485cda392cf18dc9ef71ec412263630b4f9a478a",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-ROTATION-TRANSFORMS-REFERENCE-FRAME-OPERATIONS-PY-E26E63259408",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/rotation_transforms/reference_frame_operations.py",
+      "purpose": "Reference-frame conversion operations shared across tools and APIs.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ReferenceFrameResult",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "compute_homogeneous_transform",
+            "signature": "rotation_matrix: Any, translation: Any"
+          },
+          {
+            "kind": "function",
+            "name": "compute_reference_frame_operation",
+            "signature": "operation: OperationName, *, transform: Any | None=None, twist: Any | None=None, rotation_matrix: Any | None=None, translation: Any | None=None, so3_vector: Any | None=None, so3_matrix: Any | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "compute_so3_so3_maps",
+            "signature": "so3_vector: Any | None=None, so3_matrix: Any | None=None, rotation_matrix: Any | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "compute_twist_frame_conversion",
+            "signature": "transform: Any, twist: Any"
+          }
+        ],
+        "test_paths": [
+          "tests/rotation_converter/test_reference_frame_operations.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 6128,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "0bc9b44427f75150cccacdc2c2b951e3bcf5741b9fe81ed1a367ac51c0ac09d6",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-ROTATION-TRANSFORMS-ROTATION-PY-5645E5EA82C8",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/rotation_transforms/rotation.py",
+      "purpose": "Shared rotation representation conversions.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Rotation",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/shared/python/rotation_transforms",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

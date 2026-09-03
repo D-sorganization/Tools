@@ -1,0 +1,51 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 245,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "417d0bf8a0b53582695f93182e937160351ee852ef5447689b4c6b0400c29693",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-THEME-INIT-PY-32DB610C6635",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/theme/__init__.py",
+      "purpose": "Compatibility shim for the canonical ``shared.python.theme`` package.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/ui/test_headless_import.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/theme",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

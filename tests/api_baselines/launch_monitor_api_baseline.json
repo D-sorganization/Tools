@@ -1,0 +1,5138 @@
+{
+  "__init__.py": {
+    "__all__": [
+      "AnalysisContextV2",
+      "AnalysisLineageV2",
+      "AnalysisMode",
+      "AssociationEstimateV1",
+      "AvailabilityV1",
+      "AvailabilityV2",
+      "BASELINE_CONTRACT_VERSION",
+      "BETWEEN_PLAYER_INTERVAL_MIN_GROUPS",
+      "BackingRecordV2",
+      "BaselineProvenanceV1",
+      "COMMON_ALIASES",
+      "CONTRACT_VERSION",
+      "CONTRACT_VERSION_V2",
+      "CORPUS_COLUMN_MAP",
+      "CORPUS_RELATIVE_PATH",
+      "CanonicalPrivateCorpus",
+      "ChangeCandidate",
+      "ClaimsV2",
+      "CoefficientEstimate",
+      "ColumnMapping",
+      "ConfidenceIntervalV1",
+      "CorpusManifest",
+      "CorrelationEstimate",
+      "CorrelationMethod",
+      "CorrelationResult",
+      "CourseStateColumnsV1",
+      "CourseStateValueV1",
+      "CovariationMissingnessV1",
+      "CovariationPairRankV1",
+      "CovariationUncertaintyV1",
+      "DATASET_JOB_CONTRACT_VERSION",
+      "DatasetAuthorityV2",
+      "DatasetJobRequestV1",
+      "DatasetOperationV1",
+      "DatasetReferenceV1",
+      "DatasetSummary",
+      "DatasetUnavailableError",
+      "DatasetUnavailableStateV1",
+      "DependencyEdge",
+      "DispersionResult",
+      "EstimateSummaryV1",
+      "ExcludedRowV1",
+      "ExclusionSummaryV1",
+      "ExpectedStrokesBaselineLike",
+      "ExpectedStrokesStateLike",
+      "FilterRule",
+      "FlexibleAnalysisRequest",
+      "FlexibleAnalysisResult",
+      "GroupAnalysis",
+      "GroupSummaryV1",
+      "GroupingDimensionV1",
+      "IDENTITY_COLUMNS",
+      "ImportManifest",
+      "ImportOptions",
+      "ImportProfile",
+      "ImportedSession",
+      "InterpolationV1",
+      "LAUNCH_MONITOR_CONFORMANCE_BUNDLE_VERSION",
+      "LONGITUDINAL_SESSION_CONTRACT_VERSION",
+      "LaunchMonitorAnalysisResultV2",
+      "LaunchMonitorConformanceBundleV1",
+      "LaunchMonitorConformanceScenarioV1",
+      "LongitudinalClaimsV1",
+      "LongitudinalDesignV1",
+      "LongitudinalDimensionV1",
+      "LongitudinalMethod",
+      "LongitudinalMissingnessV1",
+      "LongitudinalPlayerAssociationV1",
+      "LongitudinalSessionRequestV1",
+      "LongitudinalSessionResultV1",
+      "LongitudinalSummaryV1",
+      "MAX_PAGE_SIZE",
+      "MAX_RETAINED_ROWS",
+      "METRICS",
+      "MIN_FISHER_SAMPLES",
+      "MetaAnalysisSummaryV1",
+      "MetricDefinition",
+      "MetricUnitsV2",
+      "MissingPolicy",
+      "MissingnessV2",
+      "ModelProvenanceV2",
+      "MonitorComparisonResult",
+      "MonitorSummary",
+      "OUTCOME_PROXY_CONTRACT_VERSION",
+      "OrderEvidenceV2",
+      "OutcomeProxyRequestV1",
+      "OutcomeProxyResultV1",
+      "OutcomeProxyRowV1",
+      "PCAResult",
+      "PLAYER_COVARIATION_CONTRACT_VERSION",
+      "POOLED_METHOD_DESCRIPTIONS",
+      "PRIVATE_DATA_ENV",
+      "PROFILES",
+      "PairwiseMonitorComparison",
+      "PlayerAssociationV1",
+      "PlayerCovariationContractV1",
+      "PlayerCovariationRequestV1",
+      "PlayerCovariationResultV1",
+      "PlayerCovariationScanRequestV1",
+      "PlayerCovariationScanResultV1",
+      "PlayerIdentityV2",
+      "PooledAssociationV1",
+      "PooledMethod",
+      "PredictiveModelResult",
+      "ProfileDetection",
+      "RegressionEstimate",
+      "ResidualDiagnostics",
+      "SELECTED_PAIR_METHOD_DESCRIPTION",
+      "STROKES_GAINED_CONTRACT_VERSION",
+      "SessionAggregateV1",
+      "SessionIdentityV2",
+      "SourceFileReferenceV2",
+      "StrokesGainedAnalysisResultV1",
+      "StrokesGainedRequestV1",
+      "StrokesGainedRowV1",
+      "StrokesGainedUncertaintyV1",
+      "TemporalTrendResult",
+      "TransformRecordV2",
+      "TreatmentConfig",
+      "TreatmentResult",
+      "UncertaintyV2",
+      "VIFResult",
+      "VendorProvenanceV2",
+      "VerifiedDataset",
+      "adapt_v2_to_v1",
+      "analysis_lineage_v2",
+      "analyze_dispersion",
+      "analyze_longitudinal_sessions",
+      "analyze_outcome_proxy",
+      "analyze_player_covariation_v1",
+      "analyze_source_backed_strokes_gained",
+      "analyze_trend",
+      "analyze_variables",
+      "analyze_variables_v2",
+      "apply_treatment",
+      "build_analysis_lineage_v2",
+      "clustered_pooled_association",
+      "compare_monitors",
+      "compute_correlations",
+      "compute_pca",
+      "compute_vif",
+      "contract_v2_json_schema",
+      "corpus_dataset_path",
+      "covariation_backing_frame",
+      "dataset_content_sha256",
+      "dataset_job_contract_json_schema",
+      "dersimonian_laird_pooled_association",
+      "detect_profile",
+      "execute_dataset_operation",
+      "fit_predictive_model",
+      "import_session",
+      "launch_monitor_conformance_bundle_json_schema",
+      "launch_monitor_conformance_bundle_sha256",
+      "launch_monitor_conformance_scenario_sha256",
+      "load_private_corpus",
+      "load_private_corpus_with_provenance",
+      "longitudinal_session_contract_json_schema",
+      "metric_units_v2",
+      "normalize_header",
+      "numeric_metric_columns",
+      "player_association_frame",
+      "player_associations",
+      "player_covariation_contract_json_schema",
+      "read_corpus_manifest",
+      "resolve_private_corpus_path",
+      "scan_player_covariation_v1",
+      "strokes_gained_contract_json_schema",
+      "validate_corpus_manifest",
+      "vendor_provenance_v2",
+      "verify_dataset_reference"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "AnalysisContextV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {
+            "validate_source_links": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "AnalysisContextV2"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "AnalysisLineageV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "AnalysisMode": {
+        "type": "variable"
+      },
+      "AssociationEstimateV1": {
+        "info": {
+          "bases": [
+            "_CovariationModel"
+          ],
+          "methods": {
+            "require_consistent_state": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "AssociationEstimateV1"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "AvailabilityV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "AvailabilityV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "BASELINE_CONTRACT_VERSION": {
+        "type": "variable"
+      },
+      "BETWEEN_PLAYER_INTERVAL_MIN_GROUPS": {
+        "type": "variable"
+      },
+      "BackingRecordV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {
+            "require_link_or_reason": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "BackingRecordV2"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "BaselineProvenanceV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "COMMON_ALIASES": {
+        "type": "variable"
+      },
+      "CONTRACT_VERSION": {
+        "type": "variable"
+      },
+      "CONTRACT_VERSION_V2": {
+        "type": "variable"
+      },
+      "CORPUS_COLUMN_MAP": {
+        "type": "variable"
+      },
+      "CORPUS_RELATIVE_PATH": {
+        "type": "variable"
+      },
+      "CanonicalPrivateCorpus": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "source_name": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "str"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ChangeCandidate": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ClaimsV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "CoefficientEstimate": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ColumnMapping": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ConfidenceIntervalV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "CorpusManifest": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "source_count": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "int"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "CorrelationEstimate": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "CorrelationMethod": {
+        "type": "variable"
+      },
+      "CorrelationResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "CourseStateColumnsV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "CourseStateValueV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "CovariationMissingnessV1": {
+        "info": {
+          "bases": [
+            "_CovariationModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "CovariationPairRankV1": {
+        "info": {
+          "bases": [
+            "_CovariationModel"
+          ],
+          "methods": {
+            "require_consistent_state": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "CovariationPairRankV1"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "CovariationUncertaintyV1": {
+        "info": {
+          "bases": [
+            "_CovariationModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "DATASET_JOB_CONTRACT_VERSION": {
+        "type": "reexport"
+      },
+      "DatasetAuthorityV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "DatasetJobRequestV1": {
+        "type": "reexport"
+      },
+      "DatasetOperationV1": {
+        "type": "reexport"
+      },
+      "DatasetReferenceV1": {
+        "type": "reexport"
+      },
+      "DatasetSummary": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "DatasetUnavailableError": {
+        "type": "reexport"
+      },
+      "DatasetUnavailableStateV1": {
+        "type": "reexport"
+      },
+      "DependencyEdge": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "DispersionResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "EstimateSummaryV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ExcludedRowV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ExclusionSummaryV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ExpectedStrokesBaselineLike": {
+        "info": {
+          "bases": [
+            "Protocol"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ExpectedStrokesStateLike": {
+        "info": {
+          "bases": [
+            "Protocol"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "FilterRule": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "FlexibleAnalysisRequest": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "FlexibleAnalysisResult": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "to_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "GroupAnalysis": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "GroupSummaryV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "GroupingDimensionV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {
+            "strip_group_text": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "value"
+                }
+              ],
+              "returns": "str"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "IDENTITY_COLUMNS": {
+        "type": "variable"
+      },
+      "ImportManifest": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ImportOptions": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ImportProfile": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "mappings_for": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "list[str]",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "headers"
+                }
+              ],
+              "returns": "tuple[ColumnMapping, ...]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ImportedSession": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "InterpolationV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "LAUNCH_MONITOR_CONFORMANCE_BUNDLE_VERSION": {
+        "type": "variable"
+      },
+      "LONGITUDINAL_SESSION_CONTRACT_VERSION": {
+        "type": "variable"
+      },
+      "LaunchMonitorAnalysisResultV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "LaunchMonitorConformanceBundleV1": {
+        "info": {
+          "bases": [
+            "_StrictModel"
+          ],
+          "methods": {
+            "validate_bundle": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "LaunchMonitorConformanceBundleV1"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "LaunchMonitorConformanceScenarioV1": {
+        "info": {
+          "bases": [
+            "_StrictModel"
+          ],
+          "methods": {
+            "require_nonnegative_exclusions": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "dict[str, int]",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "value"
+                }
+              ],
+              "returns": "dict[str, int]"
+            },
+            "validate_case": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "LaunchMonitorConformanceScenarioV1"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "LongitudinalClaimsV1": {
+        "info": {
+          "bases": [
+            "_StrictModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "LongitudinalDesignV1": {
+        "info": {
+          "bases": [
+            "_StrictModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "LongitudinalDimensionV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {
+            "require_complete_group_mapping": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "LongitudinalDimensionV1"
+            },
+            "strip_longitudinal_text": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "value"
+                }
+              ],
+              "returns": "str"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "LongitudinalMethod": {
+        "type": "variable"
+      },
+      "LongitudinalMissingnessV1": {
+        "info": {
+          "bases": [
+            "_StrictModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "LongitudinalPlayerAssociationV1": {
+        "info": {
+          "bases": [
+            "_StrictModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "LongitudinalSessionRequestV1": {
+        "info": {
+          "bases": [
+            "_StrictModel"
+          ],
+          "methods": {
+            "validate_design_terms": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "LongitudinalSessionRequestV1"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "LongitudinalSessionResultV1": {
+        "info": {
+          "bases": [
+            "_StrictModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "LongitudinalSummaryV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "MAX_PAGE_SIZE": {
+        "type": "reexport"
+      },
+      "MAX_RETAINED_ROWS": {
+        "type": "variable"
+      },
+      "METRICS": {
+        "type": "variable"
+      },
+      "MIN_FISHER_SAMPLES": {
+        "type": "variable"
+      },
+      "MetaAnalysisSummaryV1": {
+        "info": {
+          "bases": [
+            "_CovariationModel"
+          ],
+          "methods": {
+            "require_consistent_state": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "MetaAnalysisSummaryV1"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "MetricDefinition": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "MetricUnitsV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "MissingPolicy": {
+        "type": "variable"
+      },
+      "MissingnessV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ModelProvenanceV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "MonitorComparisonResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "MonitorSummary": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "OUTCOME_PROXY_CONTRACT_VERSION": {
+        "type": "variable"
+      },
+      "OrderEvidenceV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {
+            "require_complete_evidence": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "OrderEvidenceV2"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "OutcomeProxyRequestV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "OutcomeProxyResultV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "OutcomeProxyRowV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "PCAResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "PLAYER_COVARIATION_CONTRACT_VERSION": {
+        "type": "variable"
+      },
+      "POOLED_METHOD_DESCRIPTIONS": {
+        "type": "variable"
+      },
+      "PRIVATE_DATA_ENV": {
+        "type": "variable"
+      },
+      "PROFILES": {
+        "type": "variable"
+      },
+      "PairwiseMonitorComparison": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "PlayerAssociationV1": {
+        "info": {
+          "bases": [
+            "_CovariationModel"
+          ],
+          "methods": {
+            "require_consistent_weights": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "PlayerAssociationV1"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "PlayerCovariationContractV1": {
+        "info": {
+          "bases": [
+            "RootModel[CovariationResultUnion]"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "PlayerCovariationRequestV1": {
+        "info": {
+          "bases": [
+            "_CovariationModel"
+          ],
+          "methods": {
+            "require_distinct_variables": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "PlayerCovariationRequestV1"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "PlayerCovariationResultV1": {
+        "info": {
+          "bases": [
+            "_CovariationModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "PlayerCovariationScanRequestV1": {
+        "info": {
+          "bases": [
+            "_CovariationModel"
+          ],
+          "methods": {
+            "require_unique_columns": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "PlayerCovariationScanRequestV1"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "PlayerCovariationScanResultV1": {
+        "info": {
+          "bases": [
+            "_CovariationModel"
+          ],
+          "methods": {
+            "require_consistent_counts": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "PlayerCovariationScanResultV1"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "PlayerIdentityV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {
+            "require_explicit_evidence": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "PlayerIdentityV2"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "PooledAssociationV1": {
+        "info": {
+          "bases": [
+            "_StrictModel"
+          ],
+          "methods": {
+            "require_method_consistent_outputs": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "PooledAssociationV1"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "PooledMethod": {
+        "type": "variable"
+      },
+      "PredictiveModelResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ProfileDetection": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "RegressionEstimate": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ResidualDiagnostics": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "SELECTED_PAIR_METHOD_DESCRIPTION": {
+        "type": "variable"
+      },
+      "STROKES_GAINED_CONTRACT_VERSION": {
+        "type": "variable"
+      },
+      "SessionAggregateV1": {
+        "info": {
+          "bases": [
+            "_StrictModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "SessionIdentityV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {
+            "require_complete_evidence": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "SessionIdentityV2"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "SourceFileReferenceV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "StrokesGainedAnalysisResultV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "StrokesGainedRequestV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {
+            "require_unique_summary_dimensions": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "StrokesGainedRequestV1"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "StrokesGainedRowV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "StrokesGainedUncertaintyV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "TemporalTrendResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "TransformRecordV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "TreatmentConfig": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "TreatmentResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "UncertaintyV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "VIFResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "VendorProvenanceV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "VerifiedDataset": {
+        "type": "reexport"
+      },
+      "adapt_v2_to_v1": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "LaunchMonitorAnalysisResultV2",
+              "default": null,
+              "kind": "arg",
+              "name": "result"
+            }
+          ],
+          "returns": "dict[str, Any]"
+        },
+        "type": "function"
+      },
+      "analysis_lineage_v2": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "AnalysisContextV2",
+              "default": null,
+              "kind": "arg",
+              "name": "context"
+            },
+            {
+              "annotation": "tuple[str, ...]",
+              "default": null,
+              "kind": "arg",
+              "name": "selected_columns"
+            }
+          ],
+          "returns": "AnalysisLineageV2"
+        },
+        "type": "function"
+      },
+      "analyze_dispersion": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "str",
+              "default": "'carry_distance'",
+              "kind": "kwonlyarg",
+              "name": "forward"
+            },
+            {
+              "annotation": "str",
+              "default": "'lateral_carry'",
+              "kind": "kwonlyarg",
+              "name": "lateral"
+            }
+          ],
+          "returns": "DispersionResult"
+        },
+        "type": "function"
+      },
+      "analyze_longitudinal_sessions": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "LongitudinalSessionRequestV1",
+              "default": null,
+              "kind": "arg",
+              "name": "request"
+            },
+            {
+              "annotation": "AnalysisContextV2",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "context"
+            }
+          ],
+          "returns": "LongitudinalSessionResultV1"
+        },
+        "type": "function"
+      },
+      "analyze_outcome_proxy": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "OutcomeProxyRequestV1",
+              "default": null,
+              "kind": "arg",
+              "name": "request"
+            }
+          ],
+          "returns": "OutcomeProxyResultV1"
+        },
+        "type": "function"
+      },
+      "analyze_player_covariation_v1": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "PlayerCovariationRequestV1",
+              "default": null,
+              "kind": "arg",
+              "name": "request"
+            },
+            {
+              "annotation": "AnalysisContextV2 | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "context"
+            }
+          ],
+          "returns": "PlayerCovariationResultV1"
+        },
+        "type": "function"
+      },
+      "analyze_source_backed_strokes_gained": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "ExpectedStrokesBaselineLike",
+              "default": null,
+              "kind": "arg",
+              "name": "baseline"
+            },
+            {
+              "annotation": "StrokesGainedRequestV1",
+              "default": null,
+              "kind": "arg",
+              "name": "request"
+            },
+            {
+              "annotation": "AnalysisContextV2 | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "context"
+            }
+          ],
+          "returns": "StrokesGainedAnalysisResultV1"
+        },
+        "type": "function"
+      },
+      "analyze_trend": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "metric"
+            },
+            {
+              "annotation": "str",
+              "default": "'captured_at'",
+              "kind": "kwonlyarg",
+              "name": "time_column"
+            },
+            {
+              "annotation": "int",
+              "default": "10",
+              "kind": "kwonlyarg",
+              "name": "rolling_window"
+            },
+            {
+              "annotation": "int | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "ewma_span"
+            }
+          ],
+          "returns": "TemporalTrendResult"
+        },
+        "type": "function"
+      },
+      "analyze_variables": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "FlexibleAnalysisRequest",
+              "default": null,
+              "kind": "arg",
+              "name": "request"
+            }
+          ],
+          "returns": "FlexibleAnalysisResult"
+        },
+        "type": "function"
+      },
+      "analyze_variables_v2": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "FlexibleAnalysisRequest",
+              "default": null,
+              "kind": "arg",
+              "name": "request"
+            },
+            {
+              "annotation": "AnalysisContextV2 | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "context"
+            },
+            {
+              "annotation": "tuple[ModelProvenanceV2, ...]",
+              "default": "()",
+              "kind": "kwonlyarg",
+              "name": "model_provenance"
+            }
+          ],
+          "returns": "LaunchMonitorAnalysisResultV2"
+        },
+        "type": "function"
+      },
+      "apply_treatment": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "TreatmentConfig",
+              "default": null,
+              "kind": "arg",
+              "name": "config"
+            }
+          ],
+          "returns": "TreatmentResult"
+        },
+        "type": "function"
+      },
+      "build_analysis_lineage_v2": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "AnalysisContextV2",
+              "default": null,
+              "kind": "arg",
+              "name": "context"
+            },
+            {
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "dataset_fingerprint_sha256"
+            }
+          ],
+          "returns": "AnalysisLineageV2"
+        },
+        "type": "function"
+      },
+      "clustered_pooled_association": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "cells"
+            },
+            {
+              "annotation": "LongitudinalSessionRequestV1",
+              "default": null,
+              "kind": "arg",
+              "name": "request"
+            }
+          ],
+          "returns": "tuple[PooledAssociationV1 | None, str | None, tuple[str, ...]]"
+        },
+        "type": "function"
+      },
+      "compare_monitors": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "metric"
+            },
+            {
+              "annotation": "str",
+              "default": "'monitor_vendor'",
+              "kind": "kwonlyarg",
+              "name": "monitor_column"
+            },
+            {
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "match_column"
+            },
+            {
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "reference_monitor"
+            }
+          ],
+          "returns": "MonitorComparisonResult"
+        },
+        "type": "function"
+      },
+      "compute_correlations": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "tuple[str, ...] | list[str]",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "metrics"
+            },
+            {
+              "annotation": "str",
+              "default": "'pearson'",
+              "kind": "kwonlyarg",
+              "name": "method"
+            },
+            {
+              "annotation": "tuple[str, ...] | list[str]",
+              "default": "()",
+              "kind": "kwonlyarg",
+              "name": "controls"
+            },
+            {
+              "annotation": "float",
+              "default": "0.3",
+              "kind": "kwonlyarg",
+              "name": "edge_threshold"
+            },
+            {
+              "annotation": "float",
+              "default": "0.05",
+              "kind": "kwonlyarg",
+              "name": "alpha"
+            }
+          ],
+          "returns": "CorrelationResult"
+        },
+        "type": "function"
+      },
+      "compute_pca": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "tuple[str, ...] | list[str]",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "metrics"
+            }
+          ],
+          "returns": "PCAResult"
+        },
+        "type": "function"
+      },
+      "compute_vif": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "tuple[str, ...] | list[str]",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "metrics"
+            }
+          ],
+          "returns": "VIFResult"
+        },
+        "type": "function"
+      },
+      "contract_v2_json_schema": {
+        "signature": {
+          "args": [],
+          "returns": "dict[str, Any]"
+        },
+        "type": "function"
+      },
+      "corpus_dataset_path": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str | Path | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "root"
+            }
+          ],
+          "returns": "Path"
+        },
+        "type": "function"
+      },
+      "covariation_backing_frame": {
+        "type": "reexport"
+      },
+      "dataset_content_sha256": {
+        "type": "reexport"
+      },
+      "dataset_job_contract_json_schema": {
+        "type": "reexport"
+      },
+      "dersimonian_laird_pooled_association": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "cells"
+            },
+            {
+              "annotation": "tuple[LongitudinalPlayerAssociationV1, ...]",
+              "default": null,
+              "kind": "arg",
+              "name": "associations"
+            },
+            {
+              "annotation": "LongitudinalSessionRequestV1",
+              "default": null,
+              "kind": "arg",
+              "name": "request"
+            }
+          ],
+          "returns": "tuple[PooledAssociationV1 | None, str | None, tuple[str, ...]]"
+        },
+        "type": "function"
+      },
+      "detect_profile": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "list[str]",
+              "default": null,
+              "kind": "arg",
+              "name": "headers"
+            }
+          ],
+          "returns": "ProfileDetection"
+        },
+        "type": "function"
+      },
+      "execute_dataset_operation": {
+        "type": "reexport"
+      },
+      "fit_predictive_model": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "target"
+            },
+            {
+              "annotation": "tuple[str, ...] | list[str]",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "features"
+            },
+            {
+              "annotation": "str",
+              "default": "'ridge'",
+              "kind": "kwonlyarg",
+              "name": "model"
+            },
+            {
+              "annotation": "int",
+              "default": "42",
+              "kind": "kwonlyarg",
+              "name": "random_seed"
+            },
+            {
+              "annotation": "float",
+              "default": "0.25",
+              "kind": "kwonlyarg",
+              "name": "test_fraction"
+            },
+            {
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "group_column"
+            }
+          ],
+          "returns": "PredictiveModelResult"
+        },
+        "type": "function"
+      },
+      "import_session": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str | Path",
+              "default": null,
+              "kind": "arg",
+              "name": "source"
+            },
+            {
+              "annotation": "ImportOptions | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "options"
+            }
+          ],
+          "returns": "ImportedSession"
+        },
+        "type": "function"
+      },
+      "launch_monitor_conformance_bundle_json_schema": {
+        "signature": {
+          "args": [],
+          "returns": "dict[str, Any]"
+        },
+        "type": "function"
+      },
+      "launch_monitor_conformance_bundle_sha256": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "LaunchMonitorConformanceBundleV1 | dict[str, Any]",
+              "default": null,
+              "kind": "arg",
+              "name": "bundle"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "launch_monitor_conformance_scenario_sha256": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "LaunchMonitorConformanceScenarioV1 | dict[str, Any]",
+              "default": null,
+              "kind": "arg",
+              "name": "scenario"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "load_private_corpus": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str | Path | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "root"
+            },
+            {
+              "annotation": "list[str] | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "sources"
+            },
+            {
+              "annotation": "list[str] | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "metrics"
+            }
+          ],
+          "returns": "pd.DataFrame"
+        },
+        "type": "function"
+      },
+      "load_private_corpus_with_provenance": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str | Path | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "root"
+            },
+            {
+              "annotation": "list[str] | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "sources"
+            },
+            {
+              "annotation": "list[str] | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "metrics"
+            }
+          ],
+          "returns": "CanonicalPrivateCorpus"
+        },
+        "type": "function"
+      },
+      "longitudinal_session_contract_json_schema": {
+        "signature": {
+          "args": [],
+          "returns": "dict[str, Any]"
+        },
+        "type": "function"
+      },
+      "metric_units_v2": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "metric"
+            },
+            {
+              "annotation": "AnalysisContextV2",
+              "default": null,
+              "kind": "arg",
+              "name": "context"
+            }
+          ],
+          "returns": "MetricUnitsV2"
+        },
+        "type": "function"
+      },
+      "normalize_header": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "numeric_metric_columns": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            }
+          ],
+          "returns": "list[str]"
+        },
+        "type": "function"
+      },
+      "player_association_frame": {
+        "type": "reexport"
+      },
+      "player_associations": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "cells"
+            },
+            {
+              "annotation": "LongitudinalSessionRequestV1",
+              "default": null,
+              "kind": "arg",
+              "name": "request"
+            }
+          ],
+          "returns": "tuple[LongitudinalPlayerAssociationV1, ...]"
+        },
+        "type": "function"
+      },
+      "player_covariation_contract_json_schema": {
+        "signature": {
+          "args": [],
+          "returns": "dict[str, object]"
+        },
+        "type": "function"
+      },
+      "read_corpus_manifest": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Path",
+              "default": null,
+              "kind": "arg",
+              "name": "dataset_dir"
+            }
+          ],
+          "returns": "CorpusManifest"
+        },
+        "type": "function"
+      },
+      "resolve_private_corpus_path": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str | Path | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "root"
+            }
+          ],
+          "returns": "Path"
+        },
+        "type": "function"
+      },
+      "scan_player_covariation_v1": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "PlayerCovariationScanRequestV1",
+              "default": null,
+              "kind": "arg",
+              "name": "request"
+            },
+            {
+              "annotation": "AnalysisContextV2 | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "context"
+            }
+          ],
+          "returns": "PlayerCovariationScanResultV1"
+        },
+        "type": "function"
+      },
+      "strokes_gained_contract_json_schema": {
+        "signature": {
+          "args": [],
+          "returns": "dict[str, object]"
+        },
+        "type": "function"
+      },
+      "validate_corpus_manifest": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "CorpusManifest",
+              "default": null,
+              "kind": "arg",
+              "name": "manifest"
+            },
+            {
+              "annotation": "int",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "observed_rows"
+            },
+            {
+              "annotation": "set[str]",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "observed_sources"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      },
+      "vendor_provenance_v2": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "tuple[str, ...]",
+              "default": null,
+              "kind": "arg",
+              "name": "selected"
+            }
+          ],
+          "returns": "tuple[VendorProvenanceV2, ...]"
+        },
+        "type": "function"
+      },
+      "verify_dataset_reference": {
+        "type": "reexport"
+      }
+    }
+  },
+  "_scoring_statistics.py": {
+    "__all__": [
+      "estimate_summary",
+      "group_summaries",
+      "longitudinal_summaries"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "estimate_summary": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "list[float]",
+              "default": null,
+              "kind": "arg",
+              "name": "values"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "confidence_level"
+            }
+          ],
+          "returns": "EstimateSummaryV1"
+        },
+        "type": "function"
+      },
+      "group_summaries": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "tuple[StrokesGainedRowV1, ...]",
+              "default": null,
+              "kind": "arg",
+              "name": "rows"
+            },
+            {
+              "annotation": "tuple[GroupingDimensionV1, ...]",
+              "default": null,
+              "kind": "arg",
+              "name": "specs"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "confidence_level"
+            }
+          ],
+          "returns": "tuple[GroupSummaryV1, ...]"
+        },
+        "type": "function"
+      },
+      "longitudinal_summaries": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "tuple[StrokesGainedRowV1, ...]",
+              "default": null,
+              "kind": "arg",
+              "name": "rows"
+            },
+            {
+              "annotation": "LongitudinalDimensionV1 | None",
+              "default": null,
+              "kind": "arg",
+              "name": "spec"
+            }
+          ],
+          "returns": "tuple[LongitudinalSummaryV1, ...]"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "comparison.py": {
+    "__all__": [
+      "MonitorComparisonResult",
+      "MonitorSummary",
+      "PairwiseMonitorComparison",
+      "compare_monitors"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "MonitorComparisonResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "MonitorSummary": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "PairwiseMonitorComparison": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "compare_monitors": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "metric"
+            },
+            {
+              "annotation": "str",
+              "default": "'monitor_vendor'",
+              "kind": "kwonlyarg",
+              "name": "monitor_column"
+            },
+            {
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "match_column"
+            },
+            {
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "reference_monitor"
+            }
+          ],
+          "returns": "MonitorComparisonResult"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "conformance_bundle.py": {
+    "__all__": [
+      "LAUNCH_MONITOR_CONFORMANCE_BUNDLE_VERSION",
+      "LaunchMonitorConformanceBundleV1",
+      "LaunchMonitorConformanceScenarioV1",
+      "launch_monitor_conformance_bundle_json_schema",
+      "launch_monitor_conformance_bundle_sha256",
+      "launch_monitor_conformance_scenario_sha256"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "LAUNCH_MONITOR_CONFORMANCE_BUNDLE_VERSION": {
+        "type": "variable"
+      },
+      "LaunchMonitorConformanceBundleV1": {
+        "info": {
+          "bases": [
+            "_StrictModel"
+          ],
+          "methods": {
+            "validate_bundle": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "LaunchMonitorConformanceBundleV1"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "LaunchMonitorConformanceScenarioV1": {
+        "info": {
+          "bases": [
+            "_StrictModel"
+          ],
+          "methods": {
+            "require_nonnegative_exclusions": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "dict[str, int]",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "value"
+                }
+              ],
+              "returns": "dict[str, int]"
+            },
+            "validate_case": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "LaunchMonitorConformanceScenarioV1"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "launch_monitor_conformance_bundle_json_schema": {
+        "signature": {
+          "args": [],
+          "returns": "dict[str, Any]"
+        },
+        "type": "function"
+      },
+      "launch_monitor_conformance_bundle_sha256": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "LaunchMonitorConformanceBundleV1 | dict[str, Any]",
+              "default": null,
+              "kind": "arg",
+              "name": "bundle"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "launch_monitor_conformance_scenario_sha256": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "LaunchMonitorConformanceScenarioV1 | dict[str, Any]",
+              "default": null,
+              "kind": "arg",
+              "name": "scenario"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "contract_v2.py": {
+    "__all__": [
+      "CONTRACT_VERSION_V2",
+      "AnalysisContextV2",
+      "AnalysisLineageV2",
+      "AvailabilityV2",
+      "BackingRecordV2",
+      "ClaimsV2",
+      "DatasetAuthorityV2",
+      "LaunchMonitorAnalysisResultV2",
+      "MetricUnitsV2",
+      "ModelProvenanceV2",
+      "OrderEvidenceV2",
+      "PlayerIdentityV2",
+      "SessionIdentityV2",
+      "SourceFileReferenceV2",
+      "TransformRecordV2",
+      "UncertaintyV2",
+      "VendorProvenanceV2",
+      "adapt_v2_to_v1",
+      "analysis_lineage_v2",
+      "analyze_variables_v2",
+      "build_analysis_lineage_v2",
+      "contract_v2_json_schema",
+      "metric_units_v2",
+      "vendor_provenance_v2"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "AnalysisContextV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {
+            "validate_source_links": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "AnalysisContextV2"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "AnalysisLineageV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "AvailabilityV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "BackingRecordV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {
+            "require_link_or_reason": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "BackingRecordV2"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "CONTRACT_VERSION_V2": {
+        "type": "variable"
+      },
+      "ClaimsV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "DatasetAuthorityV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "LaunchMonitorAnalysisResultV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "MetricUnitsV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ModelProvenanceV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "OrderEvidenceV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {
+            "require_complete_evidence": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "OrderEvidenceV2"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "PlayerIdentityV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {
+            "require_explicit_evidence": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "PlayerIdentityV2"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "SessionIdentityV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {
+            "require_complete_evidence": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "SessionIdentityV2"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "SourceFileReferenceV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "TransformRecordV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "UncertaintyV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "VendorProvenanceV2": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "adapt_v2_to_v1": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "LaunchMonitorAnalysisResultV2",
+              "default": null,
+              "kind": "arg",
+              "name": "result"
+            }
+          ],
+          "returns": "dict[str, Any]"
+        },
+        "type": "function"
+      },
+      "analysis_lineage_v2": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "AnalysisContextV2",
+              "default": null,
+              "kind": "arg",
+              "name": "context"
+            },
+            {
+              "annotation": "tuple[str, ...]",
+              "default": null,
+              "kind": "arg",
+              "name": "selected_columns"
+            }
+          ],
+          "returns": "AnalysisLineageV2"
+        },
+        "type": "function"
+      },
+      "analyze_variables_v2": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "FlexibleAnalysisRequest",
+              "default": null,
+              "kind": "arg",
+              "name": "request"
+            },
+            {
+              "annotation": "AnalysisContextV2 | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "context"
+            },
+            {
+              "annotation": "tuple[ModelProvenanceV2, ...]",
+              "default": "()",
+              "kind": "kwonlyarg",
+              "name": "model_provenance"
+            }
+          ],
+          "returns": "LaunchMonitorAnalysisResultV2"
+        },
+        "type": "function"
+      },
+      "build_analysis_lineage_v2": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "AnalysisContextV2",
+              "default": null,
+              "kind": "arg",
+              "name": "context"
+            },
+            {
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "dataset_fingerprint_sha256"
+            }
+          ],
+          "returns": "AnalysisLineageV2"
+        },
+        "type": "function"
+      },
+      "contract_v2_json_schema": {
+        "signature": {
+          "args": [],
+          "returns": "dict[str, Any]"
+        },
+        "type": "function"
+      },
+      "metric_units_v2": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "metric"
+            },
+            {
+              "annotation": "AnalysisContextV2",
+              "default": null,
+              "kind": "arg",
+              "name": "context"
+            }
+          ],
+          "returns": "MetricUnitsV2"
+        },
+        "type": "function"
+      },
+      "vendor_provenance_v2": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "tuple[str, ...]",
+              "default": null,
+              "kind": "arg",
+              "name": "selected"
+            }
+          ],
+          "returns": "tuple[VendorProvenanceV2, ...]"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "corpus.py": {
+    "__all__": [
+      "CORPUS_COLUMN_MAP",
+      "CORPUS_RELATIVE_PATH",
+      "MANIFEST_FILENAME",
+      "MAX_RETAINED_ROWS",
+      "OPTIONAL_IDENTITY_COLUMNS",
+      "PRIVATE_DATA_ENV",
+      "SUPPORTED_MANIFEST_SCHEMA_VERSION",
+      "CanonicalPrivateCorpus",
+      "CorpusManifest",
+      "corpus_dataset_path",
+      "load_private_corpus",
+      "load_private_corpus_with_provenance",
+      "read_corpus_manifest",
+      "resolve_private_corpus_path",
+      "validate_corpus_manifest"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "CORPUS_COLUMN_MAP": {
+        "type": "variable"
+      },
+      "CORPUS_RELATIVE_PATH": {
+        "type": "variable"
+      },
+      "CanonicalPrivateCorpus": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "source_name": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "str"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "CorpusManifest": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "source_count": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "int"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "MANIFEST_FILENAME": {
+        "type": "variable"
+      },
+      "MAX_RETAINED_ROWS": {
+        "type": "variable"
+      },
+      "OPTIONAL_IDENTITY_COLUMNS": {
+        "type": "variable"
+      },
+      "PRIVATE_DATA_ENV": {
+        "type": "variable"
+      },
+      "SUPPORTED_MANIFEST_SCHEMA_VERSION": {
+        "type": "variable"
+      },
+      "corpus_dataset_path": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str | Path | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "root"
+            }
+          ],
+          "returns": "Path"
+        },
+        "type": "function"
+      },
+      "load_private_corpus": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str | Path | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "root"
+            },
+            {
+              "annotation": "list[str] | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "sources"
+            },
+            {
+              "annotation": "list[str] | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "metrics"
+            }
+          ],
+          "returns": "pd.DataFrame"
+        },
+        "type": "function"
+      },
+      "load_private_corpus_with_provenance": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str | Path | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "root"
+            },
+            {
+              "annotation": "list[str] | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "sources"
+            },
+            {
+              "annotation": "list[str] | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "metrics"
+            }
+          ],
+          "returns": "CanonicalPrivateCorpus"
+        },
+        "type": "function"
+      },
+      "read_corpus_manifest": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Path",
+              "default": null,
+              "kind": "arg",
+              "name": "dataset_dir"
+            }
+          ],
+          "returns": "CorpusManifest"
+        },
+        "type": "function"
+      },
+      "resolve_private_corpus_path": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str | Path | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "root"
+            }
+          ],
+          "returns": "Path"
+        },
+        "type": "function"
+      },
+      "validate_corpus_manifest": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "CorpusManifest",
+              "default": null,
+              "kind": "arg",
+              "name": "manifest"
+            },
+            {
+              "annotation": "int",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "observed_rows"
+            },
+            {
+              "annotation": "set[str]",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "observed_sources"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "dataset_reference.py": {
+    "__all__": [
+      "DATASET_JOB_CONTRACT_VERSION",
+      "MAX_PAGE_SIZE",
+      "DatasetJobRequestV1",
+      "DatasetOperationV1",
+      "DatasetReferenceV1",
+      "DatasetUnavailableError",
+      "DatasetUnavailableStateV1",
+      "VerifiedDataset",
+      "dataset_content_sha256",
+      "dataset_job_contract_json_schema",
+      "execute_dataset_operation",
+      "verify_dataset_reference"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "DATASET_JOB_CONTRACT_VERSION": {
+        "type": "reexport"
+      },
+      "DatasetJobRequestV1": {
+        "type": "reexport"
+      },
+      "DatasetOperationV1": {
+        "type": "reexport"
+      },
+      "DatasetReferenceV1": {
+        "type": "reexport"
+      },
+      "DatasetUnavailableError": {
+        "type": "reexport"
+      },
+      "DatasetUnavailableStateV1": {
+        "type": "reexport"
+      },
+      "MAX_PAGE_SIZE": {
+        "type": "reexport"
+      },
+      "VerifiedDataset": {
+        "type": "reexport"
+      },
+      "dataset_content_sha256": {
+        "type": "reexport"
+      },
+      "dataset_job_contract_json_schema": {
+        "type": "reexport"
+      },
+      "execute_dataset_operation": {
+        "type": "reexport"
+      },
+      "verify_dataset_reference": {
+        "type": "reexport"
+      }
+    }
+  },
+  "dataset_reference_contract.py": {
+    "__all__": [
+      "DATASET_JOB_CONTRACT_VERSION",
+      "MAX_PAGE_SIZE",
+      "MAX_RESULT_ITEMS",
+      "DatasetJobRequestV1",
+      "DatasetOperationV1",
+      "DatasetReferenceV1",
+      "DatasetUnavailableError",
+      "DatasetUnavailableStateV1",
+      "UnavailableCode",
+      "dataset_job_contract_json_schema",
+      "unavailable"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "DATASET_JOB_CONTRACT_VERSION": {
+        "type": "variable"
+      },
+      "DatasetJobRequestV1": {
+        "info": {
+          "bases": [
+            "BaseModel"
+          ],
+          "methods": {
+            "validate_nested_reference": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "DatasetJobRequestV1"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "DatasetOperationV1": {
+        "info": {
+          "bases": [
+            "BaseModel"
+          ],
+          "methods": {
+            "validate_operation": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "DatasetOperationV1"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "DatasetReferenceV1": {
+        "info": {
+          "bases": [
+            "BaseModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "DatasetUnavailableError": {
+        "info": {
+          "bases": [
+            "RuntimeError"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "DatasetUnavailableStateV1",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "state"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "DatasetUnavailableStateV1": {
+        "info": {
+          "bases": [
+            "BaseModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "MAX_PAGE_SIZE": {
+        "type": "variable"
+      },
+      "MAX_RESULT_ITEMS": {
+        "type": "variable"
+      },
+      "UnavailableCode": {
+        "type": "variable"
+      },
+      "dataset_job_contract_json_schema": {
+        "signature": {
+          "args": [],
+          "returns": "dict[str, object]"
+        },
+        "type": "function"
+      },
+      "unavailable": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "UnavailableCode",
+              "default": null,
+              "kind": "arg",
+              "name": "code"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "message"
+            },
+            {
+              "annotation": "bool",
+              "default": "False",
+              "kind": "kwonlyarg",
+              "name": "retryable"
+            }
+          ],
+          "returns": "DatasetUnavailableError"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "dataset_reference_operations.py": {
+    "__all__": [
+      "execute_dataset_operation"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "execute_dataset_operation": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "VerifiedDataset",
+              "default": null,
+              "kind": "arg",
+              "name": "dataset"
+            },
+            {
+              "annotation": "DatasetOperationV1",
+              "default": null,
+              "kind": "arg",
+              "name": "operation"
+            }
+          ],
+          "returns": "list[dict[str, Any]]"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "dataset_reference_verification.py": {
+    "__all__": [
+      "ACQUISITION_MANIFEST_RELATIVE_PATH",
+      "SOURCE_SUMMARY_RELATIVE_PATH",
+      "VerifiedDataset",
+      "dataset_content_sha256",
+      "normalize_repository",
+      "open_parquet_dataset",
+      "parse_json_bytes",
+      "safe_fixed_child",
+      "sha256_file",
+      "verify_dataset_reference"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "ACQUISITION_MANIFEST_RELATIVE_PATH": {
+        "type": "variable"
+      },
+      "SOURCE_SUMMARY_RELATIVE_PATH": {
+        "type": "variable"
+      },
+      "VerifiedDataset": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "Path",
+                  "default": null,
+                  "kind": "kwonlyarg",
+                  "name": "root"
+                },
+                {
+                  "annotation": "Path",
+                  "default": null,
+                  "kind": "kwonlyarg",
+                  "name": "dataset_path"
+                },
+                {
+                  "annotation": "DatasetReferenceV1",
+                  "default": null,
+                  "kind": "kwonlyarg",
+                  "name": "reference"
+                },
+                {
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "kwonlyarg",
+                  "name": "qualification"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "dataset_content_sha256": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Path",
+              "default": null,
+              "kind": "arg",
+              "name": "dataset_path"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "normalize_repository": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "remote_url"
+            }
+          ],
+          "returns": "str | None"
+        },
+        "type": "function"
+      },
+      "open_parquet_dataset": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Path",
+              "default": null,
+              "kind": "arg",
+              "name": "dataset_path"
+            }
+          ],
+          "returns": "Any"
+        },
+        "type": "function"
+      },
+      "parse_json_bytes": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "bytes",
+              "default": null,
+              "kind": "arg",
+              "name": "payload"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "label"
+            }
+          ],
+          "returns": "Mapping[str, Any]"
+        },
+        "type": "function"
+      },
+      "safe_fixed_child": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Path",
+              "default": null,
+              "kind": "arg",
+              "name": "root"
+            },
+            {
+              "annotation": "Path",
+              "default": null,
+              "kind": "arg",
+              "name": "relative"
+            }
+          ],
+          "returns": "Path"
+        },
+        "type": "function"
+      },
+      "sha256_file": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Path",
+              "default": null,
+              "kind": "arg",
+              "name": "path"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "verify_dataset_reference": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Path",
+              "default": null,
+              "kind": "arg",
+              "name": "root"
+            },
+            {
+              "annotation": "DatasetReferenceV1",
+              "default": null,
+              "kind": "arg",
+              "name": "reference"
+            }
+          ],
+          "returns": "VerifiedDataset"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "dispersion.py": {
+    "__all__": [
+      "DispersionResult",
+      "analyze_dispersion"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "DispersionResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "analyze_dispersion": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "str",
+              "default": "'carry_distance'",
+              "kind": "kwonlyarg",
+              "name": "forward"
+            },
+            {
+              "annotation": "str",
+              "default": "'lateral_carry'",
+              "kind": "kwonlyarg",
+              "name": "lateral"
+            }
+          ],
+          "returns": "DispersionResult"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "flexible_analysis.py": {
+    "__all__": [
+      "CONTRACT_VERSION",
+      "AnalysisMode",
+      "CoefficientEstimate",
+      "CorrelationEstimate",
+      "CorrelationMethod",
+      "DatasetSummary",
+      "FlexibleAnalysisRequest",
+      "FlexibleAnalysisResult",
+      "GroupAnalysis",
+      "MissingPolicy",
+      "RegressionEstimate",
+      "ResidualDiagnostics",
+      "analyze_variables"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "AnalysisMode": {
+        "type": "variable"
+      },
+      "CONTRACT_VERSION": {
+        "type": "variable"
+      },
+      "CoefficientEstimate": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "CorrelationEstimate": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "CorrelationMethod": {
+        "type": "variable"
+      },
+      "DatasetSummary": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "FlexibleAnalysisRequest": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "FlexibleAnalysisResult": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "to_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "GroupAnalysis": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "MissingPolicy": {
+        "type": "variable"
+      },
+      "RegressionEstimate": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ResidualDiagnostics": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "analyze_variables": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "FlexibleAnalysisRequest",
+              "default": null,
+              "kind": "arg",
+              "name": "request"
+            }
+          ],
+          "returns": "FlexibleAnalysisResult"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "importer.py": {
+    "__all__": [
+      "import_session"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "import_session": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str | Path",
+              "default": null,
+              "kind": "arg",
+              "name": "source"
+            },
+            {
+              "annotation": "ImportOptions | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "options"
+            }
+          ],
+          "returns": "ImportedSession"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "longitudinal.py": {
+    "__all__": [
+      "analyze_longitudinal_sessions",
+      "longitudinal_session_contract_json_schema"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "analyze_longitudinal_sessions": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "LongitudinalSessionRequestV1",
+              "default": null,
+              "kind": "arg",
+              "name": "request"
+            },
+            {
+              "annotation": "AnalysisContextV2",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "context"
+            }
+          ],
+          "returns": "LongitudinalSessionResultV1"
+        },
+        "type": "function"
+      },
+      "longitudinal_session_contract_json_schema": {
+        "signature": {
+          "args": [],
+          "returns": "dict[str, Any]"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "longitudinal_statistics.py": {
+    "__all__": [
+      "clustered_pooled_association",
+      "dersimonian_laird_pooled_association",
+      "player_associations"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "clustered_pooled_association": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "cells"
+            },
+            {
+              "annotation": "LongitudinalSessionRequestV1",
+              "default": null,
+              "kind": "arg",
+              "name": "request"
+            }
+          ],
+          "returns": "tuple[PooledAssociationV1 | None, str | None, tuple[str, ...]]"
+        },
+        "type": "function"
+      },
+      "dersimonian_laird_pooled_association": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "cells"
+            },
+            {
+              "annotation": "tuple[LongitudinalPlayerAssociationV1, ...]",
+              "default": null,
+              "kind": "arg",
+              "name": "associations"
+            },
+            {
+              "annotation": "LongitudinalSessionRequestV1",
+              "default": null,
+              "kind": "arg",
+              "name": "request"
+            }
+          ],
+          "returns": "tuple[PooledAssociationV1 | None, str | None, tuple[str, ...]]"
+        },
+        "type": "function"
+      },
+      "player_associations": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "cells"
+            },
+            {
+              "annotation": "LongitudinalSessionRequestV1",
+              "default": null,
+              "kind": "arg",
+              "name": "request"
+            }
+          ],
+          "returns": "tuple[LongitudinalPlayerAssociationV1, ...]"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "longitudinal_types.py": {
+    "__all__": [
+      "LONGITUDINAL_SESSION_CONTRACT_VERSION",
+      "POOLED_METHOD_DESCRIPTIONS",
+      "LongitudinalClaimsV1",
+      "LongitudinalDesignV1",
+      "LongitudinalMissingnessV1",
+      "LongitudinalSessionRequestV1",
+      "LongitudinalSessionResultV1",
+      "LongitudinalPlayerAssociationV1",
+      "PooledAssociationV1",
+      "PooledMethod",
+      "SessionAggregateV1"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "LONGITUDINAL_SESSION_CONTRACT_VERSION": {
+        "type": "variable"
+      },
+      "LongitudinalClaimsV1": {
+        "info": {
+          "bases": [
+            "_StrictModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "LongitudinalDesignV1": {
+        "info": {
+          "bases": [
+            "_StrictModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "LongitudinalMissingnessV1": {
+        "info": {
+          "bases": [
+            "_StrictModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "LongitudinalPlayerAssociationV1": {
+        "info": {
+          "bases": [
+            "_StrictModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "LongitudinalSessionRequestV1": {
+        "info": {
+          "bases": [
+            "_StrictModel"
+          ],
+          "methods": {
+            "validate_design_terms": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "LongitudinalSessionRequestV1"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "LongitudinalSessionResultV1": {
+        "info": {
+          "bases": [
+            "_StrictModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "POOLED_METHOD_DESCRIPTIONS": {
+        "type": "variable"
+      },
+      "PooledAssociationV1": {
+        "info": {
+          "bases": [
+            "_StrictModel"
+          ],
+          "methods": {
+            "require_method_consistent_outputs": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "PooledAssociationV1"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "PooledMethod": {
+        "type": "variable"
+      },
+      "SessionAggregateV1": {
+        "info": {
+          "bases": [
+            "_StrictModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      }
+    }
+  },
+  "modeling.py": {
+    "__all__": [
+      "PredictiveModelResult",
+      "fit_predictive_model"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "PredictiveModelResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "fit_predictive_model": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "target"
+            },
+            {
+              "annotation": "tuple[str, ...] | list[str]",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "features"
+            },
+            {
+              "annotation": "str",
+              "default": "'ridge'",
+              "kind": "kwonlyarg",
+              "name": "model"
+            },
+            {
+              "annotation": "int",
+              "default": "42",
+              "kind": "kwonlyarg",
+              "name": "random_seed"
+            },
+            {
+              "annotation": "float",
+              "default": "0.25",
+              "kind": "kwonlyarg",
+              "name": "test_fraction"
+            },
+            {
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "group_column"
+            }
+          ],
+          "returns": "PredictiveModelResult"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "multivariate.py": {
+    "__all__": [
+      "PCAResult",
+      "VIFResult",
+      "compute_pca",
+      "compute_vif"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "PCAResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "VIFResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "compute_pca": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "tuple[str, ...] | list[str]",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "metrics"
+            }
+          ],
+          "returns": "PCAResult"
+        },
+        "type": "function"
+      },
+      "compute_vif": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "tuple[str, ...] | list[str]",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "metrics"
+            }
+          ],
+          "returns": "VIFResult"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "outcome_proxy.py": {
+    "__all__": [
+      "analyze_outcome_proxy"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "analyze_outcome_proxy": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "OutcomeProxyRequestV1",
+              "default": null,
+              "kind": "arg",
+              "name": "request"
+            }
+          ],
+          "returns": "OutcomeProxyResultV1"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "player_covariation.py": {
+    "__all__": [
+      "SELECTED_PAIR_METHOD_DESCRIPTION",
+      "analyze_player_covariation_v1",
+      "covariation_backing_frame",
+      "player_association_frame",
+      "player_covariation_contract_json_schema",
+      "scan_player_covariation_v1"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "SELECTED_PAIR_METHOD_DESCRIPTION": {
+        "type": "variable"
+      },
+      "analyze_player_covariation_v1": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "PlayerCovariationRequestV1",
+              "default": null,
+              "kind": "arg",
+              "name": "request"
+            },
+            {
+              "annotation": "AnalysisContextV2 | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "context"
+            }
+          ],
+          "returns": "PlayerCovariationResultV1"
+        },
+        "type": "function"
+      },
+      "covariation_backing_frame": {
+        "type": "reexport"
+      },
+      "player_association_frame": {
+        "type": "reexport"
+      },
+      "player_covariation_contract_json_schema": {
+        "signature": {
+          "args": [],
+          "returns": "dict[str, object]"
+        },
+        "type": "function"
+      },
+      "scan_player_covariation_v1": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "PlayerCovariationScanRequestV1",
+              "default": null,
+              "kind": "arg",
+              "name": "request"
+            },
+            {
+              "annotation": "AnalysisContextV2 | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "context"
+            }
+          ],
+          "returns": "PlayerCovariationScanResultV1"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "player_covariation_core.py": {
+    "__all__": [
+      "BACKING_FRAME_COLUMNS",
+      "PLAYER_ASSOCIATION_FRAME_COLUMNS",
+      "PairStatistics",
+      "compute_pair_statistics",
+      "covariation_backing_frame",
+      "player_association_frame"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "BACKING_FRAME_COLUMNS": {
+        "type": "variable"
+      },
+      "PLAYER_ASSOCIATION_FRAME_COLUMNS": {
+        "type": "variable"
+      },
+      "PairStatistics": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "compute_pair_statistics": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "PlayerCovariationRequestV1",
+              "default": null,
+              "kind": "arg",
+              "name": "request"
+            }
+          ],
+          "returns": "PairStatistics"
+        },
+        "type": "function"
+      },
+      "covariation_backing_frame": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "PlayerCovariationRequestV1",
+              "default": null,
+              "kind": "arg",
+              "name": "request"
+            }
+          ],
+          "returns": "pd.DataFrame"
+        },
+        "type": "function"
+      },
+      "player_association_frame": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "tuple[PlayerAssociationV1, ...]",
+              "default": null,
+              "kind": "arg",
+              "name": "per_player"
+            }
+          ],
+          "returns": "pd.DataFrame"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "player_covariation_types.py": {
+    "__all__": [
+      "BETWEEN_PLAYER_INTERVAL_MIN_GROUPS",
+      "MIN_FISHER_SAMPLES",
+      "PLAYER_COVARIATION_CONTRACT_VERSION",
+      "AssociationEstimateV1",
+      "CovariationMissingnessV1",
+      "CovariationPairRankV1",
+      "CovariationUncertaintyV1",
+      "IntervalWithheldReason",
+      "MetaAnalysisSummaryV1",
+      "PlayerAssociationV1",
+      "PlayerCovariationContractV1",
+      "PlayerCovariationRequestV1",
+      "PlayerCovariationResultV1",
+      "PlayerCovariationScanRequestV1",
+      "PlayerCovariationScanResultV1"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "AssociationEstimateV1": {
+        "info": {
+          "bases": [
+            "_CovariationModel"
+          ],
+          "methods": {
+            "require_consistent_state": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "AssociationEstimateV1"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "BETWEEN_PLAYER_INTERVAL_MIN_GROUPS": {
+        "type": "variable"
+      },
+      "CovariationMissingnessV1": {
+        "info": {
+          "bases": [
+            "_CovariationModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "CovariationPairRankV1": {
+        "info": {
+          "bases": [
+            "_CovariationModel"
+          ],
+          "methods": {
+            "require_consistent_state": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "CovariationPairRankV1"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "CovariationUncertaintyV1": {
+        "info": {
+          "bases": [
+            "_CovariationModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "IntervalWithheldReason": {
+        "type": "variable"
+      },
+      "MIN_FISHER_SAMPLES": {
+        "type": "variable"
+      },
+      "MetaAnalysisSummaryV1": {
+        "info": {
+          "bases": [
+            "_CovariationModel"
+          ],
+          "methods": {
+            "require_consistent_state": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "MetaAnalysisSummaryV1"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "PLAYER_COVARIATION_CONTRACT_VERSION": {
+        "type": "variable"
+      },
+      "PlayerAssociationV1": {
+        "info": {
+          "bases": [
+            "_CovariationModel"
+          ],
+          "methods": {
+            "require_consistent_weights": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "PlayerAssociationV1"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "PlayerCovariationContractV1": {
+        "info": {
+          "bases": [
+            "RootModel[CovariationResultUnion]"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "PlayerCovariationRequestV1": {
+        "info": {
+          "bases": [
+            "_CovariationModel"
+          ],
+          "methods": {
+            "require_distinct_variables": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "PlayerCovariationRequestV1"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "PlayerCovariationResultV1": {
+        "info": {
+          "bases": [
+            "_CovariationModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "PlayerCovariationScanRequestV1": {
+        "info": {
+          "bases": [
+            "_CovariationModel"
+          ],
+          "methods": {
+            "require_unique_columns": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "PlayerCovariationScanRequestV1"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "PlayerCovariationScanResultV1": {
+        "info": {
+          "bases": [
+            "_CovariationModel"
+          ],
+          "methods": {
+            "require_consistent_counts": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "PlayerCovariationScanResultV1"
+            }
+          }
+        },
+        "type": "class"
+      }
+    }
+  },
+  "profiles.py": {
+    "__all__": [
+      "COMMON_ALIASES",
+      "PROFILES",
+      "ImportProfile",
+      "ProfileDetection",
+      "detect_profile",
+      "normalize_header"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "COMMON_ALIASES": {
+        "type": "variable"
+      },
+      "ImportProfile": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "mappings_for": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "list[str]",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "headers"
+                }
+              ],
+              "returns": "tuple[ColumnMapping, ...]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "PROFILES": {
+        "type": "variable"
+      },
+      "ProfileDetection": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "detect_profile": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "list[str]",
+              "default": null,
+              "kind": "arg",
+              "name": "headers"
+            }
+          ],
+          "returns": "ProfileDetection"
+        },
+        "type": "function"
+      },
+      "normalize_header": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "relationships.py": {
+    "__all__": [
+      "CorrelationResult",
+      "DependencyEdge",
+      "compute_correlations"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "CorrelationResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "DependencyEdge": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "compute_correlations": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "tuple[str, ...] | list[str]",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "metrics"
+            },
+            {
+              "annotation": "str",
+              "default": "'pearson'",
+              "kind": "kwonlyarg",
+              "name": "method"
+            },
+            {
+              "annotation": "tuple[str, ...] | list[str]",
+              "default": "()",
+              "kind": "kwonlyarg",
+              "name": "controls"
+            },
+            {
+              "annotation": "float",
+              "default": "0.3",
+              "kind": "kwonlyarg",
+              "name": "edge_threshold"
+            },
+            {
+              "annotation": "float",
+              "default": "0.05",
+              "kind": "kwonlyarg",
+              "name": "alpha"
+            }
+          ],
+          "returns": "CorrelationResult"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "schema.py": {
+    "__all__": [
+      "IDENTITY_COLUMNS",
+      "METRICS",
+      "ColumnMapping",
+      "ImportManifest",
+      "ImportOptions",
+      "ImportedSession",
+      "MetricDefinition",
+      "numeric_metric_columns"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "ColumnMapping": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "IDENTITY_COLUMNS": {
+        "type": "variable"
+      },
+      "ImportManifest": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ImportOptions": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ImportedSession": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "METRICS": {
+        "type": "variable"
+      },
+      "MetricDefinition": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "numeric_metric_columns": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            }
+          ],
+          "returns": "list[str]"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "strokes_gained.py": {
+    "__all__": [
+      "YARDS_PER_METRE",
+      "analyze_source_backed_strokes_gained",
+      "strokes_gained_contract_json_schema"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "YARDS_PER_METRE": {
+        "type": "variable"
+      },
+      "analyze_source_backed_strokes_gained": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "ExpectedStrokesBaselineLike",
+              "default": null,
+              "kind": "arg",
+              "name": "baseline"
+            },
+            {
+              "annotation": "StrokesGainedRequestV1",
+              "default": null,
+              "kind": "arg",
+              "name": "request"
+            },
+            {
+              "annotation": "AnalysisContextV2 | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "context"
+            }
+          ],
+          "returns": "StrokesGainedAnalysisResultV1"
+        },
+        "type": "function"
+      },
+      "strokes_gained_contract_json_schema": {
+        "signature": {
+          "args": [],
+          "returns": "dict[str, object]"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "strokes_gained_types.py": {
+    "__all__": [
+      "BASELINE_CONTRACT_VERSION",
+      "OUTCOME_PROXY_CONTRACT_VERSION",
+      "STROKES_GAINED_CONTRACT_VERSION",
+      "AvailabilityV1",
+      "BaselineProvenanceV1",
+      "ConfidenceIntervalV1",
+      "CourseStateColumnsV1",
+      "CourseStateValueV1",
+      "EstimateSummaryV1",
+      "ExcludedRowV1",
+      "ExclusionSummaryV1",
+      "ExpectedStrokesBaselineLike",
+      "ExpectedStrokesStateLike",
+      "GroupingDimensionV1",
+      "GroupSummaryV1",
+      "InterpolationV1",
+      "LongitudinalDimensionV1",
+      "LongitudinalMethod",
+      "LongitudinalSummaryV1",
+      "OutcomeProxyRequestV1",
+      "OutcomeProxyResultV1",
+      "OutcomeProxyRowV1",
+      "StrokesGainedAnalysisResultV1",
+      "StrokesGainedRequestV1",
+      "StrokesGainedRowV1",
+      "StrokesGainedUncertaintyV1"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "AvailabilityV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "BASELINE_CONTRACT_VERSION": {
+        "type": "variable"
+      },
+      "BaselineProvenanceV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ConfidenceIntervalV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "CourseStateColumnsV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "CourseStateValueV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "EstimateSummaryV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ExcludedRowV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ExclusionSummaryV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ExpectedStrokesBaselineLike": {
+        "info": {
+          "bases": [
+            "Protocol"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ExpectedStrokesStateLike": {
+        "info": {
+          "bases": [
+            "Protocol"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "GroupSummaryV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "GroupingDimensionV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {
+            "strip_group_text": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "value"
+                }
+              ],
+              "returns": "str"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "InterpolationV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "LongitudinalDimensionV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {
+            "require_complete_group_mapping": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "LongitudinalDimensionV1"
+            },
+            "strip_longitudinal_text": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "value"
+                }
+              ],
+              "returns": "str"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "LongitudinalMethod": {
+        "type": "variable"
+      },
+      "LongitudinalSummaryV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "OUTCOME_PROXY_CONTRACT_VERSION": {
+        "type": "variable"
+      },
+      "OutcomeProxyRequestV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "OutcomeProxyResultV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "OutcomeProxyRowV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "STROKES_GAINED_CONTRACT_VERSION": {
+        "type": "variable"
+      },
+      "StrokesGainedAnalysisResultV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "StrokesGainedRequestV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {
+            "require_unique_summary_dimensions": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "StrokesGainedRequestV1"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "StrokesGainedRowV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "StrokesGainedUncertaintyV1": {
+        "info": {
+          "bases": [
+            "_ContractModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      }
+    }
+  },
+  "treatment.py": {
+    "__all__": [
+      "FilterRule",
+      "TreatmentConfig",
+      "TreatmentResult",
+      "apply_treatment"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "FilterRule": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "TreatmentConfig": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "TreatmentResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "apply_treatment": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "TreatmentConfig",
+              "default": null,
+              "kind": "arg",
+              "name": "config"
+            }
+          ],
+          "returns": "TreatmentResult"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "trends.py": {
+    "__all__": [
+      "ChangeCandidate",
+      "TemporalTrendResult",
+      "analyze_trend"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "ChangeCandidate": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "TemporalTrendResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "analyze_trend": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "pd.DataFrame",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "metric"
+            },
+            {
+              "annotation": "str",
+              "default": "'captured_at'",
+              "kind": "kwonlyarg",
+              "name": "time_column"
+            },
+            {
+              "annotation": "int",
+              "default": "10",
+              "kind": "kwonlyarg",
+              "name": "rolling_window"
+            },
+            {
+              "annotation": "int | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "ewma_span"
+            }
+          ],
+          "returns": "TemporalTrendResult"
+        },
+        "type": "function"
+      }
+    }
+  }
+}

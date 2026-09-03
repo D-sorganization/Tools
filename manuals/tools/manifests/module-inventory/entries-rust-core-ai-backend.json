@@ -1,0 +1,880 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7792,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "853fe280e5f8b2c03cb6c88085dde884a89635785a5e8cb6ecc501af042a4530",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-AI-BACKEND-SRC-BIN-CLI-RS-B1DE2186F68B",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/ai_backend/src/bin/cli.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://localhost:11434/v1"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "N",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9785,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "012ed318dd8d2702fd501181a045c237c5a19df4c9563aa35aadab34f4adbb46",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-AI-BACKEND-SRC-CONFIG-RS-7F82EFE5C539",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/ai_backend/src/config.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "mapped",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://localhost:11434/v1",
+          "http://localhost:11434/v1/chat/completions",
+          "http://localhost:11434/v1/embeddings",
+          "https://api.openai.com/v1",
+          "https://api.openai.com/v1/",
+          "https://api.openai.com/v1/chat/completions",
+          "https://api.openai.com/v1/embeddings",
+          "https://full.example/chat",
+          "https://other.example/v2/chat"
+        ],
+        "equation_refs": [],
+        "public_routes": [
+          "/v1/chat/completions",
+          "/v1/embeddings",
+          "chat/completions",
+          "https://other.example/v2/chat"
+        ],
+        "public_surfaces": [
+          {
+            "kind": "const",
+            "name": "DEFAULT_CHAT_PATH",
+            "signature": null
+          },
+          {
+            "kind": "const",
+            "name": "DEFAULT_EMBED_MODEL",
+            "signature": null
+          },
+          {
+            "kind": "const",
+            "name": "DEFAULT_EMBED_PATH",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "chat_url",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "embed_url",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "new",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "try_new",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "validate",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "AIConfig",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "Chaotic_Pendulum/tests/test_physics.py",
+          "rust_core/ai_backend/tests/embeddings_http_integration.rs",
+          "rust_core/ai_backend/tests/llm_http_integration.rs",
+          "rust_core/tools-core/tests/flight_ground_transfer.rs",
+          "src/data_processing/data_processor/python/data_processor/tests/test_split_config.py",
+          "src/data_processing/data_processor/python/tests/test_advanced_analysis.py",
+          "src/data_processing/data_processor/python/tests/test_augmentation_types.py",
+          "src/data_processing/data_processor/python/tests/test_config_manager.py",
+          "src/data_processing/data_processor/python/tests/test_feature_types.py",
+          "src/data_processing/data_processor/python/tests/test_outlier_detection.py",
+          "src/data_processing/data_processor/python/tests/test_plot_config_manager.py",
+          "src/data_processing/data_processor/python/tests/test_plot_zoom.py",
+          "src/data_processing/data_processor/python/tests/test_processing_config.py",
+          "src/data_processing/data_processor/python/tests/test_regression_types.py",
+          "src/data_processing/data_processor/python/tests/test_signal_list_manager.py",
+          "src/data_processing/data_processor/python/tests/test_signal_processing_core.py",
+          "src/data_processing/data_processor/python/tests/test_statistical_analysis.py",
+          "src/data_processing/data_processor/python/tests/test_wavelet_denoising.py",
+          "src/movement_optimizer/tests/test_chain_forces.py",
+          "src/movement_optimizer/tests/test_gait_sts.py",
+          "src/movement_optimizer/tests/test_issue_217_decompose.py",
+          "src/movement_optimizer/tests/test_joint_limits.py",
+          "src/movement_optimizer/tests/test_motion_tabs.py",
+          "src/movement_optimizer/tests/test_rust_parity.py",
+          "src/movement_optimizer/tests/test_swingset_chain_models.py",
+          "src/movement_optimizer/tests/test_swingset_forces.py",
+          "src/movement_optimizer/tests/test_trajectory_optimization.py",
+          "src/optimizer_gui/tests/test_swing_chain_models.py",
+          "src/p1am_control_system/backend/tests/_power_supply_helpers.py",
+          "src/p1am_control_system/backend/tests/test_alarm_ack_engine.py",
+          "src/p1am_control_system/backend/tests/test_backend_p1am_safety.py",
+          "src/p1am_control_system/backend/tests/test_estop_endpoint_writes.py",
+          "src/p1am_control_system/backend/tests/test_estop_reconnect.py",
+          "src/p1am_control_system/backend/tests/test_interlock_defaults_contract.py",
+          "src/p1am_control_system/backend/tests/test_modbus_client.py",
+          "src/p1am_control_system/backend/tests/test_modbus_codec.py",
+          "src/p1am_control_system/backend/tests/test_passthrough.py",
+          "src/p1am_control_system/backend/tests/test_pid_tuning_tag_guards.py",
+          "src/p1am_control_system/backend/tests/test_poll_data_quality.py",
+          "src/p1am_control_system/backend/tests/test_poll_once.py",
+          "src/p1am_control_system/backend/tests/test_power_supply.py",
+          "src/p1am_control_system/backend/tests/test_power_supply_integration.py",
+          "src/p1am_control_system/backend/tests/test_power_supply_persistence.py",
+          "src/p1am_control_system/backend/tests/test_power_supply_sensor_units.py",
+          "src/p1am_control_system/backend/tests/test_read_auth.py",
+          "src/p1am_control_system/backend/tests/test_system_state.py",
+          "src/p1am_control_system/backend/tests/test_temperature_controller.py",
+          "src/p1am_control_system/backend/tests/test_temperature_integration.py",
+          "src/p1am_control_system/backend/tests/test_temperature_models.py",
+          "src/p1am_control_system/backend/tests/test_temperature_persistence.py",
+          "src/p1am_control_system/backend/tests/test_validation_guards_3745.py",
+          "src/pendulum_simulator/pendulum-web/tests/forceSourceProfiles.test.ts",
+          "src/pendulum_simulator/pendulum-web/tests/forceSourceStudy.test.ts",
+          "src/pendulum_simulator/tests/test_downswing_optimizer.py",
+          "src/pendulum_simulator/tests/test_hub_options.py",
+          "src/pendulum_simulator/tests/test_jacobians.py",
+          "src/pendulum_simulator/tests/test_jacobians_golfer.py",
+          "src/pendulum_simulator/tests/test_model_registry.py",
+          "src/pendulum_simulator/tests/test_model_registry_gaps.py",
+          "src/pendulum_simulator/tests/test_perturbation_analysis.py",
+          "src/pendulum_simulator/tests/test_perturbation_panel.py",
+          "src/pendulum_simulator/tests/test_swing_comparison_dialog.py",
+          "src/project_packer/tests/test_folder_packer_gui.py",
+          "src/python/tests/test_folder_packer_pro.py",
+          "src/shared/python/ai/tests/test_rag_context_provider.py",
+          "src/shared/python/chat/tests/test_chat_ws_error_handling.py",
+          "src/shared/python/humanoid_character_builder/tests/test_api.py",
+          "src/shared/python/humanoid_character_builder/tests/test_urdf_generator.py",
+          "src/shared/python/model_generation/tests/test_library.py",
+          "src/shared/python/model_generation/tests/test_simscape.py",
+          "src/shared/python/sidekick/tests/calculators/electrical/test_electrical_model.py",
+          "src/shared/python/sidekick/tests/calculators/test_electrical_config.py",
+          "src/shared/python/sidekick/tests/calculators/test_electrical_model.py",
+          "src/shared/python/swing_sim/flight/tests/test_capability_flight_evaluator.py",
+          "src/shared/python/swing_sim/tests/test_prescribed_run.py",
+          "src/shared/python/swing_sim/variation/tests/noise_response_test_support.py",
+          "src/shared/python/swing_sim/variation/tests/test_noise_response_falsification.py",
+          "src/shared/python/swing_sim/variation/tests/test_noise_response_field.py",
+          "src/urdf_builder_gui/tests/test_urdf_builder_gui.py",
+          "tests/architecture/test_design_manual_governance_contract.py",
+          "tests/architecture/test_shared_import_aliases_3316.py",
+          "tests/architecture/test_tools_module_inventory_contract.py",
+          "tests/benchmarks/conftest.py",
+          "tests/conftest.py",
+          "tests/data_processing/data_processor/test_core_modules_smoke.py",
+          "tests/data_processing/data_processor/test_neural_network.py",
+          "tests/data_processing/data_processor/test_uncertainty_quantification_contracts.py",
+          "tests/document_processing/test_pdf_renamer_config_security.py",
+          "tests/e2e/conftest.py",
+          "tests/e2e/test_workflows.py",
+          "tests/folder_packer_pro/test_file_ops.py",
+          "tests/folder_packer_pro/test_pack_engine.py",
+          "tests/folder_tool/test_folders_tool_r0.py",
+          "tests/integration/obsidian/test_vault_client.py",
+          "tests/integration/sidekick/test_sidekick_host_integration.py",
+          "tests/ops/test_ci_test_shards.py",
+          "tests/ops/test_full_suite_nightly_workflow.py",
+          "tests/p1am_control_system/firmware/test_dcs.cpp",
+          "tests/p1am_control_system/test_cors_config.py",
+          "tests/p1am_control_system/test_desktop_hmi_annunciation.py",
+          "tests/programmatic_pid/test_spec_loader.py",
+          "tests/rate_of_closure/test_complete_trial_standalone_wheel.py",
+          "tests/rate_of_closure/test_derivation_models.py",
+          "tests/rate_of_closure/test_durable_ensemble_authority_registry.py",
+          "tests/rate_of_closure/test_durable_ensemble_authority_service.py",
+          "tests/rate_of_closure/test_ground_study_scalar_adapter.py",
+          "tests/rate_of_closure/test_impact_outcomes.py",
+          "tests/rate_of_closure/test_localized_torque_variation.py",
+          "tests/rate_of_closure/test_manual_delivery.py",
+          "tests/rate_of_closure/test_manual_delivery_gui.py",
+          "tests/rate_of_closure/test_morris_authority_contracts.py",
+          "tests/rate_of_closure/test_morris_pyqt_workflow.py",
+          "tests/rate_of_closure/test_morris_rate_adapter.py",
+          "tests/rate_of_closure/test_morris_ui_contract.py",
+          "tests/rate_of_closure/test_paired_attribution_adapter.py",
+          "tests/rate_of_closure/test_rate_launch_pyqt_authority.py",
+          "tests/rate_of_closure/test_simulation_gui.py",
+          "tests/rate_of_closure/test_solver_gui.py",
+          "tests/rate_of_closure/test_variation_complete_trial_record.py",
+          "tests/rate_of_closure/test_variation_durable_ensemble_chunks.py",
+          "tests/rate_of_closure/test_variation_ensemble_chunks.py",
+          "tests/rate_of_closure/test_variation_simulation_adapter.py",
+          "tests/rate_of_closure/test_variation_simulation_request.py",
+          "tests/rate_of_closure/test_variation_streaming_ensemble_geometry.py",
+          "tests/rate_of_closure/test_variation_visual_state.py",
+          "tests/rotation_converter/test_modern_robotics.py",
+          "tests/scripts/test_module_inventory_merge_driver.py",
+          "tests/scripts/test_release_changelog.py",
+          "tests/scripts/test_start_gaai_daemon.py",
+          "tests/shared/python/ai/integrations/test_credential_isolation.py",
+          "tests/shared/python/ai/test_rust_adapter_extended.py",
+          "tests/shared/python/chat/test_cli_provider_dropdown.py",
+          "tests/shared/python/config/test_environment.py",
+          "tests/shared/python/file_watcher/test_file_watcher.py",
+          "tests/shared/python/gui_launcher/test_launcher_factories.py",
+          "tests/shared/python/gui_launcher/test_registry.py",
+          "tests/shared/python/launch_monitor/test_dataset_reference_jobs.py",
+          "tests/shared/python/launch_monitor/test_treatment.py",
+          "tests/shared/python/plotting/test_identity_export.py",
+          "tests/shared/python/theme/test_zoom.py",
+          "tests/shared/python/utils/test_launcher_factory.py",
+          "tests/test_anthropometry_parity.py",
+          "tests/test_config_loader.py",
+          "tests/test_dry_compliance.py",
+          "tests/test_env_utils.py",
+          "tests/test_folder_packer_pro.py",
+          "tests/test_gh1655_print_to_logging.py",
+          "tests/test_gh1732_logging_consistency.py",
+          "tests/test_launcher_factory.py",
+          "tests/test_pendulum_discovery.py",
+          "tests/test_validation.py",
+          "tests/test_wave4_launcher.py",
+          "tests/test_wave_solver_security.py",
+          "tests/tools/test_config_loader.py",
+          "tests/tools/test_matlab_quality_utils.py",
+          "tests/unit/ai/integrations/conftest.py",
+          "tests/unit/ai/integrations/github_mcp/test_server_config.py",
+          "tests/unit/ai/mcp/test_claude_desktop_import.py",
+          "tests/unit/ai/mcp/test_pool.py",
+          "tests/unit/ai/mcp/test_presets.py",
+          "tests/unit/ai/mcp/widgets/test_mcp_servers_prefs_widget.py",
+          "tests/unit/ai/test_peer_review.py",
+          "tests/unit/sidekick/test_runtime_tab_settings.py",
+          "tests/unit/sidekick/test_standalone_runtime.py",
+          "tests/unit/test_check_coverage_policy.py",
+          "tests/video_analyzer/test_video_analyzer_packaging.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": [
+          "src/p1am_control_system/backend/tests/test_interlock_defaults_contract.py",
+          "src/p1am_control_system/backend/tests/test_validation_guards_3745.py",
+          "tests/architecture/test_design_manual_governance_contract.py",
+          "tests/architecture/test_tools_module_inventory_contract.py",
+          "tests/data_processing/data_processor/test_uncertainty_quantification_contracts.py",
+          "tests/rate_of_closure/test_morris_authority_contracts.py",
+          "tests/rate_of_closure/test_morris_ui_contract.py",
+          "tests/test_validation.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4311,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e5268d4a2c6b708bff08790c5a3d5a0da0d666d6f31af1a18c5d00cc37a6f6e0",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-AI-BACKEND-SRC-EMBEDDINGS-RS-E669CF5CD6D5",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/ai_backend/src/embeddings.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://local"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "fn",
+            "name": "embed_batch",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "embed_one",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "rust_core/ai_backend/tests/embeddings_http_integration.rs"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1175,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1091c17e6e1c2a11e5614db16188ed95f0548bfd2eb7ac26a35dfddf00912f91",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-AI-BACKEND-SRC-LIB-RS-297595DAE0A8",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/ai_backend/src/lib.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10386,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "dc71b38b634795a2a579bf7e2d80f8cb4b7efd76fcd5b0d86d4f4f1cdae89776",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-AI-BACKEND-SRC-LLM-RS-18E6C6922BD5",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/ai_backend/src/llm.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://local"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "fn",
+            "name": "generate_response",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "new",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "stream_response",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "try_generate_response",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "try_new",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "try_stream_response",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "AIEngine",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "bar",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11677,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "eb2ddf5e6ae9aec321fe607e22490774add4562f8a7c1f995c9cd6af628c130e",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-AI-BACKEND-SRC-LOCAL-EMBED-RS-539EE6C53626",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/ai_backend/src/local_embed.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/onnx/model.onnx",
+          "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/tokenizer.json"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "const",
+            "name": "DEFAULT_EMBEDDING_DIM",
+            "signature": null
+          },
+          {
+            "kind": "const",
+            "name": "DEFAULT_MODEL_ID",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "dim",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "embed",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "embed_batch",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "from_default_cache",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "from_paths",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "resolve_cache_dir",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "sha256_of_file",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "LocalEmbedder",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "ms",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 17329,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ec8841bedab5701212ad0a43b145aa8faf090750ef9a4ce36763ecd2dbebf5bb",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-AI-BACKEND-SRC-MEMORY-RS-A61CE488BDD3",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/ai_backend/src/memory.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "fn",
+            "name": "count",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "initialize",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "new",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "search",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "store_embedding",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "try_count",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "try_initialize",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "try_new",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "try_search",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "try_store_embedding",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "MemoryManager",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "benchmarks/test_data_processor_baseline.py",
+          "rust_core/ai_backend/tests/embeddings_http_integration.rs",
+          "rust_core/ai_backend/tests/llm_http_integration.rs",
+          "src/p1am_control_system/backend/tests/test_backend.py",
+          "src/p1am_control_system/backend/tests/test_backend_p1am_safety.py",
+          "src/p1am_control_system/backend/tests/test_data_explorer_router.py",
+          "src/p1am_control_system/backend/tests/test_tag_force_nonfinite.py",
+          "tests/p1am_control_system/test_backend_security.py",
+          "tests/rate_of_closure/test_club_view_camera.py",
+          "tests/rate_of_closure/test_variation_geometry_properties.py",
+          "tests/shared/python/ai/test_rust_adapter_extended.py",
+          "tests/shared/python/chat/test_ai_memory_manager.py",
+          "tests/shared/python/sidekick/lab/mocap/test_session_serialization.py",
+          "tests/test_debug_utils.py",
+          "tests/test_health_checks.py",
+          "tests/unit/ai/mcp/test_claude_desktop_import.py",
+          "tests/unit/ai/mcp/test_config_loader_presets.py",
+          "tests/unit/ai/mcp/test_presets.py",
+          "tests/unit/codemap/test_codemap_db.py",
+          "tests/unit/codemap/test_codemap_indexer.py",
+          "tests/unit/sidekick/test_popped_chat_redock.py",
+          "tests/unit/sidekick/test_standalone_runtime.py",
+          "tests/unit/test_epic_2661_children_verification.py"
+        ],
+        "unit_mentions": [
+          "ms",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 20508,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "677ea4f3c3c73e9e81887cdee09fde01474dab9043f58952f4bc170bcb7bc35d",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-AI-BACKEND-SRC-RAG-RS-B264A506DD3F",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/ai_backend/src/rag.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://localhost:1"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "const",
+            "name": "DEFAULT_CHUNK_LINES",
+            "signature": null
+          },
+          {
+            "kind": "const",
+            "name": "DEFAULT_CHUNK_OVERLAP",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "chunk_text",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "index_codebase",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "index_codebase_impl",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "index_with_embedder",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "new",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "retrieve_context",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "retrieve_context_impl",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "uses_local_embeddings",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "validate_index_path",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "HttpEmbedder",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "RagPipeline",
+            "signature": null
+          },
+          {
+            "kind": "trait",
+            "name": "Embedder",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "rust_core/ai_backend",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

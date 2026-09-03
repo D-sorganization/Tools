@@ -1,0 +1,752 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1419,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "bb9598a0a25631ddcfe49dd9f2c1e62d5c3bda19a18b7bf94925e82dc07a8650",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GUI-LAUNCHER-INIT-PY-63F6545A651D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/gui_launcher/__init__.py",
+      "purpose": "Shared GUI Launcher Infrastructure.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "GUILauncher",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GUIRegistry",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GUIType",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LaunchConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "auto_discover_guis",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "generate_launch_script",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_registry",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "launch_from_gui_info",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "launch_pyqt6_app",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "launch_tool_by_name",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "launch_web_app",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "launch_web_from_gui_info",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "load_manifest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "make_pyqt6_launcher",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "register_gui",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8926,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a7dd00146aea2af45d8f858f3c5fe4db05ac877ade6314918bc5ac80cea6bccf",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GUI-LAUNCHER-SIDEBAR-INTEGRATION-HELPERS-PY-ECE78F86D39E",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/gui_launcher/_sidebar_integration_helpers.py",
+      "purpose": "Internal helpers and reflection utilities for Tools Sidebar host integration.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_FILE_OPEN_METHOD_CANDIDATES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_FILE_OPEN_SIGNAL_CANDIDATES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SIDEBAR_CLASS_CANDIDATES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SIDEBAR_MODULE_CANDIDATES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "add_dock_widget",
+            "signature": "main_window: Any, dock: Any"
+          },
+          {
+            "kind": "function",
+            "name": "build_status_handler",
+            "signature": "main_window: Any"
+          },
+          {
+            "kind": "function",
+            "name": "call_shared_installer",
+            "signature": "installer: Callable[..., Any], *, main_window: Any, project_root: Path | None, context_provider: Callable[[], Any] | None"
+          },
+          {
+            "kind": "function",
+            "name": "call_sidebar_factory",
+            "signature": "factory: Callable[..., Any], *, main_window: Any, project_root: Path | None, context_provider: Callable[[], Any] | None"
+          },
+          {
+            "kind": "function",
+            "name": "callable_accepts_path",
+            "signature": "method: Callable[..., Any]"
+          },
+          {
+            "kind": "function",
+            "name": "connect_file_open_request",
+            "signature": "sidebar: Any, main_window: Any"
+          },
+          {
+            "kind": "function",
+            "name": "create_sidebar_from_module",
+            "signature": "module: Any, *, main_window: Any, project_root: Path | None, context_provider: Callable[[], Any] | None"
+          },
+          {
+            "kind": "function",
+            "name": "ensure_dock_widget",
+            "signature": "sidebar: Any, main_window: Any"
+          },
+          {
+            "kind": "function",
+            "name": "find_file_open_handler",
+            "signature": "main_window: Any"
+          },
+          {
+            "kind": "function",
+            "name": "find_signal",
+            "signature": "candidate: Any"
+          },
+          {
+            "kind": "function",
+            "name": "get_sidekick_tokens",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "import_sidebar_module",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "looks_like_dock_widget",
+            "signature": "widget: Any"
+          },
+          {
+            "kind": "function",
+            "name": "maybe_call",
+            "signature": "obj: Any, method_name: str"
+          },
+          {
+            "kind": "function",
+            "name": "right_dock_area",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "sidebar_factory_kwargs",
+            "signature": "*, main_window: Any, project_root: Path | None, context_provider: Callable[[], Any] | None"
+          },
+          {
+            "kind": "function",
+            "name": "status_sidebar",
+            "signature": "installed: Any"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13718,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f03e25db0fa3402a2ee1d3c806fcbed031913ed49a5b92af149b0e5df17490a3",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GUI-LAUNCHER-LAUNCHER-PY-BC358BC6020E",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/gui_launcher/launcher.py",
+      "purpose": "Core launcher implementation for GUI applications.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DependencyStatus",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GUILauncher",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GUIType",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LaunchConfig",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "check_node_dependencies",
+            "signature": "web_path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "check_python_dependencies",
+            "signature": "packages: list[str], spec_finder: Callable[[str], object]=find_spec"
+          },
+          {
+            "kind": "function",
+            "name": "launch_from_gui_info",
+            "signature": "gui_info: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "launch_pyqt6_app",
+            "signature": "config: LaunchConfig"
+          }
+        ],
+        "test_paths": [
+          "src/solar_system_model/solar_system/tests/test_launcher.py",
+          "tests/shared/python/gui_launcher/test_launcher_factories.py",
+          "tests/shared/python/gui_launcher/test_registry.py",
+          "tests/test_dry_compliance.py",
+          "tests/test_wave4_launcher.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2989,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c47986da41d24f1d80d14af110462256c45fac960ee0f413e5a3817f0d5cc4d9",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GUI-LAUNCHER-LAUNCHER-FACTORIES-PY-5FD225F7D5FC",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/gui_launcher/launcher_factories.py",
+      "purpose": "Factory and registry helpers for shared GUI launchers.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "create_launcher",
+            "signature": "tool_name: str, gui_type: Any, **kwargs: Any"
+          },
+          {
+            "kind": "function",
+            "name": "generate_launch_script",
+            "signature": "gui_info_module: str, tool_display_name: str"
+          },
+          {
+            "kind": "function",
+            "name": "launch_tool_by_name",
+            "signature": "tool_name: str"
+          },
+          {
+            "kind": "function",
+            "name": "make_launcher",
+            "signature": "gui_info_module: str"
+          },
+          {
+            "kind": "function",
+            "name": "make_pyqt6_launcher",
+            "signature": "gui_info_module: str"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/gui_launcher/test_launcher_factories.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6744,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "92f22f1a6eea4a831dd668e30ae79a7e8e187e7db9ec67d95bb4c297cc570537",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GUI-LAUNCHER-LAUNCHER-WEB-PY-4771EFF330F4",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/gui_launcher/launcher_web.py",
+      "purpose": "Web application launch helpers for shared GUI launchers.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://localhost:%s",
+          "http://localhost:{port",
+          "https://nodejs.org/"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_READINESS_POLL_INTERVAL_SECONDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_READINESS_TIMEOUT_SECONDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SHUTDOWN_GRACE_SECONDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SIGINT_EXIT_CODE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "launch_web_app",
+            "signature": "tool_name: str, web_dir: Path, port: int=5173, auto_open_browser: bool=True, npm_args: list[str] | None=None, env_vars: dict[str, str] | None=None, process_started: Callable[[subprocess.Popen], None] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "launch_web_from_gui_info",
+            "signature": "gui_info: dict[str, object], caller_file: str, *, env_vars: dict[str, str] | None=None"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2711,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2643e697bbe2cd2e36d9c13b82b8ba597c18dfafb2a40fd86007dab319dcb0b0",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GUI-LAUNCHER-MANIFEST-LOADER-PY-2BAEEF2A371B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/gui_launcher/manifest_loader.py",
+      "purpose": "Data-driven GUI registration loader for the Tools platform.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_DEFAULT_MANIFEST",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "load_manifest",
+            "signature": "path: Path | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/gui_launcher/test_manifest_loader.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 12098,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b4a5334dd069b82c8fd4c34fbf97a8577be80ae40f7e2de755f1596658b11dba",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GUI-LAUNCHER-REGISTRY-PY-C9BEAC2CD90B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/gui_launcher/registry.py",
+      "purpose": "GUI Registry for centralized tool registration and discovery.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GUIRegistration",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GUIRegistry",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "auto_discover_guis",
+            "signature": "search_paths: list[Path]"
+          },
+          {
+            "kind": "function",
+            "name": "get_registry",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "register_gui",
+            "signature": "tool_name: str, display_name: str, description: str, gui_configs: dict[GUIType, LaunchConfig], **kwargs: Any"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/conventions/tests/test_registry.py",
+          "src/shared/python/swing_sim/flight/tests/test_registry.py",
+          "tests/shared/python/gui_launcher/test_launcher_factories.py",
+          "tests/shared/python/gui_launcher/test_registry.py",
+          "tests/test_wave4_launcher.py",
+          "tests/unit/ai/peer_review/test_registry.py",
+          "tests/unit/ai/skills/test_registry.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10342,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c1539544c02ab74cb9ffc56ae99d31e5cfe50ea0c1a3d317762c06b94a75c379",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GUI-LAUNCHER-TOOLS-SIDEBAR-INTEGRATION-PY-2E0B9A6D0340",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/gui_launcher/tools_sidebar_integration.py",
+      "purpose": "Optional host integration for the shared Unified Tools Sidebar.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "NullToolsSidebar",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ToolsSidebarInstallStatus",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "install_tools_sidebar",
+            "signature": "main_window: Any, project_root: str | Path | None=None, context_provider: Callable[[], Any] | None=None, install_fallback: bool=True"
+          },
+          {
+            "kind": "function",
+            "name": "is_tools_sidebar_available",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/pyqt_visual_layout_persistence_probe.py",
+          "tests/rate_of_closure/test_sidekick_integration.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/shared/python/gui_launcher",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

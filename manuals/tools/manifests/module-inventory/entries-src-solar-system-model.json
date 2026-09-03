@@ -1,0 +1,3444 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 35,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a00e3488db1ae4a658a116aa82b3dda90b53c991b88a53f2aa993d17483863d0",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-INIT-PY-194B17107EF7",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/__init__.py",
+      "purpose": "Package: solar_system_model.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 438,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5f3153fd1f654334cc4b33100513af992b975c4e5d4273b4cca8d096f0f0d462",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-LAUNCH-SOLAR-SYSTEM-PY-C8DBCB1F779B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/launch_solar_system.py",
+      "purpose": "One-click launcher for the Solar System Simulation.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 377,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7e7dccf8bdde40e8b519c8a5347f684b2b928a3d39272594b8c5f5cacb4057a7",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-RUN-SOLAR-SYSTEM-PY-B9D0E9FBF4FE",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/run_solar_system.py",
+      "purpose": "Convenience script to run the Solar System Simulation.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_REPO_ROOT",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 996,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "858ee64166840a44e8492328bb00ba38fdeae307ee51839d26fcb8ed225f4a16",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-INIT-PY-DA0360A0F122",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/__init__.py",
+      "purpose": "Solar System Simulation",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "CelestialBody",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Moon",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "OrbitalMechanics",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Planet",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Star",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TrajectoryPlanner",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TransferType",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "constants",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 282,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "eab1388fbbbfbf3253421d18d5af3df2c6a9b9f52efcfbabd5c1f3be76bd6cc2",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-CORE-INIT-PY-560CC5A086B5",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/core/__init__.py",
+      "purpose": "Core module for solar system simulation.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "CelestialBody",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Moon",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Planet",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Star",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TimeManager",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "constants",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 25873,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4a95586c1dcefa590d31d214aa0cc5d836e5856a6268a90d8fa1f1267f55c22f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-CORE-CELESTIAL-BODY-PY-082521AC3C75",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/core/celestial_body.py",
+      "purpose": "Celestial Body Classes",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "BodyType",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CelestialBody",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Moon",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Planet",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Spacecraft",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Star",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StateVector",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "kg",
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13099,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5cf8f123ea9c658763df6d16afcb7bbe25c16548991364d8c0e0c7a9b99193a0",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-CORE-CONSTANTS-PY-66A68B205B44",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/core/constants.py",
+      "purpose": "Astronomical Constants and Planetary Data",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://ssd.jpl.nasa.gov/planets/approx_pos.html"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "OrbitalElements",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PhysicalProperties",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "AU",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "AU_KM",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DAYS_PER_YEAR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DISTANCE_SCALE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DWARF_PLANETS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "G",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GM",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GRID_COLOR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "INNER_PLANETS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "J2000",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "JULIAN_CENTURY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "JULIAN_YEAR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_PLANET_SIZE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MIN_PLANET_SIZE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ORBITAL_ELEMENTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ORBITAL_PERIODS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ORBIT_COLOR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ORBIT_TRAIL_OPACITY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ORBIT_TRAIL_POINTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "OUTER_PLANETS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PHYSICAL_PROPERTIES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PLANET_ORDER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SECONDS_PER_DAY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SIZE_SCALE_PLANETS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SIZE_SCALE_SUN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SUN_GM",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SUN_LUMINOSITY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SUN_MASS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SUN_RADIUS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SUN_TEMPERATURE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SUN_VISUAL_SIZE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TRAJECTORY_COLOR",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "W",
+          "bar",
+          "kg",
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 12205,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "96d46bda7a507c75458b00a68b119761da546954db39b30bdd19a33153fc5d5d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-CORE-TIME-MANAGER-PY-BDD13BCC315F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/core/time_manager.py",
+      "purpose": "Time Manager",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SimulationTime",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TimeManager",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TimeScale",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 52,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "96de16abcc955dee2a871afc85ad13cda01710a4386589a3ef5b9f291cfe7b84",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-DATA-INIT-PY-FF53BF3ADADF",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/data/__init__.py",
+      "purpose": "Data module for additional solar system data.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3581,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e3c4455fb2919a0309bb9b0b574c25c790c0f5b2d451dd2554090f5e410d0d2c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-DATA-ASTEROIDS-PY-33D1E6EDEDDF",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/data/asteroids.py",
+      "purpose": "Asteroid belt and minor body definitions.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AsteroidDescriptor",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAJOR_ASTEROIDS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "generate_belt_particles",
+            "signature": "count: int=720"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2419,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "063cd320246b330d21b90d23819a40ec3f946429d6f1cc0994c7978f38ef896e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-DATA-COMETS-PY-EF35B4F13404",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/data/comets.py",
+      "purpose": "Comet definitions for long-period and periodic visitors.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CometDescriptor",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "COMETS",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 16364,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "783623daf9ed849db3e8448064606e5b91cd8053b809916279341725f1d006fe",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-DATA-FAMOUS-MISSIONS-PY-6D1D5AF5C490",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/data/famous_missions.py",
+      "purpose": "Famous Space Mission Trajectories",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MissionProfile",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FAMOUS_MISSIONS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_apollo11_trajectory",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "get_cassini_trajectory",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "get_curiosity_trajectory",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "get_galileo_trajectory",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "get_mariner10_trajectory",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "get_mariner2_trajectory",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "get_new_horizons_trajectory",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "get_pioneer10_trajectory",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "get_voyager1_trajectory",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "get_voyager2_trajectory",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3259,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a172747bf7a6c1cca033976d6dc92d9fd9092299d572034506a88fad37f083ea",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-DATA-HISTORICAL-EVENTS-PY-F6D8DE6D2A3B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/data/historical_events.py",
+      "purpose": "Historical Space Exploration Events — Query API",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "get_events_by_category",
+            "signature": "category: str"
+          },
+          {
+            "kind": "function",
+            "name": "get_events_by_year",
+            "signature": "year: int"
+          },
+          {
+            "kind": "function",
+            "name": "get_events_for_date",
+            "signature": "dt: datetime, window_days: int=3"
+          },
+          {
+            "kind": "re-export",
+            "name": "SPACE_EVENTS",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3744,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b9bc6a434f0d9efa0a25fa0ee79a4b56a276356abc95a7d4e8bbeed5c90afe76",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-DATA-HISTORICAL-EVENTS-INIT-PY-54EC8C09DE6C",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/data/historical_events/__init__.py",
+      "purpose": "Historical Space Exploration Events",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "SPACE_EVENTS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_events_by_category",
+            "signature": "category: str"
+          },
+          {
+            "kind": "function",
+            "name": "get_events_by_year",
+            "signature": "year: int"
+          },
+          {
+            "kind": "function",
+            "name": "get_events_for_date",
+            "signature": "dt: datetime, window_days: int=3"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3439,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f8f0226b5cff4c06334e5a0d77c6aa905e3853903c2fa28726548b2eda7e0c6e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-DATA-HISTORICAL-EVENTS-ANCIENT-AND-EARLY-PY-64ACC74780DE",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/data/historical_events/ancient_and_early.py",
+      "purpose": "Ancient Astronomy and Early Space Age",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "ANCIENT_AND_EARLY_EVENTS",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5710,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9638c8916103b7924cf08e304512cd46285e94a088f098e68a44261d21b5801b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-DATA-HISTORICAL-EVENTS-CREWED-PROGRAMS-PY-F359168F3A36",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/data/historical_events/crewed_programs.py",
+      "purpose": "Crewed Spaceflight Programs",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "CREWED_PROGRAM_EVENTS",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3713,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e093546e35ee75e4efe5eeb2cbb98223fdb3ba044f57d8e3151fa19d50e7dcbb",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-DATA-HISTORICAL-EVENTS-INTERNATIONAL-MISSIONS-PY-6DA024E587A0",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/data/historical_events/international_missions.py",
+      "purpose": "International and Recent Missions",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "INTERNATIONAL_EVENTS",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7669,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c5de76cdc9bf9214830032999906bdd6f9296ab55a055042181ef6a60e81c7e7",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-DATA-HISTORICAL-EVENTS-MODERN-ERA-PY-80F7382B245A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/data/historical_events/modern_era.py",
+      "purpose": "Modern Era",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "MODERN_ERA_EVENTS",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3905,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "61f0b72c4fe3dda949b754a8c74bb20d686368eb0df32b10008269baef5e65fc",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-DATA-HISTORICAL-EVENTS-PLANETARY-MISSIONS-PY-47EA5A2BC1FF",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/data/historical_events/planetary_missions.py",
+      "purpose": "Planetary Missions",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "PLANETARY_MISSION_EVENTS",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6516,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6abc7c94af33a38770645df10e6cacbfa7f6cd8f0dd926e9324fe44e7d35e5cc",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-DATA-MOON-SYSTEMS-PY-4B09A73AEEA0",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/data/moon_systems.py",
+      "purpose": "Curated moon system data for gas giants and Earth.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MoonDescriptor",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MOONS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "moons_by_parent",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7731,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2c5acb99c448dea2aece9017bd6090226a015749ad899ce623b99f9aca3372a9",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-DATA-PLANET-INFO-PY-D5DC17DD650A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/data/planet_info.py",
+      "purpose": "Educational Information about Planets",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "ORBITAL_MECHANICS_GLOSSARY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PLANET_DESCRIPTIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TRANSFER_INFO",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 23555,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "520e3c1395b5f73fcd1a91e97c360124f2a711189f17b5f8da4273267146ff49",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-DATA-SPACE-EVENTS-DATA-PY-930A0FABA21A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/data/space_events_data.py",
+      "purpose": "Historical Space Events — Data Module",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "SPACE_EVENTS",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7083,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f913813d1e101b8a5b1abb5c178ffbf759ee0f052b44cd464df98a02d613fe5d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-DATA-STAR-CATALOG-PY-990B09AD3DA0",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/data/star_catalog.py",
+      "purpose": "Bright star catalog for accurate sky rendering.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "StarEntry",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "STAR_CATALOG",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "equatorial_to_cartesian",
+            "signature": "ra_hours: float, dec_degrees: float"
+          },
+          {
+            "kind": "function",
+            "name": "iter_catalog",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "star_count",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4164,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "260e3ccc353fd26985c5bde634c1a52297119e0ddf4466718deadd97d39c9bae",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-LAUNCHER-PY-306FEA008B01",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/launcher.py",
+      "purpose": "Quick-launch helpers for the Solar System Simulation.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DependencyStatus",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_HEIGHT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_WIDTH",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_launch_command",
+            "signature": "*, width: int=DEFAULT_WIDTH, height: int=DEFAULT_HEIGHT, fullscreen: bool=False, start_date: str | None=None, enable_antialiasing: bool=True"
+          },
+          {
+            "kind": "function",
+            "name": "check_dependencies",
+            "signature": "spec_finder: Callable[[str], object]=find_spec"
+          },
+          {
+            "kind": "function",
+            "name": "launch_quickstart",
+            "signature": "*, width: int=DEFAULT_WIDTH, height: int=DEFAULT_HEIGHT, fullscreen: bool=False, start_date: str | None=None, enable_antialiasing: bool=True"
+          }
+        ],
+        "test_paths": [
+          "src/solar_system_model/solar_system/tests/test_launcher.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6695,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ab937a841cd7f97dbb64df718d3de26ec4d0eae856b6a0d7cad9bd65c1c0f492",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-MAIN-PY-FF6C152747F1",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/main.py",
+      "purpose": "Solar System Simulation",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "parse_arguments",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N",
+          "W",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 269,
+      "classification": "calculation",
+      "classification_basis": "path-marker:physics",
+      "content_sha256_lf": "ba5f4dacc93f19d871a347b13395ac01bf8aa1120a691a44cdc43ea65f1cfdbc",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-PHYSICS-INIT-PY-C19D9D24DC1C",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/physics/__init__.py",
+      "purpose": "Physics module for orbital mechanics and trajectory calculations.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "OrbitalMechanics",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TrajectoryPlanner",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TransferType",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 17397,
+      "classification": "calculation",
+      "classification_basis": "path-marker:physics",
+      "content_sha256_lf": "77736e2bb20e5472282a86321ae3ad1579bf26ca5a7fd0bd84b2dbcf109e5304",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-PHYSICS-ORBITAL-MECHANICS-PY-61770CC97228",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/physics/orbital_mechanics.py",
+      "purpose": "Orbital Mechanics Engine",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "OrbitalMechanics",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "OrbitalParameters",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/solar_system_model/solar_system/tests/test_orbital_mechanics.py"
+        ],
+        "unit_mentions": [
+          "J",
+          "kg",
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 26186,
+      "classification": "calculation",
+      "classification_basis": "path-marker:physics",
+      "content_sha256_lf": "ec47e57a5cfe8890ca19b99d96d0a53dccfd02c0b5b31efb9c78c79a7a41aa36",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-PHYSICS-TRAJECTORY-PLANNER-PY-58A1A391168A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/physics/trajectory_planner.py",
+      "purpose": "Trajectory Planner",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "LaunchWindow",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ManeuverNode",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TrajectoryPlanner",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TransferTrajectory",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TransferType",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2524,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "775bb5fe97fec5c3f566df936c7f3abe22cd11564b58e7c9768ccb6ba3ac4a9c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-SETUP-PY-6AC3E617426E",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/setup.py",
+      "purpose": "Setup script for Solar System Simulation package.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://github.com/your-repo/solar-system-simulation"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "src/media_processing/video_processor/apps/web/test/setup.ts",
+          "src/p1am_control_system/frontend/src/test/setup.ts",
+          "src/rate_of_closure/web/src/test/setup.ts",
+          "src/rotation_converter/web/src/test/setup.ts"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 240,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8e2cf4ca2fbe5fbdfa80c9e4b9a22788027285752869d820129fc7ccb66ed134",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-INIT-PY-8903A7B9CCAE",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/ui/__init__.py",
+      "purpose": "User interface module for the solar system simulation.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "HelpOverlay",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InfoPanel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InputHandler",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StatusBar",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10915,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8cbdb7cec35a01e1bf5d248c7f51c710a304fd9e0a166cdca3ec64d6ebc59580",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-CONTROLS-PY-21B678E21C73",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/ui/controls.py",
+      "purpose": "Input Handler",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "InputAction",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "InputHandler",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "KeyBinding",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MouseState",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/programmatic_pid/test_controls.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 32330,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6618ea991817f4dd9487d321f7ec44e1a0331103736008a9bd84e1adb75ff8d6",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-WIDGETS-PY-FC31F75A5F46",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/ui/widgets.py",
+      "purpose": "UI Widgets",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Button",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Checkbox",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DateTimePicker",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "EducationalInfoPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HelpOverlay",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HistoricalEventsPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImmersionChecklistPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImmersionTask",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "InfoPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MissionListPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "NavigationPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PanelStyle",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SettingsPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SidebarPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StatusBar",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Tab",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TimeNavigationPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TooltipManager",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TransferPlanner",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "UnifiedControlPanel",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "bar",
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1414,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a83fb128cf77e9ad82a27f4134e5388bd71f4c829eb3f7272a0460014e37b8a0",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-WIDGETS-INIT-PY-15F4885C125D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/ui/widgets/__init__.py",
+      "purpose": "UI Widgets",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "Button",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Checkbox",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DateTimePicker",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "EducationalInfoPanel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "HelpOverlay",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "HistoricalEventsPanel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImmersionChecklistPanel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImmersionTask",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InfoPanel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MissionListPanel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "NavigationPanel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PanelStyle",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SettingsPanel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SidebarPanel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StatusBar",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Tab",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TimeNavigationPanel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TooltipManager",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TransferPlanner",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "UnifiedControlPanel",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 549,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "98ae92e23bb36746159a9642b0143346a51518c1e78e1f8f2e22559d5060d923",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-WIDGETS-BASE-PY-1F4C5D74A272",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/ui/widgets/_base.py",
+      "purpose": "Shared base types for UI widgets.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PanelStyle",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7080,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "441d69f64e3ae9ff067f151b4c6da2c946ba6c82578f90551291788e4631cd02",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-WIDGETS-DATE-TIME-PY-0E66DE2E0F42",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/ui/widgets/date_time.py",
+      "purpose": "Date/time widgets: DateTimePicker, TimeNavigationPanel.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DateTimePicker",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TimeNavigationPanel",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2367,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7e97e6d35990fb66dcf7c0355c62b817f79dbbb6a45f759ebffcd484fc370420",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-WIDGETS-HISTORICAL-EVENTS-PANEL-PY-07B421D239AA",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/ui/widgets/historical_events_panel.py",
+      "purpose": "HistoricalEventsPanel widget.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "HistoricalEventsPanel",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4020,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2d991ce9ae7b76afd1d364ac52fdd883ff533118e287607df55b009ba09209a4",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-WIDGETS-IMMERSION-PY-0268A0AFC411",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/ui/widgets/immersion.py",
+      "purpose": "Immersion checklist widget types: ImmersionTask, ImmersionChecklistPanel.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ImmersionChecklistPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImmersionTask",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6116,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4ebb06c434fd6c12b4a0520c153a739e260ff9454d1ef3fb30bb54f0fd40aa00",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-WIDGETS-INFO-PANELS-PY-BC86A462F1B6",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/ui/widgets/info_panels.py",
+      "purpose": "Information display widgets: InfoPanel, StatusBar, EducationalInfoPanel.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "EducationalInfoPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "InfoPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StatusBar",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "bar"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4117,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "69100d67327da222df728dba6f81751249f1a811e70576d10ad3370e5ad8e905",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-WIDGETS-OVERLAYS-PY-09EF1249AB26",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/ui/widgets/overlays.py",
+      "purpose": "Overlay widgets: HelpOverlay, TransferPlanner, TooltipManager.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "HelpOverlay",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TooltipManager",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TransferPlanner",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2757,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4112b47e048b233aca155c382377e00df862168ca5afccb80dae42bfdf7e9edb",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-WIDGETS-SETTINGS-NAV-PY-32CBD6E27013",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/ui/widgets/settings_nav.py",
+      "purpose": "Settings/navigation widgets: Checkbox, SettingsPanel, NavigationPanel.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Checkbox",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "NavigationPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SettingsPanel",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6100,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "49212ec41bc3554e2df29e07f38ad56a58d47f3865061a0cf68f804fd1e415d8",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-UI-WIDGETS-SIDEBAR-CONTROLS-PY-AF192A7D0D5E",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/ui/widgets/sidebar_controls.py",
+      "purpose": "Sidebar and bottom control widgets:",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Button",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MissionListPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SidebarPanel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Tab",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "UnifiedControlPanel",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 240,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ea67ac5d4de1c60fce89723022a4c72b9448c078f5457fc8e38610413011a9d2",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-VISUALIZATION-INIT-PY-44CA9BEB57FC",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/visualization/__init__.py",
+      "purpose": "Visualization module for 3D rendering of the solar system.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "Camera",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CameraMode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Renderer",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SolarSystemScene",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 19111,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b465658d4d6d25c962fe5aef8fef31dff87de701b7a442f372e355594f3e1198",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-VISUALIZATION-CAMERA-PY-F83E71621A17",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/visualization/camera.py",
+      "purpose": "Camera System",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Camera",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CameraMode",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CameraState",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 30920,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c8fb4fd2324650e1342bf0d0aa004ba115e63d1dbd7de9373ceac2471629b369",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-VISUALIZATION-RENDERER-PY-8DF0B3CC165D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/visualization/renderer.py",
+      "purpose": "3D Renderer",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "RenderSettings",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Renderer",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "bar",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 21989,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4b9b8e526954a9f1c4157eacb189c8a16b5ffce07258c42589bf3df032ca7986",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-VISUALIZATION-SCENE-PY-D45AAEBA8A0D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/visualization/scene.py",
+      "purpose": "Solar System scene controller.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SolarSystemScene",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ViewState",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N",
+          "bar"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 19524,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cc3da5640370a34eea2665340bbdcd3db14e91d02fa20e95b6248aa9fdc6db2a",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-VISUALIZATION-SCENE-EVENT-MIXIN-PY-10C29385491E",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/visualization/scene_event_mixin.py",
+      "purpose": "Event handling mixin for SolarSystemScene.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SceneEventMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 14991,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "59d62e83acdae2ba31cfcc500e0a5bae99136fbfa5b62259db4e3b0941fc6709",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-VISUALIZATION-SCENE-RENDER-MIXIN-PY-D8351B2D8DD9",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/visualization/scene_render_mixin.py",
+      "purpose": "Rendering mixin for SolarSystemScene.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SceneRenderMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "bar"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3475,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "62398c26e2d84fdb0242c940ba32b6598f206dee6addc4db1c9237d978768d4a",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-VISUALIZATION-STARFIELD-PY-A7F413394617",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/visualization/starfield.py",
+      "purpose": "Build accurate starfield geometry from catalog data.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "StarVertex",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_star_vertices",
+            "signature": "catalog: Iterable[StarEntry], radius: float=1200.0"
+          },
+          {
+            "kind": "function",
+            "name": "point_size_from_magnitude",
+            "signature": "magnitude: float, min_size: float=1.0, max_size: float=6.0"
+          }
+        ],
+        "test_paths": [
+          "src/solar_system_model/solar_system/tests/test_starfield.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5023,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f2f9f828294fc06e72cc265520e94d56db31c9515caa4e49a0e0946b9c11786e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-VISUALIZATION-TEXTURES-PY-EEA70F5CF4B9",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/visualization/textures.py",
+      "purpose": "Texture management for planet maps sourced from NASA imagery.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Pluto_in_True_Color_-_High_Res.jpg/1024px-Pluto_in_True_Color_-_High_Res.jpg",
+          "https://www.solarsystemscope.com/textures/download/2k_earth_daymap.jpg",
+          "https://www.solarsystemscope.com/textures/download/2k_jupiter.jpg",
+          "https://www.solarsystemscope.com/textures/download/2k_mars.jpg",
+          "https://www.solarsystemscope.com/textures/download/2k_mercury.jpg",
+          "https://www.solarsystemscope.com/textures/download/2k_moon.jpg",
+          "https://www.solarsystemscope.com/textures/download/2k_neptune.jpg",
+          "https://www.solarsystemscope.com/textures/download/2k_saturn.jpg",
+          "https://www.solarsystemscope.com/textures/download/2k_sun.jpg",
+          "https://www.solarsystemscope.com/textures/download/2k_uranus.jpg",
+          "https://www.solarsystemscope.com/textures/download/2k_venus_surface.jpg"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "TextureHandle",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TextureManager",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TEXTURE_MANIFEST",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 26626,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "46d0197a7c71809d85b1ebea78661386e05eca596f084e865477c03b2579b65b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-VISUALIZATION-UI-RENDERER-PY-FA0C863885B5",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/visualization/ui_renderer.py",
+      "purpose": "UI Renderer",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "TextCache",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "UIRenderer",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "UITheme",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N",
+          "bar",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/solar_system_model",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

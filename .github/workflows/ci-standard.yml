@@ -1139,3 +1139,22 @@ jobs:
           echo "- ✅ cargo audit: no known vulnerabilities" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ maturin build: Python wheel built" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ wasm-pack build: WASM + NPM package produced" >> $GITHUB_STEP_SUMMARY
+
+  # ── Divergence ledger gate (Tools #4915, RM #1507 governed single-job add) ──
+  # Stdlib-only. A PR touching a module listed in
+  # docs/shared/divergence_ledger.v1.json must reference its paired
+  # UpstreamDrift PR (UD-PAIR: D-sorganization/UpstreamDrift#N) unless the
+  # ledger rules the module tools-canonical. Not a required check.
+  divergence-ledger-gate:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Paired-PR gate for ledgered shadowed modules
+        run: |
+          git fetch --no-tags origin main:refs/remotes/origin/main
+          python3 scripts/check_divergence_ledger.py --check
+          python3 scripts/check_divergence_ledger.py

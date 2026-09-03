@@ -1,0 +1,2403 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2924,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5c9f9d60bc031e25c47fda65c32218be24e663d54aa27b13c4147e6df0d9fefb",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-INIT-PY-459142AE842F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/humanoid_character_builder/__init__.py",
+      "purpose": "Humanoid Character Builder - Standalone URDF Generation Module.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "AnthropometryData",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AppearanceParameters",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BodyParameters",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CharacterBuildResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CharacterBuilder",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "HUMANOID_JOINTS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "HUMANOID_SEGMENTS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "HumanoidURDFGenerator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InertiaMode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InertiaResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "JointDefinition",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MeshInertiaCalculator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PrimitiveInertiaCalculator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PrimitiveShape",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SegmentDefinition",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SegmentParameters",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "URDFGeneratorConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_segment_length_ratio",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_segment_mass_ratio",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 619,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b3a05a71519484970639ff8840890e5eca81c05685dd97675b5b0b67fdfd4be7",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-CONTRACTS-PY-32A819D344CB",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/humanoid_character_builder/contracts.py",
+      "purpose": "Design by Contract decorators for Humanoid Character Builder.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "ContractViolationError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "invariant",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "postcondition",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "precondition",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/humanoid_character_builder/tests/test_body_parameters.py",
+          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
+          "src/shared/python/humanoid_character_builder/tests/test_urdf_contracts_integration.py",
+          "src/shared/python/model_generation/tests/test_contracts.py",
+          "tests/rate_of_closure/test_contracts.py",
+          "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
+          "tests/shared/python/test_contracts.py",
+          "tests/unit/ai/mcp/test_contracts.py",
+          "tests/unit/ai/peer_review/test_contracts.py",
+          "tests/unit/ai/skills/test_contracts.py",
+          "tests/unit/test_contracts.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
+          "src/shared/python/humanoid_character_builder/tests/test_urdf_contracts_integration.py",
+          "src/shared/python/model_generation/tests/test_contracts.py",
+          "tests/rate_of_closure/test_contracts.py",
+          "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
+          "tests/shared/python/test_contracts.py",
+          "tests/unit/ai/mcp/test_contracts.py",
+          "tests/unit/ai/peer_review/test_contracts.py",
+          "tests/unit/ai/skills/test_contracts.py",
+          "tests/unit/test_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1119,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "58b599f889b1793c027046dac375f4b3a7865cf2b0a5b252a88554070a52e55d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-CORE-INIT-PY-0601D4807C64",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/humanoid_character_builder/core/__init__.py",
+      "purpose": "Core module for humanoid character builder.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "AnthropometryData",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AppearanceParameters",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BodyParameters",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GeometryType",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "HUMANOID_JOINTS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "HUMANOID_SEGMENTS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "JointDefinition",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "JointType",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SegmentDefinition",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SegmentParameters",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "estimate_segment_dimensions",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "estimate_segment_masses",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_segment_length_ratio",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_segment_mass_ratio",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 22156,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "16010dfc2ce744cf03110949b313db8ff825742812a46edbca4c3229c6a18938",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-CORE-ANTHROPOMETRY-PY-57B8CCB5B654",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/humanoid_character_builder/core/anthropometry.py",
+      "purpose": "Anthropometric data for humanoid character builder.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AnthropometryData",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SegmentAnthropometry",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DE_LEVA_DATA",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "URDF_HEIGHT_RATIOS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "URDF_MASS_RATIOS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_FEMALE_SEGMENTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_MALE_SEGMENTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SEGMENT_NAME_MAP",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "estimate_segment_dimensions",
+            "signature": "total_height_m: float, gender_factor: float=0.5"
+          },
+          {
+            "kind": "function",
+            "name": "estimate_segment_inertia_from_gyration",
+            "signature": "segment_name: str, mass_kg: float, length_m: float, gender_factor: float=0.5"
+          },
+          {
+            "kind": "function",
+            "name": "estimate_segment_masses",
+            "signature": "total_mass_kg: float, gender_factor: float=0.5"
+          },
+          {
+            "kind": "function",
+            "name": "get_anthropometry_key",
+            "signature": "segment_name: str"
+          },
+          {
+            "kind": "function",
+            "name": "get_com_location",
+            "signature": "segment_name: str, length_m: float, gender_factor: float=0.5"
+          },
+          {
+            "kind": "function",
+            "name": "get_segment_length_ratio",
+            "signature": "segment_name: str, gender_factor: float=0.5"
+          },
+          {
+            "kind": "function",
+            "name": "get_segment_mass_ratio",
+            "signature": "segment_name: str, gender_factor: float=0.5"
+          },
+          {
+            "kind": "function",
+            "name": "get_simple_length_ratios",
+            "signature": "gender_factor: float=0.5"
+          },
+          {
+            "kind": "function",
+            "name": "get_simple_mass_ratios",
+            "signature": "gender_factor: float=0.5"
+          },
+          {
+            "kind": "function",
+            "name": "get_urdf_mass_ratios",
+            "signature": "gender_factor: float=1.0"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/humanoid/test_anthropometry.py",
+          "tests/test_anthropometry_parity.py",
+          "tests/unit/test_anthropometry_parity.py"
+        ],
+        "unit_mentions": [
+          "kg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 14263,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8cca1e53d2697bf325bc8c9e14638ddf37565a5c3b25a3d055258516a78b983a",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-CORE-BODY-PARAMETERS-PY-4BA02FE99606",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/humanoid_character_builder/core/body_parameters.py",
+      "purpose": "Body parameter definitions for humanoid character builder.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AppearanceParameters",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "BodyParameters",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "BuildType",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GenderModel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RGBA",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SegmentParameters",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Vector3",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ALL_FACTOR_BOUNDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "HEIGHT_RANGE_M",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MASS_RANGE_KG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "NORMALIZED_FACTOR_BOUNDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PROPORTION_FACTOR_BOUNDS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "create_athletic_body",
+            "signature": "height_m: float=1.8, mass_kg: float=80.0"
+          },
+          {
+            "kind": "function",
+            "name": "create_average_body",
+            "signature": "height_m: float=1.75, mass_kg: float=75.0"
+          },
+          {
+            "kind": "function",
+            "name": "create_heavy_body",
+            "signature": "height_m: float=1.78, mass_kg: float=100.0"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/humanoid_character_builder/tests/test_api.py",
+          "src/shared/python/humanoid_character_builder/tests/test_body_parameters.py",
+          "src/shared/python/humanoid_character_builder/tests/test_urdf_contracts_integration.py",
+          "src/shared/python/humanoid_character_builder/tests/test_urdf_generator.py",
+          "tests/shared/python/humanoid/test_mesh_generator_submodules.py",
+          "tests/test_body_parameters_strict_validation.py",
+          "tests/test_review_fixes_2026_03_09.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "kg"
+        ],
+        "validation_paths": [
+          "src/shared/python/humanoid_character_builder/tests/test_urdf_contracts_integration.py",
+          "tests/test_body_parameters_strict_validation.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11227,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b9f5344833f04da1ab1cddfa0eda938d72114e7229977a8bca43cf1324eca7d9",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-CORE-MODEL-PY-439400A2300A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/humanoid_character_builder/core/model.py",
+      "purpose": "Data structures for the humanoid model.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GeneratedJoint",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GeneratedLink",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HumanoidModel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SupportPolygon",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/humanoid_character_builder/tests/test_physics_validator.py",
+          "tests/rate_of_closure/test_model.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "src/shared/python/humanoid_character_builder/tests/test_physics_validator.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 23614,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cffc2357478794a1d928eff05243c562f76e45663f697810706b56ce0bd5abee",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-CORE-SEGMENT-DEFINITIONS-PY-2BD96D3C5CD9",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/humanoid_character_builder/core/segment_definitions.py",
+      "purpose": "Humanoid segment and joint definitions.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GeometrySpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GeometryType",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "JointDefinition",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "JointLimits",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "JointType",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SegmentDefinition",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "HUMANOID_JOINTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "HUMANOID_SEGMENTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SEGMENT_HIERARCHY",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_all_segment_names",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "get_children",
+            "signature": "segment_name: str"
+          },
+          {
+            "kind": "function",
+            "name": "get_joint",
+            "signature": "name: str"
+          },
+          {
+            "kind": "function",
+            "name": "get_segment",
+            "signature": "name: str"
+          },
+          {
+            "kind": "function",
+            "name": "get_segment_chain",
+            "signature": "segment_name: str"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/humanoid_character_builder/tests/test_urdf_contracts_integration.py"
+        ],
+        "unit_mentions": [
+          "N*m",
+          "rad/s"
+        ],
+        "validation_paths": [
+          "src/shared/python/humanoid_character_builder/tests/test_urdf_contracts_integration.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 553,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0b248e0ab21581dad235f8b653c013231ebc6d562947dff62a1a7f66b9456b8f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-GENERATORS-INIT-PY-6D967B045CC6",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/humanoid_character_builder/generators/__init__.py",
+      "purpose": "Generator module for humanoid character builder.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "GeneratedMeshResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "HumanoidURDFGenerator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MeshGenerator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MeshGeneratorBackend",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "URDFGeneratorConfig",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 20417,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "13dc90418ab42584e435f377c28e600f2b2e5db85f8105e932b8ce0cc2c9bf8e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-GENERATORS-MAKEHUMAN-GENERATOR-PY-5ED6ADC962E6",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/humanoid_character_builder/generators/_makehuman_generator.py",
+      "purpose": "MakeHuman mesh generator for humanoid character builder.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MakeHumanMeshGenerator",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_MAKEHUMAN_MODIFIER_RE",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/humanoid/test_makehuman_script_hardening.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2627,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "40367ecd8d3375cbd98ea16972409e1d5fdd9f240dee6ce344fdea5d0e8e8814",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-GENERATORS-MESH-TYPES-PY-8C59FFB51DC0",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/humanoid_character_builder/generators/_mesh_types.py",
+      "purpose": "Shared types and abstract interface for mesh generation backends.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GeneratedMeshResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MeshGeneratorBackend",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MeshGeneratorInterface",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/humanoid/test_mesh_generator_submodules.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4519,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9468510460a49c3711ee4451ed4f322ab177ed6caae2ca3030d501aa8a221cfb",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-GENERATORS-PRIMITIVE-GENERATOR-PY-A1D108858811",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/humanoid_character_builder/generators/_primitive_generator.py",
+      "purpose": "Primitive shape mesh generator for humanoid character builder.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PrimitiveMeshGenerator",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13469,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b92183823bfa60032c7c4239229d252a038c3a36d3d8e803bd46d08862f545c1",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-GENERATORS-SMPLX-GENERATOR-PY-6CD28AA4C974",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/humanoid_character_builder/generators/_smplx_generator.py",
+      "purpose": "SMPL-X mesh generator for humanoid character builder.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SMPLXMeshGenerator",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4251,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "68bb0c3fbfc29d9032daaddfa58df7b56b3e9570595dc30daf274bb86e63c236",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-GENERATORS-MESH-GENERATOR-PY-C62A0BDCCF38",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/humanoid_character_builder/generators/mesh_generator.py",
+      "purpose": "Mesh generation interfaces for humanoid character builder.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MeshGenerator",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/humanoid/test_mesh_generator_submodules.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 746,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1672dbe40940d2f99b8e6fc0f4d8cf672a26377563b638070d7b95fdbfa1c799",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-GENERATORS-MESH-GENERATOR-MAKEHUMAN-PY-8ABB051C97A4",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/humanoid_character_builder/generators/mesh_generator_makehuman.py",
+      "purpose": "Compatibility exports for the MakeHuman mesh generator.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "GeneratedMeshResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MakeHumanMeshGenerator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MeshGeneratorBackend",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MeshGeneratorInterface",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7653,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "07933095b04276eb4c4896bf306f878b13144c7688f04876f8a86b5c19b8a2b4",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-GENERATORS-MESH-GENERATOR-PRIMITIVE-PY-FC3ED2CDB742",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/humanoid_character_builder/generators/mesh_generator_primitive.py",
+      "purpose": "Mesh generation interfaces for humanoid character builder.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GeneratedMeshResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MeshGeneratorBackend",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MeshGeneratorInterface",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PrimitiveMeshGenerator",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 17447,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "37e012a7a0f0ac55157513fb344d8f35c894ef8fa636b811075e609a120be361",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-GENERATORS-MESH-GENERATOR-SMPLX-PY-88E21A1E5E4F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/humanoid_character_builder/generators/mesh_generator_smplx.py",
+      "purpose": "Mesh generation interfaces for humanoid character builder.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GeneratedMeshResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MeshGeneratorBackend",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MeshGeneratorInterface",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PrimitiveMeshGenerator",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 27051,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "fab6060e4200368cdce6c5cae3c83ccd037b6cefda2f0b90d4256ca34f506e59",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-GENERATORS-URDF-GENERATOR-PY-1A2860107D5D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/humanoid_character_builder/generators/urdf_generator.py",
+      "purpose": "Standalone URDF generator for humanoid characters.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "HumanoidURDFGenerator",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "URDFGeneratorConfig",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "generate_humanoid_urdf",
+            "signature": "params: BodyParameters, output_path: Path | str | None=None, config: URDFGeneratorConfig | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/humanoid_character_builder/tests/test_urdf_contracts_integration.py",
+          "src/shared/python/humanoid_character_builder/tests/test_urdf_generator.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "kg",
+          "s"
+        ],
+        "validation_paths": [
+          "src/shared/python/humanoid_character_builder/tests/test_urdf_contracts_integration.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 398,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ed25393b67d41d6574666078d8d02d6e3f19661ee867f51e354ed832e912033f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-INTERFACES-INIT-PY-9C8D5077B513",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/humanoid_character_builder/interfaces/__init__.py",
+      "purpose": "Public interfaces module for humanoid character builder.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "CharacterBuildResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CharacterBuilder",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ExportOptions",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SegmentMeshInfo",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 22284,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1cb89b2021c663b488695182ec97d39b91ca3dd6942f0dd40d4771ba97240f67",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-INTERFACES-API-PY-2C8570E31324",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/humanoid_character_builder/interfaces/api.py",
+      "purpose": "Public API for humanoid character builder.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CharacterBuildResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CharacterBuilder",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ExportOptions",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SegmentMeshInfo",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "quick_build",
+            "signature": "height_m: float=1.75, mass_kg: float=75.0, preset: str | None=None, output_dir: Path | str | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "quick_urdf",
+            "signature": "height_m: float=1.75, mass_kg: float=75.0, preset: str | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/humanoid_character_builder/tests/test_api.py",
+          "src/shared/python/humanoid_character_builder/tests/test_builder_assembly.py",
+          "src/shared/python/humanoid_character_builder/tests/test_preview.py"
+        ],
+        "unit_mentions": [
+          "kg"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1058,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "31bde6989db2065aed25105b0e2829cbf6820881cc560aba2279aab9b2d655b8",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-MESH-INIT-PY-F81A74AAE0D7",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/humanoid_character_builder/mesh/__init__.py",
+      "purpose": "Mesh processing module for humanoid character builder.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "CollisionGeometry",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CollisionGeometryGenerator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InertiaMode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InertiaResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LODGenerationResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LODGenerator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LODLevel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MeshInertiaCalculator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MeshProcessor",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MeshSegmentResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PrimitiveInertiaCalculator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PrimitiveShape",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 26190,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "598465363829ab91fb171f206d0f70e47696ecb06da0524eb4ebc8ace49bbae3",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-MESH-COLLISION-GENERATOR-PY-2DE89E3B987C",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/humanoid_character_builder/mesh/collision_generator.py",
+      "purpose": "Collision Geometry Generator.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CollisionGeometryGenerator",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CollisionGeometryResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ComplexityLevel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PrimitiveFit",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SimplificationMethod",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "VHACDParameters",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 7117,
+      "classification": "calculation",
+      "classification_basis": "path-marker:geometry",
+      "content_sha256_lf": "10e8c8adbd8056c875025632b4fdf2dd92d38e39fc0d0fad7eecb16ddfa9c5e2",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-MESH-COLLISION-GEOMETRY-PY-C4A0BDC6510A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/humanoid_character_builder/mesh/collision_geometry.py",
+      "purpose": "Collision geometry generation for humanoid character builder.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CollisionGeometry",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CollisionGeometryGenerator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CollisionGeometryResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ComplexityLevel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PrimitiveFit",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SimplificationMethod",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "VHACDParameters",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/humanoid_character_builder/tests/test_collision_geometry.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 20438,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "aa9feac149bb104a49173b06ce6553de284c951ca3b5a505bd808cd1b886b950",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-MESH-INERTIA-CALCULATOR-PY-0B018A5D0256",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/humanoid_character_builder/mesh/inertia_calculator.py",
+      "purpose": "Mesh-based inertia calculation for humanoid character builder.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://wiki.ros.org/urdf/XML/link"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "InertiaMode",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "InertiaResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MeshInertiaCalculator",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MIN_MESH_VOLUME_M3",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "validate_inertia_tensor",
+            "signature": "inertia_matrix: NDArray[np.float64]"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/humanoid_character_builder/tests/test_inertia_calculator.py",
+          "src/shared/python/humanoid_character_builder/tests/test_physics_validator.py",
+          "tests/shared/python/humanoid/test_primitive_inertia.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "kg",
+          "s"
+        ],
+        "validation_paths": [
+          "src/shared/python/humanoid_character_builder/tests/test_physics_validator.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 26007,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cd7f12c6fa032ffb33fb532bde07b5d024959d473c1613d80a66efb701d40245",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-MESH-MESH-PROCESSOR-PY-AFEC3301032A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/humanoid_character_builder/mesh/mesh_processor.py",
+      "purpose": "Mesh processing utilities for humanoid character builder.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "LODGenerationResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LODGenerator",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LODLevel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MeshExportConfig",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MeshProcessor",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MeshSegmentResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PrimitiveMeshGenerator",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 15676,
+      "classification": "calculation",
+      "classification_basis": "path-marker:inertia",
+      "content_sha256_lf": "2c4cf514680183c70b6cf54632cb70ca861a93efaa0459e245fa7faf29a1d324",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-MESH-PRIMITIVE-INERTIA-PY-8A98206DA748",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/humanoid_character_builder/mesh/primitive_inertia.py",
+      "purpose": "Primitive shape inertia calculations.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PrimitiveInertiaCalculator",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PrimitiveShape",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "estimate_segment_primitive",
+            "signature": "segment_type: str, length: float, width: float | None=None, depth: float | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/humanoid_character_builder/tests/test_inertia_calculator.py",
+          "tests/shared/python/humanoid/test_primitive_inertia.py"
+        ],
+        "unit_mentions": [
+          "kg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 400,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "35f08832a03b5dab3c4fe0d56db0b0d0679ce548506dfecb1c2512d428571f66",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-PRESETS-INIT-PY-BB865E8588B2",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/humanoid_character_builder/presets/__init__.py",
+      "purpose": "Presets module for humanoid character builder.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "PRESET_NAMES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "list_available_presets",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "load_body_preset",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "load_segment_template",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9060,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b0a824952c1e3ee91fb1504c0af1c12fb58115ee6fa4a22f99f83ad90b8a6d3e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-PRESETS-LOADER-PY-2F75389A3210",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/humanoid_character_builder/presets/loader.py",
+      "purpose": "Preset loader for humanoid character builder.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "PRESET_NAMES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_BUILTIN_PRESETS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_preset_info",
+            "signature": "preset_name: str"
+          },
+          {
+            "kind": "function",
+            "name": "list_available_presets",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "load_body_preset",
+            "signature": "preset_name: str, height_m: float | None=None, mass_kg: float | None=None, **overrides: Any"
+          },
+          {
+            "kind": "function",
+            "name": "load_preset_from_file",
+            "signature": "file_path: Path | str"
+          },
+          {
+            "kind": "function",
+            "name": "load_segment_template",
+            "signature": "template_name: str"
+          },
+          {
+            "kind": "function",
+            "name": "save_preset_to_file",
+            "signature": "params: BodyParameters, file_path: Path | str, format: str='yaml'"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/humanoid_character_builder/tests/test_api.py",
+          "src/shared/python/humanoid_character_builder/tests/test_builder_assembly.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 27,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6d72b8d643890363bdfd94ee1ab67277870810471611a7fe45a01b37a3b772c4",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-VALIDATION-INIT-PY-199FAFFE8C11",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/humanoid_character_builder/validation/__init__.py",
+      "purpose": "Package: validation.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 8525,
+      "classification": "calculation",
+      "classification_basis": "path-marker:physics",
+      "content_sha256_lf": "bf0e043913b11577badfa3c46d1a03021dc8f04893418a62b6c56e790b2d299f",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-VALIDATION-PHYSICS-VALIDATOR-PY-C118646D656B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/humanoid_character_builder/validation/physics_validator.py",
+      "purpose": "Physics validation for humanoid models.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PhysicsValidator",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StabilityResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ValidationResult",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/humanoid_character_builder/tests/test_physics_validator.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "src/shared/python/humanoid_character_builder/tests/test_physics_validator.py"
+        ]
+      }
+    }
+  ],
+  "package": "src/shared/python/humanoid_character_builder",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

@@ -1,0 +1,133 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 747,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2590d7fea9e5d12e6c9569ce1811271239483e1f1aded9ad468a84a72ef8e4d7",
+      "family": "data-processing-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-DATA-PROCESSING-INIT-PY-455E512F58A1",
+      "language": "python",
+      "maintainer": "Data processing maintainers",
+      "path": "src/shared/python/data_processing/__init__.py",
+      "purpose": "Shared data processing module extracted from Data_Processor_Integrated.py.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "DataProcessor",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 22175,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "82622eaab5e29425e356fc8d803ddb5956eb236df1ab43f043ba29b5c5fe4522",
+      "family": "data-processing-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-DATA-PROCESSING-PROCESSOR-PY-98361D22A003",
+      "language": "python",
+      "maintainer": "Data processing maintainers",
+      "path": "src/shared/python/data_processing/processor.py",
+      "purpose": "DataProcessor facade -- clean API over the extracted core modules.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DataProcessor",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DatasetInfo",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SUPPORTED_FILTER_TYPES",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/data_processing/tests/test_processor.py",
+          "tests/data_processor_io/test_rust_engine_contract.py",
+          "tests/shared/python/data_processing/test_data_processing_contract.py",
+          "tests/shared/python/data_processing/test_processor.py",
+          "tests/shared/python/test_safe_pandas_eval.py"
+        ],
+        "unit_mentions": [
+          "Hz",
+          "s"
+        ],
+        "validation_paths": [
+          "tests/data_processor_io/test_rust_engine_contract.py",
+          "tests/shared/python/data_processing/test_data_processing_contract.py"
+        ]
+      }
+    }
+  ],
+  "package": "src/shared/python/data_processing",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

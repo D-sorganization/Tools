@@ -1,0 +1,203 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1351,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c776809b5688a88a3be6cea768f50f3ad243f15d1d18c9bfd270987cd498ae59",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-RELEASE-GENERATERELEASEARTIFACTS-MJS-01831B2D4514",
+      "language": "javascript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/release/generateReleaseArtifacts.mjs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6919,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "01fd8b106682ab5f6a333be8d928217f0c795ac4dd51891726ac63ac2ead631a",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-RELEASE-RELEASEARTIFACTCONTRACT-MJS-D20741935986",
+      "language": "javascript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/release/releaseArtifactContract.mjs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "ASSET_MANIFEST_NAME",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ASSET_MANIFEST_SCHEMA",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "WEB_RUNTIME_ELEMENT_ID",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "WEB_RUNTIME_NAME",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "WEB_RUNTIME_SCHEMA",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "buildAssetManifest",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "embedRuntimeDescriptor",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "runtimeDescriptor",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "stableJson",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "validateReleaseRevision",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "verifyReleaseArtifacts",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3889,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "52d02c9177187a197b664de7f631f995a7d48968452c265fc0648d6a10b71ed6",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-RELEASE-RELEASEARTIFACTCONTRACT-NODE-TEST-MJS-3DBF42F1E1BA",
+      "language": "javascript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/release/releaseArtifactContract.node-test.mjs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "app",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/rate_of_closure/web/release",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

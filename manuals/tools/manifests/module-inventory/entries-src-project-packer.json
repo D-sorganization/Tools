@@ -1,0 +1,467 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 203,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cb23b7eec6434c5b7e6a6cda775a537c67e5609c768c17ef3d8a9b2b6a1d9784",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PROJECT-PACKER-INIT-PY-985AC5A7347C",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/project_packer/__init__.py",
+      "purpose": "Folder Packer package for organizing and packaging folders.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1718,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "255aedc409c2a8b2304fd39f2ad0247d0f67d0a49668b09e0caf21fb17d0bcbb",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PROJECT-PACKER-BUILD-PY-EF2560F6698B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/project_packer/build.py",
+      "purpose": "Cross-platform launcher for building Folder Packer executable.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3993,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4fe06fdf1ba48dc4376ddfad4fe00d761c24e27c9aa5a128e00197ae0eb0a004",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PROJECT-PACKER-BUILD-EXE-PY-ECEB5A865C41",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/project_packer/build_exe.py",
+      "purpose": "Build executable for Folder Packer application.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "BUILD_DIR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DIST_DIR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXE_NAME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCRIPT_NAME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SPEC_FILE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_executable",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "check_pyinstaller",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "clean_build_dirs",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "install_pyinstaller",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "verify_build",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/project_packer/tests/test_build_exe.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2005,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "eeeb3502b469e21e9ace61b94dcde9a3c90d5ef6877b500810039e9cada4c73e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PROJECT-PACKER-CONSTANTS-PY-F8222E494A62",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/project_packer/constants.py",
+      "purpose": "Constants for Project Packer application.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "BOLD_HEADER_FONT_SIZE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_LISTBOX_HEIGHT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_PADDING",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_WINDOW_HEIGHT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_WINDOW_WIDTH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GRID_WEIGHT_MAIN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "HEADER_FONT_SIZE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SMALL_PADDING",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "STATUS_TEXT_HEIGHT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TINY_PADDING",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TITLE_FONT_SIZE",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 14717,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a30077c2e5c14d0299e77f8d89124422037d18cf4e0079455e86b889ecd20c20",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PROJECT-PACKER-FOLDER-PACKER-GUI-PY-303EA5B3EE0B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/project_packer/folder_packer_gui.py",
+      "purpose": "Folder Packer GUI application for organizing and packaging folders.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FolderPackerGUI",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXCLUDE_PATTERNS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "INCLUDE_EXTENSIONS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/project_packer/tests/test_folder_packer_gui.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3201,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "908fab6dd0a616e35704fe13365c8dafe3a59973a96b9af688b0782218e8dd23",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PROJECT-PACKER-PACKAGE-FOR-DISTRIBUTION-PY-43A0BCCF5675",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/project_packer/package_for_distribution.py",
+      "purpose": "Package creation utility for Folder Packer distribution.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "PACKAGES_DIR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PACKAGE_BASE_NAME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PACKAGE_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REQUIRED_FILES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "copy_required_files",
+            "signature": "source_dir: Path, package_dir: Path"
+          },
+          {
+            "kind": "function",
+            "name": "create_deployment_package",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "create_zip_archive",
+            "signature": "source_dir: Path, zip_path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/project_packer/tests/test_package_for_distribution.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/project_packer",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

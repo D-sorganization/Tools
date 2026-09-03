@@ -1,0 +1,368 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 86,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e93f2610103e0bd6c544784231613ec3e3da1a63ecb0c34989bf5931d58dab80",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-MULTI-PARAM-ANALYSIS-INIT-PY-8640A4DF68C6",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/multi_param_analysis/__init__.py",
+      "purpose": "Multi-Parameter Analysis GUI for standalone use.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 669,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3bc41db4ff68ea8385bf51e3a7db41f1f4827d60da67acf9cd4c53cd806ee8e2",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-MULTI-PARAM-ANALYSIS-GUI-REGISTRATION-PY-5E0CD6D137DC",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/multi_param_analysis/gui_registration.py",
+      "purpose": "GUI registration for Multi-Parameter Analysis.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "GUI_INFO",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_gui_info",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_gui_registration.py",
+          "tests/rate_of_closure/test_gui_registration.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 353,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "04fea7e34782883452228ed17a4669154c035544a9b0212acf3835d05c64304e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-MULTI-PARAM-ANALYSIS-LAUNCH-PYQT6-PY-1E3EE92A0A47",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/multi_param_analysis/launch_pyqt6.py",
+      "purpose": "Standalone PyQt6 launcher for Multi-Parameter Analysis.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/folder_tool/test_launch_pyqt6.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 115,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "36e465ad787b19479564567bb8fbc64af89a7c4b895645d8bb823386d706d6dc",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-MULTI-PARAM-ANALYSIS-PYTHON-MULTI-PARAM-ANALYSIS-INIT-PY-DCFB1F4C01BB",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/multi_param_analysis/python/multi_param_analysis/__init__.py",
+      "purpose": "PyQt6 GUI for Multi-Parameter Analysis.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 42,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d1a5946830c0d9e1a8beb0a8c146839c720be80dc69511fa621e117e16d288e4",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-MULTI-PARAM-ANALYSIS-PYTHON-MULTI-PARAM-ANALYSIS-UI-INIT-PY-8BE77B26AEAB",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/multi_param_analysis/python/multi_param_analysis/ui/__init__.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 130,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cf4d5c92701309e735ff87b4bcf96a1c4044c6c417724f6feb3478447d13c4b3",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-MULTI-PARAM-ANALYSIS-PYTHON-MULTI-PARAM-ANALYSIS-UI-PYQT6-INIT-PY-B7803F6B559C",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/multi_param_analysis/python/multi_param_analysis/ui/pyqt6/__init__.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "MultiParamAnalysisWindow",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 20240,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9a51b09007f064ee4cf61b348e2e20c1252c45351efb6a050ca660546b201a78",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-MULTI-PARAM-ANALYSIS-PYTHON-MULTI-PARAM-ANALYSIS-UI-PYQT6-MAIN-WINDOW-PY-4D555790CBB3",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/multi_param_analysis/python/multi_param_analysis/ui/pyqt6/main_window.py",
+      "purpose": "Multi-Parameter Analysis PyQt6 Main Window.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MultiParamAnalysisWindow",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ALIGN_CENTER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SCROLLBAR_ALWAYS_OFF",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SIZE_EXPANDING",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SIZE_FIXED",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_main_window.py",
+          "src/multi_param_analysis/tests/test_multi_param_analysis_gui.py",
+          "src/pendulum_simulator/tests/test_main_window.py",
+          "tests/ode_solver/test_main_window.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/multi_param_analysis",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}
