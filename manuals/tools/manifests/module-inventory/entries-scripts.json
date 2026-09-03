@@ -1509,6 +1509,161 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 13383,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "bdc1f510828d5f8314b26cf50a18e5279ee08a5d887879fabc88e32018cd2320",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CHECK-DIVERGENCE-LEDGER-PY-96055F084B5C",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/check_divergence_ledger.py",
+      "purpose": "Shadowed-module divergence ledger: paired-PR gate, renderer and freshness check.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "LedgerError",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXEMPT_RULINGS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXEMPT_STATUSES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LEDGER_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PAIR_PATTERN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "RENDER_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ROOT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ROW_FIELDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "RULINGS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "STATUSES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "changed_files",
+            "signature": "root: Path=ROOT, base: str='origin/main'"
+          },
+          {
+            "kind": "function",
+            "name": "gate",
+            "signature": "document: dict[str, object], changed: Sequence[str], body: str | None"
+          },
+          {
+            "kind": "function",
+            "name": "load_ledger",
+            "signature": "path: Path=LEDGER_PATH"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: Sequence[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "paired_pr",
+            "signature": "body: str | None"
+          },
+          {
+            "kind": "function",
+            "name": "pr_body_from_event",
+            "signature": "event_path: str | None"
+          },
+          {
+            "kind": "function",
+            "name": "render",
+            "signature": "document: dict[str, object]"
+          },
+          {
+            "kind": "function",
+            "name": "rows_of",
+            "signature": "document: dict[str, object]"
+          },
+          {
+            "kind": "function",
+            "name": "rows_requiring_pair",
+            "signature": "hits: dict[str, list[dict[str, object]]]"
+          },
+          {
+            "kind": "function",
+            "name": "touched_rows",
+            "signature": "document: dict[str, object], changed_files: Iterable[str]"
+          }
+        ],
+        "test_paths": [
+          "tests/scripts/test_check_divergence_ledger.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 1802,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
