@@ -5,7 +5,7 @@ Both halves are written together and neither is committed. The *definition* of
 a merge driver lives in git config, which is per-clone; the attribute
 ``SPEC.md merge=spec-rows`` goes in ``$GIT_COMMON_DIR/info/attributes`` rather
 than a committed ``.gitattributes``. Run once per clone
-(``scripts/install_workspace_hooks.py`` calls it for you); git config and
+(``scripts/setup_hooks.py`` calls it for you); git config and
 ``info/attributes`` are both shared across worktrees, so once is enough.
 
 Idempotent: re-running rewrites the same two config values.
