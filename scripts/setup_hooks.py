@@ -93,11 +93,22 @@ def install_dev_dependencies() -> None:
 
 
 def install_merge_drivers() -> None:
-    """Register local-only git merge drivers (e.g. module-inventory-regen).
+    """Register local-only git merge drivers.
 
     .gitattributes can only name a driver; the command it runs is local
     git config that has to be set up per clone/worktree. See
     scripts/git/install_merge_drivers.py for why.
+
+    Two installers run here:
+
+    * ``scripts/git/install_merge_drivers.py`` -- module-inventory-regen
+      (#4818), whose attribute IS committed in .gitattributes.
+    * ``scripts/install_spec_merge_driver.py`` -- spec-rows
+      (Repository_Management#1520), which unions SPEC.md change-log rows.
+      It writes its attribute to $GIT_COMMON_DIR/info/attributes rather
+      than .gitattributes, so it must run for the driver to do anything
+      at all. Until it was wired in here nothing invoked it and the
+      driver was never registered for anybody.
     """
     logger.info("\n[6/6] Registering git merge drivers...")
     repo_root = Path(__file__).resolve().parent.parent
@@ -105,6 +116,12 @@ def install_merge_drivers() -> None:
         [
             sys.executable,
             str(repo_root / "scripts" / "git" / "install_merge_drivers.py"),
+        ]
+    )
+    run_command(
+        [
+            sys.executable,
+            str(repo_root / "scripts" / "install_spec_merge_driver.py"),
         ]
     )
     logger.info("  Merge drivers registered")

@@ -158,6 +158,18 @@ repos:
         pass_filenames: false
         always_run: true
 
+      # PR-keyed SPEC.md change-log rows (Repository_Management#1520). Fails
+      # closed: a serial version in the key column, a reused PR key, or a
+      # SPEC.md edit alongside source changes that adds no row. Degrades to a
+      # warning if shared_scripts/spec_changelog.py is ever absent, so a
+      # partial fleet rollout cannot block a commit.
+      - id: fleet-spec-changelog
+        name: "SPEC.md change-log rows (PR-keyed)"
+        entry: python shared_scripts/fleet_hooks.py spec-changelog
+        language: python
+        pass_filenames: false
+        always_run: true
+
       - id: code-quality-check-report
         name: "code quality check (report-only)"
         entry: python scripts/quality-check.py --report-only

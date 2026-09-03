@@ -111,7 +111,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "4949f5d9d9a5fe6e41cb546dbdb42cb877219b0d484ce9ea1ea88f618e2eb933",
+      "content_sha256_lf": "7fb7dc64d31e24c3ebffc8cb01257f233ece4789c700610f04dd97f7babe4467",
       "entry_count": 18,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
@@ -129,13 +129,13 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
     },
     {
-      "content_sha256_lf": "a87d8ca5a39ef502c1c13aaf0440a545ab75d31eb5052666b748fbcdc38ab45f",
+      "content_sha256_lf": "07a39ce60a2b5af88143fd46bd4a04962d874d518cd1442cf15a9b72492f403e",
       "entry_count": 3,
       "package": "rust_core/file_watcher",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "3fa7e13c31209ee5409f7891cd32790501c3b74590fc40b6f5543ae16cb98572",
+      "content_sha256_lf": "3f5527159d3708b8ee9160047c6b2ca1f2928cdc771dd218b3657f2a24dad91c",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "3816e02ae994520111034823253104b680e665bcdaddfacee654bf7191997943",
+      "content_sha256_lf": "28bdaf029a8d40cb42cd271745aa50e7903d3dcd246079ecd974fa5be6a1c188",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -159,14 +159,14 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "ff9c6f72ed85cab452a1a04143ee3a9b353838f9baeddfa54b2090bd13f733f7",
-      "entry_count": 87,
+      "content_sha256_lf": "4e8ee9b411dd9b0789f56fe9bc10c08ed476853c2ef7a69a7bf1728a4c836ed4",
+      "entry_count": 90,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
     },
     {
-      "content_sha256_lf": "c04d3d1dfcafa932165559a92959915648215b0a7ee68d0ba10a0b086c6b65de",
-      "entry_count": 1,
+      "content_sha256_lf": "e3f0c3fce5a241270794b73814ef002c8c2b2e38668d1f4cb830b25897e95c54",
+      "entry_count": 2,
       "package": "shared_scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-shared-scripts.json"
     },
@@ -429,7 +429,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-python.json"
     },
     {
-      "content_sha256_lf": "cebf650bf8de60a9744df134af4bd7abd19a351501608bc00a7dd5c8db893cc4",
+      "content_sha256_lf": "3b1d073470fccc823f00d16562dbfd2266b6958674e20771a32ed30818db3e0e",
       "entry_count": 59,
       "package": "src/rate_of_closure",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure.json"
@@ -483,7 +483,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web.json"
     },
     {
-      "content_sha256_lf": "72ab22e742270a5a9e9f01b3a4cb4b612508eaa34e83afc0af129eab99400e17",
+      "content_sha256_lf": "dae15c427258b8f1332f4576a58b01ba3498042fb7dca91aab0f278278250ebb",
       "entry_count": 16,
       "package": "src/rate_of_closure/web/e2e",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-e2e.json"
@@ -519,7 +519,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-hooks.json"
     },
     {
-      "content_sha256_lf": "2703435a37d350d374be321e0e037d7b81c913d5a9b5d1af7c8e52221cccbe05",
+      "content_sha256_lf": "1beadc8599e17eb8db8c7ee46761c7b168680f3a6ebaaf3fa46e7cf38c14f66d",
       "entry_count": 400,
       "package": "src/rate_of_closure/web/src/model",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-model.json"
@@ -579,7 +579,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "45fef31e1d9fe292a233f55f81c03f0c0c10487f81982cca57ea29cb45d5e088",
+      "content_sha256_lf": "573fc684abcf51a0d0fb3292d7b7fbe6fcd9ff1c8b4d36e881b6b1823bfac60e",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
@@ -735,8 +735,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-signal-toolkit.json"
     },
     {
-      "content_sha256_lf": "e34d836cc463afb2379624bbcb576ebf9e0df8fc069ae395822ddfdd35c667e0",
-      "entry_count": 215,
+      "content_sha256_lf": "57e631448ed35f248dd7cab4ec7d63f6889723c3ac08d9af9cfaa48720122a22",
+      "entry_count": 220,
       "package": "src/shared/python/swing_sim",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim.json"
     },
