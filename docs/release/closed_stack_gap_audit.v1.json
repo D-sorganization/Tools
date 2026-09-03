@@ -1,0 +1,4175 @@
+{
+  "base": {
+    "ref": "origin/main",
+    "sha": "7bc0f652c254d5b951204f50531f4723a2d2097e"
+  },
+  "generated_at": "2026-09-03T01:14:15Z",
+  "prs": [
+    {
+      "base_ref": "feat/4144-variation-visualizations",
+      "base_ref_on_origin": true,
+      "closed_at": "2026-08-06T02:31:40Z",
+      "counts": {
+        "added": 428,
+        "deleted": 0,
+        "modified": 310
+      },
+      "diff_ref_sha": "391c505278ebf64fae567da91d77a3b302eb999a",
+      "diff_ref_used": "origin/feat/screw-axis-analysis",
+      "diffstat_summary": "738 files changed, 84399 insertions(+), 2434 deletions(-)",
+      "error": "",
+      "groups": [],
+      "head_oid": "391c505278ebf64fae567da91d77a3b302eb999a",
+      "head_oid_matches_diff_ref": true,
+      "head_ref": "feat/screw-axis-analysis",
+      "merged_at": "2026-08-06T02:31:40Z",
+      "missing_files": [],
+      "number": 4169,
+      "reachable": true,
+      "reason": "",
+      "state": "MERGED",
+      "title": "Add Screw-Axis Analytics and Motion Glyphs",
+      "url": "https://github.com/D-sorganization/Tools/pull/4169"
+    },
+    {
+      "base_ref": "feat/4144-variation-visualizations",
+      "base_ref_on_origin": true,
+      "closed_at": "2026-08-14T00:02:02Z",
+      "counts": {
+        "added": 500,
+        "deleted": 0,
+        "modified": 312
+      },
+      "diff_ref_sha": "137c6587d4f7d48ebfcf2b837ea71c5952ac2d93",
+      "diff_ref_used": "origin/feat/4163-impact-inspector",
+      "diffstat_summary": "812 files changed, 93904 insertions(+), 2574 deletions(-)",
+      "error": "",
+      "groups": [
+        {
+          "classification": "obsolete",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 0,
+            "obsolete": 6
+          },
+          "files": [
+            ".codex-worktrees/friction-factors-3659",
+            ".codex-worktrees/pr-3602-fix",
+            ".codex-worktrees/pr-3752-movement",
+            ".codex-worktrees/pr-3766-modern-robotics-dbc",
+            ".codex-worktrees/pr-3780-pressure-flow",
+            ".codex-worktrees/pr-3784-deterministic-te"
+          ],
+          "prefix": ".codex-worktrees"
+        },
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 1,
+            "obsolete": 0
+          },
+          "files": [
+            "src/movement_optimizer/gui/motion_helpers.py"
+          ],
+          "prefix": "src/movement_optimizer/gui"
+        }
+      ],
+      "head_oid": "137c6587d4f7d48ebfcf2b837ea71c5952ac2d93",
+      "head_oid_matches_diff_ref": true,
+      "head_ref": "feat/4163-impact-inspector",
+      "merged_at": "2026-08-14T00:02:02Z",
+      "missing_files": [
+        {
+          "classification": "obsolete",
+          "path": ".codex-worktrees/friction-factors-3659",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "obsolete",
+          "path": ".codex-worktrees/pr-3602-fix",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "obsolete",
+          "path": ".codex-worktrees/pr-3752-movement",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "obsolete",
+          "path": ".codex-worktrees/pr-3766-modern-robotics-dbc",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "obsolete",
+          "path": ".codex-worktrees/pr-3780-pressure-flow",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "obsolete",
+          "path": ".codex-worktrees/pr-3784-deterministic-te",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/movement_optimizer/gui/motion_helpers.py",
+          "symbols_checked": [
+            "build_motion_colors",
+            "chain_path_length"
+          ],
+          "symbols_found_on_main": []
+        }
+      ],
+      "number": 4173,
+      "reachable": true,
+      "reason": "",
+      "state": "MERGED",
+      "title": "feat(rate-of-closure): add shared impact inspector",
+      "url": "https://github.com/D-sorganization/Tools/pull/4173"
+    },
+    {
+      "base_ref": "feat/4163-impact-inspector",
+      "base_ref_on_origin": true,
+      "closed_at": "2026-08-13T23:37:44Z",
+      "counts": {
+        "added": 500,
+        "deleted": 0,
+        "modified": 312
+      },
+      "diff_ref_sha": "3e1b44cf42f4c0838149e0bc8e88ce4cb79b72b0",
+      "diff_ref_used": "origin/feat/4161-wedge-ground-clearance",
+      "diffstat_summary": "812 files changed, 93904 insertions(+), 2574 deletions(-)",
+      "error": "",
+      "groups": [
+        {
+          "classification": "obsolete",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 0,
+            "obsolete": 6
+          },
+          "files": [
+            ".codex-worktrees/friction-factors-3659",
+            ".codex-worktrees/pr-3602-fix",
+            ".codex-worktrees/pr-3752-movement",
+            ".codex-worktrees/pr-3766-modern-robotics-dbc",
+            ".codex-worktrees/pr-3780-pressure-flow",
+            ".codex-worktrees/pr-3784-deterministic-te"
+          ],
+          "prefix": ".codex-worktrees"
+        },
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 1,
+            "obsolete": 0
+          },
+          "files": [
+            "src/movement_optimizer/gui/motion_helpers.py"
+          ],
+          "prefix": "src/movement_optimizer/gui"
+        }
+      ],
+      "head_oid": "3e1b44cf42f4c0838149e0bc8e88ce4cb79b72b0",
+      "head_oid_matches_diff_ref": true,
+      "head_ref": "feat/4161-wedge-ground-clearance",
+      "merged_at": "2026-08-13T23:37:44Z",
+      "missing_files": [
+        {
+          "classification": "obsolete",
+          "path": ".codex-worktrees/friction-factors-3659",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "obsolete",
+          "path": ".codex-worktrees/pr-3602-fix",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "obsolete",
+          "path": ".codex-worktrees/pr-3752-movement",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "obsolete",
+          "path": ".codex-worktrees/pr-3766-modern-robotics-dbc",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "obsolete",
+          "path": ".codex-worktrees/pr-3780-pressure-flow",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "obsolete",
+          "path": ".codex-worktrees/pr-3784-deterministic-te",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/movement_optimizer/gui/motion_helpers.py",
+          "symbols_checked": [
+            "build_motion_colors",
+            "chain_path_length"
+          ],
+          "symbols_found_on_main": []
+        }
+      ],
+      "number": 4174,
+      "reachable": true,
+      "reason": "",
+      "state": "MERGED",
+      "title": "feat: add swept wedge ground-clearance analysis",
+      "url": "https://github.com/D-sorganization/Tools/pull/4174"
+    },
+    {
+      "base_ref": "feat/4181-launch-monitor-registry",
+      "base_ref_on_origin": true,
+      "closed_at": "2026-08-07T03:07:08Z",
+      "counts": {
+        "added": 551,
+        "deleted": 0,
+        "modified": 314
+      },
+      "diff_ref_sha": "98589174273e90e6690a08201c369004c3f568b4",
+      "diff_ref_used": "origin/feat/4193-launch-direction-registry-integration",
+      "diffstat_summary": "865 files changed, 103125 insertions(+), 2559 deletions(-)",
+      "error": "",
+      "groups": [
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 1,
+            "obsolete": 0
+          },
+          "files": [
+            "src/movement_optimizer/gui/motion_helpers.py"
+          ],
+          "prefix": "src/movement_optimizer/gui"
+        }
+      ],
+      "head_oid": "98589174273e90e6690a08201c369004c3f568b4",
+      "head_oid_matches_diff_ref": true,
+      "head_ref": "feat/4193-launch-direction-registry-integration",
+      "merged_at": "2026-08-07T03:07:08Z",
+      "missing_files": [
+        {
+          "classification": "missing",
+          "path": "src/movement_optimizer/gui/motion_helpers.py",
+          "symbols_checked": [
+            "build_motion_colors",
+            "chain_path_length"
+          ],
+          "symbols_found_on_main": []
+        }
+      ],
+      "number": 4209,
+      "reachable": true,
+      "reason": "",
+      "state": "MERGED",
+      "title": "feat(rate-of-closure): add launch direction conventions",
+      "url": "https://github.com/D-sorganization/Tools/pull/4209"
+    },
+    {
+      "base_ref": "feat/4181-launch-monitor-registry",
+      "base_ref_on_origin": true,
+      "closed_at": "2026-08-07T02:33:59Z",
+      "counts": {
+        "added": 567,
+        "deleted": 0,
+        "modified": 314
+      },
+      "diff_ref_sha": "2ec1decaf2c9114e6ec00d41698bd40338d2251d",
+      "diff_ref_used": "origin/feat/4205-launch-monitor-analytics",
+      "diffstat_summary": "881 files changed, 105548 insertions(+), 2560 deletions(-)",
+      "error": "",
+      "groups": [
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 1,
+            "obsolete": 0
+          },
+          "files": [
+            "docs/rate_of_closure/LAUNCH_MONITOR_PLAYER_ANALYTICS.md"
+          ],
+          "prefix": "docs/rate_of_closure"
+        },
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 1,
+            "obsolete": 0
+          },
+          "files": [
+            "src/movement_optimizer/gui/motion_helpers.py"
+          ],
+          "prefix": "src/movement_optimizer/gui"
+        },
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 2,
+            "obsolete": 0
+          },
+          "files": [
+            "src/rate_of_closure/launch_monitor_data.py",
+            "src/rate_of_closure/launch_monitor_player_metrics.py"
+          ],
+          "prefix": "src/rate_of_closure"
+        },
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 1,
+            "missing": 4,
+            "obsolete": 0
+          },
+          "files": [
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_analysis_mixin.py",
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_data_mixin.py",
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_player_controls.py",
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_plot_widget.py",
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_table_preview.py"
+          ],
+          "prefix": "src/rate_of_closure/ui"
+        },
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 1,
+            "missing": 9,
+            "obsolete": 0
+          },
+          "files": [
+            "src/rate_of_closure/web/src/components/LaunchMonitorCharts.test.tsx",
+            "src/rate_of_closure/web/src/components/LaunchMonitorCharts.tsx",
+            "src/rate_of_closure/web/src/components/LaunchMonitorImportedResults.test.tsx",
+            "src/rate_of_closure/web/src/components/LaunchMonitorImportedResults.tsx",
+            "src/rate_of_closure/web/src/components/LaunchMonitorPlayerInsights.tsx",
+            "src/rate_of_closure/web/src/model/launchMonitorImportedResults.test.ts",
+            "src/rate_of_closure/web/src/model/launchMonitorImportedResults.ts",
+            "src/rate_of_closure/web/src/model/launchMonitorPlayerAnalytics.test.ts",
+            "src/rate_of_closure/web/src/model/launchMonitorPlayerAnalytics.ts",
+            "src/rate_of_closure/web/src/model/launchMonitorProject.ts"
+          ],
+          "prefix": "src/rate_of_closure/web"
+        },
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 1,
+            "obsolete": 0
+          },
+          "files": [
+            "tests/rate_of_closure/test_launch_monitor_player_metrics.py"
+          ],
+          "prefix": "tests/rate_of_closure"
+        }
+      ],
+      "head_oid": "a4dcddde6122bb298c7c20d3353d45e74481ba2a",
+      "head_oid_matches_diff_ref": false,
+      "head_ref": "feat/4205-launch-monitor-analytics",
+      "merged_at": "2026-08-07T02:33:59Z",
+      "missing_files": [
+        {
+          "classification": "missing",
+          "path": "docs/rate_of_closure/LAUNCH_MONITOR_PLAYER_ANALYTICS.md",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/movement_optimizer/gui/motion_helpers.py",
+          "symbols_checked": [
+            "build_motion_colors",
+            "chain_path_length"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/launch_monitor_data.py",
+          "symbols_checked": [
+            "DatasetDescriptor",
+            "CampaignDatasetCatalog",
+            "AnalysisProject",
+            "ResolvedProjectData",
+            "infer_unit",
+            "axis_label",
+            "discover_campaign_repository",
+            "campaign_dataset_catalog"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "tests/shared/python/launch_monitor/test_player_covariation_contract.py"
+              ],
+              "symbol": "infer_unit"
+            },
+            {
+              "paths": [
+                "src/rate_of_closure/plotting/catalog_contract.py",
+                "src/rate_of_closure/plotting/putting_catalog.py",
+                "src/rate_of_closure/ui/pyqt6/plot_wizard.py",
+                "src/rate_of_closure/ui/pyqt6/variation_distribution_matrix.py",
+                "src/rate_of_closure/ui/pyqt6/variation_plot_helpers.py",
+                "src/rate_of_closure/ui/pyqt6/variation_scatter_view.py",
+                "src/rate_of_closure/ui/pyqt6/variation_trial_table.py"
+              ],
+              "symbol": "axis_label"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/launch_monitor_player_metrics.py",
+          "symbols_checked": [
+            "DispersionAnalysis",
+            "StrokesGainedAnalysis",
+            "SessionAnalysis",
+            "analyze_dispersion",
+            "strokes_gained_reference_table",
+            "calculate_strokes_gained_proxy",
+            "analyze_sessions"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "src/rate_of_closure/launch_monitor_performance.py",
+                "src/rate_of_closure/ui/pyqt6/launch_monitor_performance_workspace.py",
+                "src/shared/python/launch_monitor/__init__.py",
+                "src/shared/python/launch_monitor/dispersion.py",
+                "tests/rate_of_closure/test_launch_monitor_performance.py",
+                "tests/shared/python/launch_monitor/test_dispersion.py"
+              ],
+              "symbol": "analyze_dispersion"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_analysis_mixin.py",
+          "symbols_checked": [
+            "LaunchMonitorAnalysisMixin"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "landed-elsewhere",
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_data_mixin.py",
+          "symbols_checked": [
+            "demo_frame",
+            "LaunchMonitorDataMixin"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "src/rate_of_closure/ui/pyqt6/launch_monitor_analytics_tab.py",
+                "src/rate_of_closure/ui/pyqt6/launch_monitor_preview.py"
+              ],
+              "symbol": "demo_frame"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_player_controls.py",
+          "symbols_checked": [
+            "LaunchMonitorPlayerControls"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_plot_widget.py",
+          "symbols_checked": [
+            "LaunchMonitorPlotWidget"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_table_preview.py",
+          "symbols_checked": [
+            "populate_table_preview"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/components/LaunchMonitorCharts.test.tsx",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/components/LaunchMonitorCharts.tsx",
+          "symbols_checked": [
+            "ScatterPlot",
+            "DispersionPlot",
+            "SessionTrendPlot"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "src/p1am_control_system/frontend/src/components/data_explorer/AnalysisPanels.tsx",
+                "src/p1am_control_system/frontend/src/components/data_explorer/PlotPanel.tsx",
+                "src/p1am_control_system/frontend/src/components/data_explorer/plots/ScatterPlot.test.tsx",
+                "src/p1am_control_system/frontend/src/components/data_explorer/plots/ScatterPlot.tsx"
+              ],
+              "symbol": "ScatterPlot"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/components/LaunchMonitorImportedResults.test.tsx",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/components/LaunchMonitorImportedResults.tsx",
+          "symbols_checked": [
+            "LaunchMonitorImportedResults"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/components/LaunchMonitorPlayerInsights.tsx",
+          "symbols_checked": [
+            "LaunchMonitorPlayerInsights"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/model/launchMonitorImportedResults.test.ts",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/model/launchMonitorImportedResults.ts",
+          "symbols_checked": [
+            "RankedValue",
+            "PcaScore",
+            "ImportedAdvancedResults",
+            "importedAdvancedResults"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/model/launchMonitorPlayerAnalytics.test.ts",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/model/launchMonitorPlayerAnalytics.ts",
+          "symbols_checked": [
+            "MetricUnit",
+            "DispersionSummary",
+            "StrokesGainedShot",
+            "SessionTrendPoint",
+            "PlayerSessionTrend",
+            "SessionTrend",
+            "metricUnit",
+            "metricLabel"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "src/rate_of_closure/web/src/model/impactSolutionContract.ts",
+                "src/rate_of_closure/web/src/model/launchMonitorMetricUnits.ts"
+              ],
+              "symbol": "metricUnit"
+            },
+            {
+              "paths": [
+                "src/rate_of_closure/web/src/components/LaunchMonitorCovariation.tsx",
+                "src/rate_of_closure/web/src/components/LaunchMonitorCovariationChart.tsx",
+                "src/rate_of_closure/web/src/components/LaunchMonitorLongitudinalAnalysis.tsx",
+                "src/rate_of_closure/web/src/model/launchMonitorMetricUnits.ts"
+              ],
+              "symbol": "metricLabel"
+            }
+          ]
+        },
+        {
+          "classification": "landed-elsewhere",
+          "path": "src/rate_of_closure/web/src/model/launchMonitorProject.ts",
+          "symbols_checked": [
+            "PROJECT_CONTRACT_VERSION",
+            "LaunchMonitorProject",
+            "parseLaunchMonitorProject"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "src/rate_of_closure/launch_monitor_workspace.py",
+                "src/rate_of_closure/ui/pyqt6/launch_monitor_canonical_workspace_mixin.py",
+                "src/rate_of_closure/ui/pyqt6/launch_monitor_player_workspace.py",
+                "src/rate_of_closure/web/src/components/LaunchMonitorPlayerWorkspace.tsx",
+                "src/rate_of_closure/web/src/model/launchMonitorWorkspace.test.ts",
+                "src/rate_of_closure/web/src/model/launchMonitorWorkspace.ts",
+                "tests/rate_of_closure/test_launch_monitor_forbidden_identity.py",
+                "tests/rate_of_closure/test_launch_monitor_workspace.py",
+                "tests/shared/python/launch_monitor/test_importer.py"
+              ],
+              "symbol": "LaunchMonitorProject"
+            },
+            {
+              "paths": [
+                "src/rate_of_closure/web/src/model/launchMonitorWorkspace.test.ts",
+                "src/rate_of_closure/web/src/model/launchMonitorWorkspace.ts"
+              ],
+              "symbol": "parseLaunchMonitorProject"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "tests/rate_of_closure/test_launch_monitor_player_metrics.py",
+          "symbols_checked": [
+            "test_campaign_catalog_exposes_all_manifested_csvs",
+            "test_project_round_trip_preserves_source_and_selections",
+            "test_units_dispersion_strokes_gained_and_session_trends",
+            "test_session_trends_are_fitted_independently_by_player"
+          ],
+          "symbols_found_on_main": []
+        }
+      ],
+      "number": 4212,
+      "reachable": true,
+      "reason": "",
+      "state": "MERGED",
+      "title": "feat(rate-of-closure): add launch monitor analytics tabs",
+      "url": "https://github.com/D-sorganization/Tools/pull/4212"
+    },
+    {
+      "base_ref": "feat/4181-launch-monitor-registry",
+      "base_ref_on_origin": true,
+      "closed_at": "2026-08-07T16:53:54Z",
+      "counts": {
+        "added": 678,
+        "deleted": 0,
+        "modified": 314
+      },
+      "diff_ref_sha": "655fea08f62bb48c6ca3498a8893936ef9370e9e",
+      "diff_ref_used": "origin/codex/ballflight-campaign-integration",
+      "diffstat_summary": "992 files changed, 126599 insertions(+), 2559 deletions(-)",
+      "error": "",
+      "groups": [
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 1,
+            "obsolete": 0
+          },
+          "files": [
+            "src/movement_optimizer/gui/motion_helpers.py"
+          ],
+          "prefix": "src/movement_optimizer/gui"
+        }
+      ],
+      "head_oid": "655fea08f62bb48c6ca3498a8893936ef9370e9e",
+      "head_oid_matches_diff_ref": true,
+      "head_ref": "codex/ballflight-campaign-integration",
+      "merged_at": "2026-08-07T16:53:54Z",
+      "missing_files": [
+        {
+          "classification": "missing",
+          "path": "src/movement_optimizer/gui/motion_helpers.py",
+          "symbols_checked": [
+            "build_motion_colors",
+            "chain_path_length"
+          ],
+          "symbols_found_on_main": []
+        }
+      ],
+      "number": 4217,
+      "reachable": true,
+      "reason": "",
+      "state": "MERGED",
+      "title": "feat: integrate ball-flight and launch-monitor campaign",
+      "url": "https://github.com/D-sorganization/Tools/pull/4217"
+    },
+    {
+      "base_ref": "feat/4205-launch-monitor-analytics",
+      "base_ref_on_origin": true,
+      "closed_at": "2026-08-07T04:40:23Z",
+      "counts": {
+        "added": 599,
+        "deleted": 0,
+        "modified": 314
+      },
+      "diff_ref_sha": "d4ebc8a1872ee9185cdaaadf332c100afee04ea1",
+      "diff_ref_used": "origin/feat/4226-launch-monitor-player-platform",
+      "diffstat_summary": "913 files changed, 110484 insertions(+), 2560 deletions(-)",
+      "error": "",
+      "groups": [
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 2,
+            "obsolete": 0
+          },
+          "files": [
+            "docs/rate_of_closure/LAUNCH_MONITOR_PLAYER_ANALYTICS.md",
+            "docs/rate_of_closure/NEURAL_MODEL_LAB.md"
+          ],
+          "prefix": "docs/rate_of_closure"
+        },
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 1,
+            "obsolete": 0
+          },
+          "files": [
+            "src/movement_optimizer/gui/motion_helpers.py"
+          ],
+          "prefix": "src/movement_optimizer/gui"
+        },
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 4,
+            "obsolete": 0
+          },
+          "files": [
+            "src/rate_of_closure/launch_monitor_data.py",
+            "src/rate_of_closure/launch_monitor_player_metrics.py",
+            "src/rate_of_closure/neural_model.py",
+            "src/rate_of_closure/neural_training.py"
+          ],
+          "prefix": "src/rate_of_closure"
+        },
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 1,
+            "missing": 10,
+            "obsolete": 0
+          },
+          "files": [
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_analysis_mixin.py",
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_covariation_presenter.py",
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_covariation_scan_plot.py",
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_covariation_state.py",
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_data_mixin.py",
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_demo_data.py",
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_player_controls.py",
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_plot_widget.py",
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_table_preview.py",
+            "src/rate_of_closure/ui/pyqt6/neural_model_outputs.py",
+            "src/rate_of_closure/ui/pyqt6/neural_training_controls.py"
+          ],
+          "prefix": "src/rate_of_closure/ui"
+        },
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 1,
+            "missing": 14,
+            "obsolete": 0
+          },
+          "files": [
+            "src/rate_of_closure/web/src/components/LaunchMonitorCharts.test.tsx",
+            "src/rate_of_closure/web/src/components/LaunchMonitorCharts.tsx",
+            "src/rate_of_closure/web/src/components/LaunchMonitorImportedResults.test.tsx",
+            "src/rate_of_closure/web/src/components/LaunchMonitorImportedResults.tsx",
+            "src/rate_of_closure/web/src/components/LaunchMonitorPlayerInsights.tsx",
+            "src/rate_of_closure/web/src/components/NeuralModelCharts.tsx",
+            "src/rate_of_closure/web/src/model/launchMonitorImportedResults.test.ts",
+            "src/rate_of_closure/web/src/model/launchMonitorImportedResults.ts",
+            "src/rate_of_closure/web/src/model/launchMonitorPlayerAnalytics.test.ts",
+            "src/rate_of_closure/web/src/model/launchMonitorPlayerAnalytics.ts",
+            "src/rate_of_closure/web/src/model/launchMonitorProject.ts",
+            "src/rate_of_closure/web/src/model/neuralModelBundle.test.ts",
+            "src/rate_of_closure/web/src/model/neuralModelBundle.ts",
+            "src/rate_of_closure/web/src/model/neuralTrainingRequest.test.ts",
+            "src/rate_of_closure/web/src/model/neuralTrainingRequest.ts"
+          ],
+          "prefix": "src/rate_of_closure/web"
+        },
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 3,
+            "obsolete": 0
+          },
+          "files": [
+            "tests/rate_of_closure/test_launch_monitor_player_metrics.py",
+            "tests/rate_of_closure/test_neural_model_contract.py",
+            "tests/rate_of_closure/test_neural_model_lab_tab.py"
+          ],
+          "prefix": "tests/rate_of_closure"
+        }
+      ],
+      "head_oid": "fd0ad5c7deaa50a94daafd4dc33291591cb740d4",
+      "head_oid_matches_diff_ref": false,
+      "head_ref": "feat/4226-launch-monitor-player-platform",
+      "merged_at": "2026-08-07T04:40:23Z",
+      "missing_files": [
+        {
+          "classification": "missing",
+          "path": "docs/rate_of_closure/LAUNCH_MONITOR_PLAYER_ANALYTICS.md",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "docs/rate_of_closure/NEURAL_MODEL_LAB.md",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/movement_optimizer/gui/motion_helpers.py",
+          "symbols_checked": [
+            "build_motion_colors",
+            "chain_path_length"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/launch_monitor_data.py",
+          "symbols_checked": [
+            "DatasetDescriptor",
+            "CampaignDatasetCatalog",
+            "AnalysisProject",
+            "ResolvedProjectData",
+            "infer_unit",
+            "axis_label",
+            "discover_campaign_repository",
+            "campaign_dataset_catalog"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "tests/shared/python/launch_monitor/test_player_covariation_contract.py"
+              ],
+              "symbol": "infer_unit"
+            },
+            {
+              "paths": [
+                "src/rate_of_closure/plotting/catalog_contract.py",
+                "src/rate_of_closure/plotting/putting_catalog.py",
+                "src/rate_of_closure/ui/pyqt6/plot_wizard.py",
+                "src/rate_of_closure/ui/pyqt6/variation_distribution_matrix.py",
+                "src/rate_of_closure/ui/pyqt6/variation_plot_helpers.py",
+                "src/rate_of_closure/ui/pyqt6/variation_scatter_view.py",
+                "src/rate_of_closure/ui/pyqt6/variation_trial_table.py"
+              ],
+              "symbol": "axis_label"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/launch_monitor_player_metrics.py",
+          "symbols_checked": [
+            "DispersionAnalysis",
+            "StrokesGainedAnalysis",
+            "SessionAnalysis",
+            "analyze_dispersion",
+            "strokes_gained_reference_table",
+            "calculate_strokes_gained_proxy",
+            "analyze_sessions"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "src/rate_of_closure/launch_monitor_performance.py",
+                "src/rate_of_closure/ui/pyqt6/launch_monitor_performance_workspace.py",
+                "src/shared/python/launch_monitor/__init__.py",
+                "src/shared/python/launch_monitor/dispersion.py",
+                "tests/rate_of_closure/test_launch_monitor_performance.py",
+                "tests/shared/python/launch_monitor/test_dispersion.py"
+              ],
+              "symbol": "analyze_dispersion"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/neural_model.py",
+          "symbols_checked": [
+            "VariableSpec",
+            "DenseLayer",
+            "NeuralModelBundle",
+            "PredictionResult",
+            "FramePrediction",
+            "load_neural_bundle",
+            "predict_records",
+            "predict_frame"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "src/rate_of_closure/plotting/__init__.py",
+                "src/rate_of_closure/plotting/_catalog_entries.py",
+                "src/rate_of_closure/plotting/catalog.py",
+                "src/rate_of_closure/plotting/catalog_contract.py",
+                "src/rate_of_closure/ui/pyqt6/solver_rows.py",
+                "src/rate_of_closure/ui/pyqt6/solver_specs.py",
+                "tests/rate_of_closure/test_plotting.py"
+              ],
+              "symbol": "VariableSpec"
+            },
+            {
+              "paths": [
+                "src/rate_of_closure/web/src/model/neuralLabContract.ts"
+              ],
+              "symbol": "DenseLayer"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/neural_training.py",
+          "symbols_checked": [
+            "TrainingOptions",
+            "TrainingRequest",
+            "discover_training_repository",
+            "parse_hidden_layers",
+            "write_training_config",
+            "build_training_request"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_analysis_mixin.py",
+          "symbols_checked": [
+            "LaunchMonitorAnalysisMixin"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_covariation_presenter.py",
+          "symbols_checked": [
+            "run_covariation_presentation",
+            "run_covariation_scan_presentation"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_covariation_scan_plot.py",
+          "symbols_checked": [
+            "plot_covariation_scan"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_covariation_state.py",
+          "symbols_checked": [
+            "covariation_project_selections",
+            "restore_covariation_project_selections"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_data_mixin.py",
+          "symbols_checked": [
+            "LaunchMonitorDataMixin"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "landed-elsewhere",
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_demo_data.py",
+          "symbols_checked": [
+            "demo_frame"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "src/rate_of_closure/ui/pyqt6/launch_monitor_analytics_tab.py",
+                "src/rate_of_closure/ui/pyqt6/launch_monitor_preview.py"
+              ],
+              "symbol": "demo_frame"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_player_controls.py",
+          "symbols_checked": [
+            "LaunchMonitorPlayerControls"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_plot_widget.py",
+          "symbols_checked": [
+            "LaunchMonitorPlotWidget"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_table_preview.py",
+          "symbols_checked": [
+            "populate_table_preview"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/ui/pyqt6/neural_model_outputs.py",
+          "symbols_checked": [
+            "NeuralModelOutputs"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/ui/pyqt6/neural_training_controls.py",
+          "symbols_checked": [
+            "NeuralTrainingControls"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/components/LaunchMonitorCharts.test.tsx",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/components/LaunchMonitorCharts.tsx",
+          "symbols_checked": [
+            "ScatterPlot",
+            "DispersionPlot",
+            "SessionTrendPlot"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "src/p1am_control_system/frontend/src/components/data_explorer/AnalysisPanels.tsx",
+                "src/p1am_control_system/frontend/src/components/data_explorer/PlotPanel.tsx",
+                "src/p1am_control_system/frontend/src/components/data_explorer/plots/ScatterPlot.test.tsx",
+                "src/p1am_control_system/frontend/src/components/data_explorer/plots/ScatterPlot.tsx"
+              ],
+              "symbol": "ScatterPlot"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/components/LaunchMonitorImportedResults.test.tsx",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/components/LaunchMonitorImportedResults.tsx",
+          "symbols_checked": [
+            "LaunchMonitorImportedResults"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/components/LaunchMonitorPlayerInsights.tsx",
+          "symbols_checked": [
+            "LaunchMonitorPlayerInsights"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/components/NeuralModelCharts.tsx",
+          "symbols_checked": [
+            "PredictionPoint",
+            "LearningCurveChart",
+            "MetricCards",
+            "ResidualChart"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/model/launchMonitorImportedResults.test.ts",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/model/launchMonitorImportedResults.ts",
+          "symbols_checked": [
+            "RankedValue",
+            "PcaScore",
+            "ImportedAdvancedResults",
+            "importedAdvancedResults"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/model/launchMonitorPlayerAnalytics.test.ts",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/model/launchMonitorPlayerAnalytics.ts",
+          "symbols_checked": [
+            "MetricUnit",
+            "DispersionSummary",
+            "StrokesGainedShot",
+            "SessionTrendPoint",
+            "PlayerSessionTrend",
+            "SessionTrend",
+            "metricUnit",
+            "metricLabel"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "src/rate_of_closure/web/src/model/impactSolutionContract.ts",
+                "src/rate_of_closure/web/src/model/launchMonitorMetricUnits.ts"
+              ],
+              "symbol": "metricUnit"
+            },
+            {
+              "paths": [
+                "src/rate_of_closure/web/src/components/LaunchMonitorCovariation.tsx",
+                "src/rate_of_closure/web/src/components/LaunchMonitorCovariationChart.tsx",
+                "src/rate_of_closure/web/src/components/LaunchMonitorLongitudinalAnalysis.tsx",
+                "src/rate_of_closure/web/src/model/launchMonitorMetricUnits.ts"
+              ],
+              "symbol": "metricLabel"
+            }
+          ]
+        },
+        {
+          "classification": "landed-elsewhere",
+          "path": "src/rate_of_closure/web/src/model/launchMonitorProject.ts",
+          "symbols_checked": [
+            "PROJECT_CONTRACT_VERSION",
+            "LaunchMonitorProject",
+            "parseLaunchMonitorProject"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "src/rate_of_closure/launch_monitor_workspace.py",
+                "src/rate_of_closure/ui/pyqt6/launch_monitor_canonical_workspace_mixin.py",
+                "src/rate_of_closure/ui/pyqt6/launch_monitor_player_workspace.py",
+                "src/rate_of_closure/web/src/components/LaunchMonitorPlayerWorkspace.tsx",
+                "src/rate_of_closure/web/src/model/launchMonitorWorkspace.test.ts",
+                "src/rate_of_closure/web/src/model/launchMonitorWorkspace.ts",
+                "tests/rate_of_closure/test_launch_monitor_forbidden_identity.py",
+                "tests/rate_of_closure/test_launch_monitor_workspace.py",
+                "tests/shared/python/launch_monitor/test_importer.py"
+              ],
+              "symbol": "LaunchMonitorProject"
+            },
+            {
+              "paths": [
+                "src/rate_of_closure/web/src/model/launchMonitorWorkspace.test.ts",
+                "src/rate_of_closure/web/src/model/launchMonitorWorkspace.ts"
+              ],
+              "symbol": "parseLaunchMonitorProject"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/model/neuralModelBundle.test.ts",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/model/neuralModelBundle.ts",
+          "symbols_checked": [
+            "PORTABLE_MODEL_SCHEMA",
+            "ModelVariable",
+            "DenseLayer",
+            "ModelMetric",
+            "LearningCurvePoint",
+            "ModelProvenance",
+            "PortableModelBundle",
+            "parsePortableModelBundle"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "src/rate_of_closure/web/src/model/neuralLabContract.ts"
+              ],
+              "symbol": "PORTABLE_MODEL_SCHEMA"
+            },
+            {
+              "paths": [
+                "src/rate_of_closure/web/src/model/neuralLabContract.ts"
+              ],
+              "symbol": "ModelVariable"
+            },
+            {
+              "paths": [
+                "src/rate_of_closure/web/src/model/neuralLabContract.ts"
+              ],
+              "symbol": "DenseLayer"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/model/neuralTrainingRequest.test.ts",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/model/neuralTrainingRequest.ts",
+          "symbols_checked": [
+            "TRAINING_REQUEST_SCHEMA",
+            "TrainingDatasetReference",
+            "TrainingRequestInput",
+            "NeuralTrainingRequest",
+            "createTrainingRequest"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "tests/rate_of_closure/test_launch_monitor_player_metrics.py",
+          "symbols_checked": [
+            "test_campaign_catalog_exposes_all_manifested_csvs",
+            "test_project_round_trip_preserves_source_and_selections",
+            "test_units_dispersion_strokes_gained_and_session_trends",
+            "test_session_trends_are_fitted_independently_by_player"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "tests/rate_of_closure/test_neural_model_contract.py",
+          "symbols_checked": [
+            "test_json_bundle_predicts_and_reports_applicability",
+            "test_batch_prediction_preserves_inputs_and_adds_named_outputs",
+            "test_bundle_rejects_unsupported_or_malformed_content",
+            "test_bundle_loader_never_accepts_pickle"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "tests/rate_of_closure/test_neural_model_lab_tab.py",
+          "symbols_checked": [
+            "test_tab_imports_safe_model_and_queries_current_row",
+            "test_training_controls_are_configurable_and_accessible",
+            "test_training_request_uses_private_cli_and_visible_arguments",
+            "test_vendor_without_shot_level_targets_is_disabled_with_reason",
+            "test_modeling_cohort_defaults_are_preselected"
+          ],
+          "symbols_found_on_main": []
+        }
+      ],
+      "number": 4233,
+      "reachable": true,
+      "reason": "",
+      "state": "MERGED",
+      "title": "feat(rate-of-closure): add launch monitor player analytics platform",
+      "url": "https://github.com/D-sorganization/Tools/pull/4233"
+    },
+    {
+      "base_ref": "feat/4226-launch-monitor-player-platform",
+      "base_ref_on_origin": true,
+      "closed_at": "2026-08-07T08:46:02Z",
+      "counts": {
+        "added": 582,
+        "deleted": 0,
+        "modified": 314
+      },
+      "diff_ref_sha": "5874fbb0bfc0dde9200bcd4f50dfc1bb4736d665",
+      "diff_ref_used": "origin/feat/4240-neural-model-lab",
+      "diffstat_summary": "896 files changed, 108082 insertions(+), 2560 deletions(-)",
+      "error": "",
+      "groups": [
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 2,
+            "obsolete": 0
+          },
+          "files": [
+            "docs/rate_of_closure/LAUNCH_MONITOR_PLAYER_ANALYTICS.md",
+            "docs/rate_of_closure/NEURAL_MODEL_LAB.md"
+          ],
+          "prefix": "docs/rate_of_closure"
+        },
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 1,
+            "obsolete": 0
+          },
+          "files": [
+            "src/movement_optimizer/gui/motion_helpers.py"
+          ],
+          "prefix": "src/movement_optimizer/gui"
+        },
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 4,
+            "obsolete": 0
+          },
+          "files": [
+            "src/rate_of_closure/launch_monitor_data.py",
+            "src/rate_of_closure/launch_monitor_player_metrics.py",
+            "src/rate_of_closure/neural_model.py",
+            "src/rate_of_closure/neural_training.py"
+          ],
+          "prefix": "src/rate_of_closure"
+        },
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 1,
+            "missing": 6,
+            "obsolete": 0
+          },
+          "files": [
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_analysis_mixin.py",
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_data_mixin.py",
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_player_controls.py",
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_plot_widget.py",
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_table_preview.py",
+            "src/rate_of_closure/ui/pyqt6/neural_model_outputs.py",
+            "src/rate_of_closure/ui/pyqt6/neural_training_controls.py"
+          ],
+          "prefix": "src/rate_of_closure/ui"
+        },
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 1,
+            "missing": 14,
+            "obsolete": 0
+          },
+          "files": [
+            "src/rate_of_closure/web/src/components/LaunchMonitorCharts.test.tsx",
+            "src/rate_of_closure/web/src/components/LaunchMonitorCharts.tsx",
+            "src/rate_of_closure/web/src/components/LaunchMonitorImportedResults.test.tsx",
+            "src/rate_of_closure/web/src/components/LaunchMonitorImportedResults.tsx",
+            "src/rate_of_closure/web/src/components/LaunchMonitorPlayerInsights.tsx",
+            "src/rate_of_closure/web/src/components/NeuralModelCharts.tsx",
+            "src/rate_of_closure/web/src/model/launchMonitorImportedResults.test.ts",
+            "src/rate_of_closure/web/src/model/launchMonitorImportedResults.ts",
+            "src/rate_of_closure/web/src/model/launchMonitorPlayerAnalytics.test.ts",
+            "src/rate_of_closure/web/src/model/launchMonitorPlayerAnalytics.ts",
+            "src/rate_of_closure/web/src/model/launchMonitorProject.ts",
+            "src/rate_of_closure/web/src/model/neuralModelBundle.test.ts",
+            "src/rate_of_closure/web/src/model/neuralModelBundle.ts",
+            "src/rate_of_closure/web/src/model/neuralTrainingRequest.test.ts",
+            "src/rate_of_closure/web/src/model/neuralTrainingRequest.ts"
+          ],
+          "prefix": "src/rate_of_closure/web"
+        },
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 3,
+            "obsolete": 0
+          },
+          "files": [
+            "tests/rate_of_closure/test_launch_monitor_player_metrics.py",
+            "tests/rate_of_closure/test_neural_model_contract.py",
+            "tests/rate_of_closure/test_neural_model_lab_tab.py"
+          ],
+          "prefix": "tests/rate_of_closure"
+        }
+      ],
+      "head_oid": "5874fbb0bfc0dde9200bcd4f50dfc1bb4736d665",
+      "head_oid_matches_diff_ref": true,
+      "head_ref": "feat/4240-neural-model-lab",
+      "merged_at": "2026-08-07T08:46:02Z",
+      "missing_files": [
+        {
+          "classification": "missing",
+          "path": "docs/rate_of_closure/LAUNCH_MONITOR_PLAYER_ANALYTICS.md",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "docs/rate_of_closure/NEURAL_MODEL_LAB.md",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/movement_optimizer/gui/motion_helpers.py",
+          "symbols_checked": [
+            "build_motion_colors",
+            "chain_path_length"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/launch_monitor_data.py",
+          "symbols_checked": [
+            "DatasetDescriptor",
+            "CampaignDatasetCatalog",
+            "AnalysisProject",
+            "ResolvedProjectData",
+            "infer_unit",
+            "axis_label",
+            "discover_campaign_repository",
+            "campaign_dataset_catalog"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "tests/shared/python/launch_monitor/test_player_covariation_contract.py"
+              ],
+              "symbol": "infer_unit"
+            },
+            {
+              "paths": [
+                "src/rate_of_closure/plotting/catalog_contract.py",
+                "src/rate_of_closure/plotting/putting_catalog.py",
+                "src/rate_of_closure/ui/pyqt6/plot_wizard.py",
+                "src/rate_of_closure/ui/pyqt6/variation_distribution_matrix.py",
+                "src/rate_of_closure/ui/pyqt6/variation_plot_helpers.py",
+                "src/rate_of_closure/ui/pyqt6/variation_scatter_view.py",
+                "src/rate_of_closure/ui/pyqt6/variation_trial_table.py"
+              ],
+              "symbol": "axis_label"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/launch_monitor_player_metrics.py",
+          "symbols_checked": [
+            "DispersionAnalysis",
+            "StrokesGainedAnalysis",
+            "SessionAnalysis",
+            "analyze_dispersion",
+            "strokes_gained_reference_table",
+            "calculate_strokes_gained_proxy",
+            "analyze_sessions"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "src/rate_of_closure/launch_monitor_performance.py",
+                "src/rate_of_closure/ui/pyqt6/launch_monitor_performance_workspace.py",
+                "src/shared/python/launch_monitor/__init__.py",
+                "src/shared/python/launch_monitor/dispersion.py",
+                "tests/rate_of_closure/test_launch_monitor_performance.py",
+                "tests/shared/python/launch_monitor/test_dispersion.py"
+              ],
+              "symbol": "analyze_dispersion"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/neural_model.py",
+          "symbols_checked": [
+            "VariableSpec",
+            "DenseLayer",
+            "NeuralModelBundle",
+            "PredictionResult",
+            "FramePrediction",
+            "load_neural_bundle",
+            "predict_records",
+            "predict_frame"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "src/rate_of_closure/plotting/__init__.py",
+                "src/rate_of_closure/plotting/_catalog_entries.py",
+                "src/rate_of_closure/plotting/catalog.py",
+                "src/rate_of_closure/plotting/catalog_contract.py",
+                "src/rate_of_closure/ui/pyqt6/solver_rows.py",
+                "src/rate_of_closure/ui/pyqt6/solver_specs.py",
+                "tests/rate_of_closure/test_plotting.py"
+              ],
+              "symbol": "VariableSpec"
+            },
+            {
+              "paths": [
+                "src/rate_of_closure/web/src/model/neuralLabContract.ts"
+              ],
+              "symbol": "DenseLayer"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/neural_training.py",
+          "symbols_checked": [
+            "TrainingOptions",
+            "TrainingRequest",
+            "discover_training_repository",
+            "parse_hidden_layers",
+            "write_training_config",
+            "build_training_request"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_analysis_mixin.py",
+          "symbols_checked": [
+            "LaunchMonitorAnalysisMixin"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "landed-elsewhere",
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_data_mixin.py",
+          "symbols_checked": [
+            "demo_frame",
+            "LaunchMonitorDataMixin"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "src/rate_of_closure/ui/pyqt6/launch_monitor_analytics_tab.py",
+                "src/rate_of_closure/ui/pyqt6/launch_monitor_preview.py"
+              ],
+              "symbol": "demo_frame"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_player_controls.py",
+          "symbols_checked": [
+            "LaunchMonitorPlayerControls"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_plot_widget.py",
+          "symbols_checked": [
+            "LaunchMonitorPlotWidget"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_table_preview.py",
+          "symbols_checked": [
+            "populate_table_preview"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/ui/pyqt6/neural_model_outputs.py",
+          "symbols_checked": [
+            "NeuralModelOutputs"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/ui/pyqt6/neural_training_controls.py",
+          "symbols_checked": [
+            "NeuralTrainingControls"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/components/LaunchMonitorCharts.test.tsx",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/components/LaunchMonitorCharts.tsx",
+          "symbols_checked": [
+            "ScatterPlot",
+            "DispersionPlot",
+            "SessionTrendPlot"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "src/p1am_control_system/frontend/src/components/data_explorer/AnalysisPanels.tsx",
+                "src/p1am_control_system/frontend/src/components/data_explorer/PlotPanel.tsx",
+                "src/p1am_control_system/frontend/src/components/data_explorer/plots/ScatterPlot.test.tsx",
+                "src/p1am_control_system/frontend/src/components/data_explorer/plots/ScatterPlot.tsx"
+              ],
+              "symbol": "ScatterPlot"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/components/LaunchMonitorImportedResults.test.tsx",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/components/LaunchMonitorImportedResults.tsx",
+          "symbols_checked": [
+            "LaunchMonitorImportedResults"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/components/LaunchMonitorPlayerInsights.tsx",
+          "symbols_checked": [
+            "LaunchMonitorPlayerInsights"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/components/NeuralModelCharts.tsx",
+          "symbols_checked": [
+            "PredictionPoint",
+            "LearningCurveChart",
+            "MetricCards",
+            "ResidualChart"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/model/launchMonitorImportedResults.test.ts",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/model/launchMonitorImportedResults.ts",
+          "symbols_checked": [
+            "RankedValue",
+            "PcaScore",
+            "ImportedAdvancedResults",
+            "importedAdvancedResults"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/model/launchMonitorPlayerAnalytics.test.ts",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/model/launchMonitorPlayerAnalytics.ts",
+          "symbols_checked": [
+            "MetricUnit",
+            "DispersionSummary",
+            "StrokesGainedShot",
+            "SessionTrendPoint",
+            "PlayerSessionTrend",
+            "SessionTrend",
+            "metricUnit",
+            "metricLabel"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "src/rate_of_closure/web/src/model/impactSolutionContract.ts",
+                "src/rate_of_closure/web/src/model/launchMonitorMetricUnits.ts"
+              ],
+              "symbol": "metricUnit"
+            },
+            {
+              "paths": [
+                "src/rate_of_closure/web/src/components/LaunchMonitorCovariation.tsx",
+                "src/rate_of_closure/web/src/components/LaunchMonitorCovariationChart.tsx",
+                "src/rate_of_closure/web/src/components/LaunchMonitorLongitudinalAnalysis.tsx",
+                "src/rate_of_closure/web/src/model/launchMonitorMetricUnits.ts"
+              ],
+              "symbol": "metricLabel"
+            }
+          ]
+        },
+        {
+          "classification": "landed-elsewhere",
+          "path": "src/rate_of_closure/web/src/model/launchMonitorProject.ts",
+          "symbols_checked": [
+            "PROJECT_CONTRACT_VERSION",
+            "LaunchMonitorProject",
+            "parseLaunchMonitorProject"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "src/rate_of_closure/launch_monitor_workspace.py",
+                "src/rate_of_closure/ui/pyqt6/launch_monitor_canonical_workspace_mixin.py",
+                "src/rate_of_closure/ui/pyqt6/launch_monitor_player_workspace.py",
+                "src/rate_of_closure/web/src/components/LaunchMonitorPlayerWorkspace.tsx",
+                "src/rate_of_closure/web/src/model/launchMonitorWorkspace.test.ts",
+                "src/rate_of_closure/web/src/model/launchMonitorWorkspace.ts",
+                "tests/rate_of_closure/test_launch_monitor_forbidden_identity.py",
+                "tests/rate_of_closure/test_launch_monitor_workspace.py",
+                "tests/shared/python/launch_monitor/test_importer.py"
+              ],
+              "symbol": "LaunchMonitorProject"
+            },
+            {
+              "paths": [
+                "src/rate_of_closure/web/src/model/launchMonitorWorkspace.test.ts",
+                "src/rate_of_closure/web/src/model/launchMonitorWorkspace.ts"
+              ],
+              "symbol": "parseLaunchMonitorProject"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/model/neuralModelBundle.test.ts",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/model/neuralModelBundle.ts",
+          "symbols_checked": [
+            "PORTABLE_MODEL_SCHEMA",
+            "ModelVariable",
+            "DenseLayer",
+            "ModelMetric",
+            "LearningCurvePoint",
+            "ModelProvenance",
+            "PortableModelBundle",
+            "parsePortableModelBundle"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "src/rate_of_closure/web/src/model/neuralLabContract.ts"
+              ],
+              "symbol": "PORTABLE_MODEL_SCHEMA"
+            },
+            {
+              "paths": [
+                "src/rate_of_closure/web/src/model/neuralLabContract.ts"
+              ],
+              "symbol": "ModelVariable"
+            },
+            {
+              "paths": [
+                "src/rate_of_closure/web/src/model/neuralLabContract.ts"
+              ],
+              "symbol": "DenseLayer"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/model/neuralTrainingRequest.test.ts",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/model/neuralTrainingRequest.ts",
+          "symbols_checked": [
+            "TRAINING_REQUEST_SCHEMA",
+            "TrainingDatasetReference",
+            "TrainingRequestInput",
+            "NeuralTrainingRequest",
+            "createTrainingRequest"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "tests/rate_of_closure/test_launch_monitor_player_metrics.py",
+          "symbols_checked": [
+            "test_campaign_catalog_exposes_all_manifested_csvs",
+            "test_project_round_trip_preserves_source_and_selections",
+            "test_units_dispersion_strokes_gained_and_session_trends",
+            "test_session_trends_are_fitted_independently_by_player"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "tests/rate_of_closure/test_neural_model_contract.py",
+          "symbols_checked": [
+            "test_json_bundle_predicts_and_reports_applicability",
+            "test_batch_prediction_preserves_inputs_and_adds_named_outputs",
+            "test_bundle_rejects_unsupported_or_malformed_content",
+            "test_bundle_loader_never_accepts_pickle"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "tests/rate_of_closure/test_neural_model_lab_tab.py",
+          "symbols_checked": [
+            "test_tab_imports_safe_model_and_queries_current_row",
+            "test_training_controls_are_configurable_and_accessible",
+            "test_training_request_uses_private_cli_and_visible_arguments",
+            "test_vendor_without_shot_level_targets_is_disabled_with_reason",
+            "test_modeling_cohort_defaults_are_preselected"
+          ],
+          "symbols_found_on_main": []
+        }
+      ],
+      "number": 4246,
+      "reachable": true,
+      "reason": "",
+      "state": "MERGED",
+      "title": "feat(rate-of-closure): add Neural Model Lab",
+      "url": "https://github.com/D-sorganization/Tools/pull/4246"
+    },
+    {
+      "base_ref": "codex/4142-localized-react-execution",
+      "base_ref_on_origin": true,
+      "closed_at": "2026-08-13T17:02:35Z",
+      "counts": {
+        "added": 880,
+        "deleted": 0,
+        "modified": 322
+      },
+      "diff_ref_sha": "87719a2663defac25aac300a95e48c781b916626",
+      "diff_ref_used": "origin/agent/sasho-face-center-rotational-aoa",
+      "diffstat_summary": "1202 files changed, 167955 insertions(+), 2582 deletions(-)",
+      "error": "",
+      "groups": [
+        {
+          "classification": "obsolete",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 0,
+            "obsolete": 6
+          },
+          "files": [
+            ".codex-worktrees/friction-factors-3659",
+            ".codex-worktrees/pr-3602-fix",
+            ".codex-worktrees/pr-3752-movement",
+            ".codex-worktrees/pr-3766-modern-robotics-dbc",
+            ".codex-worktrees/pr-3780-pressure-flow",
+            ".codex-worktrees/pr-3784-deterministic-te"
+          ],
+          "prefix": ".codex-worktrees"
+        },
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 1,
+            "obsolete": 0
+          },
+          "files": [
+            "src/movement_optimizer/gui/motion_helpers.py"
+          ],
+          "prefix": "src/movement_optimizer/gui"
+        },
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 1,
+            "obsolete": 0
+          },
+          "files": [
+            "src/rate_of_closure/web/src/model/__fixtures__/sasho_face_center_rotation_golden_v1.json"
+          ],
+          "prefix": "src/rate_of_closure/web"
+        }
+      ],
+      "head_oid": "87719a2663defac25aac300a95e48c781b916626",
+      "head_oid_matches_diff_ref": true,
+      "head_ref": "agent/sasho-face-center-rotational-aoa",
+      "merged_at": "2026-08-13T17:02:35Z",
+      "missing_files": [
+        {
+          "classification": "obsolete",
+          "path": ".codex-worktrees/friction-factors-3659",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "obsolete",
+          "path": ".codex-worktrees/pr-3602-fix",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "obsolete",
+          "path": ".codex-worktrees/pr-3752-movement",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "obsolete",
+          "path": ".codex-worktrees/pr-3766-modern-robotics-dbc",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "obsolete",
+          "path": ".codex-worktrees/pr-3780-pressure-flow",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "obsolete",
+          "path": ".codex-worktrees/pr-3784-deterministic-te",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/movement_optimizer/gui/motion_helpers.py",
+          "symbols_checked": [
+            "build_motion_colors",
+            "chain_path_length"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/model/__fixtures__/sasho_face_center_rotation_golden_v1.json",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        }
+      ],
+      "number": 4436,
+      "reachable": true,
+      "reason": "",
+      "state": "MERGED",
+      "title": "feat(rate-of-closure): add Sasho rotational AoA option",
+      "url": "https://github.com/D-sorganization/Tools/pull/4436"
+    },
+    {
+      "base_ref": "main",
+      "base_ref_on_origin": true,
+      "closed_at": "2026-08-20T09:01:27Z",
+      "counts": {
+        "added": 105,
+        "deleted": 0,
+        "modified": 35
+      },
+      "diff_ref_sha": "7fba01f5c5615ec62c2bc6eeef7f4c8afad9f580",
+      "diff_ref_used": "origin/consolidated/p1am-platform-2026-08-13",
+      "diffstat_summary": "140 files changed, 16678 insertions(+), 226 deletions(-)",
+      "error": "",
+      "groups": [
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 1,
+            "obsolete": 0
+          },
+          "files": [
+            "dcs_scada.db"
+          ],
+          "prefix": "dcs_scada.db"
+        },
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 1,
+            "obsolete": 0
+          },
+          "files": [
+            "docs/adr/ADR-007-plant-historian-timescaledb.md"
+          ],
+          "prefix": "docs/adr"
+        },
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 84,
+            "obsolete": 0
+          },
+          "files": [
+            "src/p1am_control_system/backend/advisory_router.py",
+            "src/p1am_control_system/backend/advisory_workspace.py",
+            "src/p1am_control_system/backend/alarm_lifecycle.py",
+            "src/p1am_control_system/backend/alarm_router.py",
+            "src/p1am_control_system/backend/alarm_service.py",
+            "src/p1am_control_system/backend/asset_health.py",
+            "src/p1am_control_system/backend/audit_log.py",
+            "src/p1am_control_system/backend/audit_middleware.py",
+            "src/p1am_control_system/backend/audit_router.py",
+            "src/p1am_control_system/backend/availability.py",
+            "src/p1am_control_system/backend/configuration_repository.py",
+            "src/p1am_control_system/backend/configuration_router.py",
+            "src/p1am_control_system/backend/configuration_workflow.py",
+            "src/p1am_control_system/backend/connector_plugins.py",
+            "src/p1am_control_system/backend/enum_compat.py",
+            "src/p1am_control_system/backend/evidence_package.py",
+            "src/p1am_control_system/backend/historian_shipper.py",
+            "src/p1am_control_system/backend/historian_sink.py",
+            "src/p1am_control_system/backend/historian_wiring.py",
+            "src/p1am_control_system/backend/identity.py",
+            "src/p1am_control_system/backend/identity_config.py",
+            "src/p1am_control_system/backend/identity_router.py",
+            "src/p1am_control_system/backend/notification_policy.py",
+            "src/p1am_control_system/backend/operations_router.py",
+            "src/p1am_control_system/backend/operator_router.py",
+            "src/p1am_control_system/backend/process_overview.py",
+            "src/p1am_control_system/backend/product_router.py",
+            "src/p1am_control_system/backend/protection_management.py",
+            "src/p1am_control_system/backend/recovery_package.py",
+            "src/p1am_control_system/backend/representative_product.py",
+            "src/p1am_control_system/backend/saved_investigation.py",
+            "src/p1am_control_system/backend/scenario_evidence.py",
+            "src/p1am_control_system/backend/scenario_router.py",
+            "src/p1am_control_system/backend/shift_log.py",
+            "src/p1am_control_system/backend/shift_log_repository.py",
+            "src/p1am_control_system/backend/signal_quality.py",
+            "src/p1am_control_system/backend/synthetic_procedure.py",
+            "src/p1am_control_system/backend/system_health.py",
+            "src/p1am_control_system/backend/system_router.py",
+            "src/p1am_control_system/backend/tests/_route_inventory.py",
+            "src/p1am_control_system/backend/tests/test_advisory_router.py",
+            "src/p1am_control_system/backend/tests/test_advisory_workspace.py",
+            "src/p1am_control_system/backend/tests/test_alarm_lifecycle.py",
+            "src/p1am_control_system/backend/tests/test_alarm_router.py",
+            "src/p1am_control_system/backend/tests/test_alarm_service.py",
+            "src/p1am_control_system/backend/tests/test_asset_health.py",
+            "src/p1am_control_system/backend/tests/test_audit_log.py",
+            "src/p1am_control_system/backend/tests/test_audit_middleware.py",
+            "src/p1am_control_system/backend/tests/test_audit_router.py",
+            "src/p1am_control_system/backend/tests/test_availability.py",
+            "src/p1am_control_system/backend/tests/test_configuration_repository.py",
+            "src/p1am_control_system/backend/tests/test_configuration_router.py",
+            "src/p1am_control_system/backend/tests/test_configuration_workflow.py",
+            "src/p1am_control_system/backend/tests/test_connector_plugins.py",
+            "src/p1am_control_system/backend/tests/test_historian_shipper.py",
+            "src/p1am_control_system/backend/tests/test_historian_sink.py",
+            "src/p1am_control_system/backend/tests/test_historian_wiring.py",
+            "src/p1am_control_system/backend/tests/test_identity.py",
+            "src/p1am_control_system/backend/tests/test_identity_config.py",
+            "src/p1am_control_system/backend/tests/test_identity_main_integration.py",
+            "src/p1am_control_system/backend/tests/test_identity_router.py",
+            "src/p1am_control_system/backend/tests/test_notification_policy.py",
+            "src/p1am_control_system/backend/tests/test_operations_router.py",
+            "src/p1am_control_system/backend/tests/test_operator_router.py",
+            "src/p1am_control_system/backend/tests/test_process_overview.py",
+            "src/p1am_control_system/backend/tests/test_product_router.py",
+            "src/p1am_control_system/backend/tests/test_protection_management.py",
+            "src/p1am_control_system/backend/tests/test_recovery_package.py",
+            "src/p1am_control_system/backend/tests/test_saved_investigation.py",
+            "src/p1am_control_system/backend/tests/test_scenario_evidence.py",
+            "src/p1am_control_system/backend/tests/test_scenario_router.py",
+            "src/p1am_control_system/backend/tests/test_shift_log.py",
+            "src/p1am_control_system/backend/tests/test_signal_quality.py",
+            "src/p1am_control_system/backend/tests/test_synthetic_procedure.py",
+            "src/p1am_control_system/backend/tests/test_system_health.py",
+            "src/p1am_control_system/backend/tests/test_system_router.py",
+            "src/p1am_control_system/backend/timescale/001_schema.sql",
+            "src/p1am_control_system/backend/timescale/002_continuous_aggregates.sql",
+            "src/p1am_control_system/backend/timescale/003_compression.sql",
+            "src/p1am_control_system/backend/timescale/004_retention.sql",
+            "src/p1am_control_system/backend/timescale/005_event_log.sql",
+            "src/p1am_control_system/backend/timescale/006_roles.sql",
+            "src/p1am_control_system/backend/timescale/README.md",
+            "src/p1am_control_system/backend/timescale_writer.py"
+          ],
+          "prefix": "src/p1am_control_system/backend"
+        },
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 9,
+            "obsolete": 0
+          },
+          "files": [
+            "src/p1am_control_system/deploy/grafana/dashboards/alarm-performance.json",
+            "src/p1am_control_system/deploy/grafana/dashboards/campaign-comparison.json",
+            "src/p1am_control_system/deploy/grafana/dashboards/historian-health.json",
+            "src/p1am_control_system/deploy/grafana/dashboards/process-overview.json",
+            "src/p1am_control_system/deploy/grafana/provisioning/dashboards/dashboards.yaml",
+            "src/p1am_control_system/deploy/grafana/provisioning/datasources/timescale.yaml",
+            "src/p1am_control_system/deploy/historian/.env.example",
+            "src/p1am_control_system/deploy/historian/README.md",
+            "src/p1am_control_system/deploy/historian/docker-compose.yml"
+          ],
+          "prefix": "src/p1am_control_system/deploy"
+        },
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 10,
+            "obsolete": 0
+          },
+          "files": [
+            "src/p1am_control_system/frontend/src/components/CommsQualityBadge.test.tsx",
+            "src/p1am_control_system/frontend/src/components/CommsQualityBadge.tsx",
+            "src/p1am_control_system/frontend/src/components/ConfigurationWorkflowPanel.test.tsx",
+            "src/p1am_control_system/frontend/src/components/ConfigurationWorkflowPanel.tsx",
+            "src/p1am_control_system/frontend/src/components/OperatorWorkspace.test.tsx",
+            "src/p1am_control_system/frontend/src/components/OperatorWorkspace.tsx",
+            "src/p1am_control_system/frontend/src/components/ProfessionalAlarmPanel.test.tsx",
+            "src/p1am_control_system/frontend/src/components/ProfessionalAlarmPanel.tsx",
+            "src/p1am_control_system/frontend/src/components/SystemHealthPanel.test.tsx",
+            "src/p1am_control_system/frontend/src/components/SystemHealthPanel.tsx"
+          ],
+          "prefix": "src/p1am_control_system/frontend"
+        }
+      ],
+      "head_oid": "7fba01f5c5615ec62c2bc6eeef7f4c8afad9f580",
+      "head_oid_matches_diff_ref": true,
+      "head_ref": "consolidated/p1am-platform-2026-08-13",
+      "merged_at": null,
+      "missing_files": [
+        {
+          "classification": "missing",
+          "path": "dcs_scada.db",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "docs/adr/ADR-007-plant-historian-timescaledb.md",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/advisory_router.py",
+          "symbols_checked": [
+            "create_advisory_router"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/advisory_workspace.py",
+          "symbols_checked": [
+            "AdvisoryRequest",
+            "ConstraintEnvelope",
+            "ConfidenceInterval",
+            "ModelProvenance",
+            "DataProvenance",
+            "ReplayEvidence",
+            "AdvisoryResult",
+            "DispositionDecision"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "src/data_processing/data_processor/python/data_processor/core/_lazy_map.py",
+                "src/data_processing/data_processor/python/data_processor/core/uncertainty_quantification.py"
+              ],
+              "symbol": "ConfidenceInterval"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/alarm_lifecycle.py",
+          "symbols_checked": [
+            "AlarmPriority",
+            "AlarmLifecycle",
+            "AlarmDefinition",
+            "AlarmSnapshot",
+            "AlarmPerformanceReport",
+            "AlarmManager"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/alarm_router.py",
+          "symbols_checked": [
+            "ShelfRequest",
+            "SuppressionRequest",
+            "create_alarm_router"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/alarm_service.py",
+          "symbols_checked": [
+            "manager_from_routing",
+            "AlarmService"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/asset_health.py",
+          "symbols_checked": [
+            "AdvisoryCode",
+            "AssetHealthPolicy",
+            "AssetObservation",
+            "AssetCounters",
+            "DeviceStatistics",
+            "MaintenanceAdvisory",
+            "AssetHealthReport",
+            "AssetHealthService"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/audit_log.py",
+          "symbols_checked": [
+            "AuditOutcome",
+            "AuditEvent",
+            "AuditLog",
+            "append_audit_event",
+            "install_append_only_guards"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "src/p1am_control_system/backend/audit.py",
+                "src/p1am_control_system/backend/tests/test_audit_trail.py"
+              ],
+              "symbol": "AuditEvent"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/audit_middleware.py",
+          "symbols_checked": [
+            "MutationAuditMiddleware"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/audit_router.py",
+          "symbols_checked": [
+            "AuditItem",
+            "AuditPage",
+            "create_audit_router"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/availability.py",
+          "symbols_checked": [
+            "AvailabilityPolicy",
+            "AuthorityLease",
+            "BufferedSample",
+            "AvailabilityCommandResult",
+            "AvailabilityHealth",
+            "AvailabilityService"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/configuration_repository.py",
+          "symbols_checked": [
+            "ConfigurationRevisionRecord",
+            "SqliteRevisionRepository"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/configuration_router.py",
+          "symbols_checked": [
+            "DraftRequest",
+            "ReasonRequest",
+            "create_configuration_router"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/configuration_workflow.py",
+          "symbols_checked": [
+            "ConfigurationState",
+            "ConfigurationDiff",
+            "ConfigurationRevision",
+            "RevisionRepository",
+            "InMemoryRevisionRepository",
+            "ConfigurationWorkflow"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/connector_plugins.py",
+          "symbols_checked": [
+            "ConnectorDescriptor",
+            "ConnectorPlugin",
+            "ConnectorSample",
+            "CommandDisposition",
+            "ConnectorCommandResult",
+            "ConnectorDiagnostic",
+            "ConnectorManager"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/enum_compat.py",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/evidence_package.py",
+          "symbols_checked": [
+            "EvidencePackageManifest",
+            "EvidenceArtifact",
+            "VerifiedEvidencePackage",
+            "EvidencePackageService"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/historian_shipper.py",
+          "symbols_checked": [
+            "RemoteHistorianWriter",
+            "ShipperStats",
+            "StoreAndForwardSink"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/historian_sink.py",
+          "symbols_checked": [
+            "HistorianSink",
+            "NullHistorianSink",
+            "HistorianWriter"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "src/p1am_control_system/backend/historian.py",
+                "src/p1am_control_system/backend/main.py",
+                "src/p1am_control_system/backend/poll_runtime.py",
+                "src/p1am_control_system/backend/tests/test_historian_writer.py"
+              ],
+              "symbol": "HistorianWriter"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/historian_wiring.py",
+          "symbols_checked": [
+            "build_historian_writer",
+            "shipper_stats"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/identity.py",
+          "symbols_checked": [
+            "Role",
+            "Principal",
+            "CredentialRecord",
+            "parse_principal_config",
+            "CredentialRegistry",
+            "IssuedSession",
+            "SessionStore"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "src/media_processing/video_processor/JULES_ARCHITECTURE.md",
+                "src/media_processing/video_processor/docs/GOLF_VIDEO_EDITOR_TECH_STACK.md",
+                "src/media_processing/video_processor/docs/GOLF_VIDEO_PROJECT_STRUCTURE.md",
+                "src/media_processing/video_processor/packages/database/prisma/schema.prisma",
+                "src/p1am_control_system/calibration/CALIBRATION.md",
+                "src/p1am_control_system/desktop/auth.py",
+                "src/p1am_control_system/desktop/header.py",
+                "src/p1am_control_system/desktop/sidebar.py",
+                "src/pendulum_simulator/src/double_pendulum_golf/gui/equations_data.py",
+                "src/shared/python/ai/gui/chat_export.py"
+              ],
+              "symbol": "Role"
+            },
+            {
+              "paths": [
+                "src/data_processing/data_processor/python/data_processor/core/__init__.py",
+                "src/data_processing/data_processor/python/data_processor/core/pca_analysis.py",
+                "src/data_processing/data_processor/web/src/components/AnalyticsSuite.tsx",
+                "src/data_processing/data_processor/web/src/types/index.ts",
+                "src/document_processing/pdf_renamer/create_pdf_renamer_shortcut.ps1",
+                "src/inertia_calculator/README.md",
+                "src/inertia_calculator/python/inertia_calculator/ui/pyqt6/main_window.py",
+                "src/p1am_control_system/backend/data_explorer_service.py",
+                "src/p1am_control_system/backend/data_explorer_stats.py",
+                "src/p1am_control_system/scripts/plc-connect.ps1"
+              ],
+              "symbol": "Principal"
+            },
+            {
+              "paths": [
+                "src/shared/python/sidekick/standalone/preferences.py",
+                "src/shared/python/sidekick/standalone/session_store.py",
+                "tests/sidekick_api_baseline.json",
+                "tests/unit/sidekick/test_standalone_runtime.py"
+              ],
+              "symbol": "SessionStore"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/identity_config.py",
+          "symbols_checked": [
+            "load_identity_service",
+            "EnvironmentIdentityProvider"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/identity_router.py",
+          "symbols_checked": [
+            "PrincipalResponse",
+            "SessionResponse",
+            "IdentityService",
+            "require_role",
+            "create_identity_router"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/notification_policy.py",
+          "symbols_checked": [
+            "AlarmNotice",
+            "NotificationPolicy",
+            "NotificationChannel",
+            "NotificationAudit",
+            "NotificationService"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/operations_router.py",
+          "symbols_checked": [
+            "HandoverBody",
+            "create_operations_router"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/operator_router.py",
+          "symbols_checked": [
+            "TripRequest",
+            "BypassBody",
+            "ProtectionSnapshot",
+            "create_operator_router"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/process_overview.py",
+          "symbols_checked": [
+            "FaceplateValue",
+            "AssetFaceplate",
+            "ProcessArea",
+            "ProcessOverview",
+            "synthetic_process_overview"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/product_router.py",
+          "symbols_checked": [
+            "ProcedureCommandBody",
+            "ProductStatus",
+            "create_product_router"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/protection_management.py",
+          "symbols_checked": [
+            "ProtectionCategory",
+            "ProtectionDefinition",
+            "BypassRequest",
+            "TripRecord",
+            "ManagedBypass",
+            "ProtectionService",
+            "representative_protections"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/recovery_package.py",
+          "symbols_checked": [
+            "RecoveryManifest",
+            "RecoveryArtifact",
+            "VerifiedRecovery",
+            "RecoveryPackageService"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/representative_product.py",
+          "symbols_checked": [
+            "RepresentativeProduct",
+            "build_representative_product"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/saved_investigation.py",
+          "symbols_checked": [
+            "BadDataPolicy",
+            "InvestigationQuery",
+            "TagMetadata",
+            "Transformation",
+            "ChartDefinition",
+            "InvestigationSpec",
+            "SavedInvestigation",
+            "InvestigationRecord"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "src/data_processing/data_processor/python/data_processor/core/augmentation_transforms.py",
+                "src/data_processing/data_processor/python/data_processor/core/augmentation_types.py",
+                "src/data_processing/data_processor/python/data_processor/core/feature_transformer.py",
+                "src/data_processing/data_processor/python/data_processor/core/uncertainty_quantification.py",
+                "tests/shared/python/data_processing/test_data_processor_core.py"
+              ],
+              "symbol": "Transformation"
+            },
+            {
+              "paths": [
+                "src/pendulum_simulator/pendulum-web/src/components/RotatingBaseTraceCharts.tsx"
+              ],
+              "symbol": "ChartDefinition"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/scenario_evidence.py",
+          "symbols_checked": [
+            "ScenarioStep",
+            "ScenarioDefinition",
+            "SyntheticAlarmRecord",
+            "SyntheticAuditRecord",
+            "StepObservation",
+            "StepEvidence",
+            "EvidenceSignoff",
+            "ScenarioEvidence"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/scenario_router.py",
+          "symbols_checked": [
+            "representative_scenario",
+            "create_scenario_router"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/shift_log.py",
+          "symbols_checked": [
+            "EventReference",
+            "TrendReference",
+            "ShiftEntryDraft",
+            "ShiftEntry",
+            "ShiftSignoff",
+            "HandoverAcknowledgment",
+            "ShiftEntryRecord",
+            "ShiftSignoffRecord"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/shift_log_repository.py",
+          "symbols_checked": [
+            "SqliteShiftLogRepository"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/signal_quality.py",
+          "symbols_checked": [
+            "SignalQuality",
+            "SignalSample",
+            "SignalFrame",
+            "SignalFrameFactory"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/synthetic_procedure.py",
+          "symbols_checked": [
+            "ProcedureState",
+            "ProcedureCommand",
+            "ProcedureEvent",
+            "SyntheticProcedure"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/system_health.py",
+          "symbols_checked": [
+            "HealthStatus",
+            "DeploymentIdentity",
+            "HealthCheck",
+            "SystemHealthReport",
+            "SystemHealthService"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "src/pendulum_simulator/tests/test_hypothesis_physics.py",
+                "src/shared/python/calc_backend/tests/test_calc_backend_properties.py",
+                "src/shared/python/sidekick/tests/test_hypothesis_calculators.py",
+                "tests/test_properties.py"
+              ],
+              "symbol": "HealthCheck"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/system_router.py",
+          "symbols_checked": [
+            "create_system_router"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/_route_inventory.py",
+          "symbols_checked": [
+            "methods_by_path",
+            "route_paths"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_advisory_router.py",
+          "symbols_checked": [
+            "test_representative_advisory_and_disposition_are_review_only",
+            "test_unknown_advisory_cannot_receive_a_disposition"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_advisory_workspace.py",
+          "symbols_checked": [
+            "test_evaluation_is_reproducible_and_carries_complete_evidence",
+            "test_constraints_and_confidence_reject_invalid_ranges",
+            "test_operator_disposition_is_attributable_and_cannot_apply_control"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_alarm_lifecycle.py",
+          "symbols_checked": [
+            "test_alarm_activation_and_return_honor_delay_and_deadband",
+            "test_acknowledged_alarm_clears_only_after_return",
+            "test_authorized_shelving_requires_reason_and_expires",
+            "test_only_designed_suppression_rules_can_hide_alarm",
+            "test_first_out_order_help_and_performance_report_are_deterministic"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_alarm_router.py",
+          "symbols_checked": [
+            "test_active_alarm_surface_includes_lifecycle_help_and_first_out",
+            "test_acknowledge_and_timed_shelving_mutations",
+            "test_designed_suppression_and_performance_report",
+            "test_unknown_alarm_is_a_bounded_not_found_contract"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_alarm_service.py",
+          "symbols_checked": [
+            "test_routing_adapter_builds_generic_nonconfidential_alarm_definition",
+            "test_routing_adapter_rejects_invalid_limit_order"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_asset_health.py",
+          "symbols_checked": [
+            "test_report_detects_calibration_drift_flatline_and_mismatch_as_advisories",
+            "test_noisy_signal_and_device_statistics_are_reproducible",
+            "test_start_counter_distinguishes_transitions_from_runtime"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_audit_log.py",
+          "symbols_checked": [
+            "audit_engine",
+            "test_audit_event_rejects_missing_reason_and_identity",
+            "test_append_audit_event_persists_attribution_and_redacts_secrets",
+            "test_append_audit_event_preserves_failed_attempt",
+            "test_database_guards_reject_audit_update_and_delete",
+            "test_append_audit_event_requires_session"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_audit_middleware.py",
+          "symbols_checked": [
+            "audited_app",
+            "test_successful_mutation_is_attributed_and_secret_redacted",
+            "test_denied_and_runtime_failed_mutations_are_both_audited",
+            "test_read_only_request_is_not_written_to_mutation_audit"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_audit_router.py",
+          "symbols_checked": [
+            "test_audit_page_is_newest_first_and_structured",
+            "test_audit_query_filters_by_actor_outcome_and_correlation",
+            "test_audit_query_rejects_invalid_outcome_contract"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_availability.py",
+          "symbols_checked": [
+            "test_exactly_one_command_authority_is_enforced",
+            "test_offline_buffer_reconciles_ordered_unique_samples",
+            "test_hmi_loss_rejects_energizing_but_allows_deenergizing_command",
+            "test_health_report_exposes_recovery_and_clock_contracts"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_configuration_repository.py",
+          "symbols_checked": [
+            "repository",
+            "test_repository_round_trips_revision_and_monotonic_version",
+            "test_repository_rejects_payload_rewrite_under_existing_identity",
+            "test_activation_supersedes_prior_revision_atomically"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "rust_core/ai_backend/src/rag.rs",
+                "rust_core/data-processor-core/Cargo.toml",
+                "rust_core/math-primitives/Cargo.toml",
+                "rust_core/swing-core/Cargo.toml",
+                "rust_core/tools-core/Cargo.toml",
+                "src/c3d_viewer/README.md",
+                "src/core/__init__.py",
+                "src/core/paths.py",
+                "src/data_processing/README.md",
+                "src/data_processing/data_processor/python/data_processor/rust_engine.py"
+              ],
+              "symbol": "repository"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_configuration_router.py",
+          "symbols_checked": [
+            "test_api_exposes_reviewed_activation_and_machine_readable_diff",
+            "test_api_rejects_silent_direct_activation_and_bounds_unknown_ids",
+            "test_api_rollback_creates_new_revision_identity"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_configuration_workflow.py",
+          "symbols_checked": [
+            "test_protected_revision_requires_every_transition_before_activation",
+            "test_failed_deployment_does_not_claim_an_active_revision",
+            "test_rollback_clones_history_into_a_new_identified_revision",
+            "test_validation_and_diff_are_semantic_and_machine_readable"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_connector_plugins.py",
+          "symbols_checked": [
+            "HealthyConnector",
+            "FailedConnector",
+            "test_failed_connector_degrades_only_its_tags_without_crashing_poll",
+            "test_failed_and_unknown_commands_fail_closed",
+            "test_diagnostics_identify_connector_and_redact_secrets"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_historian_shipper.py",
+          "symbols_checked": [
+            "test_shipper_satisfies_the_sink_protocol",
+            "test_fake_remote_satisfies_the_remote_protocol",
+            "test_samples_reach_the_remote",
+            "test_non_numeric_values_are_skipped_not_fatal",
+            "test_enqueue_does_not_block_when_the_remote_hangs",
+            "test_enqueue_never_raises_when_the_remote_is_dead",
+            "test_writes_work_before_start_is_called",
+            "test_queue_is_bounded_and_drops_oldest"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_historian_sink.py",
+          "symbols_checked": [
+            "test_null_sink_satisfies_the_protocol",
+            "test_null_sink_accepts_and_discards",
+            "test_writer_persists_locally_and_forwards_the_same_timestamp",
+            "test_writer_skips_both_stores_when_throttle_declines",
+            "test_writer_consults_the_throttle_exactly_once_per_scan",
+            "test_remote_failure_does_not_reach_the_scan_loop",
+            "test_any_remote_exception_type_is_contained",
+            "test_writer_returns_local_row_count_not_forwarded_count"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_historian_wiring.py",
+          "symbols_checked": [
+            "test_forwarding_is_off_by_default",
+            "test_enabled_without_a_dsn_is_rejected_at_startup",
+            "test_enabled_with_whitespace_dsn_is_rejected",
+            "test_enabled_with_a_dsn_is_accepted",
+            "test_disabled_with_empty_dsn_is_fine",
+            "test_disabled_builds_an_inert_writer_and_no_shipper",
+            "test_disabled_wiring_does_not_import_psycopg",
+            "test_wiring_rejects_a_non_callable_due"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_identity.py",
+          "symbols_checked": [
+            "test_role_order_enforces_least_privilege",
+            "test_principal_rejects_blank_identity",
+            "test_parse_principal_config_builds_named_registry_without_secret_repr",
+            "test_parse_principal_config_rejects_unsafe_contracts",
+            "test_registry_authenticates_named_principal",
+            "test_registry_rejects_duplicate_credentials",
+            "test_session_store_issues_resolves_and_revokes_opaque_token",
+            "test_session_store_expires_session"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_identity_config.py",
+          "symbols_checked": [
+            "test_named_principal_configuration_takes_precedence",
+            "test_distinct_legacy_keys_receive_named_operator_and_admin_roles",
+            "test_single_legacy_key_retains_existing_admin_capability",
+            "test_unconfigured_identity_service_is_absent",
+            "test_session_ttl_configuration_is_validated",
+            "test_configured_ttl_controls_session_expiry_window",
+            "test_resolve_rejects_invalid_bearer_without_falling_back_to_key",
+            "test_provider_preserves_sessions_until_identity_environment_changes"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_identity_main_integration.py",
+          "symbols_checked": [
+            "test_route_inventory_resolves_routes_behind_an_included_router",
+            "test_main_application_mounts_identity_session_routes",
+            "test_main_application_registers_automatic_mutation_audit",
+            "test_audit_revision_resolves_the_identified_active_configuration"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_identity_router.py",
+          "symbols_checked": [
+            "test_login_returns_named_principal_and_opaque_session",
+            "test_login_rejects_invalid_credential_without_echoing_it",
+            "test_me_resolves_bearer_session",
+            "test_logout_revokes_session",
+            "test_role_dependency_enforces_operator_and_engineer_boundaries",
+            "test_role_dependency_accepts_named_api_key_during_migration",
+            "test_router_resolves_service_provider_at_request_time"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_notification_policy.py",
+          "symbols_checked": [
+            "RecordingChannel",
+            "test_delay_then_escalation_and_delivery_audit_are_deterministic",
+            "test_suppression_acknowledgment_cancellation_and_redaction",
+            "test_rate_limit_blocks_burst_and_records_attempt"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_operations_router.py",
+          "symbols_checked": [
+            "test_investigation_create_fetch_and_checksum_export",
+            "test_asset_health_report_is_advisory_not_trip",
+            "test_shift_entry_signoff_and_handover_workflow"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_operator_router.py",
+          "symbols_checked": [
+            "test_overview_is_explicitly_synthetic_and_multi_area",
+            "test_trip_and_bypass_endpoints_return_operator_context",
+            "test_non_bypassable_endpoint_maps_policy_conflict"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_process_overview.py",
+          "symbols_checked": [
+            "test_synthetic_overview_supports_progressive_multi_area_navigation",
+            "test_faceplate_exposes_consistent_operator_context",
+            "test_overview_rejects_non_synthetic_identifiers"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_product_router.py",
+          "symbols_checked": [
+            "Connector",
+            "Channel",
+            "test_product_status_exposes_all_reusable_contracts",
+            "test_procedure_commands_are_role_gated_and_attributed"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "src/c3d_viewer/README.md",
+                "src/c3d_viewer/python/c3d_viewer/ui/pyqt6/main_window.py",
+                "src/media_processing/audio_processor/matlab/audio_signal_processor/core/AudioLoader.m",
+                "src/p1am_control_system/firmware/P1AMHardware.cpp",
+                "src/p1am_control_system/frontend/src/components/RoutingMatrix.tsx"
+              ],
+              "symbol": "Channel"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_protection_management.py",
+          "symbols_checked": [
+            "principal",
+            "service",
+            "test_trip_group_preserves_first_out_and_consequences",
+            "test_managed_bypass_requires_role_reason_expiry_and_banner",
+            "test_non_bypassable_policy_and_expiry_are_fail_closed",
+            "test_expired_bypass_is_not_reported_active"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "rust_core/tools-core/src/swing_plane.rs",
+                "src/data_processing/data_processor/python/data_processor/core/pca_analysis.py",
+                "src/inertia_calculator/README.md",
+                "src/p1am_control_system/backend/data_explorer_stats.py",
+                "src/pendulum_simulator/pendulum-core/src/jacobians.rs",
+                "src/pendulum_simulator/src/double_pendulum_golf/gui/golfer_pendulum_widget.py",
+                "src/pendulum_simulator/src/double_pendulum_golf/gui/pendulum_widget.py",
+                "src/pendulum_simulator/src/double_pendulum_golf/jacobians.py",
+                "src/rate_of_closure/README.md",
+                "src/rate_of_closure/ui/pyqt6/variation_geometry_rendering.py"
+              ],
+              "symbol": "principal"
+            },
+            {
+              "paths": [
+                "rust_core/ai_backend/src/rag.rs",
+                "src/financial_calculator/README.md",
+                "src/function_generator/web/src-tauri/Cargo.lock",
+                "src/media_processing/video_processor/apps/web/components/ErrorBoundary.tsx",
+                "src/media_processing/video_processor/apps/web/lib/logger.ts",
+                "src/media_processing/video_processor/docs/GOLF_VIDEO_EDITOR_TECH_STACK.md",
+                "src/media_processing/video_processor/docs/GOLF_VIDEO_MATLAB_INTEGRATION.md",
+                "src/media_processing/video_processor/docs/GOLF_VIDEO_PROGRAMMING_LANGUAGES.md",
+                "src/media_processing/video_processor/docs/GOLF_VIDEO_PROJECT_STRUCTURE.md",
+                "src/media_processing/video_processor/package-lock.json"
+              ],
+              "symbol": "service"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_recovery_package.py",
+          "symbols_checked": [
+            "test_backup_round_trip_restores_only_as_a_draft",
+            "test_tampered_or_wrongly_identified_package_is_rejected",
+            "test_backup_requires_an_identified_active_revision"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_saved_investigation.py",
+          "symbols_checked": [
+            "test_saved_investigation_round_trip_reproduces_complete_context",
+            "test_export_package_has_reproducible_checksums",
+            "test_bad_data_cannot_be_silently_interpolated",
+            "test_query_rejects_non_synthetic_tags_and_inverted_time"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_scenario_evidence.py",
+          "symbols_checked": [
+            "test_synthetic_fault_and_recovery_emit_self_contained_evidence",
+            "test_scenario_contract_rejects_non_synthetic_or_live_targets",
+            "test_timing_window_failure_is_evidence_not_an_exception"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_scenario_router.py",
+          "symbols_checked": [
+            "test_representative_scenario_is_machine_marked_synthetic",
+            "test_scenario_run_returns_verified_self_contained_evidence_zip"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_shift_log.py",
+          "symbols_checked": [
+            "test_entry_is_attributable_searchable_and_exactly_linked",
+            "test_signoff_makes_entry_append_only_even_below_service_layer",
+            "test_handover_acknowledgment_is_explicit_and_attributable",
+            "test_unsigned_entry_cannot_be_acknowledged"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_signal_quality.py",
+          "symbols_checked": [
+            "test_signal_sample_requires_complete_aware_provenance",
+            "test_signal_sample_rejects_nonfinite_values",
+            "test_degraded_quality_requires_diagnostic_reason",
+            "test_frame_factory_sequences_good_stale_and_simulated_scans",
+            "test_factory_rejects_empty_or_malformed_tag_maps"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_synthetic_procedure.py",
+          "symbols_checked": [
+            "test_start_run_hold_resume_stop_cycle_is_deterministic_and_attributed",
+            "test_abort_and_recovery_are_bounded",
+            "test_invalid_transition_is_fail_closed"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_system_health.py",
+          "symbols_checked": [
+            "test_identity_is_observable_even_before_first_activation",
+            "test_health_distinguishes_primary_transport_from_simulator_availability"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/tests/test_system_router.py",
+          "symbols_checked": [
+            "test_system_api_downloads_and_restores_verified_package",
+            "test_system_api_exposes_distinct_identity_and_health"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/timescale/001_schema.sql",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/timescale/002_continuous_aggregates.sql",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/timescale/003_compression.sql",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/timescale/004_retention.sql",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/timescale/005_event_log.sql",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/timescale/006_roles.sql",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/timescale/README.md",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/backend/timescale_writer.py",
+          "symbols_checked": [
+            "redact_dsn",
+            "TimescaleWriter"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/deploy/grafana/dashboards/alarm-performance.json",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/deploy/grafana/dashboards/campaign-comparison.json",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/deploy/grafana/dashboards/historian-health.json",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/deploy/grafana/dashboards/process-overview.json",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/deploy/grafana/provisioning/dashboards/dashboards.yaml",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/deploy/grafana/provisioning/datasources/timescale.yaml",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/deploy/historian/.env.example",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/deploy/historian/README.md",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/deploy/historian/docker-compose.yml",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/frontend/src/components/CommsQualityBadge.test.tsx",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/frontend/src/components/CommsQualityBadge.tsx",
+          "symbols_checked": [
+            "CommsQualityBadgeProps",
+            "CommsQualityBadge"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/frontend/src/components/ConfigurationWorkflowPanel.test.tsx",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/frontend/src/components/ConfigurationWorkflowPanel.tsx",
+          "symbols_checked": [
+            "ConfigurationWorkflowPanel"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/frontend/src/components/OperatorWorkspace.test.tsx",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/frontend/src/components/OperatorWorkspace.tsx",
+          "symbols_checked": [
+            "OperatorWorkspace"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/frontend/src/components/ProfessionalAlarmPanel.test.tsx",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/frontend/src/components/ProfessionalAlarmPanel.tsx",
+          "symbols_checked": [
+            "ProfessionalAlarmPanel"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/frontend/src/components/SystemHealthPanel.test.tsx",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/p1am_control_system/frontend/src/components/SystemHealthPanel.tsx",
+          "symbols_checked": [
+            "SystemHealthPanel"
+          ],
+          "symbols_found_on_main": []
+        }
+      ],
+      "number": 4449,
+      "reachable": true,
+      "reason": "",
+      "state": "CLOSED",
+      "title": "CONS-A3: P1AM plant historian + professional SCADA foundation (supersedes #4065, #4091)",
+      "url": "https://github.com/D-sorganization/Tools/pull/4449"
+    },
+    {
+      "base_ref": "main",
+      "base_ref_on_origin": true,
+      "closed_at": "2026-08-20T09:01:30Z",
+      "counts": {
+        "added": 1344,
+        "deleted": 0,
+        "modified": 41
+      },
+      "diff_ref_sha": "9dd48d4bd27d72d04a1541f69ef0dae6d8c30555",
+      "diff_ref_used": "origin/consolidated/rate-closure-remainder-2026-08-13",
+      "diffstat_summary": "1385 files changed, 258896 insertions(+), 451 deletions(-)",
+      "error": "",
+      "groups": [
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 1,
+            "obsolete": 0
+          },
+          "files": [
+            ".github/workflows/rate-of-closure-windows-state-security.yml"
+          ],
+          "prefix": ".github/workflows"
+        },
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 4,
+            "obsolete": 0
+          },
+          "files": [
+            "scripts/four_surface_capability.py",
+            "scripts/generate_regional_ground_authority_fixtures.py",
+            "scripts/qualify_windows_authority_state_install.py",
+            "scripts/rate_campaign_manifest.py"
+          ],
+          "prefix": "scripts"
+        },
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 1,
+            "obsolete": 0
+          },
+          "files": [
+            "src/movement_optimizer/gui/motion_helpers.py"
+          ],
+          "prefix": "src/movement_optimizer/gui"
+        },
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 1,
+            "missing": 4,
+            "obsolete": 0
+          },
+          "files": [
+            "src/rate_of_closure/_runtime_manifest_reason.py",
+            "src/rate_of_closure/four_surface_capability.py",
+            "src/rate_of_closure/four_surface_declarations.py",
+            "src/rate_of_closure/launch_web_dev.py",
+            "src/rate_of_closure/runtime_manifest.py"
+          ],
+          "prefix": "src/rate_of_closure"
+        },
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 20,
+            "obsolete": 0
+          },
+          "files": [
+            "src/rate_of_closure/web/src/App.workspaceState.test.tsx",
+            "src/rate_of_closure/web/src/components/ChipForgivenessPanel.test.tsx",
+            "src/rate_of_closure/web/src/components/ChipForgivenessPanel.tsx",
+            "src/rate_of_closure/web/src/components/ClubCanvasCamera.test.tsx",
+            "src/rate_of_closure/web/src/components/GroundPlayback3D.test.tsx",
+            "src/rate_of_closure/web/src/components/GroundPlayback3D.tsx",
+            "src/rate_of_closure/web/src/components/GroundPlaybackLoadedResult.tsx",
+            "src/rate_of_closure/web/src/components/GroundPlaybackPanel.test.tsx",
+            "src/rate_of_closure/web/src/components/GroundPlaybackPanel.tsx",
+            "src/rate_of_closure/web/src/components/RegionalGroundExecutionFileCommands.tsx",
+            "src/rate_of_closure/web/src/components/RegionalGroundVariationFileCommands.tsx",
+            "src/rate_of_closure/web/src/components/SimulationPhysicsStatus.tsx",
+            "src/rate_of_closure/web/src/components/SynchronizedSimulationViews.tsx",
+            "src/rate_of_closure/web/src/components/ViewCompositorApp.test.tsx",
+            "src/rate_of_closure/web/src/model/chipForgivenessEnsemble.test.ts",
+            "src/rate_of_closure/web/src/model/clubAssemblySimulationAdapter.test.ts",
+            "src/rate_of_closure/web/src/model/workspaceVariationSession.test.ts",
+            "src/rate_of_closure/web/src/workers/windStrategy.worker.ts",
+            "src/rate_of_closure/web/tests/e2e/camera-controls.pw.ts",
+            "src/rate_of_closure/web/tests/e2e/mobile-tools-menu.pw.ts"
+          ],
+          "prefix": "src/rate_of_closure/web"
+        },
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 1,
+            "obsolete": 0
+          },
+          "files": [
+            "tests/ops/test_rate_of_closure_windows_state_workflow.py"
+          ],
+          "prefix": "tests/ops"
+        },
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 19,
+            "obsolete": 0
+          },
+          "files": [
+            "tests/rate_of_closure/test_camera_controls_gui.py",
+            "tests/rate_of_closure/test_campaign_release_manifest.py",
+            "tests/rate_of_closure/test_capability_gui.py",
+            "tests/rate_of_closure/test_chip_forgiveness_runner.py",
+            "tests/rate_of_closure/test_club_assembly_simulation_adapter.py",
+            "tests/rate_of_closure/test_flight_execution_profiles.py",
+            "tests/rate_of_closure/test_four_surface_capability.py",
+            "tests/rate_of_closure/test_ground_playback_gui.py",
+            "tests/rate_of_closure/test_regional_ground_execution_job.py",
+            "tests/rate_of_closure/test_regional_ground_execution_workspace.py",
+            "tests/rate_of_closure/test_regional_ground_job_preparation.py",
+            "tests/rate_of_closure/test_regional_ground_production_runner.py",
+            "tests/rate_of_closure/test_regional_ground_result_golden.py",
+            "tests/rate_of_closure/test_regional_ground_variation.py",
+            "tests/rate_of_closure/test_regional_ground_variation_execution.py",
+            "tests/rate_of_closure/test_runtime_manifest.py",
+            "tests/rate_of_closure/test_view_compositor_gui.py",
+            "tests/rate_of_closure/test_wind_strategy_panel.py",
+            "tests/rate_of_closure/test_workspace_session.py"
+          ],
+          "prefix": "tests/rate_of_closure"
+        },
+        {
+          "classification": "missing",
+          "counts": {
+            "landed-elsewhere": 0,
+            "missing": 1,
+            "obsolete": 0
+          },
+          "files": [
+            "tests/shared/python/golf_club/test_cad_validation.py"
+          ],
+          "prefix": "tests/shared"
+        }
+      ],
+      "head_oid": "9dd48d4bd27d72d04a1541f69ef0dae6d8c30555",
+      "head_oid_matches_diff_ref": true,
+      "head_ref": "consolidated/rate-closure-remainder-2026-08-13",
+      "merged_at": null,
+      "missing_files": [
+        {
+          "classification": "missing",
+          "path": ".github/workflows/rate-of-closure-windows-state-security.yml",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "scripts/four_surface_capability.py",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "scripts/generate_regional_ground_authority_fixtures.py",
+          "symbols_checked": [
+            "generated_fixture_texts"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "scripts/qualify_windows_authority_state_install.py",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "scripts/rate_campaign_manifest.py",
+          "symbols_checked": [
+            "StrictModel",
+            "ReleaseStage",
+            "CompletionState",
+            "ReleaseStatus",
+            "CarrierState",
+            "ProtectionEvidence",
+            "SurfaceState",
+            "EvidenceOutcome"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/movement_optimizer/gui/motion_helpers.py",
+          "symbols_checked": [
+            "build_motion_colors",
+            "chain_path_length"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/_runtime_manifest_reason.py",
+          "symbols_checked": [
+            "validate_reason_grammar"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/four_surface_capability.py",
+          "symbols_checked": [
+            "StrictModel",
+            "SurfaceId",
+            "CapabilityCategory",
+            "CapabilityState",
+            "ToolsPin",
+            "SchemaReference",
+            "FreshnessWindow",
+            "SurfaceDefinition"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/four_surface_declarations.py",
+          "symbols_checked": [
+            "DeclaredCapability",
+            "derive_declared_capabilities",
+            "validate_declared_scope_completeness",
+            "render_declared_scope"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/launch_web_dev.py",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "landed-elsewhere",
+          "path": "src/rate_of_closure/runtime_manifest.py",
+          "symbols_checked": [
+            "StrictModel",
+            "SurfaceId",
+            "CalculationDomain",
+            "Availability",
+            "SourceKind",
+            "RuntimeOption",
+            "RuntimeBuild",
+            "CalculationAuthority"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "src/rate_of_closure/web/src/model/runtimeManifest.ts"
+              ],
+              "symbol": "CalculationDomain"
+            },
+            {
+              "paths": [
+                "src/python/src/utils/integration_test_helpers.py",
+                "src/rate_of_closure/club/simulation_adapter.py",
+                "src/rate_of_closure/ui/pyqt6/neural_model_lab_tab.py",
+                "src/rate_of_closure/ui/pyqt6/regional_ground_execution_presentation.py",
+                "src/rate_of_closure/ui/pyqt6/wind_strategy_panel.py",
+                "src/rate_of_closure/variation/chip_forgiveness.py",
+                "src/rate_of_closure/variation/streaming_ensemble_analysis.py",
+                "src/rate_of_closure/web/e2e/visualization-tab-visibility.spec.ts",
+                "src/shared/python/ai/adapters/github_cli_provider.py",
+                "src/shared/python/ai/adapters/rust_adapter.py"
+              ],
+              "symbol": "Availability"
+            },
+            {
+              "paths": [
+                "src/p1am_control_system/backend/data_explorer_enums.py"
+              ],
+              "symbol": "SourceKind"
+            },
+            {
+              "paths": [
+                "src/rate_of_closure/web/src/model/runtimeManifest.ts"
+              ],
+              "symbol": "RuntimeOption"
+            },
+            {
+              "paths": [
+                "src/rate_of_closure/web/src/model/runtimeManifest.ts"
+              ],
+              "symbol": "RuntimeBuild"
+            },
+            {
+              "paths": [
+                "src/rate_of_closure/web/src/model/runtimeManifest.ts"
+              ],
+              "symbol": "CalculationAuthority"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/App.workspaceState.test.tsx",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/components/ChipForgivenessPanel.test.tsx",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/components/ChipForgivenessPanel.tsx",
+          "symbols_checked": [
+            "ChipForgivenessPanel"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/components/ClubCanvasCamera.test.tsx",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/components/GroundPlayback3D.test.tsx",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/components/GroundPlayback3D.tsx",
+          "symbols_checked": [
+            "GroundPlaybackPortableState",
+            "GroundPlayback3D"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/components/GroundPlaybackLoadedResult.tsx",
+          "symbols_checked": [
+            "GroundPlaybackLoadedResult"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/components/GroundPlaybackPanel.test.tsx",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/components/GroundPlaybackPanel.tsx",
+          "symbols_checked": [
+            "GroundPlaybackPanel"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/components/RegionalGroundExecutionFileCommands.tsx",
+          "symbols_checked": [
+            "RegionalGroundExecutionFileCommands"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/components/RegionalGroundVariationFileCommands.tsx",
+          "symbols_checked": [
+            "RegionalGroundVariationFileCommands"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/components/SimulationPhysicsStatus.tsx",
+          "symbols_checked": [
+            "SimulationPhysicsStatus"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/components/SynchronizedSimulationViews.tsx",
+          "symbols_checked": [
+            "SynchronizedSimulationViews"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/components/ViewCompositorApp.test.tsx",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/model/chipForgivenessEnsemble.test.ts",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/model/clubAssemblySimulationAdapter.test.ts",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/model/workspaceVariationSession.test.ts",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/src/workers/windStrategy.worker.ts",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/tests/e2e/camera-controls.pw.ts",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "src/rate_of_closure/web/tests/e2e/mobile-tools-menu.pw.ts",
+          "symbols_checked": [],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "tests/ops/test_rate_of_closure_windows_state_workflow.py",
+          "symbols_checked": [
+            "test_windows_state_workflow_uses_only_restricted_runner_and_public_fetch",
+            "test_windows_state_workflow_qualifies_native_and_installed_contracts"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "tests/rate_of_closure/test_camera_controls_gui.py",
+          "symbols_checked": [
+            "reference_run",
+            "test_every_3d_view_exposes_accessible_stable_camera_commands",
+            "test_simulation_camera_starts_fitted_and_tracks_the_clubhead",
+            "test_flight_camera_starts_fitted_and_tracks_the_ball",
+            "test_simulation_snap_views_are_exact_idempotent_and_face_side_explicit",
+            "test_orthographic_snap_hides_only_depth_axis_and_restores_all_axes",
+            "test_tracking_keeps_complete_swing_subject_inside_preserved_zoom",
+            "test_flight_tracking_follows_ball_without_rebuilding_camera_controls"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "src/rate_of_closure/ui/pyqt6/plot_wizard.py",
+                "src/rate_of_closure/ui/pyqt6/plots_process_worker.py",
+                "src/rate_of_closure/ui/pyqt6/plots_tab.py",
+                "src/rate_of_closure/ui/pyqt6/plots_tab_computation.py",
+                "tests/rate_of_closure/pyqt_plot_point_inspector_probe.py",
+                "tests/rate_of_closure/test_plots_async_performance.py",
+                "tests/rate_of_closure/test_plots_gui.py"
+              ],
+              "symbol": "reference_run"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "tests/rate_of_closure/test_campaign_release_manifest.py",
+          "symbols_checked": [
+            "manifest",
+            "test_manifest_covers_primary_campaign_issues",
+            "test_manifest_distinguishes_delivery_stages",
+            "test_released_state_requires_main_sha",
+            "test_campaign_release_requires_every_program_release",
+            "test_placeholders_are_rejected",
+            "test_dependency_cycles_are_rejected",
+            "test_repository_evidence_references_exist"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "rust_core/ai_backend/pyproject.toml",
+                "rust_core/data-processor-core/pyproject.toml",
+                "rust_core/file_watcher/pyproject.toml",
+                "rust_core/swing-core/pyproject.toml",
+                "rust_core/tools-core/pyproject.toml",
+                "src/c3d_viewer/README.md",
+                "src/data_processing/data_processor/README.md",
+                "src/document_processing/pdf_renamer/README.md",
+                "src/financial_calculator/README.md",
+                "src/flow_rate_converter/README.md"
+              ],
+              "symbol": "manifest"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "tests/rate_of_closure/test_capability_gui.py",
+          "symbols_checked": [
+            "test_capability_controls_round_trip_integration_settings",
+            "test_capability_tab_runs_and_exposes_complete_diagnostics",
+            "test_capability_tab_rejects_oversized_interactive_workload",
+            "test_capability_workspace_apply_replaces_inputs_and_invalidates_results",
+            "test_capability_workspace_apply_rejects_noncanonical_basis_before_mutation",
+            "test_capability_workspace_rejects_stale_worker_success_after_replacement"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "tests/rate_of_closure/test_chip_forgiveness_runner.py",
+          "symbols_checked": [
+            "test_runner_retains_success_and_failure_with_advanced_metrics",
+            "test_runner_replay_is_deterministic_for_the_same_seed",
+            "test_retained_ensemble_analysis_avoids_reexecuting_trials",
+            "test_runner_honors_cancellation_before_any_trial",
+            "test_retained_analysis_honors_cancellation_before_postprocessing",
+            "test_retained_postprocessing_failure_remains_one_all_trial_record",
+            "test_retained_analysis_preserves_unsupported_turf_status",
+            "test_objective_identity_does_not_alias_distinct_custom_targets"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "tests/rate_of_closure/test_club_assembly_simulation_adapter.py",
+          "symbols_checked": [
+            "test_unbound_adapter_preserves_scalar_path_and_reports_every_gap",
+            "test_adapter_rotates_only_head_tensor_with_explicit_frame_attitude",
+            "test_adapter_rejects_selection_and_frame_mismatch",
+            "test_manual_pipeline_uses_bound_head_tensor_but_miss_skips_impact",
+            "test_pendulum_binding_does_not_infer_selected_head_attitude"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "tests/rate_of_closure/test_flight_execution_profiles.py",
+          "symbols_checked": [
+            "test_registry_exposes_one_exact_versioned_profile_and_settings_schema",
+            "test_schema_mismatch_fails_before_model_resolution",
+            "test_unregistered_exact_identity_fails_before_model_resolution",
+            "test_model_failure_becomes_typed_non_digest_evidence",
+            "test_current_fixture_recomputes_deterministically_and_qualifies",
+            "test_qualified_boundary_returns_only_an_exact_digest_matched_result",
+            "test_builder_returns_a_fresh_digest_bound_registered_input",
+            "test_unqualified_boundary_raises_typed_evidence_without_digest_text"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "tests/rate_of_closure/test_four_surface_capability.py",
+          "symbols_checked": [
+            "manifest",
+            "test_surface_ids_and_declared_categories_are_complete",
+            "test_unsupported_cells_have_reasons_and_supported_cells_have_evidence",
+            "test_supported_without_evidence_is_rejected",
+            "test_unsupported_without_reason_is_rejected",
+            "test_duplicate_capability_ids_are_rejected",
+            "test_json_primitive_types_are_strict",
+            "test_evidence_must_match_exact_tools_pin"
+          ],
+          "symbols_found_on_main": [
+            {
+              "paths": [
+                "rust_core/ai_backend/pyproject.toml",
+                "rust_core/data-processor-core/pyproject.toml",
+                "rust_core/file_watcher/pyproject.toml",
+                "rust_core/swing-core/pyproject.toml",
+                "rust_core/tools-core/pyproject.toml",
+                "src/c3d_viewer/README.md",
+                "src/data_processing/data_processor/README.md",
+                "src/document_processing/pdf_renamer/README.md",
+                "src/financial_calculator/README.md",
+                "src/flow_rate_converter/README.md"
+              ],
+              "symbol": "manifest"
+            }
+          ]
+        },
+        {
+          "classification": "missing",
+          "path": "tests/rate_of_closure/test_ground_playback_gui.py",
+          "symbols_checked": [
+            "test_tab_imports_strict_result_and_exposes_accessible_controls",
+            "test_tab_imports_validated_regional_envelope_and_reuses_nested_result",
+            "test_invalid_import_retains_last_good_result",
+            "test_play_pause_step_phase_jump_restart_and_loop",
+            "test_playback_uses_monotonic_time_speed_and_loop_overshoot",
+            "test_ground_module_is_discoverable_for_existing_qt_navigation",
+            "test_large_evidence_window_consumes_only_the_visible_budget"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "tests/rate_of_closure/test_regional_ground_execution_job.py",
+          "symbols_checked": [
+            "test_trajectory_digest_polls_cancellation_during_large_serialization",
+            "test_paired_flight_evidence_preserves_both_individual_digests",
+            "test_shared_golden_round_trip_and_digest_parity",
+            "test_authority_fixture_family_is_deterministically_generated",
+            "test_flight_digests_bind_every_canonical_result_field",
+            "test_builder_binds_exact_launch_setup_transfer_and_existing_request",
+            "test_nested_invalid_values_fail_closed",
+            "test_tampering_with_any_bound_input_rejects_job_digest"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "tests/rate_of_closure/test_regional_ground_execution_workspace.py",
+          "symbols_checked": [
+            "test_default_workspace_is_injection_safe_and_accessible",
+            "test_prepare_accepts_exact_job_without_running_and_preserves_separate_run",
+            "test_failed_preparation_preserves_prior_job_and_result",
+            "test_editor_change_marks_prepared_job_stale_but_not_imported_job",
+            "test_accept_confirm_run_and_retain_exact_result",
+            "test_declined_confirmation_does_not_submit",
+            "test_new_job_acceptance_clears_retained_result",
+            "test_failed_rerun_preserves_prior_complete_result"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "tests/rate_of_closure/test_regional_ground_job_preparation.py",
+          "symbols_checked": [
+            "test_preparation_binds_current_launch_request_and_recomputed_flight",
+            "test_preparation_is_deterministic_for_the_same_exact_authorities",
+            "test_preparation_rejects_an_unsupported_editor_flight_model",
+            "test_preparation_rejects_unresolved_variable_wind",
+            "test_preparation_profile_rejects_invalid_numerical_and_identity_bounds",
+            "test_prepared_job_postcondition_rejects_substituted_authority",
+            "test_preparation_request_round_trips_canonical_exact_editor_state",
+            "test_preparation_request_rejects_duplicate_and_multibyte_oversize_json"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "tests/rate_of_closure/test_regional_ground_production_runner.py",
+          "symbols_checked": [
+            "test_known_profile_rejects_mismatched_recomputed_flight_evidence",
+            "test_canonical_fixture_is_profile_qualified",
+            "test_unknown_model_identity_is_a_distinct_preflight_failure",
+            "test_known_model_with_unregistered_version_is_a_distinct_failure",
+            "test_generic_flight_settings_contract_does_not_imply_executable_semantics",
+            "test_solver_failure_is_mapped_without_exposing_internal_text",
+            "test_precancel_wins_before_preflight_or_any_physics",
+            "test_cancellation_callback_defect_remains_typed_and_chained"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "tests/rate_of_closure/test_regional_ground_result_golden.py",
+          "symbols_checked": [
+            "test_python_producer_exactly_recreates_shared_result_fixture"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "tests/rate_of_closure/test_regional_ground_variation.py",
+          "symbols_checked": [
+            "test_seed_is_deterministic_and_each_stream_is_subset_stable",
+            "test_trials_rebind_plan_identity_provenance_and_preserve_order",
+            "test_real_pipeline_responds_to_sampled_rolling_resistance",
+            "test_transfer_failures_keep_sampled_inputs_but_null_every_ground_metric",
+            "test_invalid_keys_base_bounds_and_bool_fail_before_execution",
+            "test_nonfinite_sample_and_row_cap_fail_before_execution",
+            "test_executor_must_return_exact_outcome_bound_to_the_sampled_plan"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "tests/rate_of_closure/test_regional_ground_variation_execution.py",
+          "symbols_checked": [
+            "test_success_reports_typed_progress_without_changing_result_bytes",
+            "test_precancel_stops_before_executor_and_publishes_no_partial_dataset",
+            "test_midrun_cancel_discards_inflight_trial_and_publishes_nothing",
+            "test_progress_callback_failure_is_typed_and_cannot_publish_rows",
+            "test_executor_failure_is_typed_and_publishes_no_partial_dataset",
+            "test_validator_failure_is_typed_and_publishes_no_partial_dataset",
+            "test_publication_failure_is_typed_after_all_trials_without_partial_rows",
+            "test_cancellation_callback_failure_is_a_typed_terminal_failure"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "tests/rate_of_closure/test_runtime_manifest.py",
+          "symbols_checked": [
+            "test_runtime_manifest_matches_shared_canonical_fixture",
+            "test_factory_requires_only_explicit_inputs_and_freezes_nested_records",
+            "test_runtime_manifest_rejects_adversarial_records",
+            "test_runtime_manifest_rejects_nonfinite_options",
+            "test_runtime_manifest_rejects_unsafe_float_magnitudes",
+            "test_runtime_manifest_accepts_safe_numeric_boundaries",
+            "test_runtime_manifest_accepts_substantive_unavailable_reason_and_semver",
+            "test_runtime_manifest_numeric_policy_matches_shared_parity_fixture"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "tests/rate_of_closure/test_view_compositor_gui.py",
+          "symbols_checked": [
+            "test_compositor_recovers_unknown_saved_view_and_keeps_real_hosts",
+            "test_toggle_normalizes_cardinality_and_preserves_legend",
+            "test_playback_updates_are_debounced_before_settings_write",
+            "test_grid_remains_navigable_when_real_views_exceed_available_height",
+            "test_keyboard_focus_order_can_build_and_reduce_a_multi_view_layout",
+            "test_versioned_workspace_export_import_round_trip_is_atomic",
+            "test_camera_preferences_survive_layout_hide_show_and_qsettings_reload"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "tests/rate_of_closure/test_wind_strategy_panel.py",
+          "symbols_checked": [
+            "test_request_uses_current_launch_and_canonical_landing_target",
+            "test_generic_csv_preserves_all_rows_variables_and_nulls",
+            "test_panel_exposes_controls_status_summary_scatter_and_export",
+            "test_panel_scatter_has_zoom_pan_autofit_and_legend_controls",
+            "test_panel_seed_round_trips_full_uint32_without_coercion",
+            "test_completed_snapshot_is_invalidated_when_consumed_factors_change",
+            "test_panel_run_completes_asynchronously_and_restores_controls",
+            "test_panel_stop_cancels_and_joins_running_worker"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "tests/rate_of_closure/test_workspace_session.py",
+          "symbols_checked": [
+            "test_live_state_round_trips_through_strict_whole_workspace_document",
+            "test_legacy_v4_requires_explicit_capability_request_fallback",
+            "test_workspace_rejects_corrupt_capability_before_returning_state",
+            "test_club_default_provenance_must_match_persisted_club_and_geometry",
+            "test_tee_height_variation_requires_tee_support_context",
+            "test_legacy_v1_session_requires_and_uses_an_explicit_simulation_fallback",
+            "test_legacy_cross_club_fallback_preserves_geometry_as_an_override",
+            "test_legacy_v2_requires_explicit_torque_fallback_without_inventing_profiles"
+          ],
+          "symbols_found_on_main": []
+        },
+        {
+          "classification": "missing",
+          "path": "tests/shared/python/golf_club/test_cad_validation.py",
+          "symbols_checked": [
+            "test_exported_stl_is_independently_watertight_and_volume_bounded",
+            "test_exact_exports_are_reopened_and_compared_to_reference",
+            "test_binary_stl_validation_rejects_a_truncated_artifact",
+            "test_binary_stl_validation_rejects_inconsistent_triangle_winding",
+            "test_geometry_reference_fails_closed_on_invalid_values"
+          ],
+          "symbols_found_on_main": []
+        }
+      ],
+      "number": 4466,
+      "reachable": true,
+      "reason": "",
+      "state": "CLOSED",
+      "title": "Rate of Closure remainder: club builder, impact tensor, flight, multi-view workspace, ground and web companion (consolidates 43 PRs)",
+      "url": "https://github.com/D-sorganization/Tools/pull/4466"
+    }
+  ],
+  "repo": "D-sorganization/Tools",
+  "schema_version": 1,
+  "totals": {
+    "files_by_class": {
+      "landed-elsewhere": 7,
+      "missing": 244,
+      "obsolete": 18
+    },
+    "groups_by_class": {
+      "landed-elsewhere": 0,
+      "missing": 37,
+      "obsolete": 3
+    },
+    "prs": 11,
+    "reachable": 11,
+    "unreachable": []
+  }
+}

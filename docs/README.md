@@ -23,3 +23,4 @@ This directory contains detailed documentation for the AffineDrift Tools reposit
 
 - **[Changelog](release/CHANGELOG.md)**: Record of all notable changes to the project.
 - **[Safe State](release/SAFE_STATE.md)**: Notes on the repository's safety state and recovery points.
+- **[Closed-Stack Gap Audit](release/closed_stack_gap_audit.md)**: Evidence for Tools #4921 — which files from the folded golf-app PR stack (#4466, #4449 and their parent PRs) never reached `main`; regenerate with `python scripts/audit_closed_stack_branches.py` (JSON: `release/closed_stack_gap_audit.v1.json`).

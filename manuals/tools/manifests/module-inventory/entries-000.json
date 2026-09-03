@@ -7561,6 +7561,7 @@
           "tests/rate_of_closure/test_tooltips.py",
           "tests/rate_of_closure/test_viewers_gui.py",
           "tests/rate_of_closure/test_web_asset_distribution.py",
+          "tests/scripts/test_audit_closed_stack_branches.py",
           "tests/scripts/test_check_changed_python_policy.py",
           "tests/scripts/test_check_rate_visual_evidence_changes.py",
           "tests/scripts/test_check_test_assertions.py",
@@ -13671,6 +13672,283 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 24717,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e125e0112d63d796e196cec84c492ddee3a27812967addc5a6e42dc25dde3fa1",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-AUDIT-CLOSED-STACK-BRANCHES-PY-FB70F299B842",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/audit_closed_stack_branches.py",
+      "purpose": "Audit closed/folded golf-app PR stacks for content that never reached main.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://github.com/{repo"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Shell",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CLASS_LANDED",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CLASS_MISSING",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CLASS_OBSOLETE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CLASS_ORDER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_BASE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_OUT_JSON",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_OUT_MD",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_PRS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_REPO",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GENERIC_SYMBOLS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GREP_CHUNK",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_SYMBOLS_PER_FILE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MD_LIST_CAP",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MIN_SYMBOL_LEN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "OBSOLETE_DIR_PREFIXES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PRODUCT_PREFIXES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SYMBOL_EXTENSIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_OBSOLETE_NAME_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_PY_SYMBOL_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_TS_SYMBOL_RE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "audit_missing_files",
+            "signature": "shell: Shell, base: str, ref: str, paths: list[str]"
+          },
+          {
+            "kind": "function",
+            "name": "audit_pr",
+            "signature": "shell: Shell, repo: str, base: str, number: int"
+          },
+          {
+            "kind": "function",
+            "name": "build_result",
+            "signature": "args: argparse.Namespace, root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "classify_file",
+            "signature": "path: str, symbols_checked: list[str], symbols_found: list[dict[str, Any]]"
+          },
+          {
+            "kind": "function",
+            "name": "compute_totals",
+            "signature": "prs: list[dict[str, Any]]"
+          },
+          {
+            "kind": "function",
+            "name": "diffstat_summary",
+            "signature": "shell: Shell, base: str, ref: str"
+          },
+          {
+            "kind": "function",
+            "name": "extract_symbols",
+            "signature": "source: str, path: str"
+          },
+          {
+            "kind": "function",
+            "name": "fetch_pr",
+            "signature": "shell: Shell, repo: str, number: int"
+          },
+          {
+            "kind": "function",
+            "name": "grep_symbols",
+            "signature": "shell: Shell, base: str, symbols: list[str]"
+          },
+          {
+            "kind": "function",
+            "name": "group_files",
+            "signature": "missing_files: list[dict[str, Any]]"
+          },
+          {
+            "kind": "function",
+            "name": "group_prefix",
+            "signature": "path: str"
+          },
+          {
+            "kind": "function",
+            "name": "is_obsolete_path",
+            "signature": "path: str"
+          },
+          {
+            "kind": "function",
+            "name": "is_product_prefix",
+            "signature": "prefix: str"
+          },
+          {
+            "kind": "function",
+            "name": "keep_recommendation",
+            "signature": "pr: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "majority_class",
+            "signature": "classes: list[str]"
+          },
+          {
+            "kind": "function",
+            "name": "missing_on_base",
+            "signature": "shell: Shell, base: str, paths: list[str]"
+          },
+          {
+            "kind": "function",
+            "name": "name_status",
+            "signature": "shell: Shell, base: str, ref: str"
+          },
+          {
+            "kind": "function",
+            "name": "parse_args",
+            "signature": "argv: list[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "read_files_at_ref",
+            "signature": "shell: Shell, ref: str, paths: list[str]"
+          },
+          {
+            "kind": "function",
+            "name": "render_markdown",
+            "signature": "result: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "resolve_ref",
+            "signature": "shell: Shell, head_ref: str, head_oid: str"
+          },
+          {
+            "kind": "function",
+            "name": "write_outputs",
+            "signature": "result: dict[str, Any], out_json: Path, out_md: Path"
+          }
+        ],
+        "test_paths": [
+          "tests/scripts/test_audit_closed_stack_branches.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2333,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -14697,83 +14975,6 @@
         "unit_mentions": [
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3138,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0014d5c99fda633e7cf6c0dbfdf2edb20793ed559b0fbc54e0a4ca3c499af480",
-      "family": "repository-tooling-non-calculation",
-      "id": "TOOLS-MODULE-SCRIPTS-CHECK-LOCAL-ONLY-WORKFLOWS-PY-44F5D4C62B29",
-      "language": "python",
-      "maintainer": "Repository tooling maintainers",
-      "path": "scripts/check_local_only_workflows.py",
-      "purpose": "Fail when GitHub Actions workflows can route to hosted runners.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "BANNED",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "HOSTED_RUNNER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "HOSTED_RUNNER_ALLOWLIST",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "LEGACY_HOSTED_RUNNER_ALLOWLIST",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "WORKFLOW_DIR",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "main",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "tests/scripts/test_check_local_only_workflows.py"
-        ],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

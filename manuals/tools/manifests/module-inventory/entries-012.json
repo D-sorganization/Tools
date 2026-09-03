@@ -3,6 +3,77 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 7432,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "758905f9869a58018cb9a7f4691fcc0a4a7ee1d8bd6bce337d1b90ceb862ed0d",
+      "family": "rotation-converter-calculation",
+      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-MOTION-EXAMPLES-PY-523CA98AA1CB",
+      "language": "python",
+      "maintainer": "Rotation converter maintainers",
+      "path": "src/rotation_converter/motion_examples.py",
+      "purpose": "Example rigid-body motion trajectories for screw axis visualization.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_GRAVITY",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "football_spiral",
+            "signature": "n_frames: int=60, speed: float=20.0, spin_rate: float=10.0, launch_angle_deg: float=35.0"
+          },
+          {
+            "kind": "function",
+            "name": "frisbee_flight",
+            "signature": "n_frames: int=60, speed: float=14.0, spin_rate: float=7.0, launch_angle_deg: float=8.0, tilt_deg: float=15.0"
+          }
+        ],
+        "test_paths": [
+          "tests/rotation_converter/test_screw_visualization.py"
+        ],
+        "unit_mentions": [
+          "m/s",
+          "m/s^2",
+          "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 570,
       "classification": "calculation",
       "classification_basis": "path-marker:rotation",
@@ -14687,71 +14758,6 @@
           "src/shared/python/calc_backend/tests/test_calc_backend_gaps.py"
         ],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 5784,
-      "classification": "calculation",
-      "classification_basis": "path-marker:pressure_drop",
-      "content_sha256_lf": "fd62e0a6374ce3567606cb5ebd0af5f3126587a8e89d96c7139e8604195b65dd",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-PRESSURE-DROP-V2-PY-0E8225C13521",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/calc_backend/routers/pressure_drop_v2.py",
-      "purpose": "Enhanced pressure drop calculator router with standardized response format.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "mapped",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [
-          "/validate"
-        ],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "calculate_pressure_drop",
-            "signature": "request: PressureDropRequestV2"
-          },
-          {
-            "kind": "function",
-            "name": "validate_request",
-            "signature": "request: PressureDropRequestV2"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
         "validation_paths": []
       }
     }
