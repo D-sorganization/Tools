@@ -173,6 +173,7 @@
           "tests/python/test_plugin_manager_discovery.py",
           "tests/rate_of_closure/test_complete_trial_standalone_wheel.py",
           "tests/rate_of_closure/test_epic_4142_requirement_evidence.py",
+          "tests/rate_of_closure/test_launch_monitor_drift_gate_surface.py",
           "tests/rate_of_closure/test_morris_authority_runtime.py",
           "tests/rate_of_closure/test_variation_complete_trial_scaling_evidence.py",
           "tests/rate_of_closure/test_variation_noise_response.py",

@@ -178,7 +178,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "not-applicable"
       },
@@ -239,7 +239,9 @@
             "signature": null
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/rate_of_closure/test_launch_monitor_drift_gate_surface.py"
+        ],
         "unit_mentions": [
           "s"
         ],
@@ -360,6 +362,7 @@
           }
         ],
         "test_paths": [
+          "tests/rate_of_closure/test_launch_monitor_drift_gate_surface.py",
           "tests/shared/python/launch_monitor/test_player_covariation_contract.py"
         ],
         "unit_mentions": [],
@@ -1625,6 +1628,7 @@
         ],
         "test_paths": [
           "tests/rate_of_closure/test_launch_monitor_analysis.py",
+          "tests/rate_of_closure/test_launch_monitor_drift_gate_surface.py",
           "tests/rate_of_closure/test_launch_monitor_linked_scatter.py"
         ],
         "unit_mentions": [],
@@ -1897,6 +1901,7 @@
           }
         ],
         "test_paths": [
+          "tests/rate_of_closure/test_launch_monitor_drift_gate_surface.py",
           "tests/rate_of_closure/test_launch_monitor_linked_scatter.py",
           "tests/shared/python/launch_monitor/test_corpus.py"
         ],
@@ -1961,6 +1966,7 @@
           }
         ],
         "test_paths": [
+          "tests/rate_of_closure/test_launch_monitor_drift_gate_surface.py",
           "tests/rate_of_closure/test_launch_monitor_forbidden_identity.py",
           "tests/rate_of_closure/test_launch_monitor_longitudinal.py"
         ],
@@ -2119,6 +2125,7 @@
           }
         ],
         "test_paths": [
+          "tests/rate_of_closure/test_launch_monitor_drift_gate_surface.py",
           "tests/rate_of_closure/test_launch_monitor_performance.py",
           "tests/shared/python/launch_monitor/test_strokes_gained_contract.py",
           "tests/shared/python/launch_monitor/test_trends.py"
@@ -2196,6 +2203,7 @@
           }
         ],
         "test_paths": [
+          "tests/rate_of_closure/test_launch_monitor_drift_gate_surface.py",
           "tests/rate_of_closure/test_launch_monitor_private_corpus.py",
           "tests/shared/python/launch_monitor/test_corpus.py"
         ],
@@ -2306,6 +2314,7 @@
           }
         ],
         "test_paths": [
+          "tests/rate_of_closure/test_launch_monitor_drift_gate_surface.py",
           "tests/rate_of_closure/test_launch_monitor_provenance_and_unavailable.py",
           "tests/rate_of_closure/test_launch_monitor_strokes_gained.py"
         ],
@@ -2383,6 +2392,7 @@
           }
         ],
         "test_paths": [
+          "tests/rate_of_closure/test_launch_monitor_drift_gate_surface.py",
           "tests/rate_of_closure/test_launch_monitor_provenance_and_unavailable.py",
           "tests/rate_of_closure/test_launch_monitor_strokes_gained.py",
           "tests/shared/python/launch_monitor/test_conformance_bundle.py",
@@ -3314,6 +3324,7 @@
           }
         ],
         "test_paths": [
+          "tests/rate_of_closure/test_launch_monitor_drift_gate_surface.py",
           "tests/rate_of_closure/test_launch_monitor_provenance_and_unavailable.py",
           "tests/rate_of_closure/test_player_covariation.py",
           "tests/shared/python/launch_monitor/test_player_covariation_contract.py"
