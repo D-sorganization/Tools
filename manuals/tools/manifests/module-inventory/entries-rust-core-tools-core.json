@@ -2639,6 +2639,7 @@
           "src/shared/python/swing_sim/ground/tests/test_surface_resolver.py",
           "src/shared/python/swing_sim/impact/tests/test_delivery.py",
           "src/shared/python/swing_sim/impact/tests/test_dplane.py",
+          "src/shared/python/swing_sim/impact_interval/tests/test_contact_law.py",
           "src/shared/python/swing_sim/putting/tests/test_impact.py",
           "src/shared/python/swing_sim/putting/tests/test_result_wire.py",
           "src/shared/python/swing_sim/putting/tests/test_stroke_interchange.py",
