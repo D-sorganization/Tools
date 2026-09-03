@@ -199,13 +199,13 @@ def _fake_pr(number: int, **overrides: object) -> dict:
         "state": "CLOSED",
         "url": f"https://github.com/D-sorganization/Tools/pull/{number}",
         "head_ref": f"feat/{number}",
-        "head_oid": "abcdef1234567890",
+        "head_oid": "head-sha-placeholder",
         "base_ref": "main",
         "base_ref_on_origin": True,
         "merged_at": None,
         "closed_at": "2026-08-20T09:01:30Z",
         "diff_ref_used": f"origin/feat/{number}",
-        "diff_ref_sha": "abcdef1234567890",
+        "diff_ref_sha": "head-sha-placeholder",
         "head_oid_matches_diff_ref": True,
         "reachable": True,
         "reason": "",
@@ -314,8 +314,8 @@ class TestRenderMarkdown:
         assert "**Ref unreachable:** origin/feat/4449 absent" in md
         assert "differs from PR head SHA" not in md
         pr_ok["head_oid_matches_diff_ref"] = False
-        pr_ok["diff_ref_sha"] = "fedcba9876543210"
-        assert "branch tip `fedcba987654` differs from PR head SHA" in (
+        pr_ok["diff_ref_sha"] = "tip-sha-placeholder"
+        assert "branch tip `tip-sha-plac` differs from PR head SHA" in (
             acsb.render_markdown(result)
         )
         assert "## Totals" in md
