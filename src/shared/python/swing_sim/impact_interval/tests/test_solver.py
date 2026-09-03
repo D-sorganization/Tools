@@ -23,7 +23,7 @@ from shared.python.swing_sim.impact_interval import (
 
 
 def _reduced_mass(club_mass: float = 0.2) -> float:
-    return GOLF_BALL_MASS_KG * club_mass / (GOLF_BALL_MASS_KG + club_mass)
+    return float(GOLF_BALL_MASS_KG * club_mass / (GOLF_BALL_MASS_KG + club_mass))
 
 
 def _club(contact_offset: np.ndarray | None = None) -> ClubRigidBody:

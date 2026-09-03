@@ -271,3 +271,25 @@ Fleet-wide policy from `Repository_Management#1390`, binding in this repo:
    PR touching `src/**` (including `AGENT_HANDOFF.md` files, since they live
    under `src/<tool>/`) must add a dated row to SPEC.md §12 Change Log, or
    carry the `spec-exempt` label.
+
+   **Rows are keyed by pull request, never by a serial spec version**
+   ([Repository_Management#1520](https://github.com/D-sorganization/Repository_Management/issues/1520)):
+
+   ```markdown
+   | 2026-09-03 | #4951 | one-line summary of what this PR changed |
+   ```
+
+   Use your PR number, or the governing issue number if the PR does not
+   exist yet. Prepend exactly one row for your own change; never renumber
+   anybody else's, and never reuse a key that is already in the table.
+   Do **not** touch the `**Spec Version**` field in §1 — it is
+   release-derived now (`python scripts/bump_spec_version.py --from-tag
+vX.Y.Z` at release time). A serial version in the key column, a reused
+   key, or a bumped header are all gate failures:
+   `python shared_scripts/fleet_hooks.py spec-changelog` and
+   `tests/architecture/test_spec_version_freshness.py`.
+
+   Keep `|` out of the summary — markdown reads it as a column break. If
+   your local rebase ever conflicts on the change-log table, run
+   `python scripts/install_spec_merge_driver.py` once per clone and the
+   union merge becomes automatic.
