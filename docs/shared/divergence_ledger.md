@@ -4,9 +4,9 @@ Generated from `docs/shared/divergence_ledger.v1.json` by `python scripts/check_
 
 - Updated: 2026-09-03
 - Pins: Tools `c0a395d5` / UpstreamDrift `27b6eeadbbd970bebb8926a3c83aeaea1f6ee4da`
-- Rows: 75
-- Rulings: deferred 24, split 7, tools-canonical 43, ud-canonical 1
-- Statuses: in-sync 10, paired-open 3, pending-inventory 26, pinned 4, ported 28, tools-only 3, ud-copy-deleted 1
+- Rows: 76
+- Rulings: deferred 24, split 7, tools-canonical 43, ud-canonical 2
+- Statuses: in-sync 10, paired-open 3, pending-inventory 26, pinned 4, ported 29, tools-only 3, ud-copy-deleted 1
 
 ## Gate
 
@@ -98,3 +98,4 @@ A PR touching a ledgered tools_path must carry 'UD-PAIR: D-sorganization/Upstrea
 | `package:trusted_git.py` | `src/shared/python/trusted_git.py` | — | tools-canonical | tools-only |  | Tools shared-layer maintainers | UpstreamDrift#9406 | UpstreamDrift#9432 | 0/0/0/1 | Tools-only. |
 | `package:ui` | `src/shared/python/ui` | `src/shared/python/ui` | ud-canonical | pending-inventory |  | Tools shared-layer maintainers | UpstreamDrift#9406 | UpstreamDrift#9432 | 4/0/27/0 | 27 UD-only files, 4 identical: UD application UI that happens to live under the shared path. Consumer-side; Tools does not shadow it. |
 | `package:upstream_drift_tools` | `src/shared/python/upstream_drift_tools` | `src/shared/python/upstream_drift_tools` | deferred | pending-inventory |  | seam epic UpstreamDrift#9406 | UpstreamDrift#9406 | UpstreamDrift#9432 | 0/1/0/0 | Compat shim diverged (bootstrap semantics differ between launch.py and UnifiedToolsLauncher consumers). Owner ruling pending. |
+| `ai/tools/sidekick_analytics.py` | `src/shared/python/ai/tools/sidekick_analytics.py` | `src/shared/python/ai/tools/sidekick_analytics.py` | ud-canonical | ported |  | seam epic UpstreamDrift#9406 | UpstreamDrift#9474 |  |  | Authored in UpstreamDrift for #5464; Tools had NO counterpart while UD's copy carried the Tools child-copy header, so the header asserted an ownership that did not exist. Upstreamed into Tools under the ai/tools subpackage ruling (tools-canonical destination). UD's copy stays until the #9406 cleanup deletes it; the header is now accurate. |

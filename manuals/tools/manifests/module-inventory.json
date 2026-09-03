@@ -579,14 +579,14 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "573fc684abcf51a0d0fb3292d7b7fbe6fcd9ff1c8b4d36e881b6b1823bfac60e",
+      "content_sha256_lf": "821ce6434eee8b97751e0bfaef2e5036b6f8825b3920b4d24d9d176e47fd14b0",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
     },
     {
-      "content_sha256_lf": "4faa4b592285ba0866b98ab380b8e59ded69fac99b79a65b18ca68e29723dce9",
-      "entry_count": 111,
+      "content_sha256_lf": "22ddf55df2e54bda9bef1fdae8ff9c7d7a4ef58e2e954218eee76e37cf77a51c",
+      "entry_count": 112,
       "package": "src/shared/python/ai",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-ai.json"
     },
