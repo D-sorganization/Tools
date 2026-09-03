@@ -1162,6 +1162,95 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 5060,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8c777d7a147bb402e4f913701899a68b07ede5eddef160896bfc63dc8aa18d92",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CHECK-VERSION-CONSISTENCY-PY-23AE7526BE58",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/check_version_consistency.py",
+      "purpose": "Check (or set) the release version across every file that declares it.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "CHART_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PACKAGE_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PYPROJECT_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SEMVER_RE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "mismatches",
+            "signature": "versions: dict[str, str | None]"
+          },
+          {
+            "kind": "function",
+            "name": "read_versions",
+            "signature": "root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "set_version",
+            "signature": "root: Path, version: str"
+          }
+        ],
+        "test_paths": [
+          "tests/scripts/test_check_version_consistency.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 4235,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -3336,6 +3425,176 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10704,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8a3d97f40ea90ca4593670f4ceaa21b86f2a8a351ad20c0bec448e147f8c0601",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-RELEASE-CHANGELOG-PY-9AB167CABD20",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/release_changelog.py",
+      "purpose": "Decide the release bump and write the delta changelog entry (release.yml).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Commit",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BOT_ACTOR_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BREAKING_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CONVENTIONAL_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MINOR_TYPES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "NO_BUMP_TYPES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PATCH_TYPES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PR_SUFFIX_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "RELEASE_BUMP_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SECTION_TITLES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "bump_for_subject",
+            "signature": "subject: str"
+          },
+          {
+            "kind": "function",
+            "name": "decide_bump",
+            "signature": "*, event: str, head_subject: str, actor: str | None, force_bump: str, delta_subjects: list[str]"
+          },
+          {
+            "kind": "function",
+            "name": "delta_commits",
+            "signature": "marker: str | None, cwd: Path | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "gh_pr_title",
+            "signature": "repo: str, number: int"
+          },
+          {
+            "kind": "function",
+            "name": "highest_bump",
+            "signature": "bumps: list[str]"
+          },
+          {
+            "kind": "function",
+            "name": "is_bot_actor",
+            "signature": "actor: str | None"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "next_version",
+            "signature": "current: str, bump: str"
+          },
+          {
+            "kind": "function",
+            "name": "previous_release_marker",
+            "signature": "cwd: Path | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "render_entry",
+            "signature": "lines: list[str]"
+          },
+          {
+            "kind": "function",
+            "name": "render_entry_line",
+            "signature": "subject: str, resolve_pr_title: Callable[[int], str | None]"
+          },
+          {
+            "kind": "function",
+            "name": "section_for",
+            "signature": "line: str"
+          },
+          {
+            "kind": "function",
+            "name": "split_pr_suffix",
+            "signature": "subject: str"
+          },
+          {
+            "kind": "function",
+            "name": "subject_has_text",
+            "signature": "subject_body: str"
+          }
+        ],
+        "test_paths": [
+          "tests/scripts/test_release_changelog.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "s"
+        ],
         "validation_paths": []
       }
     },
@@ -15062,175 +15321,6 @@
         "validation_paths": [
           "src/data_processing/data_processor/python/tests/test_vectorized_filter_engine_contracts.py"
         ]
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 9550,
-      "classification": "calculation",
-      "classification_basis": "path-marker:filter",
-      "content_sha256_lf": "e6c4d856d90c8b3d2a2751b6292d8f889d0832894a13f00af58b7dce124d5f40",
-      "family": "data-processing-calculation",
-      "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-VECTORIZED-FILTER-FREQUENCY-DOMAIN-PY-54B02EC974D5",
-      "language": "python",
-      "maintainer": "Data processing maintainers",
-      "path": "src/data_processing/data_processor/python/data_processor/vectorized_filter_frequency_domain.py",
-      "purpose": "Frequency-domain filter kernels for the vectorized filter engine.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "apply_fft_filter_core",
-            "signature": "signal_data: np.ndarray, filter_coeffs: np.ndarray, zero_phase: bool"
-          },
-          {
-            "kind": "function",
-            "name": "apply_fft_filter_vectorized",
-            "signature": "signal: pd.Series, params: dict[str, Any], safe_get_param: ParamGetter, calculate_sampling_rate: SamplingRateCalculator, logger: Logger"
-          },
-          {
-            "kind": "function",
-            "name": "apply_window_function",
-            "signature": "filter_response: np.ndarray, window_shape: str"
-          },
-          {
-            "kind": "function",
-            "name": "calculate_frequency_response",
-            "signature": "filter_type: str, params: dict[str, Any], safe_get_param: ParamGetter, logger: Logger, n_freqs: int=1024"
-          },
-          {
-            "kind": "function",
-            "name": "design_frequency_window",
-            "signature": "filter_type: str, freq_low: float, freq_high: float, window_shape: str, n_samples: int, transition_bw: float"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "Hz"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 11760,
-      "classification": "calculation",
-      "classification_basis": "path-marker:filter",
-      "content_sha256_lf": "939c03c7cd917488de962493c7994b60cd85fc808a99fe9c55a762065a2b2905",
-      "family": "data-processing-calculation",
-      "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-VECTORIZED-FILTER-TIME-DOMAIN-PY-39221E73AD27",
-      "language": "python",
-      "maintainer": "Data processing maintainers",
-      "path": "src/data_processing/data_processor/python/data_processor/vectorized_filter_time_domain.py",
-      "purpose": "Time-domain filter kernels for the vectorized filter engine.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "apply_butterworth_vectorized",
-            "signature": "signal: pd.Series, params: dict[str, Any], safe_get_param: ParamGetter, calculate_sampling_rate: SamplingRateCalculator, logger: Logger"
-          },
-          {
-            "kind": "function",
-            "name": "apply_gaussian_vectorized",
-            "signature": "signal: pd.Series, params: dict[str, Any], safe_get_param: ParamGetter, logger: Logger"
-          },
-          {
-            "kind": "function",
-            "name": "apply_hampel_fallback",
-            "signature": "signal: pd.Series, params: dict[str, Any], safe_get_param: ParamGetter"
-          },
-          {
-            "kind": "function",
-            "name": "apply_hampel_vectorized",
-            "signature": "signal: pd.Series, params: dict[str, Any], safe_get_param: ParamGetter, logger: Logger"
-          },
-          {
-            "kind": "function",
-            "name": "apply_median_vectorized",
-            "signature": "signal: pd.Series, params: dict[str, Any], safe_get_param: ParamGetter, logger: Logger"
-          },
-          {
-            "kind": "function",
-            "name": "apply_moving_average_vectorized",
-            "signature": "signal: pd.Series, params: dict[str, Any], safe_get_param: ParamGetter, logger: Logger"
-          },
-          {
-            "kind": "function",
-            "name": "apply_savgol_vectorized",
-            "signature": "signal: pd.Series, params: dict[str, Any], safe_get_param: ParamGetter, logger: Logger"
-          },
-          {
-            "kind": "function",
-            "name": "apply_zscore_vectorized",
-            "signature": "signal: pd.Series, params: dict[str, Any], safe_get_param: ParamGetter, logger: Logger"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "N"
-        ],
-        "validation_paths": []
       }
     }
   ],
