@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """Register the ``spec-rows`` merge driver in this clone.
 
-``.gitattributes`` can say ``SPEC.md merge=spec-rows``, but the *definition* of
-a merge driver lives in git config, which is per-clone and cannot be committed.
-Without this step git silently falls back to the default driver, so the
-``.gitattributes`` line looks effective while doing nothing. Run once per clone
-(``scripts/install_workspace_hooks.py`` calls it for you), or per worktree —
-git config is shared across worktrees of the same clone, so once is enough.
+Both halves are written together and neither is committed. The *definition* of
+a merge driver lives in git config, which is per-clone; the attribute
+``SPEC.md merge=spec-rows`` goes in ``$GIT_COMMON_DIR/info/attributes`` rather
+than a committed ``.gitattributes``, because git aborts a merge outright when
+an attribute names an unregistered driver -- a committed attribute would make
+SPEC.md unmergeable in every clone that had not run this script. Run once per
+clone (``scripts/install_workspace_hooks.py`` calls it for you); git config and
+``info/attributes`` are both shared across worktrees, so once is enough.
 
 Idempotent: re-running rewrites the same two config values.
 """
@@ -19,6 +21,7 @@ import sys
 from pathlib import Path
 
 DRIVER_NAME = "spec-rows"
+DRIVER_SCRIPT = "scripts/spec_rows_merge_driver.py"
 ATTRIBUTE_LINE = f"SPEC.md merge={DRIVER_NAME}"
 ATTRIBUTE_BLOCK = f"""# Union SPEC.md change-log rows instead of conflicting on
 # adjacent inserts (Repository_Management#1520).
@@ -44,14 +47,21 @@ def _git(args: list[str], cwd: Path) -> subprocess.CompletedProcess[str]:
 
 
 def driver_command(repo_root: Path) -> str:
-    """Return the ``merge.spec-rows.driver`` command for ``repo_root``.
+    """Return the ``merge.spec-rows.driver`` command.
 
-    The path is absolute because git runs merge drivers from the top of the
-    worktree, which for a linked worktree is not where this script lives.
+    The script path is **worktree-relative on purpose**. Git config is shared by
+    every worktree of a clone, so an absolute path would pin the driver to
+    whichever worktree happened to run the installer -- and when that worktree
+    is removed the attribute names a driver git cannot run, which aborts every
+    SPEC.md merge in the clone (`fatal: custom merge driver spec-rows lacks
+    command line`). That is strictly worse than the conflict the driver exists
+    to prevent. Git runs a merge driver with its working directory at the top
+    of the worktree being merged, so a relative path resolves to that
+    worktree's own copy and is correct for all of them.
     """
-    script = (repo_root / "scripts" / "spec_rows_merge_driver.py").resolve()
+    del repo_root  # deliberately unused: the command must not be worktree-specific
     interpreter = Path(sys.executable).as_posix()
-    return f'"{interpreter}" "{script.as_posix()}" %O %A %B %P'
+    return f'"{interpreter}" "{DRIVER_SCRIPT}" %O %A %B %P'
 
 
 def attributes_path(repo_root: Path) -> Path | None:
