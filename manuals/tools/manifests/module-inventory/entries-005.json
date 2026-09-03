@@ -3,6 +3,52 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 5500,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "faea64ced00ba996cb8aefb9836a22f0a41a0b89442dba34fe9fe0dd9eb7b6f5",
+      "family": "control-systems-non-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-LIB-CURVEFIT-TEST-TS-41FD5CEABAA8",
+      "language": "typescript",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/frontend/src/lib/curveFit.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "deg",
+          "ms",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 7731,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -15644,75 +15690,6 @@
           "tests/shared/python/launch_monitor/test_comparison.py"
         ],
         "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 9733,
-      "classification": "calculation",
-      "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "e2ec8546bb404563e9cf68a65aed73b1554fbb0fc5bd8a7f848385f941e751c8",
-      "family": "pendulum-calculation",
-      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-DOWNSWING-PY-31CBD3F1B74F",
-      "language": "python",
-      "maintainer": "Pendulum maintainers",
-      "path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/downswing.py",
-      "purpose": "Slew-limited direct-collocation optimizer for a golf downswing.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "DownswingOptimizer",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "DownswingResult",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "DownswingConfig",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "N",
-          "N·m",
           "s"
         ],
         "validation_paths": []
