@@ -41,6 +41,19 @@ PID_STRIDE = 10  # registers per PID block
 PID_SETPOINT_OFFSET = 2  # setpoint is the 3rd field (regs +2, +3)
 INTERLOCK_BASE = 300  # 32 tags x 8 regs (lolo/low/high/hihi)
 PID_COUNT = 4
+
+# ---- Interlock "disabled" sentinels ------------------------------------
+# A limit of ``None`` in InterlockConfig means "not interlocked on this side".
+# The register contract has no way to say that, so the backend encodes None as
+# the exact sentinel the firmware's SafetyInterlock treats as disabled
+# (kDisabledLowLimit / kDisabledHighLimit in SafetyInterlock.h) and decodes
+# the sentinel back to None. A tag left at both sentinels is skipped by the
+# firmware's Evaluate() entirely, which is what makes the default config safe
+# to deploy: an unrouted tag reading 0.0 can no longer trip the plant (#4001).
+# Enforced against the firmware source by
+# src/p1am_control_system/backend/tests/test_interlock_defaults_contract.py.
+INTERLOCK_DISABLED_LOW = -99999.0
+INTERLOCK_DISABLED_HIGH = 99999.0
 # Host-liveness watchdog. The firmware proves the host is alive from a CHANGE
 # to this register (the value itself is meaningless), not from its content. If
 # it sees neither a Modbus TCP connection nor a heartbeat change for
@@ -49,6 +62,12 @@ PID_COUNT = 4
 # bump it once per successful scan — see AsyncModbusManager.write_heartbeat.
 HOST_HEARTBEAT_REGISTER = 560
 HEARTBEAT_TIMEOUT_S = 2.0  # firmware-side watchdog window
+# Interlock status read-back, written by the firmware every scan (read-only
+# for the host): 561 = 1 while the trip latch is set; 562 = broker tag index
+# that latched the trip, or UNMAPPED_TAG_INDEX when clear. Lets the host
+# confirm that a coil-1 reset actually took (issue #4001).
+INTERLOCK_TRIPPED_REGISTER = 561
+INTERLOCK_TRIP_TAG_REGISTER = 562
 
 # Plant wiring: the DC power supply's analog command rides PID loop 0. Named
 # here so the shutdown safe-state and the power-supply service agree on which
@@ -57,6 +76,10 @@ POWER_SUPPLY_PID_INDEX = 0
 
 # ---- Coils ------------------------------------------------------------
 SAVE_TO_FLASH_COIL = 0
+# Interlock reset request. The host writes 1; the firmware consumes the pulse
+# (writes it back to 0) and clears its trip latch ONLY if no tag is still
+# outside its band -- a reset while the cause persists is refused. See
+# firmware/README.md "Interlock latch and reset".
 ESTOP_RESET_COIL = 1
 HEATER_RELAY_COIL = 2  # 24 V DO -> relay -> 110 V resistive heater (temp ctrl)
 # Selects the P1-04THM open-circuit (burnout) fail direction: 1 = HIGH-side
@@ -65,6 +88,48 @@ HEATER_RELAY_COIL = 2  # 24 V DO -> relay -> 110 V resistive heater (temp ctrl)
 # module on change; the backend re-asserts this each scan so it survives a PLC
 # reboot. See temperature_integration.TemperatureService.set_burnout_high_side.
 THM_BURNOUT_COIL = 3
+
+
+class NonFiniteValueError(ValueError):
+    """A command value (tag force, setpoint, limit) is NaN or infinite.
+
+    Distinct from transport failures on purpose (issue #3974): a NaN in a
+    request body is a *precondition* violation by the caller, not an I/O
+    fault, and must never be mistaken for a lost PLC link. The Modbus client
+    raises this before touching the socket, so ``_connected`` is untouched.
+    """
+
+
+def require_finite_value(value: object, name: str = "value") -> float:
+    """Return ``value`` as a finite float or raise :class:`NonFiniteValueError`.
+
+    Raises:
+        TypeError: If ``value`` is not a real number (``bool`` is rejected).
+        NonFiniteValueError: If ``value`` is NaN or infinite.
+    """
+    if isinstance(value, bool) or not isinstance(value, int | float):
+        raise TypeError(f"{name} must be a real number, got {type(value).__name__}")
+    numeric = float(value)
+    if not math.isfinite(numeric):
+        raise NonFiniteValueError(f"{name} must be finite, got {numeric!r}")
+    return numeric
+
+
+def json_safe(value: object) -> object:
+    """Recursively replace non-finite floats with their ``repr`` string.
+
+    FastAPI's default 422 response embeds the offending ``input`` and renders
+    with ``allow_nan=False``, so a body of ``{"value": NaN}`` used to turn a
+    validation error into a 500 (#3974). Run error payloads through this
+    before serialising them.
+    """
+    if isinstance(value, float) and not math.isfinite(value):
+        return repr(value)
+    if isinstance(value, dict):
+        return {k: json_safe(v) for k, v in value.items()}
+    if isinstance(value, list | tuple):
+        return [json_safe(v) for v in value]
+    return value
 
 
 def tag_name(index: int) -> str:

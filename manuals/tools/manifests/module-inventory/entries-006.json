@@ -3,6 +3,64 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 8648,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "59ea2804532cf82c4b11b8d0a33c3599990dbf302259035fab00c1788252c15e",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-COLLOCATION-PY-704EA3959FE8",
+      "language": "python",
+      "maintainer": "Pendulum maintainers",
+      "path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/collocation.py",
+      "purpose": "Direct-collocation transcription of the downswing optimal control problem.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CollocationTranscription",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 12132,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
@@ -14706,119 +14764,6 @@
           "tests/shared/python/launch_monitor/test_corpus.py"
         ],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 16330,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6e7b281301695f2ea7bb2dc578ef356a6bcf4ba8ac3f4eb94ae5e16f46bc17cc",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-LAUNCH-MONITOR-STROKES-GAINED-PY-B22AE4F7A2F7",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/launch_monitor_strokes_gained.py",
-      "purpose": "Hash-verified expected-strokes baselines and source-backed SG bookkeeping.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SourceBackedStrokesGainedRequest",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SourceBackedStrokesGainedResult",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "StrokesGainedExcludedRow",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "StrokesGainedExclusionSummary",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TrustedSummaryRequest",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "EXCLUSION_REASON_CODES",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_source_backed_strokes_gained_payload",
-            "signature": "frame: pd.DataFrame, baseline: StrokesGainedBaseline, request: SourceBackedStrokesGainedRequest"
-          },
-          {
-            "kind": "function",
-            "name": "calculate_source_backed_strokes_gained",
-            "signature": "frame: pd.DataFrame, baseline: StrokesGainedBaseline, request: SourceBackedStrokesGainedRequest"
-          },
-          {
-            "kind": "re-export",
-            "name": "CONTRACT_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "StrokesGainedBaseline",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "baseline_table_hash",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "load_strokes_gained_baseline",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/test_launch_monitor_provenance_and_unavailable.py",
-          "tests/rate_of_closure/test_launch_monitor_strokes_gained.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
         "validation_paths": []
       }
     }

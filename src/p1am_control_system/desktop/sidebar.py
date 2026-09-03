@@ -120,9 +120,13 @@ class InspectorSidebar(QWidget):
         self.alarms_group = QGroupBox("Alarm Interlock Limits", self)
         alarms_grid = QGridLayout(self.alarms_group)
 
+        # A limit of ``None`` (side disabled, the backend default for every
+        # unrouted tag) is shown as the spin box's range end (the low box says
+        # "disabled" there); reading that value back yields ``None`` again.
         alarms_grid.addWidget(QLabel("Low Limit (LL/L):", self), 0, 0)
         self.spin_low_limit = QDoubleSpinBox(self)
         self.spin_low_limit.setRange(-9999.0, 9999.0)
+        self.spin_low_limit.setSpecialValueText("disabled")
         alarms_grid.addWidget(self.spin_low_limit, 0, 1)
 
         alarms_grid.addWidget(QLabel("High Limit (H/HH):", self), 1, 0)
@@ -220,8 +224,16 @@ class InspectorSidebar(QWidget):
         # 1. Load Interlock limits
         if tag_id < len(self.routing_config.interlocks):
             interlock = self.routing_config.interlocks[tag_id]
-            self.spin_low_limit.setValue(interlock.low_limit)
-            self.spin_high_limit.setValue(interlock.high_limit)
+            self.spin_low_limit.setValue(
+                self.spin_low_limit.minimum()
+                if interlock.low_limit is None
+                else interlock.low_limit
+            )
+            self.spin_high_limit.setValue(
+                self.spin_high_limit.maximum()
+                if interlock.high_limit is None
+                else interlock.high_limit
+            )
             self._baseline_low_limit = self.spin_low_limit.value()
 
         # 2. Check associated PID loop (either PV or CV tag matches)
@@ -291,14 +303,16 @@ class InspectorSidebar(QWidget):
         if self.user_role == "Admin" and self.routing_config:
             tag_id = self.selected_tag_id
 
-            # Update safety limits
+            # Update safety limits (range end == "disabled" == None)
             if tag_id < len(self.routing_config.interlocks):
-                self.routing_config.interlocks[
-                    tag_id
-                ].low_limit = self.spin_low_limit.value()
-                self.routing_config.interlocks[
-                    tag_id
-                ].high_limit = self.spin_high_limit.value()
+                low_value = self.spin_low_limit.value()
+                high_value = self.spin_high_limit.value()
+                self.routing_config.interlocks[tag_id].low_limit = (
+                    None if low_value <= self.spin_low_limit.minimum() else low_value
+                )
+                self.routing_config.interlocks[tag_id].high_limit = (
+                    None if high_value >= self.spin_high_limit.maximum() else high_value
+                )
 
             # Update PID loop configs
             if self.pid_group.isVisible() and self.pid_loop_index >= 0:

@@ -13508,10 +13508,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5615,
+      "bytes_lf": 6111,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4cae04dbb91d9c7304bbe75938c99f47c66c19d7122e923bd5b52bba919621b3",
+      "content_sha256_lf": "b0cf2371c623c33b1fda0608e364cb61bc1fb1e5972e03c5d83ab0d1a8318ccb",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-ALARM-PROCESSING-PY-77E33AC894C7",
       "language": "python",
@@ -13546,6 +13546,11 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "BAD_QUALITY_STATE",
+            "signature": null
+          },
           {
             "kind": "constant",
             "name": "_SEVERITY_BY_STATE",

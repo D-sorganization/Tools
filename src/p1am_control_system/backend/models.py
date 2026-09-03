@@ -1,3 +1,4 @@
+# mypy: disable-error-code="unused-ignore"
 from datetime import datetime, timezone
 from typing import Any
 
@@ -225,6 +226,17 @@ class EventLog(SQLModel, table=True):  # type: ignore[call-arg]
     )
 
 
+def _finite(value: float, field_name: str) -> float:
+    """DbC helper: reject NaN/Inf in any value that reaches a register.
+
+    Pydantic v2 accepts JSON ``NaN``/``Infinity`` for a plain ``float`` field,
+    and ``float_to_registers`` then raises inside the Modbus client's blanket
+    I/O handler -- which used to drop the PLC connection over a bad request
+    body (issue #3974). Refuse it at the model boundary instead.
+    """
+    return float(hardware.require_finite_value(value, field_name))
+
+
 class PIDConfig(BaseModel):
     """Pydantic model validating a PID loop configuration."""
 
@@ -235,6 +247,11 @@ class PIDConfig(BaseModel):
     ki: float
     kd: float
 
+    @field_validator("setpoint", "kp", "ki", "kd")
+    @classmethod
+    def _check_finite(cls, value: float, info: Any) -> float:
+        return _finite(value, info.field_name)
+
     @field_validator("pv_tag", "cv_tag")
     @classmethod
     def _check_loop_tag(cls, value: str) -> str:
@@ -242,12 +259,56 @@ class PIDConfig(BaseModel):
 
 
 class InterlockConfig(BaseModel):
-    """Pydantic model validating 4-tier limits for a tag."""
+    """Pydantic model validating 4-tier limits for a tag.
 
-    lolo_limit: float
-    low_limit: float
-    high_limit: float
-    hihi_limit: float
+    A limit of ``None`` means "not interlocked / not alarmed on this side".
+    It is encoded to the PLC as the firmware's disabled sentinel
+    (``hardware.INTERLOCK_DISABLED_LOW`` / ``_HIGH``) and fed to the alarm
+    engine as -inf / +inf, so the tag can never trip or alarm on that side.
+    This is the default for every tag that is not a routed input (#4001): the
+    old ``low_limit=5.0`` for all 32 tags tripped the firmware on any unrouted
+    tag reading 0.0 -- and on a routed thermocouple at room temperature.
+    """
+
+    lolo_limit: float | None = None
+    low_limit: float | None = None
+    high_limit: float | None = None
+    hihi_limit: float | None = None
+
+    @field_validator("lolo_limit", "low_limit", "high_limit", "hihi_limit")
+    @classmethod
+    def _check_finite_or_none(cls, value: float | None, info: Any) -> float | None:
+        if value is None:
+            return None
+        return _finite(value, info.field_name)
+
+    def is_disabled(self) -> bool:
+        """True when no side of this tag is interlocked or alarmed."""
+        return all(
+            limit is None
+            for limit in (
+                self.lolo_limit,
+                self.low_limit,
+                self.high_limit,
+                self.hihi_limit,
+            )
+        )
+
+    def engine_limits(self) -> dict[str, float]:
+        """Limits for the SCADA alarm engine (Rust or fallback).
+
+        ``None`` becomes -inf (low side) / +inf (high side): every comparison
+        against it is False, so the engine never enters that state, while the
+        engine's ``lolo <= low <= high <= hihi`` contract still holds.
+        """
+        neg_inf = float("-inf")
+        pos_inf = float("inf")
+        return {
+            "lolo": neg_inf if self.lolo_limit is None else self.lolo_limit,
+            "low": neg_inf if self.low_limit is None else self.low_limit,
+            "high": pos_inf if self.high_limit is None else self.high_limit,
+            "hihi": pos_inf if self.hihi_limit is None else self.hihi_limit,
+        }
 
 
 class RoutingConfig(BaseModel):
@@ -263,6 +324,11 @@ class PIDTuningStepPayload(BaseModel):
     """Pydantic model validating PID tuning step value command."""
 
     step_value: float
+
+    @field_validator("step_value")
+    @classmethod
+    def _check_finite(cls, value: float) -> float:
+        return _finite(value, "step_value")
 
 
 class AlicatSetpointPayload(BaseModel):

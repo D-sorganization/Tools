@@ -3,6 +3,57 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 14703,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7732d09d2f0b71d2b1e0f04c262ac92ef186f6df0916931b324e8d86fd7a96cf",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-LAUNCHMONITORPLAYERWORKSPACE-TSX-B148EC3608BC",
+      "language": "typescript-react",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/components/LaunchMonitorPlayerWorkspace.tsx",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "LaunchMonitorPlayerWorkspace",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 11760,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -11506,182 +11557,6 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 15722,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "49802eaaef61240b17fe999465e67bd0e8fb4cdeca4f79eb69c4cc3c19ab5f32",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-CLUBFITTING-TS-8FFA04331B33",
-      "language": "typescript",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/model/clubFitting.ts",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "BODY_CHAIN_FORMAT",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "BodyChain",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "ChainBody",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "ChainJoint",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "ClubFittingDocument",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "ClubOutcome",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "CounterfactualSpec",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "CoupledImpactResult",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "FITTING_DOCUMENT_FORMAT",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "FITTING_REPORT_FORMAT",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "FaceGeometry",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "FittingProvenance",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "FittingReport",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "GripBoundary",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "GripKinematics",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "IMPACT_COUPLING_REPORT_FORMAT",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "ImpactCouplingReport",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "MeshReference",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "ShaftDeliveryDeltas",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "ShaftTipMass",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "gripBoundaryReduction",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "parseBodyChain",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "parseFittingDocument",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "parseFittingReport",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "parseImpactCouplingReport",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "serializeFittingDocument",
-            "signature": null
-          }
-        ],
         "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []

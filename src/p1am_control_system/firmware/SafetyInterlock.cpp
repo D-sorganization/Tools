@@ -15,28 +15,48 @@ SafetyInterlock::SafetyInterlock() {
 
 void SafetyInterlock::Reset() {
   tripped_ = false;
-  // Initialize limits to broad ranges that won't trip by default
+  trip_tag_id_ = kNoTripTag;
+  // Initialize limits to the disabled sentinels so nothing trips by default.
   for (int i = 0; i < SignalBroker::kNumTags; ++i) {
-    lolo_limits_[i] = -99999.0f;
-    low_limits_[i] = -99999.0f;
-    high_limits_[i] = 99999.0f;
-    hihi_limits_[i] = 99999.0f;
+    lolo_limits_[i] = kDisabledLowLimit;
+    low_limits_[i] = kDisabledLowLimit;
+    high_limits_[i] = kDisabledHighLimit;
+    hihi_limits_[i] = kDisabledHighLimit;
   }
 }
 
-void SafetyInterlock::Evaluate(SignalBroker& broker, HardwareInterface& hw) {
-  bool trip_detected = false;
+bool SafetyInterlock::IsInterlocked(int tag_id) const {
+  if (!IsValidTagId(tag_id)) {
+    return false;
+  }
+  return low_limits_[tag_id] > kDisabledLowLimit ||
+         high_limits_[tag_id] < kDisabledHighLimit;
+}
 
+int SafetyInterlock::FindTripCause(const SignalBroker& broker) const {
   for (int i = 0; i < SignalBroker::kNumTags; ++i) {
+    if (!IsInterlocked(i)) {
+      // Unrouted / un-interlocked tags read 0.0 (or NaN) and are not process
+      // measurements; they must never be able to trip the plant (#4001).
+      continue;
+    }
     float val = broker.GetTag(i);
+    if (!std::isfinite(val)) {
+      // Sensor fault on an interlocked channel: fail safe (see header).
+      return i;
+    }
     if (val > high_limits_[i] || val < low_limits_[i]) {
-      trip_detected = true;
-      break;
+      return i;
     }
   }
+  return kNoTripTag;
+}
 
-  if (trip_detected) {
+void SafetyInterlock::Evaluate(SignalBroker& broker, HardwareInterface& hw) {
+  const int cause = FindTripCause(broker);
+  if (cause != kNoTripTag) {
     tripped_ = true;
+    trip_tag_id_ = cause;
   }
 
   if (tripped_) {
@@ -62,7 +82,7 @@ void SafetyInterlock::Evaluate(SignalBroker& broker, HardwareInterface& hw) {
 
 float SafetyInterlock::GetLoloLimit(int tag_id) const {
   if (!IsValidTagId(tag_id)) {
-    return -99999.0f;
+    return kDisabledLowLimit;
   }
   return lolo_limits_[tag_id];
 }
@@ -72,14 +92,14 @@ void SafetyInterlock::SetLoloLimit(int tag_id, float val) {
     return;
   }
   if (!std::isfinite(val)) {
-    val = -99999.0f;
+    val = kDisabledLowLimit;
   }
   lolo_limits_[tag_id] = val;
 }
 
 float SafetyInterlock::GetLowLimit(int tag_id) const {
   if (!IsValidTagId(tag_id)) {
-    return -99999.0f;
+    return kDisabledLowLimit;
   }
   return low_limits_[tag_id];
 }
@@ -89,14 +109,14 @@ void SafetyInterlock::SetLowLimit(int tag_id, float val) {
     return;
   }
   if (!std::isfinite(val)) {
-    val = -99999.0f;
+    val = kDisabledLowLimit;
   }
   low_limits_[tag_id] = val;
 }
 
 float SafetyInterlock::GetHighLimit(int tag_id) const {
   if (!IsValidTagId(tag_id)) {
-    return 99999.0f;
+    return kDisabledHighLimit;
   }
   return high_limits_[tag_id];
 }
@@ -106,14 +126,14 @@ void SafetyInterlock::SetHighLimit(int tag_id, float val) {
     return;
   }
   if (!std::isfinite(val)) {
-    val = 99999.0f;
+    val = kDisabledHighLimit;
   }
   high_limits_[tag_id] = val;
 }
 
 float SafetyInterlock::GetHihiLimit(int tag_id) const {
   if (!IsValidTagId(tag_id)) {
-    return 99999.0f;
+    return kDisabledHighLimit;
   }
   return hihi_limits_[tag_id];
 }
@@ -123,7 +143,7 @@ void SafetyInterlock::SetHihiLimit(int tag_id, float val) {
     return;
   }
   if (!std::isfinite(val)) {
-    val = 99999.0f;
+    val = kDisabledHighLimit;
   }
   hihi_limits_[tag_id] = val;
 }
@@ -132,6 +152,20 @@ bool SafetyInterlock::IsTripped() const {
   return tripped_;
 }
 
-void SafetyInterlock::ClearTrip() {
+int SafetyInterlock::GetTripTagId() const {
+  return trip_tag_id_;
+}
+
+bool SafetyInterlock::ClearTrip(const SignalBroker& broker) {
+  if (!tripped_) {
+    return true;
+  }
+  if (FindTripCause(broker) != kNoTripTag) {
+    // Cause still present: refuse. The latch and the forced-safe outputs
+    // stay exactly as they are; the next Evaluate() re-asserts them.
+    return false;
+  }
   tripped_ = false;
+  trip_tag_id_ = kNoTripTag;
+  return true;
 }

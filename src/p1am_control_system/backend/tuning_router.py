@@ -28,6 +28,7 @@ import logging
 import time
 from typing import Any, cast
 
+import hardware
 from fastapi import APIRouter, Depends, HTTPException
 
 # Imported as a real type, not injected: this module uses
@@ -39,7 +40,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from models import PIDTuningStepPayload
 from mpc import simulate_pid_vs_mpc
 from pid_tuning import identify_fopdt_and_tune
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from pydantic import Field as PydanticField
 
 # Number of PID loops the firmware exposes; mirrors hardware.PID_COUNT.
@@ -49,9 +50,20 @@ TAG_COUNT = 32
 
 
 class TagWritePayload(BaseModel):
-    """Operator-supplied value for a direct tag write."""
+    """Operator-supplied value for a direct tag write.
+
+    ``NaN``/``Infinity`` are valid JSON to pydantic's default ``float`` and
+    used to reach the Modbus codec, whose ``ValueError`` was then swallowed by
+    the client's I/O handler and reported as a lost PLC link (#3974). Reject
+    them here (422) so a bad request body is a bad request, not an outage.
+    """
 
     value: float
+
+    @field_validator("value")
+    @classmethod
+    def _check_finite(cls, value: float) -> float:
+        return float(hardware.require_finite_value(value, "value"))
 
 
 class MPCSimulatePayload(BaseModel):
@@ -135,6 +147,10 @@ def create_tuning_router(
 
         try:
             success = await plc_client.write_tag(tag_name, payload.value)
+        except hardware.NonFiniteValueError as exc:
+            # Defense in depth behind the payload validator: a precondition
+            # failure is the caller's error (400), never a transport fault.
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
         except NotImplementedError as exc:
             # No host-writable register for this tag (the P1AM TAG_n block is
             # republished by the firmware every scan) — say so rather than answer

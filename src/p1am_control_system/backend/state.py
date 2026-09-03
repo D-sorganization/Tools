@@ -4,6 +4,7 @@ from collections.abc import Callable
 from datetime import datetime, timezone
 from typing import Any
 
+import hardware
 from alarm_processing import build_alarm_entry, state_name
 from defaults import default_routing_config
 from models import RoutingConfig
@@ -90,7 +91,15 @@ class SystemState:
         self.latest_tags.update(default_tag_values())
 
     def write_tag(self, tag_name: str, value: float) -> None:
-        self.latest_tags[tag_name] = value
+        """Record an operator force in the live tag map.
+
+        Raises:
+            TypeError: If ``value`` is not a number.
+            hardware.NonFiniteValueError: If ``value`` is NaN/Inf. A NaN in
+                ``latest_tags`` would be fed to the alarm engine on the next
+                snapshot and read as a sensor fault (#3973/#3974).
+        """
+        self.latest_tags[tag_name] = hardware.require_finite_value(value, "value")
 
     def acknowledge_alarm(self, tag_id: str, user: str | None = None) -> bool:
         """Acknowledge ``tag_id`` on both the live map and the alarm engine.

@@ -434,3 +434,37 @@ def test_fetch_logs_orders_same_timestamp_events_newest_first(tmp_path: Path) ->
         "events sharing a timestamp must be returned newest-first by insertion "
         f"order, got {kinds}"
     )
+
+
+# ---------------------------------------------------------------------------
+# #4911 -- a ``None`` limit means "side disabled" and can never classify
+# ---------------------------------------------------------------------------
+
+
+def test_none_limits_are_treated_as_disabled_sides() -> None:
+    """Backend default for unrouted tags: every limit ``None`` -> never alarms."""
+    disabled = _Interlock(None, None, None, None)
+    assert classify_value(0.0, disabled) is None
+    assert classify_value(-1e9, disabled) is None
+    assert classify_value(1e9, disabled) is None
+    validate_interlocks({"TAG_9": disabled})
+
+
+def test_high_side_only_default_alarms_high_but_never_low() -> None:
+    """Backend default for a routed input: low side disabled, high 95/100."""
+    routed = _Interlock(None, None, 95.0, 100.0)
+    assert classify_value(0.0, routed) is None
+    assert classify_value(1.8, routed) is None  # room-temperature thermocouple
+    assert classify_value(96.0, routed) == "H"
+    assert classify_value(100.0, routed) == "HH"
+    validate_interlocks([routed])
+
+
+def test_state_machine_never_raises_on_a_disabled_side() -> None:
+    machine = AlarmStateMachine()
+    routed = _Interlock(None, None, 95.0, 100.0)
+    assert machine.evaluate(3, 0.0, routed) == []
+    assert machine.active_alarms == set()
+    raised = machine.evaluate(3, 97.0, routed)
+    assert [t.kind for t in raised] == ["raised"]
+    assert (3, "H") in machine.active_alarms
