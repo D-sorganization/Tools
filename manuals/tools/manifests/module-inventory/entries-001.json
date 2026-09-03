@@ -3,157 +3,6 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3138,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0014d5c99fda633e7cf6c0dbfdf2edb20793ed559b0fbc54e0a4ca3c499af480",
-      "family": "repository-tooling-non-calculation",
-      "id": "TOOLS-MODULE-SCRIPTS-CHECK-LOCAL-ONLY-WORKFLOWS-PY-44F5D4C62B29",
-      "language": "python",
-      "maintainer": "Repository tooling maintainers",
-      "path": "scripts/check_local_only_workflows.py",
-      "purpose": "Fail when GitHub Actions workflows can route to hosted runners.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "BANNED",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "HOSTED_RUNNER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "HOSTED_RUNNER_ALLOWLIST",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "LEGACY_HOSTED_RUNNER_ALLOWLIST",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "WORKFLOW_DIR",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "main",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "tests/scripts/test_check_local_only_workflows.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5137,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7904f9281a639365341360d1f1ef14c7a1f721fb4b1a5beaca1bf916d9341f37",
-      "family": "repository-tooling-non-calculation",
-      "id": "TOOLS-MODULE-SCRIPTS-CHECK-MINIMUM-TEST-CONTRACT-PY-D00C141F501F",
-      "language": "python",
-      "maintainer": "Repository tooling maintainers",
-      "path": "scripts/check_minimum_test_contract.py",
-      "purpose": "Enforce minimum test contract for changed source packages.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "ROOT",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "changed_files",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "has_tests",
-            "signature": "pkg_key: str"
-          },
-          {
-            "kind": "function",
-            "name": "main",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "package_key",
-            "signature": "path: str"
-          }
-        ],
-        "test_paths": [
-          "tests/test_minimum_test_contract.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "tests/test_minimum_test_contract.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
       "bytes_lf": 13233,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -628,10 +477,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 677,
+      "bytes_lf": 1413,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2bbe7e1d2896c9c7bb7fb295326a0084d412e36151c93bb2b7a8b4b3cfa74286",
+      "content_sha256_lf": "885342641bbc949ab50b6854899cbfb95c2cdfd55e4615dbddbb9fa1c57d22ec",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CHECK-REPO-TOPOLOGY-PY-28DB7674BC91",
       "language": "python",
@@ -682,6 +531,78 @@
           }
         ],
         "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6839,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3183e526953bd9d167c71992c83e948811fa64b3a47884d49346a5e01a0bb567",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CHECK-ROOT-ALLOWLIST-PY-94782E1774B7",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/check_root_allowlist.py",
+      "purpose": "Fail when a tracked top-level repository entry is not on the explicit allowlist.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "ROOT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ROOT_ALLOWLIST",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "disallowed_entries",
+            "signature": "entries: Iterable[str], allowlist: frozenset[str]=ROOT_ALLOWLIST"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "tracked_top_level_entries",
+            "signature": "root: Path"
+          }
+        ],
+        "test_paths": [
+          "tests/scripts/test_check_root_allowlist.py"
+        ],
         "unit_mentions": [],
         "validation_paths": []
       }
@@ -15232,6 +15153,48 @@
         "unit_mentions": [
           "N"
         ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 600,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4ecd9a9d2c2932d4ed2d5cc8fb13b76775c022ff1a4207cc6b8fbef946780074",
+      "family": "data-processing-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-WEB-INDEX-HTML-AFD1E314F101",
+      "language": "html",
+      "maintainer": "Data processing maintainers",
+      "path": "src/data_processing/data_processor/web/index.html",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
         "validation_paths": []
       }
     }

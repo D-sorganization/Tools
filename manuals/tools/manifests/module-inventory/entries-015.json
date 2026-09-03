@@ -3,102 +3,6 @@
   "entries": [
     {
       "authority_status": "provisional",
-      "bytes_lf": 756,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "ffbfff93685d0481afd119833e5803748c1281d6eb40b726bb967cc92c091774",
-      "family": "process-calculators-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-PSA-PACKAGE-INIT-PY-049FD5FD0469",
-      "language": "python",
-      "maintainer": "Process calculator maintainers",
-      "path": "src/shared/python/sidekick/process_calculators/psa_package/__init__.py",
-      "purpose": "PSA (Pressure Swing Adsorption) Analysis Package.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "ComponentData",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "DEFAULT_COMPONENTS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PSAModel",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PSAResults",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "StreamCompositions",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "StreamFlows",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "calculate_o2_safety_analysis",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "calculate_sensitivity",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "get_flammability_status",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
       "bytes_lf": 31432,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
@@ -17915,6 +17819,82 @@
         "test_paths": [
           "src/shared/python/swing_sim/ground/tests/test_bounce_execution.py"
         ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 4232,
+      "classification": "calculation",
+      "classification_basis": "path-marker:kinematic",
+      "content_sha256_lf": "422a08af8ba7c58cf7b84880fb9722701183434a7614029df9f62b7999655af4",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-BOUNCE-KINEMATICS-PY-95884738D159",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/bounce_kinematics.py",
+      "purpose": "Exact contact interpolation and ballistic hop kinematics.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "ballistic_state",
+            "signature": "initial: GroundContactState, elapsed_s: float, settings: BounceModelSettings"
+          },
+          {
+            "kind": "function",
+            "name": "contact_state_after_hop",
+            "signature": "outgoing: GroundContactState, request: GroundSimulationRequest, settings: BounceModelSettings"
+          },
+          {
+            "kind": "function",
+            "name": "interpolate_first_contact",
+            "signature": "request: GroundSimulationRequest"
+          },
+          {
+            "kind": "function",
+            "name": "next_contact_elapsed_s",
+            "signature": "outgoing: GroundContactState, request: GroundSimulationRequest, settings: BounceModelSettings"
+          },
+          {
+            "kind": "function",
+            "name": "trajectory_point",
+            "signature": "state: GroundContactState, phase: GroundPhase"
+          }
+        ],
+        "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []
       }

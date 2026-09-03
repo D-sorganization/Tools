@@ -1143,95 +1143,15 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 808,
+      "bytes_lf": 1239,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "781e07b4a1a43d4519fe65a992b864ab06c310a26f19a02bfc33b2958c57e7e1",
+      "content_sha256_lf": "04be7cd1d3e25ccf3262f4edd4257159b360fd1dcc7bd79e2c6501f4d18c577f",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-CREATE-LAUNCHER-SHORTCUT-PS1-D4B497809F2A",
       "language": "powershell",
       "maintainer": "Tools module maintainers",
       "path": "create_launcher_shortcut.ps1",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "unavailable",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 838,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e88a57454d396fad723d278aa70739cb37c43f5f5a09ddd3e6fabb13407bf026",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-CREATE-LAUNCHER-SHORTCUT-PNG-PS1-4622F480E081",
-      "language": "powershell",
-      "maintainer": "Tools module maintainers",
-      "path": "create_launcher_shortcut_png.ps1",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "unavailable",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2538,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a1583e72a9a4536487ee5378260b00f8e03f4ab47c9b4e06bcb776892b945f3c",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-CREATE-REQUESTED-SHORTCUTS-PS1-E8973B9757E3",
-      "language": "powershell",
-      "maintainer": "Tools module maintainers",
-      "path": "create_requested_shortcuts.ps1",
       "purpose": null,
       "review_status": "inventory-baseline",
       "risk_tags": [],
@@ -1265,27 +1185,25 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 22740,
+      "bytes_lf": 1290,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "1c8eb1f31965c9a68145cd4ef04b7c06776c93fda0359abda99431a41172225c",
+      "content_sha256_lf": "d9ea15fff9a45c76c31352b69acec3e06846b2995813c316da43495068e45572",
       "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-DRAFTS-WORKFLOW-ENGINE-WORKFLOW-DEFINITIONS-PY-CFA30937AB64",
-      "language": "python",
+      "id": "TOOLS-MODULE-CREATE-LAUNCHER-SHORTCUT-PNG-PS1-4622F480E081",
+      "language": "powershell",
       "maintainer": "Tools module maintainers",
-      "path": "drafts/workflow_engine/workflow_definitions.py",
-      "purpose": "Workflow definitions for the AI assistant.",
+      "path": "create_launcher_shortcut_png.ps1",
+      "purpose": null,
       "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
+      "risk_tags": [],
       "states": {
-        "adrs": "mapped",
+        "adrs": "unavailable",
         "artifacts": "not-applicable",
         "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
+        "public_surfaces": "unavailable",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "not-applicable",
@@ -1293,73 +1211,41 @@
         "validation": "not-applicable"
       },
       "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
+        "adr_paths": [],
         "artifact_sha256": [],
         "chapter_paths": [],
         "citation_refs": [],
         "equation_refs": [],
         "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "create_c3d_import_workflow",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "create_cross_engine_validation_workflow",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "create_drift_control_decomposition_workflow",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "create_first_analysis_workflow",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "create_inverse_dynamics_workflow",
-            "signature": ""
-          }
-        ],
+        "public_surfaces": [],
         "test_paths": [],
         "unit_mentions": [
-          "Hz",
-          "N·m",
-          "g"
+          "s"
         ],
         "validation_paths": []
       }
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 22191,
+      "bytes_lf": 2610,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9a1c62a31523c81a57ed195ba7e5364b42cab162df4f817943ad2606717bb5c2",
+      "content_sha256_lf": "8880a708d5e81b3e2e9acf73ce22af3e97a8279889c0f5d3df1567d57b3d7463",
       "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-DRAFTS-WORKFLOW-ENGINE-WORKFLOW-ENGINE-PY-76D177E04DD1",
-      "language": "python",
+      "id": "TOOLS-MODULE-CREATE-REQUESTED-SHORTCUTS-PS1-E8973B9757E3",
+      "language": "powershell",
       "maintainer": "Tools module maintainers",
-      "path": "drafts/workflow_engine/workflow_engine.py",
-      "purpose": "Workflow Engine for guided AI-assisted analysis.",
+      "path": "create_requested_shortcuts.ps1",
+      "purpose": null,
       "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
+      "risk_tags": [],
       "states": {
-        "adrs": "mapped",
+        "adrs": "unavailable",
         "artifacts": "not-applicable",
         "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
+        "public_surfaces": "unavailable",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "not-applicable",
@@ -1367,61 +1253,13 @@
         "validation": "not-applicable"
       },
       "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
+        "adr_paths": [],
         "artifact_sha256": [],
         "chapter_paths": [],
         "citation_refs": [],
         "equation_refs": [],
         "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "RecoveryStrategy",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "StepResult",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "StepStatus",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ValidationResult",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "Workflow",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "WorkflowEngine",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "WorkflowExecution",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "WorkflowStep",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "UTC",
-            "signature": null
-          }
-        ],
+        "public_surfaces": [],
         "test_paths": [],
         "unit_mentions": [
           "s"
@@ -7564,6 +7402,7 @@
           "tests/scripts/test_audit_closed_stack_branches.py",
           "tests/scripts/test_check_changed_python_policy.py",
           "tests/scripts/test_check_rate_visual_evidence_changes.py",
+          "tests/scripts/test_check_root_allowlist.py",
           "tests/scripts/test_check_test_assertions.py",
           "tests/scripts/test_module_inventory_merge_driver.py",
           "tests/shared/python/ai/test_settings_dialog_provider_config.py",
@@ -7775,6 +7614,7 @@
           "tests/rust_bindings/test_ball_flight_bindings.py",
           "tests/rust_bindings/test_math_primitives_bindings.py",
           "tests/scientific_modeling/test_star_wars_rrt_perf.py",
+          "tests/scripts/test_check_root_allowlist.py",
           "tests/scripts/test_check_sidekick_coverage_gate.py",
           "tests/scripts/test_check_test_assertions.py",
           "tests/scripts/test_check_tracked_text_normalization.py",
@@ -14976,6 +14816,157 @@
           "s"
         ],
         "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3138,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0014d5c99fda633e7cf6c0dbfdf2edb20793ed559b0fbc54e0a4ca3c499af480",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CHECK-LOCAL-ONLY-WORKFLOWS-PY-44F5D4C62B29",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/check_local_only_workflows.py",
+      "purpose": "Fail when GitHub Actions workflows can route to hosted runners.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "BANNED",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "HOSTED_RUNNER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "HOSTED_RUNNER_ALLOWLIST",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LEGACY_HOSTED_RUNNER_ALLOWLIST",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "WORKFLOW_DIR",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/scripts/test_check_local_only_workflows.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5137,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7904f9281a639365341360d1f1ef14c7a1f721fb4b1a5beaca1bf916d9341f37",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CHECK-MINIMUM-TEST-CONTRACT-PY-D00C141F501F",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/check_minimum_test_contract.py",
+      "purpose": "Enforce minimum test contract for changed source packages.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "ROOT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "changed_files",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "has_tests",
+            "signature": "pkg_key: str"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "package_key",
+            "signature": "path: str"
+          }
+        ],
+        "test_paths": [
+          "tests/test_minimum_test_contract.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/test_minimum_test_contract.py"
+        ]
       }
     }
   ],

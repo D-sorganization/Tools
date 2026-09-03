@@ -144,6 +144,13 @@ repos:
         pass_filenames: false
         always_run: true
 
+      - id: root-allowlist
+        name: "tracked top-level entry allowlist"
+        entry: python scripts/check_root_allowlist.py
+        language: system
+        pass_filenames: false
+        always_run: true
+
       - id: fleet-spec-freshness-warning
         name: "SPEC.md freshness warning"
         entry: python shared_scripts/fleet_hooks.py spec-freshness --warn-only

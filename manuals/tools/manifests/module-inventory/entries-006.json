@@ -3,90 +3,6 @@
   "entries": [
     {
       "authority_status": "provisional",
-      "bytes_lf": 12132,
-      "classification": "calculation",
-      "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "7a45364ff5f51e8db8fe4040f974f6e674a91f2d55ab0668aaf01f072392c9ac",
-      "family": "pendulum-calculation",
-      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-COMPARISON-PY-0D591EEEEB3F",
-      "language": "python",
-      "maintainer": "Pendulum maintainers",
-      "path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/comparison.py",
-      "purpose": "Controlled comparison of the competing swing objectives.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SwingComparison",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "COMPARISON_SCHEMA_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "compare_objectives",
-            "signature": "config: DownswingConfig, objective_keys: Sequence[str] | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "comparison_from_payload",
-            "signature": "payload: Mapping[str, Any]"
-          },
-          {
-            "kind": "function",
-            "name": "comparison_to_payload",
-            "signature": "comparison: SwingComparison"
-          },
-          {
-            "kind": "function",
-            "name": "cross_evaluation_matrix",
-            "signature": "raw_values: Mapping[str, Mapping[str, float]], objective_keys: Sequence[str]"
-          }
-        ],
-        "test_paths": [
-          "src/movement_optimizer/tests/test_comparison.py",
-          "tests/shared/python/launch_monitor/test_comparison.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
       "bytes_lf": 9733,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
@@ -14820,6 +14736,84 @@
           "s"
         ],
         "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6927,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "bf2e95d0e3b043e4ad2c7d52239f5155e2f151de3ce7bc70bf1c4cfeb603fa23",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-LAUNCH-MONITOR-STROKES-GAINED-BASELINE-PY-9F3D3E5DD451",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/launch_monitor_strokes_gained_baseline.py",
+      "purpose": "Validation authority for versioned expected-strokes baseline artifacts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "BaselineState",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StrokesGainedBaseline",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "baseline_table_hash",
+            "signature": "states: list[dict[str, object]]"
+          },
+          {
+            "kind": "function",
+            "name": "load_strokes_gained_baseline",
+            "signature": "path: Path"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_launch_monitor_provenance_and_unavailable.py",
+          "tests/rate_of_closure/test_launch_monitor_strokes_gained.py",
+          "tests/shared/python/launch_monitor/test_conformance_bundle.py",
+          "tests/shared/python/launch_monitor/test_strokes_gained_contract.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/shared/python/launch_monitor/test_strokes_gained_contract.py"
+        ]
       }
     }
   ],
