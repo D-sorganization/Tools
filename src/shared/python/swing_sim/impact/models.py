@@ -43,6 +43,7 @@ from .constants import (
     GOLF_BALL_MOMENT_OF_INERTIA_KG_M2,
     GOLF_BALL_RADIUS_M,
 )
+from .contact import KelvinVoigtContactLaw
 from .types import ImpactModelType, ImpactParameters, PostImpactState, PreImpactState
 
 # Rolling-without-slip tangential-impulse factor for a uniform solid sphere.
@@ -374,7 +375,11 @@ class SpringDamperImpactModel(ImpactModel):
         contact_time = 0.0
         max_time = 0.005  # 5 ms max contact time [s]
         max_steps = int(max_time / self.dt)
-        max_force = 1e5  # [N] limit to prevent numerical blow-up
+        contact_law = KelvinVoigtContactLaw(
+            stiffness_n_per_m=params.contact_stiffness,
+            damping_n_s_per_m=params.contact_damping,
+            maximum_force_n=1e5,
+        )
 
         for _ in range(max_steps):
             gap = float(np.dot(x_ball - x_club, n)) - GOLF_BALL_RADIUS_M
@@ -382,9 +387,7 @@ class SpringDamperImpactModel(ImpactModel):
             if gap < 0:  # In contact (penetration)
                 penetration = -gap
                 v_rel_normal = float(np.dot(v_ball - v_club, n))
-                f_spring = params.contact_stiffness * penetration
-                f_damper = -params.contact_damping * v_rel_normal
-                f_magnitude = max(0.0, min(f_spring + f_damper, max_force))
+                f_magnitude = contact_law.normal_force(penetration, -v_rel_normal)
                 f_contact = f_magnitude * n
 
                 # Semi-implicit Euler: velocities first, then positions.
