@@ -1,7 +1,12 @@
+# Creates a desktop shortcut for the Tools launcher.
+# Paths are resolved from this script's own location so the script works from
+# any checkout (no machine-specific absolute paths).
+
+$RepoRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 $WshShell = New-Object -comObject WScript.Shell
 $DesktopPath = [Environment]::GetFolderPath("Desktop")
-$ShortcutFile = "$DesktopPath\Tools Launcher.lnk"
+$ShortcutFile = Join-Path $DesktopPath "Tools Launcher.lnk"
 $Shortcut = $WshShell.CreateShortcut($ShortcutFile)
 
 # Assuming python is in PATH. If not, this might need adjustment.
@@ -14,9 +19,18 @@ else {
 }
 
 $Shortcut.Arguments = "UnifiedToolsLauncher.py"
-$Shortcut.WorkingDirectory = "C:\Users\diete\Repositories\Tools"
+$Shortcut.WorkingDirectory = $RepoRoot
 $Shortcut.Description = "Launch Professional Tools Launcher"
-$Shortcut.IconLocation = "C:\Users\diete\Repositories\Tools\tools_icon_alt.ico"
+
+# Only set an icon when the tracked asset is present; fall back gracefully.
+$IconPath = Join-Path $RepoRoot "assets\tools_icon_alt.ico"
+if (Test-Path $IconPath) {
+    $Shortcut.IconLocation = $IconPath
+}
+else {
+    Write-Host "Icon not found at $IconPath - using default icon."
+}
+
 $Shortcut.Save()
 
 Write-Host "Created shortcut at: $ShortcutFile"

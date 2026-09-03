@@ -3,82 +3,6 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5130,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0b52684b5d34dd3d7d1992a03bfd965d3e761816aea45d5ae2d2f21c85d0193f",
-      "family": "control-systems-non-calculation",
-      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-CONFIG-STORE-PY-62F1873A2264",
-      "language": "python",
-      "maintainer": "Control systems maintainers",
-      "path": "src/p1am_control_system/backend/config_store.py",
-      "purpose": "Durable operator-configuration store (SQLite).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "PersistedConfig",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "load_config",
-            "signature": "session: Session, key: str"
-          },
-          {
-            "kind": "function",
-            "name": "load_model",
-            "signature": "session: Session, key: str, model_cls: type[_ModelT]"
-          },
-          {
-            "kind": "function",
-            "name": "save_config",
-            "signature": "session: Session, key: str, payload: dict[str, object]"
-          },
-          {
-            "kind": "function",
-            "name": "save_model",
-            "signature": "session: Session, key: str, model: BaseModel"
-          }
-        ],
-        "test_paths": [
-          "src/p1am_control_system/backend/tests/test_config_store.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
       "bytes_lf": 10018,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -13361,6 +13285,52 @@
         "test_paths": [],
         "unit_mentions": [
           "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5500,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "faea64ced00ba996cb8aefb9836a22f0a41a0b89442dba34fe9fe0dd9eb7b6f5",
+      "family": "control-systems-non-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-LIB-CURVEFIT-TEST-TS-41FD5CEABAA8",
+      "language": "typescript",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/frontend/src/lib/curveFit.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "deg",
+          "ms",
           "s"
         ],
         "validation_paths": []
