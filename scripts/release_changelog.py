@@ -29,6 +29,7 @@ import os
 import re
 import subprocess
 import sys
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -73,7 +74,9 @@ def _git(*args: str, cwd: Path | None = None) -> str:
 # --------------------------------------------------------------------------
 def is_bot_actor(actor: str | None) -> bool:
     """True for dependabot / GitHub App / *[bot] actors."""
-    return bool(actor) and BOT_ACTOR_RE.search(actor.strip()) is not None
+    if not actor:
+        return False
+    return BOT_ACTOR_RE.search(actor.strip()) is not None
 
 
 def bump_for_subject(subject: str) -> str:
@@ -143,7 +146,7 @@ def subject_has_text(subject_body: str) -> bool:
 
 
 def render_entry_line(
-    subject: str, resolve_pr_title: callable[[int], str | None]
+    subject: str, resolve_pr_title: Callable[[int], str | None]
 ) -> str | None:
     """Return the ``- ...`` row for a commit, or None to drop it.
 
