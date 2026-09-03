@@ -3,6 +3,64 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 4290,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pressure_drop",
+      "content_sha256_lf": "f3d4290caec401b0955003bcffbb17ba4ff44483e72cfd19352b92bbcda5f57d",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-PRESSURE-DROP-PY-C08B6B709F4B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/routers/pressure_drop.py",
+      "purpose": "Pressure drop calculator router with standardized API responses.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "calculate_pressure_drop",
+            "signature": "request: PressureDropRequest"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/calc_backend/tests/test_calc_backend.py",
+          "src/shared/python/calc_backend/tests/test_calc_backend_gaps.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 5784,
       "classification": "calculation",
       "classification_basis": "path-marker:pressure_drop",
@@ -5685,6 +5743,7 @@
         ],
         "test_paths": [
           "src/data_processing/data_processor/python/tests/test_advanced_analysis.py",
+          "src/p1am_control_system/backend/tests/test_interlock_defaults_contract.py",
           "src/p1am_control_system/backend/tests/test_units_contract.py",
           "src/pendulum_simulator/pendulum-web/tests/forceSourceProfiles.test.ts",
           "src/pendulum_simulator/tests/test_companion_dialog.py",
@@ -5854,6 +5913,7 @@
           "s"
         ],
         "validation_paths": [
+          "src/p1am_control_system/backend/tests/test_interlock_defaults_contract.py",
           "src/p1am_control_system/backend/tests/test_units_contract.py",
           "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
           "src/shared/python/model_generation/tests/test_contracts.py",
@@ -17351,73 +17411,6 @@
           {
             "kind": "class",
             "name": "AssetLibraryEditorRoutesMixin",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 683,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a9e7f25fe28884babac63970201dc4f3e13406e5e82fe14a2dfb317fc5423fae",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-API-REST-API-CONTRACTS-PY-F8A200C1D740",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/api/rest_api_contracts.py",
-      "purpose": "Shared request, response, and route contracts for model_generation APIs.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "APIRequest",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "APIResponse",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "HTTPMethod",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "Route",
             "signature": null
           }
         ],

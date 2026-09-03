@@ -1326,10 +1326,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3882,
+      "bytes_lf": 5017,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f8b0ee02d2c573b54521cd961966acd94a3138e3c843b39f37b80fdf779863f9",
+      "content_sha256_lf": "f89954ff7691477bb4cda5f6f3034d6e4c823737cbe29c5ebf57a868092d7c40",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-DEFAULTS-PY-BD7C789D5F44",
       "language": "python",
@@ -1366,6 +1366,16 @@
         "public_surfaces": [
           {
             "kind": "constant",
+            "name": "DEFAULT_INPUT_HIGH_LIMIT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_INPUT_HIHI_LIMIT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
             "name": "PASSTHROUGH_KD",
             "signature": null
           },
@@ -1378,6 +1388,11 @@
             "kind": "constant",
             "name": "PASSTHROUGH_KP",
             "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "default_interlock_for",
+            "signature": "tag: str, routed_inputs: frozenset[str]"
           },
           {
             "kind": "function",
@@ -1405,10 +1420,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 7647,
+      "bytes_lf": 10785,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4297c8d8e695a71aa35bc8503a709c6e15226a0278e4a9f32b6ae66a62c4784b",
+      "content_sha256_lf": "6f588a61d0f78fb960a60ad40a14eed116cdbbc4e4ff56341aac78103770611d",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-HARDWARE-PY-5C4DB8BBEC0B",
       "language": "python",
@@ -1444,6 +1459,11 @@
         "public_routes": [],
         "public_surfaces": [
           {
+            "kind": "class",
+            "name": "NonFiniteValueError",
+            "signature": null
+          },
+          {
             "kind": "constant",
             "name": "ESTOP_RESET_COIL",
             "signature": null
@@ -1471,6 +1491,26 @@
           {
             "kind": "constant",
             "name": "INTERLOCK_BASE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "INTERLOCK_DISABLED_HIGH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "INTERLOCK_DISABLED_LOW",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "INTERLOCK_TRIPPED_REGISTER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "INTERLOCK_TRIP_TAG_REGISTER",
             "signature": null
           },
           {
@@ -1550,6 +1590,11 @@
           },
           {
             "kind": "function",
+            "name": "json_safe",
+            "signature": "value: object"
+          },
+          {
+            "kind": "function",
             "name": "percent_to_celsius",
             "signature": "percent: float, full_scale_c: float | None=None"
           },
@@ -1557,6 +1602,11 @@
             "kind": "function",
             "name": "pid_setpoint_address",
             "signature": "pid_index: int"
+          },
+          {
+            "kind": "function",
+            "name": "require_finite_value",
+            "signature": "value: object, name: str='value'"
           },
           {
             "kind": "function",
@@ -1662,10 +1712,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 50658,
+      "bytes_lf": 51356,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7a5125d83c686a982c8a4460f24ed870a5453632c1e41425a90aa0bf63f9741a",
+      "content_sha256_lf": "5a6299c75fd342fe696b7ae30a13af87359ea61d64e27baea4fefaf1d64e9a2f",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-MAIN-PY-C47A4D7AC436",
       "language": "python",
@@ -1902,10 +1952,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 29929,
+      "bytes_lf": 30581,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "1d00c048141439ba0c27c9b42a4027bbdc443b49cd38f361f95f43136ead4ba2",
+      "content_sha256_lf": "ca9d4f4a8b2e41d1128d203d93af6fbcc492a559373a56157e700a443caf773c",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-MODBUS-CLIENT-PY-2770F6F53F58",
       "language": "python",
@@ -1958,10 +2008,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 7067,
+      "bytes_lf": 8419,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "dbb40362b5e31e19f85cbe7cb0a684ffd9a376e230123ea592a6c6fdd301172f",
+      "content_sha256_lf": "6186bfa5b0e806f871a66683da91971cfc1f9db496238b72b92a38a8542fd613",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-MODBUS-CODEC-PY-BC02AD876958",
       "language": "python",
@@ -2038,8 +2088,18 @@
           },
           {
             "kind": "function",
+            "name": "decode_high_limit",
+            "signature": "low: int, high: int"
+          },
+          {
+            "kind": "function",
             "name": "decode_interlocks",
             "signature": "registers: list[int]"
+          },
+          {
+            "kind": "function",
+            "name": "decode_low_limit",
+            "signature": "low: int, high: int"
           },
           {
             "kind": "function",
@@ -2053,8 +2113,18 @@
           },
           {
             "kind": "function",
+            "name": "encode_high_limit",
+            "signature": "limit: float | None"
+          },
+          {
+            "kind": "function",
             "name": "encode_interlocks",
             "signature": "interlocks: dict[str, InterlockConfig]"
+          },
+          {
+            "kind": "function",
+            "name": "encode_low_limit",
+            "signature": "limit: float | None"
           },
           {
             "kind": "function",
@@ -2098,10 +2168,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10004,
+      "bytes_lf": 12818,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "55ddb5f0f13746876ffd208f0e9f8071b282ce376c310906a582561bf8f507ff",
+      "content_sha256_lf": "8b3d5d15741ed667e9d96b46f5938efe9f9760b4337264dae801e8906277a5fd",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-MODELS-PY-DDB50293189B",
       "language": "python",
@@ -3544,10 +3614,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9255,
+      "bytes_lf": 10066,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "509e413294a236435a76e4f80022892e3ae8560ea9281d2945be4f8f71f1d119",
+      "content_sha256_lf": "6d5183bba5523834fd14dcd88837438a33a78ef8d6193956d16df30026666037",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-SCADA-FALLBACK-PY-F701073992EB",
       "language": "python",
@@ -3899,10 +3969,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 7551,
+      "bytes_lf": 7966,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c1288d47315e189b3035470787c3c206642fd7635edfcd6d17931cae34188f5f",
+      "content_sha256_lf": "420fa259217a08303161f99425273db9304a92ab63535710259b98b2ef4b77c9",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-SIMULATOR-CLIENT-PY-3C402A9CFE2C",
       "language": "python",
@@ -3955,10 +4025,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11221,
+      "bytes_lf": 11636,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6850dfddcb23229de8f1d5554339b8e4234cabd703e8f987f9f5e380874d55e2",
+      "content_sha256_lf": "9fc89a37511d0191fb331252efcd697b00a0dfea598637991959e547502dfb33",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-STATE-PY-C288C9C9A698",
       "language": "python",
@@ -4334,10 +4404,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11870,
+      "bytes_lf": 12662,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b2bab52c230aa5daafdc08c961ab435abb23d7b7616a74b829ddf591d650aea6",
+      "content_sha256_lf": "a6a69c9fe03feeacb6976fc1d478c957f8f0007bb8a9d85da062a42c62a1d35e",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-TUNING-ROUTER-PY-A153D94DE73E",
       "language": "python",
@@ -4867,10 +4937,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 16971,
+      "bytes_lf": 17600,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7e2630aab2a75ee6ea55b7f4a26a8909d3f35882ffde36abc6bc6a30e9d57b74",
+      "content_sha256_lf": "a1b8ffd425feb29c172aec75d3c05e5efdacf0d589e11ce1d13ca9bed21b5705",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-DESKTOP-ALARM-STATE-PY-58AD32402EE9",
       "language": "python",
@@ -5707,10 +5777,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8868,
+      "bytes_lf": 9747,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a1f871b46fa60f0e2d340f211d546aeccdade5ef227d714f410dc13538001c5b",
+      "content_sha256_lf": "1f85821171e24988f334a646698d142f4a489150b17dff1e0d8c1c0036b98534",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-DESKTOP-ROUTING-TAB-PY-9351590C0544",
       "language": "python",
@@ -5817,10 +5887,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13845,
+      "bytes_lf": 14624,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a0206ac1388fcc3aaca797638fb2cc640ee9548e3ecbfef25c5da2f06fd300c6",
+      "content_sha256_lf": "78cbe3e1bfbed60a8f6f331516710cf67da11ee46640578aba0354afd9ac567a",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-DESKTOP-SIDEBAR-PY-F93D846930B4",
       "language": "python",
@@ -6264,10 +6334,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 4173,
+      "bytes_lf": 4503,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "5d914fd800773c3b66b92751b40bcc9cc023a119739069d14938feb134b40d02",
+      "content_sha256_lf": "87c231b3c32bbf973f7edcb5f7357aee9288151c46e6ebf1e350be8245dae261",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FIRMWARE-PIDCONTROLLER-CPP-876CD3D022BE",
       "language": "cpp",
@@ -6350,10 +6420,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 2987,
+      "bytes_lf": 4185,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4c108efbf00cd27817a510ccb0217dd820d5be26e7b9efd5fa044bad98923bc9",
+      "content_sha256_lf": "51c0ac45609cc46d32f31b4643eacceaed487909378271771ce88eb740215307",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FIRMWARE-SAFETYINTERLOCK-CPP-53C731035273",
       "language": "cpp",
@@ -6392,10 +6462,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1385,
+      "bytes_lf": 3444,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "de2849c6150dca928707405cffde0f28cc0fcbcd50e70b5a72761a038e1518ef",
+      "content_sha256_lf": "9d514fc4f4cd56ce13a358a39c23a7809e4dc79296cae2b9b2d417448c620410",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FIRMWARE-SAFETYINTERLOCK-H-8422333940E7",
       "language": "c-header",
@@ -6434,10 +6504,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 3056,
+      "bytes_lf": 3578,
       "classification": "calculation",
       "classification_basis": "path-marker:signal",
-      "content_sha256_lf": "adc7cc71c212ea4f8725a2dd2a7b5713cd21212329dec37e78f66745a7365370",
+      "content_sha256_lf": "3cc848ac9f65bf614221833e44517eb95516eb0b0288839ecd59f8945f8edacd",
       "family": "control-systems-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FIRMWARE-SIGNALBROKER-CPP-F19ABFBB4FC8",
       "language": "cpp",
@@ -6481,10 +6551,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 2848,
+      "bytes_lf": 3789,
       "classification": "calculation",
       "classification_basis": "path-marker:signal",
-      "content_sha256_lf": "817e29414f22416619dccb74f12215e37648a9e5aacb445e4382f1146a1f9cae",
+      "content_sha256_lf": "9a0034ab6a85a1d9096a691e7cf5375849003872194dedf4e85ad79c0aeb1916",
       "family": "control-systems-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FIRMWARE-SIGNALBROKER-H-0AC413AEEC6E",
       "language": "c-header",
@@ -6613,31 +6683,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
-      "bytes_lf": 17073,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6a09d9bd9cb6414d352f8390fdddf90de82b5a1c4f43f4bc96330e40d3dc343b",
-      "family": "control-systems-non-calculation",
+      "authority_status": "provisional",
+      "bytes_lf": 19540,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "4e5530d837fb9500d150b00e7f55ece50747d6cdcd125c3593aa62271ac71ffa",
+      "family": "control-systems-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FIRMWARE-FIRMWARE-INO-7C2771175FA6",
       "language": "arduino",
       "maintainer": "Control systems maintainers",
       "path": "src/p1am_control_system/firmware/firmware.ino",
       "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "unavailable",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "unavailable",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -6792,10 +6867,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 57169,
+      "bytes_lf": 57318,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "cfea8a427451e401a755a3e84f8aa78e0a3e91ac57a4b3e4afdba86f45deddf2",
+      "content_sha256_lf": "2a07da96fc2a076131f0a7e4d61bc1cc5dbff013d57c03aacfeb3e0022eac2f4",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-APP-TSX-4019D5C4C9BE",
       "language": "typescript-react",
@@ -8196,10 +8271,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10302,
+      "bytes_lf": 10509,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b532c93d9800d2304d5e62fed2f3eab2f99a387bd3eee2a99cbed4e1780348a5",
+      "content_sha256_lf": "694d5cc4e2365492fca5c8b83a4bf1ba37c61a69467ae5c06e4930cf6d649c8a",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-COMPONENTS-CONTROLDASHBOARD-TSX-BE7C2A902DF1",
       "language": "typescript-react",
@@ -8986,10 +9061,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5504,
+      "bytes_lf": 5813,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "5974fdaf0a8f181252de745d980c2b504b5f3d5e5b0cbcf9d3072bddcc0b9d54",
+      "content_sha256_lf": "0f91904360c2f5d91c3bdc90b7987bf3943f87552fbcbd921c5187986add149a",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-COMPONENTS-INTERLOCKSPANEL-TSX-514979AB7E0D",
       "language": "typescript-react",
@@ -9992,10 +10067,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10205,
+      "bytes_lf": 10388,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6f25cb15d2fd592e8d0df49ae8fb7246bb8f3ed5738e3c92540c302dcae9a7db",
+      "content_sha256_lf": "93fe7263d7c1ad66736b5075fc3c65f2db0d39e33b4dc344679b98670d001ff5",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-COMPONENTS-TAGINSPECTOR-TSX-E9B61ADEFD7F",
       "language": "typescript-react",

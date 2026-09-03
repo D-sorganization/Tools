@@ -27,11 +27,17 @@ _SEVERITY_BY_STATE: dict[str, int] = {
     "High": 1,
     "LoLo": 2,
     "HiHi": 2,
+    # Non-finite reading (sensor/register fault). Ranks with the trip tier: an
+    # alarmed tag whose value cannot be read cannot be shown to be safe (#3973).
+    "BadQuality": 2,
 }
+
+#: The state both engines emit for a NaN/Inf reading. Never "Normal".
+BAD_QUALITY_STATE = "BadQuality"
 
 
 def severity_for_state(state: str) -> int:
-    """Map an alarm state name to a severity (0 normal, 1 Lo/Hi, 2 LoLo/HiHi)."""
+    """Map an alarm state name to a severity (0 normal, 1 Lo/Hi, 2 LoLo/HiHi/Bad)."""
     return _SEVERITY_BY_STATE.get(state, 0)
 
 
@@ -147,14 +153,17 @@ def process_alarm_events(
                     tag_name, state, timestamp=stamp
                 )
 
-            events.append(
-                EventLog(
-                    event_type="ALARM",
-                    description=(
-                        f"Tag {tag_name} crossed limit. State: {state} Value: {value}"
-                    ),
-                    severity=sev,
+            if state == BAD_QUALITY_STATE:
+                description = (
+                    f"Tag {tag_name} reading is not a number (sensor/register "
+                    f"fault). State: {state} Value: {value}"
                 )
+            else:
+                description = (
+                    f"Tag {tag_name} crossed limit. State: {state} Value: {value}"
+                )
+            events.append(
+                EventLog(event_type="ALARM", description=description, severity=sev)
             )
 
     return events
