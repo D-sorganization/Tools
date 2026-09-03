@@ -57,19 +57,34 @@ function extents(
   comparison: readonly FlightPoint[],
   target?: SpatialTargetTs,
 ): Bounds {
-  const positions = [...points, ...comparison].map((point) => point.position);
-  positions.push([0, 0, 0]);
+  // ⚡ Bolt Optimization: Use a single-pass loop to compute min/max bounds instead of [...arr].map()
+  // and Math.min(...spread)/Math.max(...spread) which can cause "Maximum call stack size exceeded" errors
+  // for large datasets and creates significant garbage collection pressure.
+  let minX = 0, minY = 0, minZ = 0;
+  let maxX = 0, maxY = 0, maxZ = 0;
+
+  const include = (p: readonly [number, number, number]) => {
+    if (p[0] < minX) minX = p[0];
+    if (p[1] < minY) minY = p[1];
+    if (p[2] < minZ) minZ = p[2];
+    if (p[0] > maxX) maxX = p[0];
+    if (p[1] > maxY) maxY = p[1];
+    if (p[2] > maxZ) maxZ = p[2];
+  };
+
+  for (let i = 0; i < points.length; i++) include(points[i].position);
+  for (let i = 0; i < comparison.length; i++) include(comparison[i].position);
+
   if (target) {
     const center = target.point.appCoordinatesM;
     const half = spatialTargetHalfExtents(target);
-    positions.push(
-      center.map((value, axis) => value - half[axis]) as Vec3,
-      center.map((value, axis) => value + half[axis]) as Vec3,
-    );
+    include([center[0] - half[0], center[1] - half[1], center[2] - half[2]]);
+    include([center[0] + half[0], center[1] + half[1], center[2] + half[2]]);
   }
+
   return {
-    min: [0, 1, 2].map((axis) => Math.min(...positions.map((value) => value[axis]))) as Vec3,
-    max: [0, 1, 2].map((axis) => Math.max(...positions.map((value) => value[axis]))) as Vec3,
+    min: [minX, minY, minZ],
+    max: [maxX, maxY, maxZ],
   };
 }
 
