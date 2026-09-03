@@ -4877,10 +4877,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 4721,
+      "bytes_lf": 5429,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e6ec90376fdc01f5b9e73470a0283d75bcf5482d86698d6c1512d77e38cd7684",
+      "content_sha256_lf": "22f2c08dc63c325357dabeb9d4faa1a708ffb27c6b4990ab6db816d1530909c9",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-INSTALL-SPEC-MERGE-DRIVER-PY-953E5E855CA0",
       "language": "python",
@@ -4927,6 +4927,11 @@
           {
             "kind": "constant",
             "name": "DRIVER_NAME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DRIVER_SCRIPT",
             "signature": null
           },
           {
