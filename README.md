@@ -1,7 +1,7 @@
 # Tools
 
 [![CI Standard](https://github.com/D-sorganization/Tools/actions/workflows/ci-standard.yml/badge.svg)](https://github.com/D-sorganization/Tools/actions/workflows/ci-standard.yml)
-[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
@@ -14,7 +14,7 @@ are shared with other D-sorganization repositories.
 
 - **Audience**: engineers and researchers who want working desktop tools, and
   developers who want the libraries behind them.
-- **Platform**: Windows, macOS, and Linux. Python 3.11 or 3.12.
+- **Platform**: Windows, macOS, and Linux. Python 3.11 or 3.12 (Version **3.11+** required).
 - **Status**: actively developed. Interfaces outside `src/shared/` may change
   between releases.
 
@@ -42,35 +42,37 @@ generated from the one source of truth, the `GUI_INFO` dict in each tool's
 `tool_surface_contract.json` in step). Do not edit the table by hand.
 
 <!-- tool-catalog:start -->
-| Tool | Category | Surfaces | Maturity | What it does | Help |
-| ---- | -------- | -------- | -------- | ------------ | ---- |
-| `multi_param_analysis` | Analysis | PyQt6 | stable | Run multi-parameter sensitivity analysis with grid evaluation | [docs](src/multi_param_analysis/README.md) |
-| `c3d_viewer` | Biomechanics | PyQt6 | stable | View and analyze C3D motion capture files | [docs](src/c3d_viewer/README.md) |
-| `lower_body_model` | Biomechanics | PyQt6 | stable | Simulate and inspect lower-body MuJoCo kinematics and controls | — |
-| `rate_of_closure` | Biomechanics | PyQt6 + Web | stable | Quantifies how a rotating clubhead's impact-point delivery differs from the tracked reference point (COM or geometric center): path deviation, attack-angle change, face rotation during contact, and the launch-monitor geometric-center question, with an animated 3D clubhead and rate sweeps. | [docs](src/rate_of_closure/README.md) |
-| `data_explorer` | Data Processing | PyQt6 | stable | Interactive workbench for browsing simulation datasets | [docs](src/data_explorer/gui.py) |
-| `data_processor` | Data Processing | PyQt6 + Web | stable | Signal processing and time-series data analysis tool | [docs](src/data_processing/data_processor/README.md) |
-| `folder_packer_pro` | Development Tools | PyQt6 | stable | Professional Project Archiving and Distribution Tool | [docs](src/folder_packer_pro/README.md) |
-| `folder_tool` | Development Tools | PyQt6 | experimental | Directory Management Utility | [docs](src/folder_tool/README.md) |
-| `pdf_renamer` | Development Tools | PyQt6 | stable | Intelligent PDF File Renaming Tool | [docs](src/document_processing/pdf_renamer/README.md) |
-| `pid_generator` | Engineering Drafting | PyQt6 | stable | Generate P&ID drawings from YAML specifications (DXF + SVG output) | [docs](src/pid_generator/README.md) |
-| `p1am_control_system` | Industrial | Web | stable | HMI Control System for P1AM-100 PLC | — |
-| `ode_solver` | Mathematics | PyQt6 + Web | stable | Solve systems of ordinary differential equations symbolically | [docs](src/ode_solver/README.md) |
-| `pendulum_simulator` | Mathematics | PyQt6 | experimental | Multi-link pendulum dynamics with parameter sweeps | [docs](src/pendulum_simulator/README.md) |
-| `video_processor` | Media Processing | Web | stable | Video file format conversion, frame extraction, and media analysis | [docs](src/media_processing/video_processor/README.md) |
-| `video_analyzer` | Motion Capture | PyQt6 | stable | Video-based motion analysis with pose tracking | — |
-| `movement_optimizer` | Optimization | PyQt6 | stable | Optimize barbell biomechanics trajectories with Lagrangian dynamics, swingset, and chain models | [docs](src/movement_optimizer/README.md) |
-| `financial_calculator` | Process Simulation | PyQt6 + Web | stable | Comprehensive financial modeling for plant operations | [docs](src/financial_calculator/README.md) |
-| `pressure_drop_calculator` | Process Simulation | PyQt6 + Web | stable | Pipe flow pressure drop analysis with multiple friction methods | [docs](src/pressure_drop_calculator/README.md) |
-| `vessel_drafter` | Process Simulation | PyQt6 | stable | Refractory vessel design with STEP, STL, BREP, and GLTF export | [docs](src/vessel_drafter/README.md) |
-| `humanoid_builder_gui` | Robotics | PyQt6 | stable | Build parametric humanoid characters with anthropometric calculations | [docs](src/humanoid_builder_gui/README.md) |
-| `inertia_calculator` | Robotics | PyQt6 | stable | Calculate and validate inertia tensors for rigid bodies | [docs](src/inertia_calculator/README.md) |
-| `rotation_converter` | Robotics | PyQt6 + Web | stable | Comprehensive rotation and rigid-body transform converter with interactive 3D visualization. Supports quaternions, Euler angles, rotation matrices, axis-angle, SE(3), twists, screw axes, and frame-aware transforms. | [docs](src/rotation_converter/README.md) |
-| `urdf_builder_gui` | Robotics | PyQt6 | stable | Generate parametric URDF models for robotics applications | [docs](src/urdf_builder_gui/README.md) |
-| `function_generator` | Signal Processing | PyQt6 + Web | stable | Generate and visualize various waveforms (sine, square, triangle, etc.) | [docs](src/function_generator/README.md) |
-| `signal_processing_studio` | Signal Processing | PyQt6 | stable | Unified signal processing: waveform generation, analysis, filtering, curve fitting | [docs](src/signal_processing_studio/README.md) |
-| `steam_engine_calculator` | Thermodynamics | PyQt6 + Web | stable | Calculate thermodynamic properties of steam/water | [docs](src/steam_engine_calculator/README.md) |
-| `flow_rate_converter` | Utilities | PyQt6 | stable | Convert between mass, molar, and volumetric flow rate units | [docs](src/flow_rate_converter/README.md) |
+
+| Tool                       | Category             | Surfaces    | Maturity     | What it does                                                                                                                                                                                                                                                                                      | Help                                                   |
+| -------------------------- | -------------------- | ----------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| `multi_param_analysis`     | Analysis             | PyQt6       | stable       | Run multi-parameter sensitivity analysis with grid evaluation                                                                                                                                                                                                                                     | [docs](src/multi_param_analysis/README.md)             |
+| `c3d_viewer`               | Biomechanics         | PyQt6       | stable       | View and analyze C3D motion capture files                                                                                                                                                                                                                                                         | [docs](src/c3d_viewer/README.md)                       |
+| `lower_body_model`         | Biomechanics         | PyQt6       | stable       | Simulate and inspect lower-body MuJoCo kinematics and controls                                                                                                                                                                                                                                    | —                                                      |
+| `rate_of_closure`          | Biomechanics         | PyQt6 + Web | stable       | Quantifies how a rotating clubhead's impact-point delivery differs from the tracked reference point (COM or geometric center): path deviation, attack-angle change, face rotation during contact, and the launch-monitor geometric-center question, with an animated 3D clubhead and rate sweeps. | [docs](src/rate_of_closure/README.md)                  |
+| `data_explorer`            | Data Processing      | PyQt6       | stable       | Interactive workbench for browsing simulation datasets                                                                                                                                                                                                                                            | [docs](src/data_explorer/gui.py)                       |
+| `data_processor`           | Data Processing      | PyQt6 + Web | stable       | Signal processing and time-series data analysis tool                                                                                                                                                                                                                                              | [docs](src/data_processing/data_processor/README.md)   |
+| `folder_packer_pro`        | Development Tools    | PyQt6       | stable       | Professional Project Archiving and Distribution Tool                                                                                                                                                                                                                                              | [docs](src/folder_packer_pro/README.md)                |
+| `folder_tool`              | Development Tools    | PyQt6       | experimental | Directory Management Utility                                                                                                                                                                                                                                                                      | [docs](src/folder_tool/README.md)                      |
+| `pdf_renamer`              | Development Tools    | PyQt6       | stable       | Intelligent PDF File Renaming Tool                                                                                                                                                                                                                                                                | [docs](src/document_processing/pdf_renamer/README.md)  |
+| `pid_generator`            | Engineering Drafting | PyQt6       | stable       | Generate P&ID drawings from YAML specifications (DXF + SVG output)                                                                                                                                                                                                                                | [docs](src/pid_generator/README.md)                    |
+| `p1am_control_system`      | Industrial           | Web         | stable       | HMI Control System for P1AM-100 PLC                                                                                                                                                                                                                                                               | —                                                      |
+| `ode_solver`               | Mathematics          | PyQt6 + Web | stable       | Solve systems of ordinary differential equations symbolically                                                                                                                                                                                                                                     | [docs](src/ode_solver/README.md)                       |
+| `pendulum_simulator`       | Mathematics          | PyQt6       | experimental | Multi-link pendulum dynamics with parameter sweeps                                                                                                                                                                                                                                                | [docs](src/pendulum_simulator/README.md)               |
+| `video_processor`          | Media Processing     | Web         | stable       | Video file format conversion, frame extraction, and media analysis                                                                                                                                                                                                                                | [docs](src/media_processing/video_processor/README.md) |
+| `video_analyzer`           | Motion Capture       | PyQt6       | stable       | Video-based motion analysis with pose tracking                                                                                                                                                                                                                                                    | —                                                      |
+| `movement_optimizer`       | Optimization         | PyQt6       | stable       | Optimize barbell biomechanics trajectories with Lagrangian dynamics, swingset, and chain models                                                                                                                                                                                                   | [docs](src/movement_optimizer/README.md)               |
+| `financial_calculator`     | Process Simulation   | PyQt6 + Web | stable       | Comprehensive financial modeling for plant operations                                                                                                                                                                                                                                             | [docs](src/financial_calculator/README.md)             |
+| `pressure_drop_calculator` | Process Simulation   | PyQt6 + Web | stable       | Pipe flow pressure drop analysis with multiple friction methods                                                                                                                                                                                                                                   | [docs](src/pressure_drop_calculator/README.md)         |
+| `vessel_drafter`           | Process Simulation   | PyQt6       | stable       | Refractory vessel design with STEP, STL, BREP, and GLTF export                                                                                                                                                                                                                                    | [docs](src/vessel_drafter/README.md)                   |
+| `humanoid_builder_gui`     | Robotics             | PyQt6       | stable       | Build parametric humanoid characters with anthropometric calculations                                                                                                                                                                                                                             | [docs](src/humanoid_builder_gui/README.md)             |
+| `inertia_calculator`       | Robotics             | PyQt6       | stable       | Calculate and validate inertia tensors for rigid bodies                                                                                                                                                                                                                                           | [docs](src/inertia_calculator/README.md)               |
+| `rotation_converter`       | Robotics             | PyQt6 + Web | stable       | Comprehensive rotation and rigid-body transform converter with interactive 3D visualization. Supports quaternions, Euler angles, rotation matrices, axis-angle, SE(3), twists, screw axes, and frame-aware transforms.                                                                            | [docs](src/rotation_converter/README.md)               |
+| `urdf_builder_gui`         | Robotics             | PyQt6       | stable       | Generate parametric URDF models for robotics applications                                                                                                                                                                                                                                         | [docs](src/urdf_builder_gui/README.md)                 |
+| `function_generator`       | Signal Processing    | PyQt6 + Web | stable       | Generate and visualize various waveforms (sine, square, triangle, etc.)                                                                                                                                                                                                                           | [docs](src/function_generator/README.md)               |
+| `signal_processing_studio` | Signal Processing    | PyQt6       | stable       | Unified signal processing: waveform generation, analysis, filtering, curve fitting                                                                                                                                                                                                                | [docs](src/signal_processing_studio/README.md)         |
+| `steam_engine_calculator`  | Thermodynamics       | PyQt6 + Web | stable       | Calculate thermodynamic properties of steam/water                                                                                                                                                                                                                                                 | [docs](src/steam_engine_calculator/README.md)          |
+| `flow_rate_converter`      | Utilities            | PyQt6       | stable       | Convert between mass, molar, and volumetric flow rate units                                                                                                                                                                                                                                       | [docs](src/flow_rate_converter/README.md)              |
+
 <!-- tool-catalog:end -->
 
 Maturity: `stable` launches headless-importable code with tests; `beta` is
@@ -81,12 +83,12 @@ cleanly in a headless environment or is not yet wired end to end.
 
 These packages ship code or a command line but no launcher-registered GUI:
 
-| Package | What it does |
-| ------- | ------------ |
-| `rrt_path_planner` | Rapidly-exploring random tree motion planning (library + scripts) |
-| `project_packer` | Directory packing and unpacking for transfer and archival (standalone script, `folder_packer_gui.py`) |
-| `solar_system_model` | N-body orbital mechanics simulation and visualization (scripts) |
-| `shared/python/*` | Libraries shared across the repository fleet (see `src/shared/python/README.md`) |
+| Package              | What it does                                                                                          |
+| -------------------- | ----------------------------------------------------------------------------------------------------- |
+| `rrt_path_planner`   | Rapidly-exploring random tree motion planning (library + scripts)                                     |
+| `project_packer`     | Directory packing and unpacking for transfer and archival (standalone script, `folder_packer_gui.py`) |
+| `solar_system_model` | N-body orbital mechanics simulation and visualization (scripts)                                       |
+| `shared/python/*`    | Libraries shared across the repository fleet (see `src/shared/python/README.md`)                      |
 
 ### Browser-based utilities
 
