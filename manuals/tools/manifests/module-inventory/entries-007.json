@@ -3,10 +3,10 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13879,
+      "bytes_lf": 14056,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4dcfcae34f7771e0a4f58f0a8aa15179afe109c9365b7e5c32e5c8577f434ce4",
+      "content_sha256_lf": "8f2ff6be44a6763407e952c0573465086fe51635f7b7d42d9d68301fcd353d59",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-LAUNCH-MONITOR-WORKSPACE-PY-7C09AA564695",
       "language": "python",
@@ -27,13 +27,14 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
+        "units": "mapped",
         "validation": "not-applicable"
       },
       "traceability": {
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -102,7 +103,9 @@
           "tests/rate_of_closure/test_launch_monitor_performance.py",
           "tests/rate_of_closure/test_launch_monitor_workspace.py"
         ],
-        "unit_mentions": [],
+        "unit_mentions": [
+          "s"
+        ],
         "validation_paths": []
       }
     },
