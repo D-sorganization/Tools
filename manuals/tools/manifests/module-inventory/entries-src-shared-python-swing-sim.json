@@ -11335,6 +11335,62 @@
     },
     {
       "authority_status": "provisional",
+      "bytes_lf": 2574,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "099b5633ebc07fc9228a64ccb30da57b48998a5e726720658a1d5181ad1f5f67",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-CONTACT-PY-049E54D91934",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/impact/contact.py",
+      "purpose": "Canonical unilateral Kelvin-Voigt contact-force law.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "KelvinVoigtContactLaw",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 10724,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
@@ -11757,7 +11813,8 @@
         ],
         "test_paths": [
           "src/shared/python/swing_sim/impact/tests/test_gear_effect.py",
-          "src/shared/python/swing_sim/impact/tests/test_solver.py"
+          "src/shared/python/swing_sim/impact/tests/test_solver.py",
+          "src/shared/python/swing_sim/impact_interval/tests/test_solver.py"
         ],
         "unit_mentions": [
           "kg",
@@ -11910,6 +11967,294 @@
         "test_paths": [
           "src/shared/python/swing_sim/impact/tests/test_solver.py"
         ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 886,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "8a1945bcc0d4bfc3a6b8de0c5fa7793673efec82741aeba7463969bac4228372",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-INTERVAL-INIT-PY-DCBA6FDCB2C6",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/impact_interval/__init__.py",
+      "purpose": "Six-DOF impact-interval dynamics façade (Tools #4130).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "BoundaryKind",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ClubRigidBody",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactIntervalAudit",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactIntervalConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactIntervalInitialState",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactIntervalResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactIntervalSample",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "KelvinVoigtContactLaw",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "solve_impact_interval",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 1554,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "79509f474c38f4fd7a3c141afb3ca035f989ae6504a4212b070941a8b851a9e1",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-INTERVAL-ROTATION-PY-85F94CCD794D",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/impact_interval/_rotation.py",
+      "purpose": "Small SO(3) helpers kept private behind the impact-interval façade.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 13585,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "57204a48bb245b189ac6213622b6ed17d001c8449b52554280f8b3e8b772bcc2",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-INTERVAL-SOLVER-PY-4B56FB1A484E",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/impact_interval/solver.py",
+      "purpose": "Reference fixed-step six-DOF club/ball contact-interval solver.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "solve_impact_interval",
+            "signature": "initial: ImpactIntervalInitialState, club: ClubRigidBody, config: ImpactIntervalConfig"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/impact/tests/test_solver.py",
+          "src/shared/python/swing_sim/impact_interval/tests/test_solver.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 10928,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "dc1fcb59f4a2bcc26ad211e336fc6ae6c7090abb1c5774e7c7f9731c578e3f5a",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-INTERVAL-TYPES-PY-19AA8D67EF7F",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/impact_interval/types.py",
+      "purpose": "Validated value types for six-DOF contact-interval simulation.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "BoundaryKind",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ClubRigidBody",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImpactIntervalAudit",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImpactIntervalConfig",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImpactIntervalInitialState",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImpactIntervalResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImpactIntervalSample",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []
       }
