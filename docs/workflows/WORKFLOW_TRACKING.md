@@ -51,6 +51,7 @@ Global status note: Paused for catching up.
 | Jules-Test-Generator.yml           | Defined (see global status note) | See workflow YAML header/name for execution role. |
 | Maintenance-Global-Control.yml     | Defined (see global status note) | See workflow YAML header/name for execution role. |
 | Nightly-Doc-Organizer.yml          | Defined (see global status note) | See workflow YAML header/name for execution role. |
+| release.yml                        | Defined (bump gated on feat/fix/perf or dispatch; RM #1507) | Version bump PR + GitHub release; changelog delta via scripts/release_changelog.py. |
 | pr-auto-labeler.yml                | Defined (see global status note) | See workflow YAML header/name for execution role. |
 | PR-Comment-Responder.yml           | Defined (see global status note) | See workflow YAML header/name for execution role. |
 | stale-cleanup.yml                  | Defined (see global status note) | See workflow YAML header/name for execution role. |

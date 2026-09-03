@@ -3,6 +3,202 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 645,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "efb3887f3cf440f11f78b4aee31d2f4047c8e0b1db8af657b6db042064bd7992",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-CLUBHEADGENERATION-TS-FDEBC4E8B402",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/clubHeadGeneration.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "GeneratedHead",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "generatedHeadFor",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10029,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "77ed9c645eb9a336ba04093eb913c781ce567846aba8945fe5fae5a8129ad3c0",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-CLUBHEADS-TS-595D80DFCFB8",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/clubHeads.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "BLADE_HOSEL_HEIGHT_FRACTION",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "BLADE_PUTTER_PROFILE",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "HYBRID_PROFILE",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "HeadProfile",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "HeadStyle",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "IRON_PROFILE",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "MALLET_PROFILE",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "PLUMBER_NECK_OFFSET_M",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "Section",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "WEDGE_PROFILE",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "WOOD_PROFILE",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "faceCenterPoint",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "hoselPoint",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "leadingEdgeHeight",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "leanPoint",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "massScale",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "profileFor",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "resolvedStyle",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "mm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 1721,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -13663,121 +13859,6 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 7562,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4627021ee63521ea463aeccde54be1b21f3215e9b314f698b45000bb8e357a6f",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-REGIONALGROUNDEXECUTIONQUALIFICATION-TS-9CF30874F72A",
-      "language": "typescript",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/model/regionalGroundExecutionQualification.ts",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "LaunchQualificationInput",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "QualifiedExecutionAuthority",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "RegionalExecutionOptionsWire",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "SkidRollSettingsWire",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "parseQualifiedExecutionAuthority",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5430,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4caf07e399a767f9c1b0e08bf200872859cf4c7b996616c0de16725b40855dbb",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-REGIONALGROUNDEXECUTIONRESULT-TEST-TS-D4E4B9287E49",
-      "language": "typescript",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/model/regionalGroundExecutionResult.test.ts",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
         "validation_paths": []
       }
     }

@@ -3,6 +3,116 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 8761,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "326fcb6d7c9ef3491985a3ae19c00af480204eac3d9f393c31f0b6f4acac29ae",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-API-REST-API-CORE-PY-9330EF0E1843",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/api/rest_api_core.py",
+      "purpose": "Core route registration and request dispatch for model_generation APIs.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ModelGenerationAPI",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/model_generation/tests/test_api_adapters.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4967,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b5a17aaf1240f6a07946363b933f1ca2d7f32638743168970b1e7c1a60681d96",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-API-REST-API-FASTAPI-PY-8F06BF869928",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/api/rest_api_fastapi.py",
+      "purpose": "FastAPI adapter for the model generation REST API.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FastAPIAdapter",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/model_generation/tests/test_api_adapters.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2585,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17430,154 +17540,6 @@
         "unit_mentions": [
           "g",
           "mm"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 756,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "ffbfff93685d0481afd119833e5803748c1281d6eb40b726bb967cc92c091774",
-      "family": "process-calculators-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-PSA-PACKAGE-INIT-PY-049FD5FD0469",
-      "language": "python",
-      "maintainer": "Process calculator maintainers",
-      "path": "src/shared/python/sidekick/process_calculators/psa_package/__init__.py",
-      "purpose": "PSA (Pressure Swing Adsorption) Analysis Package.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "ComponentData",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "DEFAULT_COMPONENTS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PSAModel",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PSAResults",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "StreamCompositions",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "StreamFlows",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "calculate_o2_safety_analysis",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "calculate_sensitivity",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "get_flammability_status",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 31432,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "1623ac47796d63fa585d313f0be2facbb713ba083dd39c37a0df3a622c3bcf3e",
-      "family": "process-calculators-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-PSA-PACKAGE-PSA-CALCULATOR-HTML-310F9AC14DCC",
-      "language": "html",
-      "maintainer": "Process calculator maintainers",
-      "path": "src/shared/python/sidekick/process_calculators/psa_package/psa_calculator.html",
-      "purpose": null,
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "scientific-review-required",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "https://cdn.plot.ly/plotly-2.27.0.min.js"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [
-          "g",
-          "s"
         ],
         "validation_paths": []
       }
