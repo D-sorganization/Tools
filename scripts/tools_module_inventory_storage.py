@@ -25,6 +25,7 @@ import hashlib
 import json
 import re
 from collections import Counter
+from collections.abc import Mapping
 from pathlib import Path
 from typing import cast
 
@@ -57,7 +58,7 @@ FAMILY_RATIONALE = (
 _SLUG_PATTERN = re.compile(r"[^a-z0-9]+")
 
 
-def _serialized(payload: dict[str, object]) -> str:
+def _serialized(payload: Mapping[str, object]) -> str:
     return json.dumps(payload, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
 
 

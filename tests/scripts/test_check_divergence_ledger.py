@@ -50,7 +50,13 @@ def test_repository_ledger_loads_and_markdown_is_fresh() -> None:
     assert "package:launch_monitor" in modules
     assert "package:sidekick" in modules
     assert "rate_of_closure/player_covariation.py" in modules
-    d_refs = {ref for row in rows for ref in row["rulings"]}
+    d_refs = {
+        ref
+        for row in rows
+        for ref in (
+            row["rulings"] if isinstance(row["rulings"], (list, tuple, set)) else []
+        )
+    }
     assert {"D1", "D15", "D17", "D22", "D23", "D30"} <= d_refs
     assert mod.main(["--check"]) == 0
 

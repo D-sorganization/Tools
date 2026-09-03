@@ -244,6 +244,8 @@ def render(document: dict[str, object]) -> str:
     for row in rows:
         by_ruling[str(row["ruling"])] = by_ruling.get(str(row["ruling"]), 0) + 1
         by_status[str(row["status"])] = by_status.get(str(row["status"]), 0) + 1
+    gate = document.get("gate")
+    gate_rule = gate.get("rule", "") if isinstance(gate, dict) else ""
     out = [
         f"# {document.get('title', 'Divergence ledger')}",
         "",
@@ -260,7 +262,7 @@ def render(document: dict[str, object]) -> str:
         "",
         "## Gate",
         "",
-        str(document.get("gate", {}).get("rule", "")),  # type: ignore[union-attr]
+        str(gate_rule),
         "",
         "## Ruling vocabulary",
         "",
@@ -284,7 +286,12 @@ def render(document: dict[str, object]) -> str:
             if isinstance(inventory, dict)
             else ""
         )
-        rulings_text = ", ".join(str(item) for item in row["rulings"])  # type: ignore[union-attr]
+        raw_rulings = row["rulings"]
+        rulings_text = (
+            ", ".join(str(item) for item in raw_rulings)
+            if isinstance(raw_rulings, (list, tuple, set))
+            else ""
+        )
         out.append(
             "| "
             + " | ".join(
