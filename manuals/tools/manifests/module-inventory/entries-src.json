@@ -252,6 +252,7 @@
           "tests/ops/test_pre_push_mypy_scope.py",
           "tests/ops/test_rate_web_playwright_workflow.py",
           "tests/ops/test_rust_security_dependency_floors.py",
+          "tests/ops/test_workflow_run_security_guards.py",
           "tests/rate_of_closure/test_ball_setup.py",
           "tests/rate_of_closure/test_ball_setup_gui.py",
           "tests/rate_of_closure/test_camera_preferences.py",

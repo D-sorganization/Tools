@@ -129,7 +129,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
     },
     {
-      "content_sha256_lf": "548e54f0ba0229853c73a050dc07c40a44ccd3730543fe9edbe947393ad3038e",
+      "content_sha256_lf": "a87d8ca5a39ef502c1c13aaf0440a545ab75d31eb5052666b748fbcdc38ab45f",
       "entry_count": 3,
       "package": "rust_core/file_watcher",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
@@ -171,7 +171,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-shared-scripts.json"
     },
     {
-      "content_sha256_lf": "f37b0b9cb0e4a03238651359e9ca22368d9cb59e6fcda817f687153ecbe3e5ee",
+      "content_sha256_lf": "1e3993a6329a976b1cad87dcedf1071a7ec0af1806ab5aabac3882ed07fa1af1",
       "entry_count": 1,
       "package": "src",
       "path": "manuals/tools/manifests/module-inventory/entries-src.json"
@@ -579,7 +579,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "08da1248f4c2bdbbc25571667e2c47a5122adc01f3a4375e7558e975a5871d41",
+      "content_sha256_lf": "45fef31e1d9fe292a233f55f81c03f0c0c10487f81982cca57ea29cb45d5e088",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
