@@ -20533,7 +20533,8 @@
           }
         ],
         "test_paths": [
-          "src/shared/python/swing_sim/impact/tests/test_solver.py"
+          "src/shared/python/swing_sim/impact/tests/test_solver.py",
+          "src/shared/python/swing_sim/impact_interval/tests/test_solver.py"
         ],
         "unit_mentions": [
           "m/s"
