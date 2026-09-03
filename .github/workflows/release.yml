@@ -1,11 +1,14 @@
 name: Release Automation
 
+# Bump policy (Tools #4910, RM #1507): a push to main bumps ONLY when the merge
+# commit subject is a conventional feat/fix/perf (never chore/docs/ci/test/
+# refactor, never a bot push); workflow_dispatch bumps on demand. The old
+# `paths: [pyproject.toml]` trigger fired on every release-PR merge and bumped
+# again -- ten minor bumps in ten days. Logic lives in
+# scripts/release_changelog.py so it is unit-tested (tests/scripts).
 on:
   push:
     branches: [main]
-    paths:
-      - "pyproject.toml"
-      - ".github/workflows/release.yml"
   workflow_dispatch:
     inputs:
       force_bump:
@@ -64,97 +67,15 @@ jobs:
         env:
           FORCE_BUMP: ${{ inputs.force_bump }}
           CURRENT_VERSION: ${{ steps.current.outputs.version }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          python3 - <<'PY'
-          import os, re, subprocess
-
-          # ── Get commits since last semver tag ──────────────────────────
-          result = subprocess.run(
-              ["git", "tag", "--sort=-version:refname", "--list", "v[0-9]*"],
-              capture_output=True, text=True
-          )
-          tags = [t.strip() for t in result.stdout.splitlines() if t.strip()]
-          last_tag = tags[0] if tags else ""
-
-          if last_tag:
-              log = subprocess.run(
-                  ["git", "log", f"{last_tag}..HEAD", "--format=%s"],
-                  capture_output=True, text=True
-              ).stdout.strip()
-          else:
-              log = subprocess.run(
-                  ["git", "log", "--format=%s"],
-                  capture_output=True, text=True
-              ).stdout.strip()
-
-          messages = [m.strip() for m in log.splitlines() if m.strip()]
-          force = os.environ.get("FORCE_BUMP", "").strip().lower()
-
-          if (
-              force not in ("major", "minor", "patch")
-              and messages
-              and re.match(r"^chore\(release\): bump version to v\d+\.\d+\.\d+$", messages[0])
-          ):
-              current = os.environ["CURRENT_VERSION"]
-              with open(os.environ["GITHUB_OUTPUT"], "a") as fh:
-                  fh.write("bump=none\n")
-                  fh.write(f"new_version={current}\n")
-                  fh.write(f"current_version={current}\n")
-              with open("release-changelog-entry.md", "w", encoding="utf-8") as fh:
-                  fh.write("- Release bump commit detected; skipping recursive release automation.\n")
-              print("Release bump commit detected; skipping recursive release automation.")
-              raise SystemExit(0)
-
-          # ── Conventional commits → bump type ───────────────────────────
-          BREAKING = re.compile(r"BREAKING[ -]CHANGE|!:")
-          FEAT     = re.compile(r"^feat(\(.+\))?!?:")
-          FIX      = re.compile(r"^(fix|perf|refactor|revert)(\(.+\))?!?:")
-          PATCH    = re.compile(r"^(chore|ci|docs|style|test|build)(\(.+\))?!?:")
-
-          bump = "none"
-          changelog_lines: list[str] = []
-
-          for msg in messages:
-              if BREAKING.search(msg):
-                  bump = "major"
-              elif FEAT.match(msg) and bump not in ("major",):
-                  bump = "minor"
-              elif FIX.match(msg) and bump not in ("major", "minor"):
-                  bump = "patch"
-              elif PATCH.match(msg) and bump == "none":
-                  bump = "patch"
-              changelog_lines.append(f"- {msg}")
-
-          # Allow manual override
-          if force in ("major", "minor", "patch"):
-              bump = force
-
-          # ── Compute new version ────────────────────────────────────────
-          current = os.environ["CURRENT_VERSION"]
-          major, minor, patch = map(int, current.split("."))
-          if bump == "major":
-              major, minor, patch = major + 1, 0, 0
-          elif bump == "minor":
-              minor, patch = minor + 1, 0
-          elif bump == "patch":
-              patch += 1
-
-          new_version = f"{major}.{minor}.{patch}"
-          changelog_entry = "\n".join(changelog_lines) if changelog_lines else "- No conventional commits found"
-
-          # Keep scalar control values in GITHUB_OUTPUT. Release notes travel as
-          # a file artifact so large histories never become process environment.
-          with open(os.environ["GITHUB_OUTPUT"], "a") as fh:
-              fh.write(f"bump={bump}\n")
-              fh.write(f"new_version={new_version}\n")
-              fh.write(f"current_version={current}\n")
-          with open("release-changelog-entry.md", "w", encoding="utf-8") as fh:
-              fh.write(changelog_entry + "\n")
-
-          print(f"Bump type : {bump}")
-          print(f"Current   : {current}")
-          print(f"New       : {new_version}")
-          PY
+          python3 scripts/release_changelog.py \
+            --current-version "$CURRENT_VERSION" \
+            --event "$GITHUB_EVENT_NAME" \
+            --actor "$GITHUB_ACTOR" \
+            --force-bump "$FORCE_BUMP" \
+            --repo "$GITHUB_REPOSITORY" \
+            --out release-changelog-entry.md
 
       - name: Upload release notes
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
@@ -276,33 +197,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Update version in pyproject.toml
+      - name: Update version in VERSION, pyproject.toml and package.json
         env:
           NEW_VERSION: ${{ needs.analyse-commits.outputs.new_version }}
-        run: |
-          python3 - <<'PY'
-          import os, re, pathlib
-
-          new_version = os.environ["NEW_VERSION"]
-          path = pathlib.Path("pyproject.toml")
-          content = path.read_text()
-          content = re.sub(
-              r'^(version\s*=\s*)"[^"]+"',
-              f'version = "{new_version}"',
-              content,
-              count=1,
-              flags=re.MULTILINE,
-          )
-          path.write_text(content)
-          print(f"pyproject.toml version → {new_version}")
-          PY
-
-      - name: Update VERSION file
-        env:
-          NEW_VERSION: ${{ needs.analyse-commits.outputs.new_version }}
-        run: |
-          echo "$NEW_VERSION" > VERSION
-          echo "VERSION file → $NEW_VERSION"
+        run: python3 scripts/check_version_consistency.py --set "$NEW_VERSION"
 
       - name: Update CHANGELOG.md
         env:
@@ -318,7 +216,7 @@ jobs:
           today       = datetime.date.today().isoformat()
 
           section = (
-              f"## [{new_version}] — {today} ({bump} bump)\n\n"
+              f"## [{new_version}] - {today} ({bump} bump)\n\n"
               f"### Changes\n\n"
               f"{entry}\n"
           )
@@ -351,7 +249,7 @@ jobs:
         run: |
           BRANCH="release/v${NEW_VERSION}-${GITHUB_RUN_ID}"
           git switch -c "$BRANCH"
-          git add pyproject.toml VERSION CHANGELOG.md
+          git add pyproject.toml VERSION package.json CHANGELOG.md
           if git diff --cached --quiet; then
             echo "No release version changes to commit."
             echo "release_pr_url=" >> "$GITHUB_OUTPUT"
