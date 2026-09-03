@@ -150,6 +150,7 @@
           "tests/architecture/test_mocap_authority_program.py",
           "tests/architecture/test_shared_import_aliases_3316.py",
           "tests/architecture/test_sidekick_external_imports_3316.py",
+          "tests/architecture/test_spec_version_freshness.py",
           "tests/conftest.py",
           "tests/data_processing/data_processor/test_anova_split.py",
           "tests/data_processing/data_processor/test_nn_script_exporter_split.py",

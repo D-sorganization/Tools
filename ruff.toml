@@ -76,6 +76,14 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 # generated assessment text that cannot be reformatted without losing meaning.
 "scripts/**/*.py" = ["T201", "E501"]
 "scripts/*.py" = ["T201", "E501"]
+# shared_scripts/ holds the fleet-synced hook and gate CLIs (fleet_hooks.py,
+# spec_changelog.py). They print to stdout by design — that IS their output —
+# and they are kept byte-identical to the Repository_Management copies so the
+# fleet sync stays a straight file copy, so the ignore lives here rather than
+# as noqa comments in the vendored files. Matches the `shared_scripts/`
+# exclusion .pre-commit-config.yaml already applies to ruff.
+"shared_scripts/**/*.py" = ["T201", "E501"]
+"shared_scripts/*.py" = ["T201", "E501"]
 # Root-level launcher and utility scripts use print() for CLI output
 "launch.py" = ["T201"]
 "verify_launcher.py" = ["T201"]

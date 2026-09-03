@@ -1068,6 +1068,7 @@
           "src/solar_system_model/solar_system/tests/test_parametrized.py",
           "src/steam_engine_calculator/tests/test_steam_engine_calculator_gui.py",
           "tests/architecture/test_shared_import_aliases_3316.py",
+          "tests/architecture/test_spec_version_freshness.py",
           "tests/conftest.py",
           "tests/data_processing/data_processor/test_background_thread_errors.py",
           "tests/data_processing/data_processor/test_script_generator_hardening.py",
