@@ -1,0 +1,675 @@
+{
+  "schema_version": "scada-f-matrix/v1",
+  "repo": "D-sorganization/Tools",
+  "generated_at": "2026-09-03T16:16:10Z",
+  "base": {
+    "ref": "origin/main",
+    "sha": "90b7ff3c4639fd9e34864a97ffc6982706230c87"
+  },
+  "audit_issue": "#4912",
+  "program": "D-sorganization/Repository_Management#1505",
+  "tracker_of_record": true,
+  "supersedes": [
+    "#4085",
+    "#4086",
+    "#4087",
+    "#4088",
+    "#4089",
+    "#4046"
+  ],
+  "status_classes": {
+    "landed": "the requirement as stated is substantially implemented on main and covered by tests on main",
+    "partial": "some capability exists on main, but the requirement as stated is not met; the specific gap is recorded",
+    "missing": "nothing on main addresses the requirement"
+  },
+  "method": "Requirement text comes from the bodies of #4089 (F01-F16) and #4046 (H1-H9). For each requirement, main was searched for an implementation and read - a related filename was not accepted as evidence. Every path recorded here was asserted present with `git ls-files` at generation time, and the generator refuses to emit a landed/partial row with no file or no test, or a missing row that carries evidence. Evidence PR refs are read from the git history of the implementing files, not asserted by hand. Closed carrier PRs were diffed three-dot against main at their recorded head OID (not their branch tip).",
+  "field_notes": {
+    "evidence_prs": "The merged PRs that most recently touched this requirement's first four implementing files, read from git history. They are a pointer to where the capability currently lives - NOT a claim that those PRs set out to deliver the requirement. A `missing` row has none by construction.",
+    "gaps": "Every row states its gaps, including `partial` rows. This is the field that replaces a ticked checkbox: it is what remains before the requirement as written in #4089 / #4046 could be called landed."
+  },
+  "headline": "0 of 16 SCADA requirements and 0 of 9 historian children are landed. The 38/38 ticked boxes on #4085-#4088 correspond to no merged code: every carrier PR was closed unmerged. Corroboration: docs/development/professional-scada-epic.md is on main with all 16 of its own feature checkboxes still unchecked.",
+  "requirements": [
+    {
+      "id": "F01",
+      "title": "Named-user identity, server-side RBAC, and append-only audit trail",
+      "epic": "#4085",
+      "status": "partial",
+      "files": [
+        "src/p1am_control_system/backend/audit.py",
+        "src/p1am_control_system/backend/auth_config.py",
+        "src/p1am_control_system/backend/main.py"
+      ],
+      "tests": [
+        "src/p1am_control_system/backend/tests/test_audit_trail.py",
+        "src/p1am_control_system/backend/tests/test_route_authz_matrix.py",
+        "src/p1am_control_system/backend/tests/test_auth_config.py",
+        "src/p1am_control_system/backend/tests/test_auth_resolution.py",
+        "src/p1am_control_system/backend/tests/test_read_auth.py",
+        "src/p1am_control_system/backend/tests/test_request_guard.py"
+      ],
+      "delivered": "The append-only half is real: a pure-ASGI AuditMiddleware records every POST/PUT/PATCH/DELETE into a dedicated AuditEvent table that no handler writes and clear_capture cannot erase, with redacted payload, status, client IP and credential fingerprint. Every mutating route is gated and the gate is pinned by a route matrix.",
+      "gaps": [
+        "Identity is not named-user: authorization is two shared environment keys (P1AM_API_KEY / P1AM_ADMIN_API_KEY), so the actor is a key tier plus a SHA-256 key fingerprint. No user accounts, no roles beyond the two nested tiers, no login.",
+        "Audit rows lack three fields the requirement names: reason, before/after values, and configuration revision.",
+        "Alarm acknowledgement takes the actor as a free-text `user` string in the request body, i.e. self-asserted and unverified.",
+        "POST /api/estop is deliberately unauthenticated (documented at the call site) - an intentional exception to 'every mutation attributable'."
+      ],
+      "evidence_prs": [
+        "#4448",
+        "#4928"
+      ]
+    },
+    {
+      "id": "F02",
+      "title": "End-to-end signal quality and communications health",
+      "epic": "#4085",
+      "status": "partial",
+      "files": [
+        "src/p1am_control_system/backend/data_quality.py",
+        "src/p1am_control_system/backend/poll_runtime.py",
+        "src/p1am_control_system/backend/models.py",
+        "src/p1am_control_system/backend/historian.py",
+        "src/p1am_control_system/backend/scada_fallback.py",
+        "rust_core/tools-core/src/scada.rs",
+        "src/p1am_control_system/frontend/src/lib/dataAge.ts",
+        "src/p1am_control_system/frontend/src/components/DataAgeIndicator.tsx"
+      ],
+      "tests": [
+        "src/p1am_control_system/backend/tests/test_poll_data_quality.py",
+        "src/p1am_control_system/backend/tests/test_alarm_nan_bad_quality.py",
+        "src/p1am_control_system/backend/tests/test_historian.py",
+        "src/p1am_control_system/backend/tests/test_tag_force_nonfinite.py",
+        "src/p1am_control_system/frontend/src/components/DataAgeIndicator.test.tsx"
+      ],
+      "delivered": "The driver -> control -> alarm -> historian leg is genuine and tested: a held/faulted scan yields None to the control laws and is never written as a tag row (a truthful gap, not fabricated continuity), NaN/Inf classifies as BadQuality at trip severity in both the Python and Rust engines with a parity test, and source transitions emit a DATA_QUALITY event. Delivered by Phase 0 PR #4928.",
+      "gaps": [
+        "The chain breaks on the read/HMI side: GET /api/trends returns only {timestamps, values, truncated} with no quality column, and the CSV export header is Timestamp/Tag Name/Value - stored quality is dropped on the way out.",
+        "The React frontend contains zero references to `data_source`. The poll loop publishes it in the frame, but the HMI infers badness only from wall-clock frame age, so a `held` or `fault` scan arriving on time renders as CONNECTED.",
+        "Quality is scan-scoped, not per-tag; there are no source/server timestamps, per-tag diagnostic reason codes, or sequence numbers."
+      ],
+      "evidence_prs": [
+        "#4678",
+        "#4893",
+        "#4928"
+      ]
+    },
+    {
+      "id": "F03",
+      "title": "Professional alarm lifecycle and alarm-performance management",
+      "epic": "#4085",
+      "status": "partial",
+      "files": [
+        "src/p1am_control_system/backend/alarm_processing.py",
+        "src/p1am_control_system/backend/scada_fallback.py",
+        "rust_core/tools-core/src/scada.rs",
+        "src/p1am_control_system/backend/main.py",
+        "src/p1am_control_system/frontend/src/components/AlarmsHeader.tsx"
+      ],
+      "tests": [
+        "src/p1am_control_system/backend/tests/test_alarm_ack_engine.py",
+        "src/p1am_control_system/backend/tests/test_alarm_processing.py",
+        "src/p1am_control_system/backend/tests/test_alarm_nan_bad_quality.py",
+        "src/p1am_control_system/backend/tests/test_scada_fallback.py",
+        "src/p1am_control_system/frontend/src/components/AlarmsHeader.test.tsx"
+      ],
+      "delivered": "A four-band (Low/High/LoLo/HiHi) plus BadQuality classifier with a coarse 0/1/2 severity, engine-authoritative acknowledgement that survives a routing redeploy, and an acknowledge-all header.",
+      "gaps": [
+        "Absent entirely: shelving with authorization and expiry, designed suppression, configurable alarm priority (severity is a hardcoded _SEVERITY_BY_STATE map), alarm deadband or on/off delay, first-out grouping, and per-alarm operator help.",
+        "No alarm-performance KPI exists. backend/performance.py is loop/scan cadence health, not alarm-rate management."
+      ],
+      "evidence_prs": [
+        "#4928"
+      ]
+    },
+    {
+      "id": "F04",
+      "title": "Versioned configuration, approval, deployment, and rollback",
+      "epic": "#4085",
+      "status": "partial",
+      "files": [
+        "src/p1am_control_system/backend/config_store.py",
+        "src/p1am_control_system/backend/models.py",
+        "src/p1am_control_system/backend/main.py"
+      ],
+      "tests": [
+        "src/p1am_control_system/backend/tests/test_config_store.py",
+        "src/p1am_control_system/backend/tests/test_interlock_defaults_contract.py",
+        "src/p1am_control_system/backend/tests/test_validation_guards_3745.py"
+      ],
+      "delivered": "The validation clause is partly met: protected config is a Pydantic model that rejects non-finite limits, unrouted tags default to fully disabled (Phase 0 PR #4928), deployment is behind the admin key, and the mutation is audited.",
+      "gaps": [
+        "The versioning clause is not met at all. PersistedConfig is a single key -> value_json table whose writer is an upsert, so exactly one generation of each config exists: no revision id, no diff, no draft/review/approve step, no activation record, and no rollback path. The previous revision is destroyed on write.",
+        "There is no revision identity to stamp into audit rows or historian data, which is also what blocks F01's `revision` field."
+      ],
+      "evidence_prs": [
+        "#3912",
+        "#4928"
+      ]
+    },
+    {
+      "id": "F05",
+      "title": "Backup, restore, deployment identity, and system-health center",
+      "epic": "#4085",
+      "status": "missing",
+      "files": [],
+      "tests": [],
+      "delivered": "",
+      "gaps": [
+        "No health endpoint of any kind exists: /api/health, /healthz, /api/version, build_info and system_health all return zero hits across the subsystem.",
+        "No backup, restore, integrity-check or package-verification code exists in the backend or in deploy/.",
+        "main.py exposes no build/commit/config identity, so a running instance cannot report which revision it is.",
+        "Adjacent but not this requirement: backend/performance.py (scan overruns and historian write failures), backend/shutdown_safety.py (bounded de-energized teardown), and tests/test_deployment_hardening.py, which asserts static properties of the installer text and exercises no restore path."
+      ],
+      "evidence_prs": []
+    },
+    {
+      "id": "F06",
+      "title": "Generic process overview and reusable high-performance faceplates",
+      "epic": "#4086",
+      "status": "missing",
+      "files": [],
+      "tests": [],
+      "delivered": "",
+      "gaps": [
+        "The HMI is eleven hardcoded device/function tabs with bespoke, non-reusable panels; PowerSupplyControl.tsx and TemperatureControl.tsx each re-implement their own state/trip/setpoint chrome instead of instantiating a shared faceplate.",
+        "No faceplate, synoptic, mimic or P&ID component exists in the React HMI. desktop/mimic_tab.py belongs to the legacy PyQt package, not the web HMI, and is not this requirement.",
+        "PlantHierarchy.tsx is an area/unit/equipment/tag tree browser, not a process overview graphic: it carries no quality, mode, alarm or interlock state and offers no overview-to-detail drill-down."
+      ],
+      "evidence_prs": []
+    },
+    {
+      "id": "F07",
+      "title": "Interlock, permissive, first-out, and managed-bypass view",
+      "epic": "#4086",
+      "status": "partial",
+      "files": [
+        "src/p1am_control_system/firmware/SafetyInterlock.h",
+        "src/p1am_control_system/firmware/SafetyInterlock.cpp",
+        "src/p1am_control_system/backend/hardware.py",
+        "src/p1am_control_system/backend/safety_state_machine.py",
+        "src/p1am_control_system/backend/models.py",
+        "src/p1am_control_system/frontend/src/components/InterlocksPanel.tsx"
+      ],
+      "tests": [
+        "src/p1am_control_system/backend/tests/test_safety_state_machine.py",
+        "src/p1am_control_system/backend/tests/test_interlock_defaults_contract.py",
+        "src/p1am_control_system/backend/tests/test_backend_p1am_safety.py",
+        "src/p1am_control_system/backend/tests/test_estop_clear_endpoint.py",
+        "src/p1am_control_system/backend/tests/test_power_supply_runtime_safety.py"
+      ],
+      "delivered": "Permissive and latched-trip-with-acknowledge are solidly landed and tested at both the firmware and controller layers, and Phase 0 PR #4928 wired the reset path (coil 1 -> ClearTrip()) with latch semantics. The firmware does compute a genuine first-out: trip_tag_id_ is the tag that latched the trip.",
+      "gaps": [
+        "The first-out never reaches the operator. INTERLOCK_TRIP_TAG_REGISTER appears only as a constant and in a register-layout assertion: no Python reads it, it is not in the telemetry frame, and no component displays it.",
+        "InterlocksPanel.tsx is a limit-entry form, not an interlock/consequence view.",
+        "Managed bypass is entirely absent: no bypass record, role gate, reason, expiry, banner, or non-bypassable policy exists.",
+        "rust_core/tools-core/src/scada.rs contains an InterlockMatrix, but no Python in the SCADA backend references it. It is dead relative to this subsystem and is deliberately not counted as evidence."
+      ],
+      "evidence_prs": [
+        "#4928",
+        "#3912"
+      ]
+    },
+    {
+      "id": "F08",
+      "title": "Historian context, annotations, comparisons, and reporting",
+      "epic": "#4086",
+      "status": "partial",
+      "files": [
+        "src/p1am_control_system/backend/historian.py",
+        "src/p1am_control_system/backend/data_capture.py",
+        "src/p1am_control_system/backend/data_explorer_router.py",
+        "src/p1am_control_system/backend/data_explorer_service.py",
+        "src/p1am_control_system/backend/data_explorer_stats.py",
+        "src/p1am_control_system/backend/data_explorer_expression.py",
+        "src/p1am_control_system/frontend/src/components/data_explorer/DataExplorer.tsx"
+      ],
+      "tests": [
+        "src/p1am_control_system/backend/tests/test_data_explorer_service.py",
+        "src/p1am_control_system/backend/tests/test_data_explorer_router.py",
+        "src/p1am_control_system/backend/tests/test_data_explorer_stats.py",
+        "src/p1am_control_system/backend/tests/test_data_explorer_expression.py",
+        "src/p1am_control_system/backend/tests/test_trends_endpoint.py",
+        "src/p1am_control_system/backend/tests/test_data_capture_queries.py"
+      ],
+      "delivered": "A real analysis workspace: historian-sourced datasets through a deterministic align/resample/filter/derive/trim/downsample pipeline, statistics/correlation/PCA/spectrum, several plot types, CSV/JSON export, and the important negative property that gaps and non-finite samples round-trip as None rather than being interpolated.",
+      "gaps": [
+        "Saved investigations are stored client-side in localStorage under p1am.explorer.sessions.v1, so they are per-browser, unshareable and not immutable - the requirement's provenance half is unmet.",
+        "No export checksums, no tag-metadata capture, and no annotation model or endpoint anywhere in the subsystem.",
+        "No run/campaign comparison feature and no reporting output.",
+        "Exported CSV omits the TagLog.quality column, so an investigation cannot show which samples were simulated (same root cause as F02)."
+      ],
+      "evidence_prs": [
+        "#4678",
+        "#4448",
+        "#3912"
+      ]
+    },
+    {
+      "id": "F09",
+      "title": "Generic sequence/state and procedure demonstration",
+      "epic": "#4087",
+      "status": "partial",
+      "files": [
+        "src/p1am_control_system/backend/safety_state_machine.py"
+      ],
+      "tests": [
+        "src/p1am_control_system/backend/tests/test_safety_state_machine.py"
+      ],
+      "delivered": "A Generic[StateT] base class factoring the IDLE/ARMED/RUNNING/TRIPPED scaffolding, one-way E-stop latch, permissive toggle and trip latch/acknowledge, shared by the temperature and power-supply controllers.",
+      "gaps": [
+        "This is per-controller safety scaffolding, not a sequence engine: no hold, abort or recovery transition, no declarative procedure/step/phase model, and no scenario tests.",
+        "No simulator-only gate confines procedure execution to the simulated driver, which the requirement makes a precondition."
+      ],
+      "evidence_prs": [
+        "#3912"
+      ]
+    },
+    {
+      "id": "F10",
+      "title": "Asset health, calibration, and maintenance workspace",
+      "epic": "#4086",
+      "status": "partial",
+      "files": [
+        "src/p1am_control_system/calibration/calibrate.py",
+        "src/p1am_control_system/calibration/CALIBRATION.md",
+        "src/p1am_control_system/backend/signal_stats.py",
+        "src/p1am_control_system/backend/power_supply_noise.py",
+        "src/p1am_control_system/backend/data_quality.py"
+      ],
+      "tests": [
+        "src/p1am_control_system/backend/tests/test_signal_stats.py",
+        "src/p1am_control_system/backend/tests/test_power_supply_noise.py",
+        "src/p1am_control_system/backend/tests/test_poll_data_quality.py"
+      ],
+      "delivered": "An offline interactive AI/AO calibration CLI over raw Modbus registers, rolling feedback-noise statistics with an arc-detection flag, and a provenance tracker that logs DataSource transitions.",
+      "gaps": [
+        "No asset register, no calibration-due or drift tracking, no flatline or command/feedback-mismatch detection, no runtime/start counters, and no device-statistics store.",
+        "No advisory maintenance-record type distinct from authoritative trips - which is the specific property the phase issue claimed.",
+        "No maintenance workspace: none of the eleven HMI tabs is asset health or maintenance."
+      ],
+      "evidence_prs": [
+        "#4448",
+        "#3081",
+        "#3806"
+      ]
+    },
+    {
+      "id": "F11",
+      "title": "Driver/plugin framework and device diagnostics",
+      "epic": "#4087",
+      "status": "partial",
+      "files": [
+        "src/p1am_control_system/backend/plc_interface.py",
+        "src/p1am_control_system/backend/plc_factory.py",
+        "src/p1am_control_system/backend/poll_runtime.py",
+        "src/p1am_control_system/backend/modbus_client.py",
+        "src/p1am_control_system/backend/audit.py"
+      ],
+      "tests": [
+        "src/p1am_control_system/backend/tests/test_plc_factory.py",
+        "src/p1am_control_system/backend/tests/test_estop_write_seams.py",
+        "src/p1am_control_system/backend/tests/test_audit_trail.py",
+        "src/p1am_control_system/backend/tests/test_poll_data_quality.py",
+        "tests/plant_simulator/test_plc_contract_identity.py"
+      ],
+      "delivered": "BasePLCClient is a real abc.ABC seam; the poll loop wraps each scan with exponential backoff and a degraded frame so a driver fault does not kill the backend; modbus_client forces energizing commands to zero/false while the E-stop write-seam latch is set, never blocks the de-energizing direction, and retries a failed de-energize once; audit.redact_payload masks credential-like keys recursively.",
+      "gaps": [
+        "PLCFactory.create_client is a hardcoded if/elif over four driver strings: no plugin registry, entry points, discovery, or per-driver capability declaration.",
+        "Only one connector exists at a time, so 'a connector can fail without crashing SCADA' is untested as a multi-connector isolation property, and diagnostics do not identify a failing connector by name.",
+        "settings.py holds API keys as plain str (no SecretStr / repr suppression), so redaction covers audit bodies only.",
+        "The `neural` driver does not satisfy the ABC and raises TypeError on instantiation; see the needs_owner entry for #3984."
+      ],
+      "evidence_prs": [
+        "#4448",
+        "#4893",
+        "#4928"
+      ]
+    },
+    {
+      "id": "F12",
+      "title": "FAT/HIL scenario runner and acceptance-evidence packages",
+      "epic": "#4085",
+      "status": "missing",
+      "files": [],
+      "tests": [],
+      "delivered": "",
+      "gaps": [
+        "Nothing in the subsystem matches scenario, evidence, sign-off, hil or fat_. The only acceptance artifacts in the repo belong to src/rate_of_closure, a different subsystem.",
+        "No declarative scenario format, no software/config hashing for evidence identity, and no sign-off or limitations packaging."
+      ],
+      "evidence_prs": []
+    },
+    {
+      "id": "F13",
+      "title": "Shift log, run/campaign context, and handover reporting",
+      "epic": "#4086",
+      "status": "missing",
+      "files": [],
+      "tests": [],
+      "delivered": "",
+      "gaps": [
+        "Zero matches for handover anywhere. 'Campaign' appears only as prose describing historian retention pruning.",
+        "backend/audit.py and models.EventLog give an append-only trail, but there is no shift or run entity, no operator narrative entries, no link-to-event/trend, and no sign-off or handover acknowledgement."
+      ],
+      "evidence_prs": []
+    },
+    {
+      "id": "F14",
+      "title": "Notification and escalation policies",
+      "epic": "#4087",
+      "status": "missing",
+      "files": [],
+      "tests": [],
+      "delivered": "",
+      "gaps": [
+        "The only 'escalation' is POLL_FAILURE_ESCALATION_THRESHOLD in the poll loop (a log level plus a degraded frame), and NotificationBanner.tsx is an in-page UI banner.",
+        "No notification channel, delay/suppression/escalation/rate-limit policy, acknowledgement cancellation, or delivery audit."
+      ],
+      "evidence_prs": []
+    },
+    {
+      "id": "F15",
+      "title": "High availability, time synchronization, and disaster-recovery mode",
+      "epic": "#4087",
+      "status": "missing",
+      "files": [],
+      "tests": [],
+      "delivered": "",
+      "gaps": [
+        "Zero matches for failover, high availability, NTP, time sync or clock skew.",
+        "No second command authority or arbitration, no timestamp-ordering or time-sync check, no buffered-data reconciliation, no stated RPO/RTO, and no headless 'safe without HMI' mode.",
+        "Adjacent but different: backend/shutdown_safety.py is an ordered, deadline-bounded teardown that de-energizes before joining tasks. `backup_simulator` in main.py is a simulated-PLC fallback for routing and tag endpoints, not a redundancy peer."
+      ],
+      "evidence_prs": []
+    },
+    {
+      "id": "F16",
+      "title": "Advisory optimization, digital-twin, and advanced-control workspace",
+      "epic": "#4088",
+      "status": "partial",
+      "files": [
+        "src/p1am_control_system/backend/mpc.py",
+        "src/p1am_control_system/backend/tuning_router.py",
+        "src/p1am_control_system/backend/pid_tuning.py",
+        "src/p1am_control_system/backend/plant_model.py"
+      ],
+      "tests": [
+        "src/p1am_control_system/backend/tests/test_mpc_dmc.py",
+        "src/p1am_control_system/backend/tests/test_pid_tuning_math.py",
+        "src/p1am_control_system/backend/tests/test_pid_tuning_tag_guards.py"
+      ],
+      "delivered": "An unconstrained DMC move solver and a PID-vs-MPC comparison exposed only as POST /api/mpc/simulate (admin-gated), so the MPC genuinely has no write path today.",
+      "gaps": [
+        "That absence is incidental, not an enforced review-only contract: no record states authoritative_write_available=false.",
+        "Advisory results carry no model or data provenance, constraint set, confidence ordering, replay evidence, or operator-disposition record.",
+        "plant_model.py is a Plant/Area/Unit/Equipment/Tag metadata hierarchy, not a digital twin.",
+        "The same router's PID auto-tuning does write setpoints through write_pid_setpoint, so the advisory/authoritative boundary the requirement demands is not drawn as a policy."
+      ],
+      "evidence_prs": [
+        "#4448",
+        "#4928",
+        "#3062"
+      ]
+    },
+    {
+      "id": "H1",
+      "title": "Extract a HistorianSink protocol (pluggable write backend)",
+      "epic": "#4046",
+      "child": "#4047",
+      "status": "missing",
+      "files": [],
+      "tests": [],
+      "delivered": "",
+      "gaps": [
+        "No HistorianSink symbol exists. Every hit for the string is ThrottledHistorianSink, which is a throttling decorator holding a duck-typed writer - not a pluggable write-backend abstraction.",
+        "historian.py imports sqlalchemy.insert, sqlmodel.Session and models.TagLog directly and _write_batch/_commit_once speak SQLAlchemy, so the SQLite backend is hardwired. No Protocol or ABC defines a sink contract."
+      ],
+      "evidence_prs": []
+    },
+    {
+      "id": "H2",
+      "title": "Store-and-forward shipper that cannot stall the poll loop",
+      "epic": "#4046",
+      "child": "#4048",
+      "status": "partial",
+      "files": [
+        "src/p1am_control_system/backend/historian.py",
+        "src/p1am_control_system/backend/poll_runtime.py"
+      ],
+      "tests": [
+        "src/p1am_control_system/backend/tests/test_historian_writer.py",
+        "src/p1am_control_system/backend/tests/test_historian.py"
+      ],
+      "delivered": "The non-stall half is real and well tested: submit() is strictly non-blocking onto a bounded asyncio.Queue (256), writes are batched (32) onto a worker thread off the event loop, OperationalError is retried, and on overflow the oldest record is evicted while its alarm/event payload is merged forward.",
+      "gaps": [
+        "This is an in-process write buffer, not a store-and-forward shipper: no durable on-disk spool surviving restart, no remote destination, and no forward/replay/checkpoint or at-least-once delivery.",
+        "A full queue silently drops samples by design."
+      ],
+      "evidence_prs": [
+        "#4678",
+        "#4893"
+      ]
+    },
+    {
+      "id": "H3",
+      "title": "TimescaleDB schema: hypertable, compression, CAGGs, retention",
+      "epic": "#4046",
+      "child": "#4049",
+      "status": "missing",
+      "files": [],
+      "tests": [],
+      "delivered": "",
+      "gaps": [
+        "Zero matches for `timescale` repo-wide: no migration, DDL, create_hypertable, compression policy or continuous aggregate.",
+        "The only retention on main is SQLite row pruning plus incremental VACUUM in backend/data_capture.py, a different mechanism."
+      ],
+      "evidence_prs": []
+    },
+    {
+      "id": "H4",
+      "title": "Wire dual-write behind a feature flag",
+      "epic": "#4046",
+      "child": "#4050",
+      "status": "missing",
+      "files": [],
+      "tests": [],
+      "delivered": "",
+      "gaps": [
+        "settings.py has no historian-backend or dual-write flag, and main.py constructs exactly one sink over one HistorianWriter.",
+        "Blocked by H1 and H3: with no sink protocol and no second backend there is nothing to dual-write to."
+      ],
+      "evidence_prs": []
+    },
+    {
+      "id": "H5",
+      "title": "Shipper observability: queue depth, lag, drop counters",
+      "epic": "#4046",
+      "child": "#4051",
+      "status": "partial",
+      "files": [
+        "src/p1am_control_system/backend/historian.py",
+        "src/p1am_control_system/backend/poll_runtime.py",
+        "src/p1am_control_system/backend/performance.py",
+        "src/p1am_control_system/backend/performance_models.py"
+      ],
+      "tests": [
+        "src/p1am_control_system/backend/tests/test_historian_writer.py",
+        "src/p1am_control_system/backend/tests/test_performance.py",
+        "src/p1am_control_system/backend/tests/test_poll_loop_cadence.py"
+      ],
+      "delivered": "Drop and write-failure counters exist (_WriterCounters: dropped_samples, write_failures, rows_written) and reach the operator via loop_diagnostics and the performance snapshot model.",
+      "gaps": [
+        "queue_depth is implemented as a property but referenced nowhere outside historian.py, so it is not actually observable.",
+        "No lag or latency metric (no oldest-unshipped timestamp or backlog age) and no /metrics surface at all."
+      ],
+      "evidence_prs": [
+        "#4678",
+        "#4893",
+        "#4448"
+      ]
+    },
+    {
+      "id": "H6",
+      "title": "Grafana provisioning-as-code: datasource + dashboards in git",
+      "epic": "#4046",
+      "child": "#4052",
+      "status": "missing",
+      "files": [],
+      "tests": [],
+      "delivered": "",
+      "gaps": [
+        "Zero matches for `grafana` repo-wide. deploy/ contains only .gitkeep; src/p1am_control_system/deploy/ has no provisioning directory, datasource YAML or dashboard JSON."
+      ],
+      "evidence_prs": []
+    },
+    {
+      "id": "H7",
+      "title": "ISA-18.2 / EEMUA 191 alarm performance dashboard",
+      "epic": "#4046",
+      "child": "#4054",
+      "status": "missing",
+      "files": [],
+      "tests": [],
+      "delivered": "",
+      "gaps": [
+        "Alarm machinery on main is classification and event folding only. No ISA-18.2/EEMUA-191 KPI computation (alarm rate per 10 min, flood/chattering/stale/standing counts, top-10 contributors) and no dashboard consuming them.",
+        "Shares a root cause with F03: severity is a fixed map, so there is no priority distribution to report."
+      ],
+      "evidence_prs": []
+    },
+    {
+      "id": "H8",
+      "title": "Deployment topology: historian + Grafana off the control Pi",
+      "epic": "#4046",
+      "child": "#4055",
+      "status": "missing",
+      "files": [],
+      "tests": [],
+      "delivered": "",
+      "gaps": [
+        "docker-compose.yml deploys backend + frontend on one host with the historian as a local SQLite file on the dcs_db_data volume, and deploy/install-services.sh installs systemd units on the same Pi.",
+        "No separate historian/visualization host, network split, or remote-write configuration exists."
+      ],
+      "evidence_prs": []
+    },
+    {
+      "id": "H9",
+      "title": "Operator/engineer documentation, runbook, and ADR",
+      "epic": "#4046",
+      "child": "#4056",
+      "status": "missing",
+      "files": [],
+      "tests": [],
+      "delivered": "",
+      "gaps": [
+        "docs/adr/ has 18 files, none matching histor|timescale|grafana|scada.",
+        "USER_MANUAL.md, BENCH_HANDOFF.md and deploy/README.md mention the historian only in passing. No operating procedure, backfill/failure runbook, or architecture decision record."
+      ],
+      "evidence_prs": []
+    }
+  ],
+  "closed_carrier_prs": [
+    {
+      "number": 4091,
+      "title": "feat(scada): deliver professional representative SCADA product",
+      "head_ref": "agent/scada-phase-a-foundation",
+      "head_oid": "2259f5915426471a4b13e8a4e1d3fe59ef1c15b4",
+      "claimed": "Phase A (F01-F05, F12)",
+      "reachable": true,
+      "product_files_absent_from_main": 78,
+      "note": "Nominally the Phase A carrier, but its head OID carries the *whole* four-phase stack: its set of added-and-absent product files is byte identical to #4095's. #4093 and #4094 are strict subsets of that same set (#4093 lacks 15 files, #4094 lacks 4). The four 'phases' are one nested stack, not four independent deliveries, so the recovery corpus is a single 78-file set - not 4 x ~80."
+    },
+    {
+      "number": 4093,
+      "title": "feat(scada): add professional Phase B operator experience",
+      "head_ref": "agent/scada-phase-b-operator-experience",
+      "head_oid": "43c018f0b9ff87ce8aaa53fe8bcca12dd545476f",
+      "claimed": "Phase B (F06-F08, F10, F13)",
+      "reachable": true,
+      "product_files_absent_from_main": 63,
+      "note": "Subset of #4091/#4095's file set; adds no unique product file."
+    },
+    {
+      "number": 4094,
+      "title": "feat(scada): add reusable Phase C product contracts",
+      "head_ref": "agent/scada-phase-c-reusable-product",
+      "head_oid": "49fdd11abbbd455df64af62f55a54d2283bc9ea9",
+      "claimed": "Phase C (F09, F11, F14, F15)",
+      "reachable": true,
+      "product_files_absent_from_main": 74,
+      "note": "Subset of #4091/#4095's file set; adds no unique product file."
+    },
+    {
+      "number": 4095,
+      "title": "feat(scada): add review-only Phase D advisory workspace",
+      "head_ref": "agent/scada-phase-d-advisory",
+      "head_oid": "4efb2e81c1dee73fb706913321d0937aa139ceac",
+      "claimed": "Phase D (F16)",
+      "reachable": true,
+      "product_files_absent_from_main": 78,
+      "note": "Stack tip; file set identical to #4091's."
+    },
+    {
+      "number": 4449,
+      "title": "CONS-A3: P1AM plant historian + professional SCADA foundation",
+      "head_ref": "consolidated/p1am-platform-2026-08-13",
+      "head_oid": "7fba01f5c5615ec62c2bc6eeef7f4c8afad9f580",
+      "claimed": "Consolidation of #4065 + #4091",
+      "reachable": true,
+      "product_files_absent_from_main": 105,
+      "note": "Union of the #4091 and #4065 corpora plus exactly two unique files (backend/enum_compat.py, backend/tests/_route_inventory.py). Its closing note cites #4445, a 9-file CI-only PR with no SCADA content, so nothing it carried reached main."
+    },
+    {
+      "number": 4065,
+      "title": "feat(p1am): plant historian and analytics platform",
+      "head_ref": "feat/timescale-historian",
+      "head_oid": "128bd1c3b492d7c74903f7335803c7cbb5b987c4",
+      "claimed": "Historian epic #4046 (H1-H9)",
+      "reachable": true,
+      "product_files_absent_from_main": 25,
+      "note": "The only carrier of TimescaleDB/Grafana content: 6 SQL migrations, 4 Grafana dashboards, provisioning YAML, a deploy compose file, ADR-007, and historian_sink/shipper/wiring + timescale_writer with tests. Also adds dcs_scada.db, a runtime SQLite artifact that must never be committed."
+    }
+  ],
+  "recovery_corpus": {
+    "note": "The four phase PRs are one nested stack whose tip content is identical at #4091 and #4095, so the SCADA recovery corpus is a single 78-file set rather than four. #4065 is the only carrier of historian/Timescale/Grafana content.",
+    "scada_product_files": 78,
+    "historian_product_files": 25,
+    "consolidation_unique_files": 2
+  },
+  "needs_owner": [
+    {
+      "ref": "#3984",
+      "title": "Full removal of the p1am flat-import packaging",
+      "detail": "The BasePLCClient/RoutingConfig duplicate-class hazard is fixed by aligning plant_simulator on the flat import path. Removing the flat path itself - package __init__, package-absolute imports across ~50 backend modules, and a Dockerfile whose build context is the package root rather than backend/ - changes the container layout and is not safe to fold into an audit PR."
+    },
+    {
+      "ref": "#3984",
+      "title": "The `neural` PLC driver is uninstantiable",
+      "detail": "NeuralSimulatorClient never implemented clear_estop (added to the ABC by #3415 for the E-stop reset path), and its read_tags/write_tag signatures drifted from the ABC (list[float] vs dict[str, float] | None; tag_id: int vs tag_name: str). PLCFactory therefore raises TypeError for plc_driver='neural'. Pinned by an xfail(strict=True). Owner must choose: complete the driver against the current safety contract, or withdraw the factory branch."
+    },
+    {
+      "ref": "#4046",
+      "title": "TimescaleDB and Grafana licensing",
+      "detail": "Epic #4046 flags Grafana as AGPLv3 (a network-copyleft question for customer-facing deliverables) and TimescaleDB as split-licensed (Apache-2 core, TSL for the compression and continuous aggregates the epic depends on). Re-landing #4065's H3/H6 content commits the repo to both. This must be ruled on before, not after, a re-land."
+    },
+    {
+      "ref": "#4089",
+      "title": "Re-scope or withdraw the six zero-delivery requirements",
+      "detail": "F05, F06, F12, F13, F14, F15 and seven of the nine historian children have no implementation on main at all. They should be re-scoped as fresh, sized issues or withdrawn - not carried as ticked boxes."
+    }
+  ],
+  "totals": {
+    "scada": {
+      "landed": 0,
+      "partial": 10,
+      "missing": 6,
+      "total": 16
+    },
+    "historian": {
+      "landed": 0,
+      "partial": 2,
+      "missing": 7,
+      "total": 9
+    }
+  }
+}

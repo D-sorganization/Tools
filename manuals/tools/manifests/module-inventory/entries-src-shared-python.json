@@ -1088,6 +1088,7 @@
           }
         ],
         "test_paths": [
+          "src/p1am_control_system/backend/tests/test_data_explorer_expression.py",
           "src/shared/python/sidekick/tests/test_calculator_plotting.py",
           "tests/shared/python/test_safe_eval.py",
           "tests/test_shared_package_api_stability.py"

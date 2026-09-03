@@ -42,6 +42,20 @@ def evaluate_output(
         ``(output_value, state_dict, composition_dict)`` where
         *state_dict* and *composition_dict* are sub-dicts from the engine
         result (empty dicts if not present).
+
+        On **any** failure the first element is ``math.nan`` and both dicts are
+        empty (issue #3976). A failure is: the engine raising, the engine
+        returning a non-dict, ``output_variable`` being absent from the result,
+        or its value not being coercible to ``float``. ``NaN`` -- never ``0.0``
+        -- is the failure sentinel, because ``0.0`` is a legitimate objective
+        value and both callers detect failure with ``np.isfinite(...)``.
+
+    Notes
+    -----
+    This function does not raise on engine failure by design: the callers are a
+    gradient estimator and a grid sweep that must continue past a bad point and
+    apply their own penalty. The contract is therefore "explicit NaN sentinel",
+    and callers **must** check finiteness before using the value.
     """
     if base_params is None:
         raise ValueError("base_params must be provided")
@@ -68,7 +82,34 @@ def evaluate_output(
     if not isinstance(result, dict):
         return math.nan, {}, {}
 
-    output_value = float(result.get(output_variable, 0.0))
+    # A *missing* output key is an evaluation failure, not "the answer is zero"
+    # (issue #3976). The original `result.get(output_variable, 0.0)` turned a
+    # typo'd `output_variable` -- or an engine that simply does not publish that
+    # key -- into a perfectly plausible objective of 0.0. In
+    # `optimization._gradient_component` both perturbed evaluations then return
+    # 0.0, the gradient is exactly zero, and the optimizer "converges" on
+    # garbage; a multi-parameter sweep plots a flat zero surface that is
+    # indistinguishable from real data. NaN is the failure sentinel both callers
+    # already test for with `np.isfinite(...)`.
+    if output_variable not in result:
+        _logger.warning(
+            "Engine result has no %r key (available: %s); returning NaN",
+            output_variable,
+            sorted(result),
+        )
+        return math.nan, {}, {}
+
+    try:
+        output_value = float(result[output_variable])
+    except (TypeError, ValueError) as exc:
+        # A non-numeric value under the requested key is equally a failure; it
+        # must not escape as a raw TypeError from deep inside a sweep.
+        _logger.warning(
+            "Engine result key %r is not numeric (%s); returning NaN",
+            output_variable,
+            exc,
+        )
+        return math.nan, {}, {}
 
     state: dict[str, float] = result.get("state", {})
     composition: dict[str, float] = result.get("composition", {})

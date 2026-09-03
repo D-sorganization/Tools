@@ -153,10 +153,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5034,
+      "bytes_lf": 7057,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2f7feb5cadd4b71020e22d8696ffbd064691a9fcce4cb8d80b703b1fe427463a",
+      "content_sha256_lf": "5c90db064a0e620f83d72952ce910e564e3e1595ffee877af4b3f46fcf7dee9b",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-PLANT-SIMULATOR-NEURAL-SIMULATOR-CLIENT-PY-3CC23422A1DE",
       "language": "python",
@@ -176,9 +176,9 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
       },
       "traceability": {
         "adr_paths": [
@@ -197,9 +197,15 @@
             "signature": null
           }
         ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
+        "test_paths": [
+          "tests/plant_simulator/test_plc_contract_identity.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "tests/plant_simulator/test_plc_contract_identity.py"
+        ]
       }
     },
     {

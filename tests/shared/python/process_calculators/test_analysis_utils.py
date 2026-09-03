@@ -76,14 +76,48 @@ class TestEvaluateOutputBasic:
         assert state == {"T": 1200.0, "P": 101325.0}
         assert comp == {"CO": 0.25, "H2": 0.35}
 
-    def test_missing_output_variable_returns_zero(self, engine: _StubEngine) -> None:
-        value, _, _ = evaluate_output(
+    def test_missing_output_variable_returns_nan(self, engine: _StubEngine) -> None:
+        """A missing output key is a failure, not an objective of 0.0 (#3976).
+
+        This test previously asserted ``value == 0.0`` and so *cemented* the
+        defect: a typo'd ``output_variable`` produced a plausible objective of
+        zero, the gradient estimator saw 0.0 at both perturbed points, computed
+        an exactly-zero gradient, and reported convergence on garbage.
+        """
+        value, state, comp = evaluate_output(
             engine,
             {"T_in": 500.0},
             manual_hhv=0.0,
             output_variable="nonexistent",
         )
+        assert math.isnan(value)
+        assert state == {}
+        assert comp == {}
+
+    def test_non_numeric_output_returns_nan(self) -> None:
+        """A non-numeric value under the requested key is a failure (#3976)."""
+        engine = _StubEngine(result={"efficiency": "not-a-number"})
+        value, state, comp = evaluate_output(
+            engine,
+            {"T_in": 500.0},
+            manual_hhv=0.0,
+            output_variable="efficiency",
+        )
+        assert math.isnan(value)
+        assert state == {}
+        assert comp == {}
+
+    def test_legitimate_zero_output_is_preserved(self) -> None:
+        """0.0 must still round-trip: it is a valid objective, not a sentinel."""
+        engine = _StubEngine(result={"efficiency": 0.0})
+        value, _, _ = evaluate_output(
+            engine,
+            {"T_in": 500.0},
+            manual_hhv=0.0,
+            output_variable="efficiency",
+        )
         assert value == 0.0
+        assert not math.isnan(value)
 
 
 # ── Parameter merging ───────────────────────────────────────────────────
