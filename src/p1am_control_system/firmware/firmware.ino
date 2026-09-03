@@ -10,7 +10,7 @@
 #include "StorageManager.h"
 #include "CommsWatchdog.h"
 
-#include <math.h>
+#include <math.h>  // isfinite() -- a macro on the Arduino core, so never std::isfinite here
 
 // Ethernet Configuration (P1AM-ETH shield)
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
@@ -432,7 +432,7 @@ void loop() {
                          : 0.0f;
       // A bad-quality source is driven to 0 % by WriteHardwareOutputs; show
       // the same on the diagnostic channel rather than a NaN.
-      if (!std::isfinite(cmdPct)) {
+      if (!isfinite(cmdPct)) {
         cmdPct = 0.0f;
       }
       broker.SetTag(24 + ch, cmdPct * (5.0f / 100.0f));
