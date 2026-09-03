@@ -1,8 +1,11 @@
 """Reference-only project and export seam for launch-monitor analytics.
 
-Statistics remain owned by the UpstreamDrift backend.  This module validates
-the portable client state sent to that backend and deliberately keeps private
-corpus rows out of persistent project documents.
+The canonical inferential layer now lives in Tools' `src/shared/python/
+launch_monitor/` per UpstreamDrift ADR-0046 (Stage 1 complete 2026-09-02).
+This module remains part of `rate_of_closure`'s web-twinned application
+layer: it validates the portable client state exchanged with that canonical
+layer and deliberately keeps private corpus rows out of persistent project
+documents.
 """
 
 from __future__ import annotations

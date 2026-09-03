@@ -14376,10 +14376,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9486,
+      "bytes_lf": 9712,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7433ab3700cd48ee8068cba7b907e03cce5bb1ff5f1e6e1f04f9f0cbdf87f48c",
+      "content_sha256_lf": "cf655b26909b103c35093bbdde9d4d4edb9acd776356f78031b6c169f9f0c22b",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-LAUNCH-MONITOR-PERFORMANCE-PY-6BDA404D6573",
       "language": "python",
@@ -14406,7 +14406,8 @@
       "traceability": {
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],

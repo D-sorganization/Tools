@@ -1,7 +1,11 @@
 """Descriptive performance metrics behind a swappable analytics adapter.
 
 These calculations are deliberately limited to unit conversion, aggregation,
-and score bookkeeping. Inferential statistics remain an UpstreamDrift concern.
+and score bookkeeping. The canonical inferential layer now lives in Tools'
+`src/shared/python/launch_monitor/` per UpstreamDrift ADR-0046 (Stage 1
+complete 2026-09-02); this module and the rest of `rate_of_closure` remain
+the web-twinned application layer that consumes it, not the statistics
+themselves.
 """
 
 from __future__ import annotations
