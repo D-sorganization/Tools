@@ -29,6 +29,18 @@ paired-device validation without real paired observations.** #4584/#4599 merged
 strokes-gained v2 into both clients; #4600 owns the PyQt reference and
 #4602/#4608/#4610/#4613 the isolated rendered gates.
 
+**ADR-0046 Stage 2 is classified, and nothing in this package retires yet.**
+All 15 `launch_monitor_*`/`player_covariation*` Python modules were mapped to the
+canonical `shared/python/launch_monitor/` layer: **0 pure-duplicates**. See
+`docs/specs/LAUNCH_MONITOR_ANALYTICS.md` §"ADR-0046 Stage 2 - Canonical-Layer
+Mapping" for the per-module verdict and evidence. Before touching any of them:
+seven are `split` in `docs/shared/divergence_ledger.v1.json` (three
+`paired-open`, so a Tools-only diff is refused without a `UD-PAIR:` line), and
+UpstreamDrift's drift gates import **20 symbols from 10 of these modules by
+name** - `tests/rate_of_closure/test_launch_monitor_drift_gate_surface.py` pins
+that surface, and a retirement must leave a deprecating re-export at the old
+path rather than delete it.
+
 **Source-backed SG excludes and audits; it does not raise** (ADR-0048 G1-D3).
 `calculate_source_backed_strokes_gained` and its TS twin classify a bad row as
 `missing_course_state`/`invalid_distance`/`outside_baseline`, count it in
