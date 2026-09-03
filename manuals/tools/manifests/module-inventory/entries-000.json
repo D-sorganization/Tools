@@ -7393,6 +7393,7 @@
           "tests/rate_of_closure/pyqt_variation_visual_state_probe.py",
           "tests/rate_of_closure/pyqt_visual_layout_persistence_probe.py",
           "tests/rate_of_closure/pyqt_visualization_tab_probe.py",
+          "tests/rate_of_closure/test_closed_stack_gap_audit_decisions.py",
           "tests/rate_of_closure/test_launch_monitor_linked_scatter.py",
           "tests/rate_of_closure/test_layout_minsize.py",
           "tests/rate_of_closure/test_plots_gui.py",
@@ -7654,6 +7655,7 @@
           "tests/test_phase1_quick_wins.py",
           "tests/test_phase2_critical_bugs.py",
           "tests/test_pressure_drop_engine_split.py",
+          "tests/test_shared_package_api_stability.py",
           "tests/test_sidekick_public_api_stability.py",
           "tests/test_signal_processing_expanded.py",
           "tests/test_subprocess_utils.py",
@@ -13915,10 +13917,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 16105,
+      "bytes_lf": 16114,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a787d6613c0f7b1ca6c40e1f7fe133ab0b65407f9f175c35b7180ab730db6ab9",
+      "content_sha256_lf": "3d555be2ab131d6e5f5da2affb0130b0787e892f76793499a20caf53f3e49265",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-BUILD-TOOLS-MODULE-INVENTORY-PY-FFBDFD4ACF17",
       "language": "python",
@@ -14225,6 +14227,144 @@
           "tests/scripts/test_bump_vendor_pin.py"
         ],
         "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7580,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0ab683e46d3ae2acde2e30952fa1c69746a2c4d754ae719328c48ecd2ec5a852",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CHECK-ADR-REFERENCES-PY-B8193D9E7CB5",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/check_adr_references.py",
+      "purpose": "Resolve every ``ADR-NNNN`` cited under ``src/`` and keep the ADR index fresh.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-0049-fleet-adr-home.md",
+          "docs/adr/ADR-007-engineering-design-manual-authority.md",
+          "docs/adr/ADR-008-markerless-mocap-authority-and-licensing.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "CITATION_PATTERN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "END_MARKER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXCLUDED_SUFFIXES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FILE_PATTERN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MIRROR_PATTERN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ROOT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "START_MARKER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "STATUS_PATTERN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TITLE_PATTERN",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "adr_files",
+            "signature": "adr_dir: Path"
+          },
+          {
+            "kind": "function",
+            "name": "cited_adr_numbers",
+            "signature": "root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "index_is_fresh",
+            "signature": "index_path: Path, records: dict[str, Path]"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: Sequence[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "render_index",
+            "signature": "records: dict[str, Path]"
+          },
+          {
+            "kind": "function",
+            "name": "run",
+            "signature": "root: Path, write: bool"
+          },
+          {
+            "kind": "function",
+            "name": "unresolved_citations",
+            "signature": "cited: dict[str, list[str]], records: dict[str, Path]"
+          },
+          {
+            "kind": "function",
+            "name": "write_index",
+            "signature": "index_path: Path, records: dict[str, Path]"
+          }
+        ],
+        "test_paths": [
+          "tests/scripts/test_check_adr_references.py"
+        ],
+        "unit_mentions": [
+          "g",
           "s"
         ],
         "validation_paths": []
@@ -14655,10 +14795,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1802,
+      "bytes_lf": 1865,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "de93e6dbc95f2564a252c6bf837681682ef5ccd5b253bb17dec7e189cc585f46",
+      "content_sha256_lf": "017f6291ccfd97572c4a2adbb49c3b41baca8f0b663f027528c7de8832934236",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CHECK-DOCS-GOVERNANCE-PY-92BC2DAEE266",
       "language": "python",
@@ -14895,80 +15035,6 @@
         ],
         "unit_mentions": [],
         "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5137,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7904f9281a639365341360d1f1ef14c7a1f721fb4b1a5beaca1bf916d9341f37",
-      "family": "repository-tooling-non-calculation",
-      "id": "TOOLS-MODULE-SCRIPTS-CHECK-MINIMUM-TEST-CONTRACT-PY-D00C141F501F",
-      "language": "python",
-      "maintainer": "Repository tooling maintainers",
-      "path": "scripts/check_minimum_test_contract.py",
-      "purpose": "Enforce minimum test contract for changed source packages.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "ROOT",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "changed_files",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "has_tests",
-            "signature": "pkg_key: str"
-          },
-          {
-            "kind": "function",
-            "name": "main",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "package_key",
-            "signature": "path: str"
-          }
-        ],
-        "test_paths": [
-          "tests/test_minimum_test_contract.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "tests/test_minimum_test_contract.py"
-        ]
       }
     }
   ],

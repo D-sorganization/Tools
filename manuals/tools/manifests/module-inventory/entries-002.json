@@ -3,6 +3,154 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 14782,
+      "classification": "calculation",
+      "classification_basis": "path-marker:filter",
+      "content_sha256_lf": "d6f4d42e5fe14cfd473ce3031edb7cc50cf1f8acab3df64c2ff73ca5bbbd91b2",
+      "family": "data-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-VECTORIZED-FILTER-ENGINE-PY-5CE9AD02C830",
+      "language": "python",
+      "maintainer": "Data processing maintainers",
+      "path": "src/data_processing/data_processor/python/data_processor/vectorized_filter_engine.py",
+      "purpose": "Facade for the vectorized filter engine and its extracted filter modules.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FilterEngine",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "VectorizedFilterEngine",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "apply_filter",
+            "signature": "signal: pd.Series, filter_type: str, params: dict[str, Any], signal_name: str='', logger: Callable[..., Any] | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/data_processing/data_processor/python/tests/test_vectorized_filter_engine_contracts.py",
+          "tests/data_processing/data_processor/test_script_generator_hardening.py",
+          "tests/data_processing/data_processor/test_vectorized_filter_split.py",
+          "tests/data_processor/test_vectorized_filter_engine.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "src/data_processing/data_processor/python/tests/test_vectorized_filter_engine_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 9550,
+      "classification": "calculation",
+      "classification_basis": "path-marker:filter",
+      "content_sha256_lf": "e6c4d856d90c8b3d2a2751b6292d8f889d0832894a13f00af58b7dce124d5f40",
+      "family": "data-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-VECTORIZED-FILTER-FREQUENCY-DOMAIN-PY-54B02EC974D5",
+      "language": "python",
+      "maintainer": "Data processing maintainers",
+      "path": "src/data_processing/data_processor/python/data_processor/vectorized_filter_frequency_domain.py",
+      "purpose": "Frequency-domain filter kernels for the vectorized filter engine.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "apply_fft_filter_core",
+            "signature": "signal_data: np.ndarray, filter_coeffs: np.ndarray, zero_phase: bool"
+          },
+          {
+            "kind": "function",
+            "name": "apply_fft_filter_vectorized",
+            "signature": "signal: pd.Series, params: dict[str, Any], safe_get_param: ParamGetter, calculate_sampling_rate: SamplingRateCalculator, logger: Logger"
+          },
+          {
+            "kind": "function",
+            "name": "apply_window_function",
+            "signature": "filter_response: np.ndarray, window_shape: str"
+          },
+          {
+            "kind": "function",
+            "name": "calculate_frequency_response",
+            "signature": "filter_type: str, params: dict[str, Any], safe_get_param: ParamGetter, logger: Logger, n_freqs: int=1024"
+          },
+          {
+            "kind": "function",
+            "name": "design_frequency_window",
+            "signature": "filter_type: str, freq_low: float, freq_high: float, window_shape: str, n_samples: int, transition_bw: float"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "Hz"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 11760,
       "classification": "calculation",
       "classification_basis": "path-marker:filter",
@@ -13653,112 +13801,6 @@
           {
             "kind": "export",
             "name": "withErrorBoundary",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 678,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a7abddb944f410750055de8cc6c356e4b573b006a40433aecae4e01d3f291af5",
-      "family": "media-processing-non-calculation",
-      "id": "TOOLS-MODULE-SRC-MEDIA-PROCESSING-VIDEO-PROCESSOR-APPS-WEB-COMPONENTS-TOASTER-TSX-9EC5607A0EF2",
-      "language": "typescript-react",
-      "maintainer": "Media processing maintainers",
-      "path": "src/media_processing/video_processor/apps/web/components/Toaster.tsx",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "https://sonner.emilkowal.ski/"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "Toaster",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4741,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2290278d65a0790100e09ca88733b58bcdf34de389b90c1c71938a5289812b7c",
-      "family": "media-processing-non-calculation",
-      "id": "TOOLS-MODULE-SRC-MEDIA-PROCESSING-VIDEO-PROCESSOR-APPS-WEB-COMPONENTS-AI-POSEDETECTOR-TSX-0847F09DC3C6",
-      "language": "typescript-react",
-      "maintainer": "Media processing maintainers",
-      "path": "src/media_processing/video_processor/apps/web/components/ai/PoseDetector.tsx",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "PoseDetector",
             "signature": null
           }
         ],

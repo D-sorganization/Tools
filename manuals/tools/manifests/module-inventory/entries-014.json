@@ -3,6 +3,142 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 1203,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "84390a5904051bb43d7d1786674c4394782fb5340aed7e560aa8e383c491bbfc",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-API-REST-API-PY-BB713EA6D7D6",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/api/rest_api.py",
+      "purpose": "REST API for model_generation package.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "APIRequest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "APIResponse",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FastAPIAdapter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FlaskAdapter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "HTTPMethod",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ModelGenerationAPI",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Route",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/model_generation/tests/test_api_adapters.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 15081,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f0e453fc40ad67cfd1a56de3fa9b3493ef0ef7c3372bcafa2dee2df3db775a30",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-API-REST-API-ASSETS-PY-509B84B19E41",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/model_generation/api/rest_api_assets.py",
+      "purpose": "Inertia, library, and editor route handlers for model_generation.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AssetLibraryEditorRoutesMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 683,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -8072,7 +8208,8 @@
         ],
         "test_paths": [
           "src/shared/python/sidekick/tests/test_calculator_plotting.py",
-          "tests/shared/python/test_safe_eval.py"
+          "tests/shared/python/test_safe_eval.py",
+          "tests/test_shared_package_api_stability.py"
         ],
         "unit_mentions": [
           "g"
@@ -9006,7 +9143,7 @@
       },
       "traceability": {
         "adr_paths": [
-          "docs/adr/ADR-001-monorepo-workspaces.md",
+          "docs/adr/ADR-0016-error-handling-discipline.md",
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md"
         ],
@@ -17241,281 +17378,6 @@
           "kg",
           "m/s",
           "mm"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 1151,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "0bcc841a8e6a30db6fac490c3c2b3963e477e8f8dd47c30b4f61352c03d5e0a6",
-      "family": "process-calculators-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-PRESSURE-DROP-CALCULATOR-UTILS-FLOW-RATE-CONVERTER-PY-D748F13C421A",
-      "language": "python",
-      "maintainer": "Process calculator maintainers",
-      "path": "src/shared/python/sidekick/process_calculators/pressure_drop_calculator/utils/flow_rate_converter.py",
-      "purpose": "Flow rate conversion utilities — re-export from canonical location.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "MASS_FLOW_CONVERSIONS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "MOLAR_FLOW_CONVERSIONS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "STANDARD_CONDITIONS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "acfm_to_scfm",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "convert_flow_rate_to_mass",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "mass_to_mass",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "mass_to_molar",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "mass_to_standard_volumetric",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "mass_to_volumetric_actual",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "molar_to_mass",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "molar_to_molar",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "scfm_to_acfm",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "standard_volumetric_to_mass",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "volumetric_actual_to_mass",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/sidekick/tests/calculators/conversion/test_flow_rate_converter.py",
-          "tests/shared/python/calculators/conversion/test_flow_rate_converter.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 31301,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "15ed7f26fa19cbb6d7cc8c8975512fc18205b031038597859b50d75ddef41b7c",
-      "family": "process-calculators-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-PRESSURE-DROP-CALCULATOR-UTILS-GAS-PROPERTIES-PY-EAF111810C02",
-      "language": "python",
-      "maintainer": "Process calculator maintainers",
-      "path": "src/shared/python/sidekick/process_calculators/pressure_drop_calculator/utils/gas_properties.py",
-      "purpose": "Gas mixture property calculations for pressure drop analysis.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ComponentProperties",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GAS_DATABASE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "R_UNIVERSAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SUTHERLAND_CONSTANTS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "calculate_compressibility_factor",
-            "signature": "composition: dict[str, float], temperature: float, pressure: float"
-          },
-          {
-            "kind": "function",
-            "name": "calculate_gas_properties",
-            "signature": "composition: dict[str, float], temperature: float, pressure: float, use_compressibility: bool=True"
-          },
-          {
-            "kind": "function",
-            "name": "calculate_heat_capacity_ratio",
-            "signature": "composition: dict[str, float], temperature: float"
-          },
-          {
-            "kind": "function",
-            "name": "calculate_ideal_gas_cp",
-            "signature": "component: str, temperature: float"
-          },
-          {
-            "kind": "function",
-            "name": "calculate_ideal_gas_density",
-            "signature": "molecular_weight: float, temperature: float, pressure: float"
-          },
-          {
-            "kind": "function",
-            "name": "calculate_mixture_cp",
-            "signature": "composition: dict[str, float], temperature: float"
-          },
-          {
-            "kind": "function",
-            "name": "calculate_mixture_molecular_weight",
-            "signature": "composition: dict[str, float]"
-          },
-          {
-            "kind": "function",
-            "name": "calculate_mixture_viscosity_simple",
-            "signature": "composition: dict[str, float], temperature: float"
-          },
-          {
-            "kind": "function",
-            "name": "calculate_mixture_viscosity_wilke",
-            "signature": "composition: dict[str, float], temperature: float, pressure: float"
-          },
-          {
-            "kind": "function",
-            "name": "calculate_pure_gas_viscosity_lucas",
-            "signature": "temperature: float, pressure: float, props: ComponentProperties"
-          },
-          {
-            "kind": "function",
-            "name": "calculate_pure_gas_viscosity_sutherland",
-            "signature": "temperature: float, T_ref: float=273.15, mu_ref: float=1.716e-05, S: float=110.4"
-          },
-          {
-            "kind": "function",
-            "name": "calculate_real_gas_density",
-            "signature": "molecular_weight: float, temperature: float, pressure: float, compressibility: float"
-          },
-          {
-            "kind": "function",
-            "name": "calculate_speed_of_sound",
-            "signature": "composition: dict[str, float], temperature: float, molecular_weight: float | None=None"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/sidekick/tests/process_calculators/test_pressure_drop_gas_properties.py",
-          "tests/shared/python/calculators/conversion/test_core.py",
-          "tests/shared/python/process_calculators/test_wave1_process_numerics.py"
-        ],
-        "unit_mentions": [
-          "J",
-          "Pa",
-          "W",
-          "bar",
-          "kg",
-          "m/s",
-          "s"
         ],
         "validation_paths": []
       }

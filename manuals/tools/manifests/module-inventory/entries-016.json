@@ -3,6 +3,970 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 13357,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "83de3df7ccbc961a4703b098a7d924c76467cde58258767abde500ff7020c798",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-INIT-PY-C110891C67D3",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/__init__.py",
+      "purpose": "Strict reusable flight-to-ground transfer and result contracts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "AdaptedTerrainSurface",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BounceAirSegment",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BounceModelSettings",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BounceTermination",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BounceTerminationReason",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BoundGroundSurface",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CANONICAL_GROUND_PARAMETER_IDS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalibrationKind",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_PROFILE_LIBRARY_FILENAME",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_PROFILE_LIBRARY_MAX_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FrameTransform",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GROUND_MATERIAL_PROFILE_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GROUND_PROFILE_LIBRARY_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GROUND_SKID_ROLL_MODEL_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GROUND_SKID_ROLL_MODEL_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundApplicability",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundCalibration",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundCalibrationRecord",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundCompositionError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundContactState",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundEvent",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundEventType",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundEvidenceKind",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundFrame",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundMaterialParameter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundMaterialProfile",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundModelUseStatus",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundParameterId",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundPhase",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundProfileEvidence",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundProfileLibrary",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundProfileLibraryStore",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundProfileProvenance",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundProfileQualification",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundProfileRights",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundProvenance",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundQualificationGate",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundQualificationGateId",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundQualificationStatus",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundRegionalMaterialPlanRequest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundRegionalMaterialPlanResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundRegionalMaterialRegion",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundResultStatus",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundSimulationRequest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundSimulationResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundSummary",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundSurfaceProfile",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundTermination",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundTerminationReason",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundTrajectoryPoint",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundUnavailableField",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundUnavailableFieldId",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundUnavailableReason",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundWarning",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundWarningSeverity",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactEnergyLedger",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactImpulseResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactRegime",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactRejectionReason",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactStateError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "JSON_SCHEMA_DIALECT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_REGIONAL_EXECUTION_STEPS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_REGIONAL_EXECUTION_TRANSITIONS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_REGIONAL_GROUND_EXECUTION_WIRE_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_REGIONAL_PLAN_REGIONS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_REGIONAL_PLAN_WIRE_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_REPEATED_BOUNCE_REQUEST_WIRE_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_REPEATED_BOUNCE_WIRE_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PROFILE_ILLUSTRATIVE_WARNING",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PROFILE_UNQUALIFIED_WARNING",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlanarSurfaceDomain",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlanarSurfaceRegion",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ProfileOperatingCondition",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ProfileStoreConflictError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ProfileStoreCorruptionError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ProfileStoreError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ProfileStoreIndeterminateCommitError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ProfileStoreLockError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ProfileStorePathError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "REGIONAL_GROUND_EXECUTION_LIMITATIONS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "REGIONAL_GROUND_EXECUTION_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "REGIONAL_GROUND_EXECUTOR_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "REGIONAL_GROUND_EXECUTOR_SOURCE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "REGIONAL_GROUND_EXECUTOR_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "REGIONAL_PLAN_GEOMETRY_MODEL",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "REGIONAL_PLAN_LIMITATIONS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "REGIONAL_PLAN_REQUEST_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "REGIONAL_PLAN_RESULT_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "REPEATED_BOUNCE_REQUEST_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "REPEATED_BOUNCE_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "REQUEST_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RESULT_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RegionalGroundExecutionFailureReason",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RegionalGroundExecutionOptions",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RegionalGroundExecutionResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RegionalGroundExecutionStatus",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RepeatedBounceRequest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RepeatedBounceRequestResultPair",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RepeatedBounceResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RigidMotion",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SkidRollEnergyLedger",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SkidRollExecution",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SkidRollResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SkidRollSettings",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SkidRollTermination",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SkidRollTerminationReason",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SphereProperties",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StoredGroundProfileLibrary",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SurfaceBoundaryCrossing",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SurfaceKinematicSegment",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SurfacePlacement",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SurfaceRegionTransition",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SurfaceRegionTransitionCrossing",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SurfaceResolver",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TerrainAdapterInterpretation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TerrainDispositionKind",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TerrainFieldDisposition",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "UNIT_SYSTEM_SI",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "UPSTREAM_TERRAIN_ADAPTER_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "UPSTREAM_TERRAIN_SNAPSHOT_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "UpstreamTerrainSnapshot",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "adapt_upstream_terrain_snapshot",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "bind_material_profile",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_regional_material_plan_result",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compose_ground_result",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "document_from_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "document_to_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "document_to_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "execute_regional_ground",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "execute_repeated_bounce_request",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "execution_input_sha256",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "interpolate_first_contact",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "library_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "library_json_schema",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "migrate_library_to_current",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "migrate_profile_to_current",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "migrate_request_to_current",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "migrate_result_to_current",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "profile_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "profile_json_schema",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "profile_schema_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "regional_ground_execution_result_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "regional_material_plan_request_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "regional_material_plan_result_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "regional_plan_to_surface_resolver",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "repeated_bounce_execution_input_sha256",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "repeated_bounce_request_from_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "repeated_bounce_request_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "repeated_bounce_request_to_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "repeated_bounce_request_to_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "repeated_bounce_result_from_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "repeated_bounce_result_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "repeated_bounce_result_to_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "repeated_bounce_result_to_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "request_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "request_json_schema",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "resolve_sphere_plane_impact",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "result_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "result_json_schema",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "schema_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "simulate_repeated_bounce",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "simulate_skid_roll",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "upstream_snapshot_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "validate_library_payload",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "validate_profile_payload",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2336,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d03e7639c79fbb256b074552e2fba656a339e2e3317b628ce0ae478b78f77d5d",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-VECTOR-MATH-PY-C648E7E0C731",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/ground/_vector_math.py",
+      "purpose": "Small immutable-vector operations used by the ground impact solver.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "add",
+            "signature": "left: Vector3, right: Vector3"
+          },
+          {
+            "kind": "function",
+            "name": "cross",
+            "signature": "left: Vector3, right: Vector3"
+          },
+          {
+            "kind": "function",
+            "name": "dot",
+            "signature": "left: Vector3, right: Vector3"
+          },
+          {
+            "kind": "function",
+            "name": "interpolate",
+            "signature": "left: Vector3, right: Vector3, fraction: float"
+          },
+          {
+            "kind": "function",
+            "name": "intrinsic_tangent_axis",
+            "signature": "normal: Vector3"
+          },
+          {
+            "kind": "function",
+            "name": "norm",
+            "signature": "vector: Vector3"
+          },
+          {
+            "kind": "function",
+            "name": "scale",
+            "signature": "vector: Vector3, factor: float"
+          },
+          {
+            "kind": "function",
+            "name": "subtract",
+            "signature": "left: Vector3, right: Vector3"
+          },
+          {
+            "kind": "function",
+            "name": "unit",
+            "signature": "vector: Vector3, *, tolerance: float"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 1070,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17415,320 +18379,6 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 25873,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4a95586c1dcefa590d31d214aa0cc5d836e5856a6268a90d8fa1f1267f55c22f",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-CORE-CELESTIAL-BODY-PY-082521AC3C75",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/solar_system_model/solar_system/core/celestial_body.py",
-      "purpose": "Celestial Body Classes",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "BodyType",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CelestialBody",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "Moon",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "Planet",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "Spacecraft",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "Star",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "StateVector",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "kg",
-          "m/s",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 13099,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "5cf8f123ea9c658763df6d16afcb7bbe25c16548991364d8c0e0c7a9b99193a0",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-CORE-CONSTANTS-PY-66A68B205B44",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/solar_system_model/solar_system/core/constants.py",
-      "purpose": "Astronomical Constants and Planetary Data",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "https://ssd.jpl.nasa.gov/planets/approx_pos.html"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "OrbitalElements",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PhysicalProperties",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "AU",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "AU_KM",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "C",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DAYS_PER_YEAR",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DISTANCE_SCALE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DWARF_PLANETS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "G",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GM",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GRID_COLOR",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "INNER_PLANETS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "J2000",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "JULIAN_CENTURY",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "JULIAN_YEAR",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MAX_PLANET_SIZE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MIN_PLANET_SIZE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ORBITAL_ELEMENTS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ORBITAL_PERIODS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ORBIT_COLOR",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ORBIT_TRAIL_OPACITY",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ORBIT_TRAIL_POINTS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "OUTER_PLANETS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PHYSICAL_PROPERTIES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PLANET_ORDER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SECONDS_PER_DAY",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SIZE_SCALE_PLANETS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SIZE_SCALE_SUN",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SUN_GM",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SUN_LUMINOSITY",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SUN_MASS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SUN_RADIUS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SUN_TEMPERATURE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SUN_VISUAL_SIZE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "TRAJECTORY_COLOR",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "W",
-          "bar",
-          "kg",
-          "m/s",
-          "s"
-        ],
         "validation_paths": []
       }
     }

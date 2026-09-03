@@ -3,6 +3,320 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 25873,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4a95586c1dcefa590d31d214aa0cc5d836e5856a6268a90d8fa1f1267f55c22f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-CORE-CELESTIAL-BODY-PY-082521AC3C75",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/core/celestial_body.py",
+      "purpose": "Celestial Body Classes",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "BodyType",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CelestialBody",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Moon",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Planet",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Spacecraft",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Star",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StateVector",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "kg",
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13099,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5cf8f123ea9c658763df6d16afcb7bbe25c16548991364d8c0e0c7a9b99193a0",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-CORE-CONSTANTS-PY-66A68B205B44",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/core/constants.py",
+      "purpose": "Astronomical Constants and Planetary Data",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://ssd.jpl.nasa.gov/planets/approx_pos.html"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "OrbitalElements",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PhysicalProperties",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "AU",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "AU_KM",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DAYS_PER_YEAR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DISTANCE_SCALE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DWARF_PLANETS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "G",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GM",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GRID_COLOR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "INNER_PLANETS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "J2000",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "JULIAN_CENTURY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "JULIAN_YEAR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_PLANET_SIZE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MIN_PLANET_SIZE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ORBITAL_ELEMENTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ORBITAL_PERIODS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ORBIT_COLOR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ORBIT_TRAIL_OPACITY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ORBIT_TRAIL_POINTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "OUTER_PLANETS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PHYSICAL_PROPERTIES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PLANET_ORDER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SECONDS_PER_DAY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SIZE_SCALE_PLANETS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SIZE_SCALE_SUN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SUN_GM",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SUN_LUMINOSITY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SUN_MASS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SUN_RADIUS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SUN_TEMPERATURE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SUN_VISUAL_SIZE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TRAJECTORY_COLOR",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "W",
+          "bar",
+          "kg",
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 12205,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",

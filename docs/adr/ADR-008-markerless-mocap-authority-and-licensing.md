@@ -1,4 +1,4 @@
-# ADR-007: Markerless Mocap Authority, Interchange, and Licensing
+# ADR-008: Markerless Mocap Authority, Interchange, and Licensing
 
 Date: 2026-08-25
 Status: Accepted for contract implementation
