@@ -3,6 +3,91 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 25873,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4a95586c1dcefa590d31d214aa0cc5d836e5856a6268a90d8fa1f1267f55c22f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-CORE-CELESTIAL-BODY-PY-082521AC3C75",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/core/celestial_body.py",
+      "purpose": "Celestial Body Classes",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "BodyType",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CelestialBody",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Moon",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Planet",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Spacecraft",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Star",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StateVector",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "kg",
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 13099,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",

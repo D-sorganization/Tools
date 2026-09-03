@@ -3,6 +3,76 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 2568,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "926b7e8c1a30a86c82c792fcee058ed4a2bb54bf7168efe13f0fef4a1a274841",
+      "family": "rotation-converter-calculation",
+      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-MODERN-ROBOTICS-PKG-SO3-PY-3BB45535F304",
+      "language": "python",
+      "maintainer": "Rotation converter maintainers",
+      "path": "src/rotation_converter/modern_robotics_pkg/so3.py",
+      "purpose": "SO(3) — 3D Rotation helpers.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "MatrixExp3",
+            "signature": "so3mat: Any"
+          },
+          {
+            "kind": "function",
+            "name": "MatrixLog3",
+            "signature": "R: Any"
+          },
+          {
+            "kind": "function",
+            "name": "VecToso3",
+            "signature": "omega: Any"
+          },
+          {
+            "kind": "function",
+            "name": "so3ToVec",
+            "signature": "so3mat: Any"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 3961,
       "classification": "calculation",
       "classification_basis": "path-marker:rotation",
@@ -14767,63 +14837,6 @@
         "test_paths": [
           "src/shared/python/calc_backend/tests/test_calc_backend_gaps.py"
         ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2132,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c8e961ae7e158608eb9c1f66db6ce8475ff4121ed050f14fee8c81853073bc4b",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-FLOW-RATE-PY-4F56AE605A79",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/calc_backend/routers/flow_rate.py",
-      "purpose": "Flow rate converter router.  See issue #608.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "_TABLES",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "convert_flow_rate",
-            "signature": "request: FlowRateConvertRequest"
-          }
-        ],
-        "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []
       }

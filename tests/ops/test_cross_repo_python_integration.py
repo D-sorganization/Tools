@@ -182,3 +182,26 @@ def test_cross_repo_job_uses_persistent_python_toolcache_and_cold_cache_budget()
         "cache": "pip",
     }
     assert "${{ runner.temp }}/_tool_cache" not in setup_step.get("env", {}).values()
+
+
+def test_missing_downstream_suite_fails_instead_of_skipping() -> None:
+    """Tools #4920: no consumer suite means a failed lane, never a green skip."""
+    workflow = _workflow()
+    job = workflow["jobs"]["downstream-consumer-contracts"]
+    steps = job["steps"]
+    checkout = next(
+        step
+        for step in steps
+        if step.get("name") == "Checkout ${{ matrix.downstream.repo }}"
+    )
+    assert "continue-on-error" not in checkout
+    require = next(
+        step
+        for step in steps
+        if step.get("name") == "Require the downstream consumer-contract suite"
+    )
+    assert "exit 1" in require["run"]
+    assert "tests/shared_contracts" in require["run"]
+    names = {step.get("name") for step in steps}
+    assert "Summary (suite missing)" not in names
+    assert "Summary (skipped)" not in names

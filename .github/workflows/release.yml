@@ -164,6 +164,13 @@ jobs:
         run: |
           python3 -m pytest -m "unit" -n auto --timeout=60 -q || true
 
+      - name: Wheel builds with pyproject name/version
+        # Tools #4920: never cut a release whose wheel cannot be built or whose
+        # metadata disagrees with pyproject.toml.
+        run: |
+          python3 -m pip install --upgrade build
+          python3 scripts/check_wheel_build.py --check
+
   # ── 3. Bump version in pyproject.toml + VERSION file ────────────────
   bump-version:
     timeout-minutes: 60
@@ -312,10 +319,18 @@ jobs:
           ref: main
           fetch-depth: 0
 
-      - name: Build source distribution
+      - name: Build source distribution, wheel and SBOM
+        # Tools #4920: every release ships the ud-tools wheel (UpstreamDrift
+        # consumes Tools by version) and a CycloneDX SBOM of the pinned
+        # requirements next to the sdist.
         run: |
-          python3 -m pip install --upgrade pip build
+          python3 -m pip install --upgrade pip build cyclonedx-bom
           python3 -m build --sdist --outdir dist/
+          python3 scripts/check_wheel_build.py --outdir dist
+          cyclonedx-py requirements requirements.txt --of JSON -o "dist/ud_tools-${NEW_VERSION}.sbom.cdx.json"
+          ls -la dist/
+        env:
+          NEW_VERSION: ${{ needs.analyse-commits.outputs.new_version }}
 
       - name: Download release notes
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
@@ -353,6 +368,35 @@ jobs:
 
           gh release create "v${NEW_VERSION}" \
             dist/*.tar.gz \
+            dist/*.whl \
+            dist/*.sbom.cdx.json \
             --title "v${NEW_VERSION}" \
             --notes-file release-notes.md \
             --repo "$GITHUB_REPOSITORY"
+
+  # ── 5. Wheel artifact on every push to main ───────────────────────────
+  # Tools #4920: UpstreamDrift's seam epic (UD #9406) needs to consume Tools
+  # by commit before a tag exists. Independent of the bump decision.
+  wheel-artifact:
+    timeout-minutes: 30
+    name: Wheel artifact (main)
+    runs-on: d-sorg-fleet
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
+        with:
+          python-version: "3.12"
+      - name: Build wheel
+        run: |
+          python3 -m pip install --upgrade pip build
+          python3 scripts/check_wheel_build.py --outdir dist
+      - name: Upload wheel
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: tools-wheel-${{ github.sha }}
+          path: dist/*.whl
+          if-no-files-found: error
+          retention-days: 30

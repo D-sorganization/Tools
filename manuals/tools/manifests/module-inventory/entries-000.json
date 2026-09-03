@@ -7655,6 +7655,7 @@
           "tests/test_phase1_quick_wins.py",
           "tests/test_phase2_critical_bugs.py",
           "tests/test_pressure_drop_engine_split.py",
+          "tests/test_shared_package_api_stability.py",
           "tests/test_sidekick_public_api_stability.py",
           "tests/test_signal_processing_expanded.py",
           "tests/test_subprocess_utils.py",
