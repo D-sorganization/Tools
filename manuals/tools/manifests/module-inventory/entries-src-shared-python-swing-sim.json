@@ -11592,10 +11592,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 18174,
+      "bytes_lf": 18224,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "7625ab066e70e217dba8dc88263c11ec5a8e081e2fb0ff863dbefb52b754d47d",
+      "content_sha256_lf": "2ab53c8442e2dd8a2c5baf373de10e085014ce1db4b860fe978f20ac86a431d0",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-MODELS-PY-F747EEBCCBA7",
       "language": "python",
@@ -11694,7 +11694,6 @@
         ],
         "unit_mentions": [
           "J",
-          "N",
           "ms",
           "s"
         ],
