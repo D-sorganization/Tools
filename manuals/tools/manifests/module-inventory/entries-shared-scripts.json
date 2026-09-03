@@ -1,0 +1,204 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 14133,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3d2c72911e5471fba3acf67ff3cf8564374e4381108e09c25f0ed7398f2c01fd",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SHARED-SCRIPTS-FLEET-HOOKS-PY-B72B87E03803",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "shared_scripts/fleet_hooks.py",
+      "purpose": "Portable fleet hook checks used by Repository_Management templates.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "ALLOWED_WORKFLOW_TOKENS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BANNED_WORKFLOW_TOKENS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BARE_EXCEPT_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CHECKS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_MAX_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_MAX_SOURCE_LINES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEPENDENCY_MANIFESTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DOC_GOVERNANCE_PREFIXES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "OVERSIZED_SOURCE_LINE_BASELINES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ROOT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ROOT_ALLOWLIST",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ROOT_SCRATCH_SUFFIXES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SOURCE_PREFIXES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SOURCE_SUFFIXES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "changed_files",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "check_adr_readme",
+            "signature": "args: argparse.Namespace"
+          },
+          {
+            "kind": "function",
+            "name": "check_dependency_audit",
+            "signature": "args: argparse.Namespace"
+          },
+          {
+            "kind": "function",
+            "name": "check_dependency_direction",
+            "signature": "args: argparse.Namespace"
+          },
+          {
+            "kind": "function",
+            "name": "check_error_handling",
+            "signature": "args: argparse.Namespace"
+          },
+          {
+            "kind": "function",
+            "name": "check_file_size",
+            "signature": "args: argparse.Namespace"
+          },
+          {
+            "kind": "function",
+            "name": "check_root_clutter",
+            "signature": "args: argparse.Namespace"
+          },
+          {
+            "kind": "function",
+            "name": "check_spec_freshness",
+            "signature": "args: argparse.Namespace"
+          },
+          {
+            "kind": "function",
+            "name": "check_workflow_inventory",
+            "signature": "args: argparse.Namespace"
+          },
+          {
+            "kind": "function",
+            "name": "existing",
+            "signature": "paths: Iterable[str]"
+          },
+          {
+            "kind": "function",
+            "name": "fail_or_warn",
+            "signature": "title: str, failures: list[str], warn_only: bool"
+          },
+          {
+            "kind": "function",
+            "name": "is_source",
+            "signature": "path: str"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: Sequence[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "rel",
+            "signature": "path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "repo_rel",
+            "signature": "path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "staged_files",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "shared_scripts",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

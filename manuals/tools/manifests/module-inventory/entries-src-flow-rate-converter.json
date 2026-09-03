@@ -1,0 +1,564 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 119,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9756b9d9ef6208f4d6c606035d8c9bbdc3d60215580ae7c3f9fa3cc669698a49",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FLOW-RATE-CONVERTER-INIT-PY-4E4B7CD866A5",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/flow_rate_converter/__init__.py",
+      "purpose": "Flow Rate Converter",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 878,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ec698905c5df9a663f30c5cc1661625babf38f99606211a48d43e7777b1bb467",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FLOW-RATE-CONVERTER-GUI-REGISTRATION-PY-8A138009B2B1",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/flow_rate_converter/gui_registration.py",
+      "purpose": "GUI registration for Flow Rate Converter.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "GUI_INFO",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GUI_METADATA",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_gui_info",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_gui_registration.py",
+          "tests/rate_of_closure/test_gui_registration.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 443,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2b21c0d4c4bf39c6f583e36ce111f600eedfa53eab5a46fa75bb186141c0c6df",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FLOW-RATE-CONVERTER-LAUNCH-PYQT6-PY-0B4ED2048ACC",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/flow_rate_converter/launch_pyqt6.py",
+      "purpose": "Standalone PyQt6 launcher for Flow Rate Converter.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_launch_pyqt6.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 130,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7950296f1aed319d1ed6c93493bce36008dada53940a8603d1269cb5d64a419a",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FLOW-RATE-CONVERTER-PYTHON-FLOW-RATE-CONVERTER-INIT-PY-43C6C74D73B5",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/flow_rate_converter/python/flow_rate_converter/__init__.py",
+      "purpose": "Flow Rate Converter Package",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 25,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b0cfd44b98733f38f52588b09c584c9b23dc4c4e1ff9582ec6d7802b2f69cd6e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FLOW-RATE-CONVERTER-PYTHON-FLOW-RATE-CONVERTER-UI-INIT-PY-8FF3CC59E9EE",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/flow_rate_converter/python/flow_rate_converter/ui/__init__.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 119,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c278b7d4ef0b1e4bc7d61ae0cfd5eac06e9d40c72ee9516f2dcc6618a4411daa",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FLOW-RATE-CONVERTER-PYTHON-FLOW-RATE-CONVERTER-UI-PYQT6-INIT-PY-A4725A3FA1F7",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/flow_rate_converter/python/flow_rate_converter/ui/pyqt6/__init__.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "FlowRateConverterWindow",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 12832,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ebcb99c97b742ab06fd940f9fadd931c2cc8a51ace561ae8c7e1577a94dc8bd7",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FLOW-RATE-CONVERTER-PYTHON-FLOW-RATE-CONVERTER-UI-PYQT6-MAIN-WINDOW-PY-CA13898592D2",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/flow_rate_converter/python/flow_rate_converter/ui/pyqt6/main_window.py",
+      "purpose": "Flow Rate Converter PyQt6 Main Window.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FlowRateConverterWindow",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ALIGN_CENTER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_EXPANDING",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_FIXED",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/flow_rate_converter/tests/test_flow_rate_converter_gui.py",
+          "src/movement_optimizer/tests/test_main_window.py",
+          "src/pendulum_simulator/tests/test_main_window.py",
+          "tests/ode_solver/test_main_window.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "kg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 635,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c0267ddb29d283c9ea4c98fff49db45ee5baea734182f2d9b460b08eef45acd8",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FLOW-RATE-CONVERTER-WEB-SRC-APP-TSX-C62F2503C261",
+      "language": "typescript-react",
+      "maintainer": "Tools module maintainers",
+      "path": "src/flow_rate_converter/web/src/App.tsx",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8417,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e37b94bf8aef742d4d4fefd71ab99db14270f7a1dd837b18993be671a5267c03",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FLOW-RATE-CONVERTER-WEB-SRC-COMPONENTS-FLOWRATECONVERTER-TSX-FD1BB474AE0B",
+      "language": "typescript-react",
+      "maintainer": "Tools module maintainers",
+      "path": "src/flow_rate_converter/web/src/components/FlowRateConverter.tsx",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://localhost:8010"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "FlowRateConverter",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "kg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 329,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e47d60dda42f404dd98a6cb4006c5047ff6a5fd401180452f9111ed27a9c368f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FLOW-RATE-CONVERTER-WEB-SRC-INDEX-CSS-2B0BECEF0E6C",
+      "language": "css",
+      "maintainer": "Tools module maintainers",
+      "path": "src/flow_rate_converter/web/src/index.css",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 232,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5f49dce6e6cc4b5d678cf529ef892af0ab7dfa6afb300b11ad559224019b8b05",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FLOW-RATE-CONVERTER-WEB-SRC-MAIN-TSX-CBEB7331309C",
+      "language": "typescript-react",
+      "maintainer": "Tools module maintainers",
+      "path": "src/flow_rate_converter/web/src/main.tsx",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/flow_rate_converter",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

@@ -1,0 +1,614 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1212,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "46b8412557dd9bcc682533932bcc69cb45f6a62260151c4b61e780998ed042d5",
+      "family": "plot-engine-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-ENGINE-INIT-PY-4301F125392F",
+      "language": "python",
+      "maintainer": "Plot engine maintainers",
+      "path": "src/shared/python/plot_engine/__init__.py",
+      "purpose": "Shared plot engine for cross-platform visualization.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "AxisSpec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ContourPlotSpec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FilterComparisonSpec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "HeatmapSpec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "HistogramSpec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LegendSpec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlotConverter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlotRenderer",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlotSpec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SeriesData",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SeriesStyle",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SurfacePlotSpec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ThemeColorProvider",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TrendlineSpec",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2538,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "522a8ad606e5c148a88b296fb149782d1ecb4b02d0d2942f934355b934e22a97",
+      "family": "plot-engine-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-ENGINE-CONTOUR-PY-148102622686",
+      "language": "python",
+      "maintainer": "Plot engine maintainers",
+      "path": "src/shared/python/plot_engine/contour.py",
+      "purpose": "Contour and heatmap data preparation utilities.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "correlation_matrix",
+            "signature": "data: np.ndarray, labels: list[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "scatter_to_grid",
+            "signature": "x: np.ndarray, y: np.ndarray, z: np.ndarray, resolution: int=100, method: str='linear'"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/plot_engine/test_contour.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 18042,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "eab8c6b61f0103d14305bc4146bc24d51b52bb3d7d599c0a009ba25110a6a113",
+      "family": "plot-engine-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-ENGINE-MATPLOTLIB-RENDERER-PY-345ED3EDABF1",
+      "language": "python",
+      "maintainer": "Plot engine maintainers",
+      "path": "src/shared/python/plot_engine/matplotlib_renderer.py",
+      "purpose": "Matplotlib renderer for PlotSpec contracts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MatplotlibRenderer",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_LINESTYLE_MAP",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_MARKER_MAP",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/plot_engine/tests/test_matplotlib_renderer.py",
+          "tests/shared/python/plot_engine/test_matplotlib_renderer.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13094,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7f538c57d6e2967f3bcb4569179c4740ae75001cac2e7a05761e2aa6f41e3b71",
+      "family": "plot-engine-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-ENGINE-PLOTLY-CONVERTER-PY-2464FC20D0A9",
+      "language": "python",
+      "maintainer": "Plot engine maintainers",
+      "path": "src/shared/python/plot_engine/plotly_converter.py",
+      "purpose": "Plotly.js JSON converter for PlotSpec contracts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PlotlyConverter",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_DASH_MAP",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SYMBOL_MAP",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/plot_engine/tests/test_plotly_converter.py",
+          "tests/shared/python/plot_engine/test_plotly_converter.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1868,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cb458b464a65520889fafb9f44009395d1debe071fb363952c2005f7331e9d70",
+      "family": "plot-engine-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-ENGINE-PROTOCOLS-PY-7FFDB7499FE2",
+      "language": "python",
+      "maintainer": "Plot engine maintainers",
+      "path": "src/shared/python/plot_engine/protocols.py",
+      "purpose": "Protocol interfaces for the plot engine.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PlotConverter",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlotRenderer",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ThemeColorProvider",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/test_protocols.py",
+          "tests/shared/python/plot_engine/test_protocols.py",
+          "tests/shared/python/sidekick/test_protocols.py"
+        ],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6779,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ac7d78aade9d134d7f7a32ddfe87369c33243b70e242edfa9ae14450e4e1ed40",
+      "family": "plot-engine-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-ENGINE-PYQT6-WIDGET-PY-DDEC1EC83F1A",
+      "language": "python",
+      "maintainer": "Plot engine maintainers",
+      "path": "src/shared/python/plot_engine/pyqt6_widget.py",
+      "purpose": "Reusable PyQt6 PlotWidget backed by PlotSpec + MatplotlibRenderer.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PlotWidget",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/plot_engine/tests/test_pyqt6_widget_export_identity.py",
+          "tests/shared/python/plot_engine/test_pyqt6_widget.py"
+        ],
+        "unit_mentions": [
+          "bar",
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3898,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6804bf0bf1507d27825fe728b3a8ea0ca1687a56fd10e1c75ab6c05ebd09f54d",
+      "family": "plot-engine-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-ENGINE-SPECS-PY-591CB1EC185F",
+      "language": "python",
+      "maintainer": "Plot engine maintainers",
+      "path": "src/shared/python/plot_engine/specs.py",
+      "purpose": "PlotSpec Pydantic contract hierarchy.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AxisSpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ContourPlotSpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FilterComparisonSpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HeatmapSpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HistogramSpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LegendSpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlotSpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SeriesData",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SeriesStyle",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SurfacePlotSpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TrendlineSpec",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/plot_engine/tests/test_matplotlib_renderer.py",
+          "src/shared/python/plot_engine/tests/test_plotly_converter.py",
+          "src/shared/python/plot_engine/tests/test_pyqt6_widget_export_identity.py",
+          "src/shared/python/plot_engine/tests/test_specs.py",
+          "tests/shared/python/plot_engine/test_matplotlib_renderer.py",
+          "tests/shared/python/plot_engine/test_plotly_converter.py",
+          "tests/shared/python/plot_engine/test_pyqt6_widget.py",
+          "tests/shared/python/plot_engine/test_specs.py",
+          "tests/test_waves_2_3_imports.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6322,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c89d799e31c01ff150cce72ea2a19fb9e16a671fbadd5bb0c9911f0db56dddbd",
+      "family": "plot-engine-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-ENGINE-TRENDLINE-PY-B8DF87BE68EB",
+      "language": "python",
+      "maintainer": "Plot engine maintainers",
+      "path": "src/shared/python/plot_engine/trendline.py",
+      "purpose": "Shared trendline computation module.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "TrendlineResult",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "compute_trendline",
+            "signature": "x: np.ndarray, y: np.ndarray, trend_type: Literal['linear', 'polynomial', 'exponential', 'power']='linear', degree: int=2, n_points: int=200"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/plot_engine/tests/test_trendline.py",
+          "tests/shared/python/plot_engine/test_trendline.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/shared/python/plot_engine",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

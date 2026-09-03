@@ -1,0 +1,49 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 239,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3addde2d2d2c0d8d080ec94d8702a3f3b3f4d8434d119af985991ae98b7be65b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-AI-INIT-PY-1334EEFD0087",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/ai/__init__.py",
+      "purpose": "Compatibility shim for the canonical ``shared.python.ai`` package.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/ai",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

@@ -1,0 +1,439 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 192,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e45c7ce6ded766bea9d37980e4d03537749cd483289d49347b109d28cf76c815",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-LOWER-BODY-MODEL-INIT-PY-A8931932F43E",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/lower_body_model/__init__.py",
+      "purpose": "Lower-body model public API.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "HipRotationSample",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InclinedPlaneHipRotationTarget",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9670,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b2baf753d8dd5a01a6770b2bb8385308c32ae9217229c4c6072616eefbcb3d53",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-LOWER-BODY-MODEL-BUILDER-PY-9ABCEA94DDC0",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/lower_body_model/builder.py",
+      "purpose": "MuJoCo MJCF XML generator for the lower body golf-swing model.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_PELVIS_SEMI_X",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_PELVIS_SEMI_Z",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_lower_body_xml",
+            "signature": "thigh_mass: float=10.0, calf_mass: float=4.5, foot_mass: float=1.0, pelvis_mass: float=20.0, thigh_length: float=0.45, calf_length: float=0.45, pelvis_width: float=0.3"
+          }
+        ],
+        "test_paths": [
+          "src/lower_body_model/tests/test_simulator.py",
+          "tests/unit/lower_body_model/test_builder.py",
+          "tests/unit/lower_body_model/test_hip_rotation_target.py",
+          "tests/unit/lower_body_model/test_public_api_contract.py",
+          "tests/unit/lower_body_model/test_simulator.py"
+        ],
+        "unit_mentions": [
+          "kg"
+        ],
+        "validation_paths": [
+          "tests/unit/lower_body_model/test_public_api_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 654,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "21d665b0c3d3ea39f52953c62380f22c2f6eae4cb02ae187ab9c6f8e48adf308",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-LOWER-BODY-MODEL-GUI-REGISTRATION-PY-CC436A020639",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/lower_body_model/gui_registration.py",
+      "purpose": "GUI registration for the Lower Body Model tool.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "GUI_INFO",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_gui_info",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_gui_registration.py",
+          "tests/rate_of_closure/test_gui_registration.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 6172,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "62042a3d071e96a97ff5bcbc532c9082abaa085f023e3295bc456df0d2fc5011",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-LOWER-BODY-MODEL-HIP-ROTATION-PY-346FB4CC89A0",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/lower_body_model/hip_rotation.py",
+      "purpose": "Inclined-plane hip rotation target profiles for the lower-body model.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "HipRotationSample",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "InclinedPlaneHipRotationTarget",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/unit/lower_body_model/test_hip_rotation_target.py",
+          "tests/unit/lower_body_model/test_public_api_contract.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "tests/unit/lower_body_model/test_public_api_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 14293,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "681c51684ea443950d16accfc58c5f24b913a88b878ec9dbad3a126c05f4e9a1",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-LOWER-BODY-MODEL-LAUNCH-PYQT6-PY-5CDF3BBBF986",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/lower_body_model/launch_pyqt6.py",
+      "purpose": "Lower Body Model - PyQt6/PyQt6 GUI Launcher",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ControlPanel",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_launch_pyqt6.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "Nm",
+          "deg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1677,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "746aecdb45ab9944b019b9cee6728a2aa4a6004d7be1e8245a0d5261492bae5b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-LOWER-BODY-MODEL-MAIN-PY-42B21D1004AB",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/lower_body_model/main.py",
+      "purpose": "Lower Body Model - MuJoCo Simulation Viewer",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "Nm"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 32698,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "53f95322526fd70e99668a6d773920d58e8e2bf00ece6b50a4bf2b526f17bf5a",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-LOWER-BODY-MODEL-SIMULATOR-PY-3E2EA9FD38CB",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/lower_body_model/simulator.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "LowerBodySimulator",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/lower_body_model/tests/test_simulator.py",
+          "tests/unit/lower_body_model/test_hip_rotation_target.py",
+          "tests/unit/lower_body_model/test_public_api_contract.py",
+          "tests/unit/lower_body_model/test_simulator.py"
+        ],
+        "unit_mentions": [
+          "J",
+          "N/m",
+          "Nm",
+          "rad",
+          "s"
+        ],
+        "validation_paths": [
+          "tests/unit/lower_body_model/test_public_api_contract.py"
+        ]
+      }
+    }
+  ],
+  "package": "src/lower_body_model",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

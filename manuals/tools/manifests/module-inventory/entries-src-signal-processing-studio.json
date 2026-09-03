@@ -1,0 +1,424 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 521,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "b273f5279aa2f691f2e12fa8fbafd1554389f1f322b179f4cfd691579af8bccf",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SIGNAL-PROCESSING-STUDIO-INIT-PY-9C09AE3492D6",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/signal_processing_studio/__init__.py",
+      "purpose": "Signal Processing Studio - Unified signal processing application.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_CANONICAL_PKG",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 545,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "af6446fe9daa7f233226543a3a30b618098b1688ee8db0ed6213c0f2fd8fb8bc",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SIGNAL-PROCESSING-STUDIO-CONFTEST-PY-1AB45BA6DE05",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/signal_processing_studio/conftest.py",
+      "purpose": "Root conftest for signal_processing_studio — sets up PYTHONPATH.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "src/data_processing/data_processor/python/tests/conftest.py",
+          "src/document_processing/pdf_renamer/tests/conftest.py",
+          "src/movement_optimizer/tests/conftest.py",
+          "src/p1am_control_system/backend/tests/conftest.py",
+          "src/pendulum_simulator/tests/conftest.py",
+          "src/shared/python/sidekick/tests/conftest.py",
+          "src/signal_processing_studio/tests/conftest.py",
+          "src/urdf_builder_gui/tests/conftest.py",
+          "src/vessel_drafter/tests/conftest.py",
+          "src/web_applications/urdf_viewer/tests/conftest.py",
+          "tests/benchmarks/conftest.py",
+          "tests/conftest.py",
+          "tests/e2e/conftest.py",
+          "tests/integration/conftest.py",
+          "tests/ode_solver/conftest.py",
+          "tests/p1am_control_system/conftest.py",
+          "tests/pendulum_simulator/conftest.py",
+          "tests/rate_of_closure/conftest.py",
+          "tests/shared/python/launch_monitor/conftest.py",
+          "tests/shared/python/sidekick/process_calculators/conftest.py",
+          "tests/solar_system_model/conftest.py",
+          "tests/tools/folder_tools/conftest.py",
+          "tests/unit/ai/integrations/conftest.py",
+          "tests/unit/ai/integrations/github_mcp/conftest.py",
+          "tests/unit/ai/mcp/conftest.py",
+          "tests/unit/chat/conftest.py",
+          "tests/unit/codemap/conftest.py",
+          "tests/unit/lower_body_model/conftest.py",
+          "tests/unit/sidekick/conftest.py",
+          "tests/vessel_drafter/conftest.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 759,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "b115b79fff340a870519f4bfbe5d9375121698b6d1f870dd501d011d38532559",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SIGNAL-PROCESSING-STUDIO-GUI-REGISTRATION-PY-3B82B1014183",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/signal_processing_studio/gui_registration.py",
+      "purpose": "GUI registration for Signal Processing Studio.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "GUI_INFO",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_gui_info",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_gui_registration.py",
+          "tests/rate_of_closure/test_gui_registration.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 369,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "8d6990dc5a81d945042a584ecce7354a6340b8d46fa533bb1c296fc38c250a84",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SIGNAL-PROCESSING-STUDIO-LAUNCH-PYQT6-PY-0A5AE419336C",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/signal_processing_studio/launch_pyqt6.py",
+      "purpose": "Standalone PyQt6 launcher for Signal Processing Studio.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/folder_tool/test_launch_pyqt6.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 45,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "6a5f65529c321965c63598f9a0655747318e2b03e1d137d12f7fbd0fb29821b1",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SIGNAL-PROCESSING-STUDIO-PYTHON-SIGNAL-PROCESSING-STUDIO-INIT-PY-F6AD88FE9972",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/signal_processing_studio/python/signal_processing_studio/__init__.py",
+      "purpose": "Signal Processing Studio core package.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 6808,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "2a595c0dbafee6e52f3c86c894b91632c0b23024f6975b9d548e50889a371bc1",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SIGNAL-PROCESSING-STUDIO-PYTHON-SIGNAL-PROCESSING-STUDIO-MAIN-WINDOW-PY-8A45A626C80B",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/signal_processing_studio/python/signal_processing_studio/main_window.py",
+      "purpose": "Signal Processing Studio - Unified signal processing application.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SignalProcessingStudio",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_main_window.py",
+          "src/pendulum_simulator/tests/test_main_window.py",
+          "src/signal_processing_studio/tests/test_signal_processing_studio.py",
+          "tests/ode_solver/test_main_window.py"
+        ],
+        "unit_mentions": [
+          "bar",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3272,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "490f6f8ec4d530d3f796831aeec4844def6657847b570a77380ec21f693c0096",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SIGNAL-PROCESSING-STUDIO-PYTHON-SIGNAL-PROCESSING-STUDIO-SIGNAL-BUS-PY-DC5EBF206FEE",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/signal_processing_studio/python/signal_processing_studio/signal_bus.py",
+      "purpose": "Signal bus for routing data between Signal Processing Studio widgets.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SignalBus",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/signal_processing_studio/tests/test_signal_processing_studio.py"
+        ],
+        "unit_mentions": [
+          "Hz",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/signal_processing_studio",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

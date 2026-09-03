@@ -64,3 +64,4 @@ Update this file whenever workflows are added, removed, enabled, or disabled.
 For governance, see Repository_Management/docs/architecture/WORKFLOW_GOVERNANCE.md.
 
 - 2026-09-02: `ci-standard.yml` concurrency group changed to `ci-standard-${{ github.ref == 'refs/heads/main' && github.sha || github.ref }}` (per-commit on main; `cancel-in-progress: true` unchanged) so a later push never cancels an in-flight main run (main-green campaign, Repository_Management#1507).
+- 2026-09-03: `ci-standard.yml` gains one stdlib-only job `divergence-ledger-gate` (pull_request only, `ubuntu-24.04`, `fetch-depth: 0`) running `python scripts/check_divergence_ledger.py` — a PR touching a ledgered shadowed module must name its paired UpstreamDrift PR (`UD-PAIR:`) unless the ledger rules the module tools-canonical (Tools #4915; governed edit, Repository_Management#1507).

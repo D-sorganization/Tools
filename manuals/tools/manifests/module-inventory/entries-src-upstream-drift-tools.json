@@ -1,0 +1,49 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 413,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "dcf56d08a293c98303563f6340ac86406f648a0876253c32bd0810a1fb67e2ea",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-UPSTREAM-DRIFT-TOOLS-INIT-PY-50171ECD78DE",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/upstream_drift_tools/__init__.py",
+      "purpose": "Deprecated compatibility shim for ``shared.python.sidekick``.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/upstream_drift_tools",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

@@ -1,0 +1,358 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1835,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3863fb9940c75e552eaafc61f1c01a3ca22f75550c945451e72e1fb2581e15ee",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-CONTRACTS-PY-BE024EE54693",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/contracts.py",
+      "purpose": "Top-level contracts module — re-exports the shared contracts API.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "CONTRACTS_ENABLED",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ContractChecker",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ContractLevel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ContractViolationError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DBC_LEVEL",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InvariantError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PostconditionError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PreconditionError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StateError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "check_non_negative",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "check_positive",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "check_pressure",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "check_range",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "check_temperature",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "class_invariant",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "contract",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ensure",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ensure_valid_result",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_contract_level",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "has_finite_elements",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "invariant",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "invariant_checked",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "is_non_negative",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "is_positive",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "is_valid_result",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "postcondition",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "precondition",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "require",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "require_finite",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "require_positive",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "require_unit_vector",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "set_contract_level",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "set_contracts_enabled",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/data_processing/data_processor/python/tests/test_advanced_analysis.py",
+          "src/p1am_control_system/backend/tests/test_units_contract.py",
+          "src/pendulum_simulator/pendulum-web/tests/forceSourceProfiles.test.ts",
+          "src/pendulum_simulator/tests/test_companion_dialog.py",
+          "src/pendulum_simulator/tests/test_rotating_base_panel.py",
+          "src/pendulum_simulator/tests/test_transfer_strategy_panel.py",
+          "src/shared/python/calc_backend/tests/test_calc_backend.py",
+          "src/shared/python/calc_backend/tests/test_calc_backend_gaps.py",
+          "src/shared/python/data_processing/tests/test_processor.py",
+          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
+          "src/shared/python/model_generation/tests/test_contracts.py",
+          "src/shared/python/sidekick/tests/test_data_io.py",
+          "src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py",
+          "src/shared/python/swing_sim/flight/tests/test_capability_optimizer.py",
+          "src/shared/python/swing_sim/flight/tests/test_surface_flight_cancellation.py",
+          "src/shared/python/swing_sim/ground/tests/test_reference_execution_contract.py",
+          "src/shared/python/swing_sim/ground/tests/test_regional_plan_wire.py",
+          "src/shared/python/swing_sim/ground/tests/test_regional_surfaces.py",
+          "src/shared/python/swing_sim/solver/tests/test_spatial_targets.py",
+          "src/shared/python/swing_sim/tests/test_force_attribution.py",
+          "src/shared/python/swing_sim/tests/test_localized_torque.py",
+          "src/shared/python/swing_sim/variation/tests/test_ensemble_geometry.py",
+          "src/shared/python/swing_sim/variation/tests/test_global_sensitivity.py",
+          "src/shared/python/swing_sim/variation/tests/test_noise_response_field.py",
+          "src/shared/python/tests/test_contracts_shared.py",
+          "src/shared/python/tests/test_cors.py",
+          "src/urdf_builder_gui/tests/test_urdf_builder_gui.py",
+          "tests/_import_contract_bootstrap.py",
+          "tests/architecture/test_design_manual_governance_contract.py",
+          "tests/architecture/test_layer_boundaries.py",
+          "tests/architecture/test_no_source_assert_contracts.py",
+          "tests/architecture/test_tools_exemplar_manuals_contract.py",
+          "tests/architecture/test_tools_manual_renderer_contract.py",
+          "tests/architecture/test_tools_module_inventory_contract.py",
+          "tests/architecture/test_tools_textbook_chapter_contract.py",
+          "tests/calc_backend/test_wgs_reactor_headless_import_3317.py",
+          "tests/contract/test_calc_backend_contract_surface.py",
+          "tests/heavy_integration/test_tools_contracts.py",
+          "tests/integration/sidekick/test_standalone_wheel.py",
+          "tests/integration/test_cross_repo_contracts.py",
+          "tests/ops/test_pre_push_mypy_scope.py",
+          "tests/ops/test_rate_web_playwright_workflow.py",
+          "tests/ops/test_rust_security_dependency_floors.py",
+          "tests/rate_of_closure/test_ball_setup.py",
+          "tests/rate_of_closure/test_ball_setup_gui.py",
+          "tests/rate_of_closure/test_camera_preferences.py",
+          "tests/rate_of_closure/test_chip_forgiveness_analysis.py",
+          "tests/rate_of_closure/test_contracts.py",
+          "tests/rate_of_closure/test_fixed_ball_gui.py",
+          "tests/rate_of_closure/test_ground_playback.py",
+          "tests/rate_of_closure/test_impact_scene.py",
+          "tests/rate_of_closure/test_launch_monitor_analysis.py",
+          "tests/rate_of_closure/test_launch_monitor_conformance_golden.py",
+          "tests/rate_of_closure/test_launch_monitor_workspace_v3.py",
+          "tests/rate_of_closure/test_locus_execution_capabilities.py",
+          "tests/rate_of_closure/test_morris_authority_contracts.py",
+          "tests/rate_of_closure/test_python_compatibility.py",
+          "tests/rate_of_closure/test_regional_ground_execution_controller.py",
+          "tests/rate_of_closure/test_regional_ground_execution_files.py",
+          "tests/rate_of_closure/test_regional_ground_loopback_submitter.py",
+          "tests/rate_of_closure/test_regional_ground_variation_persistence.py",
+          "tests/rate_of_closure/test_screw_analysis.py",
+          "tests/rate_of_closure/test_torque_profile_ui.py",
+          "tests/rate_of_closure/test_torque_run_history.py",
+          "tests/rate_of_closure/test_variation_noise_response.py",
+          "tests/rate_of_closure/test_variation_streaming_ensemble_analysis.py",
+          "tests/rate_of_closure/test_web_companion_contracts.py",
+          "tests/rate_of_closure/test_workspace_torque_session.py",
+          "tests/rate_of_closure/test_workspace_variation_session.py",
+          "tests/rotation_converter/test_modern_robotics.py",
+          "tests/rotation_converter/test_modern_robotics_public_surface_3689.py",
+          "tests/rotation_converter/test_rotation_core.py",
+          "tests/scripts/test_check_tools_manifest_workflow.py",
+          "tests/shared/python/ai/test_codex_cli_adapter.py",
+          "tests/shared/python/ai/test_gemini_cli_adapter.py",
+          "tests/shared/python/chat/test_terminal_contracts.py",
+          "tests/shared/python/data_processing/test_processor.py",
+          "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/golf_club/test_shaft_serialization.py",
+          "tests/shared/python/process_calculators/test_scrubber_calculator.py",
+          "tests/shared/python/process_calculators/test_syngas_water_calculator_edge_cases.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
+          "tests/shared/python/test_contracts.py",
+          "tests/shared/python/test_cors.py",
+          "tests/test_body_parameters_strict_validation.py",
+          "tests/test_cross_repo_import_compatibility.py",
+          "tests/test_launch_utils.py",
+          "tests/test_launcher_factory.py",
+          "tests/test_phase1_quick_wins.py",
+          "tests/test_properties.py",
+          "tests/test_signal_core_coverage.py",
+          "tests/tools/test_config_loader.py",
+          "tests/tools/test_icon_utils.py",
+          "tests/tools/test_launch_utils.py",
+          "tests/tools/test_matlab_quality_utils.py",
+          "tests/tools/test_quality_utils.py",
+          "tests/tools/test_scientific_auditor.py",
+          "tests/tools/test_ui_utils.py",
+          "tests/unit/ai/mcp/test_contracts.py",
+          "tests/unit/ai/mcp/test_mcp_gui_integration.py",
+          "tests/unit/ai/peer_review/test_contracts.py",
+          "tests/unit/ai/skills/test_contracts.py",
+          "tests/unit/chat/test_adapter_capabilities.py",
+          "tests/unit/sidekick/agent/test_action_service.py",
+          "tests/unit/sidekick/test_standalone_canonical_package.py",
+          "tests/unit/test_contracts.py",
+          "tests/vessel_drafter/test_contracts_fallback.py",
+          "tests/vessel_drafter/test_contracts_unified.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "src/p1am_control_system/backend/tests/test_units_contract.py",
+          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
+          "src/shared/python/model_generation/tests/test_contracts.py",
+          "src/shared/python/swing_sim/ground/tests/test_reference_execution_contract.py",
+          "src/shared/python/tests/test_contracts_shared.py",
+          "tests/_import_contract_bootstrap.py",
+          "tests/architecture/test_design_manual_governance_contract.py",
+          "tests/architecture/test_no_source_assert_contracts.py",
+          "tests/architecture/test_tools_exemplar_manuals_contract.py",
+          "tests/architecture/test_tools_manual_renderer_contract.py",
+          "tests/architecture/test_tools_module_inventory_contract.py",
+          "tests/architecture/test_tools_textbook_chapter_contract.py",
+          "tests/contract/test_calc_backend_contract_surface.py",
+          "tests/heavy_integration/test_tools_contracts.py",
+          "tests/integration/test_cross_repo_contracts.py",
+          "tests/rate_of_closure/test_contracts.py",
+          "tests/rate_of_closure/test_morris_authority_contracts.py",
+          "tests/rate_of_closure/test_web_companion_contracts.py",
+          "tests/shared/python/chat/test_terminal_contracts.py",
+          "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
+          "tests/shared/python/test_contracts.py",
+          "tests/test_body_parameters_strict_validation.py",
+          "tests/tools/test_scientific_auditor.py",
+          "tests/unit/ai/mcp/test_contracts.py",
+          "tests/unit/ai/peer_review/test_contracts.py",
+          "tests/unit/ai/skills/test_contracts.py",
+          "tests/unit/test_contracts.py",
+          "tests/vessel_drafter/test_contracts_fallback.py",
+          "tests/vessel_drafter/test_contracts_unified.py"
+        ]
+      }
+    }
+  ],
+  "package": "src",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

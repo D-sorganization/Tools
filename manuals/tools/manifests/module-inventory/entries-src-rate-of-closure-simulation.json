@@ -1,0 +1,2897 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 4679,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "b71ca6b394d08516baebb8a0480cfb843fe5b409f08cfecc0c30f8b6e9e38928",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-INIT-PY-7BC8891DC6A1",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/__init__.py",
+      "purpose": "Simulation session for the Rate of Closure explorer (epic #4103).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "AppFrameSwing",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BALL_POSITION_M",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BallSetup",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BallSupportMode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ContactMode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_DRIVER_TEE_HEIGHT_M",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_SPEED",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "EXPLORER_METRIC_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FlightExploration",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "IMPACT_SCENE_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactKinematicSnapshot",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactOutcome",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactScene",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactSceneMetric",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactSceneVector",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactStatus",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "KINETIC_JOINT_NAMES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "KineticsSeries",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ManualDeliveryConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ManualSwingSource",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PLAYBACK_SPEEDS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlaybackAdvance",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlaybackFrame",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RunGroundClearanceSnapshot",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RunTurfInteractionSnapshot",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SCREW_CSV_COLUMNS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SCRUB_STEPS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SOURCE_KINDS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ShaftAxisDatum",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SimulationConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SimulationRun",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TARGET_CSV_COLUMNS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TimedTrajectory",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TriplePendulumParameters",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TriplePendulumSwing",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WindComparison",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "advance_playback",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ball_setup_from_json_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "clamp_time",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compare_wind",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compute_kinetics",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "delivery_at",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "explore_flight",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "explore_with_optional_wind",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "fit_run_torque_profile",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ground_clearance_for_run",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "impact_kinematics_for_run",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "impact_scene_for_run",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "inverse_dynamics",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "kinetics_for_run",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "launch_from_delivery",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "launch_from_direct",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "make_source",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "manual_delivery_from_json_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putt_playback_trajectory",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "representative_wedge_parameters_for_club",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "run_simulation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "run_to_json_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "screw_axis_samples",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "screw_series_rows",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "scrub_value",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "simulate_forced",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "spatial_target_from_simulation_document",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "time_at_scrub",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "turf_interaction_for_run",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "write_csv",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "write_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "write_screw_csv",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "write_torque_csv",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "zero_torque_counterfactual",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 7456,
+      "classification": "calculation",
+      "classification_basis": "path-marker:dynamics",
+      "content_sha256_lf": "337488b0b9daabf067bc4b78fe4e8c7ffc28b7b7d10cd0bec429d4395910919d",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-KINETICS-DYNAMICS-PY-498BF77C7035",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/_kinetics_dynamics.py",
+      "purpose": "Pure double-pendulum dynamics used by the swing-kinetics façade.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "inverse_dynamics",
+            "signature": "p: PendulumParameters, states: np.ndarray, g_inplane: tuple[float, float], dt: float"
+          },
+          {
+            "kind": "function",
+            "name": "reaction_forces",
+            "signature": "p: PendulumParameters, theta: np.ndarray, omega: np.ndarray, alpha: np.ndarray, g_inplane: tuple[float, float], clubhead_mass_kg: float"
+          },
+          {
+            "kind": "function",
+            "name": "simulate_forced",
+            "signature": "p: PendulumParameters, initial: PendulumState, g_inplane: tuple[float, float], dt: float, n_steps: int, torque_fn: Callable[[float], tuple[float, float]]"
+          },
+          {
+            "kind": "function",
+            "name": "zero_torque_counterfactual",
+            "signature": "p: PendulumParameters, states: np.ndarray, g_inplane: tuple[float, float], *, locked: tuple[bool, bool]=(False, False)"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_kinetics.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 5177,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "c7ed88c364576fe4a8ce1e63925356c47ce32fea0ec9f9b339a8981ac4e577da",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-KINETICS-SERIES-PY-E94A627991E9",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/_kinetics_series.py",
+      "purpose": "Immutable output contract for double-pendulum swing kinetics.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "KineticsSeries",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CLUBHEAD_MASS_KG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "KINETIC_JOINT_NAMES",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_kinetics.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "kg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 7851,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "fd4b15e4653f56c07337fe90533bac51a449959613fabfa0454a57f990fbfa59",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-CONTACT-PY-1EDA8C0CF66A",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/contact.py",
+      "purpose": "Typed clubhead-reference-point contact outcomes.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ContactMode",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImpactOutcome",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImpactStatus",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "assess_fixed_contact",
+            "signature": "times_s: np.ndarray, reference_positions_m: np.ndarray, ball_position_m: np.ndarray, contact_threshold_m: float"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_morris_pyqt_workflow.py"
+        ],
+        "unit_mentions": [
+          "N"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3121,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "530803c05955048fe2102a01b5dab46db2d88ce0d2789ddceeed4f61bfb80058",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-DELIVERY-PY-0784ED60B7A7",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/delivery.py",
+      "purpose": "Delivery extraction at a selected clubhead sample.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_MAX_DELIVERY_ANGLE_DEG",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "delivery_at",
+            "signature": "source: SwingSource, tau: float, scenario: ImpactScenario, club: ClubSpec"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/impact/tests/test_delivery.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 16873,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "ad46909d47bf31d353ab1044e048d1c0e601f1efe8bd84b625906ef4b5f78c6e",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-EXPORT-PY-1AF44A669576",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/export.py",
+      "purpose": "Run data export: CSV time series and JSON summary/params.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "CSV_COLUMNS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCREW_CSV_COLUMNS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TORQUE_CSV_COLUMNS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "ball_setup_from_json_dict",
+            "signature": "data: Mapping[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "manual_delivery_from_json_dict",
+            "signature": "data: Mapping[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "run_to_json_dict",
+            "signature": "run: SimulationRun, *, spatial_target: SpatialTarget | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "screw_series_rows",
+            "signature": "run: SimulationRun"
+          },
+          {
+            "kind": "function",
+            "name": "series_rows",
+            "signature": "run: SimulationRun, spatial_target: SpatialTarget | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "torque_series_rows",
+            "signature": "run: SimulationRun"
+          },
+          {
+            "kind": "function",
+            "name": "write_csv",
+            "signature": "run: SimulationRun, path: str | Path, *, spatial_target: SpatialTarget | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "write_json",
+            "signature": "run: SimulationRun, path: str | Path, *, spatial_target: SpatialTarget | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "write_screw_csv",
+            "signature": "run: SimulationRun, path: str | Path"
+          },
+          {
+            "kind": "function",
+            "name": "write_torque_csv",
+            "signature": "run: SimulationRun, path: str | Path"
+          },
+          {
+            "kind": "re-export",
+            "name": "TARGET_CSV_COLUMNS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "spatial_target_from_simulation_document",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_export.py",
+          "tests/rate_of_closure/test_spatial_target_persistence.py",
+          "tests/shared/python/chat/test_export.py"
+        ],
+        "unit_mentions": [
+          "N*m",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 10542,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "22028296801f1cb4b1909eeed63b977d6561b60c92f60a80da057c5501e872c0",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-FLIGHT-EXPLORER-PY-22C1526AFF27",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/flight_explorer.py",
+      "purpose": "Standalone ball-flight exploration: launch entry -> flight, no swing.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FlightExploration",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WindComparison",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXPLORER_METRIC_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "compare_wind",
+            "signature": "launch: LaunchConditions, scenario: WindScenario, model_name: str='waterloo_penner'"
+          },
+          {
+            "kind": "function",
+            "name": "explore_flight",
+            "signature": "launch: LaunchConditions, model_name: str='waterloo_penner'"
+          },
+          {
+            "kind": "function",
+            "name": "launch_from_delivery",
+            "signature": "params: DeliveryParameters"
+          },
+          {
+            "kind": "function",
+            "name": "launch_from_direct",
+            "signature": "ball_speed_mph: float, launch_angle_deg: float, launch_direction_deg: float | None=None, spin_rpm: float | None=None, spin_axis_tilt_deg: float | None=None, *, azimuth_deg: float | None=None, direction_convention: LaunchDirectionConvention=LaunchDirectionConvention.APP_NATIVE"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_flight_explorer.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "deg",
+          "rpm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 5523,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "34698209a73e37fd5444658dd030b93ae0c24ede6c6c3aa41c2265d2907700d3",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-FLIGHT-PLAYBACK-PY-4CFE5FB15AC7",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/flight_playback.py",
+      "purpose": "Deterministic interpolation contract for shot playback (#4200, #4800 P8).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PlaybackFrame",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TimedTrajectory",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_flight_playback.py",
+          "tests/rate_of_closure/test_playback_transport.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 4702,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "08bd863d70c0ada0e88e602150ca34c9dbf84b06da2bed869481f99528118f83",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-FLIGHT-RECORD-PLAYBACK-PY-2782C7D394DE",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/flight_record_playback.py",
+      "purpose": "Runtime-neutral lift of an imported trajectory record onto the shared",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "UnsupportedTrajectoryFrameError",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "timed_trajectory_from_ball_flight_record",
+            "signature": "record: BallFlightTrajectory"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_flight_record_playback.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3992,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "d4e7fb7e5358f8f275f7c2fabc22b405620f913aac93ddcb9ce3183b9c2fa783",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-GROUND-CLEARANCE-PY-ADC3493C0BE5",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/ground_clearance.py",
+      "purpose": "Adapt retained Rate runs to shared swept-wedge ground clearance.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "RunGroundClearanceSnapshot",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "ground_clearance_for_run",
+            "signature": "run: SimulationRun, parameters: WedgeHeadParameters, ground: GroundPlane"
+          },
+          {
+            "kind": "function",
+            "name": "representative_wedge_parameters_for_club",
+            "signature": "club: ClubSpec"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_wedge_ground_clearance.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 11575,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "85a5a6ccb84cc4fe1155d33298048ddf7880f5803550e0658cb65a36b8f1d566",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-GROUND-PLAYBACK-PY-BFA7877654BE",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/ground_playback.py",
+      "purpose": "Phase-aware playback adapter for strict ground simulation results.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GroundPlaybackFrame",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundPlaybackTimeline",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_IMPORT_MAX_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_IMPORT_MAX_POINTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_RENDERED_PATH_POINTS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "load_ground_result_json",
+            "signature": "text: str, *, max_bytes: int=DEFAULT_IMPORT_MAX_BYTES, max_points: int=DEFAULT_IMPORT_MAX_POINTS"
+          },
+          {
+            "kind": "function",
+            "name": "select_ground_playback_indices",
+            "signature": "phases: Sequence[str], times: Sequence[float], event_times: Sequence[float], *, max_points: int=MAX_RENDERED_PATH_POINTS"
+          },
+          {
+            "kind": "function",
+            "name": "timeline_from_regional_execution",
+            "signature": "execution: RegionalGroundExecutionResult"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_ground_playback.py",
+          "tests/rate_of_closure/test_ground_playback_workspace_v2.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 11532,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "521b03472dd9ceb7bbaa72628f4616469e0d9a3053bb7cc4e5bde99e43d2cc11",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-GROUND-PLAYBACK-COMPARISON-PY-CA9E9C61177C",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/ground_playback_comparison.py",
+      "purpose": "Synchronized, observation-bounded comparison of two ground results.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GroundComparisonFrame",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundComparisonMetric",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundComparisonProvenance",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundPlaybackComparison",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GROUND_PLAYBACK_COMPARISON_SCHEMA",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "ground_comparison_csv",
+            "signature": "comparison: GroundPlaybackComparison"
+          },
+          {
+            "kind": "function",
+            "name": "ground_comparison_json",
+            "signature": "comparison: GroundPlaybackComparison"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 10670,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "ed4b956f4d5394e222c35e27a29c09b153035b229ba6ebc3374ecde80b2931de",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-GROUND-PLAYBACK-WORKSPACE-PY-CA0623D289A1",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/ground_playback_workspace.py",
+      "purpose": "Strict persistence and evidence exports for ground-result playback.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GroundPlaybackState",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundPlaybackViewState",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundPlaybackWorkspace",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GROUND_PLAYBACK_WORKSPACE_SCHEMA",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_CAMERA_ZOOM",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MIN_CAMERA_ZOOM",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SUPPORTED_PLAYBACK_SPEEDS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "ground_event_csv",
+            "signature": "result: GroundSimulationResult"
+          },
+          {
+            "kind": "function",
+            "name": "ground_result_json",
+            "signature": "result: GroundSimulationResult"
+          },
+          {
+            "kind": "function",
+            "name": "ground_trajectory_csv",
+            "signature": "result: GroundSimulationResult"
+          },
+          {
+            "kind": "function",
+            "name": "ground_workspace_from_json",
+            "signature": "text: str, *, max_bytes: int=DEFAULT_IMPORT_MAX_BYTES, max_points: int=DEFAULT_IMPORT_MAX_POINTS"
+          },
+          {
+            "kind": "function",
+            "name": "ground_workspace_to_json",
+            "signature": "workspace: GroundPlaybackWorkspace"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_ground_playback_workspace_v2.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 842,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "c7ed9aceb5cf82130c45ce56fe72bf9aa900fcaac0224d36375904c0f3e34325",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-GROUND-PLAYBACK-WORKSPACE-COMMON-PY-48A435D91C6A",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/ground_playback_workspace_common.py",
+      "purpose": "Shared structural validation for versioned ground playback workspaces.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "exact_workspace_fields",
+            "signature": "payload: dict[str, Any], expected: set[str], name: str, schema_label: str"
+          },
+          {
+            "kind": "function",
+            "name": "workspace_object",
+            "signature": "value: object, name: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 15164,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "978cc5c801b71a0c2002c9bbbafe2be9e44ab0dfa75d0c4e771dcc86dd64d605",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-GROUND-PLAYBACK-WORKSPACE-V2-PY-79488E9D0B51",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/ground_playback_workspace_v2.py",
+      "purpose": "Strict comparison-aware persistence for ground playback workspaces.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GroundPlaybackComparisonState",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundPlaybackWorkspaceLoad",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundPlaybackWorkspaceV2",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GROUND_PLAYBACK_WORKSPACE_MAX_BYTES_V2",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GROUND_PLAYBACK_WORKSPACE_MAX_POINTS_COMBINED",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GROUND_PLAYBACK_WORKSPACE_MAX_POINTS_PER_RESULT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GROUND_PLAYBACK_WORKSPACE_SCHEMA_V2",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "ground_workspace_from_versioned_json",
+            "signature": "text: str, *, max_bytes: int=GROUND_PLAYBACK_WORKSPACE_MAX_BYTES_V2, max_points_per_result: int=GROUND_PLAYBACK_WORKSPACE_MAX_POINTS_PER_RESULT, max_combined_points: int=GROUND_PLAYBACK_WORKSPACE_MAX_POINTS_COMBINED"
+          },
+          {
+            "kind": "function",
+            "name": "ground_workspace_v2_from_json",
+            "signature": "text: str, *, max_bytes: int=GROUND_PLAYBACK_WORKSPACE_MAX_BYTES_V2, max_points_per_result: int=GROUND_PLAYBACK_WORKSPACE_MAX_POINTS_PER_RESULT, max_combined_points: int=GROUND_PLAYBACK_WORKSPACE_MAX_POINTS_COMBINED"
+          },
+          {
+            "kind": "function",
+            "name": "ground_workspace_v2_to_json",
+            "signature": "workspace: GroundPlaybackWorkspaceV2, *, max_bytes: int=GROUND_PLAYBACK_WORKSPACE_MAX_BYTES_V2"
+          },
+          {
+            "kind": "function",
+            "name": "load_ground_workspace_versioned_json",
+            "signature": "text: str, *, max_bytes: int=GROUND_PLAYBACK_WORKSPACE_MAX_BYTES_V2, max_points_per_result: int=GROUND_PLAYBACK_WORKSPACE_MAX_POINTS_PER_RESULT, max_combined_points: int=GROUND_PLAYBACK_WORKSPACE_MAX_POINTS_COMBINED"
+          },
+          {
+            "kind": "function",
+            "name": "migrate_ground_workspace_v1",
+            "signature": "workspace: GroundPlaybackWorkspace"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_ground_playback_workspace_v2.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 9263,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "9159087582286ddf9e473434f1e349a281415dc99d9c806e78fa7a9052b30ea1",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-IMPACT-KINEMATICS-PY-7B1E029F3793",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/impact_kinematics.py",
+      "purpose": "Adapt retained Rate runs to the shared frame-explicit wedge analysis.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "mapped",
+        "citations": "mapped",
+        "equation_pathway": "mapped",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [
+          "manuals/tools/chapters/04-swing-rate-of-closure-dplane.qmd"
+        ],
+        "citation_refs": [
+          "src/rate_of_closure/web/src/model/__fixtures__/dplane_golden_v1.json",
+          "src/shared/python/swing_sim/impact/dplane.py"
+        ],
+        "equation_refs": [
+          "TOOLS-DPLANE-FRAME",
+          "TOOLS-DPLANE-NORMAL",
+          "TOOLS-DPLANE-SPIN-LOFT"
+        ],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ImpactKinematicSnapshot",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "impact_kinematics_for_run",
+            "signature": "run: SimulationRun"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_impact_kinematics.py"
+        ],
+        "unit_mentions": [
+          "1",
+          "degree",
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 11179,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "54416cb59439ff9c6215da2f5e5858b68ef8674b08d14de83021a97704d83867",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-IMPACT-SCENE-PY-58E9F1B91667",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/impact_scene.py",
+      "purpose": "UI-independent engineering scene for impact inspection and export.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ImpactScene",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImpactSceneMetric",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImpactSceneVector",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "IMPACT_SCENE_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "impact_scene_for_run",
+            "signature": "run: SimulationRun"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_impact_scene.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3292,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "33b930407b77f141504d2f3ace77326eb19e980764df006a759fe399642e6426",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-ISA-PY-64B6BB13CA70",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/isa.py",
+      "purpose": "Thin adapter over the rotation converter's screw-axis extraction.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "MIN_RATE_DPS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "screw_axis_samples",
+            "signature": "poses: Sequence[np.ndarray] | np.ndarray, dt: float"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N",
+          "deg",
+          "ms",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 7937,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "5ef2aac607d4499c5fc16244d26b65f53d6a03118c53044112d1eee11b40edec",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-KINETICS-PY-71F3E36B3E98",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/kinetics.py",
+      "purpose": "Swing kinetics façade and run adapter for the double-pendulum model.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "compute_kinetics",
+            "signature": "run: SimulationRun, clubhead_mass_kg: float=CLUBHEAD_MASS_KG, *, analysis_time_s: float | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "kinetics_for_run",
+            "signature": "run: SimulationRun"
+          },
+          {
+            "kind": "re-export",
+            "name": "CLUBHEAD_MASS_KG",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "KINETIC_JOINT_NAMES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "KineticsSeries",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "inverse_dynamics",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "simulate_forced",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "zero_torque_counterfactual",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_kinetics.py"
+        ],
+        "unit_mentions": [
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3562,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "b9e93db67652e698a8ae096b2c99fb3ba84c5d4b23056fe68fb60b4e67232147",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-MANUAL-DELIVERY-PY-804082D1F5E4",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/manual_delivery.py",
+      "purpose": "Validated manual delivery and head-geometry declarations.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ManualDeliveryConfig",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ShaftAxisDatum",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "manual_head_rotation",
+            "signature": "delivery: ManualDeliveryConfig"
+          },
+          {
+            "kind": "function",
+            "name": "manual_reference_velocity",
+            "signature": "speed_mps: float, delivery: ManualDeliveryConfig"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_manual_delivery.py",
+          "tests/rate_of_closure/test_spatial_target_persistence.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "m/s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 12953,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "d9a03fe67b16a6da4e58b8c53c77839341d35428496caf128bfb4c76be6662b2",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-PIPELINE-PY-E6FB409F0AE0",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/pipeline.py",
+      "purpose": "Internal swing/contact/impact/flight orchestration helpers.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "SWING_SAMPLE_DT_S",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "configured_swing_sample_times",
+            "signature": "config: SimulationConfig"
+          },
+          {
+            "kind": "function",
+            "name": "execute_simulation",
+            "signature": "config: SimulationConfig"
+          },
+          {
+            "kind": "function",
+            "name": "swing_sample_times",
+            "signature": "duration_s: float"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_pipeline.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 4096,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "e0d0d1ddb08b9009a9acfc4b3f3b3005772db95fb23ec288495e27c16db40264",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-PLAYBACK-TRANSPORT-PY-E7728F726E91",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/playback_transport.py",
+      "purpose": "Runtime-neutral playback transport math for 3D shot playback (#4800 P8).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PlaybackAdvance",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_SPEED",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PLAYBACK_SPEEDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCRUB_STEPS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "advance_playback",
+            "signature": "time_s: float, elapsed_s: float, speed: float, duration_s: float"
+          },
+          {
+            "kind": "function",
+            "name": "clamp_time",
+            "signature": "time_s: float, duration_s: float"
+          },
+          {
+            "kind": "function",
+            "name": "scrub_value",
+            "signature": "time_s: float, duration_s: float, steps: int=SCRUB_STEPS"
+          },
+          {
+            "kind": "function",
+            "name": "time_at_scrub",
+            "signature": "value: int, duration_s: float, steps: int=SCRUB_STEPS"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_ground_playback_workspace_v2.py",
+          "tests/rate_of_closure/test_playback_transport.py",
+          "tests/rate_of_closure/test_putting_gui.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 2674,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "294090b020a9b2c89ab8c63521dfce0a2612553219ac7aecab3685bff0c304ce",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-PUTT-PLAYBACK-PY-0B4731C52DEA",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/putt_playback.py",
+      "purpose": "Runtime-neutral lift of a recorded putt onto the shared playback timeline.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "putt_playback_trajectory",
+            "signature": "result: PuttResult, surface: GreenSurface"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_playback_transport.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 13152,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "00f7a20553148ddc7fd91eb8a670601800029701eec4bd6344fa651debc00f71",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-RECORDS-PY-21A54BC3EBDF",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/records.py",
+      "purpose": "Typed request and result records for Rate of Closure simulations.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SimulationConfig",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SimulationRun",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BALL_POSITION_M",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_turf_interaction.py"
+        ],
+        "unit_mentions": [
+          "J",
+          "N",
+          "deg"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 10983,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "3a5a4d3ff01820cd76fc07d35dccbbdcb03a36ec5c30c267973c82e8773027f5",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-SCREW-ANALYSIS-PY-2816CA7972B5",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/screw_analysis.py",
+      "purpose": "Typed instantaneous screw-motion analysis for clubs and articulated joints.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "JointMotionSeries",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MotionKind",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MotionProjection",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ScrewGlyph",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ScrewMotion",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "analyze_joint_motion",
+            "signature": "times_s: np.ndarray, joint_positions_m: np.ndarray, joint_ids: tuple[str, ...]"
+          },
+          {
+            "kind": "function",
+            "name": "analyze_twist",
+            "signature": "twist: np.ndarray, reference_point_m: np.ndarray"
+          },
+          {
+            "kind": "function",
+            "name": "build_screw_glyph",
+            "signature": "motion: ScrewMotion, scene_extent_m: float"
+          },
+          {
+            "kind": "function",
+            "name": "project_motion",
+            "signature": "motion: ScrewMotion, directions: Mapping[str, np.ndarray] | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_screw_analysis.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 1257,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "7eec79bce3bf0f874c1ea9fdc320d1ee1013fc2152f337ae8ae336c5044ea43b",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-SESSION-PY-86C8670956F0",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/session.py",
+      "purpose": "Public orchestration seam for swing, contact, impact, and flight.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "run_simulation",
+            "signature": "config: SimulationConfig"
+          },
+          {
+            "kind": "re-export",
+            "name": "BALL_POSITION_M",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BallSetup",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BallSupportMode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ContactMode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_DRIVER_TEE_HEIGHT_M",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactOutcome",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SimulationConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SimulationRun",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "delivery_at",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 11268,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "bee81e588bb8002381803c6b39f2e6c8dd0138299260be701a8ded104f49b49f",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-SOURCES-PY-9F053F3C6541",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/sources.py",
+      "purpose": "App-frame swing sources for the simulation session (epic #4103).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AppFrameSwing",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ManualSwingSource",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "APP_FROM_SWING",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MANUAL_SWING_DURATION_S",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SOURCE_KINDS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "make_source",
+            "signature": "kind: str, scenario: ImpactScenario, plane: PlaneOrientation | None=None, duration: float=1.5, run_config: DoublePendulumRunConfig | None=None, torque_library: TorqueProfileLibrary | None=None, pendulum_parameters: PendulumParameters | None=None, manual_delivery: ManualDeliveryConfig | None=None"
+          },
+          {
+            "kind": "re-export",
+            "name": "TriplePendulumParameters",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TriplePendulumSwing",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_kinetics.py",
+          "tests/rate_of_closure/test_simulation.py",
+          "tests/rate_of_closure/test_torque_run_history.py"
+        ],
+        "unit_mentions": [
+          "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 5595,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "a939991feeb49e8471373dc590598a3593c06904dc767e72733cc32b1cae03e0",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-TARGET-PERSISTENCE-PY-0F8F5CC61510",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/target_persistence.py",
+      "purpose": "Canonical spatial-target metadata for run/project persistence.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "TARGET_CSV_COLUMNS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "default_spatial_target",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "simulation_document_format",
+            "signature": "value: object"
+          },
+          {
+            "kind": "function",
+            "name": "spatial_target_from_simulation_document",
+            "signature": "value: object"
+          },
+          {
+            "kind": "function",
+            "name": "target_csv_values",
+            "signature": "target: SpatialTarget"
+          },
+          {
+            "kind": "function",
+            "name": "target_document_fields",
+            "signature": "target: SpatialTarget"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3286,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "88b4f4416c094693bf4c85b395ddbf1d4889536068822b64391c03e5e2ae2dda",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-TARGETS-PY-5D3985B3C543",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/targets.py",
+      "purpose": "Landing target regions for the app (epic #4125, H7b).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "hold_fraction",
+            "signature": "dataset: VariationDataset, region: TargetRegion"
+          },
+          {
+            "kind": "function",
+            "name": "hold_stats",
+            "signature": "carries_m: np.ndarray, laterals_m: np.ndarray, region: TargetRegion"
+          },
+          {
+            "kind": "function",
+            "name": "layout_for_region",
+            "signature": "region: TargetRegion, base: CourseLayout | None=None"
+          },
+          {
+            "kind": "re-export",
+            "name": "TargetRegion",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/solver/tests/test_targets.py",
+          "tests/rate_of_closure/test_target_gui.py",
+          "tests/rate_of_closure/test_targets.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 1892,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "71d2bd8aae55dc22bd1727cf769c0ed87353001a8cfe484be77c6ba1eb72413c",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-TORQUE-HISTORY-PY-7CDBEE5782C2",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/torque_history.py",
+      "purpose": "Convert retained Rate run torques into canonical reusable profiles.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "fit_run_torque_profile",
+            "signature": "run: SimulationRun, *, profile_id: str, name: str, description: str, degree: int, source_metadata: Mapping[str, str], created_at_utc: str, modified_at_utc: str, max_condition_number: float=100000000.0"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 10384,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "55278b3cc30f2ab5aca76815eb82b3e9c658f40fed4dc24ceed0a2c88218566d",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-TRIPLE-PENDULUM-PY-17B1DF88038B",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/triple_pendulum.py",
+      "purpose": "Planar triple-pendulum dynamics and swing-frame sampling.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "TriplePendulumParameters",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TriplePendulumSwing",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "triple_derivatives",
+            "signature": "p: TriplePendulumParameters, state: np.ndarray, g_inplane: tuple[float, float]"
+          },
+          {
+            "kind": "function",
+            "name": "triple_total_energy",
+            "signature": "p: TriplePendulumParameters, state: np.ndarray, g_inplane: tuple[float, float]"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_simulation.py"
+        ],
+        "unit_mentions": [
+          "J",
+          "kg",
+          "ms",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3304,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "9bc020620ddb9c7ce68778fe18b24e5d9ddd61fbfb803934ad051f278b63f712",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-TURF-INTERACTION-PY-011BFE2429F3",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/turf_interaction.py",
+      "purpose": "Adapt retained Rate wedge states to the shared compliant-turf model.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "RunTurfInteractionSnapshot",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "turf_interaction_for_run",
+            "signature": "run: SimulationRun, parameters: WedgeHeadParameters, ground: GroundPlane, profile: TurfContactProfile, *, time_step_s: float=5e-06"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_turf_interaction.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/rate_of_closure/simulation",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

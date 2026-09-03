@@ -1,0 +1,1334 @@
+{
+  "schema_version": "divergence-ledger/1.0.0",
+  "authority": "D-sorganization/Tools",
+  "title": "Shadowed-module divergence ledger",
+  "updated": "2026-09-03",
+  "pins": {
+    "tools": "c0a395d5",
+    "upstreamdrift": "27b6eeadbbd970bebb8926a3c83aeaea1f6ee4da"
+  },
+  "sources": [
+    "AGENT_HANDOFF.md row #4583 (D1-D30 rulings, formerly line 39)",
+    "docs/adr/ADR-0048-launch-monitor-port-plan.md (module table, G1-D1..G1-D4)",
+    "UpstreamDrift divergence inventory v1 (UpstreamDrift#9432, comment on Tools#4915)"
+  ],
+  "rulings": {
+    "tools-canonical": "Tools is the source; UD consumes (vendor pin / wheel). Tools-only PRs allowed.",
+    "ud-canonical": "UD is the source; Tools must not shadow it.",
+    "split": "Both halves are intentionally different estimands/artifacts; a change to either side is paired cross-repo work.",
+    "deferred": "Owner ruling pending on the seam epic; until ruled, a Tools change needs a paired UD PR (UD-PAIR: D-sorganization/UpstreamDrift#N)."
+  },
+  "statuses": [
+    "ported",
+    "paired-open",
+    "pinned",
+    "in-sync",
+    "tools-only",
+    "ud-copy-deleted",
+    "pending-inventory"
+  ],
+  "gate": {
+    "script": "scripts/check_divergence_ledger.py",
+    "rule": "A PR touching a ledgered tools_path must carry 'UD-PAIR: D-sorganization/UpstreamDrift#N' in its body unless the row's ruling is tools-canonical or its status is ud-copy-deleted."
+  },
+  "rows": [
+    {
+      "module": "launch_monitor/dispersion.py",
+      "tools_path": "src/shared/python/launch_monitor/dispersion.py",
+      "ud_path": "src/shared/python/launch_monitor/dispersion.py",
+      "ruling": "tools-canonical",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9348",
+      "target_pr": "Tools#4907",
+      "status": "ported",
+      "rulings": [
+        "D6",
+        "D7",
+        "D8",
+        "D9"
+      ],
+      "inventory": null,
+      "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure/launch_monitor_performance.py (analyze_dispersion) - disjoint result surface."
+    },
+    {
+      "module": "launch_monitor/multivariate.py",
+      "tools_path": "src/shared/python/launch_monitor/multivariate.py",
+      "ud_path": "src/shared/python/launch_monitor/multivariate.py",
+      "ruling": "tools-canonical",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9348",
+      "target_pr": "Tools#4907",
+      "status": "ported",
+      "rulings": [],
+      "inventory": null,
+      "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: no Tools counterpart before the port."
+    },
+    {
+      "module": "launch_monitor/trends.py",
+      "tools_path": "src/shared/python/launch_monitor/trends.py",
+      "ud_path": "src/shared/python/launch_monitor/trends.py",
+      "ruling": "tools-canonical",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9348",
+      "target_pr": "Tools#4907",
+      "status": "ported",
+      "rulings": [],
+      "inventory": null,
+      "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure/launch_monitor_performance.py (analyze_session_trend) - same name, different estimand; TrendResult -> TemporalTrendResult."
+    },
+    {
+      "module": "launch_monitor/comparison.py",
+      "tools_path": "src/shared/python/launch_monitor/comparison.py",
+      "ud_path": "src/shared/python/launch_monitor/comparison.py",
+      "ruling": "tools-canonical",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9348",
+      "target_pr": "Tools#4907",
+      "status": "ported",
+      "rulings": [],
+      "inventory": null,
+      "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: no Tools counterpart before the port."
+    },
+    {
+      "module": "launch_monitor/schema.py",
+      "tools_path": "src/shared/python/launch_monitor/schema.py",
+      "ud_path": "src/shared/python/launch_monitor/schema.py",
+      "ruling": "tools-canonical",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9348",
+      "target_pr": "Tools#4907",
+      "status": "ported",
+      "rulings": [],
+      "inventory": null,
+      "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure CANONICAL_DATASET_METRICS frozenset only."
+    },
+    {
+      "module": "launch_monitor/treatment.py",
+      "tools_path": "src/shared/python/launch_monitor/treatment.py",
+      "ud_path": "src/shared/python/launch_monitor/treatment.py",
+      "ruling": "tools-canonical",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9348",
+      "target_pr": "Tools#4907",
+      "status": "ported",
+      "rulings": [],
+      "inventory": null,
+      "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: no Tools counterpart before the port."
+    },
+    {
+      "module": "launch_monitor/relationships.py",
+      "tools_path": "src/shared/python/launch_monitor/relationships.py",
+      "ud_path": "src/shared/python/launch_monitor/relationships.py",
+      "ruling": "tools-canonical",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9348",
+      "target_pr": "Tools#4907",
+      "status": "ported",
+      "rulings": [
+        "D15"
+      ],
+      "inventory": null,
+      "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure/_launch_monitor_analysis_statistics.py correlations - plain correlation only; owner ruling D15 applied here."
+    },
+    {
+      "module": "launch_monitor/modeling.py",
+      "tools_path": "src/shared/python/launch_monitor/modeling.py",
+      "ud_path": "src/shared/python/launch_monitor/modeling.py",
+      "ruling": "tools-canonical",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9348",
+      "target_pr": "Tools#4907",
+      "status": "ported",
+      "rulings": [],
+      "inventory": null,
+      "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: no scikit-learn anywhere in rate_of_closure."
+    },
+    {
+      "module": "launch_monitor/profiles.py",
+      "tools_path": "src/shared/python/launch_monitor/profiles.py",
+      "ud_path": "src/shared/python/launch_monitor/profiles.py",
+      "ruling": "tools-canonical",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9348",
+      "target_pr": "Tools#4907",
+      "status": "ported",
+      "rulings": [],
+      "inventory": null,
+      "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: no Tools counterpart before the port."
+    },
+    {
+      "module": "launch_monitor/importer.py",
+      "tools_path": "src/shared/python/launch_monitor/importer.py",
+      "ud_path": "src/shared/python/launch_monitor/importer.py",
+      "ruling": "tools-canonical",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9348",
+      "target_pr": "Tools#4907",
+      "status": "ported",
+      "rulings": [],
+      "inventory": null,
+      "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure/launch_monitor_import.py - bounded reader, no profiles or units."
+    },
+    {
+      "module": "launch_monitor/flexible_analysis.py",
+      "tools_path": "src/shared/python/launch_monitor/flexible_analysis.py",
+      "ud_path": "src/shared/python/launch_monitor/flexible_analysis.py",
+      "ruling": "tools-canonical",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9348",
+      "target_pr": "Tools#4907",
+      "status": "ported",
+      "rulings": [
+        "D17"
+      ],
+      "inventory": null,
+      "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure/launch_monitor_analysis.py + 2 private modules; owner ruling D17 applied here (needs-decision row, gated per G1-D4)."
+    },
+    {
+      "module": "launch_monitor/contract_v2.py",
+      "tools_path": "src/shared/python/launch_monitor/contract_v2.py",
+      "ud_path": "src/shared/python/launch_monitor/contract_v2.py",
+      "ruling": "tools-canonical",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9348",
+      "target_pr": "Tools#4907",
+      "status": "ported",
+      "rulings": [
+        "D14"
+      ],
+      "inventory": null,
+      "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure/launch_monitor_canonical_v2.py - pinned client half only."
+    },
+    {
+      "module": "launch_monitor/strokes_gained_types.py",
+      "tools_path": "src/shared/python/launch_monitor/strokes_gained_types.py",
+      "ud_path": "src/shared/python/launch_monitor/strokes_gained_types.py",
+      "ruling": "tools-canonical",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9348",
+      "target_pr": "Tools#4907",
+      "status": "ported",
+      "rulings": [
+        "D1",
+        "D2",
+        "D5"
+      ],
+      "inventory": null,
+      "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure/launch_monitor_strokes_gained_baseline.py - baseline half stays in rate_of_closure."
+    },
+    {
+      "module": "launch_monitor/_scoring_statistics.py",
+      "tools_path": "src/shared/python/launch_monitor/_scoring_statistics.py",
+      "ud_path": "src/shared/python/launch_monitor/_scoring_statistics.py",
+      "ruling": "tools-canonical",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9348",
+      "target_pr": "Tools#4907",
+      "status": "ported",
+      "rulings": [
+        "D2",
+        "D3",
+        "D4"
+      ],
+      "inventory": null,
+      "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: internal."
+    },
+    {
+      "module": "launch_monitor/outcome_proxy.py",
+      "tools_path": "src/shared/python/launch_monitor/outcome_proxy.py",
+      "ud_path": "src/shared/python/launch_monitor/outcome_proxy.py",
+      "ruling": "tools-canonical",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9348",
+      "target_pr": "Tools#4907",
+      "status": "ported",
+      "rulings": [],
+      "inventory": null,
+      "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure/launch_monitor_performance.py calculate_target_error - identical formula (ungated)."
+    },
+    {
+      "module": "launch_monitor/strokes_gained.py",
+      "tools_path": "src/shared/python/launch_monitor/strokes_gained.py",
+      "ud_path": "src/shared/python/launch_monitor/strokes_gained.py",
+      "ruling": "tools-canonical",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9348",
+      "target_pr": "Tools#4907",
+      "status": "ported",
+      "rulings": [
+        "D1",
+        "D2",
+        "D3",
+        "D4",
+        "D5"
+      ],
+      "inventory": null,
+      "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure/launch_monitor_strokes_gained.py; G1-D3 exclude-and-audit is the canonical posture."
+    },
+    {
+      "module": "launch_monitor/longitudinal_types.py",
+      "tools_path": "src/shared/python/launch_monitor/longitudinal_types.py",
+      "ud_path": "src/shared/python/launch_monitor/longitudinal_types.py",
+      "ruling": "tools-canonical",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9348",
+      "target_pr": "Tools#4907",
+      "status": "ported",
+      "rulings": [
+        "D11",
+        "D12"
+      ],
+      "inventory": null,
+      "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure/launch_monitor_longitudinal.py dataclasses."
+    },
+    {
+      "module": "launch_monitor/longitudinal_statistics.py",
+      "tools_path": "src/shared/python/launch_monitor/longitudinal_statistics.py",
+      "ud_path": "src/shared/python/launch_monitor/longitudinal_statistics.py",
+      "ruling": "tools-canonical",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9348",
+      "target_pr": "Tools#4907",
+      "status": "ported",
+      "rulings": [
+        "D10",
+        "D11"
+      ],
+      "inventory": null,
+      "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure/launch_monitor_longitudinal.py - different pooled estimator (G1-D1 named-method pair)."
+    },
+    {
+      "module": "launch_monitor/longitudinal.py",
+      "tools_path": "src/shared/python/launch_monitor/longitudinal.py",
+      "ud_path": "src/shared/python/launch_monitor/longitudinal.py",
+      "ruling": "tools-canonical",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9348",
+      "target_pr": "Tools#4907",
+      "status": "ported",
+      "rulings": [
+        "D10",
+        "D11",
+        "D12",
+        "D13",
+        "D14"
+      ],
+      "inventory": null,
+      "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure/launch_monitor_longitudinal.py - different pooled estimator; G1-D1 named-method pair, G1-D2 session-cell inference unit."
+    },
+    {
+      "module": "launch_monitor/player_covariation_types.py",
+      "tools_path": "src/shared/python/launch_monitor/player_covariation_types.py",
+      "ud_path": "src/shared/python/launch_monitor/player_covariation_types.py",
+      "ruling": "tools-canonical",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9348",
+      "target_pr": "Tools#4907",
+      "status": "ported",
+      "rulings": [
+        "D22",
+        "D23"
+      ],
+      "inventory": null,
+      "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure/_player_covariation_types.py; union port."
+    },
+    {
+      "module": "launch_monitor/player_covariation_core.py",
+      "tools_path": "src/shared/python/launch_monitor/player_covariation_core.py",
+      "ud_path": "src/shared/python/launch_monitor/player_covariation_core.py",
+      "ruling": "tools-canonical",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9348",
+      "target_pr": "Tools#4907",
+      "status": "ported",
+      "rulings": [
+        "D22",
+        "D23"
+      ],
+      "inventory": null,
+      "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure/_player_covariation_scan.py plus statistics inside the twin; union port."
+    },
+    {
+      "module": "launch_monitor/player_covariation.py",
+      "tools_path": "src/shared/python/launch_monitor/player_covariation.py",
+      "ud_path": "src/shared/python/launch_monitor/player_covariation.py",
+      "ruling": "tools-canonical",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9348",
+      "target_pr": "Tools#4907",
+      "status": "ported",
+      "rulings": [
+        "D22",
+        "D23"
+      ],
+      "inventory": null,
+      "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure/player_covariation.py; union port, owner rulings D22/D23 applied here."
+    },
+    {
+      "module": "launch_monitor/conformance_bundle.py",
+      "tools_path": "src/shared/python/launch_monitor/conformance_bundle.py",
+      "ud_path": "src/shared/python/launch_monitor/conformance_bundle.py",
+      "ruling": "tools-canonical",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9348",
+      "target_pr": "Tools#4907",
+      "status": "ported",
+      "rulings": [],
+      "inventory": null,
+      "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: no Tools counterpart; Tools web consumes the golden it emits (P17 landed after P18 on purpose)."
+    },
+    {
+      "module": "launch_monitor/corpus.py",
+      "tools_path": "src/shared/python/launch_monitor/corpus.py",
+      "ud_path": "src/shared/python/launch_monitor/corpus.py",
+      "ruling": "tools-canonical",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9348",
+      "target_pr": "Tools#4907",
+      "status": "ported",
+      "rulings": [
+        "D28",
+        "D29",
+        "D30",
+        "D31"
+      ],
+      "inventory": null,
+      "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure/launch_monitor_private_corpus.py; MERGE row (ADR-0046 Amendment 1): validation refuses what the manifest rejects, no skip flag."
+    },
+    {
+      "module": "launch_monitor/dataset_reference.py",
+      "tools_path": "src/shared/python/launch_monitor/dataset_reference.py",
+      "ud_path": "src/shared/python/launch_monitor/dataset_reference.py",
+      "ruling": "tools-canonical",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9348",
+      "target_pr": "Tools#4907",
+      "status": "ported",
+      "rulings": [],
+      "inventory": null,
+      "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: pure facade; P20."
+    },
+    {
+      "module": "launch_monitor/dataset_reference_contract.py",
+      "tools_path": "src/shared/python/launch_monitor/dataset_reference_contract.py",
+      "ud_path": "src/shared/python/launch_monitor/dataset_reference_contract.py",
+      "ruling": "tools-canonical",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9348",
+      "target_pr": "Tools#4907",
+      "status": "ported",
+      "rulings": [],
+      "inventory": null,
+      "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure/launch_monitor_canonical_v2.py validators - client half only; P20."
+    },
+    {
+      "module": "launch_monitor/dataset_reference_operations.py",
+      "tools_path": "src/shared/python/launch_monitor/dataset_reference_operations.py",
+      "ud_path": "src/shared/python/launch_monitor/dataset_reference_operations.py",
+      "ruling": "tools-canonical",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9348",
+      "target_pr": "Tools#4907",
+      "status": "ported",
+      "rulings": [],
+      "inventory": null,
+      "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: P20; reads the corpus through the merged P19 loader."
+    },
+    {
+      "module": "launch_monitor/dataset_reference_verification.py",
+      "tools_path": "src/shared/python/launch_monitor/dataset_reference_verification.py",
+      "ud_path": "src/shared/python/launch_monitor/dataset_reference_verification.py",
+      "ruling": "tools-canonical",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9348",
+      "target_pr": "Tools#4907",
+      "status": "ported",
+      "rulings": [],
+      "inventory": null,
+      "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: P20."
+    },
+    {
+      "module": "rate_of_closure/launch_monitor_strokes_gained.py",
+      "tools_path": "src/rate_of_closure/launch_monitor_strokes_gained.py",
+      "ud_path": "src/shared/python/launch_monitor/strokes_gained.py",
+      "ruling": "split",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9354",
+      "target_pr": null,
+      "status": "paired-open",
+      "rulings": [
+        "D1",
+        "D2",
+        "D3",
+        "D4",
+        "D5",
+        "G1-D3"
+      ],
+      "inventory": null,
+      "notes": "G1-D3 legacy half CLOSED in Tools 1.18.112 (exclude-and-audit, additive status/excluded_rows/exclusions; TypeScript twin calculateSourceBackedStrokesGained aligned). UpstreamDrift must re-pin D1 (the raise) and D2 (the field set) in the paired vendor-bump PR; neither repo's change is correct alone."
+    },
+    {
+      "module": "rate_of_closure/player_covariation.py",
+      "tools_path": "src/rate_of_closure/player_covariation.py",
+      "ud_path": "src/shared/python/launch_monitor/player_covariation.py",
+      "ruling": "split",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9354",
+      "target_pr": null,
+      "status": "paired-open",
+      "rulings": [
+        "D22",
+        "D23"
+      ],
+      "inventory": null,
+      "notes": "D22/D23 legacy half OPEN: rate_of_closure.player_covariation still reports the low-dof between-player interval (-0.6655142653044201, 0.9960866924324187) and labels start_distance_yards as \"s\"; test_player_covariation_drift.py pins both; launchMonitorCovariation.ts is the cross-runtime twin. Must not be smuggled into a Tools-only PR."
+    },
+    {
+      "module": "rate_of_closure/launch_monitor_private_corpus.py",
+      "tools_path": "src/rate_of_closure/launch_monitor_private_corpus.py",
+      "ud_path": "src/shared/python/launch_monitor/corpus.py",
+      "ruling": "split",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9354",
+      "target_pr": null,
+      "status": "paired-open",
+      "rulings": [
+        "D28",
+        "D29",
+        "D30",
+        "D31"
+      ],
+      "inventory": null,
+      "notes": "D30 legacy half is the mirror image: UpstreamDrift's corpus.py must gain the manifest gate (five corpora rate_of_closure refuses, UD loads silently); test_corpus_drift.py's five D30 cases pin its permissiveness. Paired PR. D28 narrows, D29/D31 unchanged (UD capabilities carried over verbatim)."
+    },
+    {
+      "module": "rate_of_closure/launch_monitor_longitudinal.py",
+      "tools_path": "src/rate_of_closure/launch_monitor_longitudinal.py",
+      "ud_path": "src/shared/python/launch_monitor/longitudinal.py",
+      "ruling": "split",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9354",
+      "target_pr": null,
+      "status": "pinned",
+      "rulings": [
+        "D10",
+        "D11",
+        "D12",
+        "D13",
+        "D14",
+        "G1-D1",
+        "G1-D2"
+      ],
+      "inventory": null,
+      "notes": "Different pooled estimator by design (G1-D1 named-method pair; G1-D2 session-cell inference unit). Legacy keeps its estimator; drift suite test_longitudinal_drift.py pins D10-D14. A port must not move a pinned number."
+    },
+    {
+      "module": "rate_of_closure/launch_monitor_performance.py",
+      "tools_path": "src/rate_of_closure/launch_monitor_performance.py",
+      "ud_path": "src/shared/python/launch_monitor/dispersion.py",
+      "ruling": "split",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9354",
+      "target_pr": null,
+      "status": "pinned",
+      "rulings": [
+        "D6",
+        "D7",
+        "D8",
+        "D9"
+      ],
+      "inventory": null,
+      "notes": "analyze_dispersion (D6-D9, disjoint result surface) and analyze_session_trend (same name, different estimand) stay as the web-twinned application layer; the canonical inferential layer is Tools launch_monitor per ADR-0046 (1.18.114 docstring alignment)."
+    },
+    {
+      "module": "rate_of_closure/launch_monitor_analysis.py",
+      "tools_path": "src/rate_of_closure/launch_monitor_analysis.py",
+      "ud_path": "src/shared/python/launch_monitor/flexible_analysis.py",
+      "ruling": "split",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9354",
+      "target_pr": null,
+      "status": "pinned",
+      "rulings": [
+        "D15",
+        "D17",
+        "G1-D4"
+      ],
+      "inventory": null,
+      "notes": "Ungated twin classified per G1-D4 (gate before classification); owner rulings D15/D17 applied in the canonical relationships.py/flexible_analysis.py. Legacy modules unchanged since vendor pin e88a334c; drift suite test_flexible_drift.py pins 13 cases."
+    },
+    {
+      "module": "rate_of_closure/launch_monitor_workspace.py",
+      "tools_path": "src/rate_of_closure/launch_monitor_workspace.py",
+      "ud_path": "src/shared/python/launch_monitor/project.py",
+      "ruling": "split",
+      "owner": "launch-monitor program (#4583)",
+      "source_issue": "UpstreamDrift#9348",
+      "target_pr": null,
+      "status": "pinned",
+      "rulings": [],
+      "inventory": null,
+      "notes": "ADR-0048 app-local row: UD LaunchMonitorProject holds imported shot frames; Tools' identically named class is deliberately row-free (keeps private corpus rows out of persistent project documents). Two artifacts, not one divergence."
+    },
+    {
+      "module": "package:README.md",
+      "tools_path": "src/shared/python/README.md",
+      "ud_path": "src/shared/python/README.md",
+      "ruling": "tools-canonical",
+      "owner": "Tools shared-layer maintainers",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "in-sync",
+      "rulings": [],
+      "inventory": {
+        "identical": 1,
+        "diverged": 0,
+        "ud_only": 0,
+        "tools_only": 0,
+        "overlap": 1
+      },
+      "notes": "All overlapping files identical at the pins (CRLF/whitespace/DO-NOT-EDIT header ignored)."
+    },
+    {
+      "module": "package:__init__.py",
+      "tools_path": "src/shared/python/__init__.py",
+      "ud_path": "src/shared/python/__init__.py",
+      "ruling": "deferred",
+      "owner": "seam epic UpstreamDrift#9406",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "pending-inventory",
+      "rulings": [],
+      "inventory": {
+        "identical": 0,
+        "diverged": 1,
+        "ud_only": 0,
+        "tools_only": 0,
+        "overlap": 1
+      },
+      "notes": "1 diverged of 1 overlapping; owner ruling pending on the seam epic."
+    },
+    {
+      "module": "package:ai",
+      "tools_path": "src/shared/python/ai",
+      "ud_path": "src/shared/python/ai",
+      "ruling": "deferred",
+      "owner": "seam epic UpstreamDrift#9406",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "pending-inventory",
+      "rulings": [],
+      "inventory": {
+        "identical": 47,
+        "diverged": 70,
+        "ud_only": 21,
+        "tools_only": 0,
+        "overlap": 117
+      },
+      "notes": "70 of 117 overlapping files diverged, 21 UD-only. Named in the readiness evaluation; owner ruling pending on the seam epic."
+    },
+    {
+      "module": "package:calc_backend",
+      "tools_path": "src/shared/python/calc_backend",
+      "ud_path": "src/shared/python/calc_backend",
+      "ruling": "deferred",
+      "owner": "seam epic UpstreamDrift#9406",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "pending-inventory",
+      "rulings": [],
+      "inventory": {
+        "identical": 31,
+        "diverged": 14,
+        "ud_only": 2,
+        "tools_only": 0,
+        "overlap": 45
+      },
+      "notes": "14 diverged of 45 overlapping; owner ruling pending on the seam epic."
+    },
+    {
+      "module": "package:chat",
+      "tools_path": "src/shared/python/chat",
+      "ud_path": "src/shared/python/chat",
+      "ruling": "deferred",
+      "owner": "seam epic UpstreamDrift#9406",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "pending-inventory",
+      "rulings": [],
+      "inventory": {
+        "identical": 40,
+        "diverged": 17,
+        "ud_only": 1,
+        "tools_only": 0,
+        "overlap": 57
+      },
+      "notes": "17 diverged of 57 overlapping; owner ruling pending on the seam epic."
+    },
+    {
+      "module": "package:chat_contracts",
+      "tools_path": "src/shared/python/chat_contracts",
+      "ud_path": "src/shared/python/chat_contracts",
+      "ruling": "tools-canonical",
+      "owner": "Tools shared-layer maintainers",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "in-sync",
+      "rulings": [],
+      "inventory": {
+        "identical": 4,
+        "diverged": 0,
+        "ud_only": 0,
+        "tools_only": 0,
+        "overlap": 4
+      },
+      "notes": "All overlapping files identical at the pins (CRLF/whitespace/DO-NOT-EDIT header ignored)."
+    },
+    {
+      "module": "package:codemap",
+      "tools_path": "src/shared/python/codemap",
+      "ud_path": "src/shared/python/codemap",
+      "ruling": "deferred",
+      "owner": "seam epic UpstreamDrift#9406",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "pending-inventory",
+      "rulings": [],
+      "inventory": {
+        "identical": 8,
+        "diverged": 6,
+        "ud_only": 0,
+        "tools_only": 0,
+        "overlap": 14
+      },
+      "notes": "6 diverged of 14 overlapping; owner ruling pending on the seam epic."
+    },
+    {
+      "module": "package:compatibility.py",
+      "tools_path": "src/shared/python/compatibility.py",
+      "ud_path": "src/shared/python/compatibility.py",
+      "ruling": "deferred",
+      "owner": "seam epic UpstreamDrift#9406",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "pending-inventory",
+      "rulings": [],
+      "inventory": {
+        "identical": 0,
+        "diverged": 1,
+        "ud_only": 0,
+        "tools_only": 0,
+        "overlap": 1
+      },
+      "notes": "1 diverged of 1 overlapping; owner ruling pending on the seam epic."
+    },
+    {
+      "module": "package:config",
+      "tools_path": "src/shared/python/config",
+      "ud_path": "src/shared/python/config",
+      "ruling": "deferred",
+      "owner": "seam epic UpstreamDrift#9406",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "pending-inventory",
+      "rulings": [],
+      "inventory": {
+        "identical": 0,
+        "diverged": 2,
+        "ud_only": 13,
+        "tools_only": 0,
+        "overlap": 2
+      },
+      "notes": "13 UD-only, 2 diverged. Owner ruling pending."
+    },
+    {
+      "module": "package:contracts.py",
+      "tools_path": "src/shared/python/contracts.py",
+      "ud_path": "src/shared/python/contracts.py",
+      "ruling": "deferred",
+      "owner": "seam epic UpstreamDrift#9406",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "pending-inventory",
+      "rulings": [],
+      "inventory": {
+        "identical": 0,
+        "diverged": 1,
+        "ud_only": 0,
+        "tools_only": 0,
+        "overlap": 1
+      },
+      "notes": "753-line DbC module, diverged; named in the readiness evaluation; owner ruling pending."
+    },
+    {
+      "module": "package:cors.py",
+      "tools_path": "src/shared/python/cors.py",
+      "ud_path": "src/shared/python/cors.py",
+      "ruling": "deferred",
+      "owner": "seam epic UpstreamDrift#9406",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "pending-inventory",
+      "rulings": [],
+      "inventory": {
+        "identical": 0,
+        "diverged": 1,
+        "ud_only": 0,
+        "tools_only": 0,
+        "overlap": 1
+      },
+      "notes": "1 diverged of 1 overlapping; owner ruling pending on the seam epic."
+    },
+    {
+      "module": "package:data_processing",
+      "tools_path": "src/shared/python/data_processing",
+      "ud_path": "src/shared/python/data_processing",
+      "ruling": "deferred",
+      "owner": "seam epic UpstreamDrift#9406",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "pending-inventory",
+      "rulings": [],
+      "inventory": {
+        "identical": 3,
+        "diverged": 1,
+        "ud_only": 1,
+        "tools_only": 0,
+        "overlap": 4
+      },
+      "notes": "1 diverged of 4 overlapping; owner ruling pending on the seam epic."
+    },
+    {
+      "module": "package:data_processor_io",
+      "tools_path": "src/shared/python/data_processor_io",
+      "ud_path": "src/shared/python/data_processor_io",
+      "ruling": "deferred",
+      "owner": "seam epic UpstreamDrift#9406",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "pending-inventory",
+      "rulings": [],
+      "inventory": {
+        "identical": 2,
+        "diverged": 1,
+        "ud_only": 0,
+        "tools_only": 0,
+        "overlap": 3
+      },
+      "notes": "1 diverged of 3 overlapping; owner ruling pending on the seam epic."
+    },
+    {
+      "module": "package:deprecation.py",
+      "tools_path": "src/shared/python/deprecation.py",
+      "ud_path": "src/shared/python/deprecation.py",
+      "ruling": "tools-canonical",
+      "owner": "Tools shared-layer maintainers",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "in-sync",
+      "rulings": [],
+      "inventory": {
+        "identical": 1,
+        "diverged": 0,
+        "ud_only": 0,
+        "tools_only": 0,
+        "overlap": 1
+      },
+      "notes": "All overlapping files identical at the pins (CRLF/whitespace/DO-NOT-EDIT header ignored)."
+    },
+    {
+      "module": "package:file_watcher",
+      "tools_path": "src/shared/python/file_watcher",
+      "ud_path": "src/shared/python/file_watcher",
+      "ruling": "tools-canonical",
+      "owner": "Tools shared-layer maintainers",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "in-sync",
+      "rulings": [],
+      "inventory": {
+        "identical": 2,
+        "diverged": 0,
+        "ud_only": 0,
+        "tools_only": 0,
+        "overlap": 2
+      },
+      "notes": "All overlapping files identical at the pins (CRLF/whitespace/DO-NOT-EDIT header ignored)."
+    },
+    {
+      "module": "package:golf_club",
+      "tools_path": "src/shared/python/golf_club",
+      "ud_path": null,
+      "ruling": "tools-canonical",
+      "owner": "Tools shared-layer maintainers",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "tools-only",
+      "rulings": [],
+      "inventory": {
+        "identical": 0,
+        "diverged": 0,
+        "ud_only": 0,
+        "tools_only": 38,
+        "overlap": 0
+      },
+      "notes": "38 Tools-only files (wedge_*, putter_*, shaft_*, turf_*, fitting_*); no UD copy."
+    },
+    {
+      "module": "package:gui_launcher",
+      "tools_path": "src/shared/python/gui_launcher",
+      "ud_path": "src/shared/python/gui_launcher",
+      "ruling": "deferred",
+      "owner": "seam epic UpstreamDrift#9406",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "pending-inventory",
+      "rulings": [],
+      "inventory": {
+        "identical": 3,
+        "diverged": 5,
+        "ud_only": 3,
+        "tools_only": 1,
+        "overlap": 8
+      },
+      "notes": "5 diverged of 8 overlapping; owner ruling pending on the seam epic."
+    },
+    {
+      "module": "package:humanoid_character_builder",
+      "tools_path": "src/shared/python/humanoid_character_builder",
+      "ud_path": "src/shared/python/humanoid_character_builder",
+      "ruling": "deferred",
+      "owner": "seam epic UpstreamDrift#9406",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "pending-inventory",
+      "rulings": [],
+      "inventory": {
+        "identical": 16,
+        "diverged": 24,
+        "ud_only": 27,
+        "tools_only": 0,
+        "overlap": 40
+      },
+      "notes": "24 of 40 diverged, 27 UD-only; no attribution header in Tools. Owner ruling pending."
+    },
+    {
+      "module": "package:import_aliases.py",
+      "tools_path": "src/shared/python/import_aliases.py",
+      "ud_path": "src/shared/python/import_aliases.py",
+      "ruling": "deferred",
+      "owner": "seam epic UpstreamDrift#9406",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "pending-inventory",
+      "rulings": [],
+      "inventory": {
+        "identical": 0,
+        "diverged": 1,
+        "ud_only": 0,
+        "tools_only": 0,
+        "overlap": 1
+      },
+      "notes": "Single-file divergence named in the readiness evaluation; owner ruling pending."
+    },
+    {
+      "module": "package:launch_monitor",
+      "tools_path": "src/shared/python/launch_monitor",
+      "ud_path": null,
+      "ruling": "tools-canonical",
+      "owner": "Tools shared-layer maintainers",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "ud-copy-deleted",
+      "rulings": [],
+      "inventory": {
+        "identical": 0,
+        "diverged": 0,
+        "ud_only": 0,
+        "tools_only": 29,
+        "overlap": 0
+      },
+      "notes": "ADR-0046 Stage 1 complete; ADR-0048 Option 1 moved the vendored copy out of UD src/shared/python (29 Tools-only files). Module rows above carry the D1-D31 rulings."
+    },
+    {
+      "module": "package:logging_pkg",
+      "tools_path": "src/shared/python/logging_pkg",
+      "ud_path": "src/shared/python/logging_pkg",
+      "ruling": "tools-canonical",
+      "owner": "Tools shared-layer maintainers",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "in-sync",
+      "rulings": [],
+      "inventory": {
+        "identical": 3,
+        "diverged": 0,
+        "ud_only": 0,
+        "tools_only": 0,
+        "overlap": 3
+      },
+      "notes": "All overlapping files identical at the pins (CRLF/whitespace/DO-NOT-EDIT header ignored)."
+    },
+    {
+      "module": "package:model_generation",
+      "tools_path": "src/shared/python/model_generation",
+      "ud_path": "src/shared/python/model_generation",
+      "ruling": "deferred",
+      "owner": "seam epic UpstreamDrift#9406",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "pending-inventory",
+      "rulings": [],
+      "inventory": {
+        "identical": 31,
+        "diverged": 49,
+        "ud_only": 18,
+        "tools_only": 0,
+        "overlap": 80
+      },
+      "notes": "49 of 80 overlapping files diverged, 18 UD-only; no attribution header in Tools (evaluation section 2). Owner ruling pending."
+    },
+    {
+      "module": "package:notes",
+      "tools_path": "src/shared/python/notes",
+      "ud_path": "src/shared/python/notes",
+      "ruling": "tools-canonical",
+      "owner": "Tools shared-layer maintainers",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "in-sync",
+      "rulings": [],
+      "inventory": {
+        "identical": 6,
+        "diverged": 0,
+        "ud_only": 1,
+        "tools_only": 0,
+        "overlap": 6
+      },
+      "notes": "All overlapping files identical at the pins (CRLF/whitespace/DO-NOT-EDIT header ignored)."
+    },
+    {
+      "module": "package:plot_engine",
+      "tools_path": "src/shared/python/plot_engine",
+      "ud_path": "src/shared/python/plot_engine",
+      "ruling": "deferred",
+      "owner": "seam epic UpstreamDrift#9406",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "pending-inventory",
+      "rulings": [],
+      "inventory": {
+        "identical": 10,
+        "diverged": 3,
+        "ud_only": 0,
+        "tools_only": 1,
+        "overlap": 13
+      },
+      "notes": "3 diverged of 13 overlapping; owner ruling pending on the seam epic."
+    },
+    {
+      "module": "package:plot_theme",
+      "tools_path": "src/shared/python/plot_theme",
+      "ud_path": "src/shared/python/plot_theme",
+      "ruling": "tools-canonical",
+      "owner": "Tools shared-layer maintainers",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "in-sync",
+      "rulings": [],
+      "inventory": {
+        "identical": 6,
+        "diverged": 0,
+        "ud_only": 1,
+        "tools_only": 0,
+        "overlap": 6
+      },
+      "notes": "All overlapping files identical at the pins (CRLF/whitespace/DO-NOT-EDIT header ignored)."
+    },
+    {
+      "module": "package:plotting",
+      "tools_path": "src/shared/python/plotting",
+      "ud_path": "src/shared/python/plotting",
+      "ruling": "deferred",
+      "owner": "seam epic UpstreamDrift#9406",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "pending-inventory",
+      "rulings": [],
+      "inventory": {
+        "identical": 0,
+        "diverged": 3,
+        "ud_only": 24,
+        "tools_only": 0,
+        "overlap": 3
+      },
+      "notes": "24 UD-only, 3 diverged; one of three overlapping plot packages (plot_theme, plotting, plot_engine). Consolidation ruling pending."
+    },
+    {
+      "module": "package:programmatic_pid",
+      "tools_path": "src/shared/python/programmatic_pid",
+      "ud_path": "src/shared/python/programmatic_pid",
+      "ruling": "deferred",
+      "owner": "seam epic UpstreamDrift#9406",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "pending-inventory",
+      "rulings": [],
+      "inventory": {
+        "identical": 10,
+        "diverged": 14,
+        "ud_only": 0,
+        "tools_only": 0,
+        "overlap": 24
+      },
+      "notes": "14 diverged of 24 overlapping; owner ruling pending on the seam epic."
+    },
+    {
+      "module": "package:reporting",
+      "tools_path": "src/shared/python/reporting",
+      "ud_path": "src/shared/python/reporting",
+      "ruling": "deferred",
+      "owner": "seam epic UpstreamDrift#9406",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "pending-inventory",
+      "rulings": [],
+      "inventory": {
+        "identical": 0,
+        "diverged": 2,
+        "ud_only": 5,
+        "tools_only": 0,
+        "overlap": 2
+      },
+      "notes": "5 UD-only, 2 diverged. Owner ruling pending."
+    },
+    {
+      "module": "package:rotation_transforms",
+      "tools_path": "src/shared/python/rotation_transforms",
+      "ud_path": "src/shared/python/rotation_transforms",
+      "ruling": "deferred",
+      "owner": "seam epic UpstreamDrift#9406",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "pending-inventory",
+      "rulings": [],
+      "inventory": {
+        "identical": 0,
+        "diverged": 3,
+        "ud_only": 0,
+        "tools_only": 0,
+        "overlap": 3
+      },
+      "notes": "3 diverged of 3 overlapping; owner ruling pending on the seam epic."
+    },
+    {
+      "module": "package:safe_eval.py",
+      "tools_path": "src/shared/python/safe_eval.py",
+      "ud_path": "src/shared/python/safe_eval.py",
+      "ruling": "tools-canonical",
+      "owner": "Tools shared-layer maintainers",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "in-sync",
+      "rulings": [],
+      "inventory": {
+        "identical": 1,
+        "diverged": 0,
+        "ud_only": 0,
+        "tools_only": 0,
+        "overlap": 1
+      },
+      "notes": "All overlapping files identical at the pins (CRLF/whitespace/DO-NOT-EDIT header ignored)."
+    },
+    {
+      "module": "package:safe_pandas_eval.py",
+      "tools_path": "src/shared/python/safe_pandas_eval.py",
+      "ud_path": "src/shared/python/safe_pandas_eval.py",
+      "ruling": "tools-canonical",
+      "owner": "Tools shared-layer maintainers",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "in-sync",
+      "rulings": [],
+      "inventory": {
+        "identical": 1,
+        "diverged": 0,
+        "ud_only": 0,
+        "tools_only": 0,
+        "overlap": 1
+      },
+      "notes": "All overlapping files identical at the pins (CRLF/whitespace/DO-NOT-EDIT header ignored)."
+    },
+    {
+      "module": "package:scripting",
+      "tools_path": "src/shared/python/scripting",
+      "ud_path": "src/shared/python/scripting",
+      "ruling": "tools-canonical",
+      "owner": "Tools shared-layer maintainers",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "in-sync",
+      "rulings": [],
+      "inventory": {
+        "identical": 2,
+        "diverged": 0,
+        "ud_only": 0,
+        "tools_only": 0,
+        "overlap": 2
+      },
+      "notes": "All overlapping files identical at the pins (CRLF/whitespace/DO-NOT-EDIT header ignored)."
+    },
+    {
+      "module": "package:sidekick",
+      "tools_path": "src/shared/python/sidekick",
+      "ud_path": "src/shared/python/sidekick",
+      "ruling": "tools-canonical",
+      "owner": "Tools shared-layer maintainers",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "pending-inventory",
+      "rulings": [],
+      "inventory": {
+        "identical": 246,
+        "diverged": 63,
+        "ud_only": 36,
+        "tools_only": 22,
+        "overlap": 309
+      },
+      "notes": "Sidekick is synced Tools -> UD (never edit sidekick in UpstreamDrift; fix in Tools). Inventory shows bidirectional drift (63 diverged, 22 Tools-only, 36 UD-only): do NOT blind-mirror; per-file reconciliation is the seam epic's next PR."
+    },
+    {
+      "module": "package:signal_toolkit",
+      "tools_path": "src/shared/python/signal_toolkit",
+      "ud_path": "src/shared/python/signal_toolkit",
+      "ruling": "deferred",
+      "owner": "seam epic UpstreamDrift#9406",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "pending-inventory",
+      "rulings": [],
+      "inventory": {
+        "identical": 21,
+        "diverged": 6,
+        "ud_only": 1,
+        "tools_only": 0,
+        "overlap": 27
+      },
+      "notes": "6 diverged of 27 overlapping; owner ruling pending on the seam epic."
+    },
+    {
+      "module": "package:swing_sim",
+      "tools_path": "src/shared/python/swing_sim",
+      "ud_path": null,
+      "ruling": "tools-canonical",
+      "owner": "Tools shared-layer maintainers",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "tools-only",
+      "rulings": [],
+      "inventory": {
+        "identical": 0,
+        "diverged": 0,
+        "ud_only": 0,
+        "tools_only": 339,
+        "overlap": 0
+      },
+      "notes": "339 Tools-only files (ground/flight/impact/putting/variation/rotating_base); no UD copy under src/shared/python. ADR-0045/0047 consumer."
+    },
+    {
+      "module": "package:tests",
+      "tools_path": "src/shared/python/tests",
+      "ud_path": "src/shared/python/tests",
+      "ruling": "deferred",
+      "owner": "seam epic UpstreamDrift#9406",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "pending-inventory",
+      "rulings": [],
+      "inventory": {
+        "identical": 1,
+        "diverged": 0,
+        "ud_only": 0,
+        "tools_only": 5,
+        "overlap": 1
+      },
+      "notes": "Package-local tests: 1 identical, 5 Tools-only."
+    },
+    {
+      "module": "package:theme",
+      "tools_path": "src/shared/python/theme",
+      "ud_path": "src/shared/python/theme",
+      "ruling": "deferred",
+      "owner": "seam epic UpstreamDrift#9406",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "pending-inventory",
+      "rulings": [],
+      "inventory": {
+        "identical": 19,
+        "diverged": 3,
+        "ud_only": 4,
+        "tools_only": 0,
+        "overlap": 22
+      },
+      "notes": "3 of 22 diverged, 4 UD-only. Named in the readiness evaluation; owner ruling pending."
+    },
+    {
+      "module": "package:trusted_git.py",
+      "tools_path": "src/shared/python/trusted_git.py",
+      "ud_path": null,
+      "ruling": "tools-canonical",
+      "owner": "Tools shared-layer maintainers",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "tools-only",
+      "rulings": [],
+      "inventory": {
+        "identical": 0,
+        "diverged": 0,
+        "ud_only": 0,
+        "tools_only": 1,
+        "overlap": 0
+      },
+      "notes": "Tools-only."
+    },
+    {
+      "module": "package:ui",
+      "tools_path": "src/shared/python/ui",
+      "ud_path": "src/shared/python/ui",
+      "ruling": "ud-canonical",
+      "owner": "Tools shared-layer maintainers",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "pending-inventory",
+      "rulings": [],
+      "inventory": {
+        "identical": 4,
+        "diverged": 0,
+        "ud_only": 27,
+        "tools_only": 0,
+        "overlap": 4
+      },
+      "notes": "27 UD-only files, 4 identical: UD application UI that happens to live under the shared path. Consumer-side; Tools does not shadow it."
+    },
+    {
+      "module": "package:upstream_drift_tools",
+      "tools_path": "src/shared/python/upstream_drift_tools",
+      "ud_path": "src/shared/python/upstream_drift_tools",
+      "ruling": "deferred",
+      "owner": "seam epic UpstreamDrift#9406",
+      "source_issue": "UpstreamDrift#9406",
+      "target_pr": "UpstreamDrift#9432",
+      "status": "pending-inventory",
+      "rulings": [],
+      "inventory": {
+        "identical": 0,
+        "diverged": 1,
+        "ud_only": 0,
+        "tools_only": 0,
+        "overlap": 1
+      },
+      "notes": "Compat shim diverged (bootstrap semantics differ between launch.py and UnifiedToolsLauncher consumers). Owner ruling pending."
+    }
+  ]
+}
