@@ -23,7 +23,7 @@ Tools owns the MIT vendor-neutral markerless-mocap contracts and reference algor
 
 ## Delivered in this slice
 
-- ADR-007 records cross-repository, coordinate/time, evidence, C3D, privacy, and licensing authority.
+- ADR-008 (formerly numbered ADR-007; renumbered 2026-09-03 to clear the duplicate) records cross-repository, coordinate/time, evidence, C3D, privacy, and licensing authority.
 - The acceptance program defines unit through physical/release gates.
 - `sidekick.lab.mocap` establishes frozen, DbC-validated identity, capability, clock, frame, coordinate, transform, skeleton, 2-D/3-D observation, provenance, policy, and session records.
 - Strict `mocap-session/1.0.0` JSON Schema, golden fixture, canonical serializer, and fail-closed loader are under test.

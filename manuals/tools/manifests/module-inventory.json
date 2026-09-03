@@ -227,7 +227,7 @@
   },
   "shards": [
     {
-      "content_sha256_lf": "fc5a980e0ef3d6cf9338519d4906fde5980790dab01bfa0a9ccbbd7b824031a0",
+      "content_sha256_lf": "4557e662080be42010734d853b1053c1dfce00fb9abc99caa4e690497f4bb66d",
       "entry_count": 200,
       "first_path": ".docker/entrypoint.sh",
       "last_path": "scripts/check_minimum_test_contract.py",
@@ -275,7 +275,7 @@
       "shard_index": 5
     },
     {
-      "content_sha256_lf": "428041f5356dc2843890154b2b8799bb8691964bed225f4e774311c1d0c0091d",
+      "content_sha256_lf": "f1537c7dd318debe7a1bfd4f6b813a500ce7a668107d882a3f7e187da9a3ab6c",
       "entry_count": 200,
       "first_path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/comparison.py",
       "last_path": "src/rate_of_closure/launch_monitor_strokes_gained.py",
@@ -283,7 +283,7 @@
       "shard_index": 6
     },
     {
-      "content_sha256_lf": "0be00bc270ba931daae539bb0f73d9f4baa0dd72490f14cfdf99234c6f9a4a3c",
+      "content_sha256_lf": "983a8e98c02077fd2e5eb843724e8505b533426cd06109a3d5209ae16868084f",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/launch_monitor_strokes_gained_baseline.py",
       "last_path": "src/rate_of_closure/ui/pyqt6/solver_specs.py",
@@ -291,7 +291,7 @@
       "shard_index": 7
     },
     {
-      "content_sha256_lf": "3eebec56be7697c160dff56e218873e8f23b1294663bd279e3673017cc537d0d",
+      "content_sha256_lf": "07a7d4ab403cf3535db07e2cc7bad16e17d700344fd5a8e42aeea983e03beb59",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/ui/pyqt6/solver_worker.py",
       "last_path": "src/rate_of_closure/web/src/components/LaunchMonitorPlayerWorkspace.tsx",
@@ -299,7 +299,7 @@
       "shard_index": 8
     },
     {
-      "content_sha256_lf": "196e9539eee679b223e7597b09013368c523f83a7b035f8b0f52cfc342d5a5dc",
+      "content_sha256_lf": "1605eb7e139cac25fe971562181fcd2731f96e6c4a170432b569167ccaee7fc1",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/web/src/components/LaunchMonitorSourceBackedStrokesGained.tsx",
       "last_path": "src/rate_of_closure/web/src/model/clubFitting.ts",
@@ -307,7 +307,7 @@
       "shard_index": 9
     },
     {
-      "content_sha256_lf": "acc2d73b41dfeaae3ca5c2a2cb3785ca0c97099d08f1bc496a6e3128b8a21817",
+      "content_sha256_lf": "466746b3736f0d88d0b7349dd8f390dbe6ee52adf4ab32d4ea0011a73bc2e8c8",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/web/src/model/clubHeadGeneration.ts",
       "last_path": "src/rate_of_closure/web/src/model/regionalGroundExecutionPresentationModel.ts",
@@ -331,7 +331,7 @@
       "shard_index": 12
     },
     {
-      "content_sha256_lf": "c9a4fa651f7817b7b3daf773f0137b99a46cdc4109c27c6f1fea4eb0ad5ff074",
+      "content_sha256_lf": "817af7441b7a5ef641271c33f3292d47a493fff26f79fb5aae258211ac98d6b2",
       "entry_count": 200,
       "first_path": "src/shared/python/calc_backend/routers/pressure_drop_v2.py",
       "last_path": "src/shared/python/model_generation/api/rest_api_contracts.py",
@@ -339,7 +339,7 @@
       "shard_index": 13
     },
     {
-      "content_sha256_lf": "cf810a771489b66cec09b25211021945a3227b5a64ab6c9148037b5c9190abfc",
+      "content_sha256_lf": "9d45b5e7ad393e3dea7a5b092dd2c4090b7287cfadff33509eba1f0188dee78c",
       "entry_count": 200,
       "first_path": "src/shared/python/model_generation/api/rest_api_core.py",
       "last_path": "src/shared/python/sidekick/process_calculators/pressure_drop_calculator/utils/pipe_database.py",
@@ -347,7 +347,7 @@
       "shard_index": 14
     },
     {
-      "content_sha256_lf": "99cb4d7eadad675aa3e53f5bd6baa1c9e9f6fc62216aa49eb7f355e33073e144",
+      "content_sha256_lf": "0f8a9c8659bc14aa49997f4d01bdb46caa7ffd3b05b7d35e4570c9556a760c8f",
       "entry_count": 200,
       "first_path": "src/shared/python/sidekick/process_calculators/psa_package/__init__.py",
       "last_path": "src/shared/python/swing_sim/ground/bounce_execution.py",
@@ -371,7 +371,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "d00a5ba15000ea5f29ab93d04e93b10f1054877abd2e58f637102dd565e434be",
+  "source_tree_sha256": "c1b4f442c81cc487093a25399782db6f3f503ea0c7bf85fccd24ac9df3b0d730",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
