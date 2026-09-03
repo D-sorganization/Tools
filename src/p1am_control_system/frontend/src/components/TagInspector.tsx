@@ -4,6 +4,7 @@ import type { LadderTagInfo } from "../api/schemas";
 import type { InspectorState } from "../lib/inspector";
 import { tagName } from "../lib/tags";
 import type { InterlockConfig, RoutingConfig } from "../types";
+import { limitInputValue, parseLimitInput } from "../lib/limits";
 
 type TagInspectorView = Extract<
   InspectorState,
@@ -25,7 +26,7 @@ export const TagInspector: React.FC<{
   onInterlockChange: (
     tagId: number,
     field: keyof InterlockConfig,
-    value: number,
+    value: number | null,
   ) => void;
   onDeploy: () => void;
 }> = ({
@@ -299,12 +300,13 @@ export const TagInspector: React.FC<{
               type="number"
               step="0.5"
               className="form-input"
-              value={config.interlocks[view.tagId]?.high_limit ?? 100.0}
+              value={limitInputValue(config.interlocks[view.tagId]?.high_limit)}
+              placeholder="disabled"
               onChange={(e) =>
                 onInterlockChange(
                   view.tagId,
                   "high_limit",
-                  Number(e.target.value),
+                  parseLimitInput(e.target.value),
                 )
               }
             />
@@ -315,12 +317,13 @@ export const TagInspector: React.FC<{
               type="number"
               step="0.5"
               className="form-input"
-              value={config.interlocks[view.tagId]?.low_limit ?? 0.0}
+              value={limitInputValue(config.interlocks[view.tagId]?.low_limit)}
+              placeholder="disabled"
               onChange={(e) =>
                 onInterlockChange(
                   view.tagId,
                   "low_limit",
-                  Number(e.target.value),
+                  parseLimitInput(e.target.value),
                 )
               }
             />

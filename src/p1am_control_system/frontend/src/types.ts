@@ -15,11 +15,17 @@ export interface PIDConfig {
   kd: number;
 }
 
+/**
+ * Four-tier alarm/trip limits for one broker tag. A `null` limit means the
+ * side is disabled (not alarmed, not interlocked) -- the backend default for
+ * every tag that is not a routed input, encoded to the PLC as the firmware's
+ * "disabled" sentinel (Tools #4001 / #4911).
+ */
 export interface InterlockConfig {
-  lolo_limit: number;
-  low_limit: number;
-  high_limit: number;
-  hihi_limit: number;
+  lolo_limit: number | null;
+  low_limit: number | null;
+  high_limit: number | null;
+  hihi_limit: number | null;
 }
 
 export interface RoutingConfig {
