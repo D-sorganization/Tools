@@ -62,3 +62,5 @@ Global status note: Paused for catching up.
 
 Update this file whenever workflows are added, removed, enabled, or disabled.
 For governance, see Repository_Management/docs/architecture/WORKFLOW_GOVERNANCE.md.
+
+- 2026-09-02: `ci-standard.yml` concurrency group changed to `ci-standard-${{ github.ref == 'refs/heads/main' && github.sha || github.ref }}` (per-commit on main; `cancel-in-progress: true` unchanged) so a later push never cancels an in-flight main run (main-green campaign, Repository_Management#1507).

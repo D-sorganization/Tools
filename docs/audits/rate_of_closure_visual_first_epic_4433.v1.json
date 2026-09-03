@@ -97,7 +97,7 @@
       "requirement_id": "V1.3",
       "requirement": "Place narrow-web visuals before prose/controls without overflow and provide expanded inspection.",
       "status": "partial",
-      "rationale": "Narrow geometry, visual-before-control ordering, and overflow are tested, and the React putting playback transport (#4800 P8) is asserted visible beside its green view at the authority viewport; an expanded/full-screen path is not mapped for each applicable visual.",
+      "rationale": "Narrow geometry, visual-before-control ordering, and overflow are tested, and the React putting playback transport (#4800 P8) is asserted visible beside its green view at the authority viewport; on 2026-09-02 the trusted-push run showed a 6 px horizontal document overflow of that transport at 390x844 on Linux Chromium (the intrinsic width of the speed <select> exceeded its flex hypothetical size, pushing the position readout past the viewport), closed under RM #1507 by giving the scrubber its own full-width row below the sm breakpoint so no growing item shares a line with the label and readout, plus a fixed 4.5rem select width and a 5rem readout floor, with the readout's right edge now asserted inside the narrow viewport; an expanded/full-screen path is not mapped for each applicable visual.",
       "evidence_files": [
         "src/rate_of_closure/web/e2e/putting-sample-inspector.spec.ts",
         "src/rate_of_closure/web/e2e/visualization-tab-visibility.spec.ts"

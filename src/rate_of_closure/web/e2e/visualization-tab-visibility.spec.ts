@@ -158,6 +158,19 @@ test("every registered React tab exposes its primary visual in the initial viewp
             .toBeLessThanOrEqual(controlsRect.y);
         }
       }
+      if (viewport.width < 1280 && entry.tabId === "putting") {
+        // RM #1507 (2026-09-02): the shared playback transport overflowed the
+        // 390x844 document by 6 px on Linux Chromium because the speed
+        // <select> laid out wider than its flex hypothetical size and pushed
+        // the position readout past the viewport.  Pin the readout's right
+        // edge inside the narrow viewport so the regression names its element.
+        const readout = page.locator("output[aria-label='Putt playback position']");
+        await expect(readout).toBeVisible();
+        const readoutRect = await readout.boundingBox();
+        if (readoutRect === null) throw new Error(`${label} playback readout has no rectangle`);
+        expect.soft(readoutRect.x + readoutRect.width, `${label} playback readout right edge`)
+          .toBeLessThanOrEqual(viewport.width);
+      }
       if (viewport.width === 1440 && viewport.height === 900) {
         if (entry.tabId === "explorer") {
           await expect(page.getByRole("button", { name: "Play" })).toBeVisible();

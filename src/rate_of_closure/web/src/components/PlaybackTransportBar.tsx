@@ -171,7 +171,7 @@ export function PlaybackTransportBar({
         }
         aria-label={`${subjectLabel} Time`}
         title={scrubTitle}
-        className="min-w-36 flex-1"
+        className="min-w-36 shrink grow basis-full sm:basis-0"
       />
       <label className="flex items-center gap-1 text-slate-300">
         Speed
@@ -179,7 +179,7 @@ export function PlaybackTransportBar({
           value={speed}
           onChange={(event) => setSpeed(Number(event.target.value))}
           aria-label="Playback Speed"
-          className="rounded border border-slate-700 bg-slate-900 px-1 py-1"
+          className="w-[4.5rem] rounded border border-slate-700 bg-slate-900 px-1 py-1"
         >
           {PLAYBACK_SPEEDS.map((option) => (
             <option key={option} value={option}>
@@ -190,7 +190,7 @@ export function PlaybackTransportBar({
       </label>
       <output
         aria-label={`${sentenceCase(subjectPhrase)} playback position`}
-        className="min-w-24 text-right tabular-nums text-slate-300"
+        className="min-w-20 text-right tabular-nums text-slate-300"
       >
         {timeS.toFixed(2)} / {durationS.toFixed(2)} s
       </output>
