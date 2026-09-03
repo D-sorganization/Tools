@@ -3,102 +3,6 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5565,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "094f099d7eb7adaa6093bc53ec19c165e4c06c964d5d4504ddaa287cf3413069",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-REGIONALGROUNDEXECUTIONPRESENTATIONMODEL-TS-DE5AAE2C05DA",
-      "language": "typescript",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/model/regionalGroundExecutionPresentationModel.ts",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "RegionalGroundExecutionPresentationView",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "RegionalGroundExecutionSummary",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "RegionalGroundPresentationStatus",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "initialRegionalGroundExecutionPresentation",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "presentRegionalGroundAuthorityStatus",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "presentRegionalGroundCancelRequested",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "presentRegionalGroundCancelled",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "presentRegionalGroundFailure",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "presentRegionalGroundProgress",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "presentRegionalGroundResult",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
       "bytes_lf": 7562,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -14824,6 +14728,113 @@
         "test_paths": [],
         "unit_mentions": [
           "N",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3105,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "f27d024c24ddde65a46b7d0e18d7525b129b710806382fdb45f4fe89a20f49a0",
+      "family": "rotation-converter-calculation",
+      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-MODERN-ROBOTICS-PKG-UTILS-PY-114A90BF7922",
+      "language": "python",
+      "maintainer": "Rotation converter maintainers",
+      "path": "src/rotation_converter/modern_robotics_pkg/utils.py",
+      "purpose": "Utility functions — normalization, projection, distance, and tests.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "AxisAng3",
+            "signature": "expc3: np.ndarray"
+          },
+          {
+            "kind": "function",
+            "name": "AxisAng6",
+            "signature": "expc6: np.ndarray"
+          },
+          {
+            "kind": "function",
+            "name": "DistanceToSE3",
+            "signature": "mat: np.ndarray"
+          },
+          {
+            "kind": "function",
+            "name": "DistanceToSO3",
+            "signature": "mat: np.ndarray"
+          },
+          {
+            "kind": "function",
+            "name": "Normalize",
+            "signature": "V: np.ndarray"
+          },
+          {
+            "kind": "function",
+            "name": "ProjectToSE3",
+            "signature": "mat: np.ndarray"
+          },
+          {
+            "kind": "function",
+            "name": "ProjectToSO3",
+            "signature": "mat: np.ndarray"
+          },
+          {
+            "kind": "function",
+            "name": "RotInv",
+            "signature": "R: np.ndarray"
+          },
+          {
+            "kind": "function",
+            "name": "ScrewToAxis",
+            "signature": "q: np.ndarray, s: np.ndarray, h: float"
+          },
+          {
+            "kind": "function",
+            "name": "TestIfSE3",
+            "signature": "mat: np.ndarray"
+          },
+          {
+            "kind": "function",
+            "name": "TestIfSO3",
+            "signature": "mat: np.ndarray"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
           "s"
         ],
         "validation_paths": []

@@ -3,113 +3,6 @@
   "entries": [
     {
       "authority_status": "provisional",
-      "bytes_lf": 3105,
-      "classification": "calculation",
-      "classification_basis": "path-marker:rotation",
-      "content_sha256_lf": "f27d024c24ddde65a46b7d0e18d7525b129b710806382fdb45f4fe89a20f49a0",
-      "family": "rotation-converter-calculation",
-      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-MODERN-ROBOTICS-PKG-UTILS-PY-114A90BF7922",
-      "language": "python",
-      "maintainer": "Rotation converter maintainers",
-      "path": "src/rotation_converter/modern_robotics_pkg/utils.py",
-      "purpose": "Utility functions — normalization, projection, distance, and tests.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "AxisAng3",
-            "signature": "expc3: np.ndarray"
-          },
-          {
-            "kind": "function",
-            "name": "AxisAng6",
-            "signature": "expc6: np.ndarray"
-          },
-          {
-            "kind": "function",
-            "name": "DistanceToSE3",
-            "signature": "mat: np.ndarray"
-          },
-          {
-            "kind": "function",
-            "name": "DistanceToSO3",
-            "signature": "mat: np.ndarray"
-          },
-          {
-            "kind": "function",
-            "name": "Normalize",
-            "signature": "V: np.ndarray"
-          },
-          {
-            "kind": "function",
-            "name": "ProjectToSE3",
-            "signature": "mat: np.ndarray"
-          },
-          {
-            "kind": "function",
-            "name": "ProjectToSO3",
-            "signature": "mat: np.ndarray"
-          },
-          {
-            "kind": "function",
-            "name": "RotInv",
-            "signature": "R: np.ndarray"
-          },
-          {
-            "kind": "function",
-            "name": "ScrewToAxis",
-            "signature": "q: np.ndarray, s: np.ndarray, h: float"
-          },
-          {
-            "kind": "function",
-            "name": "TestIfSE3",
-            "signature": "mat: np.ndarray"
-          },
-          {
-            "kind": "function",
-            "name": "TestIfSO3",
-            "signature": "mat: np.ndarray"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
       "bytes_lf": 7432,
       "classification": "calculation",
       "classification_basis": "path-marker:rotation",
@@ -14805,6 +14698,64 @@
           "src/shared/python/sidekick/tests/test_ode_solver.py",
           "tests/shared/python/calc_backend/test_ode_solver_guards.py",
           "tests/shared/python/process_calculators/test_ode_solver.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 4290,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pressure_drop",
+      "content_sha256_lf": "f3d4290caec401b0955003bcffbb17ba4ff44483e72cfd19352b92bbcda5f57d",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-PRESSURE-DROP-PY-C08B6B709F4B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/routers/pressure_drop.py",
+      "purpose": "Pressure drop calculator router with standardized API responses.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "calculate_pressure_drop",
+            "signature": "request: PressureDropRequest"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/calc_backend/tests/test_calc_backend.py",
+          "src/shared/python/calc_backend/tests/test_calc_backend_gaps.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
