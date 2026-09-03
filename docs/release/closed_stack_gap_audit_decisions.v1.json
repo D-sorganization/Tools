@@ -1,0 +1,1184 @@
+{
+  "schema_version": "closed-stack-gap-audit-decisions/v1",
+  "repo": "D-sorganization/Tools",
+  "generated_at": "2026-09-03T04:58:12Z",
+  "base": {
+    "ref": "origin/main",
+    "sha": "8b9935afece7296409dd77c473806f3e8414220e"
+  },
+  "source_audit": {
+    "path": "docs/release/closed_stack_gap_audit.v1.json",
+    "generated_at": "2026-09-03T01:14:15Z",
+    "base": {
+      "ref": "origin/main",
+      "sha": "7bc0f652c254d5b951204f50531f4723a2d2097e"
+    }
+  },
+  "owner_decision": "Tools GA = Rate-of-Closure bundle with recoverable state; prioritise persistence, autosave/restart recovery (#4384), versioned project files (#4220), and treat launch-monitor analytics as owned by the ADR-0046 canonical layer (src/shared/python/launch_monitor, landed via #4899-#4907).",
+  "decision_classes": {
+    "re-land": "still valid, not superseded; to be re-applied as a clean commit on main",
+    "obsolete": "superseded by a file already on main (ADR-0046 canonical layer, governed launch-monitor platform #4587/#4592/#4622, visualization authority #4473) or not actually part of the PR head",
+    "needs-owner": "ambiguous or outside the slice scope; owner decision required"
+  },
+  "method": "For each PR the recorded head OID (not the branch tip) was diffed three-dot against origin/main; files added and absent on main were classified by comparing their public symbols and stated contracts against main. Every superseded_by path was asserted to exist on main at generation time.",
+  "prs": [
+    {
+      "number": 4212,
+      "title": "feat(rate-of-closure): add launch monitor analytics tabs",
+      "url": "https://github.com/D-sorganization/Tools/pull/4212",
+      "head_oid": "a4dcddde6122bb298c7c20d3353d45e74481ba2a",
+      "head_ref": "feat/4205-launch-monitor-analytics",
+      "audit_diff_ref_sha": "2ec1decaf2c9114e6ec00d41698bd40338d2251d",
+      "head_oid_matches_audit_diff_ref": false,
+      "audit_missing_count": 20,
+      "true_missing_count_at_head_oid": 1,
+      "counts": {
+        "re-land": 0,
+        "obsolete": 19,
+        "needs-owner": 1,
+        "misattributed": 19
+      },
+      "note": "The audit listed 18 missing files, but 17 of them are absent at the true PR head a4dcddde (they arrive with the #4233 merge commit that sits on the branch tip 2ec1deca). At its own head, #4212 has no missing product files: the analytics tabs landed via #4473 (launch_monitor_analytics_tab.py, LaunchMonitorAnalyticsPanel.tsx).",
+      "files": [
+        {
+          "path": "docs/rate_of_closure/LAUNCH_MONITOR_PLAYER_ANALYTICS.md",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID a4dcddde6122; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "src/movement_optimizer/gui/motion_helpers.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "needs-owner",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Outside the rate_of_closure slice scope (movement_optimizer GUI). Two helpers (build_motion_colors, chain_path_length) are absent on main; the movement_optimizer owner decides whether the 34-line helper is still wanted."
+        },
+        {
+          "path": "src/rate_of_closure/launch_monitor_data.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID a4dcddde6122; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "src/rate_of_closure/launch_monitor_player_metrics.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID a4dcddde6122; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_analysis_mixin.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID a4dcddde6122; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_data_mixin.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID a4dcddde6122; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_player_controls.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID a4dcddde6122; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_plot_widget.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID a4dcddde6122; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_table_preview.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID a4dcddde6122; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/components/LaunchMonitorCharts.test.tsx",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID a4dcddde6122; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/components/LaunchMonitorCharts.tsx",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID a4dcddde6122; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/components/LaunchMonitorImportedResults.test.tsx",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID a4dcddde6122; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/components/LaunchMonitorImportedResults.tsx",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID a4dcddde6122; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/components/LaunchMonitorPlayerInsights.tsx",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID a4dcddde6122; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/model/launchMonitorImportedResults.test.ts",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID a4dcddde6122; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/model/launchMonitorImportedResults.ts",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID a4dcddde6122; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/model/launchMonitorPlayerAnalytics.test.ts",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID a4dcddde6122; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/model/launchMonitorPlayerAnalytics.ts",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID a4dcddde6122; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/model/launchMonitorProject.ts",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID a4dcddde6122; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "tests/rate_of_closure/test_launch_monitor_player_metrics.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID a4dcddde6122; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        }
+      ]
+    },
+    {
+      "number": 4233,
+      "title": "feat(rate-of-closure): add launch monitor player analytics platform",
+      "url": "https://github.com/D-sorganization/Tools/pull/4233",
+      "head_oid": "fd0ad5c7deaa50a94daafd4dc33291591cb740d4",
+      "head_ref": "feat/4226-launch-monitor-player-platform",
+      "audit_diff_ref_sha": "d4ebc8a1872ee9185cdaaadf332c100afee04ea1",
+      "head_oid_matches_audit_diff_ref": false,
+      "audit_missing_count": 36,
+      "true_missing_count_at_head_oid": 20,
+      "counts": {
+        "re-land": 0,
+        "obsolete": 35,
+        "needs-owner": 1,
+        "misattributed": 16
+      },
+      "note": "Audit listed 34 (branch tip d4ebc8a1 includes the #4246 and #4278 merges); 19 product files are truly missing at head fd0ad5c7. All 19 are superseded by the governed launch-monitor platform (#4587), the covariation sequence (#4592) and workspace v3 (#4622), which LAUNCH_MONITOR_PLAYER_WORKSPACE_V2.md describes as a selective recovery of feat/4226. Legacy 2.0.0 projects remain readable as labelled compatibility imports, so no persistence continuity is lost.",
+      "files": [
+        {
+          "path": "docs/rate_of_closure/LAUNCH_MONITOR_PLAYER_ANALYTICS.md",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "docs/rate_of_closure/LAUNCH_MONITOR_PLAYER_WORKSPACE_V2.md",
+            "docs/rate_of_closure/LAUNCH_MONITOR_WORKSPACE_V3.md"
+          ],
+          "landed_via": [
+            "#4587",
+            "#4622"
+          ],
+          "rationale": "v2 doc states it is a selective recovery of feat/4226 against the current app shell"
+        },
+        {
+          "path": "docs/rate_of_closure/NEURAL_MODEL_LAB.md",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID fd0ad5c7deaa; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "src/movement_optimizer/gui/motion_helpers.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "needs-owner",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Outside the rate_of_closure slice scope (movement_optimizer GUI). Two helpers (build_motion_colors, chain_path_length) are absent on main; the movement_optimizer owner decides whether the 34-line helper is still wanted."
+        },
+        {
+          "path": "src/rate_of_closure/launch_monitor_data.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/launch_monitor_workspace.py",
+            "src/rate_of_closure/launch_monitor_workspace_v3.py",
+            "src/rate_of_closure/launch_monitor_import.py",
+            "src/shared/python/launch_monitor/importer.py",
+            "src/shared/python/launch_monitor/schema.py"
+          ],
+          "landed_via": [
+            "#4473",
+            "#4587",
+            "#4622"
+          ],
+          "rationale": "2.0.0 project schema kept readable as a labelled compatibility import (CONTRACT_VERSION 2.0.0) and superseded by launch-monitor-workspace/v3; import and unit inference moved to the ADR-0046 canonical layer"
+        },
+        {
+          "path": "src/rate_of_closure/launch_monitor_player_metrics.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/launch_monitor_performance.py",
+            "src/rate_of_closure/launch_monitor_strokes_gained.py",
+            "src/rate_of_closure/launch_monitor_strokes_gained_baseline.py",
+            "src/shared/python/launch_monitor/strokes_gained.py",
+            "src/shared/python/launch_monitor/dispersion.py"
+          ],
+          "landed_via": [
+            "#4587"
+          ],
+          "rationale": "dispersion and strokes-gained are now source-backed and fail closed in the governed platform; canonical statistics live in the ADR-0046 layer"
+        },
+        {
+          "path": "src/rate_of_closure/neural_model.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID fd0ad5c7deaa; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "src/rate_of_closure/neural_training.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID fd0ad5c7deaa; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_analysis_mixin.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_analytics_tab.py",
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_analysis_results.py"
+          ],
+          "landed_via": [
+            "#4473"
+          ],
+          "rationale": "analytics tab re-implemented against the current PyQt shell"
+        },
+        {
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_covariation_presenter.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID fd0ad5c7deaa; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_covariation_scan_plot.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID fd0ad5c7deaa; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_covariation_state.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID fd0ad5c7deaa; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_data_mixin.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_analytics_tab.py",
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_canonical_workspace_mixin.py"
+          ],
+          "landed_via": [
+            "#4473",
+            "#4587"
+          ],
+          "rationale": "demo_frame and dataset loading live in the analytics tab and canonical workspace mixin"
+        },
+        {
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_demo_data.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID fd0ad5c7deaa; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_player_controls.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_player_workspace.py"
+          ],
+          "landed_via": [
+            "#4587"
+          ],
+          "rationale": "player workspace v2 with explicit identity attestation replaces the v1 controls"
+        },
+        {
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_plot_widget.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_linked_scatter_panel.py",
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_covariation_view.py"
+          ],
+          "landed_via": [
+            "#4592"
+          ],
+          "rationale": "linked scatter and covariation views supersede the generic plot widget"
+        },
+        {
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_table_preview.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_preview.py"
+          ],
+          "landed_via": [
+            "#4473"
+          ],
+          "rationale": "table preview landed under a different name"
+        },
+        {
+          "path": "src/rate_of_closure/ui/pyqt6/neural_model_outputs.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID fd0ad5c7deaa; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "src/rate_of_closure/ui/pyqt6/neural_training_controls.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID fd0ad5c7deaa; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/components/LaunchMonitorCharts.test.tsx",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/web/src/components/LaunchMonitorCovariation.test.tsx",
+            "src/rate_of_closure/web/src/components/LaunchMonitorLinkedScatter.test.tsx"
+          ],
+          "landed_via": [
+            "#4592"
+          ],
+          "rationale": "tests follow the superseding components"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/components/LaunchMonitorCharts.tsx",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/web/src/components/LaunchMonitorCovariationChart.tsx",
+            "src/rate_of_closure/web/src/components/LaunchMonitorLinkedScatter.tsx"
+          ],
+          "landed_via": [
+            "#4592"
+          ],
+          "rationale": "chart surfaces re-implemented with covariation and linked-scatter semantics"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/components/LaunchMonitorImportedResults.test.tsx",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/web/src/components/LaunchMonitorAnalyticsPanel.test.tsx"
+          ],
+          "landed_via": [
+            "#4473"
+          ],
+          "rationale": "tests follow the superseding component"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/components/LaunchMonitorImportedResults.tsx",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/web/src/components/LaunchMonitorAnalyticsPanel.tsx"
+          ],
+          "landed_via": [
+            "#4473"
+          ],
+          "rationale": "imported-results panel is the analytics panel on main"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/components/LaunchMonitorPlayerInsights.tsx",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/web/src/components/LaunchMonitorPlayerWorkspace.tsx"
+          ],
+          "landed_via": [
+            "#4587"
+          ],
+          "rationale": "player workspace v2 replaces v1 insights"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/components/NeuralModelCharts.tsx",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID fd0ad5c7deaa; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/model/launchMonitorImportedResults.test.ts",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/web/src/model/launchMonitorAnalysis.test.ts"
+          ],
+          "landed_via": [
+            "#4473"
+          ],
+          "rationale": "tests follow the superseding model"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/model/launchMonitorImportedResults.ts",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/web/src/model/launchMonitorAnalysis.ts",
+            "src/rate_of_closure/web/src/model/launchMonitorFileParsing.ts"
+          ],
+          "landed_via": [
+            "#4473"
+          ],
+          "rationale": "file parsing and analysis model superseded"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/model/launchMonitorPlayerAnalytics.test.ts",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/web/src/model/launchMonitorPerformance.test.ts",
+            "src/rate_of_closure/web/src/model/launchMonitorCovariation.test.ts"
+          ],
+          "landed_via": [
+            "#4587",
+            "#4592"
+          ],
+          "rationale": "tests follow the superseding models"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/model/launchMonitorPlayerAnalytics.ts",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/web/src/model/launchMonitorPerformance.ts",
+            "src/rate_of_closure/web/src/model/launchMonitorCovariation.ts"
+          ],
+          "landed_via": [
+            "#4587",
+            "#4592"
+          ],
+          "rationale": "metricUnit/metricLabel and player analytics live in the performance and covariation models"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/model/launchMonitorProject.ts",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/web/src/model/launchMonitorWorkspace.ts",
+            "src/rate_of_closure/web/src/model/launchMonitorWorkspaceV3.ts"
+          ],
+          "landed_via": [
+            "#4587",
+            "#4622"
+          ],
+          "rationale": "LaunchMonitorProject/parseLaunchMonitorProject exist on main in launchMonitorWorkspace.ts; the v3 contract adds versioned migration"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/model/neuralModelBundle.test.ts",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID fd0ad5c7deaa; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/model/neuralModelBundle.ts",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID fd0ad5c7deaa; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/model/neuralTrainingRequest.test.ts",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID fd0ad5c7deaa; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/model/neuralTrainingRequest.ts",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID fd0ad5c7deaa; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "tests/rate_of_closure/test_launch_monitor_player_metrics.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "tests/rate_of_closure/test_launch_monitor_performance.py",
+            "tests/rate_of_closure/test_launch_monitor_strokes_gained.py"
+          ],
+          "landed_via": [
+            "#4587"
+          ],
+          "rationale": "tests follow the superseding modules"
+        },
+        {
+          "path": "tests/rate_of_closure/test_neural_model_contract.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID fd0ad5c7deaa; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        },
+        {
+          "path": "tests/rate_of_closure/test_neural_model_lab_tab.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": false,
+          "decision": "obsolete",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Audit correction: this path is NOT present at the PR head OID fd0ad5c7deaa; the audit diffed the branch tip, which already contained later stacked merges. See the entry under the PR that actually introduced it.",
+          "audit_correction": "misattributed_to_this_pr"
+        }
+      ]
+    },
+    {
+      "number": 4246,
+      "title": "feat(rate-of-closure): add Neural Model Lab",
+      "url": "https://github.com/D-sorganization/Tools/pull/4246",
+      "head_oid": "5874fbb0bfc0dde9200bcd4f50dfc1bb4736d665",
+      "head_ref": "feat/4240-neural-model-lab",
+      "audit_diff_ref_sha": "5874fbb0bfc0dde9200bcd4f50dfc1bb4736d665",
+      "head_oid_matches_audit_diff_ref": true,
+      "audit_missing_count": 32,
+      "true_missing_count_at_head_oid": 32,
+      "counts": {
+        "re-land": 0,
+        "obsolete": 31,
+        "needs-owner": 1,
+        "misattributed": 0
+      },
+      "note": "Head OID matches the branch tip; 31 product files truly missing. The 19 launch-monitor files are the same as #4233; the 12 Neural Model Lab v1 files are superseded by Neural Model Lab v2 (#4587), whose contract only accepts launch-monitor-neural-bundle/v2 and forbids in-process training. No v1 artifacts were ever released from main, so no migration path is required.",
+      "files": [
+        {
+          "path": "docs/rate_of_closure/LAUNCH_MONITOR_PLAYER_ANALYTICS.md",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "docs/rate_of_closure/LAUNCH_MONITOR_PLAYER_WORKSPACE_V2.md",
+            "docs/rate_of_closure/LAUNCH_MONITOR_WORKSPACE_V3.md"
+          ],
+          "landed_via": [
+            "#4587",
+            "#4622"
+          ],
+          "rationale": "v2 doc states it is a selective recovery of feat/4226 against the current app shell"
+        },
+        {
+          "path": "docs/rate_of_closure/NEURAL_MODEL_LAB.md",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "docs/rate_of_closure/NEURAL_MODEL_LAB_V2.md"
+          ],
+          "landed_via": [
+            "#4587"
+          ],
+          "rationale": "Neural Model Lab v2 doc supersedes v1"
+        },
+        {
+          "path": "src/movement_optimizer/gui/motion_helpers.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "needs-owner",
+          "superseded_by": [],
+          "landed_via": [],
+          "rationale": "Outside the rate_of_closure slice scope (movement_optimizer GUI). Two helpers (build_motion_colors, chain_path_length) are absent on main; the movement_optimizer owner decides whether the 34-line helper is still wanted."
+        },
+        {
+          "path": "src/rate_of_closure/launch_monitor_data.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/launch_monitor_workspace.py",
+            "src/rate_of_closure/launch_monitor_workspace_v3.py",
+            "src/rate_of_closure/launch_monitor_import.py",
+            "src/shared/python/launch_monitor/importer.py",
+            "src/shared/python/launch_monitor/schema.py"
+          ],
+          "landed_via": [
+            "#4473",
+            "#4587",
+            "#4622"
+          ],
+          "rationale": "2.0.0 project schema kept readable as a labelled compatibility import (CONTRACT_VERSION 2.0.0) and superseded by launch-monitor-workspace/v3; import and unit inference moved to the ADR-0046 canonical layer"
+        },
+        {
+          "path": "src/rate_of_closure/launch_monitor_player_metrics.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/launch_monitor_performance.py",
+            "src/rate_of_closure/launch_monitor_strokes_gained.py",
+            "src/rate_of_closure/launch_monitor_strokes_gained_baseline.py",
+            "src/shared/python/launch_monitor/strokes_gained.py",
+            "src/shared/python/launch_monitor/dispersion.py"
+          ],
+          "landed_via": [
+            "#4587"
+          ],
+          "rationale": "dispersion and strokes-gained are now source-backed and fail closed in the governed platform; canonical statistics live in the ADR-0046 layer"
+        },
+        {
+          "path": "src/rate_of_closure/neural_model.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/neural_lab_contract.py"
+          ],
+          "landed_via": [
+            "#4587"
+          ],
+          "rationale": "only launch-monitor-neural-bundle/v2 is accepted on main; v1 bundles were never released from main so there is no migration debt"
+        },
+        {
+          "path": "src/rate_of_closure/neural_training.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/ui/pyqt6/neural_model_lab_training.py",
+            "src/rate_of_closure/neural_lab_contract.py"
+          ],
+          "landed_via": [
+            "#4587"
+          ],
+          "rationale": "v1 trained in-process; v2 policy (NEURAL_MODEL_LAB_V2.md) is that neither UI trains in its own process, so re-landing would violate the governed contract"
+        },
+        {
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_analysis_mixin.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_analytics_tab.py",
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_analysis_results.py"
+          ],
+          "landed_via": [
+            "#4473"
+          ],
+          "rationale": "analytics tab re-implemented against the current PyQt shell"
+        },
+        {
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_data_mixin.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_analytics_tab.py",
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_canonical_workspace_mixin.py"
+          ],
+          "landed_via": [
+            "#4473",
+            "#4587"
+          ],
+          "rationale": "demo_frame and dataset loading live in the analytics tab and canonical workspace mixin"
+        },
+        {
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_player_controls.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_player_workspace.py"
+          ],
+          "landed_via": [
+            "#4587"
+          ],
+          "rationale": "player workspace v2 with explicit identity attestation replaces the v1 controls"
+        },
+        {
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_plot_widget.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_linked_scatter_panel.py",
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_covariation_view.py"
+          ],
+          "landed_via": [
+            "#4592"
+          ],
+          "rationale": "linked scatter and covariation views supersede the generic plot widget"
+        },
+        {
+          "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_table_preview.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/ui/pyqt6/launch_monitor_preview.py"
+          ],
+          "landed_via": [
+            "#4473"
+          ],
+          "rationale": "table preview landed under a different name"
+        },
+        {
+          "path": "src/rate_of_closure/ui/pyqt6/neural_model_outputs.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/ui/pyqt6/neural_model_lab_tab.py",
+            "src/rate_of_closure/ui/pyqt6/neural_model_lab_widgets.py"
+          ],
+          "landed_via": [
+            "#4587"
+          ],
+          "rationale": "v2 tab and widgets supersede"
+        },
+        {
+          "path": "src/rate_of_closure/ui/pyqt6/neural_training_controls.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/ui/pyqt6/neural_model_lab_tab.py",
+            "src/rate_of_closure/ui/pyqt6/neural_model_lab_training.py"
+          ],
+          "landed_via": [
+            "#4587"
+          ],
+          "rationale": "v2 group-safe training request controls supersede"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/components/LaunchMonitorCharts.test.tsx",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/web/src/components/LaunchMonitorCovariation.test.tsx",
+            "src/rate_of_closure/web/src/components/LaunchMonitorLinkedScatter.test.tsx"
+          ],
+          "landed_via": [
+            "#4592"
+          ],
+          "rationale": "tests follow the superseding components"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/components/LaunchMonitorCharts.tsx",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/web/src/components/LaunchMonitorCovariationChart.tsx",
+            "src/rate_of_closure/web/src/components/LaunchMonitorLinkedScatter.tsx"
+          ],
+          "landed_via": [
+            "#4592"
+          ],
+          "rationale": "chart surfaces re-implemented with covariation and linked-scatter semantics"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/components/LaunchMonitorImportedResults.test.tsx",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/web/src/components/LaunchMonitorAnalyticsPanel.test.tsx"
+          ],
+          "landed_via": [
+            "#4473"
+          ],
+          "rationale": "tests follow the superseding component"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/components/LaunchMonitorImportedResults.tsx",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/web/src/components/LaunchMonitorAnalyticsPanel.tsx"
+          ],
+          "landed_via": [
+            "#4473"
+          ],
+          "rationale": "imported-results panel is the analytics panel on main"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/components/LaunchMonitorPlayerInsights.tsx",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/web/src/components/LaunchMonitorPlayerWorkspace.tsx"
+          ],
+          "landed_via": [
+            "#4587"
+          ],
+          "rationale": "player workspace v2 replaces v1 insights"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/components/NeuralModelCharts.tsx",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/web/src/components/NeuralModelLabPanel.tsx"
+          ],
+          "landed_via": [
+            "#4587"
+          ],
+          "rationale": "v2 panel supersedes"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/model/launchMonitorImportedResults.test.ts",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/web/src/model/launchMonitorAnalysis.test.ts"
+          ],
+          "landed_via": [
+            "#4473"
+          ],
+          "rationale": "tests follow the superseding model"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/model/launchMonitorImportedResults.ts",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/web/src/model/launchMonitorAnalysis.ts",
+            "src/rate_of_closure/web/src/model/launchMonitorFileParsing.ts"
+          ],
+          "landed_via": [
+            "#4473"
+          ],
+          "rationale": "file parsing and analysis model superseded"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/model/launchMonitorPlayerAnalytics.test.ts",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/web/src/model/launchMonitorPerformance.test.ts",
+            "src/rate_of_closure/web/src/model/launchMonitorCovariation.test.ts"
+          ],
+          "landed_via": [
+            "#4587",
+            "#4592"
+          ],
+          "rationale": "tests follow the superseding models"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/model/launchMonitorPlayerAnalytics.ts",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/web/src/model/launchMonitorPerformance.ts",
+            "src/rate_of_closure/web/src/model/launchMonitorCovariation.ts"
+          ],
+          "landed_via": [
+            "#4587",
+            "#4592"
+          ],
+          "rationale": "metricUnit/metricLabel and player analytics live in the performance and covariation models"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/model/launchMonitorProject.ts",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/web/src/model/launchMonitorWorkspace.ts",
+            "src/rate_of_closure/web/src/model/launchMonitorWorkspaceV3.ts"
+          ],
+          "landed_via": [
+            "#4587",
+            "#4622"
+          ],
+          "rationale": "LaunchMonitorProject/parseLaunchMonitorProject exist on main in launchMonitorWorkspace.ts; the v3 contract adds versioned migration"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/model/neuralModelBundle.test.ts",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/web/src/model/neuralLabContract.test.ts"
+          ],
+          "landed_via": [
+            "#4587"
+          ],
+          "rationale": "tests follow the v2 contract"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/model/neuralModelBundle.ts",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/web/src/model/neuralLabContract.ts"
+          ],
+          "landed_via": [
+            "#4587"
+          ],
+          "rationale": "PORTABLE_MODEL_SCHEMA/ModelVariable/DenseLayer/inferPortableModel exist on main under the v2 contract"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/model/neuralTrainingRequest.test.ts",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/web/src/model/neuralLabContract.test.ts"
+          ],
+          "landed_via": [
+            "#4587"
+          ],
+          "rationale": "tests follow the v2 contract"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/model/neuralTrainingRequest.ts",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "src/rate_of_closure/web/src/model/neuralLabContract.ts"
+          ],
+          "landed_via": [
+            "#4587"
+          ],
+          "rationale": "training request is part of the v2 contract"
+        },
+        {
+          "path": "tests/rate_of_closure/test_launch_monitor_player_metrics.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "tests/rate_of_closure/test_launch_monitor_performance.py",
+            "tests/rate_of_closure/test_launch_monitor_strokes_gained.py"
+          ],
+          "landed_via": [
+            "#4587"
+          ],
+          "rationale": "tests follow the superseding modules"
+        },
+        {
+          "path": "tests/rate_of_closure/test_neural_model_contract.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "tests/rate_of_closure/test_neural_lab_contract_v2.py"
+          ],
+          "landed_via": [
+            "#4587"
+          ],
+          "rationale": "v2 contract tests supersede"
+        },
+        {
+          "path": "tests/rate_of_closure/test_neural_model_lab_tab.py",
+          "in_audit_missing_list": true,
+          "present_at_head_oid": true,
+          "decision": "obsolete",
+          "superseded_by": [
+            "tests/rate_of_closure/test_neural_model_lab_v2_tab.py"
+          ],
+          "landed_via": [
+            "#4587"
+          ],
+          "rationale": "v2 tab tests supersede"
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "re-land": 0,
+    "obsolete": 85,
+    "needs-owner": 3,
+    "files_decided": 88,
+    "files_to_re_land": 0
+  },
+  "persistence_review": {
+    "scope": "Owner priority items checked inside the three diffs",
+    "findings": [
+      "launch_monitor_data.py carried PROJECT_SCHEMA_VERSION 2.0.0 project load/save; main keeps CONTRACT_VERSION 2.0.0 compatibility reads in launch_monitor_workspace.py and the versioned launch-monitor-workspace/v3 contract in launch_monitor_workspace_v3.py (#4622).",
+      "launchMonitorProject.ts (PROJECT_CONTRACT_VERSION 1.0.0) is superseded by launchMonitorWorkspace.ts + launchMonitorWorkspaceV3.ts on main.",
+      "neural_model.py / neuralModelBundle.ts validated launch-monitor-neural-bundle/v1; main accepts only v2 (neural_lab_contract.py, neuralLabContract.ts).",
+      "None of the three diffs touched autosave, restart recovery (#4384) or generic versioned project operations (#4220); those gaps are tracked on their own issues and are not recoverable from these branches."
+    ]
+  }
+}
