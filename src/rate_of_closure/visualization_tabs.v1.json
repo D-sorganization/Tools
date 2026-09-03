@@ -186,7 +186,7 @@
     {
       "surface": "react",
       "tab_id": "putting",
-      "purpose": "Inspect the delivered putt stroke, model-conditional path, speed, capture evidence, synchronized sample state, and timeline playback of the retained trajectory samples.",
+      "purpose": "Inspect the delivered putt stroke, model-conditional path, speed, capture evidence, synchronized sample state, and the narrow-viewport-safe timeline playback of the retained trajectory samples.",
       "data_prerequisites": [
         "Putt initial conditions, surface parameters, and putting-model identity.",
         "Delivered stroke parameters, putter head identity, and hole-capture model.",
