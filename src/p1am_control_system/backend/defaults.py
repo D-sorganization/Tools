@@ -19,10 +19,38 @@ PASSTHROUGH_KI = 0.0
 PASSTHROUGH_KD = 0.0
 
 
+# Default high-side alarm/trip band for a ROUTED input tag, in percent of span
+# (95 % of a 1400 C type-K full scale is 1330 C). Only the high side is set:
+# a low limit would trip a routed thermocouple at room temperature (25 C is
+# 1.8 %), and an unrouted tag at 0.0 -- so the low side defaults to disabled.
+DEFAULT_INPUT_HIGH_LIMIT = 95.0
+DEFAULT_INPUT_HIHI_LIMIT = 100.0
+
+
+def default_interlock_for(tag: str, routed_inputs: frozenset[str]) -> InterlockConfig:
+    """The startup interlock for ``tag``.
+
+    Routed inputs get a high-side-only band; every other tag is fully disabled
+    (all four limits ``None``), which the firmware skips entirely (#4001).
+    """
+    if tag in routed_inputs:
+        return InterlockConfig(
+            high_limit=DEFAULT_INPUT_HIGH_LIMIT, hihi_limit=DEFAULT_INPUT_HIHI_LIMIT
+        )
+    return InterlockConfig()
+
+
 def default_routing_config() -> RoutingConfig:
-    """The startup default routing/PID/interlock configuration."""
+    """The startup default routing/PID/interlock configuration.
+
+    Invariant (contract-tested): deploying this config to a freshly booted PLC
+    must not trip the interlock -- no tag holding 0.0 (unrouted) or a
+    room-temperature thermocouple reading violates any limit in it.
+    """
+    input_routing = [hardware.tag_name(i) for i in range(6)]
+    routed_inputs = frozenset(input_routing)
     return RoutingConfig(
-        input_routing=[hardware.tag_name(i) for i in range(6)],
+        input_routing=input_routing,
         output_routing=[hardware.tag_name(10), hardware.tag_name(11)],
         pids=[
             PIDConfig(
@@ -39,8 +67,8 @@ def default_routing_config() -> RoutingConfig:
             ),
         ],
         interlocks={
-            hardware.tag_name(i): InterlockConfig(
-                lolo_limit=0.0, low_limit=5.0, high_limit=95.0, hihi_limit=100.0
+            hardware.tag_name(i): default_interlock_for(
+                hardware.tag_name(i), routed_inputs
             )
             for i in range(hardware.TAG_COUNT)
         },

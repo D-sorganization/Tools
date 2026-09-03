@@ -74,7 +74,9 @@ class TestRoutingCodec:
         decoded = decode_interlocks(encode_interlocks(interlocks))
         assert len(decoded) == TAG_COUNT
         assert decoded["TAG_3"].hihi_limit == pytest.approx(101.0)
-        assert decoded["TAG_0"].low_limit == pytest.approx(5.0)
+        # A tag absent from the config is NOT interlocked (#4001), never 0/5/95/100.
+        assert decoded["TAG_0"].low_limit is None
+        assert decoded["TAG_0"].is_disabled()
 
     def test_tag_index_encoding_valid_names(self) -> None:
         assert encode_tag_indices(["TAG_1", "TAG_0", "TAG_7"]) == [1, 0, 7]

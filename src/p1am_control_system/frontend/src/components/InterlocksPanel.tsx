@@ -1,10 +1,11 @@
 import React, { useState, useId } from "react";
 import { InterlockConfig } from "../App";
+import { limitInputValue, parseLimitInput } from "../lib/limits";
 import { ShieldAlert, Save } from "lucide-react";
 
 interface InterlocksPanelProps {
   interlocks: InterlockConfig[];
-  onChange: (tagId: number, field: keyof InterlockConfig, value: number) => void;
+  onChange: (tagId: number, field: keyof InterlockConfig, value: number | null) => void;
   onDeploy: () => void;
   deploying: boolean;
 }
@@ -71,8 +72,9 @@ const InterlocksPanelImpl: React.FC<InterlocksPanelProps> = ({
               id={`${baseId}-hihi-limit`}
               type="number"
               className="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-white mb-2"
-              value={activeInterlock.hihi_limit}
-              onChange={(e) => onChange(selectedTag, "hihi_limit", parseFloat(e.target.value))}
+              value={limitInputValue(activeInterlock.hihi_limit)}
+              placeholder="disabled"
+              onChange={(e) => onChange(selectedTag, "hihi_limit", parseLimitInput(e.target.value))}
             />
             <p className="text-xs text-gray-500">Triggers critical E-Stop condition.</p>
           </div>
@@ -86,8 +88,9 @@ const InterlocksPanelImpl: React.FC<InterlocksPanelProps> = ({
               id={`${baseId}-high-limit`}
               type="number"
               className="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-white mb-2"
-              value={activeInterlock.high_limit}
-              onChange={(e) => onChange(selectedTag, "high_limit", parseFloat(e.target.value))}
+              value={limitInputValue(activeInterlock.high_limit)}
+              placeholder="disabled"
+              onChange={(e) => onChange(selectedTag, "high_limit", parseLimitInput(e.target.value))}
             />
             <p className="text-xs text-gray-500">Triggers warning alarm, requires ACK.</p>
           </div>
@@ -101,8 +104,9 @@ const InterlocksPanelImpl: React.FC<InterlocksPanelProps> = ({
               id={`${baseId}-low-limit`}
               type="number"
               className="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-white mb-2"
-              value={activeInterlock.low_limit}
-              onChange={(e) => onChange(selectedTag, "low_limit", parseFloat(e.target.value))}
+              value={limitInputValue(activeInterlock.low_limit)}
+              placeholder="disabled"
+              onChange={(e) => onChange(selectedTag, "low_limit", parseLimitInput(e.target.value))}
             />
             <p className="text-xs text-gray-500">Triggers warning alarm, requires ACK.</p>
           </div>
@@ -116,8 +120,9 @@ const InterlocksPanelImpl: React.FC<InterlocksPanelProps> = ({
               id={`${baseId}-lolo-limit`}
               type="number"
               className="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-white mb-2"
-              value={activeInterlock.lolo_limit}
-              onChange={(e) => onChange(selectedTag, "lolo_limit", parseFloat(e.target.value))}
+              value={limitInputValue(activeInterlock.lolo_limit)}
+              placeholder="disabled"
+              onChange={(e) => onChange(selectedTag, "lolo_limit", parseLimitInput(e.target.value))}
             />
             <p className="text-xs text-gray-500">Triggers critical E-Stop condition.</p>
           </div>

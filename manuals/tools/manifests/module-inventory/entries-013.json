@@ -2,6 +2,555 @@
   "authority": "D-sorganization/Tools",
   "entries": [
     {
+      "authority_status": "provisional",
+      "bytes_lf": 4293,
+      "classification": "calculation",
+      "classification_basis": "path-marker:solver",
+      "content_sha256_lf": "12e380ed3b60b7d6db39ae34e9a48f4637b9db56f2820005623757148305ee65",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-ODE-SOLVER-PY-B4A413C51C57",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/routers/ode_solver.py",
+      "purpose": "ODE solver router.  See issue #608.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "solve_ode",
+            "signature": "request: ODESolverRequest"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/process_calculators/test_ode_solver.py",
+          "src/shared/python/sidekick/tests/test_ode_solver.py",
+          "tests/shared/python/calc_backend/test_ode_solver_guards.py",
+          "tests/shared/python/process_calculators/test_ode_solver.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 4290,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pressure_drop",
+      "content_sha256_lf": "f3d4290caec401b0955003bcffbb17ba4ff44483e72cfd19352b92bbcda5f57d",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-PRESSURE-DROP-PY-C08B6B709F4B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/routers/pressure_drop.py",
+      "purpose": "Pressure drop calculator router with standardized API responses.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "calculate_pressure_drop",
+            "signature": "request: PressureDropRequest"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/calc_backend/tests/test_calc_backend.py",
+          "src/shared/python/calc_backend/tests/test_calc_backend_gaps.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 5784,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pressure_drop",
+      "content_sha256_lf": "fd62e0a6374ce3567606cb5ebd0af5f3126587a8e89d96c7139e8604195b65dd",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-PRESSURE-DROP-V2-PY-0E8225C13521",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/routers/pressure_drop_v2.py",
+      "purpose": "Enhanced pressure drop calculator router with standardized response format.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "mapped",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [
+          "/validate"
+        ],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "calculate_pressure_drop",
+            "signature": "request: PressureDropRequestV2"
+          },
+          {
+            "kind": "function",
+            "name": "validate_request",
+            "signature": "request: PressureDropRequestV2"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 5174,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "fb4c929e3e77701f36f0f65713aec62372e4bf28b23586c57b124d267587cbae",
+      "family": "rotation-converter-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-ROTATION-CONVERTER-PY-EE8A718AEB80",
+      "language": "python",
+      "maintainer": "Rotation converter maintainers",
+      "path": "src/shared/python/calc_backend/routers/rotation_converter.py",
+      "purpose": "Rotation Converter calculator router.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "mapped",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [
+          "/reference-frame"
+        ],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "compute_reference_frame_conversion",
+            "signature": "request: ReferenceFrameConversionRequest"
+          },
+          {
+            "kind": "function",
+            "name": "compute_rotation",
+            "signature": "request: RotationConverterRequest"
+          }
+        ],
+        "test_paths": [
+          "matlab/test_rotation_converter.m"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6393,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "27bc8af4fd759a18b15e575606aaa43fde99b00f9dde2e9b549ab8c374164684",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-SCRUBBER-PY-121489E149F4",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/routers/scrubber.py",
+      "purpose": "Scrubber calculator router.  See issue #613.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_FLUX_AREA_REL_TOL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_FLUX_AREA_SEED_M2",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_FLUX_MAX_ITERATIONS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "calculate_scrubber",
+            "signature": "request: ScrubberRequest"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/calc_backend/tests/test_calc_backend.py",
+          "src/shared/python/calc_backend/tests/test_calc_backend_gaps.py",
+          "src/shared/python/calc_backend/tests/test_scrubber_convergence_3181.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "kg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 6806,
+      "classification": "calculation",
+      "classification_basis": "path-marker:solver",
+      "content_sha256_lf": "9d2c1b78aa22601be390feb3166f212c88dfc0d4e99d0bcd631bac92de61ab5a",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-SYMBOLIC-SOLVER-PY-F8C824FA5CED",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/routers/symbolic_solver.py",
+      "purpose": "Symbolic solver router with optional SymPy support. See issue #2682.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "mapped",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [
+          "/derivative",
+          "/help",
+          "/simplify",
+          "/solve"
+        ],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SymbolicDerivativeRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SymbolicDerivativeResponse",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SymbolicHelpResponse",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SymbolicSimplifyRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SymbolicSimplifyResponse",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SymbolicSolveRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SymbolicSolveResponse",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "compute_derivative",
+            "signature": "request: SymbolicDerivativeRequest"
+          },
+          {
+            "kind": "function",
+            "name": "get_symbolic_help",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "simplify_expression",
+            "signature": "request: SymbolicSimplifyRequest"
+          },
+          {
+            "kind": "function",
+            "name": "solve_equation",
+            "signature": "request: SymbolicSolveRequest"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/calc_backend/tests/test_symbolic_solver.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5434,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b7d9abee3a850a91d6cd5013783ad59e1be3657ead5c035579eb7a094e3ca130",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-SYNGAS-WATER-PY-C52D9CF2DC26",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/routers/syngas_water.py",
+      "purpose": "Syngas water calculator router.  See issue #608.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "calculate_syngas_water",
+            "signature": "request: SyngasWaterRequest"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/calc_backend/tests/test_calc_backend.py"
+        ],
+        "unit_mentions": [
+          "Pa",
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4180,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "df9975f8201716a0b82ec1c7a2dcf5b5ff346ae3fa76f9445861f3ddc6036105",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-THERMAL-PROFILE-PY-69E799313D16",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/routers/thermal_profile.py",
+      "purpose": "Thermal profile predictor router.  See issue #608.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "predict_thermal_profile",
+            "signature": "request: ThermalProfileRequest"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/calc_backend/tests/test_calc_backend_gaps.py",
+          "tests/shared/python/process_calculators/test_thermal_profile.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "not-applicable",
       "bytes_lf": 2834,
       "classification": "non-calculation",
@@ -250,6 +799,7 @@
       "traceability": {
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-0022-chat-sidekick-boundary.md",
           "docs/adr/ADR-003-api-stability-policy.md"
         ],
         "artifact_sha256": [],
@@ -986,6 +1536,7 @@
       "traceability": {
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-0022-chat-sidekick-boundary.md",
           "docs/adr/ADR-003-api-stability-policy.md"
         ],
         "artifact_sha256": [],
@@ -1360,6 +1911,7 @@
       "traceability": {
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-0022-chat-sidekick-boundary.md",
           "docs/adr/ADR-003-api-stability-policy.md"
         ],
         "artifact_sha256": [],
@@ -3457,6 +4009,7 @@
       "traceability": {
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-0022-chat-sidekick-boundary.md",
           "docs/adr/ADR-003-api-stability-policy.md"
         ],
         "artifact_sha256": [],
@@ -5254,6 +5807,7 @@
         ],
         "test_paths": [
           "src/data_processing/data_processor/python/tests/test_advanced_analysis.py",
+          "src/p1am_control_system/backend/tests/test_interlock_defaults_contract.py",
           "src/p1am_control_system/backend/tests/test_units_contract.py",
           "src/pendulum_simulator/pendulum-web/tests/forceSourceProfiles.test.ts",
           "src/pendulum_simulator/tests/test_companion_dialog.py",
@@ -5423,6 +5977,7 @@
           "s"
         ],
         "validation_paths": [
+          "src/p1am_control_system/backend/tests/test_interlock_defaults_contract.py",
           "src/p1am_control_system/backend/tests/test_units_contract.py",
           "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
           "src/shared/python/model_generation/tests/test_contracts.py",
@@ -12819,7 +13374,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -13723,7 +14278,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -13788,7 +14343,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -13861,7 +14416,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -13943,7 +14498,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -14119,7 +14674,9 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0031-launch-monitor-canonical-shot-schema.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md",
+          "docs/adr/ADR-0048-launch-monitor-port-plan.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -14251,7 +14808,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -14363,7 +14920,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -14463,7 +15020,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -14518,7 +15075,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -14621,7 +15178,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -14684,7 +15241,8 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md",
+          "docs/adr/ADR-0048-launch-monitor-port-plan.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -14790,7 +15348,8 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0031-launch-monitor-canonical-shot-schema.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -14856,7 +15415,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -14923,7 +15482,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -14988,7 +15547,8 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0045-putting-integration-one-experience-two-preserved-stacks.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -15088,7 +15648,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -15150,7 +15710,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -15222,7 +15782,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -15277,7 +15837,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -15359,7 +15919,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -15440,7 +16000,8 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md",
+          "docs/adr/ADR-0048-launch-monitor-port-plan.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -15564,7 +16125,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -15653,7 +16214,8 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md",
+          "docs/adr/ADR-0048-launch-monitor-port-plan.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -15721,7 +16283,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -15822,7 +16384,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -15887,7 +16449,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -16062,7 +16624,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -16134,7 +16696,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -16872,510 +17434,6 @@
         "test_paths": [
           "src/shared/python/model_generation/tests/test_api_adapters.py"
         ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 15081,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f0e453fc40ad67cfd1a56de3fa9b3493ef0ef7c3372bcafa2dee2df3db775a30",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-API-REST-API-ASSETS-PY-509B84B19E41",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/api/rest_api_assets.py",
-      "purpose": "Inertia, library, and editor route handlers for model_generation.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "AssetLibraryEditorRoutesMixin",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 683,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a9e7f25fe28884babac63970201dc4f3e13406e5e82fe14a2dfb317fc5423fae",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-API-REST-API-CONTRACTS-PY-F8A200C1D740",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/api/rest_api_contracts.py",
-      "purpose": "Shared request, response, and route contracts for model_generation APIs.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "APIRequest",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "APIResponse",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "HTTPMethod",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "Route",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 8761,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "326fcb6d7c9ef3491985a3ae19c00af480204eac3d9f393c31f0b6f4acac29ae",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-API-REST-API-CORE-PY-9330EF0E1843",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/api/rest_api_core.py",
-      "purpose": "Core route registration and request dispatch for model_generation APIs.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ModelGenerationAPI",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/model_generation/tests/test_api_adapters.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4967,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b5a17aaf1240f6a07946363b933f1ca2d7f32638743168970b1e7c1a60681d96",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-API-REST-API-FASTAPI-PY-8F06BF869928",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/api/rest_api_fastapi.py",
-      "purpose": "FastAPI adapter for the model generation REST API.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "FastAPIAdapter",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/model_generation/tests/test_api_adapters.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2585,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2a513d4fbbb2d8a9abf4cfd45f62555145e3a66d03cafb5184f652932ee7694f",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-API-REST-API-FLASK-PY-B7079257A4D4",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/api/rest_api_flask.py",
-      "purpose": "Flask adapter for the model generation REST API.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "FlaskAdapter",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/model_generation/tests/test_api_adapters.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 8854,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f93e6156eca2facf7629cc1229be0fe468b58e39017f5c379e0ed1dbd912ff37",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-API-REST-API-GENERATION-PY-4D6C98EB359E",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/api/rest_api_generation.py",
-      "purpose": "Generation, conversion, validation, and parsing route handlers.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "GenerationConversionRoutesMixin",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 39913,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "90d51fe28834d48dd1da4f0163aed605a34a9d2d3114a6aa1bad97a04d0fd172",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-API-REST-API-ROUTES-PY-1F4E1F0EA76D",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/api/rest_api_routes.py",
-      "purpose": "ModelGenerationAPI class with all route handler methods.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ModelGenerationAPI",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ALLOWED_MESH_SUFFIXES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MAX_MESH_UPLOAD_BYTES",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/model_generation/test_mesh_upload_hardening.py",
-          "tests/shared/python/model_generation/test_rest_api_routes.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3735,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7a819a9c87b214add9ebedc4273c28d48e919072cbca79dcd744bc2044bcea75",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-API-REST-API-SUPPORT-PY-9F07B57E4277",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/api/rest_api_support.py",
-      "purpose": "Shared helpers for model_generation API route handlers.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "ALLOWED_MESH_SUFFIXES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MAX_MESH_UPLOAD_BYTES",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "download_requested",
-            "signature": "request: APIRequest"
-          },
-          {
-            "kind": "function",
-            "name": "ensure_request",
-            "signature": "request: APIRequest | None"
-          },
-          {
-            "kind": "function",
-            "name": "inertia_payload",
-            "signature": "inertia: Any"
-          },
-          {
-            "kind": "function",
-            "name": "maybe_file_response",
-            "signature": "request: APIRequest, *, content: str | bytes, filename: str, payload: dict[str, Any], content_type: str='application/xml'"
-          },
-          {
-            "kind": "function",
-            "name": "request_body",
-            "signature": "request: APIRequest"
-          },
-          {
-            "kind": "function",
-            "name": "request_content",
-            "signature": "request: APIRequest, *, body_key: str='content', file_key: str='file'"
-          },
-          {
-            "kind": "function",
-            "name": "request_file_text",
-            "signature": "request: APIRequest, *, file_key: str='file', encoding: str='utf-8'"
-          },
-          {
-            "kind": "function",
-            "name": "temporary_payload_file",
-            "signature": "*, payload: str | bytes, suffix: str, text_mode: bool=False"
-          },
-          {
-            "kind": "function",
-            "name": "validate_mesh_upload",
-            "signature": "*, payload: bytes, filename: str | None=None"
-          }
-        ],
-        "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []
       }

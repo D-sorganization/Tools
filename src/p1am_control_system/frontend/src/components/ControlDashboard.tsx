@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import type { RoutingConfig, PIDConfig, InterlockConfig } from "../App";
+import { limitInputValue, parseLimitInput } from "../lib/limits";
 import { ShieldAlert, Cpu, HardDriveDownload } from "lucide-react";
 import { TAG_INDICES } from "./RoutingMatrix";
 
@@ -37,7 +38,7 @@ export const ControlDashboard: React.FC<ControlDashboardProps> = ({
   };
 
   // Helper to update active Interlock config
-  const handleInterlockChange = (field: keyof InterlockConfig, value: number) => {
+  const handleInterlockChange = (field: keyof InterlockConfig, value: number | null) => {
     const updatedInterlocks = config.interlocks.map((interlock, idx) => {
       if (idx === selectedInterlockIdx) {
         return { ...interlock, [field]: value };
@@ -223,8 +224,9 @@ export const ControlDashboard: React.FC<ControlDashboardProps> = ({
                   type="number"
                   step="0.5"
                   className="form-input"
-                  value={activeInterlock.high_limit}
-                  onChange={(e) => handleInterlockChange("high_limit", Number(e.target.value))}
+                  value={limitInputValue(activeInterlock.high_limit)}
+                  placeholder="disabled"
+                  onChange={(e) => handleInterlockChange("high_limit", parseLimitInput(e.target.value))}
                 />
               </div>
 
@@ -234,8 +236,9 @@ export const ControlDashboard: React.FC<ControlDashboardProps> = ({
                   type="number"
                   step="0.5"
                   className="form-input"
-                  value={activeInterlock.low_limit}
-                  onChange={(e) => handleInterlockChange("low_limit", Number(e.target.value))}
+                  value={limitInputValue(activeInterlock.low_limit)}
+                  placeholder="disabled"
+                  onChange={(e) => handleInterlockChange("low_limit", parseLimitInput(e.target.value))}
                 />
               </div>
             </div>

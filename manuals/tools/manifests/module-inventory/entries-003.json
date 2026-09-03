@@ -3,6 +3,165 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 678,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a7abddb944f410750055de8cc6c356e4b573b006a40433aecae4e01d3f291af5",
+      "family": "media-processing-non-calculation",
+      "id": "TOOLS-MODULE-SRC-MEDIA-PROCESSING-VIDEO-PROCESSOR-APPS-WEB-COMPONENTS-TOASTER-TSX-9EC5607A0EF2",
+      "language": "typescript-react",
+      "maintainer": "Media processing maintainers",
+      "path": "src/media_processing/video_processor/apps/web/components/Toaster.tsx",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://sonner.emilkowal.ski/"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "Toaster",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4741,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2290278d65a0790100e09ca88733b58bcdf34de389b90c1c71938a5289812b7c",
+      "family": "media-processing-non-calculation",
+      "id": "TOOLS-MODULE-SRC-MEDIA-PROCESSING-VIDEO-PROCESSOR-APPS-WEB-COMPONENTS-AI-POSEDETECTOR-TSX-0847F09DC3C6",
+      "language": "typescript-react",
+      "maintainer": "Media processing maintainers",
+      "path": "src/media_processing/video_processor/apps/web/components/ai/PoseDetector.tsx",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "PoseDetector",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3232,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "378685dc4b07fd3db1d6a22a4b31cf8658297e3b7476c571514353c40f348f9c",
+      "family": "media-processing-non-calculation",
+      "id": "TOOLS-MODULE-SRC-MEDIA-PROCESSING-VIDEO-PROCESSOR-APPS-WEB-COMPONENTS-ANNOTATIONS-ANNOTATIONEXPORT-TSX-E53F8BF413E0",
+      "language": "typescript-react",
+      "maintainer": "Media processing maintainers",
+      "path": "src/media_processing/video_processor/apps/web/components/annotations/AnnotationExport.tsx",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "AnnotationExportComponent",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 7444,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -11739,6 +11898,61 @@
     },
     {
       "authority_status": "provisional",
+      "bytes_lf": 437,
+      "classification": "calculation",
+      "classification_basis": "path-marker:solver",
+      "content_sha256_lf": "fe0712acaa2de658b936b826ef80790dd0d9dc8d932948a8a75e4e995fb25d3a",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-ODE-SOLVER-LAUNCH-WEB-PY-8A9019D050B9",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/ode_solver/launch_web.py",
+      "purpose": "Launch the ode_solver React web application (Vite dev server).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_REPO_ROOT",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 106,
       "classification": "calculation",
       "classification_basis": "path-marker:solver",
@@ -13450,387 +13664,6 @@
         "public_surfaces": [],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5615,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4cae04dbb91d9c7304bbe75938c99f47c66c19d7122e923bd5b52bba919621b3",
-      "family": "control-systems-non-calculation",
-      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-ALARM-PROCESSING-PY-77E33AC894C7",
-      "language": "python",
-      "maintainer": "Control systems maintainers",
-      "path": "src/p1am_control_system/backend/alarm_processing.py",
-      "purpose": "Alarm-event processing for the poll loop.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "_SEVERITY_BY_STATE",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_alarm_entry",
-            "signature": "tag_name: str, state: str, *, timestamp: str, acknowledged: bool=False, acknowledged_by: str | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "process_alarm_events",
-            "signature": "alarm_engine: Any, tags: dict[str, float], active_alarms: dict[str, dict[str, Any]], *, now: datetime | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "severity_for_state",
-            "signature": "state: str"
-          },
-          {
-            "kind": "function",
-            "name": "state_name",
-            "signature": "state: Any"
-          }
-        ],
-        "test_paths": [
-          "src/p1am_control_system/backend/tests/test_alarm_processing.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 16304,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f54f5379bc9b1cb6b69dada703f73931fa9760ab1b4dc084573406d04b3c2f83",
-      "family": "control-systems-non-calculation",
-      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-ALICAT-MANAGER-PY-45B2EF727060",
-      "language": "python",
-      "maintainer": "Control systems maintainers",
-      "path": "src/p1am_control_system/backend/alicat_manager.py",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "AlicatMFC",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "AlicatManager",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_MFC_SPECS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MOCK_CONNECTION_TYPE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PHYSICAL_CONNECTION_TYPES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SIMULATED_PLC_DRIVERS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "VALID_CONNECTION_TYPES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "VALID_GASES",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "create_default_manager",
-            "signature": "*, connection_type: str, plc_driver: str, port_or_ip: str | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "ensure_gas_control_matches_plc",
-            "signature": "connection_type: str, plc_driver: str"
-          },
-          {
-            "kind": "function",
-            "name": "is_simulated_plc_driver",
-            "signature": "plc_driver: str"
-          },
-          {
-            "kind": "function",
-            "name": "validate_connection_type",
-            "signature": "connection_type: str"
-          }
-        ],
-        "test_paths": [
-          "tests/p1am_control_system/test_alicat_manager.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 11998,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "027996dc55bdd51f1d6f44cbbc84c9070a83eab513d76889a5d2a025ad6aaba1",
-      "family": "control-systems-non-calculation",
-      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-AUDIT-PY-F859122DA277",
-      "language": "python",
-      "maintainer": "Control systems maintainers",
-      "path": "src/p1am_control_system/backend/audit.py",
-      "purpose": "Append-only audit trail for every state-changing request (issue #4029).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "Actor",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "AuditEvent",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "AuditMiddleware",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "AUDITED_METHODS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "AUDIT_EXEMPT_PREFIXES",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "credential_fingerprint",
-            "signature": "key: str | None"
-          },
-          {
-            "kind": "function",
-            "name": "redact_payload",
-            "signature": "payload: Any"
-          },
-          {
-            "kind": "function",
-            "name": "resolve_actor",
-            "signature": "api_key: str | None"
-          }
-        ],
-        "test_paths": [
-          "tests/unit/ai/peer_review/test_audit.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 11806,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "5e950b29a0edccdf246ed2d5b5e835a7ae0ef100d0045cea86920535c2a3168c",
-      "family": "control-systems-non-calculation",
-      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-AUTH-CONFIG-PY-1FCB50D39AF4",
-      "language": "python",
-      "maintainer": "Control systems maintainers",
-      "path": "src/p1am_control_system/backend/auth_config.py",
-      "purpose": "Server-side authentication/authorization for the P1AM control backend.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "AuthConfiguration",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CREDENTIAL_HEADER_NAME",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "admin_key_configured",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "is_dev_no_auth",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "log_auth_configuration",
-            "signature": "log: logging.Logger | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "require_admin_key",
-            "signature": "api_key: str | None=Security(_api_key_header)"
-          },
-          {
-            "kind": "function",
-            "name": "require_api_key",
-            "signature": "api_key: str | None=Security(_api_key_header)"
-          },
-          {
-            "kind": "function",
-            "name": "require_read_auth",
-            "signature": "api_key: str | None=Security(_read_api_key_header)"
-          },
-          {
-            "kind": "function",
-            "name": "resolve_auth_config",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "verify_admin_key",
-            "signature": "provided: str | None"
-          },
-          {
-            "kind": "function",
-            "name": "verify_operator_key",
-            "signature": "provided: str | None"
-          }
-        ],
-        "test_paths": [
-          "src/p1am_control_system/backend/tests/test_auth_config.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
         "validation_paths": []
       }
     }

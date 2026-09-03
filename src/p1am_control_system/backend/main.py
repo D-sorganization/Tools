@@ -10,6 +10,7 @@ except ImportError:
     UTC = timezone.utc  # noqa: UP017
 from typing import Any, cast
 
+import hardware
 import shutdown_safety
 from alicat_manager import create_default_manager
 from audit import AuditMiddleware
@@ -43,12 +44,15 @@ from fastapi import (
     File,
     HTTPException,
     Query,
+    Request,
     UploadFile,
     WebSocket,
     WebSocketDisconnect,
 )
+from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
 from models import (
     AlicatGasPayload,
     AlicatMFCState,
@@ -250,14 +254,12 @@ def load_tags_into_plc_clients(session: Session) -> None:
 
 def build_alarm_engine(config: RoutingConfig) -> Any:
     """Builds the tools-core Rust AlarmEngine from the active RoutingConfig."""
-    limits_dict = {}
-    for tag_name, interlock in config.interlocks.items():
-        limits_dict[tag_name] = {
-            "lolo": interlock.lolo_limit,
-            "low": interlock.low_limit,
-            "high": interlock.high_limit,
-            "hihi": interlock.hihi_limit,
-        }
+    # ``None`` (disabled side) becomes -inf/+inf so the engine can never enter
+    # that state; see InterlockConfig.engine_limits.
+    limits_dict = {
+        tag_name: interlock.engine_limits()
+        for tag_name, interlock in config.interlocks.items()
+    }
     return AlarmEngine(limits_dict)
 
 
@@ -513,6 +515,22 @@ app = FastAPI(
     lifespan=lifespan,
 )
 app.state.control_context = control_context
+
+
+@app.exception_handler(RequestValidationError)
+async def _validation_error_as_422(
+    _request: Request, exc: RequestValidationError
+) -> JSONResponse:
+    """Keep a NaN/Infinity request body a 422, not a 500.
+
+    FastAPI's stock handler echoes the offending ``input`` and serialises with
+    ``allow_nan=False``; a body of ``{"value": NaN}`` therefore crashed the
+    error response itself (#3974). Sanitise non-finite floats first.
+    """
+    detail = hardware.json_safe(jsonable_encoder(exc.errors()))
+    return JSONResponse(status_code=422, content={"detail": detail})
+
+
 app.include_router(create_power_supply_router(power_supply_service))
 app.include_router(create_temperature_router(temperature_service))
 # Direct tag writes, PID auto-tuning and the PID-vs-MPC comparison. Mounted

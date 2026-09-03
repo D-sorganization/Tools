@@ -3,6 +3,145 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 13233,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "33748ab93ea64888d3a3305e34c585480106fd21bf95b88039992275890326bd",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CHECK-MIRROR-FRESHNESS-PY-B94393E3A7F7",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/check_mirror_freshness.py",
+      "purpose": "Freshness check for the rate-of-closure-explorer public mirror.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://d-sorganization.github.io/rate-of-closure-explorer/"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CanonicalState",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ContractViolation",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FreshnessReport",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MirrorState",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_MIRROR_REPO",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_WEB_SUBDIR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXIT_DRIFTED",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXIT_ERROR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXIT_FRESH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_RECORDED_SHA_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SHA_RE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "assess_freshness",
+            "signature": "canonical: CanonicalState, mirror: MirrorState"
+          },
+          {
+            "kind": "function",
+            "name": "compare_trees",
+            "signature": "canonical_files: dict[str, str], mirror_files: dict[str, str]"
+          },
+          {
+            "kind": "function",
+            "name": "exit_code_for",
+            "signature": "report: FreshnessReport"
+          },
+          {
+            "kind": "function",
+            "name": "gather_canonical_state",
+            "signature": "repo_root: Path, web_subdir: str, deep: bool"
+          },
+          {
+            "kind": "function",
+            "name": "gather_mirror_state",
+            "signature": "mirror_repo: str, deep: bool"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "parse_recorded_canonical_commit",
+            "signature": "message: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 3005,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -1981,10 +2120,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 17276,
+      "bytes_lf": 17593,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "bea14440814253a82db89032ab7c626e8dc18e407fb6772b500ca908d518853c",
+      "content_sha256_lf": "7f49d51fa85e2a2d4f648954f2e1a8cb45926f7dcaee6c1f5c87d83ff78a3224",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-GENERATE-TOOLS-JSON-PY-4CB9321263B8",
       "language": "python",
@@ -7252,6 +7391,7 @@
         ],
         "test_paths": [
           "src/data_processing/data_processor/python/tests/test_advanced_analysis.py",
+          "src/p1am_control_system/backend/tests/test_interlock_defaults_contract.py",
           "src/p1am_control_system/backend/tests/test_units_contract.py",
           "src/pendulum_simulator/pendulum-web/tests/forceSourceProfiles.test.ts",
           "src/pendulum_simulator/tests/test_companion_dialog.py",
@@ -7362,6 +7502,7 @@
         ],
         "unit_mentions": [],
         "validation_paths": [
+          "src/p1am_control_system/backend/tests/test_interlock_defaults_contract.py",
           "src/p1am_control_system/backend/tests/test_units_contract.py",
           "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
           "src/shared/python/model_generation/tests/test_contracts.py",
@@ -7703,6 +7844,118 @@
         "unit_mentions": [
           "s"
         ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 710,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7f9a3425a7c17d662a49ce225ed3aeb9053c40f69092553d6208fba1b2fb5624",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DATA-EXPLORER-GUI-REGISTRATION-PY-A70D01A417AF",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/data_explorer/gui_registration.py",
+      "purpose": "GUI registration for the Data Explorer workbench.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "GUI_INFO",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_gui_info",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_gui_registration.py",
+          "tests/rate_of_closure/test_gui_registration.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 439,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "736b66c3ee993372a42f61f98fba919edbdbc0f4b0466ce3b844fee68dfb3785",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DATA-EXPLORER-LAUNCH-PYQT6-PY-26D6ABD4B676",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/data_explorer/launch_pyqt6.py",
+      "purpose": "Standalone PyQt6 launcher for the Data Explorer workbench.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_launch_pyqt6.py"
+        ],
+        "unit_mentions": [],
         "validation_paths": []
       }
     },
@@ -15075,246 +15328,6 @@
         "unit_mentions": [
           "bar",
           "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 14782,
-      "classification": "calculation",
-      "classification_basis": "path-marker:filter",
-      "content_sha256_lf": "d6f4d42e5fe14cfd473ce3031edb7cc50cf1f8acab3df64c2ff73ca5bbbd91b2",
-      "family": "data-processing-calculation",
-      "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-VECTORIZED-FILTER-ENGINE-PY-5CE9AD02C830",
-      "language": "python",
-      "maintainer": "Data processing maintainers",
-      "path": "src/data_processing/data_processor/python/data_processor/vectorized_filter_engine.py",
-      "purpose": "Facade for the vectorized filter engine and its extracted filter modules.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "FilterEngine",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "VectorizedFilterEngine",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "apply_filter",
-            "signature": "signal: pd.Series, filter_type: str, params: dict[str, Any], signal_name: str='', logger: Callable[..., Any] | None=None"
-          }
-        ],
-        "test_paths": [
-          "src/data_processing/data_processor/python/tests/test_vectorized_filter_engine_contracts.py",
-          "tests/data_processing/data_processor/test_script_generator_hardening.py",
-          "tests/data_processing/data_processor/test_vectorized_filter_split.py",
-          "tests/data_processor/test_vectorized_filter_engine.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "src/data_processing/data_processor/python/tests/test_vectorized_filter_engine_contracts.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 9550,
-      "classification": "calculation",
-      "classification_basis": "path-marker:filter",
-      "content_sha256_lf": "e6c4d856d90c8b3d2a2751b6292d8f889d0832894a13f00af58b7dce124d5f40",
-      "family": "data-processing-calculation",
-      "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-VECTORIZED-FILTER-FREQUENCY-DOMAIN-PY-54B02EC974D5",
-      "language": "python",
-      "maintainer": "Data processing maintainers",
-      "path": "src/data_processing/data_processor/python/data_processor/vectorized_filter_frequency_domain.py",
-      "purpose": "Frequency-domain filter kernels for the vectorized filter engine.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "apply_fft_filter_core",
-            "signature": "signal_data: np.ndarray, filter_coeffs: np.ndarray, zero_phase: bool"
-          },
-          {
-            "kind": "function",
-            "name": "apply_fft_filter_vectorized",
-            "signature": "signal: pd.Series, params: dict[str, Any], safe_get_param: ParamGetter, calculate_sampling_rate: SamplingRateCalculator, logger: Logger"
-          },
-          {
-            "kind": "function",
-            "name": "apply_window_function",
-            "signature": "filter_response: np.ndarray, window_shape: str"
-          },
-          {
-            "kind": "function",
-            "name": "calculate_frequency_response",
-            "signature": "filter_type: str, params: dict[str, Any], safe_get_param: ParamGetter, logger: Logger, n_freqs: int=1024"
-          },
-          {
-            "kind": "function",
-            "name": "design_frequency_window",
-            "signature": "filter_type: str, freq_low: float, freq_high: float, window_shape: str, n_samples: int, transition_bw: float"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "Hz"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 11760,
-      "classification": "calculation",
-      "classification_basis": "path-marker:filter",
-      "content_sha256_lf": "939c03c7cd917488de962493c7994b60cd85fc808a99fe9c55a762065a2b2905",
-      "family": "data-processing-calculation",
-      "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-VECTORIZED-FILTER-TIME-DOMAIN-PY-39221E73AD27",
-      "language": "python",
-      "maintainer": "Data processing maintainers",
-      "path": "src/data_processing/data_processor/python/data_processor/vectorized_filter_time_domain.py",
-      "purpose": "Time-domain filter kernels for the vectorized filter engine.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "apply_butterworth_vectorized",
-            "signature": "signal: pd.Series, params: dict[str, Any], safe_get_param: ParamGetter, calculate_sampling_rate: SamplingRateCalculator, logger: Logger"
-          },
-          {
-            "kind": "function",
-            "name": "apply_gaussian_vectorized",
-            "signature": "signal: pd.Series, params: dict[str, Any], safe_get_param: ParamGetter, logger: Logger"
-          },
-          {
-            "kind": "function",
-            "name": "apply_hampel_fallback",
-            "signature": "signal: pd.Series, params: dict[str, Any], safe_get_param: ParamGetter"
-          },
-          {
-            "kind": "function",
-            "name": "apply_hampel_vectorized",
-            "signature": "signal: pd.Series, params: dict[str, Any], safe_get_param: ParamGetter, logger: Logger"
-          },
-          {
-            "kind": "function",
-            "name": "apply_median_vectorized",
-            "signature": "signal: pd.Series, params: dict[str, Any], safe_get_param: ParamGetter, logger: Logger"
-          },
-          {
-            "kind": "function",
-            "name": "apply_moving_average_vectorized",
-            "signature": "signal: pd.Series, params: dict[str, Any], safe_get_param: ParamGetter, logger: Logger"
-          },
-          {
-            "kind": "function",
-            "name": "apply_savgol_vectorized",
-            "signature": "signal: pd.Series, params: dict[str, Any], safe_get_param: ParamGetter, logger: Logger"
-          },
-          {
-            "kind": "function",
-            "name": "apply_zscore_vectorized",
-            "signature": "signal: pd.Series, params: dict[str, Any], safe_get_param: ParamGetter, logger: Logger"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "N"
         ],
         "validation_paths": []
       }
