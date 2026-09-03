@@ -545,10 +545,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6177,
+      "bytes_lf": 6215,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4e44e74eed3ec07ddf86af0737198cab778ba68c5e9eef39d5db815930549acd",
+      "content_sha256_lf": "d39ef4885126ea883bc322162ebf046564ed89386e992bda47fb5f0ed25c4117",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-PLAYBACKTRANSPORTBAR-TSX-5602C107C0FE",
       "language": "typescript-react",

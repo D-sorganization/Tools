@@ -171,7 +171,7 @@ export function PlaybackTransportBar({
         }
         aria-label={`${subjectLabel} Time`}
         title={scrubTitle}
-        className="min-w-36 flex-1"
+        className="min-w-36 shrink grow basis-full sm:basis-0"
       />
       <label className="flex items-center gap-1 text-slate-300">
         Speed

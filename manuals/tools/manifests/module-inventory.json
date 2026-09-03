@@ -291,7 +291,7 @@
       "shard_index": 7
     },
     {
-      "content_sha256_lf": "012f92986c2169945ee3c24848df3f235547ced414dcdc05ffcefdd2b52e108b",
+      "content_sha256_lf": "fc27b83c43f44cde9e0aca64efbe549d2b452abb1eb83401e146e2e47324e788",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/ui/pyqt6/spatial_target_panel_access.py",
       "last_path": "src/rate_of_closure/web/src/components/ManualDeliveryControls.test.tsx",
@@ -299,7 +299,7 @@
       "shard_index": 8
     },
     {
-      "content_sha256_lf": "4cb9f251d977d22ab46d1b82cbf01796e32a90a9326cf36d7d25b32307ff66e9",
+      "content_sha256_lf": "11746c165bbe58226c11f63888d1ad80a29dd8ff10fee9c4c191ef11c800c511",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/web/src/components/ManualDeliveryControls.tsx",
       "last_path": "src/rate_of_closure/web/src/model/clubHeads.ts",
@@ -371,7 +371,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "df4844f12b44f47dc80179b92e350c99e5c75c1348f6cffe9527f660898bc86e",
+  "source_tree_sha256": "8479c8cdf08bdc0a2487aa01461333d26cffc9dbbee16f2c6d3cd89d3a8174ee",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
