@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — Rate_of_Closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-09-01
+> Last updated: 2026-09-03
 > **Current state only**, capped at 150 lines; history lives in git and in [`docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md`](../../docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md).
 > Do not append dated entries — that is how it reached 2,205 lines.
 
@@ -57,8 +57,16 @@ silent migration. Python remains the sole Monte-Carlo authority; React mirrors
 only the outcome vocabulary and deterministic single-putt evaluation through
 `evaluatePuttWithTrajectory`. Both clients consume the one shared playback
 transport and the `putt` block of `playback_transport_golden_v1.json`.
-**Never fork a second transport, sampler, or golden.** The PyQt putting visual
-baseline remains stale because P6/P8 deliberately changed its first viewport.
+**Never fork a second transport, sampler, or golden.** P6-P8 deliberately
+rebuilt the putting first viewport, so both putting baselines went stale: the
+React one is re-approved here from a trusted-run candidate; the PyQt one must
+wait for #4844's environment fix — re-approving it now would launder that
+glyph drift. The 390x844 overflow had TWO 6 px sources: the P8 transport row
+(#4927) and F2's green-import row (#4936), whose file input's font-dependent
+intrinsic width blocked shrinking. **Correcting #4936's own claim:** that fix
+does *not* change the approved 1440x900 image — baselines are viewport-only
+screenshots and the import row sits near y=1149, below the fold — so it was
+the 390x844 document width, not the captured first viewport, that it fixed.
 ADR-0047 H4 (UD #9353) wired the Flight Explorer tab's "Import Trajectory
 Record…" action to replay an imported `swing_sim.ball_flight_trajectory/1`
 record (either flight-model family) through this **same** P8 transport — no

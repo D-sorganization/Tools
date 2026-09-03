@@ -24,24 +24,24 @@ the player's right. The club body frame is user-defined through
 The free-club state is
 
 \[
-\mathcal{x}=\{\mathbf{x}_c,\mathbf{R},\mathbf{v}_c,\boldsymbol{\omega}_c,
-\mathbf{x}_b,\mathbf{v}_b,\boldsymbol{\omega}_b\},
+\mathcal{x}=\{\mathbf{x}\_c,\mathbf{R},\mathbf{v}\_c,\boldsymbol{\omega}\_c,
+\mathbf{x}\_b,\mathbf{v}\_b,\boldsymbol{\omega}\_b\},
 \]
 
 where c denotes the club CG, b the ball center, and R maps body-frame vectors to
 the world frame. With contact force F acting on the ball,
 
 \[
-m_c\dot{\mathbf v}_c=-\mathbf F,\qquad
-\mathbf I_w\dot{\boldsymbol\omega}_c+
+m_c\dot{\mathbf v}\_c=-\mathbf F,\qquad
+\mathbf I_w\dot{\boldsymbol\omega}\_c+
 \boldsymbol\omega_c\times(\mathbf I_w\boldsymbol\omega_c)
 =\mathbf r_c\times(-\mathbf F)+\boldsymbol\tau_g,
 \]
 
 \[
-m_b\dot{\mathbf v}_b=\mathbf F,\qquad
-I_b\dot{\boldsymbol\omega}_b=\mathbf r_b\times\mathbf F,
-\qquad \dot{\mathbf R}=[\boldsymbol\omega_c]_\times\mathbf R.
+m*b\dot{\mathbf v}\_b=\mathbf F,\qquad
+I_b\dot{\boldsymbol\omega}\_b=\mathbf r_b\times\mathbf F,
+\qquad \dot{\mathbf R}=[\boldsymbol\omega_c]*\times\mathbf R.
 \]
 
 The implementation advances R with the SO(3) exponential map, avoiding Euler
@@ -68,7 +68,7 @@ The contact-point approach rate includes club and ball surface velocities:
 The canonical unilateral Kelvin-Voigt law is
 
 \[
-F_n=\max(0,\min(F_{max},k\delta+c\dot\delta))\quad\text{for }\delta>0,
+F*n=\max(0,\min(F*{max},k\delta+c\dot\delta))\quad\text{for }\delta>0,
 \]
 
 and zero otherwise. Both the legacy translating spring-damper model and the
@@ -76,12 +76,12 @@ interval solver call the same `impact.contact.KelvinVoigtContactLaw`.
 Regularized Coulomb friction is bounded by `mu F_n`; this is a stable reference
 approximation, not the advanced evolving stick-slip/contact-patch model.
 
-For a requested restitution e and effective mass m*, the linear-oscillator
+For a requested restitution e and effective mass m\*, the linear-oscillator
 calibration uses
 
 \[
 \zeta={-\ln e\over\sqrt{\pi^2+(\ln e)^2}},\qquad
-c=2\zeta\sqrt{k m^*}.
+c=2\zeta\sqrt{k m^\*}.
 \]
 
 This analytic relationship supplies a reproducible instantaneous-limit target.
@@ -144,14 +144,14 @@ claiming external predictive accuracy.
 - Golf-ball mass/diameter and driver constants: in-repository provenance in
   `src/shared/python/swing_sim/impact/constants.py`.
 - Friction rolling-cap background: Cross, “Grip-slip behavior of a bouncing
-  ball,” *American Journal of Physics* 70 (2002), as already documented in
+  ball,” _American Journal of Physics_ 70 (2002), as already documented in
   `impact/models.py`.
 - Existing impact-model and literature-file inventory:
   `docs/physics/GOLF_BALL_FLIGHT_IMPACT_SOURCE_MAP.md` in UpstreamDrift.
 - 3-D impact papers retained by the project:
   `docs/references/papers/Development and Comparison of 3D Dynamics Models of
-  Golf Clubhead Ball Impacts.pdf` and `Three Dimensional Golf Clubhead Ball
-  Impact Models for Drivers and Irons.pdf` in UpstreamDrift.
+Golf Clubhead Ball Impacts.pdf` and `Three Dimensional Golf Clubhead Ball
+Impact Models for Drivers and Irons.pdf` in UpstreamDrift.
 
 No numerical parameter in the reference implementation is presented as fitted
 to those papers unless the corresponding code/docstring explicitly says so.
