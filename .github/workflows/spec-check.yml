@@ -8,6 +8,11 @@
 # 2. If source files changed but SPEC.md did not, posts a warning
 # 3. Blocks merge unless spec-exempt label is applied or SPEC.md is updated
 #
+# Change-log rows are keyed by pull request, not by a serial spec version
+# (Repository_Management#1520). This job only checks that SPEC.md was touched;
+# the row grammar is enforced by shared_scripts/fleet_hooks.py spec-changelog
+# and tests/architecture/test_spec_version_freshness.py.
+#
 # CONFIGURATION: Edit the 'source_patterns' in the Check step to match
 # your repo's source directories.
 
@@ -155,7 +160,10 @@ jobs:
             **Per the [Specification-Driven Development Policy](https://github.com/D-sorganization/Repository_Management/blob/main/docs/SPECIFICATION_DRIVEN_DEVELOPMENT_POLICY.md):**
             - Any PR that adds, removes, or changes functionality must update SPEC.md
             - Update the relevant sections (features, architecture, tests, dependencies, etc.)
-            - Bump the Spec Version if making substantive changes
+            - Add ONE \`§12 Change Log\` row keyed by your pull request:
+              \`| YYYY-MM-DD | #<pr> | one-line summary |\`. Do NOT bump the
+              \`Spec Version\` field — it is release-derived
+              ([Repository_Management#1520](https://github.com/D-sorganization/Repository_Management/issues/1520))
 
             **To resolve:**
             1. Update \`SPEC.md\` to reflect your changes, OR

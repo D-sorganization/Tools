@@ -3,10 +3,10 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 14133,
+      "bytes_lf": 17222,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3d2c72911e5471fba3acf67ff3cf8564374e4381108e09c25f0ed7398f2c01fd",
+      "content_sha256_lf": "0a0ccfe4d44603db20db90e5b95590f2a81e74e4a1971e08996c1c106179cc21",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SHARED-SCRIPTS-FLEET-HOOKS-PY-B72B87E03803",
       "language": "python",
@@ -147,6 +147,11 @@
           },
           {
             "kind": "function",
+            "name": "check_spec_changelog",
+            "signature": "args: argparse.Namespace"
+          },
+          {
+            "kind": "function",
             "name": "check_spec_freshness",
             "signature": "args: argparse.Namespace"
           },
@@ -193,6 +198,191 @@
         ],
         "test_paths": [],
         "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 21333,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8ab78f3bf8b565ad6eb790c3e956e669fab92ad2db317cfc8766385f4d449502",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SHARED-SCRIPTS-SPEC-CHANGELOG-PY-C1EC6A2D651B",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "shared_scripts/spec_changelog.py",
+      "purpose": "Portable SPEC.md change-log parser, validator, migrator and row-union merge.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://github.com/D-sorganization/Repository_Management/issues/1520"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Changelog",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Row",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SpecChangelogError",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CANONICAL_HEADER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FROZEN_PROSE_NOTE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "NO_KEY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "POLICY_NOTE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PR_KEYED_SINCE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_DATE_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_HEADING_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ISSUE_REF_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_KEY_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_PROSE_ENTRY_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SEMVER_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SEPARATOR_RE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "ensure_policy_note",
+            "signature": "text: str, *, include_frozen_note: bool"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "migrate_prose_entries",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "migrate_rows",
+            "signature": "rows: list[Row]"
+          },
+          {
+            "kind": "function",
+            "name": "migrate_text",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "parse_changelog",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "render_changelog",
+            "signature": "changelog: Changelog, rows: list[Row]"
+          },
+          {
+            "kind": "function",
+            "name": "replace_rows",
+            "signature": "text: str, changelog: Changelog, rows: list[Row]"
+          },
+          {
+            "kind": "function",
+            "name": "rows_added",
+            "signature": "before: str, after: str"
+          },
+          {
+            "kind": "function",
+            "name": "union_rows",
+            "signature": "base: list[Row], ours: list[Row], theirs: list[Row]"
+          },
+          {
+            "kind": "function",
+            "name": "union_text",
+            "signature": "base: str, ours: str, theirs: str"
+          },
+          {
+            "kind": "function",
+            "name": "validate",
+            "signature": "changelog: Changelog"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
           "s"
         ],
         "validation_paths": []

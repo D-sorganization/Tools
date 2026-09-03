@@ -9,13 +9,16 @@ container, integration, and deployment checks to GitHub Actions.
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import logging
 import os
 import re
 import shutil
 import subprocess
+import sys
 from collections.abc import Iterable, Sequence
 from pathlib import Path
+from types import ModuleType
 
 logger = logging.getLogger(__name__)
 
@@ -95,7 +98,19 @@ BARE_EXCEPT_RE = re.compile(r"^\s*except\s*:\s*(?:#.*)?$")
 
 
 def _run(cmd: Sequence[str]) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(cmd, capture_output=True, text=True, check=False)
+    # Decode explicitly as UTF-8 with replacement rather than inheriting the
+    # locale codec. On Windows that default is cp1252, which raises
+    # UnicodeDecodeError partway through any `git show`/`git diff` output
+    # carrying a character it cannot map -- and SPEC.md is 3 MB of em dashes,
+    # arrows and box characters. Matches Repository_Management's copy.
+    return subprocess.run(
+        cmd,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        check=False,
+    )
 
 
 def _git_files(args: Sequence[str]) -> list[str]:
@@ -225,6 +240,78 @@ def check_spec_freshness(args: argparse.Namespace) -> int:
     return fail_or_warn("SPEC.md freshness boundary", failures, args.warn_only)
 
 
+def _load_spec_changelog() -> ModuleType | None:
+    """Load the portable change-log helper, or ``None`` if it was not shipped."""
+    module_path = Path(__file__).with_name("spec_changelog.py")
+    if not module_path.is_file():
+        return None
+    spec = importlib.util.spec_from_file_location("fleet_spec_changelog", module_path)
+    if spec is None or spec.loader is None:  # pragma: no cover - defensive
+        return None
+    module = importlib.util.module_from_spec(spec)
+    # Register before exec: the module defines dataclasses, and
+    # dataclasses.field resolution looks the defining module up in sys.modules.
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def _spec_text_at(ref: str) -> str | None:
+    result = _run(["git", "show", f"{ref}:SPEC.md"])
+    return result.stdout if result.returncode == 0 else None
+
+
+def check_spec_changelog(args: argparse.Namespace) -> int:
+    """Enforce PR-keyed SPEC.md change-log rows (Repository_Management#1520).
+
+    Rows are ``| YYYY-MM-DD | #<pr> | summary |``. There is no serial version
+    to collide on and no header field to keep in lockstep, so two concurrent
+    pull requests cannot conflict by construction. What is still enforced:
+
+    * the table parses and every row is well formed;
+    * a PR key is never reused (a second row for the same pull request means
+      somebody copied a row instead of editing their own);
+    * a change that touches source/config **and** SPEC.md actually adds a row,
+      which is the requirement the old gate existed to impose.
+    """
+    spec = ROOT / "SPEC.md"
+    if not spec.exists():
+        return 0
+    module = _load_spec_changelog()
+    if module is None:
+        return fail_or_warn(
+            "SPEC.md change-log checker missing",
+            ["shared_scripts/spec_changelog.py was not shipped to this repository"],
+            True,
+        )
+
+    failures: list[str] = []
+    after = spec.read_text(encoding="utf-8")
+    try:
+        changelog = module.parse_changelog(after)
+    except module.SpecChangelogError as exc:
+        return fail_or_warn(
+            "SPEC.md change-log boundary",
+            [f"SPEC.md: {exc}"],
+            args.warn_only,
+        )
+
+    failures.extend(module.validate(changelog))
+
+    files = staged_files() or changed_files()
+    if "SPEC.md" in files and any(is_source(path) for path in files):
+        base_ref = os.environ.get("FLEET_HOOK_FROM_REF") or "HEAD"
+        before = _spec_text_at(base_ref)
+        if before is not None and not module.rows_added(before, after):
+            failures.append(
+                "SPEC.md was edited alongside source/config changes but no "
+                "change-log row was added. Add one row for your pull request: "
+                "| YYYY-MM-DD | #<pr> | summary |"
+            )
+
+    return fail_or_warn("SPEC.md change-log boundary", failures, args.warn_only)
+
+
 def check_adr_readme(args: argparse.Namespace) -> int:
     files = staged_files() or changed_files()
     adr_changes = [
@@ -344,6 +431,7 @@ def check_dependency_audit(args: argparse.Namespace) -> int:
 CHECKS = {
     "file-size": check_file_size,
     "spec-freshness": check_spec_freshness,
+    "spec-changelog": check_spec_changelog,
     "adr-readme": check_adr_readme,
     "workflow-inventory": check_workflow_inventory,
     "error-handling": check_error_handling,
@@ -372,6 +460,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 [
                     "file-size",
                     "spec-freshness",
+                    "spec-changelog",
                     "adr-readme",
                     "workflow-inventory",
                     "error-handling",
@@ -389,6 +478,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             [
                 "file-size",
                 "spec-freshness",
+                "spec-changelog",
                 "adr-readme",
                 "workflow-inventory",
                 "error-handling",
