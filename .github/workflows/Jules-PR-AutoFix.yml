@@ -56,6 +56,10 @@ jobs:
   pick-runner:
     runs-on: d-sorg-fleet
     timeout-minutes: 2
+    # Same-repository guard (Tools #4923 / #4464): workflow_run fires with this
+    # repository's write token even when the triggering run came from a fork
+    # PR. Nothing here may act on a head_branch that does not live in this repo.
+    if: ${{ (github.event_name != 'workflow_run' || github.event.workflow_run.head_repository.full_name == github.repository) }}
     outputs:
       runner: ${{ steps.check.outputs.runner }}
     steps:
@@ -106,10 +110,13 @@ jobs:
     name: Fix and Verify CI (Iterative)
     runs-on: ${{ needs.pick-runner.outputs.runner }}
     timeout-minutes: 30
-    # Only run on failures (not success) for workflow_run events
+    # Only run on failures (not success) for workflow_run events, and never
+    # for a run whose head repository is a fork (Tools #4923 / #4464): this
+    # job checks out workflow_run.head_branch and pushes with contents: write.
     if: |
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'failure')
+      (github.event_name != 'workflow_run' || github.event.workflow_run.head_repository.full_name == github.repository) &&
+      (github.event_name == 'workflow_dispatch' ||
+       (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'failure'))
 
     outputs:
       final_status: ${{ steps.final-status.outputs.status }}

@@ -402,11 +402,16 @@ jobs:
       - name: Security Scan (pip-audit)
         timeout-minutes: 15
         run: |
-          # CVE-2026-4539: pygments 2.19.2 vulnerability with no fix version available yet.
-          # Ignored until a patched release is published upstream.
+          # No vulnerability ignores. CVE-2026-4539 (pygments < 2.20.0,
+          # GHSA-5239-wwwm-4pmq) was ignored here without a date or expiry;
+          # the fix shipped in pygments 2.20.0 and requirements.txt pins
+          # pygments>=2.21.0, so the ignore was removed 2026-09-03 (Tools #4923).
+          # A future `--ignore-vuln <id>` must carry, in this comment: the
+          # advisory id, "added YYYY-MM-DD", "expires YYYY-MM-DD" and the reason
+          # (tests/ops/test_workflow_run_security_guards.py enforces this).
           # Use python -m pip_audit to ensure we use the venv-installed binary,
           # not the system-wide one which may have a broken dep chain.
-          python -m pip_audit -r requirements.txt --ignore-vuln CVE-2026-4539
+          python -m pip_audit -r requirements.txt
 
       - name: Check gitleaks license
         id: gitleaks-check

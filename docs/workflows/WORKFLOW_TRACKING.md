@@ -14,7 +14,7 @@ Global status note: Paused for catching up.
 | ci-failure-digest.yml              | Defined (see global status note) | See workflow YAML header/name for execution role. |
 | ci-standard.yml                    | Defined (see global status note) | See workflow YAML header/name for execution role. |
 | Code-Metrics.yml                   | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| codeql-analysis.yml.disabled       | Disabled                         | See workflow YAML header/name for execution role. |
+| codeql-analysis.yml                | Active (PR to main, push to main, weekly; RM #1507) | CodeQL security-and-quality for python + javascript-typescript on d-sorg-fleet (Tools #4923). |
 | Comment-to-Issue-Converter.yml     | Defined (see global status note) | See workflow YAML header/name for execution role. |
 | docs-governance.yml                | Defined (see global status note) | See workflow YAML header/name for execution role. |
 | Jules-Archivist.yml                | Defined (see global status note) | See workflow YAML header/name for execution role. |
@@ -64,3 +64,4 @@ Update this file whenever workflows are added, removed, enabled, or disabled.
 For governance, see Repository_Management/docs/architecture/WORKFLOW_GOVERNANCE.md.
 
 - 2026-09-02: `ci-standard.yml` concurrency group changed to `ci-standard-${{ github.ref == 'refs/heads/main' && github.sha || github.ref }}` (per-commit on main; `cancel-in-progress: true` unchanged) so a later push never cancels an in-flight main run (main-green campaign, Repository_Management#1507).
+- 2026-09-03: `codeql-analysis.yml.disabled` re-enabled as `codeql-analysis.yml` (python, javascript-typescript; PR + weekly). Every job of the two `workflow_run` consumers (`Jules-PR-AutoFix.yml`, `Jules-Control-Tower.yml`) now carries `github.event.workflow_run.head_repository.full_name == github.repository`. The undated `--ignore-vuln CVE-2026-4539` was removed from `ci-standard.yml` pip-audit (fixed in pygments 2.20.0; requirements pins >=2.21.0). Jules-* workflows are inventoried in `jules_inventory.md` for the Repository_Management#1483 retirement campaign; none deleted here (Tools #4923, Repository_Management#1507).
