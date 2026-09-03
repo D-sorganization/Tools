@@ -443,13 +443,14 @@ class AsyncModbusManager(BasePLCClient):
     async def clear_estop(self) -> bool:
         """Write the E-stop reset coil and return whether the write was accepted.
 
-        NOTE: the current firmware (firmware.ino) only acts on coil 0
-        (save-to-flash) and ignores coil 1, so this write is effectively a no-op
-        on the device today — the real reset is the controller un-latch in the
-        backend plus the operator re-arm. The write is kept (and succeeds at the
-        Modbus level) so a future firmware that honors a host reset coil works
-        without a backend change. If that firmware treats the coil as
-        level-sensitive, add a write-back to False here to make it a true pulse.
+        The firmware reads coil 1 every scan, consumes the pulse (writes it
+        back to 0) and clears its trip latch ONLY if no tag is still outside
+        its band (#4001). A refused reset therefore leaves
+        ``hardware.INTERLOCK_TRIPPED_REGISTER`` at 1 and the causing tag in
+        ``hardware.INTERLOCK_TRIP_TAG_REGISTER``; this method reports only that
+        the coil write was accepted, not that the plant is un-tripped — the
+        backend's own software latches are cleared by the caller regardless,
+        so an operator can re-arm the HMI while the PLC keeps outputs safe.
         """
         async with self.lock:
             if not self._connected:
@@ -492,6 +493,9 @@ class AsyncModbusManager(BasePLCClient):
         except ValueError as exc:
             logger.warning("write_pid_setpoint: %s", exc)
             return False
+        # Precondition, not I/O: a NaN/Inf setpoint is the caller's error and
+        # must not be reported as a lost link (#3974). Raised before the lock.
+        value = hardware.require_finite_value(value, "value")
         # Interlock: force an energizing command to 0 while E-stop is latched.
         if self._estop_active and value != 0.0:
             logger.warning(
@@ -623,7 +627,11 @@ class AsyncModbusManager(BasePLCClient):
         previously skipped the latch entirely (issue #4038).
 
         Raises:
-            TypeError: If ``tag_name`` is not a str.
+            TypeError: If ``tag_name`` is not a str or ``value`` is not a number.
+            hardware.NonFiniteValueError: If ``value`` is NaN or infinite. A
+                precondition failure by the caller, raised BEFORE the socket is
+                touched so it can never be mistaken for a transport fault and
+                drop ``_connected`` (issue #3974).
             NotImplementedError: If the tag resolves into the firmware's
                 republished broker block, i.e. the write can never take effect.
 
@@ -632,6 +640,7 @@ class AsyncModbusManager(BasePLCClient):
         """
         if not isinstance(tag_name, str):
             raise TypeError(f"tag_name must be a str, got {type(tag_name).__name__}")
+        value = hardware.require_finite_value(value, "value")
 
         address = direct_tag_address(tag_name, self.tag_map)
         if address is None:

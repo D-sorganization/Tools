@@ -24,14 +24,21 @@ which backend is active:
   first sample.
 
 The fallback ``AlarmEngine`` reproduces the Rust engine's public contract:
-LoLo/Low/Normal/High/HiHi state classification, at-most-32-tags and monotonic
-threshold validation (``ValueError``), acknowledgment tracking, and the
-``update_tag`` / ``acknowledge_alarm`` / ``get_active_alarms`` /
+LoLo/Low/Normal/High/HiHi/BadQuality state classification, at-most-32-tags and
+monotonic threshold validation (``ValueError``), acknowledgment tracking, and
+the ``update_tag`` / ``acknowledge_alarm`` / ``get_active_alarms`` /
 ``get_alarm_state`` methods used by the backend.
+
+A non-finite value (NaN/Inf) is classified ``BadQuality`` -- an *active* alarm
+state -- never ``Normal``. All four band comparisons are False for NaN, so the
+naive classifier resolved a live HiHi to Normal on a burned-out register read
+(issue #3973). ``tests/test_scada_fallback.py`` pins this against the Rust
+engine.
 """
 
 from __future__ import annotations
 
+import math
 from collections.abc import Sequence
 from enum import Enum
 from typing import Any
@@ -49,6 +56,21 @@ class AlarmState(Enum):
     LOLO = "LoLo"
     HIGH = "High"
     HIHI = "HiHi"
+    #: Non-finite reading: a sensor/register fault, held as an active alarm.
+    BAD_QUALITY = "BadQuality"
+
+
+#: Severity per state, mirrored by ``alarm_processing.severity_for_state`` and
+#: the Rust ``get_active_alarms``. BadQuality ranks with the trip tier: a fault
+#: on an alarmed tag cannot be shown to be safe.
+_SEVERITY: dict[AlarmState, int] = {
+    AlarmState.NORMAL: 0,
+    AlarmState.LOW: 1,
+    AlarmState.HIGH: 1,
+    AlarmState.LOLO: 2,
+    AlarmState.HIHI: 2,
+    AlarmState.BAD_QUALITY: 2,
+}
 
 
 def moving_average(values: Sequence[float], window_size: int) -> list[float]:
@@ -183,7 +205,9 @@ class AlarmEngine:
 
         limits = self.tag_limits[tag_id]
         old_state = self._tag_states.get(tag_id, AlarmState.NORMAL)
-        if value <= limits["lolo"]:
+        if not math.isfinite(value):
+            new_state = AlarmState.BAD_QUALITY
+        elif value <= limits["lolo"]:
             new_state = AlarmState.LOLO
         elif value <= limits["low"]:
             new_state = AlarmState.LOW
@@ -232,15 +256,11 @@ class AlarmEngine:
         for tag_id, state in self._tag_states.items():
             if state == AlarmState.NORMAL:
                 continue
-            if state in (AlarmState.LOW, AlarmState.HIGH):
-                severity = 1
-            else:
-                severity = 2
             active.append(
                 {
                     "tag_id": tag_id,
                     "state": state,
-                    "severity": severity,
+                    "severity": _SEVERITY[state],
                     "acknowledged": self._tag_acknowledged.get(tag_id, False),
                     "acknowledged_by": self._tag_acknowledged_by.get(tag_id),
                     "value": self._tag_values.get(tag_id, 0.0),

@@ -15,6 +15,43 @@ pub enum AlarmState {
     LoLo,
     High,
     HiHi,
+    /// Non-finite reading (NaN/Inf): a sensor or register fault. Held as an
+    /// ACTIVE alarm state, never resolved to `Normal` -- every band
+    /// comparison is false for NaN, so the naive classifier silently cleared
+    /// a live HiHi on a burned-out read (issue #3973). Mirrored by
+    /// `scada_fallback.AlarmState.BAD_QUALITY`.
+    BadQuality,
+}
+
+impl AlarmState {
+    /// Severity tier: 0 normal, 1 warning (Low/High), 2 trip-class
+    /// (LoLo/HiHi/BadQuality). Shared by `get_active_alarms` and the tests so
+    /// the Python fallback's table has a single Rust counterpart.
+    pub fn severity(self) -> u8 {
+        match self {
+            AlarmState::Normal => 0,
+            AlarmState::Low | AlarmState::High => 1,
+            AlarmState::LoLo | AlarmState::HiHi | AlarmState::BadQuality => 2,
+        }
+    }
+
+    /// Classify a reading against a tag's limits. Pure so it can be unit
+    /// tested without a Python interpreter.
+    pub fn classify(value: f64, limits: &TagLimits) -> AlarmState {
+        if !value.is_finite() {
+            AlarmState::BadQuality
+        } else if value <= limits.lolo {
+            AlarmState::LoLo
+        } else if value <= limits.low {
+            AlarmState::Low
+        } else if value >= limits.hihi {
+            AlarmState::HiHi
+        } else if value >= limits.high {
+            AlarmState::High
+        } else {
+            AlarmState::Normal
+        }
+    }
 }
 
 /// Limits definition for a single tag.
@@ -146,17 +183,7 @@ impl AlarmEngine {
         })?;
 
         let old_state = *self.tag_states.get(&tag_id).unwrap_or(&AlarmState::Normal);
-        let new_state = if value <= limits.lolo {
-            AlarmState::LoLo
-        } else if value <= limits.low {
-            AlarmState::Low
-        } else if value >= limits.hihi {
-            AlarmState::HiHi
-        } else if value >= limits.high {
-            AlarmState::High
-        } else {
-            AlarmState::Normal
-        };
+        let new_state = AlarmState::classify(value, limits);
 
         self.tag_values.insert(tag_id.clone(), value);
 
@@ -210,11 +237,7 @@ impl AlarmEngine {
                 let ack_by = self.tag_acknowledged_by.get(tag_id).cloned().flatten();
                 let val = *self.tag_values.get(tag_id).unwrap_or(&0.0);
 
-                let severity = match state {
-                    AlarmState::Normal => 0,
-                    AlarmState::Low | AlarmState::High => 1,
-                    AlarmState::LoLo | AlarmState::HiHi => 2,
-                };
+                let severity = state.severity();
 
                 let dict = PyDict::new(py);
                 dict.set_item("tag_id", tag_id)?;
@@ -763,6 +786,56 @@ mod tests {
             assert_eq!(events.len(), 1);
             assert_eq!(engine.tag_states["T1"], AlarmState::Normal);
             assert_eq!(engine.tag_acknowledged["T1"], false);
+        });
+    }
+
+    #[test]
+    fn test_alarm_engine_nan_is_bad_quality_never_normal() {
+        // Issue #3973: a NaN read must not resolve an active alarm to Normal.
+        let limits = TagLimits::new(20.0, 10.0, 80.0, 90.0);
+        assert_eq!(AlarmState::classify(f64::NAN, &limits), AlarmState::BadQuality);
+        assert_eq!(
+            AlarmState::classify(f64::INFINITY, &limits),
+            AlarmState::BadQuality
+        );
+        assert_eq!(
+            AlarmState::classify(f64::NEG_INFINITY, &limits),
+            AlarmState::BadQuality
+        );
+        assert_eq!(AlarmState::classify(95.0, &limits), AlarmState::HiHi);
+        assert_eq!(AlarmState::classify(50.0, &limits), AlarmState::Normal);
+        assert_eq!(AlarmState::BadQuality.severity(), 2);
+
+        // Disabled sides are fed as +/-inf by the backend and must never fire.
+        let disabled = TagLimits::new(f64::NEG_INFINITY, f64::NEG_INFINITY, 95.0, 100.0);
+        assert_eq!(AlarmState::classify(0.0, &disabled), AlarmState::Normal);
+        assert_eq!(AlarmState::classify(96.0, &disabled), AlarmState::High);
+
+        let mut limits_map = HashMap::new();
+        let mut t1 = HashMap::new();
+        t1.insert("lolo".to_string(), 10.0);
+        t1.insert("low".to_string(), 20.0);
+        t1.insert("high".to_string(), 80.0);
+        t1.insert("hihi".to_string(), 90.0);
+        limits_map.insert("T1".to_string(), t1);
+        let mut engine = AlarmEngine::new(limits_map).unwrap();
+
+        Python::initialize();
+        Python::attach(|py| {
+            engine.update_tag(py, "T1".to_string(), 95.0).unwrap();
+            assert_eq!(engine.tag_states["T1"], AlarmState::HiHi);
+
+            let events = engine.update_tag(py, "T1".to_string(), f64::NAN).unwrap();
+            assert_eq!(events.len(), 1);
+            assert_eq!(engine.tag_states["T1"], AlarmState::BadQuality);
+            assert!(!engine.get_active_alarms(py).unwrap().is_empty());
+
+            // Still acknowledgeable, and a finite reading re-classifies.
+            assert!(engine
+                .acknowledge_alarm("T1".to_string(), "op".to_string())
+                .unwrap());
+            engine.update_tag(py, "T1".to_string(), 50.0).unwrap();
+            assert_eq!(engine.tag_states["T1"], AlarmState::Normal);
         });
     }
 

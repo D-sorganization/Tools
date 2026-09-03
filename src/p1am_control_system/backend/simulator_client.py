@@ -2,6 +2,7 @@ import random
 import time
 from typing import Optional
 
+import hardware
 from defaults import default_routing_config
 from models import RoutingConfig
 from plc_interface import BasePLCClient
@@ -163,6 +164,15 @@ class SimulatedPLCClient(BasePLCClient):
             return True
 
     async def write_tag(self, tag_name: str, value: float) -> bool:
+        """Force a simulated tag.
+
+        Raises:
+            TypeError: If ``value`` is not a number.
+            hardware.NonFiniteValueError: If ``value`` is NaN/Inf -- the same
+                precondition the real client enforces (#3974), so simulator
+                mode cannot accept a force the plant would refuse.
+        """
+        value = hardware.require_finite_value(value, "value")
         async with self.lock:
             if tag_name in self.simulated_tags:
                 self.simulated_tags[tag_name] = value
