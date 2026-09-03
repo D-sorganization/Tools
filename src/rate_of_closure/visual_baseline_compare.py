@@ -247,12 +247,19 @@ def _reference_bytes(surface: str, reference: VisualBaselineEntry) -> bytes:
 def compare_visual_baselines(
     candidate_root: Path, expected_source_commit: str
 ) -> tuple[VisualBaselineComparison, ...]:
-    """Verify all candidate identities, reference bytes, and pixel tolerances."""
+    """Verify all candidate identities, reference bytes, and pixel tolerances.
+
+    Every entry is evaluated even when earlier entries drift, so the report
+    names every offender instead of masking the tabs behind the first one
+    (issue #4844: the trusted run named only ``pyqt/clubhead`` and eight
+    further drifting tabs were never evaluated).
+    """
 
     if _COMMIT.fullmatch(expected_source_commit) is None:
         raise VisualBaselineComparisonError("expected candidate commit is invalid")
     manifest = load_visual_baseline_manifest()
     results: list[VisualBaselineComparison] = []
+    offenders: list[str] = []
     for surface in ("react", "pyqt"):
         references = manifest.for_surface(surface)
         candidates = _candidate_manifest(
@@ -261,7 +268,12 @@ def compare_visual_baselines(
         for reference in references:
             reference_bytes = _reference_bytes(surface, reference)
             candidate_bytes = candidates[reference.tab_id]
-            results.append(_compare(reference, reference_bytes, candidate_bytes))
+            try:
+                results.append(_compare(reference, reference_bytes, candidate_bytes))
+            except VisualBaselineComparisonError as exc:
+                offenders.append(str(exc))
+    if offenders:
+        raise VisualBaselineComparisonError("\n".join(offenders))
     return tuple(results)
 
 
