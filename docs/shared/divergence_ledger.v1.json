@@ -41,12 +41,7 @@
       "source_issue": "UpstreamDrift#9348",
       "target_pr": "Tools#4907",
       "status": "ported",
-      "rulings": [
-        "D6",
-        "D7",
-        "D8",
-        "D9"
-      ],
+      "rulings": ["D6", "D7", "D8", "D9"],
       "inventory": null,
       "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure/launch_monitor_performance.py (analyze_dispersion) - disjoint result surface."
     },
@@ -124,9 +119,7 @@
       "source_issue": "UpstreamDrift#9348",
       "target_pr": "Tools#4907",
       "status": "ported",
-      "rulings": [
-        "D15"
-      ],
+      "rulings": ["D15"],
       "inventory": null,
       "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure/_launch_monitor_analysis_statistics.py correlations - plain correlation only; owner ruling D15 applied here."
     },
@@ -178,9 +171,7 @@
       "source_issue": "UpstreamDrift#9348",
       "target_pr": "Tools#4907",
       "status": "ported",
-      "rulings": [
-        "D17"
-      ],
+      "rulings": ["D17"],
       "inventory": null,
       "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure/launch_monitor_analysis.py + 2 private modules; owner ruling D17 applied here (needs-decision row, gated per G1-D4)."
     },
@@ -193,9 +184,7 @@
       "source_issue": "UpstreamDrift#9348",
       "target_pr": "Tools#4907",
       "status": "ported",
-      "rulings": [
-        "D14"
-      ],
+      "rulings": ["D14"],
       "inventory": null,
       "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure/launch_monitor_canonical_v2.py - pinned client half only."
     },
@@ -208,11 +197,7 @@
       "source_issue": "UpstreamDrift#9348",
       "target_pr": "Tools#4907",
       "status": "ported",
-      "rulings": [
-        "D1",
-        "D2",
-        "D5"
-      ],
+      "rulings": ["D1", "D2", "D5"],
       "inventory": null,
       "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure/launch_monitor_strokes_gained_baseline.py - baseline half stays in rate_of_closure."
     },
@@ -225,11 +210,7 @@
       "source_issue": "UpstreamDrift#9348",
       "target_pr": "Tools#4907",
       "status": "ported",
-      "rulings": [
-        "D2",
-        "D3",
-        "D4"
-      ],
+      "rulings": ["D2", "D3", "D4"],
       "inventory": null,
       "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: internal."
     },
@@ -255,13 +236,7 @@
       "source_issue": "UpstreamDrift#9348",
       "target_pr": "Tools#4907",
       "status": "ported",
-      "rulings": [
-        "D1",
-        "D2",
-        "D3",
-        "D4",
-        "D5"
-      ],
+      "rulings": ["D1", "D2", "D3", "D4", "D5"],
       "inventory": null,
       "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure/launch_monitor_strokes_gained.py; G1-D3 exclude-and-audit is the canonical posture."
     },
@@ -274,10 +249,7 @@
       "source_issue": "UpstreamDrift#9348",
       "target_pr": "Tools#4907",
       "status": "ported",
-      "rulings": [
-        "D11",
-        "D12"
-      ],
+      "rulings": ["D11", "D12"],
       "inventory": null,
       "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure/launch_monitor_longitudinal.py dataclasses."
     },
@@ -290,10 +262,7 @@
       "source_issue": "UpstreamDrift#9348",
       "target_pr": "Tools#4907",
       "status": "ported",
-      "rulings": [
-        "D10",
-        "D11"
-      ],
+      "rulings": ["D10", "D11"],
       "inventory": null,
       "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure/launch_monitor_longitudinal.py - different pooled estimator (G1-D1 named-method pair)."
     },
@@ -306,13 +275,7 @@
       "source_issue": "UpstreamDrift#9348",
       "target_pr": "Tools#4907",
       "status": "ported",
-      "rulings": [
-        "D10",
-        "D11",
-        "D12",
-        "D13",
-        "D14"
-      ],
+      "rulings": ["D10", "D11", "D12", "D13", "D14"],
       "inventory": null,
       "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure/launch_monitor_longitudinal.py - different pooled estimator; G1-D1 named-method pair, G1-D2 session-cell inference unit."
     },
@@ -325,10 +288,7 @@
       "source_issue": "UpstreamDrift#9348",
       "target_pr": "Tools#4907",
       "status": "ported",
-      "rulings": [
-        "D22",
-        "D23"
-      ],
+      "rulings": ["D22", "D23"],
       "inventory": null,
       "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure/_player_covariation_types.py; union port."
     },
@@ -341,10 +301,7 @@
       "source_issue": "UpstreamDrift#9348",
       "target_pr": "Tools#4907",
       "status": "ported",
-      "rulings": [
-        "D22",
-        "D23"
-      ],
+      "rulings": ["D22", "D23"],
       "inventory": null,
       "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure/_player_covariation_scan.py plus statistics inside the twin; union port."
     },
@@ -357,10 +314,7 @@
       "source_issue": "UpstreamDrift#9348",
       "target_pr": "Tools#4907",
       "status": "ported",
-      "rulings": [
-        "D22",
-        "D23"
-      ],
+      "rulings": ["D22", "D23"],
       "inventory": null,
       "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure/player_covariation.py; union port, owner rulings D22/D23 applied here."
     },
@@ -386,12 +340,7 @@
       "source_issue": "UpstreamDrift#9348",
       "target_pr": "Tools#4907",
       "status": "ported",
-      "rulings": [
-        "D28",
-        "D29",
-        "D30",
-        "D31"
-      ],
+      "rulings": ["D28", "D29", "D30", "D31"],
       "inventory": null,
       "notes": "ADR-0046 Stage 1 / ADR-0048 port ladder, landed in Tools (P1-P20 complete 2026-09-02). Counterpart before the port: src/rate_of_closure/launch_monitor_private_corpus.py; MERGE row (ADR-0046 Amendment 1): validation refuses what the manifest rejects, no skip flag."
     },
@@ -456,14 +405,7 @@
       "source_issue": "UpstreamDrift#9354",
       "target_pr": null,
       "status": "paired-open",
-      "rulings": [
-        "D1",
-        "D2",
-        "D3",
-        "D4",
-        "D5",
-        "G1-D3"
-      ],
+      "rulings": ["D1", "D2", "D3", "D4", "D5", "G1-D3"],
       "inventory": null,
       "notes": "G1-D3 legacy half CLOSED in Tools 1.18.112 (exclude-and-audit, additive status/excluded_rows/exclusions; TypeScript twin calculateSourceBackedStrokesGained aligned). UpstreamDrift must re-pin D1 (the raise) and D2 (the field set) in the paired vendor-bump PR; neither repo's change is correct alone."
     },
@@ -476,10 +418,7 @@
       "source_issue": "UpstreamDrift#9354",
       "target_pr": null,
       "status": "paired-open",
-      "rulings": [
-        "D22",
-        "D23"
-      ],
+      "rulings": ["D22", "D23"],
       "inventory": null,
       "notes": "D22/D23 legacy half OPEN: rate_of_closure.player_covariation still reports the low-dof between-player interval (-0.6655142653044201, 0.9960866924324187) and labels start_distance_yards as \"s\"; test_player_covariation_drift.py pins both; launchMonitorCovariation.ts is the cross-runtime twin. Must not be smuggled into a Tools-only PR."
     },
@@ -492,12 +431,7 @@
       "source_issue": "UpstreamDrift#9354",
       "target_pr": null,
       "status": "paired-open",
-      "rulings": [
-        "D28",
-        "D29",
-        "D30",
-        "D31"
-      ],
+      "rulings": ["D28", "D29", "D30", "D31"],
       "inventory": null,
       "notes": "D30 legacy half is the mirror image: UpstreamDrift's corpus.py must gain the manifest gate (five corpora rate_of_closure refuses, UD loads silently); test_corpus_drift.py's five D30 cases pin its permissiveness. Paired PR. D28 narrows, D29/D31 unchanged (UD capabilities carried over verbatim)."
     },
@@ -510,15 +444,7 @@
       "source_issue": "UpstreamDrift#9354",
       "target_pr": null,
       "status": "pinned",
-      "rulings": [
-        "D10",
-        "D11",
-        "D12",
-        "D13",
-        "D14",
-        "G1-D1",
-        "G1-D2"
-      ],
+      "rulings": ["D10", "D11", "D12", "D13", "D14", "G1-D1", "G1-D2"],
       "inventory": null,
       "notes": "Different pooled estimator by design (G1-D1 named-method pair; G1-D2 session-cell inference unit). Legacy keeps its estimator; drift suite test_longitudinal_drift.py pins D10-D14. A port must not move a pinned number."
     },
@@ -531,12 +457,7 @@
       "source_issue": "UpstreamDrift#9354",
       "target_pr": null,
       "status": "pinned",
-      "rulings": [
-        "D6",
-        "D7",
-        "D8",
-        "D9"
-      ],
+      "rulings": ["D6", "D7", "D8", "D9"],
       "inventory": null,
       "notes": "analyze_dispersion (D6-D9, disjoint result surface) and analyze_session_trend (same name, different estimand) stay as the web-twinned application layer; the canonical inferential layer is Tools launch_monitor per ADR-0046 (1.18.114 docstring alignment)."
     },
@@ -549,11 +470,7 @@
       "source_issue": "UpstreamDrift#9354",
       "target_pr": null,
       "status": "pinned",
-      "rulings": [
-        "D15",
-        "D17",
-        "G1-D4"
-      ],
+      "rulings": ["D15", "D17", "G1-D4"],
       "inventory": null,
       "notes": "Ungated twin classified per G1-D4 (gate before classification); owner rulings D15/D17 applied in the canonical relationships.py/flexible_analysis.py. Legacy modules unchanged since vendor pin e88a334c; drift suite test_flexible_drift.py pins 13 cases."
     },
@@ -1329,6 +1246,19 @@
         "overlap": 1
       },
       "notes": "Compat shim diverged (bootstrap semantics differ between launch.py and UnifiedToolsLauncher consumers). Owner ruling pending."
+    },
+    {
+      "module": "ai/tools/sidekick_analytics.py",
+      "tools_path": "src/shared/python/ai/tools/sidekick_analytics.py",
+      "ud_path": "src/shared/python/ai/tools/sidekick_analytics.py",
+      "ruling": "ud-canonical",
+      "owner": "seam epic UpstreamDrift#9406",
+      "source_issue": "UpstreamDrift#9474",
+      "target_pr": null,
+      "status": "ported",
+      "rulings": [],
+      "inventory": null,
+      "notes": "Authored in UpstreamDrift for #5464; Tools had NO counterpart while UD's copy carried the Tools child-copy header, so the header asserted an ownership that did not exist. Upstreamed into Tools under the ai/tools subpackage ruling (tools-canonical destination). UD's copy stays until the #9406 cleanup deletes it; the header is now accurate."
     }
   ]
 }
