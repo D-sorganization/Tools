@@ -4,13 +4,51 @@
 Both halves are written together and neither is committed. The *definition* of
 a merge driver lives in git config, which is per-clone; the attribute
 ``SPEC.md merge=spec-rows`` goes in ``$GIT_COMMON_DIR/info/attributes`` rather
-than a committed ``.gitattributes``, because git aborts a merge outright when
-an attribute names an unregistered driver -- a committed attribute would make
-SPEC.md unmergeable in every clone that had not run this script. Run once per
-clone (``scripts/install_workspace_hooks.py`` calls it for you); git config and
+than a committed ``.gitattributes``. Run once per clone
+(``scripts/install_workspace_hooks.py`` calls it for you); git config and
 ``info/attributes`` are both shared across worktrees, so once is enough.
 
 Idempotent: re-running rewrites the same two config values.
+
+What git actually does, measured rather than assumed
+----------------------------------------------------
+
+An earlier version of this docstring claimed git *aborts* a merge when an
+attribute names an unregistered driver, and that a committed ``.gitattributes``
+would therefore make SPEC.md unmergeable in any clone without the driver. That
+was wrong, and it is corrected here because it was the stated reason for the
+whole per-clone design. The three states behave differently:
+
+===============================================  ==========================
+clone state (attribute present in every case)    ``git merge`` result
+===============================================  ==========================
+no ``merge.spec-rows.*`` config at all           exit 1, ordinary ``UU``
+  (a fresh clone, a CI checkout)                 conflict -- graceful
+``.name`` set, ``.driver`` missing               **exit 128**, ``fatal:
+  (half-configured)                              custom merge driver
+                                                 spec-rows lacks command
+                                                 line`` -- merge aborts
+``.driver`` set, script absent from the          exit 1, ordinary ``UU``
+  worktree being merged (e.g. a checkout         conflict -- graceful
+  predating the driver's commit)
+===============================================  ==========================
+
+So an unconfigured clone degrades gracefully, and committing the attribute
+would have been survivable. The attribute still stays out of ``.gitattributes``
+-- keeping the two halves in one place, written and removed together, is what
+prevents the half-configured state -- but that is a tidiness argument, not the
+catastrophe previously described.
+
+**Removing this: unset BOTH keys.** Unsetting only ``merge.spec-rows.driver``
+and leaving ``merge.spec-rows.name`` behind produces the one state above that
+aborts merges. To disarm cleanly::
+
+    git config --unset merge.spec-rows.driver
+    git config --unset merge.spec-rows.name
+    # then delete the `SPEC.md merge=spec-rows` line from
+    # "$(git rev-parse --git-common-dir)/info/attributes"
+
+See Repository_Management#1520.
 """
 
 from __future__ import annotations
@@ -25,10 +63,13 @@ DRIVER_SCRIPT = "scripts/spec_rows_merge_driver.py"
 ATTRIBUTE_LINE = f"SPEC.md merge={DRIVER_NAME}"
 ATTRIBUTE_BLOCK = f"""# Union SPEC.md change-log rows instead of conflicting on
 # adjacent inserts (Repository_Management#1520).
-# Deliberately NOT committed in .gitattributes:
-# git aborts a merge outright when a named driver is unregistered, so a clone
-# without the driver could not merge SPEC.md at all. Installed by
-# scripts/install_spec_merge_driver.py together with the driver definition.
+# Kept here rather than in a committed .gitattributes so that this line and the
+# merge.spec-rows.* config are written -- and removed -- together. A clone with
+# neither degrades gracefully (an ordinary conflict); a clone with only
+# merge.spec-rows.name set and no .driver aborts every SPEC.md merge with
+# "fatal: custom merge driver spec-rows lacks command line", so when removing
+# this, unset BOTH config keys as well as this line. Installed by
+# scripts/install_spec_merge_driver.py.
 {ATTRIBUTE_LINE}
 """
 ROOT = Path(__file__).resolve().parent.parent
