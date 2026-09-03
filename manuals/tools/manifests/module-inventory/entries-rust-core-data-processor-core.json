@@ -394,6 +394,7 @@
           "tests/rate_of_closure/pyqt_variation_visual_state_probe.py",
           "tests/rate_of_closure/pyqt_visual_layout_persistence_probe.py",
           "tests/rate_of_closure/pyqt_visualization_tab_probe.py",
+          "tests/rate_of_closure/test_closed_stack_gap_audit_decisions.py",
           "tests/rate_of_closure/test_launch_monitor_linked_scatter.py",
           "tests/rate_of_closure/test_layout_minsize.py",
           "tests/rate_of_closure/test_plots_gui.py",
