@@ -170,6 +170,18 @@ test("every registered React tab exposes its primary visual in the initial viewp
         if (readoutRect === null) throw new Error(`${label} playback readout has no rectangle`);
         expect.soft(readoutRect.x + readoutRect.width, `${label} playback readout right edge`)
           .toBeLessThanOrEqual(viewport.width);
+        // RM #1507 (2026-09-03): ADR-0045 F2's green-import row was a second
+        // 6 px overflow source at 390x844 — the file input's font-stack
+        // dependent intrinsic width propagated through the flex default
+        // min-width:auto, so the row could not shrink on Linux.  Pin the
+        // row's rightmost control inside the narrow viewport so a recurrence
+        // names its element.
+        const planarReset = page.getByRole("button", { name: "Use Planar Green" });
+        await expect(planarReset).toBeVisible();
+        const planarRect = await planarReset.boundingBox();
+        if (planarRect === null) throw new Error(`${label} planar-green reset has no rectangle`);
+        expect.soft(planarRect.x + planarRect.width, `${label} green-import row right edge`)
+          .toBeLessThanOrEqual(viewport.width);
       }
       if (viewport.width === 1440 && viewport.height === 900) {
         if (entry.tabId === "explorer") {
