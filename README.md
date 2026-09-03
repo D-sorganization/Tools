@@ -1,7 +1,7 @@
 # Tools
 
 [![CI Standard](https://github.com/D-sorganization/Tools/actions/workflows/ci-standard.yml/badge.svg)](https://github.com/D-sorganization/Tools/actions/workflows/ci-standard.yml)
-[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
@@ -119,7 +119,7 @@ Installing the package with `pip install -e .` provides these console scripts:
 
 ### Prerequisites
 
-- Python 3.11 or 3.12. Python 3.13 is not yet validated.
+- **Python**: Version **3.11+** required (3.12 recommended for best performance); Python 3.13 is not yet validated.
 - Git with Git LFS installed.
 - MATLAB R2020a or later, only for the tools under `matlab/`.
 - Node.js, only for the browser-based utilities.
