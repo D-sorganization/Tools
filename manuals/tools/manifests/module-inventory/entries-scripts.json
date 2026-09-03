@@ -987,6 +987,109 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 5311,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8afb9d9e4aed7dedec245f7efe6c68e3ab38f47bdec4bef78808992da5d88461",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-BUMP-SPEC-VERSION-PY-3B0C61A3BB3D",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/bump_spec_version.py",
+      "purpose": "Set the release-derived ``Spec Version`` field in SPEC.md.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "BumpError",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CHANGELOG_HEADING_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LAST_UPDATE_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ROOT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SEMVER_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SPEC_VERSION_RE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "read_version",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "set_version",
+            "signature": "text: str, version: str, *, today: str"
+          },
+          {
+            "kind": "function",
+            "name": "version_from_changelog",
+            "signature": "changelog: str"
+          },
+          {
+            "kind": "function",
+            "name": "version_from_tag",
+            "signature": "tag: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 8981,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -4774,6 +4877,98 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 4721,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e6ec90376fdc01f5b9e73470a0283d75bcf5482d86698d6c1512d77e38cd7684",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-INSTALL-SPEC-MERGE-DRIVER-PY-953E5E855CA0",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/install_spec_merge_driver.py",
+      "purpose": "Register the ``spec-rows`` merge driver in this clone.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "ATTRIBUTE_BLOCK",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ATTRIBUTE_LINE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DRIVER_NAME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ROOT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "attributes_path",
+            "signature": "repo_root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "driver_command",
+            "signature": "repo_root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "install",
+            "signature": "repo_root: Path, *, dry_run: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "install_attribute",
+            "signature": "repo_root: Path, *, dry_run: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 9173,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -6406,6 +6601,68 @@
         "public_surfaces": [],
         "test_paths": [],
         "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7088,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "838e4e87edd2f8fa0bdbbe98564bba29f592d7876212ff7bf418796684a14882",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-SPEC-ROWS-MERGE-DRIVER-PY-B48EC6FA1973",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/spec_rows_merge_driver.py",
+      "purpose": "Git merge driver that unions SPEC.md change-log rows instead of conflicting.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "ROOT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "merge",
+            "signature": "base_text: str, ours_text: str, theirs_text: str, label: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
         "validation_paths": []
       }
     },
