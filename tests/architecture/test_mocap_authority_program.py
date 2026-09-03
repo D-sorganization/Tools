@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-ADR = ROOT / "docs" / "adr" / "ADR-007-markerless-mocap-authority-and-licensing.md"
+ADR = ROOT / "docs" / "adr" / "ADR-008-markerless-mocap-authority-and-licensing.md"
 ACCEPTANCE = ROOT / "docs" / "specs" / "MARKERLESS_MOCAP_ACCEPTANCE_PROGRAM.md"
 HANDOFF = (
     ROOT

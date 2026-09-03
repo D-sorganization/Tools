@@ -3,6 +3,80 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 3651,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "dee8386a035d905332595edb84f13c1a7280484743719f63ee90e8acd640f5c6",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-LAUNCH-MONITOR-PRIVATE-CORPUS-PY-E150859540A8",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/launch_monitor_private_corpus.py",
+      "purpose": "Authorized loader for the private, source-partitioned shot corpus.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "LoadedPrivateCorpus",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CORPUS_RELATIVE_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PRIVATE_DATA_ENV",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "load_private_corpus",
+            "signature": "root: Path | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "resolve_private_corpus_path",
+            "signature": "root: Path | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_launch_monitor_private_corpus.py",
+          "tests/shared/python/launch_monitor/test_corpus.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 16330,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -34,7 +108,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0048-launch-monitor-port-plan.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -365,7 +439,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -3633,7 +3707,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0047-trajectory-visualization-shared-wire-preserved-viewers.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -7603,7 +7677,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0047-trajectory-visualization-shared-wire-preserved-viewers.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -9750,7 +9824,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0048-launch-monitor-port-plan.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -13548,66 +13622,6 @@
         "unit_mentions": [
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 3632,
-      "classification": "calculation",
-      "classification_basis": "path-marker:solver",
-      "content_sha256_lf": "98fec12f6a030f759af4807f17bda4dea2e564b499da881c7ce7247977f50e15",
-      "family": "rate-of-closure-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-SOLVER-ROWS-PY-69D13423B026",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/solver_rows.py",
-      "purpose": "Row widgets for the Solver panel (split out for the 500-LOC budget).",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "GoalRow",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "VariableRow",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }
