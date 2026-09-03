@@ -261,6 +261,30 @@ def _spec_text_at(ref: str) -> str | None:
     return result.stdout if result.returncode == 0 else None
 
 
+def _changelog_base_ref() -> str:
+    """The ref whose SPEC.md counts as "before" this change.
+
+    ``changed_files()`` reports either the working-tree diff against ``HEAD``
+    or, on a clean tree, a committed range (``@{upstream}..HEAD``, else
+    ``origin/main...HEAD``). ``HEAD`` is the correct baseline only in the first
+    case: once the change is committed, ``HEAD`` *is* the new file, so
+    comparing SPEC.md against itself finds no added row and the check fails on
+    a change that plainly added one. A CI checkout is always clean, so taking
+    ``HEAD`` unconditionally would fail the gate on every pull request.
+    """
+    override = os.environ.get("FLEET_HOOK_FROM_REF")
+    if override:
+        return override
+    if staged_files() or _git_files(["diff", "--name-only", "HEAD"]):
+        return "HEAD"
+    for candidate in ("@{upstream}", "origin/main"):
+        result = _run(["git", "merge-base", candidate, "HEAD"])
+        base = result.stdout.strip()
+        if result.returncode == 0 and base:
+            return base
+    return "HEAD"
+
+
 def check_spec_changelog(args: argparse.Namespace) -> int:
     """Enforce PR-keyed SPEC.md change-log rows (Repository_Management#1520).
 
@@ -300,8 +324,7 @@ def check_spec_changelog(args: argparse.Namespace) -> int:
 
     files = staged_files() or changed_files()
     if "SPEC.md" in files and any(is_source(path) for path in files):
-        base_ref = os.environ.get("FLEET_HOOK_FROM_REF") or "HEAD"
-        before = _spec_text_at(base_ref)
+        before = _spec_text_at(_changelog_base_ref())
         if before is not None and not module.rows_added(before, after):
             failures.append(
                 "SPEC.md was edited alongside source/config changes but no "
