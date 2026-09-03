@@ -12,7 +12,9 @@
       "SidekickArgumentParser": {
         "type": "class",
         "info": {
-          "bases": ["argparse.ArgumentParser"],
+          "bases": [
+            "argparse.ArgumentParser"
+          ],
           "methods": {
             "error": {
               "args": [
@@ -160,7 +162,9 @@
       "SchemaMigration": {
         "type": "class",
         "info": {
-          "bases": ["UserWarning"],
+          "bases": [
+            "UserWarning"
+          ],
           "methods": {}
         }
       },
@@ -286,7 +290,9 @@
       "SchemaMigration": {
         "type": "class",
         "info": {
-          "bases": ["UserWarning"],
+          "bases": [
+            "UserWarning"
+          ],
           "methods": {}
         }
       },
@@ -342,7 +348,12 @@
     }
   },
   "standalone/__init__.py": {
-    "__all__": ["preferences", "onboarding", "runner", "session_store"],
+    "__all__": [
+      "preferences",
+      "onboarding",
+      "runner",
+      "session_store"
+    ],
     "symbols": {
       "preferences": {
         "type": "unknown"
@@ -359,7 +370,11 @@
     }
   },
   "standalone/onboarding.py": {
-    "__all__": ["SENTINEL_FILENAME", "OnboardingState", "StandaloneOnboarding"],
+    "__all__": [
+      "SENTINEL_FILENAME",
+      "OnboardingState",
+      "StandaloneOnboarding"
+    ],
     "symbols": {
       "SENTINEL_FILENAME": {
         "type": "variable"
@@ -367,7 +382,9 @@
       "OnboardingState": {
         "type": "class",
         "info": {
-          "bases": ["enum.Enum"],
+          "bases": [
+            "enum.Enum"
+          ],
           "methods": {}
         }
       },
@@ -652,7 +669,11 @@
     }
   },
   "standalone/runner.py": {
-    "__all__": ["list_calculators", "register", "run_calculator"],
+    "__all__": [
+      "list_calculators",
+      "register",
+      "run_calculator"
+    ],
     "symbols": {
       "list_calculators": {
         "type": "function",
@@ -857,7 +878,9 @@
       "SessionStore": {
         "type": "class",
         "info": {
-          "bases": ["Protocol"],
+          "bases": [
+            "Protocol"
+          ],
           "methods": {
             "get": {
               "args": [
@@ -1039,7 +1062,10 @@
     }
   },
   "standalone/window.py": {
-    "__all__": ["StandaloneSidekickConfig", "StandaloneSidekickWindow"],
+    "__all__": [
+      "StandaloneSidekickConfig",
+      "StandaloneSidekickWindow"
+    ],
     "symbols": {
       "StandaloneSidekickConfig": {
         "type": "class",
@@ -1051,7 +1077,9 @@
       "StandaloneSidekickWindow": {
         "type": "class",
         "info": {
-          "bases": ["QMainWindow"],
+          "bases": [
+            "QMainWindow"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -1244,7 +1272,9 @@
       "Calculator": {
         "type": "class",
         "info": {
-          "bases": ["Protocol"],
+          "bases": [
+            "Protocol"
+          ],
           "methods": {
             "name": {
               "args": [
@@ -1308,7 +1338,9 @@
       "DataTransformer": {
         "type": "class",
         "info": {
-          "bases": ["Protocol"],
+          "bases": [
+            "Protocol"
+          ],
           "methods": {
             "transform": {
               "args": [
@@ -1443,7 +1475,9 @@
       "ProcessCalculator": {
         "type": "class",
         "info": {
-          "bases": ["Protocol"],
+          "bases": [
+            "Protocol"
+          ],
           "methods": {
             "calculate": {
               "args": [
@@ -1468,7 +1502,9 @@
       "StateSerializable": {
         "type": "class",
         "info": {
-          "bases": ["Protocol"],
+          "bases": [
+            "Protocol"
+          ],
           "methods": {
             "save_state": {
               "args": [
@@ -1504,7 +1540,9 @@
       "UnitConverter": {
         "type": "class",
         "info": {
-          "bases": ["Protocol"],
+          "bases": [
+            "Protocol"
+          ],
           "methods": {
             "convert": {
               "args": [
@@ -1641,7 +1679,9 @@
       "ActionChipState": {
         "type": "class",
         "info": {
-          "bases": ["Enum"],
+          "bases": [
+            "Enum"
+          ],
           "methods": {}
         }
       },
@@ -1687,7 +1727,9 @@
       "CanonicalActionPort": {
         "type": "class",
         "info": {
-          "bases": ["Protocol"],
+          "bases": [
+            "Protocol"
+          ],
           "methods": {
             "configure": {
               "args": [
@@ -1860,14 +1902,19 @@
       "FeatureKind": {
         "type": "class",
         "info": {
-          "bases": ["str", "Enum"],
+          "bases": [
+            "str",
+            "Enum"
+          ],
           "methods": {}
         }
       },
       "HostActionPort": {
         "type": "class",
         "info": {
-          "bases": ["Protocol"],
+          "bases": [
+            "Protocol"
+          ],
           "methods": {
             "list_capabilities": {
               "args": [
@@ -2076,7 +2123,9 @@
       "PendingUserDecision": {
         "type": "class",
         "info": {
-          "bases": ["Exception"],
+          "bases": [
+            "Exception"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -2120,7 +2169,9 @@
       "PlannerError": {
         "type": "class",
         "info": {
-          "bases": ["RuntimeError"],
+          "bases": [
+            "RuntimeError"
+          ],
           "methods": {}
         }
       },
@@ -2134,7 +2185,9 @@
       "SidekickActionHandler": {
         "type": "class",
         "info": {
-          "bases": ["Protocol"],
+          "bases": [
+            "Protocol"
+          ],
           "methods": {
             "describe": {
               "args": [
@@ -2453,7 +2506,9 @@
       "SubtabActionPort": {
         "type": "class",
         "info": {
-          "bases": ["Protocol"],
+          "bases": [
+            "Protocol"
+          ],
           "methods": {
             "list_tabs": {
               "args": [
@@ -2724,7 +2779,9 @@
       "WorkflowStepStatus": {
         "type": "class",
         "info": {
-          "bases": ["Enum"],
+          "bases": [
+            "Enum"
+          ],
           "methods": {}
         }
       },
@@ -2903,7 +2960,10 @@
     }
   },
   "agent/access_policy.py": {
-    "__all__": ["PolicyDecision", "SidekickActionPolicy"],
+    "__all__": [
+      "PolicyDecision",
+      "SidekickActionPolicy"
+    ],
     "symbols": {
       "PolicyDecision": {
         "type": "class",
@@ -2957,7 +3017,11 @@
     }
   },
   "agent/action_audit.py": {
-    "__all__": ["JsonlActionAudit", "MemoryActionAudit", "redact_secrets"],
+    "__all__": [
+      "JsonlActionAudit",
+      "MemoryActionAudit",
+      "redact_secrets"
+    ],
     "symbols": {
       "JsonlActionAudit": {
         "type": "class",
@@ -3102,7 +3166,9 @@
       "SidekickActionHandler": {
         "type": "class",
         "info": {
-          "bases": ["Protocol"],
+          "bases": [
+            "Protocol"
+          ],
           "methods": {
             "describe": {
               "args": [
@@ -3305,7 +3371,9 @@
       "CanonicalActionPort": {
         "type": "class",
         "info": {
-          "bases": ["Protocol"],
+          "bases": [
+            "Protocol"
+          ],
           "methods": {
             "configure": {
               "args": [
@@ -3494,7 +3562,9 @@
       "ActionChipState": {
         "type": "class",
         "info": {
-          "bases": ["Enum"],
+          "bases": [
+            "Enum"
+          ],
           "methods": {}
         }
       },
@@ -3560,7 +3630,10 @@
       "FeatureKind": {
         "type": "class",
         "info": {
-          "bases": ["str", "Enum"],
+          "bases": [
+            "str",
+            "Enum"
+          ],
           "methods": {}
         }
       },
@@ -3633,7 +3706,9 @@
       "HostActionPort": {
         "type": "class",
         "info": {
-          "bases": ["Protocol"],
+          "bases": [
+            "Protocol"
+          ],
           "methods": {
             "list_capabilities": {
               "args": [
@@ -3783,7 +3858,9 @@
       "PlannerError": {
         "type": "class",
         "info": {
-          "bases": ["RuntimeError"],
+          "bases": [
+            "RuntimeError"
+          ],
           "methods": {}
         }
       },
@@ -3924,7 +4001,9 @@
       "SubtabActionPort": {
         "type": "class",
         "info": {
-          "bases": ["Protocol"],
+          "bases": [
+            "Protocol"
+          ],
           "methods": {
             "list_tabs": {
               "args": [
@@ -4189,7 +4268,9 @@
       "PendingUserDecision": {
         "type": "class",
         "info": {
-          "bases": ["Exception"],
+          "bases": [
+            "Exception"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -4257,7 +4338,9 @@
       "WorkflowStepStatus": {
         "type": "class",
         "info": {
-          "bases": ["Enum"],
+          "bases": [
+            "Enum"
+          ],
           "methods": {}
         }
       },
@@ -4327,14 +4410,18 @@
       "ErrorCode": {
         "type": "class",
         "info": {
-          "bases": ["StrEnum"],
+          "bases": [
+            "StrEnum"
+          ],
           "methods": {}
         }
       },
       "ErrorDetail": {
         "type": "class",
         "info": {
-          "bases": ["BaseModel"],
+          "bases": [
+            "BaseModel"
+          ],
           "methods": {
             "to_dict": {
               "args": [
@@ -4353,7 +4440,9 @@
       "ResponseMetadata": {
         "type": "class",
         "info": {
-          "bases": ["BaseModel"],
+          "bases": [
+            "BaseModel"
+          ],
           "methods": {
             "to_dict": {
               "args": [
@@ -4372,7 +4461,10 @@
       "StandardResponse": {
         "type": "class",
         "info": {
-          "bases": ["BaseModel", "Generic[T]"],
+          "bases": [
+            "BaseModel",
+            "Generic[T]"
+          ],
           "methods": {
             "to_dict": {
               "args": [
@@ -4384,6 +4476,41 @@
                 }
               ],
               "returns": "dict[str, Any]"
+            },
+            "success": {
+              "args": [
+                {
+                  "name": "cls",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "data",
+                  "annotation": "Any",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "processing_time_ms",
+                  "annotation": "float | None",
+                  "default": "None",
+                  "kind": "arg"
+                },
+                {
+                  "name": "request_id",
+                  "annotation": "str | None",
+                  "default": "None",
+                  "kind": "arg"
+                },
+                {
+                  "name": "api_version",
+                  "annotation": "str",
+                  "default": "'1.0.0'",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "StandardResponse[Any]"
             }
           }
         }
@@ -4479,14 +4606,18 @@
       "ErrorCode": {
         "type": "class",
         "info": {
-          "bases": ["StrEnum"],
+          "bases": [
+            "StrEnum"
+          ],
           "methods": {}
         }
       },
       "ErrorDetail": {
         "type": "class",
         "info": {
-          "bases": ["BaseModel"],
+          "bases": [
+            "BaseModel"
+          ],
           "methods": {
             "to_dict": {
               "args": [
@@ -4505,7 +4636,9 @@
       "ResponseMetadata": {
         "type": "class",
         "info": {
-          "bases": ["BaseModel"],
+          "bases": [
+            "BaseModel"
+          ],
           "methods": {
             "to_dict": {
               "args": [
@@ -4524,7 +4657,10 @@
       "StandardResponse": {
         "type": "class",
         "info": {
-          "bases": ["BaseModel", "Generic[T]"],
+          "bases": [
+            "BaseModel",
+            "Generic[T]"
+          ],
           "methods": {
             "to_dict": {
               "args": [
@@ -4536,6 +4672,41 @@
                 }
               ],
               "returns": "dict[str, Any]"
+            },
+            "success": {
+              "args": [
+                {
+                  "name": "cls",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "data",
+                  "annotation": "Any",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "processing_time_ms",
+                  "annotation": "float | None",
+                  "default": "None",
+                  "kind": "arg"
+                },
+                {
+                  "name": "request_id",
+                  "annotation": "str | None",
+                  "default": "None",
+                  "kind": "arg"
+                },
+                {
+                  "name": "api_version",
+                  "annotation": "str",
+                  "default": "'1.0.0'",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "StandardResponse[Any]"
             }
           }
         }
@@ -4620,7 +4791,9 @@
     }
   },
   "bootstrap.py": {
-    "__all__": ["ensure_paths"],
+    "__all__": [
+      "ensure_paths"
+    ],
     "symbols": {
       "ensure_paths": {
         "type": "function",
@@ -4639,12 +4812,16 @@
     }
   },
   "calculators/__init__.py": {
-    "__all__": ["BaseCalculationEngine"],
+    "__all__": [
+      "BaseCalculationEngine"
+    ],
     "symbols": {
       "BaseCalculationEngine": {
         "type": "class",
         "info": {
-          "bases": ["ABC"],
+          "bases": [
+            "ABC"
+          ],
           "methods": {
             "calculate": {
               "args": [
@@ -4675,12 +4852,16 @@
     }
   },
   "calculators/base.py": {
-    "__all__": ["BaseCalculationEngine"],
+    "__all__": [
+      "BaseCalculationEngine"
+    ],
     "symbols": {
       "BaseCalculationEngine": {
         "type": "class",
         "info": {
-          "bases": ["ABC"],
+          "bases": [
+            "ABC"
+          ],
           "methods": {
             "calculate": {
               "args": [
@@ -5694,7 +5875,9 @@
     }
   },
   "calculators/conversion/gas_flow_mixin.py": {
-    "__all__": ["GasFlowConversionMixin"],
+    "__all__": [
+      "GasFlowConversionMixin"
+    ],
     "symbols": {
       "GasFlowConversionMixin": {
         "type": "class",
@@ -5795,7 +5978,9 @@
     }
   },
   "calculators/conversion/heating_value_mixin.py": {
-    "__all__": ["HeatingValueConversionMixin"],
+    "__all__": [
+      "HeatingValueConversionMixin"
+    ],
     "symbols": {
       "HeatingValueConversionMixin": {
         "type": "class",
@@ -5864,21 +6049,27 @@
       "IncompatibleUnitsError": {
         "type": "class",
         "info": {
-          "bases": ["UnitConversionError"],
+          "bases": [
+            "UnitConversionError"
+          ],
           "methods": {}
         }
       },
       "InvalidValueError": {
         "type": "class",
         "info": {
-          "bases": ["UnitConversionError"],
+          "bases": [
+            "UnitConversionError"
+          ],
           "methods": {}
         }
       },
       "UnitConversionError": {
         "type": "class",
         "info": {
-          "bases": ["Exception"],
+          "bases": [
+            "Exception"
+          ],
           "methods": {}
         }
       },
@@ -6088,7 +6279,9 @@
       "UnknownUnitError": {
         "type": "class",
         "info": {
-          "bases": ["UnitConversionError"],
+          "bases": [
+            "UnitConversionError"
+          ],
           "methods": {}
         }
       },
@@ -6243,7 +6436,9 @@
       "StandardCondition": {
         "type": "class",
         "info": {
-          "bases": ["Enum"],
+          "bases": [
+            "Enum"
+          ],
           "methods": {}
         }
       },
@@ -6268,7 +6463,9 @@
     }
   },
   "calculators/conversion/tar_concentration_mixin.py": {
-    "__all__": ["TarConcentrationConversionMixin"],
+    "__all__": [
+      "TarConcentrationConversionMixin"
+    ],
     "symbols": {
       "TarConcentrationConversionMixin": {
         "type": "class",
@@ -6638,7 +6835,9 @@
     }
   },
   "calculators/electrical/config.py": {
-    "__all__": ["ElectrodeConfig"],
+    "__all__": [
+      "ElectrodeConfig"
+    ],
     "symbols": {
       "ElectrodeConfig": {
         "type": "class",
@@ -6691,7 +6890,9 @@
     }
   },
   "calculators/electrical/electrical_model.py": {
-    "__all__": ["ThreePhaseElectricalModelEnhanced"],
+    "__all__": [
+      "ThreePhaseElectricalModelEnhanced"
+    ],
     "symbols": {
       "ThreePhaseElectricalModelEnhanced": {
         "type": "class",
@@ -6792,7 +6993,9 @@
     }
   },
   "calculators/electrical/glass_interface.py": {
-    "__all__": ["GlassPropertiesInterface"],
+    "__all__": [
+      "GlassPropertiesInterface"
+    ],
     "symbols": {
       "GlassPropertiesInterface": {
         "type": "class",
@@ -7812,7 +8015,10 @@
     }
   },
   "data_io.py": {
-    "__all__": ["read_data", "write_data"],
+    "__all__": [
+      "read_data",
+      "write_data"
+    ],
     "symbols": {
       "read_data": {
         "type": "function",
@@ -7894,7 +8100,9 @@
       "ColumnNotFoundError": {
         "type": "class",
         "info": {
-          "bases": ["DataProcessingError"],
+          "bases": [
+            "DataProcessingError"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -7925,14 +8133,18 @@
       "DataNotLoadedError": {
         "type": "class",
         "info": {
-          "bases": ["DataProcessingError"],
+          "bases": [
+            "DataProcessingError"
+          ],
           "methods": {}
         }
       },
       "DataProcessingError": {
         "type": "class",
         "info": {
-          "bases": ["Exception"],
+          "bases": [
+            "Exception"
+          ],
           "methods": {}
         }
       },
@@ -7951,21 +8163,27 @@
       "FileIOError": {
         "type": "class",
         "info": {
-          "bases": ["DataProcessingError"],
+          "bases": [
+            "DataProcessingError"
+          ],
           "methods": {}
         }
       },
       "FilterError": {
         "type": "class",
         "info": {
-          "bases": ["DataProcessingError"],
+          "bases": [
+            "DataProcessingError"
+          ],
           "methods": {}
         }
       },
       "FitError": {
         "type": "class",
         "info": {
-          "bases": ["DataProcessingError"],
+          "bases": [
+            "DataProcessingError"
+          ],
           "methods": {}
         }
       },
@@ -7975,14 +8193,18 @@
       "TransformationError": {
         "type": "class",
         "info": {
-          "bases": ["DataProcessingError"],
+          "bases": [
+            "DataProcessingError"
+          ],
           "methods": {}
         }
       },
       "UnsupportedOperationError": {
         "type": "class",
         "info": {
-          "bases": ["DataProcessingError"],
+          "bases": [
+            "DataProcessingError"
+          ],
           "methods": {}
         }
       }
@@ -8002,7 +8224,9 @@
       "AggregationType": {
         "type": "class",
         "info": {
-          "bases": ["Enum"],
+          "bases": [
+            "Enum"
+          ],
           "methods": {}
         }
       },
@@ -8016,14 +8240,18 @@
       "DataFormat": {
         "type": "class",
         "info": {
-          "bases": ["Enum"],
+          "bases": [
+            "Enum"
+          ],
           "methods": {}
         }
       },
       "DataProcessorEngine": {
         "type": "class",
         "info": {
-          "bases": ["BaseCalculationEngine"],
+          "bases": [
+            "BaseCalculationEngine"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -8455,7 +8683,9 @@
       "FitType": {
         "type": "class",
         "info": {
-          "bases": ["Enum"],
+          "bases": [
+            "Enum"
+          ],
           "methods": {}
         }
       },
@@ -8483,7 +8713,9 @@
       "DataProcessorUnavailableError": {
         "type": "class",
         "info": {
-          "bases": ["RuntimeError"],
+          "bases": [
+            "RuntimeError"
+          ],
           "methods": {}
         }
       },
@@ -8539,7 +8771,9 @@
       "ColumnNotFoundError": {
         "type": "class",
         "info": {
-          "bases": ["DataProcessingError"],
+          "bases": [
+            "DataProcessingError"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -8570,49 +8804,63 @@
       "DataNotLoadedError": {
         "type": "class",
         "info": {
-          "bases": ["DataProcessingError"],
+          "bases": [
+            "DataProcessingError"
+          ],
           "methods": {}
         }
       },
       "DataProcessingError": {
         "type": "class",
         "info": {
-          "bases": ["Exception"],
+          "bases": [
+            "Exception"
+          ],
           "methods": {}
         }
       },
       "FileIOError": {
         "type": "class",
         "info": {
-          "bases": ["DataProcessingError"],
+          "bases": [
+            "DataProcessingError"
+          ],
           "methods": {}
         }
       },
       "FilterError": {
         "type": "class",
         "info": {
-          "bases": ["DataProcessingError"],
+          "bases": [
+            "DataProcessingError"
+          ],
           "methods": {}
         }
       },
       "FitError": {
         "type": "class",
         "info": {
-          "bases": ["DataProcessingError"],
+          "bases": [
+            "DataProcessingError"
+          ],
           "methods": {}
         }
       },
       "TransformationError": {
         "type": "class",
         "info": {
-          "bases": ["DataProcessingError"],
+          "bases": [
+            "DataProcessingError"
+          ],
           "methods": {}
         }
       },
       "UnsupportedOperationError": {
         "type": "class",
         "info": {
-          "bases": ["DataProcessingError"],
+          "bases": [
+            "DataProcessingError"
+          ],
           "methods": {}
         }
       }
@@ -8623,7 +8871,11 @@
     "symbols": {}
   },
   "data_processing/io.py": {
-    "__all__": ["DataReader", "DataWriter", "FileFormatDetector"],
+    "__all__": [
+      "DataReader",
+      "DataWriter",
+      "FileFormatDetector"
+    ],
     "symbols": {
       "DataReader": {
         "type": "class",
@@ -8694,40 +8946,7 @@
         }
       },
       "FileFormatDetector": {
-        "type": "class",
-        "info": {
-          "bases": [],
-          "methods": {
-            "detect_format": {
-              "args": [
-                {
-                  "name": "cls",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "file_path",
-                  "annotation": "str | Path",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "str | None"
-            },
-            "get_supported_extensions": {
-              "args": [
-                {
-                  "name": "cls",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "list[str]"
-            }
-          }
-        }
+        "type": "unknown"
       }
     }
   },
@@ -8736,7 +8955,11 @@
     "symbols": {}
   },
   "lab/bio/__init__.py": {
-    "__all__": ["C3DDataReader", "C3DEvent", "C3DMetadata"],
+    "__all__": [
+      "C3DDataReader",
+      "C3DEvent",
+      "C3DMetadata"
+    ],
     "symbols": {
       "C3DDataReader": {
         "type": "class",
@@ -9315,7 +9538,9 @@
       "LatexRenderError": {
         "type": "class",
         "info": {
-          "bases": ["RuntimeError"],
+          "bases": [
+            "RuntimeError"
+          ],
           "methods": {}
         }
       },
@@ -9724,7 +9949,9 @@
       "LauncherError": {
         "type": "class",
         "info": {
-          "bases": ["Exception"],
+          "bases": [
+            "Exception"
+          ],
           "methods": {}
         }
       },
@@ -9809,7 +10036,9 @@
     }
   },
   "notes_store.py": {
-    "__all__": ["SidekickNotesStore"],
+    "__all__": [
+      "SidekickNotesStore"
+    ],
     "symbols": {
       "SidekickNotesStore": {
         "type": "class",
@@ -9948,12 +10177,16 @@
     }
   },
   "notes_tab.py": {
-    "__all__": ["NotesTab"],
+    "__all__": [
+      "NotesTab"
+    ],
     "symbols": {
       "NotesTab": {
         "type": "class",
         "info": {
-          "bases": ["QWidget"],
+          "bases": [
+            "QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -10580,10 +10813,10 @@
         "type": "variable"
       },
       "R_UNIVERSAL": {
-        "type": "variable"
+        "type": "unknown"
       },
       "STANDARD_GRAVITY": {
-        "type": "variable"
+        "type": "unknown"
       },
       "ScrubberCalculator": {
         "type": "unknown"
@@ -10739,6 +10972,7 @@
       "AcidGasComposition",
       "AcidGasDewpointCalculator",
       "DewpointResult",
+      "MMHG_TO_PA_CONV",
       "estimate_condensation_risk",
       "quick_dewpoint_calculation"
     ],
@@ -11040,11 +11274,16 @@
           ],
           "returns": "dict[str, float | str]"
         }
+      },
+      "MMHG_TO_PA_CONV": {
+        "type": "variable"
       }
     }
   },
   "process_calculators/analysis_utils.py": {
-    "__all__": ["evaluate_output"],
+    "__all__": [
+      "evaluate_output"
+    ],
     "symbols": {
       "evaluate_output": {
         "type": "function",
@@ -11087,7 +11326,10 @@
     }
   },
   "process_calculators/baghouse_calculator.py": {
-    "__all__": ["BaghouseCalculator", "BaghouseResult"],
+    "__all__": [
+      "BaghouseCalculator",
+      "BaghouseResult"
+    ],
     "symbols": {
       "BaghouseCalculator": {
         "type": "class",
@@ -12128,7 +12370,9 @@
     }
   },
   "process_calculators/electrode_advancement_calculator.py": {
-    "__all__": ["ElectrodeAdvancementCalculator"],
+    "__all__": [
+      "ElectrodeAdvancementCalculator"
+    ],
     "symbols": {
       "ElectrodeAdvancementCalculator": {
         "type": "variable"
@@ -12230,7 +12474,11 @@
     }
   },
   "process_calculators/flare_calculator.py": {
-    "__all__": ["FlareCalculator", "FlareDesign", "GAS_PROPERTIES"],
+    "__all__": [
+      "FlareCalculator",
+      "FlareDesign",
+      "GAS_PROPERTIES"
+    ],
     "symbols": {
       "FlareCalculator": {
         "type": "class",
@@ -12435,7 +12683,9 @@
     }
   },
   "process_calculators/ode_solver.py": {
-    "__all__": ["ODESolver"],
+    "__all__": [
+      "ODESolver"
+    ],
     "symbols": {
       "ODESolver": {
         "type": "class",
@@ -12544,7 +12794,9 @@
       "OptimizationResults": {
         "type": "class",
         "info": {
-          "bases": ["TypedDict"],
+          "bases": [
+            "TypedDict"
+          ],
           "methods": {}
         }
       },
@@ -13003,39 +13255,10 @@
         "type": "variable"
       },
       "STANDARD_CONDITIONS": {
-        "type": "variable"
+        "type": "unknown"
       },
       "acfm_to_scfm": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "acfm",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "temperature",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "pressure",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "standard",
-              "annotation": "str",
-              "default": "'SCFM'",
-              "kind": "arg"
-            }
-          ],
-          "returns": "float"
-        }
+        "type": "unknown"
       },
       "calculate_gas_properties": {
         "type": "function",
@@ -13412,54 +13635,7 @@
         }
       },
       "convert_flow_rate_to_mass": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "value",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "from_unit",
-              "annotation": "str",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "molecular_weight",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "temperature",
-              "annotation": "float | None",
-              "default": "None",
-              "kind": "arg"
-            },
-            {
-              "name": "pressure",
-              "annotation": "float | None",
-              "default": "None",
-              "kind": "arg"
-            },
-            {
-              "name": "density",
-              "annotation": "float | None",
-              "default": "None",
-              "kind": "arg"
-            },
-            {
-              "name": "standard",
-              "annotation": "str",
-              "default": "'STP'",
-              "kind": "arg"
-            }
-          ],
-          "returns": "float"
-        }
+        "type": "unknown"
       },
       "create_custom_pipe": {
         "type": "function",
@@ -13584,62 +13760,10 @@
         }
       },
       "mass_to_mass": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "value",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "from_unit",
-              "annotation": "str",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "to_unit",
-              "annotation": "str",
-              "default": null,
-              "kind": "arg"
-            }
-          ],
-          "returns": "float"
-        }
+        "type": "unknown"
       },
       "molar_to_mass": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "molar_flow",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "molar_unit",
-              "annotation": "str",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "molecular_weight",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "mass_unit",
-              "annotation": "str",
-              "default": "'kg/s'",
-              "kind": "arg"
-            }
-          ],
-          "returns": "float"
-        }
+        "type": "unknown"
       },
       "print_results": {
         "type": "function",
@@ -13668,36 +13792,7 @@
         }
       },
       "scfm_to_acfm": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "scfm",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "temperature",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "pressure",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "standard",
-              "annotation": "str",
-              "default": "'SCFM'",
-              "kind": "arg"
-            }
-          ],
-          "returns": "float"
-        }
+        "type": "unknown"
       }
     }
   },
@@ -13803,7 +13898,9 @@
     }
   },
   "process_calculators/pressure_drop_calculator/engine/__init__.py": {
-    "__all__": ["PressureDropCalculationEngine"],
+    "__all__": [
+      "PressureDropCalculationEngine"
+    ],
     "symbols": {
       "PressureDropCalculationEngine": {
         "type": "class",
@@ -14386,7 +14483,9 @@
     }
   },
   "process_calculators/pressure_drop_calculator/engine/fittings.py": {
-    "__all__": ["calculate_fitting_pressure_drop"],
+    "__all__": [
+      "calculate_fitting_pressure_drop"
+    ],
     "symbols": {
       "calculate_fitting_pressure_drop": {
         "type": "function",
@@ -14698,7 +14797,9 @@
     }
   },
   "process_calculators/pressure_drop_calculator/engine/pressure_drop_calculation_engine.py": {
-    "__all__": ["PressureDropCalculationEngine"],
+    "__all__": [
+      "PressureDropCalculationEngine"
+    ],
     "symbols": {
       "PressureDropCalculationEngine": {
         "type": "class",
@@ -15994,7 +16095,9 @@
     }
   },
   "process_calculators/pressure_drop_calculator/pressure_drop_results.py": {
-    "__all__": ["print_results"],
+    "__all__": [
+      "print_results"
+    ],
     "symbols": {
       "print_results": {
         "type": "function",
@@ -16025,7 +16128,9 @@
     }
   },
   "process_calculators/pressure_drop_calculator/pressure_drop_units.py": {
-    "__all__": ["annotations"],
+    "__all__": [
+      "annotations"
+    ],
     "symbols": {
       "annotations": {
         "type": "unknown"
@@ -16033,7 +16138,9 @@
     }
   },
   "process_calculators/pressure_drop_calculator/pressure_drop_validation.py": {
-    "__all__": ["validate_inputs"],
+    "__all__": [
+      "validate_inputs"
+    ],
     "symbols": {
       "validate_inputs": {
         "type": "function",
@@ -16134,39 +16241,10 @@
         "type": "variable"
       },
       "STANDARD_CONDITIONS": {
-        "type": "variable"
+        "type": "unknown"
       },
       "acfm_to_scfm": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "acfm",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "temperature",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "pressure",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "standard",
-              "annotation": "str",
-              "default": "'SCFM'",
-              "kind": "arg"
-            }
-          ],
-          "returns": "float"
-        }
+        "type": "unknown"
       },
       "calculate_gas_properties": {
         "type": "function",
@@ -16267,54 +16345,7 @@
         }
       },
       "convert_flow_rate_to_mass": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "value",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "from_unit",
-              "annotation": "str",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "molecular_weight",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "temperature",
-              "annotation": "float | None",
-              "default": "None",
-              "kind": "arg"
-            },
-            {
-              "name": "pressure",
-              "annotation": "float | None",
-              "default": "None",
-              "kind": "arg"
-            },
-            {
-              "name": "density",
-              "annotation": "float | None",
-              "default": "None",
-              "kind": "arg"
-            },
-            {
-              "name": "standard",
-              "annotation": "str",
-              "default": "'STP'",
-              "kind": "arg"
-            }
-          ],
-          "returns": "float"
-        }
+        "type": "unknown"
       },
       "create_custom_pipe": {
         "type": "function",
@@ -16439,94 +16470,13 @@
         }
       },
       "mass_to_mass": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "value",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "from_unit",
-              "annotation": "str",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "to_unit",
-              "annotation": "str",
-              "default": null,
-              "kind": "arg"
-            }
-          ],
-          "returns": "float"
-        }
+        "type": "unknown"
       },
       "molar_to_mass": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "molar_flow",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "molar_unit",
-              "annotation": "str",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "molecular_weight",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "mass_unit",
-              "annotation": "str",
-              "default": "'kg/s'",
-              "kind": "arg"
-            }
-          ],
-          "returns": "float"
-        }
+        "type": "unknown"
       },
       "scfm_to_acfm": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "scfm",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "temperature",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "pressure",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "standard",
-              "annotation": "str",
-              "default": "'SCFM'",
-              "kind": "arg"
-            }
-          ],
-          "returns": "float"
-        }
+        "type": "unknown"
       }
     }
   },
@@ -16718,386 +16668,49 @@
     ],
     "symbols": {
       "MASS_FLOW_CONVERSIONS": {
-        "type": "variable"
+        "type": "unknown"
       },
       "MOLAR_FLOW_CONVERSIONS": {
-        "type": "variable"
+        "type": "unknown"
       },
       "STANDARD_CONDITIONS": {
-        "type": "variable"
+        "type": "unknown"
       },
       "VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S": {
-        "type": "variable"
+        "type": "unknown"
       },
       "acfm_to_scfm": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "acfm",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "temperature",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "pressure",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "standard",
-              "annotation": "str",
-              "default": "'SCFM'",
-              "kind": "arg"
-            }
-          ],
-          "returns": "float"
-        }
+        "type": "unknown"
       },
       "convert_flow_rate_to_mass": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "value",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "from_unit",
-              "annotation": "str",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "molecular_weight",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "temperature",
-              "annotation": "float | None",
-              "default": "None",
-              "kind": "arg"
-            },
-            {
-              "name": "pressure",
-              "annotation": "float | None",
-              "default": "None",
-              "kind": "arg"
-            },
-            {
-              "name": "density",
-              "annotation": "float | None",
-              "default": "None",
-              "kind": "arg"
-            },
-            {
-              "name": "standard",
-              "annotation": "str",
-              "default": "'STP'",
-              "kind": "arg"
-            }
-          ],
-          "returns": "float"
-        }
+        "type": "unknown"
       },
       "mass_to_mass": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "value",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "from_unit",
-              "annotation": "str",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "to_unit",
-              "annotation": "str",
-              "default": null,
-              "kind": "arg"
-            }
-          ],
-          "returns": "float"
-        }
+        "type": "unknown"
       },
       "mass_to_molar": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "mass_flow",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "mass_unit",
-              "annotation": "str",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "molecular_weight",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "molar_unit",
-              "annotation": "str",
-              "default": "'mol/s'",
-              "kind": "arg"
-            }
-          ],
-          "returns": "float"
-        }
+        "type": "unknown"
       },
       "mass_to_standard_volumetric": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "mass_flow",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "mass_unit",
-              "annotation": "str",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "molecular_weight",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "standard",
-              "annotation": "str",
-              "default": "'STP'",
-              "kind": "arg"
-            },
-            {
-              "name": "vol_unit",
-              "annotation": "str",
-              "default": "'Nm3/h'",
-              "kind": "arg"
-            }
-          ],
-          "returns": "float"
-        }
+        "type": "unknown"
       },
       "mass_to_volumetric_actual": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "mass_flow",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "mass_unit",
-              "annotation": "str",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "density",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "vol_unit",
-              "annotation": "str",
-              "default": "'m3/s'",
-              "kind": "arg"
-            }
-          ],
-          "returns": "float"
-        }
+        "type": "unknown"
       },
       "molar_to_mass": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "molar_flow",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "molar_unit",
-              "annotation": "str",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "molecular_weight",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "mass_unit",
-              "annotation": "str",
-              "default": "'kg/s'",
-              "kind": "arg"
-            }
-          ],
-          "returns": "float"
-        }
+        "type": "unknown"
       },
       "molar_to_molar": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "value",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "from_unit",
-              "annotation": "str",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "to_unit",
-              "annotation": "str",
-              "default": null,
-              "kind": "arg"
-            }
-          ],
-          "returns": "float"
-        }
+        "type": "unknown"
       },
       "scfm_to_acfm": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "scfm",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "temperature",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "pressure",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "standard",
-              "annotation": "str",
-              "default": "'SCFM'",
-              "kind": "arg"
-            }
-          ],
-          "returns": "float"
-        }
+        "type": "unknown"
       },
       "standard_volumetric_to_mass": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "vol_flow_std",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "vol_unit",
-              "annotation": "str",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "molecular_weight",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "standard",
-              "annotation": "str",
-              "default": "'STP'",
-              "kind": "arg"
-            },
-            {
-              "name": "mass_unit",
-              "annotation": "str",
-              "default": "'kg/s'",
-              "kind": "arg"
-            }
-          ],
-          "returns": "float"
-        }
+        "type": "unknown"
       },
       "volumetric_actual_to_mass": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "vol_flow",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "vol_unit",
-              "annotation": "str",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "density",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "mass_unit",
-              "annotation": "str",
-              "default": "'kg/s'",
-              "kind": "arg"
-            }
-          ],
-          "returns": "float"
-        }
+        "type": "unknown"
       }
     }
   },
@@ -17582,7 +17195,9 @@
       "ComponentData": {
         "type": "class",
         "info": {
-          "bases": ["TypedDict"],
+          "bases": [
+            "TypedDict"
+          ],
           "methods": {}
         }
       },
@@ -17730,7 +17345,9 @@
       "InputPanel": {
         "type": "class",
         "info": {
-          "bases": ["QWidget"],
+          "bases": [
+            "QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -17766,7 +17383,9 @@
       "MplCanvas": {
         "type": "class",
         "info": {
-          "bases": ["FigureCanvas"],
+          "bases": [
+            "FigureCanvas"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -17803,7 +17422,9 @@
       "PFDWidget": {
         "type": "class",
         "info": {
-          "bases": ["QWidget"],
+          "bases": [
+            "QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -17828,7 +17449,10 @@
       "PSAMainWindow": {
         "type": "class",
         "info": {
-          "bases": ["ThemedWindowMixin", "QMainWindow"],
+          "bases": [
+            "ThemedWindowMixin",
+            "QMainWindow"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -17847,7 +17471,9 @@
       "ResultsPanel": {
         "type": "class",
         "info": {
-          "bases": ["QWidget"],
+          "bases": [
+            "QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -17889,7 +17515,9 @@
       "SensitivityPlotWidget": {
         "type": "class",
         "info": {
-          "bases": ["QWidget"],
+          "bases": [
+            "QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -17991,7 +17619,9 @@
       "ComponentData": {
         "type": "class",
         "info": {
-          "bases": ["TypedDict"],
+          "bases": [
+            "TypedDict"
+          ],
           "methods": {}
         }
       },
@@ -18139,7 +17769,9 @@
       "ComponentData": {
         "type": "class",
         "info": {
-          "bases": ["TypedDict"],
+          "bases": [
+            "TypedDict"
+          ],
           "methods": {}
         }
       },
@@ -18229,7 +17861,9 @@
       "InputPanel": {
         "type": "class",
         "info": {
-          "bases": ["QWidget"],
+          "bases": [
+            "QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -18265,7 +17899,9 @@
       "MplCanvas": {
         "type": "class",
         "info": {
-          "bases": ["FigureCanvas"],
+          "bases": [
+            "FigureCanvas"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -18302,7 +17938,9 @@
       "PFDWidget": {
         "type": "class",
         "info": {
-          "bases": ["QWidget"],
+          "bases": [
+            "QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -18327,7 +17965,10 @@
       "PSAMainWindow": {
         "type": "class",
         "info": {
-          "bases": ["ThemedWindowMixin", "QMainWindow"],
+          "bases": [
+            "ThemedWindowMixin",
+            "QMainWindow"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -18346,7 +17987,9 @@
       "ResultsPanel": {
         "type": "class",
         "info": {
-          "bases": ["QWidget"],
+          "bases": [
+            "QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -18388,7 +18031,9 @@
       "SensitivityPlotWidget": {
         "type": "class",
         "info": {
-          "bases": ["QWidget"],
+          "bases": [
+            "QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -18468,12 +18113,17 @@
     }
   },
   "process_calculators/psa_package/ui/input_panel.py": {
-    "__all__": ["InputPanel", "create_slider"],
+    "__all__": [
+      "InputPanel",
+      "create_slider"
+    ],
     "symbols": {
       "InputPanel": {
         "type": "class",
         "info": {
-          "bases": ["QWidget"],
+          "bases": [
+            "QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -18547,12 +18197,17 @@
     }
   },
   "process_calculators/psa_package/ui/main_window.py": {
-    "__all__": ["PSAMainWindow"],
+    "__all__": [
+      "PSAMainWindow"
+    ],
     "symbols": {
       "PSAMainWindow": {
         "type": "class",
         "info": {
-          "bases": ["ThemedWindowMixin", "QMainWindow"],
+          "bases": [
+            "ThemedWindowMixin",
+            "QMainWindow"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -18571,12 +18226,16 @@
     }
   },
   "process_calculators/psa_package/ui/pfd_widget.py": {
-    "__all__": ["PFDWidget"],
+    "__all__": [
+      "PFDWidget"
+    ],
     "symbols": {
       "PFDWidget": {
         "type": "class",
         "info": {
-          "bases": ["QWidget"],
+          "bases": [
+            "QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -18601,12 +18260,16 @@
     }
   },
   "process_calculators/psa_package/ui/results_panel.py": {
-    "__all__": ["ResultsPanel"],
+    "__all__": [
+      "ResultsPanel"
+    ],
     "symbols": {
       "ResultsPanel": {
         "type": "class",
         "info": {
-          "bases": ["QWidget"],
+          "bases": [
+            "QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -18648,12 +18311,17 @@
     }
   },
   "process_calculators/psa_package/ui/sensitivity_plot.py": {
-    "__all__": ["MplCanvas", "SensitivityPlotWidget"],
+    "__all__": [
+      "MplCanvas",
+      "SensitivityPlotWidget"
+    ],
     "symbols": {
       "MplCanvas": {
         "type": "class",
         "info": {
-          "bases": ["FigureCanvas"],
+          "bases": [
+            "FigureCanvas"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -18690,7 +18358,9 @@
       "SensitivityPlotWidget": {
         "type": "class",
         "info": {
-          "bases": ["QWidget"],
+          "bases": [
+            "QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -18732,7 +18402,11 @@
     }
   },
   "process_calculators/scrubber/__init__.py": {
-    "__all__": ["ScrubberEngine", "ScrubberInputs", "ScrubberResults"],
+    "__all__": [
+      "ScrubberEngine",
+      "ScrubberInputs",
+      "ScrubberResults"
+    ],
     "symbols": {
       "ScrubberEngine": {
         "type": "class",
@@ -18774,7 +18448,9 @@
     "symbols": {}
   },
   "process_calculators/scrubber/engine/scrubber_engine.py": {
-    "__all__": ["ScrubberEngine"],
+    "__all__": [
+      "ScrubberEngine"
+    ],
     "symbols": {
       "ScrubberEngine": {
         "type": "class",
@@ -18802,7 +18478,10 @@
     "symbols": {}
   },
   "process_calculators/scrubber/models/scrubber_models.py": {
-    "__all__": ["ScrubberInputs", "ScrubberResults"],
+    "__all__": [
+      "ScrubberInputs",
+      "ScrubberResults"
+    ],
     "symbols": {
       "ScrubberInputs": {
         "type": "class",
@@ -19356,7 +19035,9 @@
       "CompressionCalculationWorker": {
         "type": "class",
         "info": {
-          "bases": ["QThread"],
+          "bases": [
+            "QThread"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -19430,7 +19111,10 @@
     }
   },
   "process_calculators/syngas_compression_engine.py": {
-    "__all__": ["CompressionStage", "SyngasCompressionEngine"],
+    "__all__": [
+      "CompressionStage",
+      "SyngasCompressionEngine"
+    ],
     "symbols": {
       "CompressionStage": {
         "type": "class",
@@ -19866,7 +19550,10 @@
     }
   },
   "process_calculators/thermal_profile_predictor.py": {
-    "__all__": ["fit_heating_parameters", "predict_temperature_profile"],
+    "__all__": [
+      "fit_heating_parameters",
+      "predict_temperature_profile"
+    ],
     "symbols": {
       "fit_heating_parameters": {
         "type": "function",
@@ -19971,7 +19658,9 @@
     }
   },
   "process_calculators/water_vapor_pressure_calculator.py": {
-    "__all__": ["WaterVaporPressureCalculator"],
+    "__all__": [
+      "WaterVaporPressureCalculator"
+    ],
     "symbols": {
       "WaterVaporPressureCalculator": {
         "type": "class",
@@ -20018,7 +19707,10 @@
     }
   },
   "process_calculators/wgs_reactor_calculator.py": {
-    "__all__": ["WGSReactorEngine", "create_wgs_reactor_calculator"],
+    "__all__": [
+      "WGSReactorEngine",
+      "create_wgs_reactor_calculator"
+    ],
     "symbols": {
       "WGSReactorEngine": {
         "type": "class",
@@ -20170,7 +19862,9 @@
       "Calculator": {
         "type": "class",
         "info": {
-          "bases": ["Protocol"],
+          "bases": [
+            "Protocol"
+          ],
           "methods": {
             "name": {
               "args": [
@@ -20234,7 +19928,9 @@
       "DataTransformer": {
         "type": "class",
         "info": {
-          "bases": ["Protocol"],
+          "bases": [
+            "Protocol"
+          ],
           "methods": {
             "transform": {
               "args": [
@@ -20369,7 +20065,9 @@
       "ProcessCalculator": {
         "type": "class",
         "info": {
-          "bases": ["Protocol"],
+          "bases": [
+            "Protocol"
+          ],
           "methods": {
             "calculate": {
               "args": [
@@ -20394,7 +20092,9 @@
       "StateSerializable": {
         "type": "class",
         "info": {
-          "bases": ["Protocol"],
+          "bases": [
+            "Protocol"
+          ],
           "methods": {
             "save_state": {
               "args": [
@@ -20430,7 +20130,9 @@
       "UnitConverter": {
         "type": "class",
         "info": {
-          "bases": ["Protocol"],
+          "bases": [
+            "Protocol"
+          ],
           "methods": {
             "convert": {
               "args": [
@@ -20482,162 +20184,16 @@
     ],
     "symbols": {
       "SIDEKICK_TAB_SETTINGS_BUTTON_OBJECT_NAME": {
-        "type": "variable"
+        "type": "unknown"
       },
       "TabSettingsMixin": {
-        "type": "class",
-        "info": {
-          "bases": [],
-          "methods": {
-            "active_tab_id": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "str"
-            },
-            "tab_display_name": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "tab_id",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "str"
-            },
-            "register_settings_button": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "button",
-                  "annotation": "QtWidgets.QToolButton",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "tab_settings": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "tab_id",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "dict[str, Any]"
-            },
-            "update_tab_settings": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "tab_id",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "values",
-                  "annotation": "dict[str, Any]",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "dict[str, Any]"
-            },
-            "open_active_tab_settings": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "bool"
-            },
-            "open_configure_tabs": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            }
-          }
-        }
+        "type": "unknown"
       },
       "build_tab_settings_dialog": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "sidebar",
-              "annotation": "Any",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "tab_id",
-              "annotation": "str",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "content",
-              "annotation": "QtWidgets.QWidget | None",
-              "default": null,
-              "kind": "arg"
-            }
-          ],
-          "returns": "QtWidgets.QDialog"
-        }
+        "type": "unknown"
       },
       "build_tab_settings_toolbar": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "sidebar",
-              "annotation": "Any",
-              "default": null,
-              "kind": "arg"
-            }
-          ],
-          "returns": "QtWidgets.QToolBar"
-        }
+        "type": "unknown"
       }
     }
   },
@@ -20656,7 +20212,9 @@
       "SymbolicEngineError": {
         "type": "class",
         "info": {
-          "bases": ["RuntimeError"],
+          "bases": [
+            "RuntimeError"
+          ],
           "methods": {}
         }
       },
@@ -20790,47 +20348,16 @@
     }
   },
   "tab_context_menu.py": {
-    "__all__": ["build_tab_context_menu", "show_tab_context_menu"],
+    "__all__": [
+      "build_tab_context_menu",
+      "show_tab_context_menu"
+    ],
     "symbols": {
       "build_tab_context_menu": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "sidebar",
-              "annotation": "Any",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "tab_id",
-              "annotation": "str",
-              "default": null,
-              "kind": "arg"
-            }
-          ],
-          "returns": "QtWidgets.QMenu"
-        }
+        "type": "unknown"
       },
       "show_tab_context_menu": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "sidebar",
-              "annotation": "Any",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "pos",
-              "annotation": "Any",
-              "default": null,
-              "kind": "arg"
-            }
-          ],
-          "returns": "None"
-        }
+        "type": "unknown"
       }
     }
   },
@@ -20949,7 +20476,10 @@
     "symbols": {}
   },
   "ui/catppuccin_theme.py": {
-    "__all__": ["COLORS", "get_stylesheet"],
+    "__all__": [
+      "COLORS",
+      "get_stylesheet"
+    ],
     "symbols": {
       "COLORS": {
         "type": "unknown"
@@ -21053,7 +20583,9 @@
       "UnitPreferencesManager": {
         "type": "class",
         "info": {
-          "bases": ["QObject"],
+          "bases": [
+            "QObject"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -21235,7 +20767,9 @@
       "UnitPreferencesManager": {
         "type": "class",
         "info": {
-          "bases": ["QObject"],
+          "bases": [
+            "QObject"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -21397,12 +20931,16 @@
     "symbols": {}
   },
   "ui/mixins/base_calculator_mixin.py": {
-    "__all__": ["BaseCalculatorMixin"],
+    "__all__": [
+      "BaseCalculatorMixin"
+    ],
     "symbols": {
       "BaseCalculatorMixin": {
         "type": "class",
         "info": {
-          "bases": ["CalculatorStateMixin"],
+          "bases": [
+            "CalculatorStateMixin"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -21478,7 +21016,9 @@
     }
   },
   "ui/mixins/calculator_state_mixin.py": {
-    "__all__": ["CalculatorStateMixin"],
+    "__all__": [
+      "CalculatorStateMixin"
+    ],
     "symbols": {
       "CalculatorStateMixin": {
         "type": "class",
@@ -22165,7 +21705,9 @@
       "CalculatorPlotSource": {
         "type": "class",
         "info": {
-          "bases": ["StrEnum"],
+          "bases": [
+            "StrEnum"
+          ],
           "methods": {}
         }
       },
@@ -22860,7 +22402,9 @@
       "CommonLocationsProvider": {
         "type": "class",
         "info": {
-          "bases": ["Protocol"],
+          "bases": [
+            "Protocol"
+          ],
           "methods": {
             "locations": {
               "args": [
@@ -23856,7 +23400,9 @@
       "SidekickThemeMode": {
         "type": "class",
         "info": {
-          "bases": ["StrEnum"],
+          "bases": [
+            "StrEnum"
+          ],
           "methods": {}
         }
       },
@@ -24744,7 +24290,9 @@
       "CalculatorPredictionProvider": {
         "type": "class",
         "info": {
-          "bases": ["Protocol"],
+          "bases": [
+            "Protocol"
+          ],
           "methods": {
             "suggest": {
               "args": [
@@ -24994,7 +24542,9 @@
       "CalculatorPlotSource": {
         "type": "class",
         "info": {
-          "bases": ["StrEnum"],
+          "bases": [
+            "StrEnum"
+          ],
           "methods": {}
         }
       },
@@ -25063,7 +24613,9 @@
       "SidekickCalculatorWidget": {
         "type": "class",
         "info": {
-          "bases": ["QtWidgets.QWidget"],
+          "bases": [
+            "QtWidgets.QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -26322,7 +25874,9 @@
       "ChatSettingsPanel": {
         "type": "class",
         "info": {
-          "bases": ["QtWidgets.QWidget"],
+          "bases": [
+            "QtWidgets.QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -26465,7 +26019,10 @@
     "symbols": {}
   },
   "ui/tools_sidebar/command_history.py": {
-    "__all__": ["CommandHistoryController", "DEFAULT_COMMAND_HISTORY_LIMIT"],
+    "__all__": [
+      "CommandHistoryController",
+      "DEFAULT_COMMAND_HISTORY_LIMIT"
+    ],
     "symbols": {
       "CommandHistoryController": {
         "type": "class",
@@ -26592,7 +26149,9 @@
       "DataExplorerError": {
         "type": "class",
         "info": {
-          "bases": ["ValueError"],
+          "bases": [
+            "ValueError"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -26811,7 +26370,9 @@
       "SidekickDataExplorerWidget": {
         "type": "class",
         "info": {
-          "bases": ["QtWidgets.QWidget"],
+          "bases": [
+            "QtWidgets.QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -26901,14 +26462,18 @@
       "DataProcessorTabError": {
         "type": "class",
         "info": {
-          "bases": ["ValueError"],
+          "bases": [
+            "ValueError"
+          ],
           "methods": {}
         }
       },
       "SidekickDataProcessorTab": {
         "type": "class",
         "info": {
-          "bases": ["QtWidgets.QWidget"],
+          "bases": [
+            "QtWidgets.QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -27032,7 +26597,9 @@
       "WorkspaceTableWidget": {
         "type": "class",
         "info": {
-          "bases": ["QtWidgets.QWidget"],
+          "bases": [
+            "QtWidgets.QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -27629,7 +27196,9 @@
     }
   },
   "ui/tools_sidebar/dock_chrome.py": {
-    "__all__": ["DockChromeController"],
+    "__all__": [
+      "DockChromeController"
+    ],
     "symbols": {
       "DockChromeController": {
         "type": "class",
@@ -27865,12 +27434,17 @@
     }
   },
   "ui/tools_sidebar/dock_title_bar.py": {
-    "__all__": ["SidekickDockTitleBar", "make_redock_button"],
+    "__all__": [
+      "SidekickDockTitleBar",
+      "make_redock_button"
+    ],
     "symbols": {
       "SidekickDockTitleBar": {
         "type": "class",
         "info": {
-          "bases": ["QtWidgets.QWidget"],
+          "bases": [
+            "QtWidgets.QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -27951,7 +27525,9 @@
       "CommonLocationsProvider": {
         "type": "class",
         "info": {
-          "bases": ["Protocol"],
+          "bases": [
+            "Protocol"
+          ],
           "methods": {
             "locations": {
               "args": [
@@ -28233,7 +27809,9 @@
       "JupyterNotebookWidget": {
         "type": "class",
         "info": {
-          "bases": ["QtWidgets.QWidget"],
+          "bases": [
+            "QtWidgets.QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -28316,7 +27894,9 @@
       "JupyterUnavailableWidget": {
         "type": "class",
         "info": {
-          "bases": ["QtWidgets.QWidget"],
+          "bases": [
+            "QtWidgets.QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -28375,7 +27955,9 @@
       "NotebookLoadError": {
         "type": "class",
         "info": {
-          "bases": ["RuntimeError"],
+          "bases": [
+            "RuntimeError"
+          ],
           "methods": {}
         }
       },
@@ -28667,7 +28249,9 @@
     }
   },
   "ui/tools_sidebar/jupyter_tab/availability.py": {
-    "__all__": ["JupyterTabAvailability"],
+    "__all__": [
+      "JupyterTabAvailability"
+    ],
     "symbols": {
       "JupyterTabAvailability": {
         "type": "class",
@@ -28702,12 +28286,17 @@
     }
   },
   "ui/tools_sidebar/jupyter_tab/notebook_loader.py": {
-    "__all__": ["NotebookLoadError", "load_notebook"],
+    "__all__": [
+      "NotebookLoadError",
+      "load_notebook"
+    ],
     "symbols": {
       "NotebookLoadError": {
         "type": "class",
         "info": {
-          "bases": ["RuntimeError"],
+          "bases": [
+            "RuntimeError"
+          ],
           "methods": {}
         }
       },
@@ -28778,7 +28367,10 @@
     }
   },
   "ui/tools_sidebar/jupyter_tab/notebook_session.py": {
-    "__all__": ["NotebookSessionManager", "NotebookSessionModel"],
+    "__all__": [
+      "NotebookSessionManager",
+      "NotebookSessionModel"
+    ],
     "symbols": {
       "NotebookSessionManager": {
         "type": "class",
@@ -28895,7 +28487,9 @@
     }
   },
   "ui/tools_sidebar/jupyter_tab/sidekick_notebook_widget.py": {
-    "__all__": ["SidekickNotebookWidget"],
+    "__all__": [
+      "SidekickNotebookWidget"
+    ],
     "symbols": {
       "SidekickNotebookWidget": {
         "type": "class",
@@ -28993,12 +28587,16 @@
     }
   },
   "ui/tools_sidebar/jupyter_tab/unavailable_widget.py": {
-    "__all__": ["JupyterUnavailableWidget"],
+    "__all__": [
+      "JupyterUnavailableWidget"
+    ],
     "symbols": {
       "JupyterUnavailableWidget": {
         "type": "class",
         "info": {
-          "bases": ["QtWidgets.QWidget"],
+          "bases": [
+            "QtWidgets.QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -29040,12 +28638,16 @@
     }
   },
   "ui/tools_sidebar/jupyter_tab/widget.py": {
-    "__all__": ["JupyterNotebookWidget"],
+    "__all__": [
+      "JupyterNotebookWidget"
+    ],
     "symbols": {
       "JupyterNotebookWidget": {
         "type": "class",
         "info": {
-          "bases": ["QtWidgets.QWidget"],
+          "bases": [
+            "QtWidgets.QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -29098,7 +28700,9 @@
     }
   },
   "ui/tools_sidebar/jupyter_tab/workspace_bridge.py": {
-    "__all__": ["WorkspaceBridge"],
+    "__all__": [
+      "WorkspaceBridge"
+    ],
     "symbols": {
       "WorkspaceBridge": {
         "type": "class",
@@ -29181,7 +28785,9 @@
       "PosixPtyBackend": {
         "type": "class",
         "info": {
-          "bases": ["_BackendBase"],
+          "bases": [
+            "_BackendBase"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -29294,7 +28900,9 @@
       "SidekickOsTerminalWidget": {
         "type": "class",
         "info": {
-          "bases": ["QtWidgets.QWidget"],
+          "bases": [
+            "QtWidgets.QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -29415,6 +29023,17 @@
                 }
               ],
               "returns": "None"
+            },
+            "shutdown": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
             }
           }
         }
@@ -29422,7 +29041,9 @@
       "SubprocessFallbackBackend": {
         "type": "class",
         "info": {
-          "bases": ["_BackendBase"],
+          "bases": [
+            "_BackendBase"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -29532,7 +29153,9 @@
       "TerminalBackend": {
         "type": "class",
         "info": {
-          "bases": ["Protocol"],
+          "bases": [
+            "Protocol"
+          ],
           "methods": {
             "start": {
               "args": [
@@ -29619,7 +29242,9 @@
       "WindowsPtyBackend": {
         "type": "class",
         "info": {
-          "bases": ["_BackendBase"],
+          "bases": [
+            "_BackendBase"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -29786,7 +29411,9 @@
       "DefaultProgramLauncher": {
         "type": "class",
         "info": {
-          "bases": ["Protocol"],
+          "bases": [
+            "Protocol"
+          ],
           "methods": {
             "open_file": {
               "args": [
@@ -29811,7 +29438,9 @@
       "ProjectFileExplorer": {
         "type": "class",
         "info": {
-          "bases": ["QtWidgets.QWidget"],
+          "bases": [
+            "QtWidgets.QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -30377,12 +30006,17 @@
     }
   },
   "ui/tools_sidebar/reporting_tab.py": {
-    "__all__": ["SidekickReportingWidget", "build_reporting_tab"],
+    "__all__": [
+      "SidekickReportingWidget",
+      "build_reporting_tab"
+    ],
     "symbols": {
       "SidekickReportingWidget": {
         "type": "class",
         "info": {
-          "bases": ["QtWidgets.QWidget"],
+          "bases": [
+            "QtWidgets.QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -30464,7 +30098,9 @@
       "AppearanceSettingsPanel": {
         "type": "class",
         "info": {
-          "bases": ["QtWidgets.QWidget"],
+          "bases": [
+            "QtWidgets.QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -30518,7 +30154,9 @@
       "PythonReplSettingsPanel": {
         "type": "class",
         "info": {
-          "bases": ["AppearanceSettingsPanel"],
+          "bases": [
+            "AppearanceSettingsPanel"
+          ],
           "methods": {
             "package_rows": {
               "args": [
@@ -30668,7 +30306,9 @@
       "PythonReplWidget": {
         "type": "class",
         "info": {
-          "bases": ["QtWidgets.QWidget"],
+          "bases": [
+            "QtWidgets.QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -30828,6 +30468,17 @@
                 }
               ],
               "returns": "CalculatorStartupResult"
+            },
+            "namespace": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "dict[str, Any]"
             }
           }
         }
@@ -30853,7 +30504,9 @@
       "SidekickNotesWidget": {
         "type": "class",
         "info": {
-          "bases": ["QtWidgets.QWidget"],
+          "bases": [
+            "QtWidgets.QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -30934,7 +30587,9 @@
       "SidekickPythonReplWidget": {
         "type": "class",
         "info": {
-          "bases": ["QtWidgets.QWidget"],
+          "bases": [
+            "QtWidgets.QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -31295,14 +30950,19 @@
       "TabSettingsDefinition": {
         "type": "class",
         "info": {
-          "bases": ["Protocol"],
+          "bases": [
+            "Protocol"
+          ],
           "methods": {}
         }
       }
     }
   },
   "ui/tools_sidebar/shell_discovery.py": {
-    "__all__": ["ShellDescriptor", "discover_shells"],
+    "__all__": [
+      "ShellDescriptor",
+      "discover_shells"
+    ],
     "symbols": {
       "ShellDescriptor": {
         "type": "class",
@@ -31331,14 +30991,18 @@
       "LayoutMode": {
         "type": "class",
         "info": {
-          "bases": ["StrEnum"],
+          "bases": [
+            "StrEnum"
+          ],
           "methods": {}
         }
       },
       "MatlabHomeWidget": {
         "type": "class",
         "info": {
-          "bases": ["QtWidgets.QWidget"],
+          "bases": [
+            "QtWidgets.QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -32250,6 +31914,34 @@
                 }
               ],
               "returns": "bool"
+            },
+            "shutdown": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "closeEvent": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "event",
+                  "annotation": "object",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
             }
           }
         }
@@ -32257,7 +31949,11 @@
     }
   },
   "ui/tools_sidebar/state.py": {
-    "__all__": ["SidebarState", "VALID_DOCK_AREAS", "VALID_LAYOUT_MODES"],
+    "__all__": [
+      "SidebarState",
+      "VALID_DOCK_AREAS",
+      "VALID_LAYOUT_MODES"
+    ],
     "symbols": {
       "SidebarState": {
         "type": "class",
@@ -32338,7 +32034,9 @@
     }
   },
   "ui/tools_sidebar/state_profile_actions.py": {
-    "__all__": ["StateProfileMixin"],
+    "__all__": [
+      "StateProfileMixin"
+    ],
     "symbols": {
       "StateProfileMixin": {
         "type": "class",
@@ -32568,7 +32266,9 @@
     }
   },
   "ui/tools_sidebar/tab_collection.py": {
-    "__all__": ["TabCollection"],
+    "__all__": [
+      "TabCollection"
+    ],
     "symbols": {
       "TabCollection": {
         "type": "class",
@@ -32830,7 +32530,10 @@
     }
   },
   "ui/tools_sidebar/tab_context_menu.py": {
-    "__all__": ["build_tab_context_menu", "show_tab_context_menu"],
+    "__all__": [
+      "build_tab_context_menu",
+      "show_tab_context_menu"
+    ],
     "symbols": {
       "build_tab_context_menu": {
         "type": "function",
@@ -32875,7 +32578,9 @@
     }
   },
   "ui/tools_sidebar/tab_definition.py": {
-    "__all__": ["SidebarTabDefinition"],
+    "__all__": [
+      "SidebarTabDefinition"
+    ],
     "symbols": {
       "SidebarTabDefinition": {
         "type": "class",
@@ -32887,7 +32592,9 @@
     }
   },
   "ui/tools_sidebar/tab_display_names.py": {
-    "__all__": ["TabDisplayNameMixin"],
+    "__all__": [
+      "TabDisplayNameMixin"
+    ],
     "symbols": {
       "TabDisplayNameMixin": {
         "type": "class",
@@ -32957,7 +32664,9 @@
     }
   },
   "ui/tools_sidebar/tab_popout.py": {
-    "__all__": ["TabPopoutMixin"],
+    "__all__": [
+      "TabPopoutMixin"
+    ],
     "symbols": {
       "TabPopoutMixin": {
         "type": "class",
@@ -33083,7 +32792,9 @@
       "ConfigureTabsDialog": {
         "type": "class",
         "info": {
-          "bases": ["QtWidgets.QDialog"],
+          "bases": [
+            "QtWidgets.QDialog"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -33284,7 +32995,9 @@
       "TabDefinitionLike": {
         "type": "class",
         "info": {
-          "bases": ["Protocol"],
+          "bases": [
+            "Protocol"
+          ],
           "methods": {
             "tab_id": {
               "args": [
@@ -33472,7 +33185,9 @@
       "SidekickThemeMode": {
         "type": "class",
         "info": {
-          "bases": ["StrEnum"],
+          "bases": [
+            "StrEnum"
+          ],
           "methods": {}
         }
       },
@@ -33564,7 +33279,9 @@
     }
   },
   "ui/tools_sidebar/visibility_persistence.py": {
-    "__all__": ["VisibilityPersistence"],
+    "__all__": [
+      "VisibilityPersistence"
+    ],
     "symbols": {
       "VisibilityPersistence": {
         "type": "class",
@@ -33628,7 +33345,10 @@
     }
   },
   "ui/tools_sidebar/workspace_commands.py": {
-    "__all__": ["WorkspaceCommandExecutor", "WorkspaceCommandResult"],
+    "__all__": [
+      "WorkspaceCommandExecutor",
+      "WorkspaceCommandResult"
+    ],
     "symbols": {
       "WorkspaceCommandExecutor": {
         "type": "class",
@@ -33807,7 +33527,10 @@
       "BaseCalculatorWidget": {
         "type": "class",
         "info": {
-          "bases": ["QWidget", "BaseCalculatorMixin"],
+          "bases": [
+            "QWidget",
+            "BaseCalculatorMixin"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -33884,7 +33607,11 @@
       "BaseCalculatorWindow": {
         "type": "class",
         "info": {
-          "bases": ["ThemedWindowMixin", "QMainWindow", "BaseCalculatorMixin"],
+          "bases": [
+            "ThemedWindowMixin",
+            "QMainWindow",
+            "BaseCalculatorMixin"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -33990,7 +33717,10 @@
       "DataProcessorWidget": {
         "type": "class",
         "info": {
-          "bases": ["DataProcessorOpsMixin", "BaseCalculatorWidget"],
+          "bases": [
+            "DataProcessorOpsMixin",
+            "BaseCalculatorWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -34136,7 +33866,9 @@
       "UnitAwareDisplay": {
         "type": "class",
         "info": {
-          "bases": ["QWidget"],
+          "bases": [
+            "QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -34202,7 +33934,9 @@
       "UnitAwareInput": {
         "type": "class",
         "info": {
-          "bases": ["QWidget"],
+          "bases": [
+            "QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -34406,7 +34140,9 @@
       "UnitConverterWidget": {
         "type": "class",
         "info": {
-          "bases": ["BaseCalculatorWindow"],
+          "bases": [
+            "BaseCalculatorWindow"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -34453,12 +34189,18 @@
     }
   },
   "ui/widgets/base_calculator_widget.py": {
-    "__all__": ["BaseCalculatorWidget", "BaseCalculatorWindow"],
+    "__all__": [
+      "BaseCalculatorWidget",
+      "BaseCalculatorWindow"
+    ],
     "symbols": {
       "BaseCalculatorWidget": {
         "type": "class",
         "info": {
-          "bases": ["QWidget", "BaseCalculatorMixin"],
+          "bases": [
+            "QWidget",
+            "BaseCalculatorMixin"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -34535,7 +34277,11 @@
       "BaseCalculatorWindow": {
         "type": "class",
         "info": {
-          "bases": ["ThemedWindowMixin", "QMainWindow", "BaseCalculatorMixin"],
+          "bases": [
+            "ThemedWindowMixin",
+            "QMainWindow",
+            "BaseCalculatorMixin"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -34641,12 +34387,17 @@
     }
   },
   "ui/widgets/data_processor_widget.py": {
-    "__all__": ["DataProcessorWidget"],
+    "__all__": [
+      "DataProcessorWidget"
+    ],
     "symbols": {
       "DataProcessorWidget": {
         "type": "class",
         "info": {
-          "bases": ["DataProcessorOpsMixin", "BaseCalculatorWidget"],
+          "bases": [
+            "DataProcessorOpsMixin",
+            "BaseCalculatorWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -34796,7 +34547,9 @@
     "symbols": {}
   },
   "ui/widgets/mixins/data_processor_ops.py": {
-    "__all__": ["DataProcessorOpsMixin"],
+    "__all__": [
+      "DataProcessorOpsMixin"
+    ],
     "symbols": {
       "DataProcessorOpsMixin": {
         "type": "class",
@@ -34808,12 +34561,17 @@
     }
   },
   "ui/widgets/unit_aware_input.py": {
-    "__all__": ["UnitAwareDisplay", "UnitAwareInput"],
+    "__all__": [
+      "UnitAwareDisplay",
+      "UnitAwareInput"
+    ],
     "symbols": {
       "UnitAwareDisplay": {
         "type": "class",
         "info": {
-          "bases": ["QWidget"],
+          "bases": [
+            "QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -34879,7 +34637,9 @@
       "UnitAwareInput": {
         "type": "class",
         "info": {
-          "bases": ["QWidget"],
+          "bases": [
+            "QWidget"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -35094,7 +34854,9 @@
       "CaseInsensitiveCompleter": {
         "type": "class",
         "info": {
-          "bases": ["QCompleter"],
+          "bases": [
+            "QCompleter"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -35259,14 +35021,18 @@
       "TypedConverterWidget": {
         "type": "class",
         "info": {
-          "bases": ["QWidget"],
+          "bases": [
+            "QWidget"
+          ],
           "methods": {}
         }
       },
       "UnitConverterWidget": {
         "type": "class",
         "info": {
-          "bases": ["BaseCalculatorWindow"],
+          "bases": [
+            "BaseCalculatorWindow"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -35331,7 +35097,10 @@
     "symbols": {}
   },
   "utils/json_io.py": {
-    "__all__": ["safe_read_json", "safe_write_json"],
+    "__all__": [
+      "safe_read_json",
+      "safe_write_json"
+    ],
     "symbols": {
       "safe_read_json": {
         "type": "function",
@@ -35440,7 +35209,9 @@
     }
   },
   "utils/paths.py": {
-    "__all__": ["get_repo_root"],
+    "__all__": [
+      "get_repo_root"
+    ],
     "symbols": {
       "get_repo_root": {
         "type": "function",
@@ -35459,7 +35230,11 @@
     }
   },
   "utils/state_manager.py": {
-    "__all__": ["StateManager", "get_state_manager", "state_manager"],
+    "__all__": [
+      "StateManager",
+      "get_state_manager",
+      "state_manager"
+    ],
     "symbols": {
       "StateManager": {
         "type": "class",
@@ -35762,6 +35537,8 @@
       "ELECTRON_VOLT_TO_JOULE",
       "ERG_TO_JOULE",
       "FOOT_H2O_TO_PASCAL",
+      "FOOT_POUND_TO_JOULE",
+      "FOOT_POUND_TO_NEWTON_METER",
       "FOOT_POUND_PER_SECOND_TO_WATT",
       "FOOT_TO_METER",
       "GIGAJOULE_TO_JOULE",
@@ -35840,6 +35617,7 @@
       "POUND_PER_CU_FOOT_TO_KG_PER_CU_METER",
       "POUND_PER_FOOT_SECOND_TO_PASCAL_SECOND",
       "POUND_PER_GALLON_TO_KG_PER_CU_METER",
+      "POUND_FORCE_INCH_TO_NEWTON_METER",
       "POUND_PER_HOUR_TO_KG_PER_SECOND",
       "POUND_PER_MINUTE_TO_KG_PER_SECOND",
       "POUND_PER_SECOND_TO_KG_PER_SECOND",
@@ -36423,16 +36201,29 @@
       },
       "YARD_TO_METER": {
         "type": "variable"
+      },
+      "FOOT_POUND_TO_JOULE": {
+        "type": "variable"
+      },
+      "FOOT_POUND_TO_NEWTON_METER": {
+        "type": "variable"
+      },
+      "POUND_FORCE_INCH_TO_NEWTON_METER": {
+        "type": "variable"
       }
     }
   },
   "workspace_contract.py": {
-    "__all__": ["WorkspaceContract"],
+    "__all__": [
+      "WorkspaceContract"
+    ],
     "symbols": {
       "WorkspaceContract": {
         "type": "class",
         "info": {
-          "bases": ["Protocol"],
+          "bases": [
+            "Protocol"
+          ],
           "methods": {
             "set_variable": {
               "args": [
