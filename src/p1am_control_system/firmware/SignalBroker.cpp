@@ -1,5 +1,6 @@
 #include "SignalBroker.h"
 #include <cmath>
+#include <limits>
 
 namespace {
 
@@ -11,8 +12,13 @@ bool IsValidRoutingTagId(int tag_id) {
   return tag_id == SignalBroker::kUnmappedTag || IsValidTagId(tag_id);
 }
 
+// Global percent-of-span clamp; NaN passes through as the bad-quality marker.
+// See the SetTag contract in SignalBroker.h for why NaN is not mapped to 0.
 float ClampTagValue(float value) {
-  if (!std::isfinite(value) || value < 0.0f) {
+  if (!std::isfinite(value)) {
+    return std::numeric_limits<float>::quiet_NaN();
+  }
+  if (value < 0.0f) {
     return 0.0f;
   }
   if (value > 100.0f) {
@@ -53,6 +59,13 @@ void SignalBroker::SetTag(int tag_id, float value) {
   }
 
   tags_[tag_id] = ClampTagValue(value);
+}
+
+bool SignalBroker::IsTagValid(int tag_id) const {
+  if (!IsValidTagId(tag_id)) {
+    return false;
+  }
+  return std::isfinite(tags_[tag_id]);
 }
 
 void SignalBroker::SetInputRouting(int channel, int tag_id) {
@@ -120,6 +133,10 @@ void SignalBroker::WriteHardwareOutputs(HardwareInterface& hw) {
     int source_tag = output_routing_[i];
     if (source_tag != kUnmappedTag) {
       float val = GetTag(source_tag);
+      // A bad-quality source tag must not reach the DAC: drive the safe 0.0 %.
+      if (!std::isfinite(val)) {
+        val = 0.0f;
+      }
       hw.WriteAnalogOutput(i, val);
     } else {
       // If unmapped, write safe 0.0% output

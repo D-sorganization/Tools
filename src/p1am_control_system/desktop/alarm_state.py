@@ -135,8 +135,22 @@ def _require_number(value: Any, name: str) -> float:
     return numeric
 
 
+# A limit of ``None`` means "this side is not alarmed" (backend
+# ``InterlockConfig``). It is folded to -inf (low side) / +inf (high side) so
+# ``classify_value`` can never select that band while the monotonic contract
+# still holds. This mirrors ``InterlockConfig.engine_limits`` in the backend.
+_DISABLED_LIMIT = {
+    "lolo_limit": float("-inf"),
+    "low_limit": float("-inf"),
+    "high_limit": float("inf"),
+    "hihi_limit": float("inf"),
+}
+
+
 def _limits(interlock: Any) -> tuple[float, float, float, float]:
     """Return ``(lolo, low, high, hihi)`` for ``interlock``.
+
+    A ``None`` limit (disabled side) maps to the matching infinity.
 
     Raises:
         TypeError: If a field is missing or is not a real number.
@@ -145,7 +159,11 @@ def _limits(interlock: Any) -> tuple[float, float, float, float]:
     for field in _LIMIT_FIELDS:
         if not hasattr(interlock, field):
             raise TypeError(f"interlock is missing required field {field!r}")
-        values.append(_require_number(getattr(interlock, field), field))
+        raw = getattr(interlock, field)
+        if raw is None:
+            values.append(_DISABLED_LIMIT[field])
+        else:
+            values.append(_require_number(raw, field))
     return (values[0], values[1], values[2], values[3])
 
 

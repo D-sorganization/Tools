@@ -23,12 +23,9 @@ PID_COUNT: int = hardware.PID_COUNT
 PID_REGISTER_WIDTH = 10
 INTERLOCK_REGISTER_WIDTH = 8
 INTERLOCK_CHUNK_OFFSETS = (0, 64, 128, 192)
-DEFAULT_INTERLOCK = InterlockConfig(
-    lolo_limit=0.0,
-    low_limit=5.0,
-    high_limit=95.0,
-    hihi_limit=100.0,
-)
+# A tag absent from the config is NOT interlocked. Encoding it as a live band
+# (the old 0/5/95/100) tripped the firmware on every unrouted tag (#4001).
+DEFAULT_INTERLOCK = InterlockConfig()
 
 
 def registers_to_float(low: int, high: int) -> float:
@@ -123,16 +120,49 @@ def encode_pid_configs(pids: list[PIDConfig]) -> list[int]:
     return registers
 
 
+def encode_low_limit(limit: float | None) -> list[int]:
+    """Encode a low-side limit; ``None`` becomes the firmware's disabled sentinel."""
+    value = hardware.INTERLOCK_DISABLED_LOW if limit is None else limit
+    return float_to_registers(value)
+
+
+def encode_high_limit(limit: float | None) -> list[int]:
+    """Encode a high-side limit; ``None`` becomes the firmware's disabled sentinel."""
+    value = hardware.INTERLOCK_DISABLED_HIGH if limit is None else limit
+    return float_to_registers(value)
+
+
+def decode_low_limit(low: int, high: int) -> float | None:
+    """Decode a low-side limit; at/below the disabled sentinel reads as ``None``."""
+    value = registers_to_float(low, high)
+    if not math.isfinite(value) or value <= hardware.INTERLOCK_DISABLED_LOW:
+        return None
+    return value
+
+
+def decode_high_limit(low: int, high: int) -> float | None:
+    """Decode a high-side limit; at/above the disabled sentinel reads as ``None``."""
+    value = registers_to_float(low, high)
+    if not math.isfinite(value) or value >= hardware.INTERLOCK_DISABLED_HIGH:
+        return None
+    return value
+
+
 def decode_interlocks(registers: list[int]) -> dict[str, InterlockConfig]:
-    """Decode the 256-register interlock block into per-tag limits."""
+    """Decode the 256-register interlock block into per-tag limits.
+
+    The firmware's disabled sentinels (and any non-finite register garbage)
+    decode to ``None`` rather than a number the alarm engine would compare
+    against (#3973).
+    """
     interlocks: dict[str, InterlockConfig] = {}
     for tag_index in range(TAG_COUNT):
         base = tag_index * INTERLOCK_REGISTER_WIDTH
         interlocks[f"TAG_{tag_index}"] = InterlockConfig(
-            lolo_limit=registers_to_float(registers[base], registers[base + 1]),
-            low_limit=registers_to_float(registers[base + 2], registers[base + 3]),
-            high_limit=registers_to_float(registers[base + 4], registers[base + 5]),
-            hihi_limit=registers_to_float(registers[base + 6], registers[base + 7]),
+            lolo_limit=decode_low_limit(registers[base], registers[base + 1]),
+            low_limit=decode_low_limit(registers[base + 2], registers[base + 3]),
+            high_limit=decode_high_limit(registers[base + 4], registers[base + 5]),
+            hihi_limit=decode_high_limit(registers[base + 6], registers[base + 7]),
         )
     return interlocks
 
@@ -142,10 +172,10 @@ def encode_interlocks(interlocks: dict[str, InterlockConfig]) -> list[int]:
     registers: list[int] = []
     for tag_index in range(TAG_COUNT):
         interlock = interlocks.get(f"TAG_{tag_index}", DEFAULT_INTERLOCK)
-        registers.extend(float_to_registers(interlock.lolo_limit))
-        registers.extend(float_to_registers(interlock.low_limit))
-        registers.extend(float_to_registers(interlock.high_limit))
-        registers.extend(float_to_registers(interlock.hihi_limit))
+        registers.extend(encode_low_limit(interlock.lolo_limit))
+        registers.extend(encode_low_limit(interlock.low_limit))
+        registers.extend(encode_high_limit(interlock.high_limit))
+        registers.extend(encode_high_limit(interlock.hihi_limit))
     return registers
 
 

@@ -40,6 +40,7 @@ import {
 import { TAG_INDICES, tagName, parseTagId } from "./lib/tags";
 import type { InspectorState } from "./lib/inspector";
 import { fmtNumber } from "./lib/format";
+import { DISABLED_INTERLOCK, isOutsideTripBand } from "./lib/limits";
 import * as api from "./api/endpoints";
 import { ApiError } from "./api/client";
 import type {
@@ -118,12 +119,10 @@ const DEFAULT_CONFIG: RoutingConfig = {
     ki: 0.0,
     kd: 0.0,
   })),
-  interlocks: TAG_INDICES.map(() => ({
-    lolo_limit: 0.0,
-    low_limit: 5.0,
-    high_limit: 95.0,
-    hihi_limit: 100.0,
-  })),
+  // Every side disabled until the backend's routing config arrives: the old
+  // 0/5/95/100 placeholder tripped the PLC on unrouted tags if it was ever
+  // deployed as-is (Tools #4001).
+  interlocks: TAG_INDICES.map(() => ({ ...DISABLED_INTERLOCK })),
 };
 
 export const App: React.FC = () => {
@@ -338,20 +337,18 @@ export const App: React.FC = () => {
           : [],
         interlocks: (() => {
           const mappedInts: InterlockConfig[] = TAG_INDICES.map(() => ({
-            lolo_limit: 0.0,
-            low_limit: 5.0,
-            high_limit: 95.0,
-            hihi_limit: 100.0,
+            ...DISABLED_INTERLOCK,
           }));
           if (data.interlocks && typeof data.interlocks === "object") {
             TAG_INDICES.forEach((i) => {
               const entry = data.interlocks?.[tagName(i)];
               if (entry) {
+                // A missing/null side is disabled, never a synthesised number.
                 mappedInts[i] = {
-                  lolo_limit: entry.lolo_limit ?? 0.0,
-                  low_limit: entry.low_limit ?? 5.0,
-                  high_limit: entry.high_limit ?? 95.0,
-                  hihi_limit: entry.hihi_limit ?? 100.0,
+                  lolo_limit: entry.lolo_limit ?? null,
+                  low_limit: entry.low_limit ?? null,
+                  high_limit: entry.high_limit ?? null,
+                  hihi_limit: entry.hihi_limit ?? null,
                 };
               }
             });
@@ -471,7 +468,11 @@ export const App: React.FC = () => {
   };
 
   // Helper to update active Interlock config
-  const handleInterlockChange = (tagId: number, field: keyof InterlockConfig, value: number) => {
+  const handleInterlockChange = (
+    tagId: number,
+    field: keyof InterlockConfig,
+    value: number | null,
+  ) => {
     const updatedInterlocks = config.interlocks.map((interlock, idx) => {
       if (idx === tagId) {
         return { ...interlock, [field]: value };
@@ -872,8 +873,7 @@ export const App: React.FC = () => {
                         {TAG_INDICES.map((i) => {
                           const val = tagValues[i] ?? 0.0;
                           const interlock = config.interlocks[i];
-                          const isTripped =
-                            interlock && (val > interlock.high_limit || val < interlock.low_limit);
+                          const isTripped = isOutsideTripBand(val, interlock);
 
                           return (
                             <div

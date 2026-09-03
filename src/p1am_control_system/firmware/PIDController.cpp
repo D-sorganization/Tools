@@ -67,6 +67,14 @@ void PIDController::Compute(SignalBroker& broker, float dt) {
 
   // Read process variable
   float pv = broker.GetTag(pv_tag_id_);
+  if (!std::isfinite(pv)) {
+    // Bad-quality PV (sensor fault): the loop cannot know where the process
+    // is, so it must not drive the actuator. De-energize the CV and shed the
+    // accumulated state so recovery restarts from a clean integral.
+    broker.SetTag(cv_tag_id_, 0.0f);
+    ResetDynamicState();
+    return;
+  }
   float error = setpoint_ - pv;
 
   // Proportional Term

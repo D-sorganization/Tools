@@ -3,6 +3,52 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 6563,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "71cba0085a1cf9351235777531c41537ee33894923defab2e2da41e4205cf8b5",
+      "family": "control-systems-non-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-LIB-CHARTSNAPSHOT-TEST-TS-C86BDBFD35BD",
+      "language": "typescript",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/frontend/src/lib/chartSnapshot.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://www.w3.org/2000/svg"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 11506,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -1385,6 +1431,77 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 1394,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "de9fd0e7eb0c29d8961d5fc545459622203aa609f91649c7178cde43fb6917f8",
+      "family": "control-systems-non-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-LIB-LIMITS-TS-40D3FB387000",
+      "language": "typescript",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/frontend/src/lib/limits.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "DISABLED_INTERLOCK",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "isOutsideTripBand",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "limitInputValue",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "parseLimitInput",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/signal_toolkit/tests/test_limits.py",
+          "tests/shared/python/signal_toolkit/test_limits.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2007,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -2647,10 +2764,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3626,
+      "bytes_lf": 3940,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4f9566ce2807cb203c4e64763b195447b4e1c3803ded6978e9ad4e24a8c4fc29",
+      "content_sha256_lf": "d88638b5c3baabd8d4e70d57aecfd3ef3e8e1ae8789d9e451632b084141fbf2c",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-TYPES-TS-1643584D2A06",
       "language": "typescript",
@@ -15544,149 +15661,6 @@
           "N*m",
           "m/s",
           "rad/s",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 6454,
-      "classification": "calculation",
-      "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "79e49f95414b8a948a622c9d1ffb27384851fef82ae810ebaaa98f2dd0165a44",
-      "family": "pendulum-calculation",
-      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-CLUB-EQUIVALENCE-PY-52908F5B4992",
-      "language": "python",
-      "maintainer": "Pendulum maintainers",
-      "path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/club_equivalence.py",
-      "purpose": "Converting a real golf club into the point-mass-at-tip club this model uses.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "10.1007/s12283-009-0020-9",
-          "10.1119/1.1976419",
-          "https://archive.org/details/searchforperfect0000coch",
-          "https://doi.org/10.1007/s12283-009-0020-9",
-          "https://doi.org/10.1119/1.1976419"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "RealClubSpec",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DRIVER_SPEC",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SEVEN_IRON_SPEC",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "equivalent_tip_mass",
-            "signature": "club: RealClubSpec, shaft_length_m: float"
-          },
-          {
-            "kind": "function",
-            "name": "wrist_inertia",
-            "signature": "club: RealClubSpec"
-          }
-        ],
-        "test_paths": [
-          "src/pendulum_simulator/tests/test_club_equivalence.py"
-        ],
-        "unit_mentions": [
-          "kg",
-          "m/s",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 8648,
-      "classification": "calculation",
-      "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "59ea2804532cf82c4b11b8d0a33c3599990dbf302259035fab00c1788252c15e",
-      "family": "pendulum-calculation",
-      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-COLLOCATION-PY-704EA3959FE8",
-      "language": "python",
-      "maintainer": "Pendulum maintainers",
-      "path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/collocation.py",
-      "purpose": "Direct-collocation transcription of the downswing optimal control problem.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CollocationTranscription",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "N",
           "s"
         ],
         "validation_paths": []

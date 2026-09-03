@@ -97,11 +97,36 @@ breaks Ethernet SPI.
 | 110..111 | 2     | Output routing — channel -> tag id; slots 0-1 = AO0-1                      |
 | 200..239 | 40    | PID config — 4 PIDs x 10 regs = (pv_tag, cv_tag, sp, kp, ki, kd)           |
 | 300..555 | 256   | Interlock limits — 32 tags x 8 regs = (lolo, low, high, hihi) IEEE-754     |
+| 560      | 1     | Host heartbeat — any change re-arms the comms watchdog                     |
+| 561      | 1     | Interlock tripped (read-only): 1 while the trip latch is set               |
+| 562      | 1     | Interlock trip tag (read-only): tag id that latched, 255 when clear        |
 | coil 0   | 1     | Save-to-flash trigger (firmware writes EEPROM on falling edge of write)    |
+| coil 1   | 1     | Interlock reset request — host pulses 1; firmware consumes (writes 0)      |
+| coil 2   | 1     | Heater relay command (temperature controller); interlock always wins       |
+| coil 3   | 1     | THM burnout direction: 1 = HIGH-side (fail-safe), 0 = LOW-side             |
 
-Tag values are clamped 0.0–100.0 by the broker. AO outputs scale linearly:
-0.0% -> 4.000 mA, 100.0% -> 20.000 mA. AI readings are pre-scaled by the P1AM
-library before reaching the broker.
+Finite tag values are clamped 0.0–100.0 by the broker (percent of span; the
+thermocouple full scale is `kThermocoupleFullScaleC`). A non-finite reading is
+kept as NaN — the broker's bad-quality marker — and is never coerced to 0.0 %.
+A NaN source tag drives its AO to 0.0 %, a NaN PV de-energizes its PID CV, and
+a NaN on an *interlocked* tag trips (a sensor fault cannot be proven safe). AO
+outputs scale linearly: 0.0% -> 4.000 mA, 100.0% -> 20.000 mA. AI readings are
+pre-scaled by the P1AM library before reaching the broker.
+
+### Interlock latch and reset (issue #4001)
+
+`SafetyInterlock::Evaluate` trips on the low/high band of every tag whose
+limits are narrower than the disabled sentinels (`kDisabledLowLimit` =
+-99999, `kDisabledHighLimit` = 99999). Tags left at the sentinels — the
+power-on default, and what the backend writes for a limit of `None` — are
+skipped, so an unrouted tag sitting at 0.0 % cannot trip the plant.
+
+The trip is a latch. Once set, outputs are forced to 0 %, Inhibit is asserted
+and the heater relay is held off until **both** conditions hold: no tag is
+outside its band, **and** the host has requested a reset by writing coil 1.
+A reset requested while the cause is still present is refused and the coil
+is consumed; registers 561/562 report whether the latch is still set and which
+tag latched it, so the host can confirm the outcome instead of assuming it.
 
 ## Thermocouple module configuration
 

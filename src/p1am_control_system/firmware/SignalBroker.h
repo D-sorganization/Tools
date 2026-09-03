@@ -26,13 +26,28 @@ class SignalBroker {
 
   // Read the value of a tag.
   // Precondition: 0 <= tag_id < kNumTags
-  // Postcondition: Returns tag value in the range [0.0, 100.0]
+  // Postcondition: Returns a finite value in [0.0, 100.0], or NaN when the
+  // tag holds a bad-quality (non-finite) reading. See SetTag.
   float GetTag(int tag_id) const;
 
   // Set the value of a tag.
   // Precondition: 0 <= tag_id < kNumTags
-  // Postcondition: The tag value is updated and clamped to [0.0, 100.0]
+  // Postcondition: A finite value is clamped to [0.0, 100.0] and stored. A
+  // non-finite value is stored as NaN -- the broker's "bad quality" marker --
+  // and is NEVER coerced to 0.0: a sensor fault is not a measurement, and
+  // 0.0 % sits below every low limit and looks like a valid cold reading to
+  // the host (issue #4032, hardware.py `_require_finite_number`).
+  //
+  // The [0, 100] clamp itself is deliberate and global for now: every tag is
+  // a percent-of-span quantity (thermocouples are scaled by
+  // kThermocoupleFullScaleC in ReadHardwareInputs, AI/AO are 0-100 % by the
+  // module), and the interlock limits are compared in the same domain. Per-tag
+  // engineering-unit classes (which would need a unit tag in the register
+  // contract) are tracked in issue #4032 and are NOT decided here.
   void SetTag(int tag_id, float value);
+
+  // True when the tag holds a finite reading, false for bad quality / invalid id.
+  bool IsTagValid(int tag_id) const;
 
   // Set input routing: map hardware input channel to tag ID.
   // Precondition: 0 <= channel < kNumInputs
