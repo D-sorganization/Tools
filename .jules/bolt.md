@@ -130,3 +130,7 @@
 ## 2024-05-19 - Array map Math.abs spread overhead
 **Learning:** Using `Math.max(...array.map(Math.abs))` creates an intermediate array and passes all items to the call stack via the spread operator, causing noticeable GC pressure and risking call stack size exceeded errors on large datasets.
 **Action:** Replace `Math.max(...array.map(Math.abs))` with a standard O(N) single-pass `for` loop in numerical hotspots.
+
+## 2026-09-03 - Prevent stack overflows and GC pressure in tight loops
+**Learning:** Using `Math.min(...arr)` or `Math.max(...arr)` on dynamically mapped arrays within render loops is an anti-pattern. It generates significant garbage collection overhead and risks stack overflows for large arrays.
+**Action:** Replace `Math.min(...spread)` / `Math.max(...spread)` with a single-pass `for` loop to compute bounds. This eliminates intermediate allocations and runs substantially faster while scaling to any data size.
