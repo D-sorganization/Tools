@@ -3,6 +3,66 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 4293,
+      "classification": "calculation",
+      "classification_basis": "path-marker:solver",
+      "content_sha256_lf": "12e380ed3b60b7d6db39ae34e9a48f4637b9db56f2820005623757148305ee65",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-ODE-SOLVER-PY-B4A413C51C57",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/routers/ode_solver.py",
+      "purpose": "ODE solver router.  See issue #608.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "solve_ode",
+            "signature": "request: ODESolverRequest"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/process_calculators/test_ode_solver.py",
+          "src/shared/python/sidekick/tests/test_ode_solver.py",
+          "tests/shared/python/calc_backend/test_ode_solver_guards.py",
+          "tests/shared/python/process_calculators/test_ode_solver.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 4290,
       "classification": "calculation",
       "classification_basis": "path-marker:pressure_drop",
@@ -17363,58 +17423,6 @@
         "test_paths": [
           "src/shared/python/model_generation/tests/test_api_adapters.py"
         ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 15081,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f0e453fc40ad67cfd1a56de3fa9b3493ef0ef7c3372bcafa2dee2df3db775a30",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-API-REST-API-ASSETS-PY-509B84B19E41",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/api/rest_api_assets.py",
-      "purpose": "Inertia, library, and editor route handlers for model_generation.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "AssetLibraryEditorRoutesMixin",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []
       }

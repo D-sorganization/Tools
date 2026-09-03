@@ -3,6 +3,153 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 31301,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "15ed7f26fa19cbb6d7cc8c8975512fc18205b031038597859b50d75ddef41b7c",
+      "family": "process-calculators-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-PRESSURE-DROP-CALCULATOR-UTILS-GAS-PROPERTIES-PY-EAF111810C02",
+      "language": "python",
+      "maintainer": "Process calculator maintainers",
+      "path": "src/shared/python/sidekick/process_calculators/pressure_drop_calculator/utils/gas_properties.py",
+      "purpose": "Gas mixture property calculations for pressure drop analysis.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ComponentProperties",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GAS_DATABASE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "R_UNIVERSAL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SUTHERLAND_CONSTANTS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "calculate_compressibility_factor",
+            "signature": "composition: dict[str, float], temperature: float, pressure: float"
+          },
+          {
+            "kind": "function",
+            "name": "calculate_gas_properties",
+            "signature": "composition: dict[str, float], temperature: float, pressure: float, use_compressibility: bool=True"
+          },
+          {
+            "kind": "function",
+            "name": "calculate_heat_capacity_ratio",
+            "signature": "composition: dict[str, float], temperature: float"
+          },
+          {
+            "kind": "function",
+            "name": "calculate_ideal_gas_cp",
+            "signature": "component: str, temperature: float"
+          },
+          {
+            "kind": "function",
+            "name": "calculate_ideal_gas_density",
+            "signature": "molecular_weight: float, temperature: float, pressure: float"
+          },
+          {
+            "kind": "function",
+            "name": "calculate_mixture_cp",
+            "signature": "composition: dict[str, float], temperature: float"
+          },
+          {
+            "kind": "function",
+            "name": "calculate_mixture_molecular_weight",
+            "signature": "composition: dict[str, float]"
+          },
+          {
+            "kind": "function",
+            "name": "calculate_mixture_viscosity_simple",
+            "signature": "composition: dict[str, float], temperature: float"
+          },
+          {
+            "kind": "function",
+            "name": "calculate_mixture_viscosity_wilke",
+            "signature": "composition: dict[str, float], temperature: float, pressure: float"
+          },
+          {
+            "kind": "function",
+            "name": "calculate_pure_gas_viscosity_lucas",
+            "signature": "temperature: float, pressure: float, props: ComponentProperties"
+          },
+          {
+            "kind": "function",
+            "name": "calculate_pure_gas_viscosity_sutherland",
+            "signature": "temperature: float, T_ref: float=273.15, mu_ref: float=1.716e-05, S: float=110.4"
+          },
+          {
+            "kind": "function",
+            "name": "calculate_real_gas_density",
+            "signature": "molecular_weight: float, temperature: float, pressure: float, compressibility: float"
+          },
+          {
+            "kind": "function",
+            "name": "calculate_speed_of_sound",
+            "signature": "composition: dict[str, float], temperature: float, molecular_weight: float | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/process_calculators/test_pressure_drop_gas_properties.py",
+          "tests/shared/python/calculators/conversion/test_core.py",
+          "tests/shared/python/process_calculators/test_wave1_process_numerics.py"
+        ],
+        "unit_mentions": [
+          "J",
+          "Pa",
+          "W",
+          "bar",
+          "kg",
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 13528,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
@@ -17857,98 +18004,6 @@
             "kind": "re-export",
             "name": "validate_profile_payload",
             "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2336,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d03e7639c79fbb256b074552e2fba656a339e2e3317b628ce0ae478b78f77d5d",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-VECTOR-MATH-PY-C648E7E0C731",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/_vector_math.py",
-      "purpose": "Small immutable-vector operations used by the ground impact solver.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "add",
-            "signature": "left: Vector3, right: Vector3"
-          },
-          {
-            "kind": "function",
-            "name": "cross",
-            "signature": "left: Vector3, right: Vector3"
-          },
-          {
-            "kind": "function",
-            "name": "dot",
-            "signature": "left: Vector3, right: Vector3"
-          },
-          {
-            "kind": "function",
-            "name": "interpolate",
-            "signature": "left: Vector3, right: Vector3, fraction: float"
-          },
-          {
-            "kind": "function",
-            "name": "intrinsic_tangent_axis",
-            "signature": "normal: Vector3"
-          },
-          {
-            "kind": "function",
-            "name": "norm",
-            "signature": "vector: Vector3"
-          },
-          {
-            "kind": "function",
-            "name": "scale",
-            "signature": "vector: Vector3, factor: float"
-          },
-          {
-            "kind": "function",
-            "name": "subtract",
-            "signature": "left: Vector3, right: Vector3"
-          },
-          {
-            "kind": "function",
-            "name": "unit",
-            "signature": "vector: Vector3, *, tolerance: float"
           }
         ],
         "test_paths": [],

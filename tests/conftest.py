@@ -1,5 +1,6 @@
 """Shared pytest configuration for entire Tools repo."""
 
+import importlib
 import sys
 import types
 from pathlib import Path
@@ -33,15 +34,23 @@ def _setup_global_stubs(repo_root: Path) -> None:
         package_path = str(repo_root / path)
         module = sys.modules.get(name)
         if module is None:
-            module = types.ModuleType(name)
-            module.__path__ = [package_path]  # type: ignore[attr-defined]
-            sys.modules[name] = module
-        else:
-            existing_paths = list(getattr(module, "__path__", []))
-            module.__path__ = [  # type: ignore[attr-defined]
-                package_path,
-                *(entry for entry in existing_paths if entry != package_path),
-            ]
+            # Prefer the real package: a synthetic ``ModuleType`` stub has a
+            # ``__path__`` but never executes ``__init__.py``, so names the
+            # package re-exports (``shared.python.config.EnvironmentError``)
+            # were missing and ``from config import EnvironmentError`` failed
+            # at collection time (Tools #4913). Fall back to a stub only when
+            # the package genuinely is not importable in this checkout.
+            try:
+                module = importlib.import_module(name)
+            except ImportError:
+                module = types.ModuleType(name)
+                module.__path__ = [package_path]  # type: ignore[attr-defined]
+                sys.modules[name] = module
+        existing_paths = list(getattr(module, "__path__", []))
+        module.__path__ = [  # type: ignore[attr-defined]
+            package_path,
+            *(entry for entry in existing_paths if entry != package_path),
+        ]
 
         if "." in name:
             parent_name, child_name = name.rsplit(".", 1)
@@ -66,12 +75,11 @@ def _setup_global_stubs(repo_root: Path) -> None:
     sys.modules.pop("shared.python.logging_pkg", None)
     sys.modules.pop("shared.python.logging_pkg.logging_config", None)
 
-    # Specifically stub environment
-    if "shared.python.config.environment" not in sys.modules:
-        env = types.ModuleType("shared.python.config.environment")
-        env.get_env = lambda key, default=None, required=False: default  # type: ignore
-        env.get_env_float = lambda key, default=0.0: float(default)  # type: ignore
-        sys.modules["shared.python.config.environment"] = env
+    # ``shared.python.config.environment`` is a real module in this checkout;
+    # the placeholder that used to be installed here (``get_env`` returning
+    # its default) shadowed it and broke tests/shared/python/config. Import
+    # it so downstream ``from config import get_env`` sees the real helpers.
+    importlib.import_module("shared.python.config.environment")
 
 
 _setup_global_stubs(REPO_ROOT)

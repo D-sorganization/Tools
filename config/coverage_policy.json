@@ -1,6 +1,5 @@
 {
-  "_comment": "Coverage policy — raised to 60% per issue #2474 (production readiness). Previous ratchet plan (issue #2406) targeted 60% as Phase 3; issue #2474 accelerates this as the repo-wide gate.",
-  "minimum_total_percent": 60.0,
+  "_comment": "Per-package coverage ratchets. The repo-wide floor is NOT here: it is [tool.coverage.report] fail_under in pyproject.toml (Tools #4913), read by scripts/check_coverage_policy.py. max_total_drop_percent bounds regression against config/coverage_baseline.json.",
   "max_total_drop_percent": 2.0,
   "tracked_packages": {
     "src/shared/python/notes": 95.0,

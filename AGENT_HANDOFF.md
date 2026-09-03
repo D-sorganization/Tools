@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — Tools (Monorepo Root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-09-01
+> Last updated: 2026-09-03
 > **Current state only**, capped at 150 lines by `CLAUDE.md`; history lives in
 > git and in [`docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md`](docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md).
 > Do not append dated entries here again.
@@ -86,7 +86,9 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
 ```bash
 python3 -m ruff check .                          # lint
 python3 -m ruff format --check .                  # format check (Ruff, NOT Black)
-python3 -m pytest -n auto --timeout=60            # full test suite
+python3 -m pytest -n auto --timeout=60            # full test suite (tests/ only)
+python3 scripts/ci_test_shards.py --check        # every test file claimed by exactly one CI shard (#4913)
+python3 scripts/ci_test_shards.py --run src-embedded --fanout auto   # one PR-lane shard locally (pendulum + movement_optimizer)
 python3 -m pytest -m contract                     # API contract tests (downstream-facing)
 python3 -m pytest -m integration --timeout=60     # cross-repo integration
 python3 -m scripts.check_design_manual_governance

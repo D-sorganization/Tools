@@ -33,6 +33,8 @@ def test_movement_provider_manifest_declares_shared_launcher_metadata() -> None:
         "pyqt6",
         "swingset",
         "chain_dynamics",
+        "coordinate_force_attribution",
+        "component_impulse_optimization",
     ]
     assert entry["launcher"]["category"] == "tool"
     assert entry["launcher"]["status"] == "provider_ready"

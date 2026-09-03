@@ -3,6 +3,91 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 6454,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "79e49f95414b8a948a622c9d1ffb27384851fef82ae810ebaaa98f2dd0165a44",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-CLUB-EQUIVALENCE-PY-52908F5B4992",
+      "language": "python",
+      "maintainer": "Pendulum maintainers",
+      "path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/club_equivalence.py",
+      "purpose": "Converting a real golf club into the point-mass-at-tip club this model uses.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "10.1007/s12283-009-0020-9",
+          "10.1119/1.1976419",
+          "https://archive.org/details/searchforperfect0000coch",
+          "https://doi.org/10.1007/s12283-009-0020-9",
+          "https://doi.org/10.1119/1.1976419"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "RealClubSpec",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DRIVER_SPEC",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SEVEN_IRON_SPEC",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "equivalent_tip_mass",
+            "signature": "club: RealClubSpec, shaft_length_m: float"
+          },
+          {
+            "kind": "function",
+            "name": "wrist_inertia",
+            "signature": "club: RealClubSpec"
+          }
+        ],
+        "test_paths": [
+          "src/pendulum_simulator/tests/test_club_equivalence.py"
+        ],
+        "unit_mentions": [
+          "kg",
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 8648,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
@@ -14691,80 +14776,6 @@
         "validation_paths": [
           "tests/shared/python/launch_monitor/test_strokes_gained_contract.py"
         ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3651,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "dee8386a035d905332595edb84f13c1a7280484743719f63ee90e8acd640f5c6",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-LAUNCH-MONITOR-PRIVATE-CORPUS-PY-E150859540A8",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/launch_monitor_private_corpus.py",
-      "purpose": "Authorized loader for the private, source-partitioned shot corpus.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "LoadedPrivateCorpus",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CORPUS_RELATIVE_PATH",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PRIVATE_DATA_ENV",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "load_private_corpus",
-            "signature": "root: Path | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "resolve_private_corpus_path",
-            "signature": "root: Path | None=None"
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/test_launch_monitor_private_corpus.py",
-          "tests/shared/python/launch_monitor/test_corpus.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
       }
     }
   ],

@@ -64,7 +64,23 @@ def test_ci_tests_job_runs_non_skippable_tools_core_contract_in_required_lane() 
 
     test_script = run_tests["run"]
     assert "TOOLS_CORE_REQUIRED=1" in test_script
-    assert "tests/rust_bindings/test_rust_bindings.py" in test_script
+    # The lane runs the whole tree as shards (Tools #4913); the contract file
+    # must be claimed by a shard rather than named in the workflow.
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(
+        "ci_test_shards", REPO_ROOT / "scripts" / "ci_test_shards.py"
+    )
+    assert spec is not None and spec.loader is not None
+    shards = importlib.util.module_from_spec(spec)
+    import sys
+
+    sys.modules[spec.name] = shards
+    spec.loader.exec_module(shards)
+    assert any(
+        shard.claims("tests/rust_bindings/test_rust_bindings.py")
+        for shard in shards.SHARDS
+    )
 
 
 def test_rust_binding_contract_can_hard_fail_when_tools_core_is_required() -> None:

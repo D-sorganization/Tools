@@ -537,10 +537,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6839,
+      "bytes_lf": 6786,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3183e526953bd9d167c71992c83e948811fa64b3a47884d49346a5e01a0bb567",
+      "content_sha256_lf": "3695617cbe38ae65b271080638bbbe04aff86fbe4066277de74d22855a9e089a",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CHECK-ROOT-ALLOWLIST-PY-94782E1774B7",
       "language": "python",
@@ -1265,6 +1265,155 @@
         ],
         "unit_mentions": [
           "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13695,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6b0c77eb992da80f748e2a430850061bf78d0f859b20db96d1b2289c1a6ffa35",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CI-TEST-SHARDS-PY-F0C2918F82E4",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/ci_test_shards.py",
+      "purpose": "Partition the whole Tools test tree into CI shards (Tools #4913).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Invocation",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Shard",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PYTEST_MARKER_EXPR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "QUARANTINE_FILE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REPO_ROOT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SHARDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SHARD_NAMES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_NOT_TEST_MODULES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SKIP_DIRS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SRC_OWNED_ELSEWHERE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_TESTS_OWNED_ELSEWHERE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "check_partition",
+            "signature": "repo_root: Path=REPO_ROOT"
+          },
+          {
+            "kind": "function",
+            "name": "iter_test_files",
+            "signature": "repo_root: Path=REPO_ROOT"
+          },
+          {
+            "kind": "function",
+            "name": "load_quarantine",
+            "signature": "path: Path=QUARANTINE_FILE"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "pytest_command",
+            "signature": "invocation: Invocation, *, fanout: str, extra: tuple[str, ...]=(), quarantine: tuple[str, ...]=()"
+          },
+          {
+            "kind": "function",
+            "name": "quarantined_paths",
+            "signature": "path: Path=QUARANTINE_FILE"
+          },
+          {
+            "kind": "function",
+            "name": "run_shard",
+            "signature": "name: str, *, fanout: str, coverage_data: str | None, dry_run: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "shard_by_name",
+            "signature": "name: str"
+          },
+          {
+            "kind": "function",
+            "name": "verify_status",
+            "signature": "status_dir: Path, python_version: str"
+          }
+        ],
+        "test_paths": [
+          "tests/ops/test_ci_test_shards.py"
+        ],
+        "unit_mentions": [
           "s"
         ],
         "validation_paths": []
@@ -2685,10 +2834,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6973,
+      "bytes_lf": 7077,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "fd424699f6350d7790ee392aae47dab228e72abe3fce180fdd09642c98561c52",
+      "content_sha256_lf": "9c315ee117093b680bb8e7c2909937c6848f565119776290addda63bfe4bd357",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-MEASURE-COVERAGE-PY-7B242AF2D85C",
       "language": "python",
@@ -3652,10 +3801,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1906,
+      "bytes_lf": 2112,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b27b1a2a02ea7f7ba080344a7fe766a71f38f1ad696cf25be28d4067631a604c",
+      "content_sha256_lf": "a03e285b02bae3145bf7850415a5760c952f6c1c9767e8ce76669ae99ce3f0e2",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-RUN-COVERAGE-SH-2D7A39885F00",
       "language": "shell",
@@ -15244,83 +15393,6 @@
         "validation_paths": [
           "src/data_processing/data_processor/python/tests/test_vectorized_filter_engine_contracts.py"
         ]
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 9550,
-      "classification": "calculation",
-      "classification_basis": "path-marker:filter",
-      "content_sha256_lf": "e6c4d856d90c8b3d2a2751b6292d8f889d0832894a13f00af58b7dce124d5f40",
-      "family": "data-processing-calculation",
-      "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-VECTORIZED-FILTER-FREQUENCY-DOMAIN-PY-54B02EC974D5",
-      "language": "python",
-      "maintainer": "Data processing maintainers",
-      "path": "src/data_processing/data_processor/python/data_processor/vectorized_filter_frequency_domain.py",
-      "purpose": "Frequency-domain filter kernels for the vectorized filter engine.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "apply_fft_filter_core",
-            "signature": "signal_data: np.ndarray, filter_coeffs: np.ndarray, zero_phase: bool"
-          },
-          {
-            "kind": "function",
-            "name": "apply_fft_filter_vectorized",
-            "signature": "signal: pd.Series, params: dict[str, Any], safe_get_param: ParamGetter, calculate_sampling_rate: SamplingRateCalculator, logger: Logger"
-          },
-          {
-            "kind": "function",
-            "name": "apply_window_function",
-            "signature": "filter_response: np.ndarray, window_shape: str"
-          },
-          {
-            "kind": "function",
-            "name": "calculate_frequency_response",
-            "signature": "filter_type: str, params: dict[str, Any], safe_get_param: ParamGetter, logger: Logger, n_freqs: int=1024"
-          },
-          {
-            "kind": "function",
-            "name": "design_frequency_window",
-            "signature": "filter_type: str, freq_low: float, freq_high: float, window_shape: str, n_samples: int, transition_bw: float"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "Hz"
-        ],
-        "validation_paths": []
       }
     }
   ],

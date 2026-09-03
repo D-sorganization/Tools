@@ -235,15 +235,6 @@ def test_quality_gate_invokes_mypy_through_verified_python() -> None:
     assert workflow["jobs"]["quality-gate"]["env"]["PYTHONNOUSERSITE"] == "1"
 
 
-def test_ci_standard_limits_sidekick_runtime_lane_to_runtime_sources() -> None:
-    workflow = CI_STANDARD.read_text(encoding="utf-8")
-
-    assert "sidekick_runtime_tests_required=false" in workflow
-    assert "sidekick_runtime_tests_required=true" in workflow
-    assert "src/shared/python/sidekick/(api|calculators" in workflow
-    assert "tests/unit/sidekick" in workflow
-
-
 def test_ci_standard_serializes_apt_installs_on_shared_runners() -> None:
     workflow = CI_STANDARD.read_text(encoding="utf-8")
 

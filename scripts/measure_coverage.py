@@ -71,7 +71,10 @@ def compare_coverage(
         "policy_check": {},
     }
 
-    min_total = float(policy.get("minimum_total_percent", 0.0))
+    # The floor lives in pyproject only (Tools #4913); never in the policy file.
+    from check_coverage_policy import coverage_floor
+
+    min_total = coverage_floor()
     max_drop = float(policy.get("max_total_drop_percent", 0.0))
     baseline_total = float(baseline.get("total_percent", 0.0))
 

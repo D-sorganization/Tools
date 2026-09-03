@@ -12,7 +12,7 @@ Global status note: Paused for catching up.
 | Bot-CI-Trigger.yml                 | Defined (see global status note) | See workflow YAML header/name for execution role. |
 | check-tools-manifest.yml           | Defined (see global status note) | See workflow YAML header/name for execution role. |
 | ci-failure-digest.yml              | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| ci-standard.yml                    | Defined (see global status note) | See workflow YAML header/name for execution role. |
+| ci-standard.yml                    | Defined (required: `quality-gate`, `tests (3.11)`; RM #1507) | Lint/type/security gate + whole-tree sharded pytest (`scripts/ci_test_shards.py`, Tools #4913). |
 | Code-Metrics.yml                   | Defined (see global status note) | See workflow YAML header/name for execution role. |
 | codeql-analysis.yml.disabled       | Disabled                         | See workflow YAML header/name for execution role. |
 | Comment-to-Issue-Converter.yml     | Defined (see global status note) | See workflow YAML header/name for execution role. |
@@ -64,3 +64,4 @@ Update this file whenever workflows are added, removed, enabled, or disabled.
 For governance, see Repository_Management/docs/architecture/WORKFLOW_GOVERNANCE.md.
 
 - 2026-09-02: `ci-standard.yml` concurrency group changed to `ci-standard-${{ github.ref == 'refs/heads/main' && github.sha || github.ref }}` (per-commit on main; `cancel-in-progress: true` unchanged) so a later push never cancels an in-flight main run (main-green campaign, Repository_Management#1507).
+- 2026-09-03: `ci-standard.yml` `tests` job is now a `python-version × shard` matrix over the partition in `scripts/ci_test_shards.py` (whole tree, incl. `src/pendulum_simulator` and `src/movement_optimizer`); new `tests-gate` job owns the required `tests (3.11)` context, verifies every shard passed and applies the single coverage floor from pyproject to the combined data. The `core_tests` allowlist, changed-file selection, branch-name conditionals and the Provider-Contract step (its suites are in the `tests-shared` shard) are gone (Tools #4913, Repository_Management#1507).

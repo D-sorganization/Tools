@@ -301,7 +301,7 @@ pythonpath = [
     "src/web_applications",
     "src/solar_system_model",
     "src/scientific_modeling/solar_system_model",
-    "src/scientific_modeling/rrt_path_planner/python/src",
+    "src/rrt_path_planner/python/src",
     "src/pendulum_simulator/src",
     "src/folder_tool",
     "src/p1am_control_system/backend",
@@ -391,27 +391,65 @@ omit = [
     "*/test_*",
     "*/__pycache__/*",
     "*/node_modules/*",
-    # Vendored self-contained sub-app, tested in its origin repo (Tools#3407)
-    "src/movement_optimizer/*",
+    "*/venv/*",
+    "*/.venv/*",
+    "*/site-packages/*",
+    "setup.py",
+    "conftest.py",
+    # Legacy/experimental trees excluded from coverage by policy (carried over
+    # from the retired .coveragerc, Tools #4913). pendulum_simulator and
+    # movement_optimizer are no longer omitted: their suites run in the PR lane.
+    "src/data_processing/*",
+    "src/document_processing/*",
+    "src/scientific_modeling/*",
+    "src/tools/folder_tools/*",
+    "src/tools/code_quality_check.py",
 ]
 
+[tool.coverage.paths]
+# The PR lane runs the suite as shards on different runners and combines the
+# data in the `tests (3.x)` gate. Map every checkout's absolute src/ back to
+# the repo-relative path so `coverage combine` merges them (Tools #4913).
+source = ["src", "*/Tools/src"]
+
 [tool.coverage.report]
-# Coverage floor ratcheted 15 -> 20 after adding meaningful pure-logic
-# tests for the model_generation URDF/inertia/validation modules
-# (primitives, spatial, calculator, urdf_parser, format_utils, validation).
-# Target ratchet plan (issue #2406 / #2474) ultimately aims at 60%; this is
-# an incremental, conservatively-verified step kept below measured coverage
-# to preserve a safety margin for environment-dependent CI runs.
+# THE coverage floor -- declared here and nowhere else (Tools #4913).
+# CI applies it exactly once: `coverage report` on the combined full-suite data
+# in the `tests (3.x)` gate of ci-standard.yml. scripts/check_coverage_policy.py
+# and scripts/measure_coverage.py read the same value. Shards pass
+# `--cov-fail-under=0` because a per-shard floor would reject every shard for
+# the code it does not exercise; that 0 is not a floor.
+# 20 is the value the retired .coveragerc declared (it was never enforced in
+# CI, which overrode it). Ratchet upward once the first green full-suite run
+# records the measured total in config/coverage_baseline.json.
 fail_under = 20
+precision = 2
 show_missing = true
 skip_empty = true
 exclude_lines = [
     "pragma: no cover",
+    "def __repr__",
     "if __name__ == .__main__.",
     "if TYPE_CHECKING:",
     "raise NotImplementedError",
+    "raise AssertionError",
     "pass",
+    "if 0:",
+    "if False:",
+    "if sys.version_info",
+    "if hasattr\\(sys, 'frozen'\\)",
+    "@abstractmethod",
+    "@abc.abstractmethod",
+    "if type\\(self\\) is not type\\(obj\\):",
 ]
+
+[tool.coverage.html]
+directory = "htmlcov"
+title = "Coverage Report"
+show_contexts = true
+
+[tool.coverage.xml]
+output = "coverage.xml"
 
 [tool.coverage.json]
 output = "coverage.json"

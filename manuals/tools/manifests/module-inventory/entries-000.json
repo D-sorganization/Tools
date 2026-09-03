@@ -796,10 +796,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 252,
+      "bytes_lf": 420,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ce590e277717463c1c074e8453b2537e537727d897fb947f0e45cd4341dd8a7e",
+      "content_sha256_lf": "aaf8af152cc8a5172efce2b5c2b1d8833f2bcbb1465b934a3299835e43c88953",
       "family": "repository-governance-non-calculation",
       "id": "TOOLS-MODULE-CONFIG-COVERAGE-BASELINE-JSON-19F283CB661C",
       "language": "json",
@@ -836,10 +836,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 721,
+      "bytes_lf": 760,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f06c7c0162cb31806e7caa238afd3ada9d4ce9b0dd93768d6d16cda8ae964bcc",
+      "content_sha256_lf": "6780b803e2090778dfb9f696f64a6facebc6787be75df2c69d79d5ed74a4ff71",
       "family": "repository-governance-non-calculation",
       "id": "TOOLS-MODULE-CONFIG-COVERAGE-POLICY-JSON-37185D254DC2",
       "language": "json",
@@ -959,10 +959,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8311,
+      "bytes_lf": 8821,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "684502fc437dea8e4b4d33efa17c13857f48f7dd11cb1e72b7232eb04bfc07c5",
+      "content_sha256_lf": "bdf2be138eff4ab851c8ab112e24dfd2b637d017c310ed19d17a7064a51ee6f1",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-CONFTEST-PY-A31C7ED5D35F",
       "language": "python",
@@ -6373,6 +6373,7 @@
           "tests/folder_tool/test_folders_tool_r0.py",
           "tests/integration/obsidian/test_vault_client.py",
           "tests/integration/sidekick/test_sidekick_host_integration.py",
+          "tests/ops/test_ci_test_shards.py",
           "tests/ops/test_full_suite_nightly_workflow.py",
           "tests/p1am_control_system/firmware/test_dcs.cpp",
           "tests/p1am_control_system/test_cors_config.py",
@@ -14513,10 +14514,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6945,
+      "bytes_lf": 8065,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d96236c5b816d365253624ff8b112fc61c1d37ad4fe53513d139efab77ac3947",
+      "content_sha256_lf": "a1560c15e74046735a8d71497b75b0b1c6dc92849562e97140679860e212f5d6",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CHECK-COVERAGE-POLICY-PY-C9DF4E1A43BB",
       "language": "python",
@@ -14554,6 +14555,16 @@
             "kind": "class",
             "name": "CoverageStats",
             "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PYPROJECT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "coverage_floor",
+            "signature": "pyproject: Path=PYPROJECT"
           },
           {
             "kind": "function",

@@ -1,0 +1,19 @@
+{
+  "_comment": "Test modules kept out of the sharded PR lane (Tools #4913). Quarantine individual modules only, never directories; every entry needs an owner cluster and a tracked issue, and `python scripts/ci_test_shards.py --check` fails when a path no longer exists. Remove entries as they are fixed; #4933 closes when this list is empty.",
+  "entries": [
+    {"path": "src/pendulum_simulator/tests/test_perturbation_panel.py", "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)", "issue": "#4933", "reason": "13 errors: fixture '_app' not found in any conftest"},
+    {"path": "src/pendulum_simulator/tests/test_swing_comparison_dialog.py", "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)", "issue": "#4933", "reason": "14 errors: fixture '_app' not found in any conftest"},
+    {"path": "src/pendulum_simulator/tests/test_diagnostics.py", "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)", "issue": "#4933", "reason": "7 failures: gui/diagnostics.py:351 TypeError 'NoneType' object is not callable"},
+    {"path": "src/pendulum_simulator/tests/test_chart_data_dialog.py", "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)", "issue": "#4933", "reason": "5 failures: ChartDataDialog requires model_type; ChartDataDialog is not a QWidget for addWidget"},
+    {"path": "src/pendulum_simulator/tests/test_perturbation_analysis.py", "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)", "issue": "#4933", "reason": "2 failures: perturbation_analysis.py raises AssertionError where tests expect ValueError"},
+    {"path": "src/pendulum_simulator/tests/test_controls_widget.py", "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)", "issue": "#4933", "reason": "1 failure: sidekick UnitAwareInput.setValue(str) API drift / MockUAI has no attribute value"},
+    {"path": "src/pendulum_simulator/tests/test_controls_widget_base.py", "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)", "issue": "#4933", "reason": "1 failure: controls_utils.py:212 MockUAI has no attribute value"},
+    {"path": "src/pendulum_simulator/tests/test_controls_widget_golfer.py", "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)", "issue": "#4933", "reason": "1 failure: sidekick UnitAwareInput.setValue(str) API drift"},
+    {"path": "src/pendulum_simulator/tests/test_ellipsoid_scale_and_emoji.py", "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)", "issue": "#4933", "reason": "2 failures: asserts on glyphs the runner's default font cannot render"},
+    {"path": "src/pendulum_simulator/tests/test_companion_dialog.py", "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)", "issue": "#4933", "reason": "1 failure on main"},
+    {"path": "src/movement_optimizer/tests/test_benchmarks.py", "owner": "src/movement_optimizer", "issue": "#4933", "reason": "wall-clock budget assertion (_compute_cost <5ms median) belongs in benchmark-suite.yml, not a PR gate"},
+    {"path": "src/project_packer/tests/test_build_exe.py", "owner": "src/project_packer", "issue": "#4933", "reason": "ModuleNotFoundError: tools.folder_tools.project_packer (package moved to src/project_packer)"},
+    {"path": "src/project_packer/tests/test_folder_packer_gui.py", "owner": "src/project_packer", "issue": "#4933", "reason": "ModuleNotFoundError: tools.folder_tools.project_packer (package moved to src/project_packer)"},
+    {"path": "src/project_packer/tests/test_package_for_distribution.py", "owner": "src/project_packer", "issue": "#4933", "reason": "ModuleNotFoundError: tools.folder_tools.project_packer (package moved to src/project_packer)"}
+  ]
+}
