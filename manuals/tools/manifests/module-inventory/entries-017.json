@@ -3,6 +3,67 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 3581,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e3c4455fb2919a0309bb9b0b574c25c790c0f5b2d451dd2554090f5e410d0d2c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-DATA-ASTEROIDS-PY-33D1E6EDEDDF",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/data/asteroids.py",
+      "purpose": "Asteroid belt and minor body definitions.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AsteroidDescriptor",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAJOR_ASTEROIDS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "generate_belt_particles",
+            "signature": "count: int=720"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2419,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",

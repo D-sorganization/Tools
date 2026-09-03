@@ -3,6 +3,146 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 9671,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "43a5235ab5b46eb5f0ee846421e20d0e4b796151bd1111f130f27234cdbae3e6",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-LAUNCH-MONITOR-V2-CLIENT-PY-4C8A59CE28C6",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/launch_monitor_v2_client.py",
+      "purpose": "Validated HTTP client seam for canonical UpstreamDrift analytics contracts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AnalysisResponseV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ResidualAvailability",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StrokesGainedResponseV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "UpstreamV2Client",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "validate_strokes_gained_response",
+            "signature": "value: object"
+          },
+          {
+            "kind": "function",
+            "name": "validate_v2_response",
+            "signature": "value: object"
+          },
+          {
+            "kind": "re-export",
+            "name": "CANONICAL_DATASET_METRICS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CanonicalDatasetReference",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DATASET_JOB_CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_CANONICAL_INLINE_RECORDS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_DATASET_JOB_PAGE_SIZE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PLAYER_COVARIATION_CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_dataset_job_request",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_player_covariation_payload",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "load_canonical_dataset_reference",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "validate_dataset_job_page",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "validate_dataset_job_status",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "validate_player_covariation_response",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_launch_monitor_conformance_golden.py",
+          "tests/rate_of_closure/test_launch_monitor_v2_client.py",
+          "tests/rate_of_closure/test_launch_monitor_workspace.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 14056,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -13414,59 +13554,6 @@
           "bar",
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 16042,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d9ba02c91b640c01528f688d95c482efe44e4212a57932e790df9d42cfe69ce2",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-SPATIAL-TARGET-PANEL-PY-D8F6668F242A",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/spatial_target_panel.py",
-      "purpose": "Accessible editor for the canonical versioned three-dimensional target.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SpatialTargetPanel",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/test_spatial_target_gui.py"
-        ],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

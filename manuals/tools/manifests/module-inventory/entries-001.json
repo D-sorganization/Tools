@@ -3,6 +3,83 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 3138,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0014d5c99fda633e7cf6c0dbfdf2edb20793ed559b0fbc54e0a4ca3c499af480",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CHECK-LOCAL-ONLY-WORKFLOWS-PY-44F5D4C62B29",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/check_local_only_workflows.py",
+      "purpose": "Fail when GitHub Actions workflows can route to hosted runners.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "BANNED",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "HOSTED_RUNNER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "HOSTED_RUNNER_ALLOWLIST",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LEGACY_HOSTED_RUNNER_ALLOWLIST",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "WORKFLOW_DIR",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/scripts/test_check_local_only_workflows.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 5137,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -15153,48 +15230,6 @@
         "unit_mentions": [
           "N"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 600,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4ecd9a9d2c2932d4ed2d5cc8fb13b76775c022ff1a4207cc6b8fbef946780074",
-      "family": "data-processing-non-calculation",
-      "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-WEB-INDEX-HTML-AFD1E314F101",
-      "language": "html",
-      "maintainer": "Data processing maintainers",
-      "path": "src/data_processing/data_processor/web/index.html",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }
