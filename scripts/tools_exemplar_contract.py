@@ -342,15 +342,12 @@ def _module_ids(root: Path) -> set[str]:
         {
             "authority",
             "blockers",
-            "families",
             "hash_contract",
             "producer",
             "release_status",
             "schema_version",
             "scope",
             "shards",
-            "source_tree_sha256",
-            "summary",
         },
     )
     identifiers: set[str] = set()

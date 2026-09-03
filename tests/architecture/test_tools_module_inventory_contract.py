@@ -259,3 +259,96 @@ def test_check_mode_rejects_missing_or_stale_manifest(
 
     missing.write_text("{}\n", encoding="utf-8")
     assert main(["--check"]) == 1
+
+
+# ---------------------------------------------------------------------------
+# Package sharding (Tools #4818 / #4915): concurrent PRs must not conflict.
+# ---------------------------------------------------------------------------
+
+
+def _mini_entry(path: str, digest: str) -> dict[str, Any]:
+    entry = dict(_payload()["entries"][0])
+    entry["path"] = path
+    entry["id"] = f"TOOLS-MODULE-{path.upper().replace('/', '-').replace('.', '-')}"
+    entry["content_sha256_lf"] = digest
+    return entry
+
+
+def _mini_payload(entries: list[dict[str, Any]]) -> dict[str, Any]:
+    from scripts.tools_module_inventory_storage import (
+        derive_families,
+        derive_source_tree_sha256,
+        derive_summary,
+    )
+
+    payload = {k: v for k, v in _payload().items() if k != "entries"}
+    payload["entries"] = entries
+    payload["families"] = derive_families(entries)
+    payload["summary"] = derive_summary(entries)
+    payload["source_tree_sha256"] = derive_source_tree_sha256(entries)
+    return payload
+
+
+def test_shards_are_cut_by_top_level_package() -> None:
+    from scripts.tools_module_inventory_storage import shard_package
+
+    assert shard_package("src/shared/python/sidekick/ui/a.py") == (
+        "src/shared/python/sidekick"
+    )
+    assert shard_package("src/shared/python/contracts.py") == "src/shared/python"
+    assert shard_package("src/rate_of_closure/x/y.py") == "src/rate_of_closure"
+    assert shard_package("rust_core/tools-core/src/lib.rs") == "rust_core/tools-core"
+    assert shard_package("scripts/a.py") == "scripts"
+    assert shard_package("config/x.json") == "config"
+    for descriptor in _index()["shards"]:
+        shard = json.loads((ROOT / descriptor["path"]).read_text(encoding="utf-8"))
+        assert shard["package"] == descriptor["package"]
+        package = descriptor["package"]
+        assert all(
+            entry["path"].startswith(package + "/")
+            or (package == "root" and "/" not in entry["path"])
+            for entry in shard["entries"]
+        )
+
+
+def test_thin_index_carries_no_whole_tree_values() -> None:
+    """The keys that made every regeneration conflict are derived, not stored."""
+    assert not {"summary", "source_tree_sha256", "families"} & set(_index())
+    assert {"summary", "source_tree_sha256", "families"} <= set(_payload())
+
+
+def test_changes_in_different_packages_touch_disjoint_shards_and_index_lines() -> None:
+    """Two branches editing different packages must merge without conflict."""
+    import difflib
+
+    from scripts.tools_module_inventory_storage import _serialized, project_shards
+
+    a = _mini_entry("src/alpha/a.py", "a" * 64)
+    b = _mini_entry("src/beta/b.py", "b" * 64)
+    c = _mini_entry("src/gamma/c.py", "c" * 64)
+    base_index, base_shards = project_shards(_mini_payload([a, b, c]))
+    left_index, left_shards = project_shards(
+        _mini_payload([_mini_entry("src/alpha/a.py", "d" * 64), b, c])
+    )
+    right_index, right_shards = project_shards(
+        _mini_payload([a, b, _mini_entry("src/gamma/c.py", "e" * 64)])
+    )
+    changed_left = {p for p in base_shards if left_shards[p] != base_shards[p]}
+    changed_right = {p for p in base_shards if right_shards[p] != base_shards[p]}
+    assert changed_left.isdisjoint(changed_right)
+
+    def changed_lines(before: dict[str, Any], after: dict[str, Any]) -> set[int]:
+        before_lines = _serialized(before).splitlines()
+        after_lines = _serialized(after).splitlines()
+        matcher = difflib.SequenceMatcher(a=before_lines, b=after_lines)
+        touched: set[int] = set()
+        for tag, i1, i2, _j1, _j2 in matcher.get_opcodes():
+            if tag != "equal":
+                touched.update(range(i1, i2))
+        return touched
+
+    left_lines = changed_lines(base_index, left_index)
+    right_lines = changed_lines(base_index, right_index)
+    assert left_lines and right_lines
+    # Non-adjacent hunks: git's three-way merge resolves these cleanly.
+    assert min(abs(x - y) for x in left_lines for y in right_lines) > 1

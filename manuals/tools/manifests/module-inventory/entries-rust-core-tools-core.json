@@ -1,0 +1,3555 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1257,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "53febbd1e68c30a24a21c584876fa8c4a78fd83644d4d4ad112a087ac2dae758",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-BENCHES-GROUND-REFERENCE-RS-AE1A3C170E35",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/benches/ground_reference.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5624,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2e7a91adf4bea346144fa0ed321f576ec9255c04b217350376b63f8c44dad1b3",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-BENCHES-MATH-BENCHMARKS-RS-97789103AA0E",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/benches/math_benchmarks.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8367,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7a2ba342b96b66fcb88cc36c9959e10230909e51ccb9d31d569ff25828b17c29",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-ATMOSPHERE-RS-2D1A4F46F742",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/atmosphere.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "fn",
+            "name": "air_density_at_altitude",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "atmosphere_at_altitude",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "wasm_atmosphere_at_altitude",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "AtmosphereProperties",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/process_calculators/test_acid_gas_dewpoint_edge_cases.py"
+        ],
+        "unit_mentions": [
+          "Pa",
+          "kg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 37865,
+      "classification": "calculation",
+      "classification_basis": "path-marker:ball_flight",
+      "content_sha256_lf": "ac7900cb5b8dc135028648487449d7f8bf4920ff95ddb55e2bbf09e22baf5af9",
+      "family": "native-kernels-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-BALL-FLIGHT-RS-F35328F88448",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/ball_flight.rs",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "const",
+            "name": "AIR_DENSITY_SEA_LEVEL",
+            "signature": null
+          },
+          {
+            "kind": "const",
+            "name": "MAX_LIFT_COEFFICIENT",
+            "signature": null
+          },
+          {
+            "kind": "const",
+            "name": "MIN_SPEED_THRESHOLD",
+            "signature": null
+          },
+          {
+            "kind": "const",
+            "name": "NUMERICAL_EPSILON",
+            "signature": null
+          },
+          {
+            "kind": "const",
+            "name": "SPIN_DECAY_RATE",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "analyze_trajectory",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "apply_spin_decay",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "calculate_accel_core",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "calculate_cd",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "calculate_cl",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "cross_sectional_area",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "height",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_analyze_trajectory",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_simulate_trajectory",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "radius",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "rk4_step",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "simulate_trajectory",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "speed",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "wasm_calculate_cd",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "wasm_calculate_cl",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "wasm_carry_distance",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "wasm_cross_sectional_area",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "wasm_flight_time",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "wasm_landing_angle",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "wasm_max_height",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "wasm_new",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "wasm_radius",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "wasm_spin_axis",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "BallProperties",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "EnvironmentalConditions",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "LaunchConditions",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "TrajectoryAnalysis",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "TrajectoryPoint",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "rust_core/tools-core/tests/flight_ground_transfer.rs",
+          "rust_core/tools-core/tests/flight_ground_wire.rs",
+          "src/shared/python/swing_sim/flight/tests/test_parity_rust_flight.py",
+          "src/shared/python/swing_sim/flight/tests/test_result_contract.py",
+          "tests/rate_of_closure/test_flight_playback.py",
+          "tests/rate_of_closure/test_units.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "kg",
+          "m/s",
+          "rad/s",
+          "rpm",
+          "s"
+        ],
+        "validation_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_result_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 14236,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0d76f140227d9039289c13619756f846f4af574ae3307cac63d6e753862feb8c",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-ELECTRODE-ADVISOR-RS-ED3F105CC0E6",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/electrode_advisor.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "fn",
+            "name": "bath_depth_mm",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "bath_height_mm",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "bath_width_mm",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "build_default_electrode_advisor_layout",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "build_default_placements",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "calculate_consumption",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "glass_level_mm",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "new",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "register_module",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "to_manifest",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "BathDefaults",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "DraftingEnvelope",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "ElectrodeAdvancementCalculator",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "ElectrodeAdvisorLayout",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "ElectrodeDefaults",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "ElectrodePlacement",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/architecture/test_layer_boundaries.py",
+          "tests/scripts/test_generate_tools_json.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13312,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e99d27521582dcd350b56a5feaeeb912a9b97ff1d797daaea4027944511e0372",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-ENGINEERING-RS-F56120A89AB1",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/engineering.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "const",
+            "name": "ATM_PA",
+            "signature": null
+          },
+          {
+            "kind": "const",
+            "name": "CELSIUS_TO_KELVIN",
+            "signature": null
+          },
+          {
+            "kind": "const",
+            "name": "G_STANDARD",
+            "signature": null
+          },
+          {
+            "kind": "const",
+            "name": "STEFAN_BOLTZMANN",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "bar_to_pa",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "celsius_to_kelvin",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "churchill_friction_factor",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "compressibility_factor_vdw",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "convective_heat_transfer",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "darcy_weisbach_pressure_drop",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "fahrenheit_to_kelvin",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "flow_rate_from_velocity",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "ideal_gas_density",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "isentropic_work",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "kelvin_to_celsius",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "kelvin_to_fahrenheit",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "lmtd",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "pa_to_psi",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "psi_to_pa",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_celsius_to_kelvin",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_churchill_friction_factor",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_darcy_weisbach",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_ideal_gas_density",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_isentropic_work",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_kelvin_to_celsius",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_lmtd",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_reynolds_number",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "radiative_heat_transfer",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "reynolds_number",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "volumetric_to_mass_flow",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/data_processing/data_processor/python/tests/test_advanced_analysis.py",
+          "src/p1am_control_system/backend/tests/test_power_supply_integration.py",
+          "src/p1am_control_system/backend/tests/test_power_supply_sensor_units.py",
+          "src/pendulum_simulator/tests/test_constants.py",
+          "src/shared/python/ai/tests/test_adapter_factory.py",
+          "src/shared/python/swing_sim/ground/tests/test_upstream_terrain_adapter.py",
+          "tests/architecture/test_design_manual_governance_contract.py",
+          "tests/architecture/test_phased_production_inventory.py",
+          "tests/architecture/test_tools_textbook_chapter_contract.py",
+          "tests/rate_of_closure/test_capability_result_export.py",
+          "tests/rate_of_closure/test_chip_forgiveness_analysis.py",
+          "tests/rate_of_closure/test_clubhead_engineering_sidecar.py",
+          "tests/unit/ai/integrations/test_notion_vcr.py",
+          "tests/unit/test_contracts.py"
+        ],
+        "unit_mentions": [
+          "J",
+          "Pa",
+          "W",
+          "bar",
+          "kg",
+          "m/s",
+          "s"
+        ],
+        "validation_paths": [
+          "tests/architecture/test_design_manual_governance_contract.py",
+          "tests/architecture/test_tools_textbook_chapter_contract.py",
+          "tests/unit/test_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13794,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f4bc7e0785942ac10e7f015da400e1089d8907ab771554138355f8f2f7f2bc37",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-FLIGHT-GROUND-RS-DF4CD544723D",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/flight_ground.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "const",
+            "name": "fn",
+            "signature": null
+          },
+          {
+            "kind": "enum",
+            "name": "GroundTransferOutcome",
+            "signature": null
+          },
+          {
+            "kind": "enum",
+            "name": "LaunchSupport",
+            "signature": null
+          },
+          {
+            "kind": "enum",
+            "name": "TransferUnavailableReason",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "horizontal",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "initial_center",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "legacy_state_to_target",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "legacy_to_target",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "new",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "qualify_ground_transfer",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "request_ground",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "signed_gap",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "tee",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "with_velocity",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "FlightGroundConfig",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "FlightGroundRun",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "FlightState",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "GroundTransferEvent",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "LaunchGeometry",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "PlanarGround",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "rust_core/tools-core/tests/flight_ground_transfer.rs",
+          "rust_core/tools-core/tests/flight_ground_wire.rs",
+          "rust_core/tools-core/tests/ground_reference_conformance.rs",
+          "rust_core/tools-core/tests/ground_reference_holding.rs",
+          "rust_core/tools-core/tests/ground_reference_limits.rs",
+          "rust_core/tools-core/tests/ground_reference_runtime.rs",
+          "rust_core/tools-core/tests/ground_result_wire.rs"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11312,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6a278177ea57d3c3b7e2ff895a275e3ace1a5a68e3565c5d9fcc3274909d5a91",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-FLIGHT-GROUND-BOUNCE-RUNTIME-RS-B4DC32EE9F81",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/flight_ground/bounce_runtime.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11205,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "606a71d793402cbe7eba6bb7e322ec4de489c0ae98349142be8df43944423ef7",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-FLIGHT-GROUND-CANONICAL-JSON-RS-0E6A207D0623",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/flight_ground/canonical_json.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8065,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f040f31dc764b1fab9a026f5572bacf391c006cca188cdae5fbaa4a89345cfc8",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-FLIGHT-GROUND-EXECUTION-V1-RS-968E9B0A659D",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/flight_ground/execution_v1.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "const",
+            "name": "EXECUTION_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "const",
+            "name": "fn",
+            "signature": null
+          },
+          {
+            "kind": "enum",
+            "name": "GroundReferenceExecutionV1Error",
+            "signature": null
+          },
+          {
+            "kind": "enum",
+            "name": "GroundReferencePhaseV1",
+            "signature": null
+          },
+          {
+            "kind": "enum",
+            "name": "GroundReferenceRuntimeCodeV1",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "parse_ground_reference_execution_v1_json",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "validate",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "BounceExecutionSettingsV1",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "GroundReferenceExecutionV1",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "GroundReferenceRuntimeErrorV1",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "SkidRollExecutionSettingsV1",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 4671,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "7a570fe73459bfa4509a924e015824f258fb325aaf0204c434c98855449109a5",
+      "family": "native-kernels-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-FLIGHT-GROUND-IMPACT-RUNTIME-RS-1982EF39F62D",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/flight_ground/impact_runtime.rs",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9405,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b02917c8c6aa443d20bb90c2169e4f8dc0dfc07df2ec63c821eca44062b5bf31",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-FLIGHT-GROUND-PYTHON-RS-423C9B6A612C",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/flight_ground/python.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "fn",
+            "name": "py_adapt_request_v1",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_simulate_flight_to_ground",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_validate_request_v1",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_validate_result_v1",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "PyFlightGroundPlane",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "PyFlightGroundRequest",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "PyFlightGroundResult",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2173,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "72f8cd5b31f5cc22e228176c4fde07c54ee134e5fb00fd99454c4c2fa9535fad",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-FLIGHT-GROUND-PYTHON-REFERENCE-RS-58402563145D",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/flight_ground/python_reference.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "fn",
+            "name": "py_run_ground_reference_v1",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2144,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5ea5c1442353bb53dfafd8089520eda0045bdce7cd0e4ec9c081a1abd13a9f42",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-FLIGHT-GROUND-REFERENCE-BOUNDARY-RS-986E3240FFE5",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/flight_ground/reference_boundary.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "const",
+            "name": "fn",
+            "signature": null
+          },
+          {
+            "kind": "enum",
+            "name": "GroundReferenceBoundaryErrorV1",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "payload",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "run_ground_reference_v1_json",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11860,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6218c5eaaf17856356dec2f4196c4ddc67c8eb93995bcd425fabe1ba1a725a32",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-FLIGHT-GROUND-REFERENCE-RUNTIME-RS-C03D2E7EF103",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/flight_ground/reference_runtime.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "fn",
+            "name": "canonical_ground_reference_runtime_error_v1_json",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "run_ground_reference_v1",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13928,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9a3385b905c30bb493728f2c814b9b80a454f1d46996e1e58d40e774f39b6a0a",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-FLIGHT-GROUND-REQUEST-V1-RS-C0D8618701E0",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/flight_ground/request_v1.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "const",
+            "name": "REQUEST_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "const",
+            "name": "TARGET_FRAME",
+            "signature": null
+          },
+          {
+            "kind": "const",
+            "name": "UNIT_SYSTEM",
+            "signature": null
+          },
+          {
+            "kind": "const",
+            "name": "fn",
+            "signature": null
+          },
+          {
+            "kind": "enum",
+            "name": "GroundRequestV1Error",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "adapt_samples_to_request_v1",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "canonical_request_v1_json",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "parse_request_v1_json",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "validate",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "FlightToGroundRequestV1",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "GroundCalibrationV1",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "GroundContactStateV1",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "GroundProvenanceV1",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "GroundSurfaceV1",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5003,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "28ec51da61b01696cbf0ed99feabca22ba682c60dfb3b6a24ef91b40a2e6b64f",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-FLIGHT-GROUND-RESOURCE-LIMITS-RS-3313F1C4ECC2",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/flight_ground/resource_limits.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 7526,
+      "classification": "calculation",
+      "classification_basis": "path-marker:geometry",
+      "content_sha256_lf": "e8096a10c15831219ef367047f0db7fb0df721e7bde847e97f61093feef809bd",
+      "family": "native-kernels-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-FLIGHT-GROUND-RESULT-GEOMETRY-RS-EE9B0458AE0D",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/flight_ground/result_geometry.rs",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8077,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d01cb038b82457f5d35994a0d8da3189504f4fd5128ad18dfcb5ae1b48428df5",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-FLIGHT-GROUND-RESULT-V1-RS-72A3076C5EA4",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/flight_ground/result_v1.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "const",
+            "name": "RESULT_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "const",
+            "name": "fn",
+            "signature": null
+          },
+          {
+            "kind": "enum",
+            "name": "GroundEventTypeV1",
+            "signature": null
+          },
+          {
+            "kind": "enum",
+            "name": "GroundPhaseV1",
+            "signature": null
+          },
+          {
+            "kind": "enum",
+            "name": "GroundResultStatusV1",
+            "signature": null
+          },
+          {
+            "kind": "enum",
+            "name": "GroundResultV1Error",
+            "signature": null
+          },
+          {
+            "kind": "enum",
+            "name": "GroundTerminationReasonV1",
+            "signature": null
+          },
+          {
+            "kind": "enum",
+            "name": "GroundUnavailableFieldIdV1",
+            "signature": null
+          },
+          {
+            "kind": "enum",
+            "name": "GroundUnavailableReasonV1",
+            "signature": null
+          },
+          {
+            "kind": "enum",
+            "name": "GroundWarningSeverityV1",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "canonical_result_v1_json",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "parse_result_v1_json",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "FlightToGroundResultV1",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "GroundEventV1",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "GroundSummaryV1",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "GroundTerminationV1",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "GroundTrajectoryPointV1",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "GroundUnavailableFieldV1",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "GroundWarningV1",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8013,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b4830592a267523ae4b279ad3895ebd4da53e3258d22c739923a55a511e9aff1",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-FLIGHT-GROUND-RESULT-VALIDATION-RS-06A86079B172",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/flight_ground/result_validation.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10439,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4747c133691e8e9c79dc864115244b874d520147b327cad1a599d726a090f449",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-FLIGHT-GROUND-RUNTIME-MATH-RS-28B4CB0E10F8",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/flight_ground/runtime_math.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "fn",
+            "name": "advance",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "anchored",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "classify",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "from_request",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "from_wire",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "inertia",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "new",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "next_elapsed",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "normalized",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "point",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "reason",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "skip_through",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "tangential_mass",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 6538,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "d5f99a961c36537676c818d3651f31af287a90478b80a30c94cbc44659db0627",
+      "family": "native-kernels-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-FLIGHT-GROUND-SIMULATION-RS-BD8C237AF5CF",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/flight_ground/simulation.rs",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "fn",
+            "name": "simulate_flight_to_ground",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/pendulum_simulator/tests/test_simulation.py",
+          "tests/rate_of_closure/test_simulation.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2527,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b1548d96cb4cbdd89f931a5d6e4831283e4583385850eccbc3b6292cb97e42b0",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-FLIGHT-GROUND-STRICT-JSON-RS-7D9608A6FF91",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/flight_ground/strict_json.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 16344,
+      "classification": "calculation",
+      "classification_basis": "path-marker:dynamics",
+      "content_sha256_lf": "a448aa223649abd57dd96f3b1f09975ad7c66c5125a4b483158633e692c0de93",
+      "family": "native-kernels-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-FLIGHT-GROUND-SURFACE-DYNAMICS-RS-DE67A1AF4BE1",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/flight_ground/surface_dynamics.rs",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "mapped",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [
+          "surface_dynamics_holding_tests.rs"
+        ],
+        "public_surfaces": [
+          {
+            "kind": "fn",
+            "name": "record",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "record_projection",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "validate_passivity",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "wire",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2168,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7df43fc33482b698003a42b5b9c9ad2ea0bd7c7b8ab28ac1854f216f38dd725a",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-FLIGHT-GROUND-SURFACE-EVENTS-RS-17F6698B4667",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/flight_ground/surface_events.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "fn",
+            "name": "append",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "new",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 16126,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6919a31060e965303495ad3454e8bd1762b255ff32264be2c97430ce31896042",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-FLIGHT-GROUND-SURFACE-RUNTIME-RS-16A1865DAD1B",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/flight_ground/surface_runtime.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11573,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0e1e0249762c371c8e95a4a1fc741d180050f9d7e63a6c237968bfe127cf35c9",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-FLIGHT-GROUND-WASM-RS-5DB8E8BF3FAD",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/flight_ground/wasm.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "fn",
+            "name": "angular_velocity_x",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "angular_velocity_y",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "angular_velocity_z",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "first_penetrating_time",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "has_bracket",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "has_state",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "last_separated_time",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "position_x",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "position_y",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "position_z",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "qualify_horizontal_ground_transfer",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "qualify_planar_ground_transfer",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "reason",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "request_ground_plane_height",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "status",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "time",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "velocity_x",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "velocity_y",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "velocity_z",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "WasmGroundTransfer",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1355,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7dc288e47a6cfc7736ea2be4a3c826d9ba1553157862d3292075c464b811338b",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-FLIGHT-GROUND-WASM-REFERENCE-RS-B78BDE8D9EED",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/flight_ground/wasm_reference.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "fn",
+            "name": "run_ground_reference_v1",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2765,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8fa800662f021193c75c93b9016c308394ea6b63b527e143948f0d9a21841456",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-FLIGHT-GROUND-WASM-REQUEST-RS-90197F496496",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/flight_ground/wasm_request.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "fn",
+            "name": "adapt_request_v1",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "validate_request_v1",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2015,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8602455df2a9da50fc78ac5f276b6d147c0ff95332b6beb61b9e807508a63ebc",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-FLIGHT-GROUND-WASM-RESULT-RS-CE69FDAAFEDA",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/flight_ground/wasm_result.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "fn",
+            "name": "validate_result_v1",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7078,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "790e811aed8f659db3784f1706ed647da669eb5aa77b77a008faaa37315a1866",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-LIB-RS-54CF37D92F57",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/lib.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5104,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f5f3b19f85d1cc49e904e2493c393a875ec9ba20b3e9ff1dbdf09681271f51e0",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-MATH-RS-8275349E631B",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/math.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "const",
+            "name": "GRAVITY",
+            "signature": null
+          },
+          {
+            "kind": "const",
+            "name": "R_GAS",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "clamp",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "deg_to_rad",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "lerp",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_clamp",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_deg_to_rad",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_lerp",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_rad_to_deg",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "rad_to_deg",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/data_processing/data_processor/python/tests/test_signal_processing_core.py",
+          "src/inertia_calculator/tests/test_inertia_calculator_gui.py",
+          "src/lower_body_model/tests/test_simulator.py",
+          "src/media_processing/video_processor/python/tests_video_processor/test_example.py",
+          "src/movement_optimizer/tests/test_gait_sts.py",
+          "src/movement_optimizer/tests/test_parameter_validation.py",
+          "src/optimizer_gui/tests/test_swing_chain_models.py",
+          "src/p1am_control_system/backend/tests/test_alarm_nan_bad_quality.py",
+          "src/p1am_control_system/backend/tests/test_backend_p1am_safety.py",
+          "src/p1am_control_system/backend/tests/test_interlock_defaults_contract.py",
+          "src/p1am_control_system/backend/tests/test_modbus_codec.py",
+          "src/p1am_control_system/backend/tests/test_pid_tuning_math.py",
+          "src/p1am_control_system/backend/tests/test_power_supply.py",
+          "src/p1am_control_system/backend/tests/test_signal_stats.py",
+          "src/p1am_control_system/backend/tests/test_tag_force_nonfinite.py",
+          "src/p1am_control_system/backend/tests/test_thermocouple_filter.py",
+          "src/pendulum_simulator/tests/test_base_pendulum_widget.py",
+          "src/pendulum_simulator/tests/test_diagnostics.py",
+          "src/python/src/utils/test_utils.py",
+          "src/shared/python/calc_backend/tests/test_calc_backend.py",
+          "src/shared/python/calc_backend/tests/test_calc_backend_properties.py",
+          "src/shared/python/humanoid_character_builder/tests/test_inertia_calculator.py",
+          "src/shared/python/sidekick/tests/calculators/electrical/test_electrical_model.py",
+          "src/shared/python/sidekick/tests/calculators/mechanical/test_trc_geometry.py",
+          "src/shared/python/sidekick/tests/process_calculators/test_analysis_utils.py",
+          "src/shared/python/sidekick/tests/test_analysis_utils.py",
+          "src/shared/python/sidekick/tests/test_calculator_plotting.py",
+          "src/shared/python/sidekick/tests/test_hypothesis_calculators.py",
+          "src/shared/python/sidekick/tests/test_pure_calc_modules.py",
+          "src/shared/python/signal_toolkit/tests/test_series.py",
+          "src/shared/python/swing_sim/delivery_interchange/tests/test_delivery_interchange.py",
+          "src/shared/python/swing_sim/flight/tests/_regional_ground_pipeline_support.py",
+          "src/shared/python/swing_sim/flight/tests/test_capability_observation.py",
+          "src/shared/python/swing_sim/flight/tests/test_ground_bounce_execution.py",
+          "src/shared/python/swing_sim/flight/tests/test_ground_transfer.py",
+          "src/shared/python/swing_sim/flight/tests/test_launch_deriver.py",
+          "src/shared/python/swing_sim/flight/tests/test_models_physics.py",
+          "src/shared/python/swing_sim/flight/tests/test_parity_rust_flight.py",
+          "src/shared/python/swing_sim/flight/tests/test_pipeline.py",
+          "src/shared/python/swing_sim/flight/tests/test_result_metrics.py",
+          "src/shared/python/swing_sim/flight/tests/test_surface_flight_cancellation.py",
+          "src/shared/python/swing_sim/flight/tests/test_wind.py",
+          "src/shared/python/swing_sim/flight/tests/test_wind_uncertainty.py",
+          "src/shared/python/swing_sim/flight_interchange/tests/test_flight_interchange.py",
+          "src/shared/python/swing_sim/ground/tests/conformance_support.py",
+          "src/shared/python/swing_sim/ground/tests/test_impact_impulse.py",
+          "src/shared/python/swing_sim/ground/tests/test_reference_conformance.py",
+          "src/shared/python/swing_sim/ground/tests/test_skid_roll_dynamics.py",
+          "src/shared/python/swing_sim/ground/tests/test_skid_roll_passivity.py",
+          "src/shared/python/swing_sim/ground/tests/test_skid_roll_simulation.py",
+          "src/shared/python/swing_sim/ground/tests/test_study_projection.py",
+          "src/shared/python/swing_sim/ground/tests/test_study_state.py",
+          "src/shared/python/swing_sim/ground/tests/test_study_validation.py",
+          "src/shared/python/swing_sim/ground/tests/test_surface_resolver.py",
+          "src/shared/python/swing_sim/impact/tests/test_delivery.py",
+          "src/shared/python/swing_sim/impact/tests/test_dplane.py",
+          "src/shared/python/swing_sim/putting/tests/test_impact.py",
+          "src/shared/python/swing_sim/putting/tests/test_result_wire.py",
+          "src/shared/python/swing_sim/putting/tests/test_stroke_interchange.py",
+          "src/shared/python/swing_sim/putting/tests/test_surface.py",
+          "src/shared/python/swing_sim/putting/tests/test_ud_adapter.py",
+          "src/shared/python/swing_sim/putting/tests/test_variation.py",
+          "src/shared/python/swing_sim/solver/tests/test_spatial_targets.py",
+          "src/shared/python/swing_sim/solver/tests/test_targets.py",
+          "src/shared/python/swing_sim/tests/test_torque_profiles.py",
+          "src/shared/python/swing_sim/variation/tests/test_analysis.py",
+          "src/shared/python/swing_sim/variation/tests/test_dispersion_metrics.py",
+          "src/shared/python/swing_sim/variation/tests/test_execution_metadata.py",
+          "src/solar_system_model/solar_system/tests/test_orbital_mechanics.py",
+          "src/solar_system_model/solar_system/tests/test_parametrized.py",
+          "src/vessel_drafter/tests/test_cylindrical_bath_layout.py",
+          "src/vessel_drafter/tests/test_electrode_advisor_defaults.py",
+          "tests/calc_backend/test_new_endpoints.py",
+          "tests/helpers/numerical.py",
+          "tests/integration/sidekick/test_sidekick_host_integration.py",
+          "tests/programmatic_pid/test_geometry_extra.py",
+          "tests/rate_of_closure/test_ball_setup_parity.py",
+          "tests/rate_of_closure/test_capability_observation_adapter.py",
+          "tests/rate_of_closure/test_chip_forgiveness_analysis.py",
+          "tests/rate_of_closure/test_club.py",
+          "tests/rate_of_closure/test_club_heads.py",
+          "tests/rate_of_closure/test_club_mesh_inertia.py",
+          "tests/rate_of_closure/test_club_profile_acceptance.py",
+          "tests/rate_of_closure/test_dispersion_metrics_golden.py",
+          "tests/rate_of_closure/test_flight_explorer_import.py",
+          "tests/rate_of_closure/test_impact_kinematics.py",
+          "tests/rate_of_closure/test_impact_outcomes.py",
+          "tests/rate_of_closure/test_kinetics.py",
+          "tests/rate_of_closure/test_manual_delivery.py",
+          "tests/rate_of_closure/test_model.py",
+          "tests/rate_of_closure/test_morris_metric_validation.py",
+          "tests/rate_of_closure/test_regional_ground_authority_status_wire.py",
+          "tests/rate_of_closure/test_screw_analysis.py",
+          "tests/rate_of_closure/test_simulation.py",
+          "tests/rate_of_closure/test_units.py",
+          "tests/rate_of_closure/test_variation_plot_definition_domain.py",
+          "tests/rate_of_closure/test_wind_strategy_plot_adapter.py",
+          "tests/rate_of_closure/test_wind_strategy_worker.py",
+          "tests/rotation_converter/test_converter.py",
+          "tests/rotation_converter/test_modern_robotics.py",
+          "tests/rotation_converter/test_rigid_transform.py",
+          "tests/rotation_converter/test_rotation_converter_advanced.py",
+          "tests/rotation_converter/test_rotation_core.py",
+          "tests/rotation_converter/test_screw_visualization.py",
+          "tests/rotation_converter/test_spatial_algebra.py",
+          "tests/rotation_converter/test_twist_screw.py",
+          "tests/rust_bindings/test_math_primitives_bindings.py",
+          "tests/rust_bindings/test_rust_bindings.py",
+          "tests/shared/python/calculators/conversion/test_core.py",
+          "tests/shared/python/calculators/conversion/test_flow_rate_converter.py",
+          "tests/shared/python/calculators/thermo/test_steam_engine.py",
+          "tests/shared/python/data_processing/test_data_processor_core.py",
+          "tests/shared/python/golf_club/test_putter_head.py",
+          "tests/shared/python/golf_club/test_shaft_delivery.py",
+          "tests/shared/python/golf_club/test_shaft_dynamics.py",
+          "tests/shared/python/golf_club/test_shaft_statics.py",
+          "tests/shared/python/golf_club/test_turf_contact.py",
+          "tests/shared/python/golf_club/test_wedge_ground_contact.py",
+          "tests/shared/python/golf_club/test_wedge_kinematics.py",
+          "tests/shared/python/humanoid/test_makehuman_script_hardening.py",
+          "tests/shared/python/humanoid/test_primitive_inertia.py",
+          "tests/shared/python/launch_monitor/test_corpus.py",
+          "tests/shared/python/launch_monitor/test_flexible_analysis.py",
+          "tests/shared/python/launch_monitor/test_relationships.py",
+          "tests/shared/python/model_generation/inertia/test_primitives.py",
+          "tests/shared/python/model_generation/test_urdf_parser.py",
+          "tests/shared/python/process_calculators/test_acid_gas_dewpoint_edge_cases.py",
+          "tests/shared/python/process_calculators/test_analysis_utils.py",
+          "tests/shared/python/process_calculators/test_baghouse_calculator.py",
+          "tests/shared/python/process_calculators/test_financial_calculator_edge_cases.py",
+          "tests/shared/python/process_calculators/test_flare_calculator.py",
+          "tests/shared/python/process_calculators/test_scrubber_calculator.py",
+          "tests/shared/python/process_calculators/test_syngas_compression_edge_cases.py",
+          "tests/shared/python/process_calculators/test_syngas_compression_engine.py",
+          "tests/shared/python/process_calculators/test_syngas_water_calculator_edge_cases.py",
+          "tests/shared/python/process_calculators/test_syngas_water_overflow.py",
+          "tests/shared/python/process_calculators/test_water_vapor_pressure_shared.py",
+          "tests/shared/python/process_calculators/test_wave1_process_numerics.py",
+          "tests/shared/python/process_calculators/test_wgs_reactor_calculator.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
+          "tests/shared/python/signal_toolkit/test_series.py",
+          "tests/shared/python/test_safe_eval.py",
+          "tests/shared/python/utils/test_unit_constants.py",
+          "tests/test_asteroid_jumper/test_physics.py",
+          "tests/test_asteroid_jumper/test_shapes.py",
+          "tests/tools/test_scientific_auditor.py",
+          "tests/unit/sidekick/test_python_repl_widget.py",
+          "tests/vessel_drafter/test_contracts_unified.py"
+        ],
+        "unit_mentions": [
+          "J",
+          "m/s"
+        ],
+        "validation_paths": [
+          "src/movement_optimizer/tests/test_parameter_validation.py",
+          "src/p1am_control_system/backend/tests/test_interlock_defaults_contract.py",
+          "src/shared/python/swing_sim/ground/tests/test_study_validation.py",
+          "tests/rate_of_closure/test_morris_metric_validation.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
+          "tests/tools/test_scientific_auditor.py",
+          "tests/vessel_drafter/test_contracts_unified.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8596,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a6de8d1a9df6fd08875de0f2150fe77718e277cda02bd10305b27b88b11d0141",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-REACTOR-RS-C062EDD59E90",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/reactor.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "fn",
+            "name": "integrate",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "new",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "PyTrc1DSystem",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "Rk4Integrator",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "Trc1DSystem",
+            "signature": null
+          },
+          {
+            "kind": "trait",
+            "name": "OdeSystem",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/ai/tests/test_rag_context_provider.py",
+          "src/shared/python/calc_backend/tests/test_calc_backend.py",
+          "tests/programmatic_pid/test_title_block.py",
+          "tests/shared/python/process_calculators/test_wave1_process_numerics.py",
+          "tests/shared/python/process_calculators/test_wgs_reactor_engine.py"
+        ],
+        "unit_mentions": [
+          "J",
+          "kg",
+          "m/s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13462,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c0661a1c5a039c5f722550117b73108c683f2a5c763338748b12b2ac03fbc67c",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-RRT-RS-35C141EF66F1",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/rrt.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "fn",
+            "name": "distance_to_surface",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "new",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "plan_path",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "Obstacle",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "RRTPlanner",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 30435,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "92d5a4cb0fc1f12602b8ff282b4e9f1840c54ee7d30b734506f56447a6dafedc",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-SCADA-RS-69BD59284CC1",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/scada.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "enum",
+            "name": "AlarmState",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "acknowledge_alarm",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "classify",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "evaluate",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "exponential_smoothing",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "get_active_alarms",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "get_alarm_state",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "moving_average",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "new",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_exponential_smoothing",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_moving_average",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_savitzky_golay",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "register_interlock",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "savitzky_golay",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "set_scenario",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "severity",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "step",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "update_tag",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "AlarmEngine",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "GasificationSimulator",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "Interlock",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "InterlockMatrix",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "TagLimits",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/p1am_control_system/backend/tests/test_alarm_nan_bad_quality.py",
+          "src/p1am_control_system/backend/tests/test_scada_fallback.py"
+        ],
+        "unit_mentions": [
+          "J",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 36278,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "78c216bde630d539b8ec96daf30762df2c3247d5cdb7737d570f794d545d162b",
+      "family": "native-kernels-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-SIGNAL-RS-632B18432666",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/signal.rs",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "fn",
+            "name": "bilateral_filter",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "chirp",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "cosine",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "exponential",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "exponential_smoothing",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "linear",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "lms_filter",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "moving_average",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "polynomial",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "pulse",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_bilateral_filter",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_chirp",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_cosine",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_exponential",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_exponential_smoothing",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_linear",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_lms_filter",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_moving_average",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_polynomial",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_pulse",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_rls_filter",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_sinusoid",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_square",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_step",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_triangle",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "rls_filter",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "sinusoid",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "square",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "step",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "triangle",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/data_processing/data_processor/python/tests/test_advanced_analysis.py",
+          "src/data_processing/data_processor/python/tests/test_analysis_panel_signals.py",
+          "src/data_processing/data_processor/python/tests/test_pipeline_executor.py",
+          "src/data_processing/data_processor/python/tests/test_plot_config_manager.py",
+          "src/data_processing/data_processor/python/tests/test_pyqt_widget.py",
+          "src/data_processing/data_processor/python/tests/test_signal_list_manager.py",
+          "src/data_processing/data_processor/python/tests/test_signal_processing_core.py",
+          "src/data_processing/data_processor/python/tests/test_signal_processor.py",
+          "src/data_processing/data_processor/python/tests/test_statistical_analysis.py",
+          "src/data_processing/data_processor/python/tests/test_vectorized_filter_engine_contracts.py",
+          "src/data_processing/data_processor/python/tests/test_wavelet_denoising.py",
+          "src/function_generator/tests/test_function_generator_gui.py",
+          "src/media_processing/audio_processor/matlab/audio_signal_processor/tests/test_fft_filters.m",
+          "src/movement_optimizer/tests/test_optimization_mixin.py",
+          "src/movement_optimizer/tests/test_thread_safety.py",
+          "src/p1am_control_system/backend/tests/test_backend_p1am_safety.py",
+          "src/p1am_control_system/backend/tests/test_data_explorer_signals.py",
+          "src/p1am_control_system/backend/tests/test_estop_clear_endpoint.py",
+          "src/p1am_control_system/backend/tests/test_estop_endpoint_writes.py",
+          "src/p1am_control_system/backend/tests/test_pid_tuning_tag_guards.py",
+          "src/p1am_control_system/backend/tests/test_power_supply_noise.py",
+          "src/p1am_control_system/backend/tests/test_power_supply_runtime_safety.py",
+          "src/p1am_control_system/backend/tests/test_request_guard.py",
+          "src/p1am_control_system/backend/tests/test_signal_stats.py",
+          "src/p1am_control_system/backend/tests/test_validation_guards_3745.py",
+          "src/pendulum_simulator/signal_test.py",
+          "src/pendulum_simulator/tests/test_controls_widget_base.py",
+          "src/pendulum_simulator/tests/test_ellipsoid_scale_and_emoji.py",
+          "src/pendulum_simulator/tests/test_optimization_widget.py",
+          "src/pendulum_simulator/tests/test_panel_builders.py",
+          "src/pendulum_simulator/tests/test_simulation_panel.py",
+          "src/pendulum_simulator/tests/test_swing_signals.py",
+          "src/pendulum_simulator/tests/test_toolstrip_elements.py",
+          "src/shared/python/plot_engine/tests/test_specs.py",
+          "src/shared/python/signal_toolkit/tests/__init__.py",
+          "src/shared/python/signal_toolkit/tests/test_bilateral_rust_parity.py",
+          "src/shared/python/signal_toolkit/tests/test_bound_validation_3182.py",
+          "src/shared/python/signal_toolkit/tests/test_limits.py",
+          "src/shared/python/signal_toolkit/tests/test_noise.py",
+          "src/shared/python/signal_toolkit/tests/test_series.py",
+          "src/shared/python/signal_toolkit/tests/test_signal_toolkit.py",
+          "src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py",
+          "src/signal_processing_studio/tests/test_signal_processing_studio.py",
+          "tests/architecture/test_layer_boundaries.py",
+          "tests/architecture/test_tools_module_inventory_contract.py",
+          "tests/benchmarks/conftest.py",
+          "tests/benchmarks/test_bilateral_rust_perf.py",
+          "tests/benchmarks/test_data_processor_perf.py",
+          "tests/data_processing/data_processor/test_ui_thread_workers.py",
+          "tests/data_processing/data_processor/test_vectorized_filter_split.py",
+          "tests/data_processor_io/test_rust_engine_contract.py",
+          "tests/heavy_integration/test_tools_contracts.py",
+          "tests/ops/test_mirror_freshness.py",
+          "tests/p1am_control_system/test_backend_security.py",
+          "tests/p1am_control_system/test_desktop_tab_labels.py",
+          "tests/rate_of_closure/test_capability_worker.py",
+          "tests/rate_of_closure/test_putting_gui.py",
+          "tests/shared/python/ai/test_adapter_contract.py",
+          "tests/shared/python/ai/test_providers_tab_signal.py",
+          "tests/shared/python/ai/test_rust_adapter.py",
+          "tests/shared/python/chat/test_ollama_latency_tuning.py",
+          "tests/shared/python/data_processing/test_data_processing_contract.py",
+          "tests/shared/python/data_processing/test_processor.py",
+          "tests/shared/python/plot_engine/test_matplotlib_renderer.py",
+          "tests/shared/python/plot_engine/test_plotly_converter.py",
+          "tests/shared/python/signal_toolkit/test_adaptive_filter.py",
+          "tests/shared/python/signal_toolkit/test_calculus.py",
+          "tests/shared/python/signal_toolkit/test_generators.py",
+          "tests/shared/python/signal_toolkit/test_limits.py",
+          "tests/shared/python/signal_toolkit/test_signal_loader.py",
+          "tests/shared/python/signal_toolkit/test_widget_mixins.py",
+          "tests/test_data_processor_embedding.py",
+          "tests/test_data_processor_tab_export.py",
+          "tests/test_properties.py",
+          "tests/test_signal_processing_expanded.py",
+          "tests/tools/gui/test_search_engine.py",
+          "tests/unit/lower_body_model/test_public_api_contract.py",
+          "tests/unit/lower_body_model/test_simulator.py",
+          "tests/unit/sidekick/test_sidekick_ux_hardening.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "src/data_processing/data_processor/python/tests/test_vectorized_filter_engine_contracts.py",
+          "src/p1am_control_system/backend/tests/test_validation_guards_3745.py",
+          "src/shared/python/signal_toolkit/tests/test_bound_validation_3182.py",
+          "tests/architecture/test_tools_module_inventory_contract.py",
+          "tests/data_processor_io/test_rust_engine_contract.py",
+          "tests/heavy_integration/test_tools_contracts.py",
+          "tests/shared/python/ai/test_adapter_contract.py",
+          "tests/shared/python/data_processing/test_data_processing_contract.py",
+          "tests/unit/lower_body_model/test_public_api_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 23948,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ce52d7b7bbd2c96aefe86454896167beaf0591bfb7d37a1c6a8ccef5807b55eb",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-SWING-PLANE-RS-8D0B775D7986",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/swing_plane.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://drkwongolf.info/biom/fsp.html"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "enum",
+            "name": "FspError",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "compute_fsp",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "compute_fsp_from_segment",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "detect_phases",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "FspParameters",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "PhaseMarkers",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 7705,
+      "classification": "calculation",
+      "classification_basis": "path-marker:dynamics",
+      "content_sha256_lf": "32d787e970867365818bcff3ceecdad94b2d32e8ffe49c22b486f22a042f522c",
+      "family": "native-kernels-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-THERMODYNAMICS-RS-1851AFDDFF40",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/tools-core/src/thermodynamics.rs",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "fn",
+            "name": "cp",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "cp_over_r",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "enthalpy",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "entropy",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "h_over_rt",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "new",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "s_over_r",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "Nasa7Coefficients",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "Nasa7Species",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "PyNasa7Species",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/steam_engine_calculator/tests/test_steam_engine_calculator_gui.py"
+        ],
+        "unit_mentions": [
+          "J",
+          "kg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "rust_core/tools-core",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

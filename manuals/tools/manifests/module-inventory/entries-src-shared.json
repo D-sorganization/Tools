@@ -1,0 +1,573 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "32c4858e22cc2c967b42150fa550562a2c839c2cebcaab91cabdf6f4da020022",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-INIT-PY-BAB65DBAB467",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/__init__.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1920,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2fbdb3099e8443a82b06c37c3a743a753e59e0501ae123af2b7b39471db1ebcf",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-TYPESCRIPT-THEME-COMPONENTS-THEMEPROVIDER-TSX-02907C2F042F",
+      "language": "typescript-react",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/typescript/theme/components/ThemeProvider.tsx",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "ThemeContextValue",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ThemeProvider",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ThemeProviderProps",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "useTheme",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2581,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "831684546ae24c30fb4bf18a46f5381338aaa37a0d0cfe8a8418af56d9cba28f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-TYPESCRIPT-THEME-DESIGNTOKENS-TS-79E3693691E8",
+      "language": "typescript",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/typescript/theme/designTokens.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "DesignTokens",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ThemeColors",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "applyThemeToElement",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "generateCssCustomProperties",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 969,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5d434afd094f86480f8a5780686952e8550e278aae524c1126e34fe8decea779",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-TYPESCRIPT-THEME-INDEX-TS-8055CD562DA4",
+      "language": "typescript",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/typescript/theme/index.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3728,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f6af6fb40f3d470cc80e49d14c8804f0f2085f699333dd033c03344bb9e2d715",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-TYPESCRIPT-THEME-THEME-VARIABLES-CSS-D63BF3EB2342",
+      "language": "css",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/typescript/theme/theme-variables.css",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5940,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a78015c3f0bf6d2add7f37173bab7a9f0cb8355992fae992530379ac9f8ecae9",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-TYPESCRIPT-THEME-THEMEAPI-TS-F2D90E28B001",
+      "language": "typescript",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/typescript/theme/themeApi.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://localhost:8000"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "ActiveThemeResponse",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ThemeApiClient",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ThemeListResponse",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ThemeOperationResponse",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9754,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a87cfe42bb6083096bf37469902d54a53d6ecdcc66ab7a0fdd71dabab808fdaf",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-TYPESCRIPT-THEME-THEMEDEFINITIONS-TS-6298204F4742",
+      "language": "typescript",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/typescript/theme/themeDefinitions.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "CHART_COLORS",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "CustomTheme",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "THEME_METADATA",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "THEME_PRESETS",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ThemeBaseColors",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ThemeColors",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ThemeDefinition",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ThemeId",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ThemeSemanticColors",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "applySidekickThemeToElement",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "applyThemeToDocument",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "applyThemeToElement",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "generateCSSVariables",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "generateSidekickCSSVariables",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "getContrastRatio",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "getThemeDisplayName",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "getThemeIds",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "isDarkTheme",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "verifyThemeReadability",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10169,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5ce3ee2e7a53a479e5cb2194e28f0a773efb7b35f19251cc8619531796d4d3c1",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-TYPESCRIPT-THEME-THEMESTORE-TS-E13EEBAFD899",
+      "language": "typescript",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/typescript/theme/themeStore.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://localhost:8000"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "CustomTheme",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ModuleThemePreference",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ThemeState",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ThemeStoreConfig",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "createThemeStore",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "useThemeStore",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/shared",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

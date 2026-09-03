@@ -1,0 +1,1462 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 2556,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "cfb4c661ff7e3df66988eaa8411c79d54f355a7352396011338feda28b0e49e3",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-INIT-PY-74FCAD42F570",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/shared/python/signal_toolkit/__init__.py",
+      "purpose": "Signal Processing Toolkit - Comprehensive Signal Analysis Library.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/signal_toolkit/test_signal_loader.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 4472,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "c57186a5551e9178878b5b659a18142ad5169074c13bb1d8b90583edd80bd651",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-LAZY-MAP-PY-7E79E0DA2DF8",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/shared/python/signal_toolkit/_lazy_map.py",
+      "purpose": "Lazy import dispatch table for ``signal_toolkit``.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "LAZY",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 5671,
+      "classification": "calculation",
+      "classification_basis": "path-marker:filter",
+      "content_sha256_lf": "36817ccc8511c1d29fe167a37844c26568d5a20978dd5e6aeb5b8ae763683339",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-ADAPTIVE-FILTER-PY-F06693A313DD",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/shared/python/signal_toolkit/adaptive_filter.py",
+      "purpose": "Adaptive filter implementations for signal_toolkit.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AdaptiveFilter",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py",
+          "tests/shared/python/signal_toolkit/test_adaptive_filter.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3870,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "f8a4321a427572a455585eff01de685e4b56e6aafe44a9b5cb74affab864a276",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-BILATERAL-RUST-PY-7E4D128D5AC4",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/shared/python/signal_toolkit/bilateral_rust.py",
+      "purpose": "Rust-accelerated bilateral filter facade.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "apply_bilateral_filter_rust",
+            "signature": "signal: Signal, window_size: int=5, sigma_space: float=1.0, sigma_intensity: float=0.1"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/signal_toolkit/tests/test_bilateral_rust_parity.py",
+          "tests/benchmarks/test_bilateral_rust_perf.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 24860,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculus",
+      "content_sha256_lf": "16e0ab6b0c88a9c5aad0c659ddc70de43982515164fb6084d880dfd3fc710135",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-CALCULUS-PY-78480075D93D",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/shared/python/signal_toolkit/calculus.py",
+      "purpose": "Differentiation and integration utilities for signals.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DifferentiationMethod",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Differentiator",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "IntegralResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "IntegrationMethod",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Integrator",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TangentLine",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "compute_all_tangent_lines",
+            "signature": "signal: Signal, num_points: int=10, method: DifferentiationMethod=DifferentiationMethod.SAVGOL"
+          },
+          {
+            "kind": "function",
+            "name": "compute_arc_length",
+            "signature": "signal: Signal, method: DifferentiationMethod=DifferentiationMethod.SAVGOL"
+          },
+          {
+            "kind": "function",
+            "name": "compute_curvature",
+            "signature": "signal: Signal, method: DifferentiationMethod=DifferentiationMethod.SAVGOL"
+          },
+          {
+            "kind": "function",
+            "name": "compute_derivative",
+            "signature": "signal: Signal, order: int=1, method: DifferentiationMethod=DifferentiationMethod.SAVGOL, **kwargs: typing.Any"
+          },
+          {
+            "kind": "function",
+            "name": "compute_integral",
+            "signature": "signal: Signal, lower_bound: float | None=None, upper_bound: float | None=None, method: IntegrationMethod=IntegrationMethod.TRAPEZOID"
+          },
+          {
+            "kind": "function",
+            "name": "compute_tangent_line",
+            "signature": "signal: Signal, t_point: float, line_width: float | None=None, method: DifferentiationMethod=DifferentiationMethod.SAVGOL"
+          },
+          {
+            "kind": "function",
+            "name": "find_extrema",
+            "signature": "signal: Signal, method: DifferentiationMethod=DifferentiationMethod.SAVGOL"
+          },
+          {
+            "kind": "function",
+            "name": "find_inflection_points",
+            "signature": "signal: Signal, method: DifferentiationMethod=DifferentiationMethod.SAVGOL"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/signal_toolkit/tests/test_bound_validation_3182.py",
+          "src/shared/python/signal_toolkit/tests/test_signal_toolkit.py",
+          "src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py",
+          "tests/shared/python/signal_toolkit/test_calculus.py",
+          "tests/shared/python/signal_toolkit/test_widget_mixins.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": [
+          "src/shared/python/signal_toolkit/tests/test_bound_validation_3182.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 21685,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "39e948c145c56bd079324eee1f8af903860677b4264135f63f9cc4a90e751298",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-CORE-PY-EF5835A09E43",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/shared/python/signal_toolkit/core.py",
+      "purpose": "Core signal classes and utilities.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Signal",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SignalGenerator",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/signal_toolkit/tests/test_bilateral_rust_parity.py",
+          "src/shared/python/signal_toolkit/tests/test_bound_validation_3182.py",
+          "src/shared/python/signal_toolkit/tests/test_limits.py",
+          "src/shared/python/signal_toolkit/tests/test_noise.py",
+          "src/shared/python/signal_toolkit/tests/test_series.py",
+          "src/shared/python/signal_toolkit/tests/test_signal_toolkit.py",
+          "src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py",
+          "src/signal_processing_studio/tests/test_signal_processing_studio.py",
+          "tests/benchmarks/test_bilateral_rust_perf.py",
+          "tests/shared/python/signal_toolkit/test_adaptive_filter.py",
+          "tests/shared/python/signal_toolkit/test_calculus.py",
+          "tests/shared/python/signal_toolkit/test_filters.py",
+          "tests/shared/python/signal_toolkit/test_fitting.py",
+          "tests/shared/python/signal_toolkit/test_generators.py",
+          "tests/shared/python/signal_toolkit/test_limits.py",
+          "tests/shared/python/signal_toolkit/test_noise.py",
+          "tests/shared/python/signal_toolkit/test_signal_loader.py",
+          "tests/shared/python/signal_toolkit/test_widget_mixins.py",
+          "tests/test_signal_core_coverage.py",
+          "tests/test_signal_processing_expanded.py"
+        ],
+        "unit_mentions": [
+          "Hz",
+          "N*m",
+          "g",
+          "rad/s"
+        ],
+        "validation_paths": [
+          "src/shared/python/signal_toolkit/tests/test_bound_validation_3182.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 18646,
+      "classification": "calculation",
+      "classification_basis": "path-marker:filter",
+      "content_sha256_lf": "bbedd50ed8ffcf51f271f351de9008506bbddcdbfd5a2dcbe5e1b6226a3d86da",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-FILTERS-PY-49FBADD0E7A2",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/shared/python/signal_toolkit/filters.py",
+      "purpose": "Signal filtering utilities.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FilterDesign",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FilterDesigner",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FilterSpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FilterType",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "apply_bilateral_filter",
+            "signature": "signal: Signal, window_size: int=5, sigma_space: float=1.0, sigma_intensity: float=0.1"
+          },
+          {
+            "kind": "function",
+            "name": "apply_exponential_smoothing",
+            "signature": "signal: Signal, alpha: float=0.3"
+          },
+          {
+            "kind": "function",
+            "name": "apply_filter",
+            "signature": "signal: Signal, filter_spec: FilterSpec, zero_phase: bool=True"
+          },
+          {
+            "kind": "function",
+            "name": "apply_gaussian_smoothing",
+            "signature": "signal: Signal, sigma: float=1.0"
+          },
+          {
+            "kind": "function",
+            "name": "apply_median_filter",
+            "signature": "signal: Signal, kernel_size: int=5"
+          },
+          {
+            "kind": "function",
+            "name": "apply_moving_average",
+            "signature": "signal: Signal, window_size: int"
+          },
+          {
+            "kind": "function",
+            "name": "apply_savgol",
+            "signature": "signal: Signal, window_length: int=11, polyorder: int=3"
+          },
+          {
+            "kind": "function",
+            "name": "create_butterworth_filter",
+            "signature": "filter_type: str, cutoff: float | tuple[float, float], fs: float, order: int=4"
+          },
+          {
+            "kind": "function",
+            "name": "create_chebyshev_filter",
+            "signature": "filter_type: str, cutoff: float | tuple[float, float], fs: float, order: int=4, ripple_db: float=1.0"
+          },
+          {
+            "kind": "function",
+            "name": "create_moving_average_filter",
+            "signature": "window_size: int"
+          },
+          {
+            "kind": "function",
+            "name": "create_savgol_filter",
+            "signature": "window_length: int=11, polyorder: int=3"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/signal_toolkit/tests/test_bilateral_rust_parity.py",
+          "src/shared/python/signal_toolkit/tests/test_signal_toolkit.py",
+          "src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py",
+          "tests/benchmarks/test_bilateral_rust_perf.py",
+          "tests/shared/python/signal_toolkit/test_filters.py",
+          "tests/shared/python/signal_toolkit/test_widget_mixins.py",
+          "tests/test_signal_processing_expanded.py"
+        ],
+        "unit_mentions": [
+          "Hz"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 26078,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "41f2f951a11e972e706844f7144be886ed52222807e0dd8a5c1d029d8f4d2ef2",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-FITTING-PY-38C1998A2327",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/shared/python/signal_toolkit/fitting.py",
+      "purpose": "Function fitting utilities for signal analysis.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CosineFitter",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CustomFunctionFitter",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ExponentialFitter",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FitResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FunctionFitter",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LinearFitter",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PolynomialFitter",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SinusoidFitter",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/signal_toolkit/tests/test_signal_toolkit.py",
+          "tests/shared/python/signal_toolkit/test_fitting.py",
+          "tests/shared/python/signal_toolkit/test_widget_mixins.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 22375,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "c14d871a517b62a01f4f249eb731a947ad7ec41310a9272679d406c8ab0fe5e1",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-IO-PY-E841C1073404",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/shared/python/signal_toolkit/io.py",
+      "purpose": "Signal import and export utilities.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "BatchProcessor",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SignalExporter",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SignalImporter",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SignalLoader",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "export_to_csv",
+            "signature": "signal: Signal | list[Signal], file_path: str | Path, **kwargs: typing.Any"
+          },
+          {
+            "kind": "function",
+            "name": "import_from_csv",
+            "signature": "file_path: str | Path, time_column: str | int=0, value_columns: str | int | list[str | int] | None=None, **kwargs: typing.Any"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/signal_toolkit/tests/test_signal_toolkit.py",
+          "src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py",
+          "tests/shared/python/signal_toolkit/test_signal_loader.py",
+          "tests/test_signal_core_coverage.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "ms",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 14777,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "6719470629e07f5a88a5ae92d4d3e8831d51d6b496c70ae8d2914e222cb82452",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-LIMITS-PY-5C3BD859D321",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/shared/python/signal_toolkit/limits.py",
+      "purpose": "Signal limiting and saturation with smoothing.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SaturationMode",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "apply_backlash",
+            "signature": "signal: Signal, backlash_width: float, smooth: bool=True, smoothness: float=5.0"
+          },
+          {
+            "kind": "function",
+            "name": "apply_deadband",
+            "signature": "signal: Signal, threshold: float, center: float=0.0, smooth: bool=True, smoothness: float=10.0"
+          },
+          {
+            "kind": "function",
+            "name": "apply_hysteresis",
+            "signature": "signal: Signal, threshold_up: float, threshold_down: float, output_high: float=1.0, output_low: float=0.0, initial_state: bool=False, smooth: bool=False, smoothness: float=10.0"
+          },
+          {
+            "kind": "function",
+            "name": "apply_rate_limiter",
+            "signature": "signal: Signal, max_rate: float, smooth_transition: bool=True, transition_time: float=0.01"
+          },
+          {
+            "kind": "function",
+            "name": "apply_saturation",
+            "signature": "signal: Signal, lower: float=-1.0, upper: float=1.0, mode: SaturationMode=SaturationMode.HARD, smoothness: float=1.0"
+          },
+          {
+            "kind": "function",
+            "name": "create_saturation_function",
+            "signature": "lower: float=-1.0, upper: float=1.0, mode: SaturationMode=SaturationMode.TANH, smoothness: float=1.0"
+          },
+          {
+            "kind": "function",
+            "name": "visualize_saturation_curves",
+            "signature": "lower: float=-1.0, upper: float=1.0, smoothness: float=1.0, num_points: int=1000"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/signal_toolkit/tests/test_limits.py",
+          "src/shared/python/signal_toolkit/tests/test_signal_toolkit.py",
+          "src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py",
+          "tests/shared/python/signal_toolkit/test_limits.py",
+          "tests/shared/python/signal_toolkit/test_widget_mixins.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 18644,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "3b1170b15670d75d85f1d418f174c8151904a2eaf0feaee694d6168ee2e8d498",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-NOISE-PY-F7A92EC95F67",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/shared/python/signal_toolkit/noise.py",
+      "purpose": "Noise generation and disturbance simulation.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DisturbanceSimulator",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "NoiseGenerator",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "NoiseType",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_LINE_FREQUENCY_HZ",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PERIODIC_NOISE_2ND_HARMONIC",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PERIODIC_NOISE_3RD_HARMONIC",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "add_noise_to_signal",
+            "signature": "signal: Signal, noise_type: NoiseType=NoiseType.WHITE, snr_db: float | None=None, amplitude: float | None=None, seed: int | None=None, **kwargs: Any"
+          },
+          {
+            "kind": "function",
+            "name": "generate_disturbance_profile",
+            "signature": "t: np.ndarray, disturbance_type: str='step', **kwargs: Any"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/signal_toolkit/tests/test_noise.py",
+          "src/shared/python/signal_toolkit/tests/test_signal_toolkit.py",
+          "src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py",
+          "tests/shared/python/signal_toolkit/test_noise.py",
+          "tests/shared/python/signal_toolkit/test_widget_mixins.py"
+        ],
+        "unit_mentions": [
+          "Hz",
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 26486,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "080a979946203f8d8a61db2ccf4a5c8f7fbf057eaab61cfb51ff87d4b3784826",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-POLYNOMIAL-GENERATOR-PY-3392DC0B6AD0",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/shared/python/signal_toolkit/polynomial_generator.py",
+      "purpose": "Polynomial Function Generator Module.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MplCanvas",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PolynomialFitError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PolynomialGenerationError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PolynomialGeneratorError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PolynomialGeneratorWidget",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/signal_processing_studio/tests/test_signal_processing_studio.py",
+          "tests/architecture/test_import_resolvability.py",
+          "tests/rate_of_closure/test_torque_profile_ui.py",
+          "tests/test_phase2_critical_bugs.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 23204,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "5b68560179b5f282cc773b17e8dba7ffe21b6585aef1a5727dde4b7267849bb6",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-SERIES-PY-6C0606C5A3D2",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/shared/python/signal_toolkit/series.py",
+      "purpose": "Taylor and Maclaurin series expansion module.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SeriesExpansion",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SeriesResult",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "arctan_series",
+            "signature": "n_terms: int=50"
+          },
+          {
+            "kind": "function",
+            "name": "cos_series",
+            "signature": "n_terms: int=20"
+          },
+          {
+            "kind": "function",
+            "name": "cosh_series",
+            "signature": "n_terms: int=20"
+          },
+          {
+            "kind": "function",
+            "name": "exp_series",
+            "signature": "n_terms: int=20"
+          },
+          {
+            "kind": "function",
+            "name": "geometric_series",
+            "signature": "n_terms: int=50"
+          },
+          {
+            "kind": "function",
+            "name": "ln_series",
+            "signature": "n_terms: int=50"
+          },
+          {
+            "kind": "function",
+            "name": "sin_series",
+            "signature": "n_terms: int=20"
+          },
+          {
+            "kind": "function",
+            "name": "sinh_series",
+            "signature": "n_terms: int=20"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/signal_toolkit/tests/test_series.py",
+          "src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py",
+          "tests/shared/python/signal_toolkit/test_series.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 6547,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "a9b67255609a4b319db8005d06c58cf2b96a0db7ac32540bf932e5f249699556",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-WIDGET-PY-9E1AAD011409",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/shared/python/signal_toolkit/widget.py",
+      "purpose": "PyQt6 GUI Widget for Signal Processing Toolkit.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "DARK_STYLESHEET",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/signal_processing_studio/tests/test_signal_processing_studio.py",
+          "tests/shared/python/signal_toolkit/test_widget_mixins.py",
+          "tests/unit/sidekick/jupyter_tab/test_widget.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 4728,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "f9e2a317c0cd40e6a13d17f8bd584e94527613df6b6af9c67632d40abb112cec",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-WIDGET-PLOTTING-PY-32CBC150A8E7",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/shared/python/signal_toolkit/widget_plotting.py",
+      "purpose": "Signal Toolkit Widget Plotting Mixin.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PlottingMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "Hz",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 29634,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "091c25a049226e18aa6f2a256cb9d3d8dd6ed277f1709b2c22fd442c433b9385",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-WIDGET-PROCESSING-PY-4A82CFD6331B",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/shared/python/signal_toolkit/widget_processing.py",
+      "purpose": "Signal Toolkit Widget Processing Mixin.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ProcessingMixin",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SignalGenerationError",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_MAX_HISTORY",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3930,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "3833fc5d1faf28f99f9d693534ee1519a5a9e1410933a0dc5a8307571e83b026",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-WIDGET-PROTOCOL-PY-BE6C126695D3",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/shared/python/signal_toolkit/widget_protocol.py",
+      "purpose": "Protocol defining the interface between widget mixins.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "WidgetProtocol",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 32924,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "6ef4c58f7af27ad7897620ae7a66b513715c491d55b743690e9694fe7581c3a6",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-WIDGET-UI-PY-41D251CD3AD9",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/shared/python/signal_toolkit/widget_ui.py",
+      "purpose": "Signal Toolkit Widget UI Setup Mixin.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "UISetupMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "Hz",
+          "rad"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/shared/python/signal_toolkit",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

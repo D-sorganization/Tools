@@ -1,0 +1,49 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 265,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3e846fa37a2710610c2da94f7e4f96bb8c0dd74125c6acbe35333691f5766c4d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-HUMANOID-CHARACTER-BUILDER-INIT-PY-236DA66769BC",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/humanoid_character_builder/__init__.py",
+      "purpose": "Compatibility shim for ``shared.python.humanoid_character_builder``.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/humanoid_character_builder",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

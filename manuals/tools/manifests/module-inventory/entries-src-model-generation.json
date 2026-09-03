@@ -1,0 +1,49 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 267,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a509806676a4fb56b9e6a43f50f99b53f5a4580a052586fa17f4cd977ba08f6d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-MODEL-GENERATION-INIT-PY-0AA2C04B079F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/model_generation/__init__.py",
+      "purpose": "Compatibility shim for the canonical ``shared.python.model_generation`` package.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/model_generation",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

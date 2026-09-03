@@ -1,0 +1,105 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 57,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a5df4c780df39c66021ec5e0718c3e732340c84c064889587fcae8f56d692fed",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-CORE-INIT-PY-E8689B292405",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/core/__init__.py",
+      "purpose": "Core utilities shared across the Tools repository.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 748,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7dab688693c264d2ec18a4c50c69611a0039b98a91b5d9c54c0ebfbc2d1c7e74",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-CORE-PATHS-PY-3786F504DE2A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/core/paths.py",
+      "purpose": "Shared path utilities for consistent project root resolution.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "get_project_root",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/test_paths.py",
+          "tests/shared/python/utils/test_paths.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/core",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

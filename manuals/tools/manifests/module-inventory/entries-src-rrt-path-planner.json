@@ -1,0 +1,1899 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 33,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d8dcdc5c703e5ad99933983ad5e759ad98727cbbae6477a15322a779ce6a3bc8",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-INIT-PY-BC047B6E7F57",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/__init__.py",
+      "purpose": "Package: rrt_path_planner.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 776,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7b0751fe67cc7b8d74567cd405a5436ec8802e3f07dca1125d96a4b0fa23d771",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-LAUNCH-RRT-ASTEROID-NAVIGATOR-PY-E2FCA8704DD7",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/launch_rrt_asteroid_navigator.py",
+      "purpose": "Standalone launcher for the RRT asteroid navigator.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "CURRENT_FILE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PYTHON_SRC",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REPO_ROOT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_RRT_ROOT",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1154,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "744fd91a2c78e8e9b0c92f43b732cdf86d6db29fba76bbc55c954287062e3c0a",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-OBSTACLESGENERATORSCRIPT-M-DBE5A0A85236",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/ObstaclesGeneratorScript.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2035,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b90af47a282eff697b26bb3cc0c3c84536313a547892823552586e10d0ac25bd",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-OBSTACLESGENERATORSCRIPT-DENSE-M-0A2BBE6FD9F9",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/ObstaclesGeneratorScript_Dense.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "deg"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3998,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "bb2d02de4efd8cfbf53376d9dff3ba73a25100139c29510feac629bab0c86d39",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-AI-PURSUITSYSTEM-M-6F0E34484046",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/ai/pursuitSystem.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "constrainToBounds",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "generateRandomGoal",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3187,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5f6de99bbf9b2043adfd3cfd782424ad50ef08c7e96f08a5e68f8e145226d43d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-CORE-RRT-M-A67B8ED9C27C",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/core/RRT.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4599,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0c745e94def2238696bc0b06374b6c8f3f5ae5287d45151225789dc1fc73d0c8",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-CORE-RRTPLANNER-M-5CFB1064F8F7",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/core/RRTPlanner.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "RRTPlanner",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "mergeParameters",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "parametersWithDefaults",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "resolvePlannerHandle",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "selectPlanner",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "setAlgorithm",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "setCollisionMode",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "setParameters",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 923,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "66691e6fb1f426625b4e946fd1b742f91e3743e7865d61cf46769a68a184735b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-CORE-COLLISIONCHECK-M-2D612363C771",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/core/collisionCheck.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "collisionCheck",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1457,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c0943ef969ec4250283e46ef098983680aaba7a9902ebb7a523112df7eb53f7b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-CORE-COLLISIONCHECKEDGE-M-83BB10C81AB1",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/core/collisionCheckEdge.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "collisionCheckEdge",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1355,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d9b9f944edb411b2be8a329376685b659d1a26ff73803e930d272f33494c58c3",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-CORE-SHIPORIENTATION-M-05073B8A14CD",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/core/shipOrientation.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1462,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ff1bea7594187208594805e75d0ec33975eb121eb3fbfcfeb12c46efab1338b6",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-CORE-STLREAD-M-9963123E858B",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/core/stlread.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4616,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f4066473aa1ca15eb87bc7b557d3ad3ad6c4462ea9e23583a2c3eb3c3703ccda",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-ENVIRONMENT-ASTEROIDFIELDPRESETS-M-D06B0F846C9C",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/environment/AsteroidFieldPresets.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "AsteroidFieldPresets",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "clampToBounds",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "generatePreset",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "generateRing",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "generateTrench",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3666,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a4ee0e6da4070f2c384503db61eabe11255a5e8cfc7ffa15751463dd4eaafef3",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-ENVIRONMENT-OBSTACLEMANAGER-M-7EF3669C402C",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/environment/ObstacleManager.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "ObstacleManager",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "createRandomObstacles",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "generateCustom",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "generatePreset",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "getObstacles",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "setObstacles",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 29972,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ac977483c9c85e5d0a8610200d28461ea3d0b3d7ec9a7c6828520a9029baf824",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-GUI-STARWARSPATHPLANNERGUI-M-B703C04805A7",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/gui/starWarsPathPlannerGUI.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "animateCallback",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "animatePursuit",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "animateSingleShip",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "cameraChangeCallback",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "createControlElements",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "createSimpleShip",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "createSimpleShipFaces",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "displayOptionCallback",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "drawObstacles",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "drawStarfield",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "generateObstaclesCallback",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "generateRandomObstacles",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "initializeVisualization",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "loadDefaultObstacles",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "loadObstaclesCallback",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "modeChangeCallback",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "planPathCallback",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "resetCallback",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "savePursuitVideo",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "saveSingleShipVideo",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "saveVideoCallback",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "setupCallbacks",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "speedChangeCallback",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "starWarsPathPlannerGUI",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "updateCameraView",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "updateStatus",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "visualizePath",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "visualizePursuit",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 401,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d966fbf929f845cc6ef2f9f8b10f20f8d47219b9b16610d6c1673d657344957d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-MAIN-CINEMATIC-M-342B70521003",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/main_cinematic.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3937,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ec60ec332ef8e84c77ff74de85172563eff44757597fd5ebd7c2031bd82101f0",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-MAIN-IMPROVED-M-56EAF4BEFEEB",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/main_improved.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "generateRandomObstacles",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "runCommandLineVersion",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 588,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3cd603fb79d5d29f066645d75ed5c8acee503bf9b3beed13e23a777c81e43684",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-MAIN-STATIC-M-DEB5AC74EA86",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/main_static.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2502,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5e1840f084533f755b41014e37581a6540f7dde6ba2400950596a002da5824f8",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-SHIPS-SHIPLIBRARY-M-9C803DAA8D39",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/ships/ShipLibrary.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "ShipLibrary",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "availableShips",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "createFallbackShip",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "defaultModelPath",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "getShip",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "loadAllShips",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9169,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b55509880684e4bced7e7ce33fbb85a09de775305cc3585e5a2eecb9f1d116ed",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-VISUALIZATION-PLOTPURSUIT-IMPROVED-M-7F0FACB0B295",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/visualization/plotPursuit_Improved.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "createSimpleShip",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "createSimpleShipFaces",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "drawObstacles",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "plotPursuit_Improved",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4728,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "945a0e7e688032f1dfe59c3ba57b496670a49423ea82d6db8fa1614945ff3c49",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-VISUALIZATION-PLOTRRT-MOVING-M-20B319E22A07",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/visualization/plotRRT_Moving.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "plotRRT_Moving",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5503,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "88a9f365061caaab8701cbd7bfa635c949138e20f90f44d01d2426720690b817",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-VISUALIZATION-PLOTRRT-MOVING-IMPROVED-M-3CC59F2F907B",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/visualization/plotRRT_Moving_Improved.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "createSimpleShip",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "createSimpleShipFaces",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "drawObstacles",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "plotRRT_Moving_Improved",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2065,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c118380a6f53053b308679e52261b9199b40b91c14ee31facd1ab578cc56b9c9",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-VISUALIZATION-PLOTRRT-STATIC-M-F2F0049F444D",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/visualization/plotRRT_Static.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "plotRRT_Static",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 23,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "610c79c11e6c9432d3a7585cbf8945c24007c3edd838ef749a270e2b2b09ebe4",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-PYTHON-INIT-PY-3D2DC99ACBC5",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/python/__init__.py",
+      "purpose": "Package: python.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "src/data_processing/data_processor/python/tests/test_data_loader_contracts.py",
+          "src/data_processing/data_processor/python/tests/test_main_window_time_ops.py",
+          "src/data_processing/data_processor/python/tests/test_nn_training_worker.py",
+          "src/data_processing/data_processor/python/tests/test_undo_redo.py",
+          "src/data_processing/data_processor/python/tests/test_vectorized_filter_engine_contracts.py",
+          "src/document_processing/pdf_renamer/tests/test_cache.py",
+          "src/financial_calculator/tests/test_financial_calculator_gui.py",
+          "src/financial_calculator/tests/test_financial_calculator_gui_contracts.py",
+          "src/function_generator/tests/test_function_generator_gui.py",
+          "src/inertia_calculator/tests/test_inertia_calculator_gui.py",
+          "src/movement_optimizer/tests/test_cli.py",
+          "src/movement_optimizer/tests/test_commands.py",
+          "src/movement_optimizer/tests/test_main_window.py",
+          "src/movement_optimizer/tests/test_session_state.py",
+          "src/movement_optimizer/tests/test_thread_safety.py",
+          "src/movement_optimizer/tests/test_undo_redo_menu.py",
+          "src/p1am_control_system/backend/tests/test_alarm_ack_engine.py",
+          "src/p1am_control_system/backend/tests/test_alarm_processing.py",
+          "src/p1am_control_system/backend/tests/test_backend_p1am_safety.py",
+          "src/p1am_control_system/backend/tests/test_data_capture_core.py",
+          "src/p1am_control_system/backend/tests/test_estop_reconnect.py",
+          "src/p1am_control_system/backend/tests/test_estop_shutdown_safe_state.py",
+          "src/p1am_control_system/backend/tests/test_estop_write_seams.py",
+          "src/p1am_control_system/backend/tests/test_historian_writer.py",
+          "src/p1am_control_system/backend/tests/test_modbus_client.py",
+          "src/p1am_control_system/backend/tests/test_modbus_estop.py",
+          "src/p1am_control_system/backend/tests/test_passthrough.py",
+          "src/p1am_control_system/backend/tests/test_poll_data_quality.py",
+          "src/p1am_control_system/backend/tests/test_poll_loop_cadence.py",
+          "src/p1am_control_system/backend/tests/test_poll_once.py",
+          "src/p1am_control_system/backend/tests/test_power_supply_integration.py",
+          "src/p1am_control_system/backend/tests/test_power_supply_persistence.py",
+          "src/p1am_control_system/backend/tests/test_safety_state_machine.py",
+          "src/p1am_control_system/backend/tests/test_scan_scheduler.py",
+          "src/p1am_control_system/backend/tests/test_temperature_integration.py",
+          "src/p1am_control_system/backend/tests/test_temperature_persistence.py",
+          "src/p1am_control_system/backend/tests/test_validation_guards_3745.py",
+          "src/p1am_control_system/backend/tests/test_ws_backpressure.py",
+          "src/pendulum_simulator/signal_test.py",
+          "src/pendulum_simulator/tests/test_controls_utils.py",
+          "src/pendulum_simulator/tests/test_controls_widget.py",
+          "src/pendulum_simulator/tests/test_controls_widget_base.py",
+          "src/pendulum_simulator/tests/test_controls_widget_golfer.py",
+          "src/pendulum_simulator/tests/test_controls_widget_triple.py",
+          "src/pendulum_simulator/tests/test_issue_fixes.py",
+          "src/pendulum_simulator/tests/test_main_window.py",
+          "src/pendulum_simulator/tests/test_overlay_state_sync.py",
+          "src/pendulum_simulator/tests/test_panel_builders.py",
+          "src/pendulum_simulator/tests/test_simulation_golfer_gpu.py",
+          "src/pendulum_simulator/tests/test_simulation_panel.py",
+          "src/pendulum_simulator/tests/test_simulation_result_base.py",
+          "src/pendulum_simulator/tests/test_torque_widgets.py",
+          "src/pid_generator/tests/test_pid_generator_gui.py",
+          "src/shared/python/ai/tests/test_access_policy.py",
+          "src/shared/python/chat/tests/test_chat.py",
+          "src/shared/python/chat/tests/test_chat_routing_lifecycle.py",
+          "src/shared/python/chat/tests/test_service_base.py",
+          "src/shared/python/chat/tests/test_workspace_bridge.py",
+          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
+          "src/shared/python/humanoid_character_builder/tests/test_inertia_calculator.py",
+          "src/shared/python/model_generation/tests/test_api_adapters.py",
+          "src/shared/python/model_generation/tests/test_contracts.py",
+          "src/shared/python/plot_theme/tests/test_plot_theme.py",
+          "src/shared/python/sidekick/tests/process_calculators/test_acid_gas_dewpoint_calculator.py",
+          "src/shared/python/sidekick/tests/process_calculators/test_multi_param_analysis.py",
+          "src/shared/python/sidekick/tests/process_calculators/test_psa_gui.py",
+          "src/shared/python/sidekick/tests/process_calculators/test_syngas_compression_engine.py",
+          "src/shared/python/sidekick/tests/process_calculators/test_wgs_reactor_calculator.py",
+          "src/shared/python/sidekick/tests/test_base_calculator_mixin.py",
+          "src/shared/python/sidekick/tests/test_calculator_state_mixin.py",
+          "src/shared/python/sidekick/tests/test_data_processor_engine_errors.py",
+          "src/shared/python/sidekick/tests/test_ode_solver.py",
+          "src/shared/python/sidekick/tests/test_selected_tab_panel.py",
+          "src/shared/python/sidekick/tests/test_state_manager.py",
+          "src/shared/python/sidekick/tests/test_tab_context_menu.py",
+          "src/shared/python/tests/test_contracts_shared.py",
+          "src/web_applications/calculator/tests/test_security_validation.py",
+          "tests/architecture/test_import_resolvability.py",
+          "tests/architecture/test_sidekick_external_imports_3316.py",
+          "tests/data_processing/data_processor/test_background_thread_errors.py",
+          "tests/data_processing/data_processor/test_ui_thread_workers.py",
+          "tests/document_processing/test_pdf_renamer_config_security.py",
+          "tests/folder_packer_pro/test_operations.py",
+          "tests/folder_tool/test_archive_ops.py",
+          "tests/folder_tool/test_backup_copy.py",
+          "tests/folder_tool/test_file_validation.py",
+          "tests/folder_tool/test_folder_ops.py",
+          "tests/folder_tool/test_folder_tool_analysis.py",
+          "tests/folder_tool/test_folder_tool_archive.py",
+          "tests/folder_tool/test_folder_tool_processing.py",
+          "tests/folder_tool/test_folder_tool_ui.py",
+          "tests/folder_tool/test_folder_tool_ui_processing.py",
+          "tests/p1am_control_system/test_calibrate_safe_shutdown.py",
+          "tests/p1am_control_system/test_desktop.py",
+          "tests/p1am_control_system/test_desktop_alarm_state.py",
+          "tests/p1am_control_system/test_desktop_hmi_annunciation.py",
+          "tests/p1am_control_system/test_desktop_tab_labels.py",
+          "tests/p1am_control_system/test_event_logger_filter_error_logging.py",
+          "tests/p1am_control_system/test_plc_write_confirmation.py",
+          "tests/project_packer_fixes/test_folder_packer_gui_lod.py",
+          "tests/python/test_performance_utils.py",
+          "tests/rate_of_closure/pyqt_flight_sample_inspector_probe.py",
+          "tests/rate_of_closure/pyqt_plot_point_inspector_probe.py",
+          "tests/rate_of_closure/pyqt_putting_sample_inspector_probe.py",
+          "tests/rate_of_closure/pyqt_simulation_scrub_probe.py",
+          "tests/rate_of_closure/pyqt_variation_visual_state_probe.py",
+          "tests/rate_of_closure/pyqt_visualization_tab_probe.py",
+          "tests/rate_of_closure/test_authority_state_security.py",
+          "tests/rate_of_closure/test_browser_companion_harness.py",
+          "tests/rate_of_closure/test_confidence_ellipsoid_mesh.py",
+          "tests/rate_of_closure/test_durable_ensemble_pyqt_workflow.py",
+          "tests/rate_of_closure/test_morris_authority_child.py",
+          "tests/rate_of_closure/test_morris_authority_host.py",
+          "tests/rate_of_closure/test_morris_authority_router.py",
+          "tests/rate_of_closure/test_morris_authority_runtime.py",
+          "tests/rate_of_closure/test_morris_pyqt_workflow.py",
+          "tests/rate_of_closure/test_morris_pyqt_workspace.py",
+          "tests/rate_of_closure/test_morris_ui_client.py",
+          "tests/rate_of_closure/test_pyqt_variation_probe_lifecycle.py",
+          "tests/rate_of_closure/test_rate_launch_pyqt_authority.py",
+          "tests/rate_of_closure/test_rate_launch_web_authority.py",
+          "tests/rate_of_closure/test_regional_ground_authority_transport.py",
+          "tests/rate_of_closure/test_regional_ground_loopback_submitter.py",
+          "tests/rate_of_closure/test_regional_ground_variation_request_io.py",
+          "tests/rate_of_closure/test_variation_complete_trial_record.py",
+          "tests/rate_of_closure/test_variation_ensemble_chunks.py",
+          "tests/rate_of_closure/test_variation_gui_execution.py",
+          "tests/rate_of_closure/test_variation_module_importability.py",
+          "tests/rate_of_closure/test_visual_layout_gui.py",
+          "tests/rate_of_closure/test_visual_layout_preferences.py",
+          "tests/rate_of_closure/test_web_companion_app.py",
+          "tests/shared/python/ai/test_ai_hardening_3179.py",
+          "tests/shared/python/ai/test_bitnet_adapter.py",
+          "tests/shared/python/ai/test_provider_config_registry.py",
+          "tests/shared/python/ai/test_rust_adapter.py",
+          "tests/shared/python/chat/test_chat_agent_label.py",
+          "tests/shared/python/chat/test_chat_import_boundaries.py",
+          "tests/shared/python/chat/test_export.py",
+          "tests/shared/python/chat/test_ollama_latency_tuning.py",
+          "tests/shared/python/chat/test_quick_bar.py",
+          "tests/shared/python/chat/test_quick_bar_widget.py",
+          "tests/shared/python/chat/test_router_error_logging.py",
+          "tests/shared/python/chat/test_router_factory.py",
+          "tests/shared/python/chat/test_terminal_protocol.py",
+          "tests/shared/python/chat/test_terminal_runtime.py",
+          "tests/shared/python/chat/test_websocket_protocol.py",
+          "tests/shared/python/file_watcher/test_file_watcher.py",
+          "tests/shared/python/logging_pkg/test_logging_pkg.py",
+          "tests/shared/python/model_generation/test_cli_main.py",
+          "tests/shared/python/model_generation/test_mesh_upload_hardening.py",
+          "tests/shared/python/model_generation/test_rate_limiter.py",
+          "tests/shared/python/model_generation/test_repository.py",
+          "tests/shared/python/model_generation/test_rest_api_routes.py",
+          "tests/shared/python/notes/test_integration.py",
+          "tests/shared/python/plot_engine/test_matplotlib_renderer.py",
+          "tests/shared/python/plot_engine/test_protocols.py",
+          "tests/shared/python/plot_engine/test_pyqt6_widget.py",
+          "tests/shared/python/plotting/test_identity_export.py",
+          "tests/shared/python/process_calculators/test_analysis_utils.py",
+          "tests/shared/python/sidekick/ui/test_tools_sidebar_runtime_tabs.py",
+          "tests/shared/python/test_contracts.py",
+          "tests/shared/python/theme/test_api.py",
+          "tests/shared/python/theme/test_colors.py",
+          "tests/shared/python/theme/test_icon_utils.py",
+          "tests/shared/python/theme/test_theme_manager.py",
+          "tests/shared/python/theme/test_typography.py",
+          "tests/shared/python/theme/test_zoom.py",
+          "tests/shared/python/ui/test_wave1_widget_state.py",
+          "tests/shared/python/ui/test_window_icon.py",
+          "tests/test_data_processor_tab_export.py",
+          "tests/test_folder_packer_pro.py",
+          "tests/test_gui_launcher_web.py",
+          "tests/test_launch_cli_output.py",
+          "tests/test_sidekick_public_api_stability.py",
+          "tests/test_src_package_import_contract.py",
+          "tests/tools/test_matlab_quality_utils.py",
+          "tests/unit/ai/integrations/github_mcp/test_integration.py",
+          "tests/unit/ai/mcp/test_client.py",
+          "tests/unit/ai/mcp/test_pool.py",
+          "tests/unit/ai/mcp/test_tool_registry_refresh.py",
+          "tests/unit/ai/peer_review/test_chat_integration.py",
+          "tests/unit/ai/peer_review/test_coordinator.py",
+          "tests/unit/ai/test_gemini_adapter.py",
+          "tests/unit/ai/test_peer_review.py",
+          "tests/unit/chat/export/test_copy_clipboard.py",
+          "tests/unit/chat/test_ai_settings_controller.py",
+          "tests/unit/chat/test_dock_widget_dropdowns.py",
+          "tests/unit/chat/test_mid_thread_switch.py",
+          "tests/unit/chat/test_workspace_command_handler.py",
+          "tests/unit/codemap/test_codemap_js_parser.py",
+          "tests/unit/codemap/test_codemap_markdown_parser.py",
+          "tests/unit/codemap/test_codemap_mcp_server.py",
+          "tests/unit/codemap/test_codemap_python_parser.py",
+          "tests/unit/codemap/test_codemap_rust_parser.py",
+          "tests/unit/codemap/test_codemap_ts_common.py",
+          "tests/unit/codemap/test_codemap_watcher.py",
+          "tests/unit/sidekick/agent/test_action_service.py",
+          "tests/unit/sidekick/agent/test_host_adapter.py",
+          "tests/unit/sidekick/agent/test_subtab_adapter.py",
+          "tests/unit/sidekick/conftest.py",
+          "tests/unit/sidekick/test_chat_settings.py",
+          "tests/unit/sidekick/test_notes_tab.py",
+          "tests/unit/sidekick/test_os_terminal_widget.py",
+          "tests/unit/sidekick/test_python_repl_cancel_namespace_3715.py",
+          "tests/unit/sidekick/test_python_repl_widget.py",
+          "tests/unit/sidekick/test_reporting_tab_context_gathering.py",
+          "tests/unit/sidekick/test_runtime_split_coverage.py",
+          "tests/unit/sidekick/test_runtime_tab_settings.py",
+          "tests/unit/sidekick/test_sidekick_ux_hardening.py",
+          "tests/unit/test_contracts.py",
+          "tests/vessel_drafter/test_dbc_lod.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "src/data_processing/data_processor/python/tests/test_data_loader_contracts.py",
+          "src/data_processing/data_processor/python/tests/test_vectorized_filter_engine_contracts.py",
+          "src/financial_calculator/tests/test_financial_calculator_gui_contracts.py",
+          "src/p1am_control_system/backend/tests/test_validation_guards_3745.py",
+          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
+          "src/shared/python/model_generation/tests/test_contracts.py",
+          "src/shared/python/tests/test_contracts_shared.py",
+          "src/web_applications/calculator/tests/test_security_validation.py",
+          "tests/folder_tool/test_file_validation.py",
+          "tests/shared/python/test_contracts.py",
+          "tests/test_src_package_import_contract.py",
+          "tests/unit/test_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2595,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9b3f0281ece8e41cc7b2371ae29358fe6fc1718297799340eaae27a217757d4a",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-PYTHON-SETUP-PY-AB2D40B84F8D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/python/setup.py",
+      "purpose": "Setup script for Star Wars RRT Path Planner - Python Version",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://github.com/your-repo/star-wars-rrt-planner"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "read_readme",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "read_requirements",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "benchmarks/test_data_processor_baseline.py",
+          "src/data_processing/data_processor/python/tests/conftest.py",
+          "src/document_processing/pdf_renamer/tests/conftest.py",
+          "src/media_processing/video_processor/apps/web/test/setup.ts",
+          "src/movement_optimizer/tests/conftest.py",
+          "src/p1am_control_system/backend/tests/_power_supply_helpers.py",
+          "src/p1am_control_system/backend/tests/test_database.py",
+          "src/p1am_control_system/backend/tests/test_read_auth.py",
+          "src/p1am_control_system/backend/tests/test_temperature_controller.py",
+          "src/p1am_control_system/backend/tests/test_temperature_models.py",
+          "src/p1am_control_system/frontend/src/test/setup.ts",
+          "src/pendulum_simulator/tests/test_side_panel_tabs.py",
+          "src/rate_of_closure/web/src/test/setup.ts",
+          "src/rotation_converter/web/src/test/setup.ts",
+          "src/rrt_path_planner/matlab/tests/test_system.m",
+          "src/shared/python/plot_theme/tests/test_plot_theme.py",
+          "src/shared/python/programmatic_pid/tests/test_pipeline_e2e.py",
+          "src/shared/python/sidekick/tests/conftest.py",
+          "src/shared/python/sidekick/tests/test_launcher_factory.py",
+          "src/shared/python/swing_sim/flight/tests/test_ground_transfer.py",
+          "src/shared/python/swing_sim/flight/tests/test_parity_rust_flight.py",
+          "src/web_applications/urdf_viewer/tests/conftest.py",
+          "src/web_applications/urdf_viewer/tests/test_urdf_viewer.py",
+          "tests/data_processor_io/test_rust_engine_contract.py",
+          "tests/ops/test_release_workflow.py",
+          "tests/programmatic_pid/test_controls.py",
+          "tests/programmatic_pid/test_equipment.py",
+          "tests/programmatic_pid/test_instruments.py",
+          "tests/programmatic_pid/test_streams.py",
+          "tests/programmatic_pid/test_title_block.py",
+          "tests/rate_of_closure/pyqt_flight_sample_inspector_probe.py",
+          "tests/rate_of_closure/pyqt_plot_point_inspector_probe.py",
+          "tests/rate_of_closure/pyqt_putting_sample_inspector_probe.py",
+          "tests/rate_of_closure/pyqt_simulation_scrub_probe.py",
+          "tests/rate_of_closure/test_ball_setup.py",
+          "tests/rate_of_closure/test_ball_setup_parity.py",
+          "tests/rate_of_closure/test_morris_authority_child.py",
+          "tests/rate_of_closure/test_morris_pyqt_workspace.py",
+          "tests/rate_of_closure/test_morris_workspace.py",
+          "tests/rate_of_closure/test_visualization_tab_manifest.py",
+          "tests/scientific_modeling/test_star_wars_rrt_perf.py",
+          "tests/shared/python/ai/test_onnx_preflight.py",
+          "tests/shared/python/process_calculators/test_acid_gas_dewpoint_edge_cases.py",
+          "tests/shared/python/process_calculators/test_financial_calculator_edge_cases.py",
+          "tests/shared/python/process_calculators/test_syngas_compression_edge_cases.py",
+          "tests/shared/python/process_calculators/test_syngas_water_calculator_edge_cases.py",
+          "tests/shared/python/process_calculators/test_syngas_water_overflow.py",
+          "tests/shared/python/signal_toolkit/test_widget_mixins.py",
+          "tests/test_debug_utils.py",
+          "tests/test_dry_compliance.py",
+          "tests/test_integration_test_helpers.py",
+          "tests/test_path_setup.py",
+          "tests/test_test_utils.py",
+          "tests/unit/sidekick/test_sidekick_f4_collaborators.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/data_processor_io/test_rust_engine_contract.py",
+          "tests/scientific_modeling/test_star_wars_rrt_perf.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 20,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b14c7ad8b03711b2eaa7f57c2d9b7415926e5def55d0595bca657635ba36468e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-PYTHON-SRC-INIT-PY-0A2867ECAA55",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/python/src/__init__.py",
+      "purpose": "Package: src.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 33902,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5446392c6b4a82d677922792d2164992833eeb80211bb0493665ee855c0b7f98",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-PYTHON-SRC-STAR-WARS-RRT-PY-DC467F6778ED",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/python/src/star_wars_rrt.py",
+      "purpose": "Asteroid-field RRT path planner with optional 3D visualization.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Obstacle",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PathMetrics",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PursuitAI",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RRTPlanner",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Ship",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StarWarsRRTApp",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StarWarsRenderer",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "distance_to_obstacle_surface",
+            "signature": "point: npt.NDArray[np.float64], obstacle: Obstacle"
+          },
+          {
+            "kind": "function",
+            "name": "generate_asteroid_field",
+            "signature": "bounds: npt.NDArray[np.float64], num_obstacles: int, *, rng: np.random.Generator | None=None, reserved_points: list[npt.NDArray[np.float64]] | None=None, clearance: float=0.0"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/rrt_path_planner/python/tests/test_star_wars_rrt.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "bar",
+          "deg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/rrt_path_planner",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

@@ -1,0 +1,482 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 331,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "412a4960d398289a620e1a469a88400b53e6c47cd1214fca478deff24b99ec27",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-DISTRIBUTION-INIT-PY-FC470FBD74F6",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web_distribution/__init__.py",
+      "purpose": "Verified immutable web-release assets for Rate of Closure.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "ResolvedWebAsset",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ResolvedWebBundle",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "resolve_packaged_web_assets",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "resolve_web_assets",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6312,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8eb42902123ab337a9c1fe6b3b3ae20568dbab00f53792b7183db282482ac87d",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-DISTRIBUTION-ASSET-MANIFEST-PY-FFAB0121C5FF",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web_distribution/asset_manifest.py",
+      "purpose": "Strict v1 manifest contract for built Rate of Closure web assets.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "WebAssetManifest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WebAssetRecord",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_WEB_ASSETS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_WEB_ASSET_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_WEB_ASSET_MANIFEST_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_WEB_BUNDLE_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "WEB_ASSET_MANIFEST_NAME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "WEB_ASSET_MANIFEST_SCHEMA",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ASSET_FIELDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_COMMIT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_HEX_64",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_MEDIA_TYPES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_PORTABLE_COMPONENT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ROOT_FIELDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_WINDOWS_RESERVED",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "parse_web_asset_manifest",
+            "signature": "source: bytes"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_web_asset_distribution.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 5674,
+      "classification": "calculation",
+      "classification_basis": "path-marker:solver",
+      "content_sha256_lf": "dd917fa15cd85e5e0d0c017b05cb7dc3068f4f970d7e46978c1ad7d3a05ef490",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-DISTRIBUTION-ASSET-RESOLVER-PY-B92F2C6B6E4D",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web_distribution/asset_resolver.py",
+      "purpose": "Fail-closed immutable resolution of one declared web release bundle.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ResolvedWebAsset",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ResolvedWebBundle",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_REPARSE_POINT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "resolve_web_assets",
+            "signature": "root: Path, manifest_source: bytes"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/browser_companion_harness.py",
+          "tests/rate_of_closure/test_web_asset_distribution.py",
+          "tests/rate_of_closure/test_web_companion_app.py",
+          "tests/rate_of_closure/test_web_companion_bundle.py",
+          "tests/rate_of_closure/test_web_companion_runtime.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 866,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "dbde40d5d856eec199edbcbf912cc8d8b38b73f782cce9276e140fd897e2305f",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-DISTRIBUTION-PACKAGE-ASSETS-PY-8C02E82B136B",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web_distribution/package_assets.py",
+      "purpose": "Resolve the installed Rate of Closure web distribution from package data.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "packaged_web_root",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "resolve_packaged_web_assets",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2924,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "47b6d356343f3bdcab0d144be834064ff97f97baaad3d5f51e1ac6d3619c39fd",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-DISTRIBUTION-RUNTIME-DESCRIPTOR-PY-58716E9D7E08",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web_distribution/runtime_descriptor.py",
+      "purpose": "Strict packaged-web runtime descriptor contract.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "WebRuntimeDescriptor",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_WEB_RUNTIME_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "WEB_AUTHORITY_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "WEB_RUNTIME_ELEMENT_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "WEB_RUNTIME_NAME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "WEB_RUNTIME_SCHEMA",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_COMMIT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_COMPANION_FIELDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_STATIC_FIELDS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "parse_web_runtime_descriptor",
+            "signature": "source: bytes"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_web_asset_distribution.py",
+          "tests/rate_of_closure/test_web_companion_bundle.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 733,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9bf558f88219cd5d0b1a79f22a3a1dd0b6e3cfe0d409810fe1258140f4e4fcfe",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-DISTRIBUTION-VERIFY-INSTALL-PY-C3A11EA4D55D",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web_distribution/verify_install.py",
+      "purpose": "Clean-install verification entry point for the packaged web distribution.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/rate_of_closure/web_distribution",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}
