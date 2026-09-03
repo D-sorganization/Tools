@@ -16,6 +16,11 @@ GUI_INFO = {
         "dependencies": ["PyQt6"],
         "settings_app": "P1AMControlSystem",
     },
+    "web": {
+        "path": "frontend",
+        "port": 3002,
+        "auto_open_browser": True,
+    },
 }
 
 

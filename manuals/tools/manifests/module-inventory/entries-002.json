@@ -2,98 +2,6 @@
   "authority": "D-sorganization/Tools",
   "entries": [
     {
-      "authority_status": "provisional",
-      "bytes_lf": 11760,
-      "classification": "calculation",
-      "classification_basis": "path-marker:filter",
-      "content_sha256_lf": "939c03c7cd917488de962493c7994b60cd85fc808a99fe9c55a762065a2b2905",
-      "family": "data-processing-calculation",
-      "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-VECTORIZED-FILTER-TIME-DOMAIN-PY-39221E73AD27",
-      "language": "python",
-      "maintainer": "Data processing maintainers",
-      "path": "src/data_processing/data_processor/python/data_processor/vectorized_filter_time_domain.py",
-      "purpose": "Time-domain filter kernels for the vectorized filter engine.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "apply_butterworth_vectorized",
-            "signature": "signal: pd.Series, params: dict[str, Any], safe_get_param: ParamGetter, calculate_sampling_rate: SamplingRateCalculator, logger: Logger"
-          },
-          {
-            "kind": "function",
-            "name": "apply_gaussian_vectorized",
-            "signature": "signal: pd.Series, params: dict[str, Any], safe_get_param: ParamGetter, logger: Logger"
-          },
-          {
-            "kind": "function",
-            "name": "apply_hampel_fallback",
-            "signature": "signal: pd.Series, params: dict[str, Any], safe_get_param: ParamGetter"
-          },
-          {
-            "kind": "function",
-            "name": "apply_hampel_vectorized",
-            "signature": "signal: pd.Series, params: dict[str, Any], safe_get_param: ParamGetter, logger: Logger"
-          },
-          {
-            "kind": "function",
-            "name": "apply_median_vectorized",
-            "signature": "signal: pd.Series, params: dict[str, Any], safe_get_param: ParamGetter, logger: Logger"
-          },
-          {
-            "kind": "function",
-            "name": "apply_moving_average_vectorized",
-            "signature": "signal: pd.Series, params: dict[str, Any], safe_get_param: ParamGetter, logger: Logger"
-          },
-          {
-            "kind": "function",
-            "name": "apply_savgol_vectorized",
-            "signature": "signal: pd.Series, params: dict[str, Any], safe_get_param: ParamGetter, logger: Logger"
-          },
-          {
-            "kind": "function",
-            "name": "apply_zscore_vectorized",
-            "signature": "signal: pd.Series, params: dict[str, Any], safe_get_param: ParamGetter, logger: Logger"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "N"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
       "authority_status": "not-applicable",
       "bytes_lf": 600,
       "classification": "non-calculation",
@@ -7011,10 +6919,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 528,
+      "bytes_lf": 709,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b82608b2a3e051143dc654b2389b57d3d57653a6006db98d5b30e79e37cf22fb",
+      "content_sha256_lf": "9350f7d3c15bdc39ffd8b2d704fb4b6ca6f9d5a3862e9a2f4e6d164d2f82bf25",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-FOLDER-TOOL-GUI-REGISTRATION-PY-E3DB198A98AF",
       "language": "python",
@@ -13764,6 +13672,59 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3232,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "378685dc4b07fd3db1d6a22a4b31cf8658297e3b7476c571514353c40f348f9c",
+      "family": "media-processing-non-calculation",
+      "id": "TOOLS-MODULE-SRC-MEDIA-PROCESSING-VIDEO-PROCESSOR-APPS-WEB-COMPONENTS-ANNOTATIONS-ANNOTATIONEXPORT-TSX-E53F8BF413E0",
+      "language": "typescript-react",
+      "maintainer": "Media processing maintainers",
+      "path": "src/media_processing/video_processor/apps/web/components/annotations/AnnotationExport.tsx",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "AnnotationExportComponent",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
         "validation_paths": []
       }
     }

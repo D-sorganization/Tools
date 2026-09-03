@@ -13,6 +13,17 @@
       }
     },
     {
+      "id": "data_explorer",
+      "name": "Data Explorer",
+      "description": "Interactive workbench for browsing simulation datasets",
+      "category": "Data Processing",
+      "surfaces": {
+        "pyqt6": true,
+        "web": false,
+        "legacy_gui": false
+      }
+    },
+    {
       "id": "data_processor",
       "name": "Data Processor",
       "description": "Signal processing and time-series data analysis tool",
@@ -140,7 +151,18 @@
       "category": "Mathematics",
       "surfaces": {
         "pyqt6": true,
-        "web": false,
+        "web": true,
+        "legacy_gui": false
+      }
+    },
+    {
+      "id": "p1am_control_system",
+      "name": "P1AM HMI Control System",
+      "description": "HMI Control System for P1AM-100 PLC",
+      "category": "Industrial",
+      "surfaces": {
+        "pyqt6": false,
+        "web": true,
         "legacy_gui": false
       }
     },
@@ -149,6 +171,17 @@
       "name": "PDF Renamer",
       "description": "Intelligent PDF File Renaming Tool",
       "category": "Development Tools",
+      "surfaces": {
+        "pyqt6": true,
+        "web": false,
+        "legacy_gui": false
+      }
+    },
+    {
+      "id": "pendulum_simulator",
+      "name": "Pendulum Simulator",
+      "description": "Multi-link pendulum dynamics with parameter sweeps",
+      "category": "Mathematics",
       "surfaces": {
         "pyqt6": true,
         "web": false,
@@ -217,7 +250,7 @@
       "category": "Thermodynamics",
       "surfaces": {
         "pyqt6": true,
-        "web": false,
+        "web": true,
         "legacy_gui": false
       }
     },

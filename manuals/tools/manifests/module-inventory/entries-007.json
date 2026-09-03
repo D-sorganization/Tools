@@ -3,523 +3,6 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6927,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "bf2e95d0e3b043e4ad2c7d52239f5155e2f151de3ce7bc70bf1c4cfeb603fa23",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-LAUNCH-MONITOR-STROKES-GAINED-BASELINE-PY-9F3D3E5DD451",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/launch_monitor_strokes_gained_baseline.py",
-      "purpose": "Validation authority for versioned expected-strokes baseline artifacts.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "BaselineState",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "StrokesGainedBaseline",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CONTRACT_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "baseline_table_hash",
-            "signature": "states: list[dict[str, object]]"
-          },
-          {
-            "kind": "function",
-            "name": "load_strokes_gained_baseline",
-            "signature": "path: Path"
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/test_launch_monitor_provenance_and_unavailable.py",
-          "tests/rate_of_closure/test_launch_monitor_strokes_gained.py",
-          "tests/shared/python/launch_monitor/test_conformance_bundle.py",
-          "tests/shared/python/launch_monitor/test_strokes_gained_contract.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "tests/shared/python/launch_monitor/test_strokes_gained_contract.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 9671,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "43a5235ab5b46eb5f0ee846421e20d0e4b796151bd1111f130f27234cdbae3e6",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-LAUNCH-MONITOR-V2-CLIENT-PY-4C8A59CE28C6",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/launch_monitor_v2_client.py",
-      "purpose": "Validated HTTP client seam for canonical UpstreamDrift analytics contracts.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "AnalysisResponseV2",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ResidualAvailability",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "StrokesGainedResponseV1",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "UpstreamV2Client",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "validate_strokes_gained_response",
-            "signature": "value: object"
-          },
-          {
-            "kind": "function",
-            "name": "validate_v2_response",
-            "signature": "value: object"
-          },
-          {
-            "kind": "re-export",
-            "name": "CANONICAL_DATASET_METRICS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CanonicalDatasetReference",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "DATASET_JOB_CONTRACT_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "MAX_CANONICAL_INLINE_RECORDS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "MAX_DATASET_JOB_PAGE_SIZE",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PLAYER_COVARIATION_CONTRACT_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "build_dataset_job_request",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "build_player_covariation_payload",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "load_canonical_dataset_reference",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "validate_dataset_job_page",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "validate_dataset_job_status",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "validate_player_covariation_response",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/test_launch_monitor_conformance_golden.py",
-          "tests/rate_of_closure/test_launch_monitor_v2_client.py",
-          "tests/rate_of_closure/test_launch_monitor_workspace.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 14056,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8f2ff6be44a6763407e952c0573465086fe51635f7b7d42d9d68301fcd353d59",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-LAUNCH-MONITOR-WORKSPACE-PY-7C09AA564695",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/launch_monitor_workspace.py",
-      "purpose": "Reference-only project and export seam for launch-monitor analytics.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "AnalysisSelection",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "DatasetReference",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "LaunchMonitorProject",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PlayerIdentityBinding",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CONTRACT_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_player_covariation_request",
-            "signature": "project: LaunchMonitorProject"
-          },
-          {
-            "kind": "function",
-            "name": "dataset_reference_for_frame",
-            "signature": "frame: pd.DataFrame, source_name: str"
-          },
-          {
-            "kind": "function",
-            "name": "export_analysis_bundle",
-            "signature": "destination: str | Path, project: LaunchMonitorProject, result: dict[str, Any], backing_rows: pd.DataFrame, authorization: WorkspaceExportAuthorization | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "load_project",
-            "signature": "source: str | Path"
-          },
-          {
-            "kind": "function",
-            "name": "load_project_versioned",
-            "signature": "source: str | Path"
-          },
-          {
-            "kind": "function",
-            "name": "save_project",
-            "signature": "destination: str | Path, project: LaunchMonitorProject"
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/test_launch_monitor_forbidden_identity.py",
-          "tests/rate_of_closure/test_launch_monitor_performance.py",
-          "tests/rate_of_closure/test_launch_monitor_workspace.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 11142,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e62804bf5e39a6b5ca5b8c170ad088918c6639a8b742c427e33a5a6dabd9a37f",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-LAUNCH-MONITOR-WORKSPACE-V3-PY-F8163B751655",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/launch_monitor_workspace_v3.py",
-      "purpose": "Portable, row-free launch-monitor workspace v3 persistence and export.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "WorkspaceExportAuthorization",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "WorkspaceProject",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SCHEMA_ID",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_CLASSIFICATIONS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_ROW_KEYS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "create_workspace_bundle",
-            "signature": "output_directory: str | Path, project: Mapping[str, Any], backing_rows: Any=(), authorization: WorkspaceExportAuthorization | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "parse_workspace_project",
-            "signature": "value: str | bytes | Mapping[str, Any]"
-          },
-          {
-            "kind": "function",
-            "name": "serialize_workspace_project",
-            "signature": "project: Mapping[str, Any]"
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/test_launch_monitor_forbidden_identity.py",
-          "tests/rate_of_closure/test_launch_monitor_provenance_and_unavailable.py",
-          "tests/rate_of_closure/test_launch_monitor_workspace.py",
-          "tests/rate_of_closure/test_launch_monitor_workspace_v3.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 565,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3115ae96acbfd4f7f2469b2175c614b05deba01ffc03ad25441da764e1cedac8",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-LAUNCH-PYQT6-PY-0C554127EC22",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/launch_pyqt6.py",
-      "purpose": "Standalone PyQt6 launcher for Rate of Closure Impact Explorer.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [
-          "tests/folder_tool/test_launch_pyqt6.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 991,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ccf56a337f0bc65d5e8dcc257b868719142acf71ae67c8308ec4e88412693f5d",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-LAUNCH-WEB-PY-4E076F32983F",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/launch_web.py",
-      "purpose": "Launch the Rate of Closure Impact Explorer React web application.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "_REPO_ROOT",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "main",
-            "signature": ""
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
       "bytes_lf": 12316,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -13571,6 +13054,394 @@
           "m/s",
           "mm",
           "rpm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3149,
+      "classification": "calculation",
+      "classification_basis": "path-marker:solver",
+      "content_sha256_lf": "eb8b184eb9b4db7c97d3b5ad6869ad0bfd0bc5127d9f969d968eb70981c44335",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-SOLVER-WORKER-PY-BD0165CC89B5",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/ui/pyqt6/solver_worker.py",
+      "purpose": "QThread worker running the impact-parameter solver off the UI thread.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SolverWorker",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_solver_gui.py"
+        ],
+        "unit_mentions": [
+          "bar",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 16042,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d9ba02c91b640c01528f688d95c482efe44e4212a57932e790df9d42cfe69ce2",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-SPATIAL-TARGET-PANEL-PY-D8F6668F242A",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/ui/pyqt6/spatial_target_panel.py",
+      "purpose": "Accessible editor for the canonical versioned three-dimensional target.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SpatialTargetPanel",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_spatial_target_gui.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6245,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "85d859e542138c498829c801a95600f9a21b9ca515ef089e7243313771a52454",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-SPATIAL-TARGET-PANEL-ACCESS-PY-5829D64C4288",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/ui/pyqt6/spatial_target_panel_access.py",
+      "purpose": "Narrow public accessors for the spatial-target editor.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SpatialTargetPanelAccessMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3588,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d5cc03aa6491337c6d3b1f650737e38ef7e68245cbbd2885db3fe19034c13359",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-SPATIAL-TARGET-PANEL-TEXT-PY-AE5C737BC01C",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/ui/pyqt6/spatial_target_panel_text.py",
+      "purpose": "Text, labels, and scalar validation for the spatial-target editor.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "COORDINATE_LABELS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_GROUND_SOURCE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FRAME_ITEMS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "KIND_ITEMS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TOLERANCE_ITEMS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "finite_number",
+            "signature": "edit: QLineEdit, label: str, *, positive: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "miss_summary",
+            "signature": "miss: TargetMiss, *, landing: bool"
+          },
+          {
+            "kind": "function",
+            "name": "target_summary",
+            "signature": "target: SpatialTarget"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7598,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7b03055d0ef5f85f9b4b0f21f90a43a7d7cc36ad00dff0af7ecbdfd29553c877",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-SPATIAL-TARGET-RENDERING-PY-0EBFF7482B55",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/ui/pyqt6/spatial_target_rendering.py",
+      "purpose": "Matplotlib projection painters for canonical spatial targets.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "draw_spatial_target_3d",
+            "signature": "axes: Any, target: SpatialTarget"
+          },
+          {
+            "kind": "function",
+            "name": "draw_spatial_target_side",
+            "signature": "axes: Any, target: SpatialTarget"
+          },
+          {
+            "kind": "function",
+            "name": "draw_spatial_target_top",
+            "signature": "axes: Any, target: SpatialTarget"
+          },
+          {
+            "kind": "function",
+            "name": "spatial_target_extents",
+            "signature": "target: SpatialTarget"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 6005,
+      "classification": "calculation",
+      "classification_basis": "path-marker:trajectory",
+      "content_sha256_lf": "3412e052862ad88ed63471cd1e6d631fb847e37a265041edb1705cadace8e389",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-SPATIAL-TARGET-TRAJECTORY-PY-2A02EF2C0C7B",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/ui/pyqt6/spatial_target_trajectory.py",
+      "purpose": "UI-facing target residual selection for a completed flight trajectory.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "LandingSurfaceResolutionError",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "trajectory_target_miss",
+            "signature": "target: SpatialTarget, positions_m: np.ndarray"
+          },
+          {
+            "kind": "function",
+            "name": "validate_landing_surface",
+            "signature": "target: SpatialTarget"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_spatial_target_gui.py"
+        ],
+        "unit_mentions": [
+          "N",
           "s"
         ],
         "validation_paths": []

@@ -34,70 +34,66 @@ are shared with other D-sorganization repositories.
 
 ## Tool catalog
 
-All graphical applications below launch from `python UnifiedToolsLauncher.py`.
-The launcher groups them by the same categories used here.
+Every graphical application below is a launcher tile: `python UnifiedToolsLauncher.py`
+reads `tools.json`, and `python launch.py --list` reads the same registry. Both are
+generated from the one source of truth, the `GUI_INFO` dict in each tool's
+`src/<tool>/gui_registration.py`, by `python scripts/generate_tools_json.py`
+(`--check` in docs governance keeps this table, `tools.json` and
+`tool_surface_contract.json` in step). Do not edit the table by hand.
 
-### Process and mechanical engineering
+<!-- tool-catalog:start -->
+| Tool | Category | Surfaces | Maturity | What it does | Help |
+| ---- | -------- | -------- | -------- | ------------ | ---- |
+| `multi_param_analysis` | Analysis | PyQt6 | stable | Run multi-parameter sensitivity analysis with grid evaluation | [docs](src/multi_param_analysis/README.md) |
+| `c3d_viewer` | Biomechanics | PyQt6 | stable | View and analyze C3D motion capture files | [docs](src/c3d_viewer/README.md) |
+| `lower_body_model` | Biomechanics | PyQt6 | stable | Simulate and inspect lower-body MuJoCo kinematics and controls | — |
+| `rate_of_closure` | Biomechanics | PyQt6 + Web | stable | Quantifies how a rotating clubhead's impact-point delivery differs from the tracked reference point (COM or geometric center): path deviation, attack-angle change, face rotation during contact, and the launch-monitor geometric-center question, with an animated 3D clubhead and rate sweeps. | [docs](src/rate_of_closure/README.md) |
+| `data_explorer` | Data Processing | PyQt6 | stable | Interactive workbench for browsing simulation datasets | [docs](src/data_explorer/gui.py) |
+| `data_processor` | Data Processing | PyQt6 + Web | stable | Signal processing and time-series data analysis tool | [docs](src/data_processing/data_processor/README.md) |
+| `folder_packer_pro` | Development Tools | PyQt6 | stable | Professional Project Archiving and Distribution Tool | [docs](src/folder_packer_pro/README.md) |
+| `folder_tool` | Development Tools | PyQt6 | experimental | Directory Management Utility | [docs](src/folder_tool/README.md) |
+| `pdf_renamer` | Development Tools | PyQt6 | stable | Intelligent PDF File Renaming Tool | [docs](src/document_processing/pdf_renamer/README.md) |
+| `pid_generator` | Engineering Drafting | PyQt6 | stable | Generate P&ID drawings from YAML specifications (DXF + SVG output) | [docs](src/pid_generator/README.md) |
+| `p1am_control_system` | Industrial | Web | stable | HMI Control System for P1AM-100 PLC | — |
+| `ode_solver` | Mathematics | PyQt6 + Web | stable | Solve systems of ordinary differential equations symbolically | [docs](src/ode_solver/README.md) |
+| `pendulum_simulator` | Mathematics | PyQt6 | experimental | Multi-link pendulum dynamics with parameter sweeps | [docs](src/pendulum_simulator/README.md) |
+| `video_processor` | Media Processing | Web | stable | Video file format conversion, frame extraction, and media analysis | [docs](src/media_processing/video_processor/README.md) |
+| `video_analyzer` | Motion Capture | PyQt6 | stable | Video-based motion analysis with pose tracking | — |
+| `movement_optimizer` | Optimization | PyQt6 | stable | Optimize barbell biomechanics trajectories with Lagrangian dynamics, swingset, and chain models | [docs](src/movement_optimizer/README.md) |
+| `financial_calculator` | Process Simulation | PyQt6 + Web | stable | Comprehensive financial modeling for plant operations | [docs](src/financial_calculator/README.md) |
+| `pressure_drop_calculator` | Process Simulation | PyQt6 + Web | stable | Pipe flow pressure drop analysis with multiple friction methods | [docs](src/pressure_drop_calculator/README.md) |
+| `vessel_drafter` | Process Simulation | PyQt6 | stable | Refractory vessel design with STEP, STL, BREP, and GLTF export | [docs](src/vessel_drafter/README.md) |
+| `humanoid_builder_gui` | Robotics | PyQt6 | stable | Build parametric humanoid characters with anthropometric calculations | [docs](src/humanoid_builder_gui/README.md) |
+| `inertia_calculator` | Robotics | PyQt6 | stable | Calculate and validate inertia tensors for rigid bodies | [docs](src/inertia_calculator/README.md) |
+| `rotation_converter` | Robotics | PyQt6 + Web | stable | Comprehensive rotation and rigid-body transform converter with interactive 3D visualization. Supports quaternions, Euler angles, rotation matrices, axis-angle, SE(3), twists, screw axes, and frame-aware transforms. | [docs](src/rotation_converter/README.md) |
+| `urdf_builder_gui` | Robotics | PyQt6 | stable | Generate parametric URDF models for robotics applications | [docs](src/urdf_builder_gui/README.md) |
+| `function_generator` | Signal Processing | PyQt6 + Web | stable | Generate and visualize various waveforms (sine, square, triangle, etc.) | [docs](src/function_generator/README.md) |
+| `signal_processing_studio` | Signal Processing | PyQt6 | stable | Unified signal processing: waveform generation, analysis, filtering, curve fitting | [docs](src/signal_processing_studio/README.md) |
+| `steam_engine_calculator` | Thermodynamics | PyQt6 + Web | stable | Calculate thermodynamic properties of steam/water | [docs](src/steam_engine_calculator/README.md) |
+| `flow_rate_converter` | Utilities | PyQt6 | stable | Convert between mass, molar, and volumetric flow rate units | [docs](src/flow_rate_converter/README.md) |
+<!-- tool-catalog:end -->
 
-| Tool                       | What it does                                                             |
-| -------------------------- | ------------------------------------------------------------------------ |
-| `pressure_drop_calculator` | Single- and two-phase pipe pressure drop analysis with fitting losses    |
-| `flow_rate_converter`      | Conversion between mass, volumetric, and standard-condition flow units   |
-| `steam_engine_calculator`  | Steam cycle and reciprocating engine performance calculations            |
-| `inertia_calculator`       | Inertia tensors and mass properties for composite rigid bodies           |
-| `vessel_drafter`           | Pressure vessel geometry and drafting output                             |
-| `pid_generator`            | P&ID diagram generation from YAML specifications, via `programmatic_pid` |
-| `financial_calculator`     | Project economics: cash flow, payback, and rate-of-return analysis       |
-| `p1am_control_system`      | P1AM programmable controller configuration and SCADA support tooling     |
+Maturity: `stable` launches headless-importable code with tests; `beta` is
+usable but changing; `experimental` means the tool module does not import
+cleanly in a headless environment or is not yet wired end to end.
 
-### Signal, data, and documents
+### Library and CLI packages (not launcher tiles)
 
-| Tool                       | What it does                                                              |
-| -------------------------- | ------------------------------------------------------------------------- |
-| `signal_processing_studio` | Filtering, spectral analysis, and transform workbench                     |
-| `function_generator`       | Waveform and test-signal generation on the shared `signal_toolkit` engine |
-| `data_processing`          | Time-series import, cleaning, and analysis pipeline                       |
-| `data_explorer`            | Interactive workbench for browsing simulation datasets                    |
-| `document_processing`      | PDF metadata extraction and rule-based renaming                           |
-| `media_processing`         | Audio and video processing utilities                                      |
-| `video_analyzer`           | Frame-accurate video review with golf swing analysis overlays             |
+These packages ship code or a command line but no launcher-registered GUI:
 
-### Robotics and biomechanics
-
-| Tool                   | What it does                                                          |
-| ---------------------- | --------------------------------------------------------------------- |
-| `urdf_builder_gui`     | Parametric URDF authoring for arbitrary robot chains                  |
-| `humanoid_builder_gui` | Anthropometric humanoid generation with URDF export                   |
-| `movement_optimizer`   | Sagittal-plane trajectory optimization by Lagrangian inverse dynamics |
-| `lower_body_model`     | Lower-limb multibody model and analysis API                           |
-| `c3d_viewer`           | C3D motion-capture file inspection and playback                       |
-| `rate_of_closure`      | Six-degree-of-freedom clubhead impact delivery analysis               |
-| `rrt_path_planner`     | Rapidly-exploring random tree motion planning                         |
-
-### Simulation and numerical work
-
-| Tool                   | What it does                                                        |
-| ---------------------- | ------------------------------------------------------------------- |
-| `ode_solver`           | Symbolic and numeric solution of ODE systems                        |
-| `pendulum_simulator`   | Multi-link pendulum dynamics with parameter sweeps                  |
-| `optimizer_gui`        | General-purpose numerical optimization front end                    |
-| `multi_param_analysis` | Multi-parameter sweeps and sensitivity studies                      |
-| `solar_system_model`   | N-body orbital mechanics simulation and visualization               |
-| `rotation_converter`   | Conversion between Euler angles, quaternions, and rotation matrices |
-
-### Project and file management
-
-| Tool                | What it does                                                           |
-| ------------------- | ---------------------------------------------------------------------- |
-| `folder_tool`       | Bulk file combining, organization, deduplication, and archiving        |
-| `folder_packer_pro` | Project packing with AES-256 encryption and syntax-highlighted preview |
-| `project_packer`    | Directory packing and unpacking for transfer and archival              |
+| Package | What it does |
+| ------- | ------------ |
+| `rrt_path_planner` | Rapidly-exploring random tree motion planning (library + scripts) |
+| `project_packer` | Directory packing and unpacking for transfer and archival (standalone script, `folder_packer_gui.py`) |
+| `solar_system_model` | N-body orbital mechanics simulation and visualization (scripts) |
+| `shared/python/*` | Libraries shared across the repository fleet (see `src/shared/python/README.md`) |
 
 ### Browser-based utilities
 
 Served from `src/web_applications/`: a scientific `calculator`, a
 `unit_converter`, and a three-dimensional `urdf_viewer`. Each runs from a static
-file server with no Python runtime required.
+file server with no Python runtime required, and is deliberately not a launcher
+tile (`src/web_applications/gui_registration.py` records `web: False`).
 
 ## Command-line entry points
 
@@ -195,7 +191,7 @@ Tools/
 │   ├── <tool_name>/          One directory per application (see catalog above)
 │   ├── shared/python/        Libraries shared across the repository fleet
 │   ├── web_applications/     Browser-based utilities
-│   └── python/src/core/      Plugin system and launcher infrastructure
+│   └── python/src/core/      Legacy plugin manager (tile launcher removed in #4916)
 ├── matlab/                   MATLAB scientific code and utilities
 ├── rust_core/                Optional Rust extension crates
 ├── docs/                     Documentation (see below)

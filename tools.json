@@ -4,7 +4,10 @@
             "name": "Multi-Parameter Analysis",
             "path": "src/multi_param_analysis/launch_pyqt6.py",
             "type": "python",
-            "desc": "Run multi-parameter sensitivity analysis with grid evaluation"
+            "desc": "Run multi-parameter sensitivity analysis with grid evaluation",
+            "tool_id": "multi_param_analysis",
+            "surface": "pyqt6",
+            "maturity": "stable"
         }
     ],
     "Biomechanics": [
@@ -12,39 +15,66 @@
             "name": "C3D Motion Capture Viewer",
             "path": "src/c3d_viewer/launch_pyqt6.py",
             "type": "python",
-            "desc": "View and analyze C3D motion capture files"
+            "desc": "View and analyze C3D motion capture files",
+            "tool_id": "c3d_viewer",
+            "surface": "pyqt6",
+            "maturity": "stable"
         },
         {
             "name": "Lower Body Model",
             "path": "src/lower_body_model/launch_pyqt6.py",
             "type": "python",
-            "desc": "Simulate and inspect lower-body MuJoCo kinematics and controls"
+            "desc": "Simulate and inspect lower-body MuJoCo kinematics and controls",
+            "tool_id": "lower_body_model",
+            "surface": "pyqt6",
+            "maturity": "stable"
         },
         {
             "name": "Rate of Closure Impact Explorer (PyQt6)",
             "path": "src/rate_of_closure/launch_pyqt6.py",
             "type": "python",
-            "desc": "Quantifies how a rotating clubhead's impact-point delivery differs from the tracked reference point (COM or geometric center): path deviation, attack-angle change, face rotation during contact, and the launch-monitor geometric-center question, with an animated 3D clubhead and rate sweeps."
+            "desc": "Quantifies how a rotating clubhead's impact-point delivery differs from the tracked reference point (COM or geometric center): path deviation, attack-angle change, face rotation during contact, and the launch-monitor geometric-center question, with an animated 3D clubhead and rate sweeps.",
+            "tool_id": "rate_of_closure",
+            "surface": "pyqt6",
+            "maturity": "stable"
         },
         {
             "name": "Rate of Closure Impact Explorer (Web)",
             "path": "src/rate_of_closure/launch_web.py",
             "type": "python",
-            "desc": "Quantifies how a rotating clubhead's impact-point delivery differs from the tracked reference point (COM or geometric center): path deviation, attack-angle change, face rotation during contact, and the launch-monitor geometric-center question, with an animated 3D clubhead and rate sweeps."
+            "desc": "Quantifies how a rotating clubhead's impact-point delivery differs from the tracked reference point (COM or geometric center): path deviation, attack-angle change, face rotation during contact, and the launch-monitor geometric-center question, with an animated 3D clubhead and rate sweeps.",
+            "tool_id": "rate_of_closure",
+            "surface": "web",
+            "maturity": "stable"
         }
     ],
     "Data Processing": [
         {
+            "name": "Data Explorer",
+            "path": "src/data_explorer/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Interactive workbench for browsing simulation datasets",
+            "tool_id": "data_explorer",
+            "surface": "pyqt6",
+            "maturity": "stable"
+        },
+        {
             "name": "Data Processor (PyQt6)",
             "path": "src/data_processing/data_processor/launch_pyqt6.py",
             "type": "python",
-            "desc": "Signal processing and time-series data analysis tool"
+            "desc": "Signal processing and time-series data analysis tool",
+            "tool_id": "data_processor",
+            "surface": "pyqt6",
+            "maturity": "stable"
         },
         {
             "name": "Data Processor (Web)",
             "path": "src/data_processing/data_processor/launch_web.py",
             "type": "python",
-            "desc": "Signal processing and time-series data analysis tool"
+            "desc": "Signal processing and time-series data analysis tool",
+            "tool_id": "data_processor",
+            "surface": "web",
+            "maturity": "stable"
         }
     ],
     "Development Tools": [
@@ -52,19 +82,28 @@
             "name": "Folder Packer Pro",
             "path": "src/folder_packer_pro/launch_pyqt6.py",
             "type": "python",
-            "desc": "Professional Project Archiving and Distribution Tool"
+            "desc": "Professional Project Archiving and Distribution Tool",
+            "tool_id": "folder_packer_pro",
+            "surface": "pyqt6",
+            "maturity": "stable"
         },
         {
             "name": "Folder Tool (Utility)",
             "path": "src/folder_tool/launch_pyqt6.py",
             "type": "python",
-            "desc": "Directory Management Utility"
+            "desc": "Directory Management Utility",
+            "tool_id": "folder_tool",
+            "surface": "pyqt6",
+            "maturity": "experimental"
         },
         {
             "name": "PDF Renamer",
             "path": "src/document_processing/pdf_renamer/launch_pyqt6.py",
             "type": "python",
-            "desc": "Intelligent PDF File Renaming Tool"
+            "desc": "Intelligent PDF File Renaming Tool",
+            "tool_id": "pdf_renamer",
+            "surface": "pyqt6",
+            "maturity": "stable"
         }
     ],
     "Engineering Drafting": [
@@ -72,15 +111,50 @@
             "name": "P&ID Generator",
             "path": "src/pid_generator/launch_pyqt6.py",
             "type": "python",
-            "desc": "Generate P&ID drawings from YAML specifications (DXF + SVG output)"
+            "desc": "Generate P&ID drawings from YAML specifications (DXF + SVG output)",
+            "tool_id": "pid_generator",
+            "surface": "pyqt6",
+            "maturity": "stable"
+        }
+    ],
+    "Industrial": [
+        {
+            "name": "P1AM HMI Control System (Web)",
+            "path": "src/p1am_control_system/launch_web.py",
+            "type": "python",
+            "desc": "HMI Control System for P1AM-100 PLC",
+            "tool_id": "p1am_control_system",
+            "surface": "web",
+            "maturity": "stable"
         }
     ],
     "Mathematics": [
         {
-            "name": "ODE Solver",
+            "name": "ODE Solver (PyQt6)",
             "path": "src/ode_solver/launch_pyqt6.py",
             "type": "python",
-            "desc": "Solve systems of ordinary differential equations symbolically"
+            "desc": "Solve systems of ordinary differential equations symbolically",
+            "tool_id": "ode_solver",
+            "surface": "pyqt6",
+            "maturity": "stable"
+        },
+        {
+            "name": "ODE Solver (Web)",
+            "path": "src/ode_solver/launch_web.py",
+            "type": "python",
+            "desc": "Solve systems of ordinary differential equations symbolically",
+            "tool_id": "ode_solver",
+            "surface": "web",
+            "maturity": "stable"
+        },
+        {
+            "name": "Pendulum Simulator",
+            "path": "src/pendulum_simulator/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Multi-link pendulum dynamics with parameter sweeps",
+            "tool_id": "pendulum_simulator",
+            "surface": "pyqt6",
+            "maturity": "experimental"
         }
     ],
     "Media Processing": [
@@ -88,7 +162,10 @@
             "name": "Video Processor (Web)",
             "path": "src/media_processing/video_processor/launch_web.py",
             "type": "python",
-            "desc": "Video file format conversion, frame extraction, and media analysis"
+            "desc": "Video file format conversion, frame extraction, and media analysis",
+            "tool_id": "video_processor",
+            "surface": "web",
+            "maturity": "stable"
         }
     ],
     "Motion Capture": [
@@ -96,7 +173,10 @@
             "name": "Video Analyzer",
             "path": "src/video_analyzer/launch_pyqt6.py",
             "type": "python",
-            "desc": "Video-based motion analysis with pose tracking"
+            "desc": "Video-based motion analysis with pose tracking",
+            "tool_id": "video_analyzer",
+            "surface": "pyqt6",
+            "maturity": "stable"
         }
     ],
     "Optimization": [
@@ -104,7 +184,10 @@
             "name": "Movement Optimizer",
             "path": "src/movement_optimizer/launch_pyqt6.py",
             "type": "python",
-            "desc": "Optimize barbell biomechanics trajectories with Lagrangian dynamics, swingset, and chain models"
+            "desc": "Optimize barbell biomechanics trajectories with Lagrangian dynamics, swingset, and chain models",
+            "tool_id": "movement_optimizer",
+            "surface": "pyqt6",
+            "maturity": "stable"
         }
     ],
     "Process Simulation": [
@@ -112,31 +195,46 @@
             "name": "Financial Calculator (PyQt6)",
             "path": "src/financial_calculator/launch_pyqt6.py",
             "type": "python",
-            "desc": "Comprehensive financial modeling for plant operations"
+            "desc": "Comprehensive financial modeling for plant operations",
+            "tool_id": "financial_calculator",
+            "surface": "pyqt6",
+            "maturity": "stable"
         },
         {
             "name": "Financial Calculator (Web)",
             "path": "src/financial_calculator/launch_web.py",
             "type": "python",
-            "desc": "Comprehensive financial modeling for plant operations"
+            "desc": "Comprehensive financial modeling for plant operations",
+            "tool_id": "financial_calculator",
+            "surface": "web",
+            "maturity": "stable"
         },
         {
             "name": "Pressure Drop Calculator (PyQt6)",
             "path": "src/pressure_drop_calculator/launch_pyqt6.py",
             "type": "python",
-            "desc": "Pipe flow pressure drop analysis with multiple friction methods"
+            "desc": "Pipe flow pressure drop analysis with multiple friction methods",
+            "tool_id": "pressure_drop_calculator",
+            "surface": "pyqt6",
+            "maturity": "stable"
         },
         {
             "name": "Pressure Drop Calculator (Web)",
             "path": "src/pressure_drop_calculator/launch_web.py",
             "type": "python",
-            "desc": "Pipe flow pressure drop analysis with multiple friction methods"
+            "desc": "Pipe flow pressure drop analysis with multiple friction methods",
+            "tool_id": "pressure_drop_calculator",
+            "surface": "web",
+            "maturity": "stable"
         },
         {
             "name": "Vessel Drafter",
             "path": "src/vessel_drafter/launch_pyqt6.py",
             "type": "python",
-            "desc": "Refractory vessel design with STEP, STL, BREP, and GLTF export"
+            "desc": "Refractory vessel design with STEP, STL, BREP, and GLTF export",
+            "tool_id": "vessel_drafter",
+            "surface": "pyqt6",
+            "maturity": "stable"
         }
     ],
     "Robotics": [
@@ -144,31 +242,46 @@
             "name": "Humanoid Character Builder",
             "path": "src/humanoid_builder_gui/launch_pyqt6.py",
             "type": "python",
-            "desc": "Build parametric humanoid characters with anthropometric calculations"
+            "desc": "Build parametric humanoid characters with anthropometric calculations",
+            "tool_id": "humanoid_builder_gui",
+            "surface": "pyqt6",
+            "maturity": "stable"
         },
         {
             "name": "Inertia Calculator",
             "path": "src/inertia_calculator/launch_pyqt6.py",
             "type": "python",
-            "desc": "Calculate and validate inertia tensors for rigid bodies"
+            "desc": "Calculate and validate inertia tensors for rigid bodies",
+            "tool_id": "inertia_calculator",
+            "surface": "pyqt6",
+            "maturity": "stable"
         },
         {
             "name": "Parametric URDF Builder",
             "path": "src/urdf_builder_gui/launch_pyqt6.py",
             "type": "python",
-            "desc": "Generate parametric URDF models for robotics applications"
+            "desc": "Generate parametric URDF models for robotics applications",
+            "tool_id": "urdf_builder_gui",
+            "surface": "pyqt6",
+            "maturity": "stable"
         },
         {
             "name": "Rotation Converter (PyQt6)",
             "path": "src/rotation_converter/launch_pyqt6.py",
             "type": "python",
-            "desc": "Comprehensive rotation and rigid-body transform converter with interactive 3D visualization. Supports quaternions, Euler angles, rotation matrices, axis-angle, SE(3), twists, screw axes, and frame-aware transforms."
+            "desc": "Comprehensive rotation and rigid-body transform converter with interactive 3D visualization. Supports quaternions, Euler angles, rotation matrices, axis-angle, SE(3), twists, screw axes, and frame-aware transforms.",
+            "tool_id": "rotation_converter",
+            "surface": "pyqt6",
+            "maturity": "stable"
         },
         {
             "name": "Rotation Converter (Web)",
             "path": "src/rotation_converter/launch_web.py",
             "type": "python",
-            "desc": "Comprehensive rotation and rigid-body transform converter with interactive 3D visualization. Supports quaternions, Euler angles, rotation matrices, axis-angle, SE(3), twists, screw axes, and frame-aware transforms."
+            "desc": "Comprehensive rotation and rigid-body transform converter with interactive 3D visualization. Supports quaternions, Euler angles, rotation matrices, axis-angle, SE(3), twists, screw axes, and frame-aware transforms.",
+            "tool_id": "rotation_converter",
+            "surface": "web",
+            "maturity": "stable"
         }
     ],
     "Signal Processing": [
@@ -176,27 +289,48 @@
             "name": "Function Generator (PyQt6)",
             "path": "src/function_generator/launch_pyqt6.py",
             "type": "python",
-            "desc": "Generate and visualize various waveforms (sine, square, triangle, etc.)"
+            "desc": "Generate and visualize various waveforms (sine, square, triangle, etc.)",
+            "tool_id": "function_generator",
+            "surface": "pyqt6",
+            "maturity": "stable"
         },
         {
             "name": "Function Generator (Web)",
             "path": "src/function_generator/launch_web.py",
             "type": "python",
-            "desc": "Generate and visualize various waveforms (sine, square, triangle, etc.)"
+            "desc": "Generate and visualize various waveforms (sine, square, triangle, etc.)",
+            "tool_id": "function_generator",
+            "surface": "web",
+            "maturity": "stable"
         },
         {
             "name": "Signal Processing Studio",
             "path": "src/signal_processing_studio/launch_pyqt6.py",
             "type": "python",
-            "desc": "Unified signal processing: waveform generation, analysis, filtering, curve fitting"
+            "desc": "Unified signal processing: waveform generation, analysis, filtering, curve fitting",
+            "tool_id": "signal_processing_studio",
+            "surface": "pyqt6",
+            "maturity": "stable"
         }
     ],
     "Thermodynamics": [
         {
-            "name": "Steam Engine Calculator",
+            "name": "Steam Engine Calculator (PyQt6)",
             "path": "src/steam_engine_calculator/launch_pyqt6.py",
             "type": "python",
-            "desc": "Calculate thermodynamic properties of steam/water"
+            "desc": "Calculate thermodynamic properties of steam/water",
+            "tool_id": "steam_engine_calculator",
+            "surface": "pyqt6",
+            "maturity": "stable"
+        },
+        {
+            "name": "Steam Engine Calculator (Web)",
+            "path": "src/steam_engine_calculator/launch_web.py",
+            "type": "python",
+            "desc": "Calculate thermodynamic properties of steam/water",
+            "tool_id": "steam_engine_calculator",
+            "surface": "web",
+            "maturity": "stable"
         }
     ],
     "Utilities": [
@@ -204,7 +338,10 @@
             "name": "Flow Rate Converter",
             "path": "src/flow_rate_converter/launch_pyqt6.py",
             "type": "python",
-            "desc": "Convert between mass, molar, and volumetric flow rate units"
+            "desc": "Convert between mass, molar, and volumetric flow rate units",
+            "tool_id": "flow_rate_converter",
+            "surface": "pyqt6",
+            "maturity": "stable"
         }
     ]
 }

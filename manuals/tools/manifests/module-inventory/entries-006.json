@@ -3,90 +3,6 @@
   "entries": [
     {
       "authority_status": "provisional",
-      "bytes_lf": 12132,
-      "classification": "calculation",
-      "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "7a45364ff5f51e8db8fe4040f974f6e674a91f2d55ab0668aaf01f072392c9ac",
-      "family": "pendulum-calculation",
-      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-COMPARISON-PY-0D591EEEEB3F",
-      "language": "python",
-      "maintainer": "Pendulum maintainers",
-      "path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/comparison.py",
-      "purpose": "Controlled comparison of the competing swing objectives.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SwingComparison",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "COMPARISON_SCHEMA_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "compare_objectives",
-            "signature": "config: DownswingConfig, objective_keys: Sequence[str] | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "comparison_from_payload",
-            "signature": "payload: Mapping[str, Any]"
-          },
-          {
-            "kind": "function",
-            "name": "comparison_to_payload",
-            "signature": "comparison: SwingComparison"
-          },
-          {
-            "kind": "function",
-            "name": "cross_evaluation_matrix",
-            "signature": "raw_values: Mapping[str, Mapping[str, float]], objective_keys: Sequence[str]"
-          }
-        ],
-        "test_paths": [
-          "src/movement_optimizer/tests/test_comparison.py",
-          "tests/shared/python/launch_monitor/test_comparison.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
       "bytes_lf": 9733,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
@@ -3885,313 +3801,6 @@
           "src/python/tests/test_logger_utils.py"
         ],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 187,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6c04a45166d64530f4b3aa59252e5494a3b21c360b8697018fd339e8c33692d9",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-TILE-LAUNCHER-INIT-PY-63A8F9334A26",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/python/src/tile_launcher/__init__.py",
-      "purpose": "Tile-based launcher implemented with PyQt6.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "DEFAULT_LAYOUT_PATH",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 159,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "fed36cefda6cf6eefe310be980684c93f48a26e673d24a80ff393de6b2e7d8fb",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-TILE-LAUNCHER-MAIN-PY-863165AFF212",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/python/src/tile_launcher/main.py",
-      "purpose": "CLI entry point for the PyQt6 tile launcher.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 7906,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "56b23e2ed28e347a55bf6bf0b4dac755d0e60197852d42b682432386d728803d",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-TILE-LAUNCHER-MANAGER-PY-D8C3865D39C2",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/python/src/tile_launcher/manager.py",
-      "purpose": "Catalog loading and layout management for the tile launcher.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "AppCatalogError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "AppManager",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "TOOLS_REGISTRY_FILENAME",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_SLUG_NON_ALNUM",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "load_catalog",
-            "signature": "catalog_path: Path"
-          },
-          {
-            "kind": "function",
-            "name": "load_tools_registry",
-            "signature": "registry_path: Path"
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/plot_theme/test_manager.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2650,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "84059080bf15fbdd144ec026d92e5e1b927be7ccdc1d33e3c2f62c7fe9867290",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-TILE-LAUNCHER-MODELS-PY-A3756216200F",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/python/src/tile_launcher/models.py",
-      "purpose": "Data models for the PyQt6 tile launcher.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "AppDefinition",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "FileLayoutStore",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "InMemoryLayoutStore",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "LaunchType",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "LayoutStore",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 14001,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "eb6ccd1e609b6c18c9a89ff6e3f349c035db9c1e189c1bba7552adb6a0600820",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-TILE-LAUNCHER-UI-PY-AE9819D0D173",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/python/src/tile_launcher/ui.py",
-      "purpose": "PyQt6 user interface for the tile-based launcher.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "LauncherWindow",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SelectionDialog",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "run",
-            "signature": ""
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
         "validation_paths": []
       }
     },
@@ -14819,6 +14428,523 @@
           "g",
           "s"
         ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6927,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "bf2e95d0e3b043e4ad2c7d52239f5155e2f151de3ce7bc70bf1c4cfeb603fa23",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-LAUNCH-MONITOR-STROKES-GAINED-BASELINE-PY-9F3D3E5DD451",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/launch_monitor_strokes_gained_baseline.py",
+      "purpose": "Validation authority for versioned expected-strokes baseline artifacts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "BaselineState",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StrokesGainedBaseline",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "baseline_table_hash",
+            "signature": "states: list[dict[str, object]]"
+          },
+          {
+            "kind": "function",
+            "name": "load_strokes_gained_baseline",
+            "signature": "path: Path"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_launch_monitor_provenance_and_unavailable.py",
+          "tests/rate_of_closure/test_launch_monitor_strokes_gained.py",
+          "tests/shared/python/launch_monitor/test_conformance_bundle.py",
+          "tests/shared/python/launch_monitor/test_strokes_gained_contract.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/shared/python/launch_monitor/test_strokes_gained_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9671,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "43a5235ab5b46eb5f0ee846421e20d0e4b796151bd1111f130f27234cdbae3e6",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-LAUNCH-MONITOR-V2-CLIENT-PY-4C8A59CE28C6",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/launch_monitor_v2_client.py",
+      "purpose": "Validated HTTP client seam for canonical UpstreamDrift analytics contracts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AnalysisResponseV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ResidualAvailability",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StrokesGainedResponseV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "UpstreamV2Client",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "validate_strokes_gained_response",
+            "signature": "value: object"
+          },
+          {
+            "kind": "function",
+            "name": "validate_v2_response",
+            "signature": "value: object"
+          },
+          {
+            "kind": "re-export",
+            "name": "CANONICAL_DATASET_METRICS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CanonicalDatasetReference",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DATASET_JOB_CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_CANONICAL_INLINE_RECORDS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_DATASET_JOB_PAGE_SIZE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PLAYER_COVARIATION_CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_dataset_job_request",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_player_covariation_payload",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "load_canonical_dataset_reference",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "validate_dataset_job_page",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "validate_dataset_job_status",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "validate_player_covariation_response",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_launch_monitor_conformance_golden.py",
+          "tests/rate_of_closure/test_launch_monitor_v2_client.py",
+          "tests/rate_of_closure/test_launch_monitor_workspace.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 14056,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8f2ff6be44a6763407e952c0573465086fe51635f7b7d42d9d68301fcd353d59",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-LAUNCH-MONITOR-WORKSPACE-PY-7C09AA564695",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/launch_monitor_workspace.py",
+      "purpose": "Reference-only project and export seam for launch-monitor analytics.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-004-ruff-formatter.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AnalysisSelection",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DatasetReference",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LaunchMonitorProject",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlayerIdentityBinding",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_player_covariation_request",
+            "signature": "project: LaunchMonitorProject"
+          },
+          {
+            "kind": "function",
+            "name": "dataset_reference_for_frame",
+            "signature": "frame: pd.DataFrame, source_name: str"
+          },
+          {
+            "kind": "function",
+            "name": "export_analysis_bundle",
+            "signature": "destination: str | Path, project: LaunchMonitorProject, result: dict[str, Any], backing_rows: pd.DataFrame, authorization: WorkspaceExportAuthorization | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "load_project",
+            "signature": "source: str | Path"
+          },
+          {
+            "kind": "function",
+            "name": "load_project_versioned",
+            "signature": "source: str | Path"
+          },
+          {
+            "kind": "function",
+            "name": "save_project",
+            "signature": "destination: str | Path, project: LaunchMonitorProject"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_launch_monitor_forbidden_identity.py",
+          "tests/rate_of_closure/test_launch_monitor_performance.py",
+          "tests/rate_of_closure/test_launch_monitor_workspace.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11142,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e62804bf5e39a6b5ca5b8c170ad088918c6639a8b742c427e33a5a6dabd9a37f",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-LAUNCH-MONITOR-WORKSPACE-V3-PY-F8163B751655",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/launch_monitor_workspace_v3.py",
+      "purpose": "Portable, row-free launch-monitor workspace v3 persistence and export.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "WorkspaceExportAuthorization",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WorkspaceProject",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_CLASSIFICATIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ROW_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "create_workspace_bundle",
+            "signature": "output_directory: str | Path, project: Mapping[str, Any], backing_rows: Any=(), authorization: WorkspaceExportAuthorization | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "parse_workspace_project",
+            "signature": "value: str | bytes | Mapping[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "serialize_workspace_project",
+            "signature": "project: Mapping[str, Any]"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_launch_monitor_forbidden_identity.py",
+          "tests/rate_of_closure/test_launch_monitor_provenance_and_unavailable.py",
+          "tests/rate_of_closure/test_launch_monitor_workspace.py",
+          "tests/rate_of_closure/test_launch_monitor_workspace_v3.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 565,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3115ae96acbfd4f7f2469b2175c614b05deba01ffc03ad25441da764e1cedac8",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-LAUNCH-PYQT6-PY-0C554127EC22",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/launch_pyqt6.py",
+      "purpose": "Standalone PyQt6 launcher for Rate of Closure Impact Explorer.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/folder_tool/test_launch_pyqt6.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 991,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ccf56a337f0bc65d5e8dcc257b868719142acf71ae67c8308ec4e88412693f5d",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-LAUNCH-WEB-PY-4E076F32983F",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/launch_web.py",
+      "purpose": "Launch the Rate of Closure Impact Explorer React web application.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_REPO_ROOT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
         "validation_paths": []
       }
     }

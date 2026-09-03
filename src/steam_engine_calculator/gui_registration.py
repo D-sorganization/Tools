@@ -16,6 +16,11 @@ GUI_INFO: dict[str, Any] = {
         "dependencies": ["PyQt6", "numpy"],
         "settings_app": "SteamEngineCalculator",
     },
+    "web": {
+        "path": "web",
+        "port": 5175,
+        "auto_open_browser": True,
+    },
 }
 
 GUI_METADATA = {

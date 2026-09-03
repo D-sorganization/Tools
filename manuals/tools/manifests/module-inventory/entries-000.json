@@ -1313,16 +1313,16 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5686,
+      "bytes_lf": 7587,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f92fca265823f31d59bb0364c471c39c9e63d9c9924e40eee07a70a37f1bdc19",
+      "content_sha256_lf": "d331882e6ec09da618f2a7bcfc652e73263583d0d9b037c3f9ccea1f2f24e020",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-LAUNCH-PY-CC636C1B90D8",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "launch.py",
-      "purpose": "Unified tool launcher for the Tools repository.",
+      "purpose": "Thin command-line launcher over the one tool registry.",
       "review_status": "inventory-baseline",
       "risk_tags": [
         "public-api"
@@ -1337,7 +1337,7 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
+        "units": "mapped",
         "validation": "not-applicable"
       },
       "traceability": {
@@ -1373,7 +1373,12 @@
           {
             "kind": "function",
             "name": "launch_tool",
-            "signature": "tool_identifier: str"
+            "signature": "tool_identifier: str, surface: str='pyqt6'"
+          },
+          {
+            "kind": "function",
+            "name": "launch_web_surface",
+            "signature": "tool_name: str"
           },
           {
             "kind": "function",
@@ -1462,7 +1467,9 @@
           "tests/unit/test_epic_2661_children_verification.py",
           "tests/verification/test_verification_lod.py"
         ],
-        "unit_mentions": [],
+        "unit_mentions": [
+          "s"
+        ],
         "validation_paths": []
       }
     },
@@ -6092,46 +6099,6 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 119,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "412df231e6fe47ae29c6ae2b140450d4a5b1fcfee2b83b66172542f7cb4d343c",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-RUN-TILE-LAUNCHER-PY-1067CD641911",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "run_tile_launcher.py",
-      "purpose": "Run the PyQt6 tile-based tools launcher.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "unavailable",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
       "bytes_lf": 7792,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -7542,7 +7509,6 @@
           "src/pendulum_simulator/tests/test_physics_native_dbc.py",
           "src/python/tests/test_logging_utils_optional_imports.py",
           "src/python/tests/test_plugin_manager_dbc_lod.py",
-          "src/python/tests/test_tile_launcher_manager.py",
           "src/rate_of_closure/web/tests/browser/support/companionHarness.ts",
           "src/shared/python/ai/tests/test_access_policy.py",
           "src/shared/python/sidekick/tests/test_bootstrap.py",
@@ -14947,6 +14913,145 @@
         "validation_paths": [
           "tests/test_minimum_test_contract.py"
         ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13233,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "33748ab93ea64888d3a3305e34c585480106fd21bf95b88039992275890326bd",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CHECK-MIRROR-FRESHNESS-PY-B94393E3A7F7",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/check_mirror_freshness.py",
+      "purpose": "Freshness check for the rate-of-closure-explorer public mirror.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://d-sorganization.github.io/rate-of-closure-explorer/"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CanonicalState",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ContractViolation",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FreshnessReport",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MirrorState",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_MIRROR_REPO",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_WEB_SUBDIR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXIT_DRIFTED",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXIT_ERROR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXIT_FRESH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_RECORDED_SHA_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SHA_RE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "assess_freshness",
+            "signature": "canonical: CanonicalState, mirror: MirrorState"
+          },
+          {
+            "kind": "function",
+            "name": "compare_trees",
+            "signature": "canonical_files: dict[str, str], mirror_files: dict[str, str]"
+          },
+          {
+            "kind": "function",
+            "name": "exit_code_for",
+            "signature": "report: FreshnessReport"
+          },
+          {
+            "kind": "function",
+            "name": "gather_canonical_state",
+            "signature": "repo_root: Path, web_subdir: str, deep: bool"
+          },
+          {
+            "kind": "function",
+            "name": "gather_mirror_state",
+            "signature": "mirror_repo: str, deep: bool"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "parse_recorded_canonical_commit",
+            "signature": "message: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
       }
     }
   ],

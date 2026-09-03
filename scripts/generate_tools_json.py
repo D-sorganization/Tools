@@ -1,15 +1,39 @@
 #!/usr/bin/env python3
-"""Generate tools.json and tool_surface_contract.json from gui_registration.py files.
+"""Generate every tool catalog from the one registry: ``src/**/gui_registration.py``.
 
-This script scans all gui_registration.py files under src/ and produces:
-1. tools.json — Unified Launcher manifest (categorized, surface-expanded entries)
-2. tool_surface_contract.json — Cross-repo parity contract (one entry per logical tool)
+The ``GUI_INFO`` dicts are the single source of truth (Tools #4916). From them
+this script produces, deterministically:
+
+1. ``tools.json`` -- Unified Launcher manifest (categorized, surface-expanded
+   entries; each entry also carries ``tool_id``, ``surface`` and ``maturity``)
+2. ``tool_surface_contract.json`` -- cross-repo parity contract (one entry per
+   logical tool; key set is frozen for downstream consumers)
+3. the ``README.md`` tool catalog table between the ``tool-catalog`` markers
+
+Registry fields (per ``GUI_INFO``)::
+
+    name, tool_name, description, category           required
+    pyqt6: {module, class, ...}                        PyQt6 surface (needs launch_pyqt6.py)
+    web: {path, port, auto_open_browser} | False       web surface (needs launch_web.py)
+                                                       or an explicit "no web app"
+    tkinter: {...}                                     legacy GUI (needs launch_gui.py)
+    maturity: "stable" | "beta" | "experimental"      default "stable"
+    help: "<repo-relative path or URL>"                default: the tool README if present
+    catalog_visible: False                             keep metadata, stay out of catalogs
+
+``--check`` fails when any generated output is stale or when a ``package.json``
+web app under ``src/`` is reachable from no launcher (no ``launch_web.py`` in
+an ancestor tool directory and no registration declaring ``"web": False``).
 """
 
+from __future__ import annotations
+
+import argparse
 import importlib.util
 import json
 import logging
 import sys
+from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -17,6 +41,10 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 CONTRACT_VERSION = "1.0.0"
+MATURITIES = ("stable", "beta", "experimental")
+README_START = "<!-- tool-catalog:start -->"
+README_END = "<!-- tool-catalog:end -->"
+_SKIP_DIRS = {"node_modules", "dist", "build", ".git"}
 
 
 def _emit_stdout(message: str) -> None:
@@ -32,7 +60,8 @@ class ToolRegistration:
     - id is always a non-empty snake_case string
     - name is always a non-empty string
     - category is always a non-empty string
-    - At least one surface (has_pyqt6 or has_web) is True
+    - At least one surface (has_pyqt6, has_web or has_legacy_gui) is True
+    - maturity is one of MATURITIES
     """
 
     id: str
@@ -42,6 +71,9 @@ class ToolRegistration:
     has_pyqt6: bool
     has_web: bool
     has_legacy_gui: bool = False  # Tkinter / non-PyQt6 GUI (launch_gui.py)
+    maturity: str = "stable"
+    help: str | None = None
+    tool_dir: str = ""
 
 
 def load_gui_info(path: Path) -> dict[str, Any] | None:
@@ -69,16 +101,43 @@ def _is_catalog_visible(info: dict[str, Any]) -> bool:
     return info.get("catalog_visible", True) is not False
 
 
+def _maturity(info: dict[str, Any], reg_file: Path) -> str:
+    value = info.get("maturity", "stable")
+    if value not in MATURITIES:
+        raise ValueError(
+            f"{reg_file}: maturity must be one of {MATURITIES}, got {value!r}"
+        )
+    return str(value)
+
+
+def _help(info: dict[str, Any], tool_dir: Path, repo_root: Path) -> str | None:
+    value = info.get("help")
+    if isinstance(value, str) and value:
+        return value
+    readme = tool_dir / "README.md"
+    if readme.is_file():
+        return readme.relative_to(repo_root).as_posix()
+    return None
+
+
+def _registration_files(repo_root: Path) -> list[Path]:
+    src_dir = repo_root / "src"
+    return sorted(
+        path
+        for path in src_dir.glob("**/gui_registration.py")
+        if not _SKIP_DIRS & set(path.parts)
+    )
+
+
 def _discover_registrations(repo_root: Path) -> list[ToolRegistration]:
     """Discover all gui_registration.py files and extract ToolRegistration entries.
 
     Pre-condition: repo_root / 'src' exists.
     Post-condition: Returns a sorted (by id) list of unique ToolRegistrations.
     """
-    src_dir = repo_root / "src"
     seen_ids: dict[str, ToolRegistration] = {}
 
-    for reg_file in sorted(src_dir.glob("**/gui_registration.py")):
+    for reg_file in _registration_files(repo_root):
         info = load_gui_info(reg_file)
         if not info:
             continue
@@ -92,7 +151,9 @@ def _discover_registrations(repo_root: Path) -> list[ToolRegistration]:
 
         # Determine surface availability
         has_pyqt6 = "pyqt6" in info and (tool_dir / "launch_pyqt6.py").exists()
-        has_web = "web" in info and (tool_dir / "launch_web.py").exists()
+        has_web = (
+            isinstance(info.get("web"), dict) and (tool_dir / "launch_web.py").exists()
+        )
         # Legacy/Tkinter GUI: explicit launch_gui.py with no PyQt6 surface
         has_legacy_gui = (
             not has_pyqt6
@@ -112,6 +173,9 @@ def _discover_registrations(repo_root: Path) -> list[ToolRegistration]:
             has_pyqt6=has_pyqt6,
             has_web=has_web,
             has_legacy_gui=has_legacy_gui,
+            maturity=_maturity(info, reg_file),
+            help=_help(info, tool_dir, repo_root),
+            tool_dir=tool_dir.relative_to(repo_root).as_posix(),
         )
 
         if tool_id in seen_ids:
@@ -124,6 +188,20 @@ def _discover_registrations(repo_root: Path) -> list[ToolRegistration]:
     return sorted(seen_ids.values(), key=lambda r: r.id)
 
 
+def _manifest_entry(
+    reg: ToolRegistration, name: str, surface: str, script: str
+) -> dict[str, Any]:
+    return {
+        "name": name,
+        "path": f"{reg.tool_dir}/{script}",
+        "type": "python",
+        "desc": reg.description,
+        "tool_id": reg.id,
+        "surface": surface,
+        "maturity": reg.maturity,
+    }
+
+
 def generate_manifest_data(repo_root: Path) -> dict[str, list[dict[str, Any]]]:
     """Generate manifest data (tools.json format) from gui_registration.py files.
 
@@ -134,59 +212,18 @@ def generate_manifest_data(repo_root: Path) -> dict[str, list[dict[str, Any]]]:
     manifest: dict[str, list[dict[str, Any]]] = {}
 
     for reg in registrations:
-        if reg.category not in manifest:
-            manifest[reg.category] = []
-
+        entries = manifest.setdefault(reg.category, [])
         if reg.has_pyqt6:
             name = f"{reg.name} (PyQt6)" if reg.has_web else reg.name
-            src_dir = repo_root / "src"
-            # We need to find the actual registration file to get the right path
-            tool_dir = _find_tool_dir(src_dir, reg.id)
-            if tool_dir:
-                launch_script = tool_dir / "launch_pyqt6.py"
-                manifest[reg.category].append(
-                    {
-                        "name": name,
-                        "path": str(launch_script.relative_to(repo_root)).replace(
-                            "\\", "/"
-                        ),
-                        "type": "python",
-                        "desc": reg.description,
-                    }
-                )
-
+            entries.append(_manifest_entry(reg, name, "pyqt6", "launch_pyqt6.py"))
         if reg.has_web:
-            name = f"{reg.name} (Web)" if reg.has_pyqt6 else f"{reg.name} (Web)"
-            src_dir = repo_root / "src"
-            tool_dir = _find_tool_dir(src_dir, reg.id)
-            if tool_dir:
-                launch_script = tool_dir / "launch_web.py"
-                manifest[reg.category].append(
-                    {
-                        "name": name,
-                        "path": str(launch_script.relative_to(repo_root)).replace(
-                            "\\", "/"
-                        ),
-                        "type": "python",
-                        "desc": reg.description,
-                    }
-                )
-
+            entries.append(
+                _manifest_entry(reg, f"{reg.name} (Web)", "web", "launch_web.py")
+            )
         if reg.has_legacy_gui:
-            src_dir = repo_root / "src"
-            tool_dir = _find_tool_dir(src_dir, reg.id)
-            if tool_dir:
-                launch_script = tool_dir / "launch_gui.py"
-                manifest[reg.category].append(
-                    {
-                        "name": reg.name,
-                        "path": str(launch_script.relative_to(repo_root)).replace(
-                            "\\", "/"
-                        ),
-                        "type": "python",
-                        "desc": reg.description,
-                    }
-                )
+            entries.append(
+                _manifest_entry(reg, reg.name, "legacy_gui", "launch_gui.py")
+            )
 
     # Sort categories and tools for determinism
     sorted_manifest: dict[str, list[dict[str, Any]]] = {}
@@ -199,11 +236,8 @@ def generate_manifest_data(repo_root: Path) -> dict[str, list[dict[str, Any]]]:
 
 
 def _find_tool_dir(src_dir: Path, tool_id: str) -> Path | None:
-    """Find the directory containing a tool's gui_registration.py by its ID.
-
-    Searches gui_registration.py files for a matching tool_name or directory name.
-    """
-    for reg_file in sorted(src_dir.glob("**/gui_registration.py")):
+    """Find the directory containing a tool's gui_registration.py by its ID."""
+    for reg_file in _registration_files(src_dir.parent):
         info = load_gui_info(reg_file)
         if not info:
             continue
@@ -226,7 +260,8 @@ def generate_contract_data(repo_root: Path) -> dict[str, Any]:
         - "name": human-readable display name
         - "description": tool description
         - "category": tool category
-        - "surfaces": {"pyqt6": bool, "web": bool}
+        - "surfaces": {"pyqt6": bool, "web": bool, "legacy_gui": bool}
+    The key set is frozen: downstream repos compare it verbatim.
     """
     registrations = _discover_registrations(repo_root)
 
@@ -252,16 +287,173 @@ def generate_contract_data(repo_root: Path) -> dict[str, Any]:
     }
 
 
-def main() -> int:
-    """Generate tools.json and optionally tool_surface_contract.json."""
-    repo_root = Path(__file__).resolve().parents[1]
+def _surfaces_label(reg: ToolRegistration) -> str:
+    labels = []
+    if reg.has_pyqt6:
+        labels.append("PyQt6")
+    if reg.has_web:
+        labels.append("Web")
+    if reg.has_legacy_gui:
+        labels.append("Tk")
+    return " + ".join(labels)
+
+
+def generate_readme_catalog(repo_root: Path) -> str:
+    """Render the README tool catalog table (one row per launcher-registered tool)."""
+    registrations = _discover_registrations(repo_root)
+    lines = [
+        "| Tool | Category | Surfaces | Maturity | What it does | Help |",
+        "| ---- | -------- | -------- | -------- | ------------ | ---- |",
+    ]
+    for reg in sorted(registrations, key=lambda r: (r.category, r.id)):
+        help_cell = f"[docs]({reg.help})" if reg.help else "—"
+        description = reg.description.replace("|", "\\|")
+        lines.append(
+            f"| `{reg.id}` | {reg.category} | {_surfaces_label(reg)} | "
+            f"{reg.maturity} | {description} | {help_cell} |"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def _readme_split(text: str) -> tuple[str, str, str]:
+    start = text.find(README_START)
+    end = text.find(README_END)
+    if start < 0 or end < 0 or end < start:
+        raise ValueError(
+            f"README.md is missing the {README_START}/{README_END} markers"
+        )
+    head = text[: start + len(README_START)] + "\n"
+    body = text[start + len(README_START) + 1 : end]
+    return head, body, text[end:]
+
+
+def readme_catalog_is_fresh(repo_root: Path) -> bool:
+    readme = repo_root / "README.md"
+    if not readme.is_file():
+        return False
+    _head, body, _tail = _readme_split(
+        readme.read_text(encoding="utf-8").replace("\r\n", "\n")
+    )
+    return body == generate_readme_catalog(repo_root)
+
+
+def write_readme_catalog(repo_root: Path) -> None:
+    readme = repo_root / "README.md"
+    head, _body, tail = _readme_split(
+        readme.read_text(encoding="utf-8").replace("\r\n", "\n")
+    )
+    readme.write_text(
+        head + generate_readme_catalog(repo_root) + tail,
+        encoding="utf-8",
+        newline="\n",
+    )
+
+
+def unreachable_web_apps(repo_root: Path) -> list[str]:
+    """Return ``package.json`` web apps under src/ that no launcher can reach.
+
+    A package.json is reachable when an ancestor directory (up to src/) holds a
+    ``launch_web.py`` or a ``gui_registration.py`` whose ``GUI_INFO["web"]`` is
+    ``False`` (an explicit "not a launcher tile" decision).
+    """
+    src_dir = repo_root / "src"
+    unreachable: list[str] = []
+    for package_json in sorted(src_dir.glob("**/package.json")):
+        if _SKIP_DIRS & set(package_json.parts):
+            continue
+        reachable = False
+        for ancestor in package_json.parents:
+            if ancestor == src_dir.parent:
+                break
+            if (ancestor / "launch_web.py").is_file():
+                reachable = True
+                break
+            registration = ancestor / "gui_registration.py"
+            if registration.is_file():
+                info = load_gui_info(registration) or {}
+                if info.get("web") is False:
+                    reachable = True
+                    break
+            if ancestor == src_dir:
+                break
+        if not reachable:
+            unreachable.append(package_json.relative_to(repo_root).as_posix())
+    return unreachable
+
+
+def _serialize_manifest(manifest: dict[str, list[dict[str, Any]]]) -> str:
+    return json.dumps(manifest, indent=4) + "\n"
+
+
+def _serialize_contract(contract: dict[str, Any]) -> str:
+    return json.dumps(contract, indent=2) + "\n"
+
+
+def check(repo_root: Path) -> list[str]:
+    """Return a list of stale-output diagnostics (empty when everything is fresh)."""
+    problems: list[str] = []
+    manifest_path = repo_root / "tools.json"
+    contract_path = repo_root / "tool_surface_contract.json"
+    expected_manifest = _serialize_manifest(generate_manifest_data(repo_root))
+    expected_contract = _serialize_contract(generate_contract_data(repo_root))
+    for path, expected in (
+        (manifest_path, expected_manifest),
+        (contract_path, expected_contract),
+    ):
+        actual = (
+            path.read_text(encoding="utf-8").replace("\r\n", "\n")
+            if path.is_file()
+            else ""
+        )
+        if actual != expected:
+            problems.append(f"{path.name} is stale")
+    try:
+        if not readme_catalog_is_fresh(repo_root):
+            problems.append("README.md tool catalog table is stale")
+    except ValueError as exc:
+        problems.append(str(exc))
+    for package_json in unreachable_web_apps(repo_root):
+        problems.append(
+            f"{package_json}: web app reachable from no launcher (add launch_web.py "
+            'or declare "web": False in gui_registration.py)'
+        )
+    return problems
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    """Generate tools.json, tool_surface_contract.json and the README catalog."""
+    parser = argparse.ArgumentParser(description="Tool registry generator")
+    parser.add_argument(
+        "--check", action="store_true", help="fail if any generated output is stale"
+    )
+    parser.add_argument("--root", type=Path, default=None, help=argparse.SUPPRESS)
+    if argv is None:
+        # Only read the process arguments when run as this script; an imported
+        # ``main()`` (tests, governance wrappers) gets the default behaviour.
+        own_script = Path(sys.argv[0]).name == Path(__file__).name
+        argv = sys.argv[1:] if own_script else []
+    args = parser.parse_args(argv)
+    repo_root = (
+        args.root.resolve()
+        if args.root is not None
+        else Path(__file__).resolve().parents[1]
+    )
+
+    if args.check:
+        problems = check(repo_root)
+        for problem in problems:
+            sys.stderr.write(f"ERROR: {problem}\n")
+        if problems:
+            sys.stderr.write("Run: python scripts/generate_tools_json.py\n")
+            return 1
+        _emit_stdout("tool registry outputs are fresh")
+        return 0
 
     # Generate manifest
     manifest = generate_manifest_data(repo_root)
     tools_json_path = repo_root / "tools.json"
     with open(tools_json_path, "w", encoding="utf-8", newline="\n") as f:
-        json.dump(manifest, f, indent=4)
-        f.write("\n")  # POSIX newline
+        f.write(_serialize_manifest(manifest))
 
     tool_count = sum(len(v) for v in manifest.values())
     logger.info("Generated tools.json with %d tools.", tool_count)
@@ -270,19 +462,27 @@ def main() -> int:
     contract = generate_contract_data(repo_root)
     contract_path = repo_root / "tool_surface_contract.json"
     with open(contract_path, "w", encoding="utf-8", newline="\n") as f:
-        json.dump(contract, f, indent=2)
-        f.write("\n")
+        f.write(_serialize_contract(contract))
 
     logger.info(
         "Generated tool_surface_contract.json with %d tools.",
         len(contract["tools"]),
     )
 
+    if (repo_root / "README.md").is_file():
+        try:
+            write_readme_catalog(repo_root)
+        except ValueError as exc:
+            logger.warning("README catalog not written: %s", exc)
+
     # Keep the CLI contract explicit for CI callers without using raw print().
     _emit_stdout(f"Generated tools.json with {tool_count} tools.")
     _emit_stdout(
         f"Generated tool_surface_contract.json with {len(contract['tools'])} tools."
     )
+    unreachable = unreachable_web_apps(repo_root)
+    for package_json in unreachable:
+        logger.warning("web app reachable from no launcher: %s", package_json)
 
     return 0
 
