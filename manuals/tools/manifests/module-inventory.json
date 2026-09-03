@@ -291,7 +291,7 @@
       "shard_index": 7
     },
     {
-      "content_sha256_lf": "7bc8f0ff2dd10bf1c7dfd938b6952a21dae2bc2bd48ffbd473b1f0d5d2ec9601",
+      "content_sha256_lf": "3eebec56be7697c160dff56e218873e8f23b1294663bd279e3673017cc537d0d",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/ui/pyqt6/solver_worker.py",
       "last_path": "src/rate_of_closure/web/src/components/LaunchMonitorPlayerWorkspace.tsx",
@@ -299,7 +299,7 @@
       "shard_index": 8
     },
     {
-      "content_sha256_lf": "7c4479a02630dd0f520802f165c6b0edbe1f822c3dda310013f4d26f3c2f6fc5",
+      "content_sha256_lf": "196e9539eee679b223e7597b09013368c523f83a7b035f8b0f52cfc342d5a5dc",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/web/src/components/LaunchMonitorSourceBackedStrokesGained.tsx",
       "last_path": "src/rate_of_closure/web/src/model/clubFitting.ts",
@@ -371,7 +371,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "fc238f0a48a4dfff698b4db6ed40e437a1215fc8a9627b003cc794f1d6d49e2e",
+  "source_tree_sha256": "d00a5ba15000ea5f29ab93d04e93b10f1054877abd2e58f637102dd565e434be",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
