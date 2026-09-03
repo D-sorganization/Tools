@@ -276,15 +276,20 @@ function AxisSelect({ label, value, variables, onChange }:
 interface PlotBounds { xMin: number; xMax: number; yMin: number; yMax: number }
 
 function plotBounds(points: number[][]): PlotBounds {
-  const extent = (values: number[]): [number, number] => {
-    if (values.length === 0) return [-1, 1];
-    const low = Math.min(...values); const high = Math.max(...values);
-    const padding = Math.max((high - low) * 0.08, Math.max(Math.abs(low), 1) * 1e-6);
-    return [low - padding, high + padding];
-  };
-  const [xMin, xMax] = extent(points.map((point) => point[0]));
-  const [yMin, yMax] = extent(points.map((point) => point[1]));
-  return { xMin, xMax, yMin, yMax };
+  if (points.length === 0) return { xMin: -1, xMax: 1, yMin: -1, yMax: 1 };
+  // ⚡ Bolt Optimization: Replace Math.min/max spread with single-pass loop to avoid stack overflow and GC pressure on large charting datasets.
+  let xLow = Infinity; let xHigh = -Infinity;
+  let yLow = Infinity; let yHigh = -Infinity;
+  for (let i = 0; i < points.length; i++) {
+    const p = points[i];
+    if (p[0] < xLow) xLow = p[0];
+    if (p[0] > xHigh) xHigh = p[0];
+    if (p[1] < yLow) yLow = p[1];
+    if (p[1] > yHigh) yHigh = p[1];
+  }
+  const xPad = Math.max((xHigh - xLow) * 0.08, Math.max(Math.abs(xLow), 1) * 1e-6);
+  const yPad = Math.max((yHigh - yLow) * 0.08, Math.max(Math.abs(yLow), 1) * 1e-6);
+  return { xMin: xLow - xPad, xMax: xHigh + xPad, yMin: yLow - yPad, yMax: yHigh + yPad };
 }
 
 const scaleX = (value: number, bounds: PlotBounds): number =>

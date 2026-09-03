@@ -284,7 +284,7 @@ Fleet-wide policy from `Repository_Management#1390`, binding in this repo:
    anybody else's, and never reuse a key that is already in the table.
    Do **not** touch the `**Spec Version**` field in §1 — it is
    release-derived now (`python scripts/bump_spec_version.py --from-tag
-   vX.Y.Z` at release time). A serial version in the key column, a reused
+vX.Y.Z` at release time). A serial version in the key column, a reused
    key, or a bumped header are all gate failures:
    `python shared_scripts/fleet_hooks.py spec-changelog` and
    `tests/architecture/test_spec_version_freshness.py`.

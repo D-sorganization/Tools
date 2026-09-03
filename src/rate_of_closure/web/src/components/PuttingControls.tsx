@@ -228,7 +228,12 @@ export function PuttingControls({
             </p>
           ) : null}
           <div className="flex items-center gap-2">
-            <label className="flex-1 text-slate-300">
+            {/* The file input's intrinsic width (widget chrome plus filename
+                text) is font-stack dependent and a flex item's default
+                min-width:auto refuses to shrink below it, so without min-w-0
+                on the label and w-full on the input this row overflows the
+                390x844 document by a few px on Linux (RM #1507). */}
+            <label className="min-w-0 flex-1 text-slate-300">
               <span className="sr-only">Import Green Document</span>
               <input
                 aria-label="Import Green Document File"
@@ -236,7 +241,7 @@ export function PuttingControls({
                 accept=".json"
                 title="Load a green heightfield: a swing_sim.green_surface/1 document, or an UpstreamDrift putting_green topography (#4800 P2/P9). The reader is chosen by the document's declared format and refuses anything it does not fully understand."
                 onChange={handleImportGreenDocument}
-                className="text-xs"
+                className="w-full min-w-0 text-xs"
               />
             </label>
             <button
@@ -245,7 +250,7 @@ export function PuttingControls({
               title="Discard an imported heightfield and return to the planar grade/aspect green above."
               disabled={!imported}
               onClick={onUsePlanarGreen}
-              className="rounded border border-slate-700 bg-slate-800 px-2 py-1 text-xs text-slate-200 disabled:cursor-not-allowed disabled:opacity-50"
+              className="shrink-0 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-xs text-slate-200 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Use planar green
             </button>
