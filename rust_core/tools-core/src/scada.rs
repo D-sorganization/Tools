@@ -793,7 +793,10 @@ mod tests {
     fn test_alarm_engine_nan_is_bad_quality_never_normal() {
         // Issue #3973: a NaN read must not resolve an active alarm to Normal.
         let limits = TagLimits::new(20.0, 10.0, 80.0, 90.0);
-        assert_eq!(AlarmState::classify(f64::NAN, &limits), AlarmState::BadQuality);
+        assert_eq!(
+            AlarmState::classify(f64::NAN, &limits),
+            AlarmState::BadQuality
+        );
         assert_eq!(
             AlarmState::classify(f64::INFINITY, &limits),
             AlarmState::BadQuality
