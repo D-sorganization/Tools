@@ -129,7 +129,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
     },
     {
-      "content_sha256_lf": "271fef67fe2241eeeacf1c2a7bfc4017563f6c63874ea2bdb047e9c3af13cfb4",
+      "content_sha256_lf": "457b9c097adc1f0db4b2bff3632907f190cdbcf74583e54b5617ae4b6aaa32c6",
       "entry_count": 3,
       "package": "rust_core/file_watcher",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
@@ -171,7 +171,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-shared-scripts.json"
     },
     {
-      "content_sha256_lf": "f37b0b9cb0e4a03238651359e9ca22368d9cb59e6fcda817f687153ecbe3e5ee",
+      "content_sha256_lf": "1e3993a6329a976b1cad87dcedf1071a7ec0af1806ab5aabac3882ed07fa1af1",
       "entry_count": 1,
       "package": "src",
       "path": "manuals/tools/manifests/module-inventory/entries-src.json"
@@ -519,7 +519,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-hooks.json"
     },
     {
-      "content_sha256_lf": "2703435a37d350d374be321e0e037d7b81c913d5a9b5d1af7c8e52221cccbe05",
+      "content_sha256_lf": "eeee977629aef1c6746877bf5bb926112e191d111dca27ff66c7293677181cf1",
       "entry_count": 400,
       "package": "src/rate_of_closure/web/src/model",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-model.json"
@@ -579,7 +579,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "08da1248f4c2bdbbc25571667e2c47a5122adc01f3a4375e7558e975a5871d41",
+      "content_sha256_lf": "45fef31e1d9fe292a233f55f81c03f0c0c10487f81982cca57ea29cb45d5e088",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
@@ -735,7 +735,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-signal-toolkit.json"
     },
     {
-      "content_sha256_lf": "e34d836cc463afb2379624bbcb576ebf9e0df8fc069ae395822ddfdd35c667e0",
+      "content_sha256_lf": "f682c9bfe8bb6bfa3eea932d5ced690166eb50d47546ebad4ab41460c0fd90ed",
       "entry_count": 215,
       "package": "src/shared/python/swing_sim",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim.json"

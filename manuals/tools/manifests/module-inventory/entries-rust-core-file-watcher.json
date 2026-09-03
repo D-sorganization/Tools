@@ -167,6 +167,7 @@
           "tests/ops/test_maturin_swing_core_workflow.py",
           "tests/ops/test_python_toolcache_guard.py",
           "tests/ops/test_rate_web_playwright_workflow.py",
+          "tests/ops/test_workflow_run_security_guards.py",
           "tests/python/test_performance_utils.py",
           "tests/python/test_plugin_manager_discovery.py",
           "tests/rate_of_closure/test_complete_trial_standalone_wheel.py",

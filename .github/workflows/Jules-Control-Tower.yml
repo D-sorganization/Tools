@@ -54,6 +54,11 @@ jobs:
   pick-runner:
     runs-on: d-sorg-fleet
     timeout-minutes: 2
+    # Same-repository guard (Tools #4923 / #4464): the call-* jobs below
+    # dispatch reusable workflows with `secrets: inherit` whose jobs hold
+    # contents/pull-requests: write, so a fork-sourced workflow_run must be
+    # refused before triage ever runs.
+    if: ${{ (github.event_name != 'workflow_run' || github.event.workflow_run.head_repository.full_name == github.repository) }}
     outputs:
       runner: ${{ steps.check.outputs.runner }}
     steps:
@@ -103,6 +108,7 @@ jobs:
     timeout-minutes: 30
     needs: pick-runner
     runs-on: ${{ needs.pick-runner.outputs.runner }}
+    if: ${{ (github.event_name != 'workflow_run' || github.event.workflow_run.head_repository.full_name == github.repository) }}
     # Removed global actor check to allow scheduled runs even if file modified by bot
     outputs:
       target: ${{ steps.decide.outputs.target }}
@@ -238,7 +244,7 @@ jobs:
 
   call-repair:
     needs: triage
-    if: needs.triage.outputs.target == 'auto-repair'
+    if: (github.event_name != 'workflow_run' || github.event.workflow_run.head_repository.full_name == github.repository) && needs.triage.outputs.target == 'auto-repair'
     uses: ./.github/workflows/Jules-Auto-Repair.yml
     with:
       run_id: ${{ format('{0}', github.event.workflow_run.id) }}
@@ -247,7 +253,7 @@ jobs:
 
   call-hotfix-creator:
     needs: triage
-    if: needs.triage.outputs.target == 'hotfix-creator'
+    if: (github.event_name != 'workflow_run' || github.event.workflow_run.head_repository.full_name == github.repository) && needs.triage.outputs.target == 'hotfix-creator'
     uses: ./.github/workflows/Jules-Hotfix-Creator.yml
     with:
       run_id: ${{ format('{0}', github.event.workflow_run.id) }}
@@ -256,48 +262,48 @@ jobs:
 
   call-scribe:
     needs: triage
-    if: needs.triage.outputs.target == 'doc-scribe'
+    if: (github.event_name != 'workflow_run' || github.event.workflow_run.head_repository.full_name == github.repository) && needs.triage.outputs.target == 'doc-scribe'
     uses: ./.github/workflows/Jules-Documentation-Scribe.yml
     secrets: inherit # pragma: allowlist secret
 
   call-tests:
     needs: triage
-    if: needs.triage.outputs.target == 'test-generator'
+    if: (github.event_name != 'workflow_run' || github.event.workflow_run.head_repository.full_name == github.repository) && needs.triage.outputs.target == 'test-generator'
     uses: ./.github/workflows/Jules-Test-Generator.yml
     secrets: inherit # pragma: allowlist secret
 
   call-auto-refactor:
     needs: triage
-    if: needs.triage.outputs.target == 'auto-refactor'
+    if: (github.event_name != 'workflow_run' || github.event.workflow_run.head_repository.full_name == github.repository) && needs.triage.outputs.target == 'auto-refactor'
     uses: ./.github/workflows/Jules-Auto-Refactor.yml
     secrets: inherit # pragma: allowlist secret
 
   call-auto-rebase:
     needs: triage
-    if: needs.triage.outputs.target == 'auto-rebase'
+    if: (github.event_name != 'workflow_run' || github.event.workflow_run.head_repository.full_name == github.repository) && needs.triage.outputs.target == 'auto-rebase'
     uses: ./.github/workflows/Jules-Auto-Rebase.yml
     secrets: inherit # pragma: allowlist secret
 
   call-archivist:
     needs: triage
-    if: needs.triage.outputs.target == 'archivist'
+    if: (github.event_name != 'workflow_run' || github.event.workflow_run.head_repository.full_name == github.repository) && needs.triage.outputs.target == 'archivist'
     uses: ./.github/workflows/Jules-Archivist.yml
     secrets: inherit # pragma: allowlist secret
 
   call-sentinel:
     needs: triage
-    if: needs.triage.outputs.target == 'sentinel'
+    if: (github.event_name != 'workflow_run' || github.event.workflow_run.head_repository.full_name == github.repository) && needs.triage.outputs.target == 'sentinel'
     uses: ./.github/workflows/Jules-Sentinel.yml
     secrets: inherit # pragma: allowlist secret
 
   call-issue-resolver:
     needs: triage
-    if: needs.triage.outputs.target == 'issue-resolver'
+    if: (github.event_name != 'workflow_run' || github.event.workflow_run.head_repository.full_name == github.repository) && needs.triage.outputs.target == 'issue-resolver'
     uses: ./.github/workflows/Jules-Issue-Resolver.yml
     secrets: inherit # pragma: allowlist secret
 
   call-documentation-auditor:
     needs: triage
-    if: needs.triage.outputs.target == 'documentation-auditor'
+    if: (github.event_name != 'workflow_run' || github.event.workflow_run.head_repository.full_name == github.repository) && needs.triage.outputs.target == 'documentation-auditor'
     uses: ./.github/workflows/Jules-Documentation-Auditor.yml
     secrets: inherit # pragma: allowlist secret
