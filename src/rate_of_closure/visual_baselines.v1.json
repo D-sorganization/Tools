@@ -2,7 +2,7 @@
   "schema_id": "rate-of-closure/visual-baselines",
   "schema_version": 1,
   "approval_policy": "proposed-off-default-branch-approved-after-protected-merge",
-  "source_artifact_commit": "1f3f6ca769276a9dbec5471e04ea576f8728eb9a",
+  "source_artifact_commit": "8b9935afece7296409dd77c473806f3e8414220e",
   "baselines": [
     {
       "surface": "react",
@@ -105,7 +105,7 @@
       "tab_id": "putting",
       "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion-inter-5.3.0",
       "file": "initial-putting-1440x900.png",
-      "sha256": "c4952c5e1d50432a9e6e57259c96934963049212434f83aeb9c2a4ff87007433",
+      "sha256": "9023b32414df5f95532b5df2a95c1c2dc0620d87f986f663e797db1a4db479a7",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 4000,

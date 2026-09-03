@@ -29,7 +29,7 @@ def test_packaged_manifest_binds_exact_reviewed_bytes() -> None:
     manifest = load_visual_baseline_manifest()
 
     assert manifest.source_artifact_commit == (
-        "1f3f6ca769276a9dbec5471e04ea576f8728eb9a"  # pragma: allowlist secret
+        "8b9935afece7296409dd77c473806f3e8414220e"  # pragma: allowlist secret
     )
     assert len(manifest.baselines) == 20
     package = files("rate_of_closure")
