@@ -1,0 +1,1201 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1845,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3bf53470e0f8f2022866baef5adc2dc475eb49226f4c55d060b76b09df028fd7",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-MATH-PRIMITIVES-BENCHES-MATH-BENCH-RS-8C411F1F11D3",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/math-primitives/benches/math_bench.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 18093,
+      "classification": "calculation",
+      "classification_basis": "path-marker:geometry",
+      "content_sha256_lf": "5bfc84a193bd2564a289f503c3fc0e95e93739a48de30998844b47ecdfed0b12",
+      "family": "native-kernels-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-MATH-PRIMITIVES-SRC-GEOMETRY-RS-7B5D68E2FC14",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/math-primitives/src/geometry.rs",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "fn",
+            "name": "axis_aligned",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "capsule_capsule_distance",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "center",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "check_collision_spheres",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "closest_points_segments",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "half_height",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "length",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "new",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "sphere_capsule_distance",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "sphere_sphere_distance",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "Capsule",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "Cylinder",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "DistanceResult",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "OrientedBox",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "Sphere",
+            "signature": null
+          },
+          {
+            "kind": "trait",
+            "name": "GeometricPrimitive",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/optimizer_gui/tests/test_swing_chain_models.py",
+          "src/pendulum_simulator/pendulum-web/tests/forceSourceStudy.test.ts",
+          "src/shared/python/humanoid_character_builder/tests/test_builder_assembly.py",
+          "src/shared/python/humanoid_character_builder/tests/test_urdf_generator.py",
+          "src/shared/python/model_generation/tests/test_physics_validation.py",
+          "src/shared/python/model_generation/tests/test_unified_loader.py",
+          "src/shared/python/model_generation/tests/test_urdf_roundtrip.py",
+          "src/shared/python/programmatic_pid/tests/test_geometry.py",
+          "src/shared/python/programmatic_pid/tests/test_pipeline_e2e.py",
+          "src/shared/python/sidekick/tests/calculators/mechanical/test_trc_geometry.py",
+          "src/shared/python/swing_sim/ground/tests/test_regional_plan_wire.py",
+          "src/shared/python/swing_sim/ground/tests/test_study_projection.py",
+          "src/shared/python/swing_sim/ground/tests/test_upstream_terrain_adapter.py",
+          "src/shared/python/swing_sim/putting/tests/test_roll.py",
+          "src/shared/python/swing_sim/solver/tests/test_spatial_targets.py",
+          "src/shared/python/swing_sim/solver/tests/test_targets.py",
+          "tests/heavy_integration/test_tools_contracts.py",
+          "tests/programmatic_pid/test_geometry.py",
+          "tests/rate_of_closure/pyqt_variation_visual_state_probe.py",
+          "tests/rate_of_closure/pyqt_visualization_tab_probe.py",
+          "tests/rate_of_closure/test_club_heads.py",
+          "tests/rate_of_closure/test_club_mesh_source.py",
+          "tests/rate_of_closure/test_club_profile_acceptance.py",
+          "tests/rate_of_closure/test_epic_4142_requirement_evidence.py",
+          "tests/rate_of_closure/test_kinetics.py",
+          "tests/rate_of_closure/test_launch_monitor_linked_scatter_layout.py",
+          "tests/rate_of_closure/test_manual_delivery_gui.py",
+          "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py",
+          "tests/rate_of_closure/test_variation_geometry_properties.py",
+          "tests/rate_of_closure/test_variation_noise_response.py",
+          "tests/rate_of_closure/test_variation_streaming_ensemble_geometry.py",
+          "tests/rate_of_closure/test_visualization_tab_audit.py",
+          "tests/rotation_converter/test_screw_visualization.py",
+          "tests/shared/python/model_generation/inertia/test_calculator.py",
+          "tests/shared/python/model_generation/test_urdf_parser.py",
+          "tests/test_asteroid_jumper/test_physics.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "src/shared/python/model_generation/tests/test_physics_validation.py",
+          "tests/heavy_integration/test_tools_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1410,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8d8fafb64f448e10f4a16884a44c92dc653b5ce0822f3a4351dcc1a69702fed0",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-MATH-PRIMITIVES-SRC-LIB-RS-83714E932D42",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/math-primitives/src/lib.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 12950,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e25615cfaae6b529d2ecd60364cc8c78c2e9b5d20389292a3aca555ed6e8d83d",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-MATH-PRIMITIVES-SRC-MATRIX3-RS-770B8FF5EF7C",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/math-primitives/src/matrix3.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "const",
+            "name": "fn",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "add",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "at",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "determinant",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "from_quaternion",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "mul_mat",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "mul_vec",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "new",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "scale",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "transpose",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "wasm_at",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "wasm_determinant",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "wasm_get_col",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "wasm_get_row",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "wasm_identity",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "wasm_mul_mat",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "wasm_mul_vec",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "wasm_new",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "wasm_scale",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "wasm_transpose",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "Matrix3",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 18036,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "af84bbeb3202e49682ba6cee3c9af3eac53a4dde00dbcd1b0bed91d8cb7426b7",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-MATH-PRIMITIVES-SRC-PY-BINDINGS-RS-DC39F7CCE4AE",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/math-primitives/src/py_bindings.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "fn",
+            "name": "register_module",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N",
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 12580,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "37a3d381c6c42af6da7607e48a77545bb6433634f1f46c13f86f7e2dbb784f50",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-MATH-PRIMITIVES-SRC-QUATERNION-RS-6A1988A3578E",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/math-primitives/src/quaternion.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "const",
+            "name": "fn",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "conjugate",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "from_axis_angle",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "magnitude",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "magnitude_squared",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "multiply",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "new",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "rotate_vector",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "slerp",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "Quaternion",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "matlab/test_rotation_converter.m",
+          "src/shared/python/swing_sim/putting/tests/test_stroke_interchange.py",
+          "tests/benchmarks/conftest.py",
+          "tests/benchmarks/test_rotation_converter_perf.py",
+          "tests/calc_backend/test_rotation_converter_api.py",
+          "tests/rotation_converter/test_converter.py",
+          "tests/rotation_converter/test_rigid_transform.py",
+          "tests/rotation_converter/test_rotation_core.py",
+          "tests/rust_bindings/test_math_primitives_bindings.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
+          "tests/unit/lower_body_model/test_simulator.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 8325,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "82a93efbdee072d3c72f89c269edd17ddf937e03daec2ec8e54aae58cea523ec",
+      "family": "native-kernels-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-MATH-PRIMITIVES-SRC-ROTATION-RS-E65E85972726",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/math-primitives/src/rotation.rs",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "fn",
+            "name": "axis_angle_to_rotation_matrix",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "euler_to_quaternion",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "euler_to_rotation_matrix",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "quaternion_to_euler",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "quaternion_to_rotation_matrix",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "rotation_matrix_to_euler",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "rotation_matrix_to_quaternion",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "matlab/test_rotation_converter.m",
+          "src/data_processing/data_processor/python/tests/test_augmentation_types.py",
+          "src/pendulum_simulator/tests/test_golfer_kinematics.py",
+          "src/pendulum_simulator/tests/test_hub_options.py",
+          "src/pendulum_simulator/tests/test_no_scroll_widgets.py",
+          "src/shared/python/humanoid_character_builder/tests/test_inertia_calculator.py",
+          "src/shared/python/swing_sim/conventions/tests/test_registry.py",
+          "src/shared/python/swing_sim/ground/tests/test_upstream_terrain_adapter.py",
+          "src/shared/python/swing_sim/impact/tests/test_dplane.py",
+          "src/shared/python/swing_sim/putting/tests/test_impact.py",
+          "src/shared/python/swing_sim/putting/tests/test_stroke_interchange.py",
+          "src/shared/python/swing_sim/tests/test_swing_source.py",
+          "src/shared/python/swing_sim/variation/tests/test_noise_response_falsification.py",
+          "tests/benchmarks/conftest.py",
+          "tests/benchmarks/test_rotation_converter_perf.py",
+          "tests/calc_backend/test_rotation_converter_api.py",
+          "tests/rate_of_closure/test_club_assembly_binding.py",
+          "tests/rate_of_closure/test_clubhead_engineering_sidecar.py",
+          "tests/rate_of_closure/test_gui.py",
+          "tests/rate_of_closure/test_manual_delivery.py",
+          "tests/rate_of_closure/test_model.py",
+          "tests/rate_of_closure/test_units.py",
+          "tests/rate_of_closure/test_wedge_ground_clearance.py",
+          "tests/rotation_converter/test_converter.py",
+          "tests/rotation_converter/test_modern_robotics.py",
+          "tests/rotation_converter/test_modern_robotics_public_surface_3689.py",
+          "tests/rotation_converter/test_rigid_transform.py",
+          "tests/rotation_converter/test_rotation_converter_advanced.py",
+          "tests/rotation_converter/test_rotation_core.py",
+          "tests/rotation_converter/test_screw_visualization.py",
+          "tests/rotation_converter/test_twist_screw.py",
+          "tests/rust_bindings/test_math_primitives_bindings.py",
+          "tests/shared/python/golf_club/test_assembly.py",
+          "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/golf_club/test_turf_contact.py",
+          "tests/shared/python/golf_club/test_wedge_ground_contact.py",
+          "tests/shared/python/golf_club/test_wedge_sweep.py",
+          "tests/shared/python/model_generation/inertia/test_spatial.py",
+          "tests/shared/python/rotation_transforms/test_rotation_transforms.py",
+          "tests/unit/lower_body_model/test_hip_rotation_target.py",
+          "tests/unit/test_epic_2661_children_verification.py",
+          "tests/video_analyzer/test_swing_score_derivation.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "tests/shared/python/golf_club/test_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 13755,
+      "classification": "calculation",
+      "classification_basis": "path-marker:transform",
+      "content_sha256_lf": "33d67019b5b06037ca2edf2fb485a24d2dbdc291b89af7d886e74f769f7305ad",
+      "family": "native-kernels-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-MATH-PRIMITIVES-SRC-TRANSFORM-RS-CF79191699EE",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/math-primitives/src/transform.rs",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "fn",
+            "name": "compose",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "from_homogeneous",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "from_pose",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "from_quaternion",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "from_rotation_matrix",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "from_rotation_x",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "from_rotation_y",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "from_rotation_z",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "from_translation",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "homogeneous_matrix",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "identity",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "interpolate",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "inverse",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "new",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "pitch",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "roll",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "rotate_euler",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "rotation_matrix",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "to_pose",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "to_quaternion",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "transform_point",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "transform_vector",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "translate",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "x",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "y",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "yaw",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "z",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "Pose6DOF",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "Transform6DOF",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "matlab/test_rotation_converter.m",
+          "src/data_processing/data_processor/python/tests/test_script_generator_types.py",
+          "src/media_processing/video_processor/apps/web/test/setup.ts",
+          "src/p1am_control_system/backend/tests/test_data_explorer_stats.py",
+          "src/pendulum_simulator/tests/test_issue_fixes.py",
+          "src/shared/python/calc_backend/tests/test_calc_backend_gaps.py",
+          "src/shared/python/sidekick/tests/test_data_processor_engine_errors.py",
+          "src/shared/python/sidekick/tests/test_exceptions.py",
+          "src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py",
+          "tests/calc_backend/test_rotation_converter_api.py",
+          "tests/contract/test_calc_backend_contract_surface.py",
+          "tests/e2e/conftest.py",
+          "tests/e2e/test_workflows.py",
+          "tests/rotation_converter/test_reference_frame_operations.py",
+          "tests/rotation_converter/test_rigid_transform.py",
+          "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/model_generation/inertia/test_spatial.py",
+          "tests/shared/python/rotation_transforms/test_rotation_transforms.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "tests/contract/test_calc_backend_contract_surface.py",
+          "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 15092,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c0f0cb43a2e95568f21f6d48d2e5361859b7e711cd8a3b40afc79e8838ad5bf4",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-MATH-PRIMITIVES-SRC-TYPES-RS-BE31FCC8272B",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/math-primitives/src/types.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "const",
+            "name": "fn",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "add",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "cross",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "dot",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "magnitude",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "magnitude_squared",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "new",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "normalized",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "scale",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "sub",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "Vector3",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "rust_core/tools-core/tests/flight_ground_transfer.rs",
+          "rust_core/tools-core/tests/flight_ground_wire.rs",
+          "src/data_processing/data_processor/python/tests/test_main_window_time_ops.py",
+          "src/data_processing/data_processor/python/tests/test_signal_processor.py",
+          "src/data_processing/data_processor/python/tests/test_vectorized_filter_engine_contracts.py",
+          "src/data_processing/data_processor/python/tests/test_wavelet_denoising.py",
+          "src/financial_calculator/tests/test_financial_calculator_gui_contracts.py",
+          "src/inertia_calculator/tests/test_inertia_calculator_gui.py",
+          "src/media_processing/audio_processor/matlab/audio_signal_processor/tests/test_fft_filters.m",
+          "src/media_processing/video_processor/python/tests_video_processor/test_api.py",
+          "src/media_processing/video_processor/python/tests_video_processor/test_logger_utils_mock.py",
+          "src/movement_optimizer/tests/test_main_window.py",
+          "src/multi_param_analysis/tests/test_multi_param_analysis_gui.py",
+          "src/p1am_control_system/backend/tests/test_data_explorer_stats.py",
+          "src/p1am_control_system/backend/tests/test_estop_write_seams.py",
+          "src/p1am_control_system/backend/tests/test_modbus_codec.py",
+          "src/p1am_control_system/backend/tests/test_system_state.py",
+          "src/p1am_control_system/backend/tests/test_validation_guards_3745.py",
+          "src/pendulum_simulator/tests/test_constants.py",
+          "src/pendulum_simulator/tests/test_friction.py",
+          "src/pendulum_simulator/tests/test_friction_triple.py",
+          "src/pendulum_simulator/tests/test_issue_fixes.py",
+          "src/pendulum_simulator/tests/test_pendulum_widget.py",
+          "src/pendulum_simulator/tests/test_simulation_golfer_gpu.py",
+          "src/pendulum_simulator/tests/test_transfer_strategy_panel.py",
+          "src/shared/python/ai/tests/test_access_policy.py",
+          "src/shared/python/chat/tests/test_chat.py",
+          "src/shared/python/chat/tests/test_voice_input.py",
+          "src/shared/python/humanoid_character_builder/tests/test_inertia_calculator.py",
+          "src/shared/python/humanoid_character_builder/tests/test_urdf_generator.py",
+          "src/shared/python/model_generation/tests/test_api_adapters.py",
+          "src/shared/python/model_generation/tests/test_simscape.py",
+          "src/shared/python/model_generation/tests/test_urdf_roundtrip.py",
+          "src/shared/python/plot_engine/tests/test_trendline.py",
+          "src/shared/python/sidekick/tests/process_calculators/test_scrubber_engine.py",
+          "src/shared/python/sidekick/tests/test_launcher_factory.py",
+          "src/shared/python/signal_toolkit/tests/test_noise.py",
+          "src/shared/python/signal_toolkit/tests/test_signal_toolkit.py",
+          "src/shared/python/swing_sim/flight/tests/test_surface_flight_cancellation.py",
+          "src/shared/python/swing_sim/ground/tests/test_profile_store.py",
+          "src/shared/python/swing_sim/solver/tests/test_goals.py",
+          "src/shared/python/swing_sim/tests/test_types.py",
+          "src/solar_system_model/solar_system/tests/test_parametrized.py",
+          "src/steam_engine_calculator/tests/test_steam_engine_calculator_gui.py",
+          "tests/architecture/test_shared_import_aliases_3316.py",
+          "tests/conftest.py",
+          "tests/data_processing/data_processor/test_background_thread_errors.py",
+          "tests/data_processing/data_processor/test_script_generator_hardening.py",
+          "tests/data_processing/data_processor/test_uncertainty_quantification_contracts.py",
+          "tests/data_processor_io/test_rust_engine_contract.py",
+          "tests/e2e/conftest.py",
+          "tests/folder_tool/test_folders_tool_r0.py",
+          "tests/integration/sidekick/test_sidekick_host_integration.py",
+          "tests/integration/test_cross_repo_contracts.py",
+          "tests/ops/test_ci_standard_tools_core_wheel.py",
+          "tests/p1am_control_system/test_calibrate_safe_shutdown.py",
+          "tests/p1am_control_system/test_cors_config.py",
+          "tests/p1am_control_system/test_event_logger_filter_error_logging.py",
+          "tests/programmatic_pid/test_equipment.py",
+          "tests/programmatic_pid/test_types.py",
+          "tests/python/test_plugin_manager_discovery.py",
+          "tests/rate_of_closure/test_chip_forgiveness_persistence.py",
+          "tests/rate_of_closure/test_club_view_camera.py",
+          "tests/rate_of_closure/test_confidence_ellipsoid_mesh.py",
+          "tests/rate_of_closure/test_contracts.py",
+          "tests/rate_of_closure/test_gui.py",
+          "tests/rate_of_closure/test_launch_monitor_analytics_tab.py",
+          "tests/rate_of_closure/test_python_compatibility.py",
+          "tests/rate_of_closure/test_rate_launch_pyqt_authority.py",
+          "tests/rate_of_closure/test_scalar_ensemble_contract.py",
+          "tests/rate_of_closure/test_variation_plot_data.py",
+          "tests/rate_of_closure/test_visualization_acceptance_manifest.py",
+          "tests/rate_of_closure/test_visualization_performance_manifest.py",
+          "tests/rate_of_closure/test_visualization_tab_manifest.py",
+          "tests/rate_of_closure/test_web_companion_app.py",
+          "tests/rate_of_closure/test_web_companion_bundle.py",
+          "tests/rate_of_closure/test_web_companion_runtime.py",
+          "tests/rust_bindings/_tools_core_import.py",
+          "tests/scripts/test_check_coverage_gates.py",
+          "tests/scripts/test_tool_registry_outputs.py",
+          "tests/shared/python/ai/integrations/_bootstrap.py",
+          "tests/shared/python/ai/integrations/test_notion_client.py",
+          "tests/shared/python/ai/test_authentication.py",
+          "tests/shared/python/ai/test_rust_adapter.py",
+          "tests/shared/python/ai/test_rust_adapter_extended.py",
+          "tests/shared/python/chat/test_adapter_lifecycle.py",
+          "tests/shared/python/chat/test_ai_memory_manager.py",
+          "tests/shared/python/chat/test_assistant_panel_inline_controls.py",
+          "tests/shared/python/chat/test_assistant_panel_memory_sync.py",
+          "tests/shared/python/chat/test_chat_chunk_batching.py",
+          "tests/shared/python/chat/test_chat_dock_widget.py",
+          "tests/shared/python/chat/test_chat_input_keybindings.py",
+          "tests/shared/python/chat/test_chat_queue_panel.py",
+          "tests/shared/python/chat/test_cli_agent_adapters.py",
+          "tests/shared/python/chat/test_cli_provider_dropdown.py",
+          "tests/shared/python/chat/test_history_sidebar.py",
+          "tests/shared/python/chat/test_indexing_controller.py",
+          "tests/shared/python/chat/test_message_display.py",
+          "tests/shared/python/chat/test_panel_header.py",
+          "tests/shared/python/chat/test_router_error_logging.py",
+          "tests/shared/python/chat/test_thinking_indicator.py",
+          "tests/shared/python/chat/test_websocket_protocol.py",
+          "tests/shared/python/data_processing/test_data_processing_contract.py",
+          "tests/shared/python/data_processing/test_processor.py",
+          "tests/shared/python/file_watcher/test_file_watcher.py",
+          "tests/shared/python/gui_launcher/test_launcher_factories.py",
+          "tests/shared/python/humanoid/test_mesh_generator_submodules.py",
+          "tests/shared/python/model_generation/test_cli_main.py",
+          "tests/shared/python/model_generation/test_mesh_upload_hardening.py",
+          "tests/shared/python/model_generation/test_rest_api_routes.py",
+          "tests/shared/python/plot_engine/test_matplotlib_renderer.py",
+          "tests/shared/python/plot_engine/test_plotly_converter.py",
+          "tests/shared/python/process_calculators/test_syngas_compression_edge_cases.py",
+          "tests/shared/python/sidekick/ui/test_tools_sidebar_runtime_tabs.py",
+          "tests/shared/python/test_safe_eval.py",
+          "tests/shared/python/theme/test_icon_utils.py",
+          "tests/shared/python/theme/test_typography.py",
+          "tests/shared/python/ui/test_wave1_widget_state.py",
+          "tests/shared/python/ui/test_window_icon.py",
+          "tests/shared_scripts/test_fleet_hooks_root_clutter.py",
+          "tests/test_cross_repo_import_compatibility.py",
+          "tests/test_data_processor_embedding.py",
+          "tests/test_data_processor_tab_export.py",
+          "tests/test_launch_cli_output.py",
+          "tests/test_pendulum_discovery.py",
+          "tests/test_signal_processing_expanded.py",
+          "tests/test_test_utils.py",
+          "tests/test_wave_solver_security.py",
+          "tests/tools/test_scientific_auditor.py",
+          "tests/unit/ai/gui/test_chat_export.py",
+          "tests/unit/ai/gui/test_session_manager_2872.py",
+          "tests/unit/ai/test_gemini_adapter.py",
+          "tests/unit/ai/test_peer_review.py",
+          "tests/unit/codemap/test_codemap_cli.py",
+          "tests/unit/codemap/test_codemap_indexer.py",
+          "tests/unit/codemap/test_codemap_mcp_server.py",
+          "tests/unit/codemap/test_codemap_ts_common.py",
+          "tests/unit/codemap/test_codemap_watcher.py",
+          "tests/unit/lower_body_model/test_public_api_contract.py",
+          "tests/unit/sidekick/agent/test_feature_catalog.py",
+          "tests/unit/sidekick/jupyter_tab/test_availability.py",
+          "tests/unit/sidekick/test_reporting_tab_context_gathering.py",
+          "tests/unit/sidekick/test_runtime_split_coverage.py",
+          "tests/unit/sidekick/test_sidebar_shutdown.py",
+          "tests/unit/sidekick/test_standalone_runtime.py",
+          "tests/unit/test_contracts.py",
+          "tests/unit/test_data_processor_exceptions.py",
+          "tests/unit/test_verify_coverage.py",
+          "tests/verification/test_verification_lod.py",
+          "tests/vessel_drafter/test_contracts_fallback.py",
+          "tests/vessel_drafter/test_dbc_lod.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "src/data_processing/data_processor/python/tests/test_vectorized_filter_engine_contracts.py",
+          "src/financial_calculator/tests/test_financial_calculator_gui_contracts.py",
+          "src/p1am_control_system/backend/tests/test_validation_guards_3745.py",
+          "tests/data_processing/data_processor/test_uncertainty_quantification_contracts.py",
+          "tests/data_processor_io/test_rust_engine_contract.py",
+          "tests/integration/test_cross_repo_contracts.py",
+          "tests/rate_of_closure/test_contracts.py",
+          "tests/rate_of_closure/test_scalar_ensemble_contract.py",
+          "tests/shared/python/data_processing/test_data_processing_contract.py",
+          "tests/tools/test_scientific_auditor.py",
+          "tests/unit/lower_body_model/test_public_api_contract.py",
+          "tests/unit/test_contracts.py",
+          "tests/vessel_drafter/test_contracts_fallback.py"
+        ]
+      }
+    }
+  ],
+  "package": "rust_core/math-primitives",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

@@ -1,0 +1,3369 @@
+{
+  "__init__.py": {
+    "__all__": [
+      "StylesheetGenerator",
+      "ThemeProvider",
+      "ThemeSwitcher",
+      "ThemeManager",
+      "get_theme_manager",
+      "FontManager",
+      "get_font_manager",
+      "ThemedWindowMixin",
+      "apply_theme_to_window",
+      "create_theme_menu",
+      "setup_themed_app",
+      "TextWidthSpec",
+      "configure_form_layout_for_readability",
+      "derive_text_candidates",
+      "readable_text_width",
+      "set_text_minimum_width",
+      "wrap_in_scroll_area",
+      "ApplicationZoomController",
+      "ZoomConfig",
+      "ZoomTokenSet",
+      "install_application_zoom",
+      "scale_px",
+      "ColorFieldEditor",
+      "ColorPickerButton",
+      "CustomThemeDialog",
+      "CustomThemeEditor",
+      "ThemeListItem",
+      "ThemeManagerDialog",
+      "ThemePreviewWidget",
+      "BUILTIN_THEMES",
+      "CHART_COLORS",
+      "Colors",
+      "DARK_THEME",
+      "SEMANTIC_ALIASES",
+      "SEMANTIC_COLOR_KEYS",
+      "THEME_COLOR_KEYS",
+      "ThemePalette",
+      "get_current_colors",
+      "get_matplotlib_colors",
+      "get_qcolor",
+      "get_rgba",
+      "is_dark_theme",
+      "is_valid_hex_color",
+      "normalise_hex_color",
+      "CSS_FONT_DISPLAY",
+      "CSS_FONT_MONO",
+      "CSS_FONT_UI",
+      "FONT_STACK_DISPLAY",
+      "FONT_STACK_MONO",
+      "FONT_STACK_UI",
+      "FontSizes",
+      "FontWeights",
+      "Sizes",
+      "Weights",
+      "get_display_font",
+      "get_mono_font",
+      "get_qfont",
+      "generate_minimal_stylesheet",
+      "generate_stylesheet"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "ApplicationZoomController": {
+        "type": "reexport"
+      },
+      "BUILTIN_THEMES": {
+        "type": "variable"
+      },
+      "CHART_COLORS": {
+        "type": "variable"
+      },
+      "CSS_FONT_DISPLAY": {
+        "type": "variable"
+      },
+      "CSS_FONT_MONO": {
+        "type": "variable"
+      },
+      "CSS_FONT_UI": {
+        "type": "variable"
+      },
+      "ColorFieldEditor": {
+        "type": "reexport"
+      },
+      "ColorPickerButton": {
+        "type": "reexport"
+      },
+      "Colors": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "get_current_colors": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                }
+              ],
+              "returns": "ThemePalette"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "CustomThemeDialog": {
+        "type": "reexport"
+      },
+      "CustomThemeEditor": {
+        "type": "reexport"
+      },
+      "DARK_THEME": {
+        "type": "variable"
+      },
+      "FONT_STACK_DISPLAY": {
+        "type": "variable"
+      },
+      "FONT_STACK_MONO": {
+        "type": "variable"
+      },
+      "FONT_STACK_UI": {
+        "type": "variable"
+      },
+      "FontManager": {
+        "type": "reexport"
+      },
+      "FontSizes": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "FontWeights": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "SEMANTIC_ALIASES": {
+        "type": "variable"
+      },
+      "SEMANTIC_COLOR_KEYS": {
+        "type": "variable"
+      },
+      "Sizes": {
+        "type": "variable"
+      },
+      "StylesheetGenerator": {
+        "info": {
+          "bases": [
+            "Protocol"
+          ],
+          "methods": {
+            "generate": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "dict[str, str]",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "colors"
+                }
+              ],
+              "returns": "str"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "THEME_COLOR_KEYS": {
+        "type": "variable"
+      },
+      "TextWidthSpec": {
+        "type": "reexport"
+      },
+      "ThemeListItem": {
+        "type": "reexport"
+      },
+      "ThemeManager": {
+        "type": "reexport"
+      },
+      "ThemeManagerDialog": {
+        "type": "reexport"
+      },
+      "ThemePalette": {
+        "info": {
+          "bases": [
+            "dict[str, str]"
+          ],
+          "methods": {
+            "get_current_colors": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                }
+              ],
+              "returns": "ThemePalette"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ThemePreviewWidget": {
+        "type": "reexport"
+      },
+      "ThemeProvider": {
+        "info": {
+          "bases": [
+            "Protocol"
+          ],
+          "methods": {
+            "current_theme_name": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "str"
+            },
+            "get_available_themes": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "list[str]"
+            },
+            "get_current_colors": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, str]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ThemeSwitcher": {
+        "info": {
+          "bases": [
+            "Protocol"
+          ],
+          "methods": {
+            "change_theme": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "name"
+                }
+              ],
+              "returns": "None"
+            },
+            "get_available_themes": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "list[str]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ThemedWindowMixin": {
+        "type": "reexport"
+      },
+      "Weights": {
+        "type": "variable"
+      },
+      "ZoomConfig": {
+        "type": "reexport"
+      },
+      "ZoomTokenSet": {
+        "type": "reexport"
+      },
+      "apply_theme_to_window": {
+        "type": "reexport"
+      },
+      "configure_form_layout_for_readability": {
+        "type": "reexport"
+      },
+      "create_theme_menu": {
+        "type": "reexport"
+      },
+      "derive_text_candidates": {
+        "type": "reexport"
+      },
+      "generate_minimal_stylesheet": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "dict[str, str]",
+              "default": null,
+              "kind": "arg",
+              "name": "theme"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "generate_stylesheet": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "dict[str, str]",
+              "default": null,
+              "kind": "arg",
+              "name": "theme"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "get_current_colors": {
+        "signature": {
+          "args": [],
+          "returns": "ThemePalette"
+        },
+        "type": "function"
+      },
+      "get_display_font": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "int",
+              "default": "Sizes.XL",
+              "kind": "arg",
+              "name": "size"
+            },
+            {
+              "annotation": "int",
+              "default": "Weights.BOLD",
+              "kind": "arg",
+              "name": "weight"
+            }
+          ],
+          "returns": "'QFont'"
+        },
+        "type": "function"
+      },
+      "get_font_manager": {
+        "type": "reexport"
+      },
+      "get_matplotlib_colors": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "dict[str, str]",
+              "default": null,
+              "kind": "arg",
+              "name": "theme"
+            }
+          ],
+          "returns": "dict[str, str | float]"
+        },
+        "type": "function"
+      },
+      "get_mono_font": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "int",
+              "default": "Sizes.BASE",
+              "kind": "arg",
+              "name": "size"
+            },
+            {
+              "annotation": "int",
+              "default": "Weights.NORMAL",
+              "kind": "arg",
+              "name": "weight"
+            }
+          ],
+          "returns": "'QFont'"
+        },
+        "type": "function"
+      },
+      "get_qcolor": {
+        "type": "reexport"
+      },
+      "get_qfont": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "int",
+              "default": "Sizes.BASE",
+              "kind": "arg",
+              "name": "size"
+            },
+            {
+              "annotation": "int",
+              "default": "Weights.NORMAL",
+              "kind": "arg",
+              "name": "weight"
+            },
+            {
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "family"
+            },
+            {
+              "annotation": "bool",
+              "default": "False",
+              "kind": "arg",
+              "name": "italic"
+            }
+          ],
+          "returns": "'QFont'"
+        },
+        "type": "function"
+      },
+      "get_rgba": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "hex_color"
+            },
+            {
+              "annotation": "float",
+              "default": "1.0",
+              "kind": "arg",
+              "name": "alpha"
+            }
+          ],
+          "returns": "tuple[float, float, float, float]"
+        },
+        "type": "function"
+      },
+      "get_theme_manager": {
+        "type": "reexport"
+      },
+      "install_application_zoom": {
+        "type": "reexport"
+      },
+      "is_dark_theme": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "theme_name"
+            }
+          ],
+          "returns": "bool"
+        },
+        "type": "function"
+      },
+      "is_valid_hex_color": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            }
+          ],
+          "returns": "bool"
+        },
+        "type": "function"
+      },
+      "normalise_hex_color": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "readable_text_width": {
+        "type": "reexport"
+      },
+      "scale_px": {
+        "type": "reexport"
+      },
+      "set_text_minimum_width": {
+        "type": "reexport"
+      },
+      "setup_themed_app": {
+        "type": "reexport"
+      },
+      "wrap_in_scroll_area": {
+        "type": "reexport"
+      }
+    }
+  },
+  "api.py": {
+    "__all__": [
+      "ActiveThemeResponse",
+      "SaveCustomThemeRequest",
+      "SetActiveThemeRequest",
+      "ThemeColors",
+      "ThemeDefinition",
+      "ThemeListResponse",
+      "ThemeOperationResponse",
+      "create_theme_router",
+      "logger"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "ActiveThemeResponse": {
+        "info": {
+          "bases": [
+            "BaseModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "SaveCustomThemeRequest": {
+        "info": {
+          "bases": [
+            "BaseModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "SetActiveThemeRequest": {
+        "info": {
+          "bases": [
+            "BaseModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ThemeColors": {
+        "info": {
+          "bases": [
+            "BaseModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ThemeDefinition": {
+        "info": {
+          "bases": [
+            "BaseModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ThemeListResponse": {
+        "info": {
+          "bases": [
+            "BaseModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ThemeOperationResponse": {
+        "info": {
+          "bases": [
+            "BaseModel"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "create_theme_router": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Any",
+              "default": null,
+              "kind": "arg",
+              "name": "theme_manager"
+            }
+          ],
+          "returns": "APIRouter"
+        },
+        "type": "function"
+      },
+      "logger": {
+        "type": "variable"
+      }
+    }
+  },
+  "catppuccin.py": {
+    "__all__": [
+      "CATPPUCCIN_MOCHA",
+      "get_stylesheet"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "CATPPUCCIN_MOCHA": {
+        "type": "variable"
+      },
+      "get_stylesheet": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "dict[str, str] | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "palette"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "colors.py": {
+    "__all__": [
+      "BUILTIN_THEMES",
+      "CHART_COLORS",
+      "SEMANTIC_COLOR_KEYS",
+      "THEME_COLOR_KEYS",
+      "get_matplotlib_colors",
+      "get_qcolor",
+      "get_rgba",
+      "is_dark_theme",
+      "is_valid_hex_color",
+      "normalise_hex_color"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "BUILTIN_THEMES": {
+        "type": "variable"
+      },
+      "CHART_COLORS": {
+        "type": "variable"
+      },
+      "SEMANTIC_COLOR_KEYS": {
+        "type": "variable"
+      },
+      "THEME_COLOR_KEYS": {
+        "type": "variable"
+      },
+      "get_matplotlib_colors": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "dict[str, str]",
+              "default": null,
+              "kind": "arg",
+              "name": "theme"
+            }
+          ],
+          "returns": "dict[str, str | float]"
+        },
+        "type": "function"
+      },
+      "get_qcolor": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "hex_color"
+            }
+          ],
+          "returns": "QColor"
+        },
+        "type": "function"
+      },
+      "get_rgba": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "hex_color"
+            },
+            {
+              "annotation": "float",
+              "default": "1.0",
+              "kind": "arg",
+              "name": "alpha"
+            }
+          ],
+          "returns": "tuple[float, float, float, float]"
+        },
+        "type": "function"
+      },
+      "is_dark_theme": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "theme_name"
+            }
+          ],
+          "returns": "bool"
+        },
+        "type": "function"
+      },
+      "is_valid_hex_color": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            }
+          ],
+          "returns": "bool"
+        },
+        "type": "function"
+      },
+      "normalise_hex_color": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "dialogs/__init__.py": {
+    "__all__": [
+      "ColorFieldEditor",
+      "ColorPickerButton",
+      "CustomThemeDialog",
+      "CustomThemeEditor",
+      "ThemeListItem",
+      "ThemeManagerDialog",
+      "ThemePreviewWidget"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "ColorFieldEditor": {
+        "info": {
+          "bases": [
+            "QWidget"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "initial_colour"
+                },
+                {
+                  "annotation": "QWidget | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "parent"
+                }
+              ],
+              "returns": "None"
+            },
+            "get_colour": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "str"
+            },
+            "set_colour": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "value"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ColorPickerButton": {
+        "info": {
+          "bases": [
+            "QPushButton"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": "'#ffffff'",
+                  "kind": "arg",
+                  "name": "initial_color"
+                },
+                {
+                  "annotation": "QWidget | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "parent"
+                }
+              ],
+              "returns": "None"
+            },
+            "get_color": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "str"
+            },
+            "set_color": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "color"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "CustomThemeDialog": {
+        "info": {
+          "bases": [
+            "QDialog"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "ThemeManager",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "theme_manager"
+                },
+                {
+                  "annotation": "QWidget | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "parent"
+                }
+              ],
+              "returns": "None"
+            },
+            "get_result": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, object] | None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "CustomThemeEditor": {
+        "info": {
+          "bases": [
+            "QDialog"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "ThemeManager",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "theme_manager"
+                },
+                {
+                  "annotation": "QWidget | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "parent"
+                },
+                {
+                  "annotation": "str | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "edit_theme"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ThemeListItem": {
+        "info": {
+          "bases": [
+            "QListWidgetItem"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "theme_name"
+                },
+                {
+                  "annotation": "bool",
+                  "default": "False",
+                  "kind": "arg",
+                  "name": "is_builtin"
+                },
+                {
+                  "annotation": "bool",
+                  "default": "False",
+                  "kind": "arg",
+                  "name": "is_current"
+                }
+              ],
+              "returns": "None"
+            },
+            "set_current": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "bool",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "is_current"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ThemeManagerDialog": {
+        "info": {
+          "bases": [
+            "QDialog"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "ThemeManager",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "theme_manager"
+                },
+                {
+                  "annotation": "QWidget | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "parent"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ThemePreviewWidget": {
+        "info": {
+          "bases": [
+            "QWidget"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "QWidget | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "parent"
+                }
+              ],
+              "returns": "None"
+            },
+            "apply_theme_colors": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "dict[str, str]",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "colors"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      }
+    }
+  },
+  "dialogs/custom_theme_dialog.py": {
+    "__all__": [
+      "BRIGHTNESS_THRESHOLD",
+      "ColorFieldEditor",
+      "CustomThemeDialog",
+      "LUMA_BLUE",
+      "LUMA_GREEN",
+      "LUMA_RED",
+      "logger"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "BRIGHTNESS_THRESHOLD": {
+        "type": "variable"
+      },
+      "ColorFieldEditor": {
+        "info": {
+          "bases": [
+            "QWidget"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "initial_colour"
+                },
+                {
+                  "annotation": "QWidget | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "parent"
+                }
+              ],
+              "returns": "None"
+            },
+            "get_colour": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "str"
+            },
+            "set_colour": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "value"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "CustomThemeDialog": {
+        "info": {
+          "bases": [
+            "QDialog"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "ThemeManager",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "theme_manager"
+                },
+                {
+                  "annotation": "QWidget | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "parent"
+                }
+              ],
+              "returns": "None"
+            },
+            "get_result": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, object] | None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "LUMA_BLUE": {
+        "type": "variable"
+      },
+      "LUMA_GREEN": {
+        "type": "variable"
+      },
+      "LUMA_RED": {
+        "type": "variable"
+      },
+      "logger": {
+        "type": "variable"
+      }
+    }
+  },
+  "dialogs/custom_theme_editor.py": {
+    "__all__": [
+      "ColorPickerButton",
+      "CustomThemeEditor",
+      "ThemePreviewWidget",
+      "logger"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "ColorPickerButton": {
+        "info": {
+          "bases": [
+            "QPushButton"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": "'#ffffff'",
+                  "kind": "arg",
+                  "name": "initial_color"
+                },
+                {
+                  "annotation": "QWidget | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "parent"
+                }
+              ],
+              "returns": "None"
+            },
+            "get_color": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "str"
+            },
+            "set_color": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "color"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "CustomThemeEditor": {
+        "info": {
+          "bases": [
+            "QDialog"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "ThemeManager",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "theme_manager"
+                },
+                {
+                  "annotation": "QWidget | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "parent"
+                },
+                {
+                  "annotation": "str | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "edit_theme"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ThemePreviewWidget": {
+        "info": {
+          "bases": [
+            "QWidget"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "QWidget | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "parent"
+                }
+              ],
+              "returns": "None"
+            },
+            "apply_theme_colors": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "dict[str, str]",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "colors"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "logger": {
+        "type": "variable"
+      }
+    }
+  },
+  "dialogs/theme_manager_dialog.py": {
+    "__all__": [
+      "ThemeListItem",
+      "ThemeManagerDialog",
+      "logger"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "ThemeListItem": {
+        "info": {
+          "bases": [
+            "QListWidgetItem"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "theme_name"
+                },
+                {
+                  "annotation": "bool",
+                  "default": "False",
+                  "kind": "arg",
+                  "name": "is_builtin"
+                },
+                {
+                  "annotation": "bool",
+                  "default": "False",
+                  "kind": "arg",
+                  "name": "is_current"
+                }
+              ],
+              "returns": "None"
+            },
+            "set_current": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "bool",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "is_current"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ThemeManagerDialog": {
+        "info": {
+          "bases": [
+            "QDialog"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "ThemeManager",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "theme_manager"
+                },
+                {
+                  "annotation": "QWidget | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "parent"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "logger": {
+        "type": "variable"
+      }
+    }
+  },
+  "fleet_adapter.py": {
+    "__all__": [
+      "FLEET_THEMES",
+      "fleet_to_theme_colors",
+      "get_fleet_theme_names",
+      "is_fleet_available"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "FLEET_THEMES": {
+        "type": "reexport"
+      },
+      "fleet_to_theme_colors": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "theme_name"
+            }
+          ],
+          "returns": "ThemeColors"
+        },
+        "type": "function"
+      },
+      "get_fleet_theme_names": {
+        "signature": {
+          "args": [],
+          "returns": "list[str]"
+        },
+        "type": "function"
+      },
+      "is_fleet_available": {
+        "signature": {
+          "args": [],
+          "returns": "bool"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "font_manager.py": {
+    "__all__": [
+      "BUILTIN_FONTS",
+      "FontManager",
+      "get_font_manager",
+      "logger"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "BUILTIN_FONTS": {
+        "type": "variable"
+      },
+      "FontManager": {
+        "info": {
+          "bases": [
+            "QObject"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "app_context"
+                },
+                {
+                  "annotation": "str | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "settings_org"
+                },
+                {
+                  "annotation": "str | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "settings_app"
+                }
+              ],
+              "returns": "None"
+            },
+            "apply_font": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "QApplication | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "app"
+                }
+              ],
+              "returns": "None"
+            },
+            "change_font": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "font_family"
+                }
+              ],
+              "returns": "None"
+            },
+            "get_available_fonts": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "list[str]"
+            },
+            "get_current_font": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "str"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "get_font_manager": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "app_context"
+            },
+            {
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "settings_org"
+            },
+            {
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "settings_app"
+            }
+          ],
+          "returns": "FontManager"
+        },
+        "type": "function"
+      },
+      "logger": {
+        "type": "variable"
+      }
+    }
+  },
+  "icon_utils.py": {
+    "__all__": [
+      "IconColorizer",
+      "SVG_REGISTRY"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "IconColorizer": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "colorize_svg_file": {
+              "args": [
+                {
+                  "annotation": "str | Path",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "path"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "color"
+                }
+              ],
+              "returns": "QIcon"
+            },
+            "get_icon": {
+              "args": [
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "name"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "color"
+                }
+              ],
+              "returns": "QIcon"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "SVG_REGISTRY": {
+        "type": "variable"
+      }
+    }
+  },
+  "integration.py": {
+    "__all__": [
+      "ThemedWindowMixin",
+      "ThemedDialogMixin",
+      "apply_theme_to_window",
+      "create_theme_menu",
+      "get_theme_manager",
+      "setup_themed_app"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "ThemedDialogMixin": {
+        "info": {
+          "bases": [
+            "ThemedWindowMixin"
+          ],
+          "methods": {
+            "setup_theme_support": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "bool",
+                  "default": "False",
+                  "kind": "arg",
+                  "name": "add_menu"
+                },
+                {
+                  "annotation": "bool",
+                  "default": "False",
+                  "kind": "arg",
+                  "name": "show_custom_options"
+                },
+                {
+                  "annotation": "str | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "settings_org"
+                },
+                {
+                  "annotation": "str | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "settings_app"
+                },
+                {
+                  "annotation": "str | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "base_icon_path"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ThemedWindowMixin": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "change_theme": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "theme_name"
+                }
+              ],
+              "returns": "None"
+            },
+            "get_current_theme": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "str"
+            },
+            "get_theme_manager": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "Any"
+            },
+            "setup_theme_support": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "bool",
+                  "default": "True",
+                  "kind": "arg",
+                  "name": "add_menu"
+                },
+                {
+                  "annotation": "bool",
+                  "default": "False",
+                  "kind": "arg",
+                  "name": "show_custom_options"
+                },
+                {
+                  "annotation": "str | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "settings_org"
+                },
+                {
+                  "annotation": "str | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "settings_app"
+                },
+                {
+                  "annotation": "str | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "base_icon_path"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "apply_theme_to_window": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "QMainWindow",
+              "default": null,
+              "kind": "arg",
+              "name": "window"
+            },
+            {
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "theme_name"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      },
+      "create_theme_menu": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "QMainWindow",
+              "default": null,
+              "kind": "arg",
+              "name": "window"
+            },
+            {
+              "annotation": "QMenuBar | QMenu | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "parent_menu"
+            },
+            {
+              "annotation": "bool",
+              "default": "False",
+              "kind": "arg",
+              "name": "show_custom_options"
+            }
+          ],
+          "returns": "QMenu"
+        },
+        "type": "function"
+      },
+      "get_theme_manager": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "QMainWindow | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "window"
+            },
+            {
+              "annotation": "str",
+              "default": "'D-sorganization'",
+              "kind": "arg",
+              "name": "settings_org"
+            },
+            {
+              "annotation": "str",
+              "default": "'FleetTheme'",
+              "kind": "arg",
+              "name": "settings_app"
+            }
+          ],
+          "returns": "Any"
+        },
+        "type": "function"
+      },
+      "setup_themed_app": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "QApplication",
+              "default": null,
+              "kind": "arg",
+              "name": "app"
+            },
+            {
+              "annotation": "QMainWindow",
+              "default": null,
+              "kind": "arg",
+              "name": "window"
+            },
+            {
+              "annotation": "bool",
+              "default": "True",
+              "kind": "arg",
+              "name": "add_menu"
+            },
+            {
+              "annotation": "bool",
+              "default": "False",
+              "kind": "arg",
+              "name": "show_custom_options"
+            },
+            {
+              "annotation": "str",
+              "default": "'D-sorganization'",
+              "kind": "arg",
+              "name": "settings_org"
+            },
+            {
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "settings_app"
+            },
+            {
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "base_icon_path"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "matplotlib_style.py": {
+    "__all__": [
+      "apply_plot_theme",
+      "apply_global_style",
+      "create_styled_figure",
+      "get_chart_color"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "apply_global_style": {
+        "signature": {
+          "args": [],
+          "returns": "None"
+        },
+        "type": "function"
+      },
+      "apply_plot_theme": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Figure",
+              "default": null,
+              "kind": "arg",
+              "name": "fig"
+            },
+            {
+              "annotation": "dict[str, str]",
+              "default": null,
+              "kind": "arg",
+              "name": "theme"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      },
+      "create_styled_figure": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "int",
+              "default": "1",
+              "kind": "arg",
+              "name": "nrows"
+            },
+            {
+              "annotation": "int",
+              "default": "1",
+              "kind": "arg",
+              "name": "ncols"
+            },
+            {
+              "annotation": "tuple[float, float] | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "figsize"
+            },
+            {
+              "annotation": "Any",
+              "default": null,
+              "kind": "kwarg",
+              "name": "kwargs"
+            }
+          ],
+          "returns": "tuple[Figure, Any]"
+        },
+        "type": "function"
+      },
+      "get_chart_color": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "int",
+              "default": null,
+              "kind": "arg",
+              "name": "index"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "palette.py": {
+    "__all__": [
+      "DARK_THEME",
+      "SEMANTIC_ALIASES",
+      "Colors",
+      "ThemePalette",
+      "get_current_colors"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "Colors": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "get_current_colors": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                }
+              ],
+              "returns": "ThemePalette"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "DARK_THEME": {
+        "type": "variable"
+      },
+      "SEMANTIC_ALIASES": {
+        "type": "variable"
+      },
+      "ThemePalette": {
+        "info": {
+          "bases": [
+            "dict[str, str]"
+          ],
+          "methods": {
+            "get_current_colors": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                }
+              ],
+              "returns": "ThemePalette"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "get_current_colors": {
+        "signature": {
+          "args": [],
+          "returns": "ThemePalette"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "protocols.py": {
+    "__all__": [
+      "StylesheetGenerator",
+      "ThemeProvider",
+      "ThemeSwitcher"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "StylesheetGenerator": {
+        "info": {
+          "bases": [
+            "Protocol"
+          ],
+          "methods": {
+            "generate": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "dict[str, str]",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "colors"
+                }
+              ],
+              "returns": "str"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ThemeProvider": {
+        "info": {
+          "bases": [
+            "Protocol"
+          ],
+          "methods": {
+            "current_theme_name": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "str"
+            },
+            "get_available_themes": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "list[str]"
+            },
+            "get_current_colors": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, str]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ThemeSwitcher": {
+        "info": {
+          "bases": [
+            "Protocol"
+          ],
+          "methods": {
+            "change_theme": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "name"
+                }
+              ],
+              "returns": "None"
+            },
+            "get_available_themes": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "list[str]"
+            }
+          }
+        },
+        "type": "class"
+      }
+    }
+  },
+  "responsive.py": {
+    "__all__": [
+      "TextWidthSpec",
+      "configure_form_layout_for_readability",
+      "derive_text_candidates",
+      "readable_text_width",
+      "set_text_minimum_width",
+      "wrap_in_scroll_area"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "TextWidthSpec": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "validate": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "configure_form_layout_for_readability": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "QFormLayout",
+              "default": null,
+              "kind": "arg",
+              "name": "layout"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      },
+      "derive_text_candidates": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "QWidget",
+              "default": null,
+              "kind": "arg",
+              "name": "widget"
+            }
+          ],
+          "returns": "list[str]"
+        },
+        "type": "function"
+      },
+      "readable_text_width": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "QFontMetrics",
+              "default": null,
+              "kind": "arg",
+              "name": "metrics"
+            },
+            {
+              "annotation": "Sequence[str]",
+              "default": null,
+              "kind": "arg",
+              "name": "texts"
+            },
+            {
+              "annotation": "TextWidthSpec",
+              "default": null,
+              "kind": "arg",
+              "name": "spec"
+            }
+          ],
+          "returns": "int"
+        },
+        "type": "function"
+      },
+      "set_text_minimum_width": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "QWidget",
+              "default": null,
+              "kind": "arg",
+              "name": "widget"
+            },
+            {
+              "annotation": "TextWidthSpec | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "spec"
+            },
+            {
+              "annotation": "Iterable[str] | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "texts"
+            }
+          ],
+          "returns": "int"
+        },
+        "type": "function"
+      },
+      "wrap_in_scroll_area": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "QWidget",
+              "default": null,
+              "kind": "arg",
+              "name": "widget"
+            },
+            {
+              "annotation": "int",
+              "default": "0",
+              "kind": "arg",
+              "name": "minimum_width"
+            }
+          ],
+          "returns": "QScrollArea"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "style_constants.py": {
+    "__all__": [
+      "Styles"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "Styles": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "color_swatch": {
+              "args": [
+                {
+                  "annotation": "int",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "r"
+                },
+                {
+                  "annotation": "int",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "g"
+                },
+                {
+                  "annotation": "int",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "b"
+                }
+              ],
+              "returns": "str"
+            },
+            "colored_bold": {
+              "args": [
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "color"
+                }
+              ],
+              "returns": "str"
+            },
+            "no_image_label": {
+              "args": [
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "color"
+                }
+              ],
+              "returns": "str"
+            },
+            "status_chip": {
+              "args": [
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "bg_color"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "text_color"
+                }
+              ],
+              "returns": "str"
+            }
+          }
+        },
+        "type": "class"
+      }
+    }
+  },
+  "stylesheets.py": {
+    "__all__": [
+      "generate_minimal_stylesheet",
+      "generate_stylesheet"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "generate_minimal_stylesheet": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "dict[str, str]",
+              "default": null,
+              "kind": "arg",
+              "name": "theme"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "generate_stylesheet": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "dict[str, str]",
+              "default": null,
+              "kind": "arg",
+              "name": "theme"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "theme_manager.py": {
+    "__all__": [
+      "ThemeManager",
+      "get_theme_manager"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "ThemeManager": {
+        "info": {
+          "bases": [
+            "QObject"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "QWidget | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "main_window"
+                },
+                {
+                  "annotation": "str | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "app_context"
+                },
+                {
+                  "annotation": "str | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "settings_org"
+                },
+                {
+                  "annotation": "str | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "settings_app"
+                }
+              ],
+              "returns": "None"
+            },
+            "apply_theme": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "None"
+            },
+            "apply_theme_by_name": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "QWidget",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "window"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "theme_name"
+                }
+              ],
+              "returns": "None"
+            },
+            "apply_theme_to_window": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "QWidget",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "window"
+                }
+              ],
+              "returns": "None"
+            },
+            "change_theme": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "theme_name"
+                }
+              ],
+              "returns": "None"
+            },
+            "delete_custom_theme": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "theme_name"
+                }
+              ],
+              "returns": "bool"
+            },
+            "get_available_themes": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "list[str]"
+            },
+            "get_builtin_themes": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "list[str]"
+            },
+            "get_current_colors": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, str]"
+            },
+            "get_current_stylesheet": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "str"
+            },
+            "get_current_theme_name": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "str"
+            },
+            "get_custom_theme_names": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "list[str]"
+            },
+            "get_theme_colors": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "theme_name"
+                }
+              ],
+              "returns": "dict[str, str] | None"
+            },
+            "get_theme_preference": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "str"
+            },
+            "get_theme_stylesheet": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "theme_name"
+                }
+              ],
+              "returns": "str"
+            },
+            "instance": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "QWidget | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "main_window"
+                },
+                {
+                  "annotation": "str | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "app_context"
+                },
+                {
+                  "annotation": "str | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "settings_org"
+                },
+                {
+                  "annotation": "str | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "settings_app"
+                }
+              ],
+              "returns": "ThemeManager"
+            },
+            "reset_instance": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                }
+              ],
+              "returns": "None"
+            },
+            "save_current_theme_as_custom": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "theme_name"
+                }
+              ],
+              "returns": "str"
+            },
+            "save_custom_theme": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "theme_name"
+                },
+                {
+                  "annotation": "dict[str, str]",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "colors"
+                },
+                {
+                  "annotation": "bool",
+                  "default": "False",
+                  "kind": "arg",
+                  "name": "apply_immediately"
+                }
+              ],
+              "returns": "str"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "get_theme_manager": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "QWidget | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "main_window"
+            },
+            {
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "app_context"
+            },
+            {
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "settings_org"
+            },
+            {
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "settings_app"
+            }
+          ],
+          "returns": "ThemeManager"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "typography.py": {
+    "__all__": [
+      "CSS_FONT_DISPLAY",
+      "CSS_FONT_MONO",
+      "CSS_FONT_UI",
+      "FONT_STACK_DISPLAY",
+      "FONT_STACK_MONO",
+      "FONT_STACK_UI",
+      "FontSizes",
+      "FontWeights",
+      "Sizes",
+      "Weights",
+      "get_display_font",
+      "get_mono_font",
+      "get_qfont"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "CSS_FONT_DISPLAY": {
+        "type": "variable"
+      },
+      "CSS_FONT_MONO": {
+        "type": "variable"
+      },
+      "CSS_FONT_UI": {
+        "type": "variable"
+      },
+      "FONT_STACK_DISPLAY": {
+        "type": "variable"
+      },
+      "FONT_STACK_MONO": {
+        "type": "variable"
+      },
+      "FONT_STACK_UI": {
+        "type": "variable"
+      },
+      "FontSizes": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "FontWeights": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "Sizes": {
+        "type": "variable"
+      },
+      "Weights": {
+        "type": "variable"
+      },
+      "get_display_font": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "int",
+              "default": "Sizes.XL",
+              "kind": "arg",
+              "name": "size"
+            },
+            {
+              "annotation": "int",
+              "default": "Weights.BOLD",
+              "kind": "arg",
+              "name": "weight"
+            }
+          ],
+          "returns": "'QFont'"
+        },
+        "type": "function"
+      },
+      "get_mono_font": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "int",
+              "default": "Sizes.BASE",
+              "kind": "arg",
+              "name": "size"
+            },
+            {
+              "annotation": "int",
+              "default": "Weights.NORMAL",
+              "kind": "arg",
+              "name": "weight"
+            }
+          ],
+          "returns": "'QFont'"
+        },
+        "type": "function"
+      },
+      "get_qfont": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "int",
+              "default": "Sizes.BASE",
+              "kind": "arg",
+              "name": "size"
+            },
+            {
+              "annotation": "int",
+              "default": "Weights.NORMAL",
+              "kind": "arg",
+              "name": "weight"
+            },
+            {
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "family"
+            },
+            {
+              "annotation": "bool",
+              "default": "False",
+              "kind": "arg",
+              "name": "italic"
+            }
+          ],
+          "returns": "'QFont'"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "zoom.py": {
+    "__all__": [
+      "ApplicationZoomController",
+      "ZoomConfig",
+      "ZoomSettings",
+      "ZoomTokenSet",
+      "install_application_zoom",
+      "scale_px"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "ApplicationZoomController": {
+        "info": {
+          "bases": [
+            "QObject"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "QApplication",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "app"
+                },
+                {
+                  "annotation": "ZoomConfig | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "config"
+                },
+                {
+                  "annotation": "ZoomSettings | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "settings"
+                }
+              ],
+              "returns": "None"
+            },
+            "base_point_size": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "float"
+            },
+            "eventFilter": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "QObject | None",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "obj"
+                },
+                {
+                  "annotation": "QEvent | None",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "event"
+                }
+              ],
+              "returns": "bool"
+            },
+            "install": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "None"
+            },
+            "reset_zoom": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "None"
+            },
+            "set_zoom_percent": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "int",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "percent"
+                }
+              ],
+              "returns": "None"
+            },
+            "tokens": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "ZoomTokenSet"
+            },
+            "uninstall": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "None"
+            },
+            "zoom_in": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "None"
+            },
+            "zoom_out": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "None"
+            },
+            "zoom_percent": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "int"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ZoomConfig": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ZoomSettings": {
+        "info": {
+          "bases": [
+            "Protocol"
+          ],
+          "methods": {
+            "setValue": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "key"
+                },
+                {
+                  "annotation": "object",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "value"
+                }
+              ],
+              "returns": "None"
+            },
+            "value": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "key"
+                },
+                {
+                  "annotation": "object | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "defaultValue"
+                },
+                {
+                  "annotation": "object",
+                  "default": null,
+                  "kind": "kwarg",
+                  "name": "kwargs"
+                }
+              ],
+              "returns": "object"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ZoomTokenSet": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "from_percent": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "int",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "zoom_percent"
+                }
+              ],
+              "returns": "ZoomTokenSet"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "install_application_zoom": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "QApplication",
+              "default": null,
+              "kind": "arg",
+              "name": "app"
+            },
+            {
+              "annotation": "ZoomConfig | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "config"
+            },
+            {
+              "annotation": "ZoomSettings | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "settings"
+            }
+          ],
+          "returns": "ApplicationZoomController"
+        },
+        "type": "function"
+      },
+      "scale_px": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "int",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "int",
+              "default": null,
+              "kind": "arg",
+              "name": "zoom_percent"
+            }
+          ],
+          "returns": "int"
+        },
+        "type": "function"
+      }
+    }
+  }
+}

@@ -1,0 +1,391 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 41,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b9d67f76f63e317d68f57f9d5a30ccf58de70101776b2bb51dc02448d56d4ae1",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-HUMANOID-BUILDER-GUI-INIT-PY-DEEAD387BDBF",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/humanoid_builder_gui/__init__.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 687,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ae0755b2784d6720ac860c07ef6db4afc265e8720a8f140697c9833986d800ff",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-HUMANOID-BUILDER-GUI-GUI-REGISTRATION-PY-A931B4BC6086",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/humanoid_builder_gui/gui_registration.py",
+      "purpose": "GUI registration for Humanoid Character Builder.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "GUI_INFO",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_gui_info",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_gui_registration.py",
+          "tests/rate_of_closure/test_gui_registration.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 367,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0c1d5591e621ad7af56bc7fec004d59a74c0f08dc4e0bf3f6a8403ca31032f77",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-HUMANOID-BUILDER-GUI-LAUNCH-PYQT6-PY-FA57FCBF7718",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/humanoid_builder_gui/launch_pyqt6.py",
+      "purpose": "Standalone PyQt6 launcher for Humanoid Character Builder.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/folder_tool/test_launch_pyqt6.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 33,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c67f6ef8b183f73424c57243d5711e901106902a6f6fc1c7b607c23778ec3950",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-HUMANOID-BUILDER-GUI-PYTHON-HUMANOID-BUILDER-GUI-INIT-PY-EEBBC23100AE",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/humanoid_builder_gui/python/humanoid_builder_gui/__init__.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 44,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "fb67072f9160034df7f19547151f2e1bbf6eeb76ee94f41680f03cc09f14099d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-HUMANOID-BUILDER-GUI-PYTHON-HUMANOID-BUILDER-GUI-UI-INIT-PY-3CEFE78E8DC5",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/humanoid_builder_gui/python/humanoid_builder_gui/ui/__init__.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 38,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f6592d4d83e22725a213dc0d49b1ae2c23034b43e0bfeded304c6dc99394152e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-HUMANOID-BUILDER-GUI-PYTHON-HUMANOID-BUILDER-GUI-UI-PYQT6-INIT-PY-2D208B2BA0DA",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/humanoid_builder_gui/python/humanoid_builder_gui/ui/pyqt6/__init__.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 20897,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7277ac8151302d95d9bab7725f239d3016887a2f5a6c3817aaa5192de3549bbc",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-HUMANOID-BUILDER-GUI-PYTHON-HUMANOID-BUILDER-GUI-UI-PYQT6-MAIN-WINDOW-PY-6497F1C9CE55",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/humanoid_builder_gui/python/humanoid_builder_gui/ui/pyqt6/main_window.py",
+      "purpose": "Humanoid Character Builder PyQt6 Main Window.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "BuildType",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GenderModel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HumanoidBuilderWindow",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SegmentData",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ALIGN_CENTER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_HORIZONTAL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_POLICY_EXPANDING",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_POLICY_FIXED",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_RESIZE_MODE_RESIZE_TO_CONTENTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_RESIZE_MODE_STRETCH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SCROLL_BAR_ALWAYS_OFF",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/humanoid_builder_gui/tests/test_humanoid_builder_gui.py",
+          "src/movement_optimizer/tests/test_main_window.py",
+          "src/pendulum_simulator/tests/test_main_window.py",
+          "tests/ode_solver/test_main_window.py"
+        ],
+        "unit_mentions": [
+          "kg"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/humanoid_builder_gui",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

@@ -1,0 +1,509 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1703,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f897ab27ada713e1bc4cbb0ad249ace1fed4fdb9f3ef0b10d3ff4f124507b80d",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-SWING-CORE-SRC-LIB-RS-2BEEB24B2275",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/swing-core/src/lib.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 255,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ed92803066d23c1956e980afd184e6263d718a619f91298c45dabf6dc041f5b2",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-SWING-CORE-SRC-PY-BINDINGS-MOD-RS-2DD106FD9F9B",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/swing-core/src/py_bindings/mod.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4667,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "11a00e57f2499343473b1f42e73130ce646f2270e70f059a4af15e5ffd3da957",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-SWING-CORE-SRC-PY-BINDINGS-PY-SWING-RS-A53968DDD904",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/swing-core/src/py_bindings/py_swing.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "fn",
+            "name": "register_module",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "J",
+          "g",
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 633,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e571ebe63e4ac1a8dae9f53bca9f351da469f2efdb57d5c4aa3c701cdd739f9f",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-SWING-CORE-SRC-SWING-MOD-RS-58CCF3594901",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/swing-core/src/swing/mod.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 15627,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "c3dfd611605b177bdae1008346168b81896ed6b399846652451798c4821c5871",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-SWING-CORE-SRC-SWING-PENDULUM-RS-D4B922B77A79",
+      "language": "rust",
+      "maintainer": "Pendulum maintainers",
+      "path": "rust_core/swing-core/src/swing/pendulum.rs",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "const",
+            "name": "MASS_MATRIX_SINGULAR_TOLERANCE",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "coriolis_vector",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "damping_vector",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "derivatives",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "golf_default",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "gravity_vector",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "mass_matrix",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "rk4_step",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "simulate",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "total_energy",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "validate",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "PendulumParameters",
+            "signature": null
+          },
+          {
+            "kind": "struct",
+            "name": "PendulumState",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "J",
+          "N·m",
+          "g",
+          "kg",
+          "ms",
+          "rad",
+          "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6709,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d45886c26d8a71aebaf7fb75cdda35a4cab6409c8b161473ef0b767c9fea70f3",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-SWING-CORE-SRC-SWING-PLANE-RS-BB5EAC1725D0",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/swing-core/src/swing/plane.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "fn",
+            "name": "in_plane_gravity",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "in_plane_gravity_from_tilts",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "plane_rotation",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 249,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b9d1de4ba5b977a0bf5ccab0e38dc348fbfc4ded023ffd1e782ad3d01584aa1b",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-SWING-CORE-SRC-WASM-BINDINGS-MOD-RS-AD74E6AE540E",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/swing-core/src/wasm_bindings/mod.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3582,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "99ba0bcef630639a24a0e659aac990f6ecbf67e4ca0f144cae14492fdd830a88",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-SWING-CORE-SRC-WASM-BINDINGS-WASM-SWING-RS-0C457BCC6304",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/swing-core/src/wasm_bindings/wasm_swing.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "fn",
+            "name": "wasm_golf_default",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "wasm_in_plane_gravity",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "wasm_new",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "wasm_plane_rotation",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "wasm_simulate",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "wasm_step",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "wasm_total_energy",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "J",
+          "g",
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "rust_core/swing-core",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

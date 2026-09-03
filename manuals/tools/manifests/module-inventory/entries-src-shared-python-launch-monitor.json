@@ -1,0 +1,3397 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13720,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "11a5a992c941ce0076f875f72825e0b2641ed123b3d3f0af1408e87e8d2e8e09",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-INIT-PY-662C22BCE5D1",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/__init__.py",
+      "purpose": "Canonical launch-monitor analytics model layer (ADR-0046 Stage 1).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "AnalysisContextV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AnalysisLineageV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AnalysisMode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AssociationEstimateV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AvailabilityV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AvailabilityV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BASELINE_CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BETWEEN_PLAYER_INTERVAL_MIN_GROUPS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BackingRecordV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BaselineProvenanceV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "COMMON_ALIASES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CONTRACT_VERSION_V2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CORPUS_COLUMN_MAP",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CORPUS_RELATIVE_PATH",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CanonicalPrivateCorpus",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ChangeCandidate",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ClaimsV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CoefficientEstimate",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ColumnMapping",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ConfidenceIntervalV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CorpusManifest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CorrelationEstimate",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CorrelationMethod",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CorrelationResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CourseStateColumnsV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CourseStateValueV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CovariationMissingnessV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CovariationPairRankV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CovariationUncertaintyV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DATASET_JOB_CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DatasetAuthorityV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DatasetJobRequestV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DatasetOperationV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DatasetReferenceV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DatasetSummary",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DatasetUnavailableError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DatasetUnavailableStateV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DependencyEdge",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DispersionResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "EstimateSummaryV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ExcludedRowV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ExclusionSummaryV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ExpectedStrokesBaselineLike",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ExpectedStrokesStateLike",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FilterRule",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FlexibleAnalysisRequest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FlexibleAnalysisResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroupAnalysis",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroupSummaryV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroupingDimensionV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "IDENTITY_COLUMNS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImportManifest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImportOptions",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImportProfile",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImportedSession",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InterpolationV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LAUNCH_MONITOR_CONFORMANCE_BUNDLE_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LONGITUDINAL_SESSION_CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LaunchMonitorAnalysisResultV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LaunchMonitorConformanceBundleV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LaunchMonitorConformanceScenarioV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LongitudinalClaimsV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LongitudinalDesignV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LongitudinalDimensionV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LongitudinalMethod",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LongitudinalMissingnessV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LongitudinalPlayerAssociationV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LongitudinalSessionRequestV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LongitudinalSessionResultV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LongitudinalSummaryV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_PAGE_SIZE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_RETAINED_ROWS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "METRICS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MIN_FISHER_SAMPLES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MetaAnalysisSummaryV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MetricDefinition",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MetricUnitsV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MissingPolicy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MissingnessV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ModelProvenanceV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MonitorComparisonResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MonitorSummary",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "OUTCOME_PROXY_CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "OrderEvidenceV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "OutcomeProxyRequestV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "OutcomeProxyResultV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "OutcomeProxyRowV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PCAResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PLAYER_COVARIATION_CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "POOLED_METHOD_DESCRIPTIONS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PRIVATE_DATA_ENV",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PROFILES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PairwiseMonitorComparison",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlayerAssociationV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlayerCovariationContractV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlayerCovariationRequestV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlayerCovariationResultV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlayerCovariationScanRequestV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlayerCovariationScanResultV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlayerIdentityV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PooledAssociationV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PooledMethod",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PredictiveModelResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ProfileDetection",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RegressionEstimate",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ResidualDiagnostics",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SELECTED_PAIR_METHOD_DESCRIPTION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "STROKES_GAINED_CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SessionAggregateV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SessionIdentityV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SourceFileReferenceV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StrokesGainedAnalysisResultV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StrokesGainedRequestV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StrokesGainedRowV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StrokesGainedUncertaintyV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TemporalTrendResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TransformRecordV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TreatmentConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TreatmentResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "UncertaintyV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "VIFResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "VendorProvenanceV2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "VerifiedDataset",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "adapt_v2_to_v1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "analysis_lineage_v2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "analyze_dispersion",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "analyze_longitudinal_sessions",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "analyze_outcome_proxy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "analyze_player_covariation_v1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "analyze_source_backed_strokes_gained",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "analyze_trend",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "analyze_variables",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "analyze_variables_v2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "apply_treatment",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_analysis_lineage_v2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "clustered_pooled_association",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compare_monitors",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compute_correlations",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compute_pca",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compute_vif",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "contract_v2_json_schema",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "corpus_dataset_path",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "covariation_backing_frame",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "dataset_content_sha256",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "dataset_job_contract_json_schema",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "dersimonian_laird_pooled_association",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "detect_profile",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "execute_dataset_operation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "fit_predictive_model",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "import_session",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "launch_monitor_conformance_bundle_json_schema",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "launch_monitor_conformance_bundle_sha256",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "launch_monitor_conformance_scenario_sha256",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "load_private_corpus",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "load_private_corpus_with_provenance",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "longitudinal_session_contract_json_schema",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "metric_units_v2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "normalize_header",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "numeric_metric_columns",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "player_association_frame",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "player_associations",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "player_covariation_contract_json_schema",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "read_corpus_manifest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "resolve_private_corpus_path",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "scan_player_covariation_v1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "strokes_gained_contract_json_schema",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "validate_corpus_manifest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "vendor_provenance_v2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "verify_dataset_reference",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 6726,
+      "classification": "calculation",
+      "classification_basis": "path-marker:statistics",
+      "content_sha256_lf": "d1af19f7d129cee19e11817e7f8d20b69f56be9701aece3903bace5ffe782af7",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-SCORING-STATISTICS-PY-BFA93507E687",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/_scoring_statistics.py",
+      "purpose": "Shared descriptive uncertainty and trusted grouping helpers.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "estimate_summary",
+            "signature": "values: list[float], confidence_level: float"
+          },
+          {
+            "kind": "function",
+            "name": "group_summaries",
+            "signature": "rows: tuple[StrokesGainedRowV1, ...], specs: tuple[GroupingDimensionV1, ...], confidence_level: float"
+          },
+          {
+            "kind": "function",
+            "name": "longitudinal_summaries",
+            "signature": "rows: tuple[StrokesGainedRowV1, ...], spec: LongitudinalDimensionV1 | None"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6910,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "22e58e62cfb958f473ad31b84b641d25809645c30ded0cf800e25ed941b12ad0",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-COMPARISON-PY-E1F6CF616BE1",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/comparison.py",
+      "purpose": "Matched and descriptive cross-monitor comparison.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MonitorComparisonResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MonitorSummary",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PairwiseMonitorComparison",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "compare_monitors",
+            "signature": "frame: pd.DataFrame, *, metric: str, monitor_column: str='monitor_vendor', match_column: str | None=None, reference_monitor: str | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_comparison.py",
+          "tests/shared/python/launch_monitor/test_comparison.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10192,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "37a9e277f6365611a2f08431857b5172f8297109fcccf7a0ab2d2a842552972a",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-CONFORMANCE-BUNDLE-PY-9C2D3FFE0375",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/conformance_bundle.py",
+      "purpose": "Versioned, data-free conformance bundle for launch-monitor consumers.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "LaunchMonitorConformanceBundleV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LaunchMonitorConformanceScenarioV1",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LAUNCH_MONITOR_CONFORMANCE_BUNDLE_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "launch_monitor_conformance_bundle_json_schema",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "launch_monitor_conformance_bundle_sha256",
+            "signature": "bundle: LaunchMonitorConformanceBundleV1 | dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "launch_monitor_conformance_scenario_sha256",
+            "signature": "scenario: LaunchMonitorConformanceScenarioV1 | dict[str, Any]"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/launch_monitor/test_conformance_bundle.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 30669,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8bfdc3112b384cbae747a0ad0d42b721d1571512ad5e9a014a3e9f8e49b08062",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-CONTRACT-V2-PY-4F36FB1EAE4C",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/contract_v2.py",
+      "purpose": "Version 2 wire contract for traceable launch-monitor analysis.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "mapped",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [
+          "regression"
+        ],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AnalysisContextV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "AnalysisLineageV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "AvailabilityV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "BackingRecordV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ClaimsV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DatasetAuthorityV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LaunchMonitorAnalysisResultV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MetricUnitsV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ModelProvenanceV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "OrderEvidenceV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlayerIdentityV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SessionIdentityV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SourceFileReferenceV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TransformRecordV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "UncertaintyV2",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "VendorProvenanceV2",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CONTRACT_VERSION_V2",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "adapt_v2_to_v1",
+            "signature": "result: LaunchMonitorAnalysisResultV2"
+          },
+          {
+            "kind": "function",
+            "name": "analysis_lineage_v2",
+            "signature": "frame: pd.DataFrame, context: AnalysisContextV2, selected_columns: tuple[str, ...]"
+          },
+          {
+            "kind": "function",
+            "name": "analyze_variables_v2",
+            "signature": "frame: pd.DataFrame, request: FlexibleAnalysisRequest, *, context: AnalysisContextV2 | None=None, model_provenance: tuple[ModelProvenanceV2, ...]=()"
+          },
+          {
+            "kind": "function",
+            "name": "build_analysis_lineage_v2",
+            "signature": "frame: pd.DataFrame, context: AnalysisContextV2, *, dataset_fingerprint_sha256: str | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "contract_v2_json_schema",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "metric_units_v2",
+            "signature": "metric: str, context: AnalysisContextV2"
+          },
+          {
+            "kind": "function",
+            "name": "vendor_provenance_v2",
+            "signature": "frame: pd.DataFrame, selected: tuple[str, ...]"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/launch_monitor/test_contract_v2.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "tests/shared/python/launch_monitor/test_contract_v2.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 21399,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8cbb3af03317bbf0eb5ae14817fee498bba57c2fedfff7149d09c3d6bedb0c15",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-CORPUS-PY-3F32E3071587",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/corpus.py",
+      "purpose": "Load the private launch-monitor shot corpus as validated canonical frames.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-0031-launch-monitor-canonical-shot-schema.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md",
+          "docs/adr/ADR-0048-launch-monitor-port-plan.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CanonicalPrivateCorpus",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CorpusManifest",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CORPUS_COLUMN_MAP",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CORPUS_RELATIVE_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MANIFEST_FILENAME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_RETAINED_ROWS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "OPTIONAL_IDENTITY_COLUMNS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PRIVATE_DATA_ENV",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SUPPORTED_MANIFEST_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "corpus_dataset_path",
+            "signature": "root: str | Path | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "load_private_corpus",
+            "signature": "root: str | Path | None=None, sources: list[str] | None=None, metrics: list[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "load_private_corpus_with_provenance",
+            "signature": "root: str | Path | None=None, sources: list[str] | None=None, metrics: list[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "read_corpus_manifest",
+            "signature": "dataset_dir: Path"
+          },
+          {
+            "kind": "function",
+            "name": "resolve_private_corpus_path",
+            "signature": "root: str | Path | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "validate_corpus_manifest",
+            "signature": "manifest: CorpusManifest, *, observed_rows: int, observed_sources: set[str]"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/launch_monitor/test_corpus.py",
+          "tests/shared/python/launch_monitor/test_dataset_reference_jobs.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "m/s",
+          "rad/s",
+          "rpm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1944,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a5bcceec4bdddeaf6a570147bcc4f8d9a4c37006b17227f59ccf0d5b36c4d15c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-DATASET-REFERENCE-PY-2F060F31084E",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/dataset_reference.py",
+      "purpose": "Stable facade for immutable, aggregate-only private-dataset jobs.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "DATASET_JOB_CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DatasetJobRequestV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DatasetOperationV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DatasetReferenceV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DatasetUnavailableError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DatasetUnavailableStateV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_PAGE_SIZE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "VerifiedDataset",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "dataset_content_sha256",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "dataset_job_contract_json_schema",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "execute_dataset_operation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "verify_dataset_reference",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/launch_monitor/test_dataset_reference_jobs.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5897,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "da80a2659bfddce3427329bbeb1a895b4c8db3c7ae4985adbc73f4555eb067d8",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-DATASET-REFERENCE-CONTRACT-PY-3D447898ED9B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/dataset_reference_contract.py",
+      "purpose": "Versioned contracts for immutable private-dataset analysis jobs.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DatasetJobRequestV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DatasetOperationV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DatasetReferenceV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DatasetUnavailableError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DatasetUnavailableStateV1",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DATASET_JOB_CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_PAGE_SIZE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_RESULT_ITEMS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "dataset_job_contract_json_schema",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "unavailable",
+            "signature": "code: UnavailableCode, message: str, *, retryable: bool=False"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10976,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "770e809c8e5af31da64af2f6546657ae583f7992742324f7c7481193b9426650",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-DATASET-REFERENCE-OPERATIONS-PY-8FC774529B90",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/dataset_reference_operations.py",
+      "purpose": "Bounded aggregate operations over a verified private-dataset reference.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "execute_dataset_operation",
+            "signature": "dataset: VerifiedDataset, operation: DatasetOperationV1"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13240,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "263724db970b9ddecf69f7fddc231091aacee050c155feb60d1d3224c928a255",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-DATASET-REFERENCE-VERIFICATION-PY-68AB9EF69EB7",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/dataset_reference_verification.py",
+      "purpose": "Fail-closed verification of an immutable private-dataset reference.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://github.com/",
+          "https://github.com/"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "VerifiedDataset",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ACQUISITION_MANIFEST_RELATIVE_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SOURCE_SUMMARY_RELATIVE_PATH",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "dataset_content_sha256",
+            "signature": "dataset_path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "normalize_repository",
+            "signature": "remote_url: str"
+          },
+          {
+            "kind": "function",
+            "name": "open_parquet_dataset",
+            "signature": "dataset_path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "parse_json_bytes",
+            "signature": "payload: bytes, *, label: str"
+          },
+          {
+            "kind": "function",
+            "name": "safe_fixed_child",
+            "signature": "root: Path, relative: Path"
+          },
+          {
+            "kind": "function",
+            "name": "sha256_file",
+            "signature": "path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "verify_dataset_reference",
+            "signature": "root: Path, reference: DatasetReferenceV1"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4055,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f2468189375c1b694b12b7de82f8c6212143882e330c9dc78988b17916e6dedd",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-DISPERSION-PY-3CDC3ACDF1B2",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/dispersion.py",
+      "purpose": "Target-relative shot-dispersion statistics.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DispersionResult",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "analyze_dispersion",
+            "signature": "frame: pd.DataFrame, *, forward: str='carry_distance', lateral: str='lateral_carry'"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/launch_monitor/test_dispersion.py",
+          "tests/shared/python/launch_monitor/test_trends.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 21602,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "bbe551197e6c7eb4732250f4562147f1ecefec740f9c7a5cd5a4e95ad9068c55",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-FLEXIBLE-ANALYSIS-PY-C490C412CE8B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/flexible_analysis.py",
+      "purpose": "Flexible, provenance-preserving correlation and OLS analysis.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md",
+          "docs/adr/ADR-0048-launch-monitor-port-plan.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CoefficientEstimate",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CorrelationEstimate",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DatasetSummary",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FlexibleAnalysisRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FlexibleAnalysisResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroupAnalysis",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RegressionEstimate",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ResidualDiagnostics",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "analyze_variables",
+            "signature": "frame: pd.DataFrame, request: FlexibleAnalysisRequest"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/launch_monitor/test_contract_v2.py",
+          "tests/shared/python/launch_monitor/test_flexible_analysis.py",
+          "tests/shared/python/launch_monitor/test_relationships.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "tests/shared/python/launch_monitor/test_contract_v2.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11507,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "aec6a5c30132cbaae0d8b0e4fd8336a95408ad657d49c170146ec298bdad0392",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-IMPORTER-PY-2FCF28E2298F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/importer.py",
+      "purpose": "Multi-format launch-monitor session importer.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-0031-launch-monitor-canonical-shot-schema.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "import_session",
+            "signature": "source: str | Path, options: ImportOptions | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/launch_monitor/conftest.py",
+          "tests/shared/python/launch_monitor/test_importer.py",
+          "tests/shared/python/launch_monitor/test_schema.py"
+        ],
+        "unit_mentions": [
+          "cm",
+          "deg",
+          "m/s",
+          "mm",
+          "rad",
+          "rad/s",
+          "rpm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13272,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7f3a0c6c19113409546c208f455162a0dabd9b4ff0b820c36f6f4357da35877d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-LONGITUDINAL-PY-ECE9AB39FB74",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/longitudinal.py",
+      "purpose": "Attested longitudinal analysis with player-session as the inference unit.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "mapped",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [
+          "analysis",
+          "pooled_association"
+        ],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "analyze_longitudinal_sessions",
+            "signature": "frame: pd.DataFrame, request: LongitudinalSessionRequestV1, *, context: AnalysisContextV2"
+          },
+          {
+            "kind": "function",
+            "name": "longitudinal_session_contract_json_schema",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 11042,
+      "classification": "calculation",
+      "classification_basis": "path-marker:statistics",
+      "content_sha256_lf": "3cb533117550785fef11a53c4ecd7f976cf98e7b4a891cd2d246b045f696bbef",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-LONGITUDINAL-STATISTICS-PY-69E2C503DEDD",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/longitudinal_statistics.py",
+      "purpose": "Session-unit descriptive and player-clustered longitudinal statistics.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "clustered_pooled_association",
+            "signature": "cells: pd.DataFrame, request: LongitudinalSessionRequestV1"
+          },
+          {
+            "kind": "function",
+            "name": "dersimonian_laird_pooled_association",
+            "signature": "cells: pd.DataFrame, associations: tuple[LongitudinalPlayerAssociationV1, ...], request: LongitudinalSessionRequestV1"
+          },
+          {
+            "kind": "function",
+            "name": "player_associations",
+            "signature": "cells: pd.DataFrame, request: LongitudinalSessionRequestV1"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9795,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d66eab20afefc6aeba48be7d3f398ca4e67505843e5e2cf4cbdec7eff22e2b77",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-LONGITUDINAL-TYPES-PY-19A6F6AF95A0",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/longitudinal_types.py",
+      "purpose": "Wire types for attested session-unit longitudinal analysis.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-0045-putting-integration-one-experience-two-preserved-stacks.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "LongitudinalClaimsV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LongitudinalDesignV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LongitudinalMissingnessV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LongitudinalPlayerAssociationV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LongitudinalSessionRequestV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LongitudinalSessionResultV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PooledAssociationV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SessionAggregateV1",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LONGITUDINAL_SESSION_CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "POOLED_METHOD_DESCRIPTIONS",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10668,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2553a75ce475a202e63e1f532dd5576f0cf51449a5b2cea8dc063a35f37c89a6",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-MODELING-PY-8B0887AEBBD1",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/modeling.py",
+      "purpose": "Reproducible regression and optional shallow-neural-network models.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PredictiveModelResult",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "fit_predictive_model",
+            "signature": "frame: pd.DataFrame, *, target: str, features: tuple[str, ...] | list[str], model: str='ridge', random_seed: int=42, test_fraction: float=0.25, group_column: str | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/launch_monitor/test_modeling.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4988,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "32ada2c2f6ab49b285bf193eb3d9d5900993f1011fa1b613d1468837d0c3241c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-MULTIVARIATE-PY-E7361F70696B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/multivariate.py",
+      "purpose": "PCA and multicollinearity diagnostics for launch-monitor metrics.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PCAResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "VIFResult",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "compute_pca",
+            "signature": "frame: pd.DataFrame, *, metrics: tuple[str, ...] | list[str]"
+          },
+          {
+            "kind": "function",
+            "name": "compute_vif",
+            "signature": "frame: pd.DataFrame, *, metrics: tuple[str, ...] | list[str]"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/launch_monitor/test_multivariate.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5737,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2c8f3aea3e89cb97ae1e8bc5566fd53bb5233866e1856c25b03e823602cb26fb",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-OUTCOME-PROXY-PY-820177378BFB",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/outcome_proxy.py",
+      "purpose": "Explicit non-strokes-gained launch-outcome proximity proxy.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "analyze_outcome_proxy",
+            "signature": "frame: pd.DataFrame, request: OutcomeProxyRequestV1"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 16947,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cc4533d7076e434b1964196d3f54737d8982ea107d94b03aa5836cb622e92102",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-PLAYER-COVARIATION-PY-32B3F73C69B6",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/player_covariation.py",
+      "purpose": "Canonical evidence-bearing player covariation and population analysis.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "SELECTED_PAIR_METHOD_DESCRIPTION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "analyze_player_covariation_v1",
+            "signature": "frame: pd.DataFrame, request: PlayerCovariationRequestV1, *, context: AnalysisContextV2 | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "player_covariation_contract_json_schema",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "scan_player_covariation_v1",
+            "signature": "frame: pd.DataFrame, request: PlayerCovariationScanRequestV1, *, context: AnalysisContextV2 | None=None"
+          },
+          {
+            "kind": "re-export",
+            "name": "covariation_backing_frame",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "player_association_frame",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_player_covariation.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 22026,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "14126920042837530dbd7c312b7c2c80de3bc97a4b581ae4b8792628d18a9509",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-PLAYER-COVARIATION-CORE-PY-DEC3483735FA",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/player_covariation_core.py",
+      "purpose": "Pure numerical core for identity-safe player covariation analysis.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PairStatistics",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BACKING_FRAME_COLUMNS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PLAYER_ASSOCIATION_FRAME_COLUMNS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "compute_pair_statistics",
+            "signature": "frame: pd.DataFrame, request: PlayerCovariationRequestV1"
+          },
+          {
+            "kind": "function",
+            "name": "covariation_backing_frame",
+            "signature": "frame: pd.DataFrame, request: PlayerCovariationRequestV1"
+          },
+          {
+            "kind": "function",
+            "name": "player_association_frame",
+            "signature": "per_player: tuple[PlayerAssociationV1, ...]"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "deg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 19772,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4dbb54b58c6a5fa21a5f9225fad77a24b6f79390649e8b031e5ad15bf0a61e8d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-PLAYER-COVARIATION-TYPES-PY-75949B6CCAF7",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/player_covariation_types.py",
+      "purpose": "Versioned wire models for player covariation and population synthesis.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md",
+          "docs/adr/ADR-0048-launch-monitor-port-plan.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AssociationEstimateV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CovariationMissingnessV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CovariationPairRankV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CovariationUncertaintyV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MetaAnalysisSummaryV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlayerAssociationV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlayerCovariationContractV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlayerCovariationRequestV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlayerCovariationResultV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlayerCovariationScanRequestV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlayerCovariationScanResultV1",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BETWEEN_PLAYER_INTERVAL_MIN_GROUPS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MIN_FISHER_SAMPLES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PLAYER_COVARIATION_CONTRACT_VERSION",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/launch_monitor/test_player_covariation_contract.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "tests/shared/python/launch_monitor/test_player_covariation_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10668,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4ece989e90027956a139c0729487ba3a17c780225c37d2bf981387b914e38e43",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-PROFILES-PY-D9BB336ED653",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/profiles.py",
+      "purpose": "Header-fingerprint launch-monitor import profiles.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ImportProfile",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ProfileDetection",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "COMMON_ALIASES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PROFILES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "detect_profile",
+            "signature": "headers: list[str]"
+          },
+          {
+            "kind": "function",
+            "name": "normalize_header",
+            "signature": "value: str"
+          }
+        ],
+        "test_paths": [
+          "tests/programmatic_pid/test_profiles.py",
+          "tests/shared/python/launch_monitor/conftest.py",
+          "tests/shared/python/launch_monitor/test_profiles.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "m/s",
+          "rad",
+          "rad/s",
+          "rpm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11756,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5c5c56862f973f0a1d1ceb87dc12d5032d3ada2831a65c40d62215c3c04641a9",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-RELATIONSHIPS-PY-9529831967A8",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/relationships.py",
+      "purpose": "Correlation, partial-correlation, and dependency-network analysis.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md",
+          "docs/adr/ADR-0048-launch-monitor-port-plan.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CorrelationResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DependencyEdge",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "compute_correlations",
+            "signature": "frame: pd.DataFrame, *, metrics: tuple[str, ...] | list[str], method: str='pearson', controls: tuple[str, ...] | list[str]=(), edge_threshold: float=0.3, alpha: float=0.05"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/launch_monitor/test_flexible_analysis.py",
+          "tests/shared/python/launch_monitor/test_relationships.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8436,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "eebda18c48aab27b40c2740406f80142d716d1ecb292d3d89f1eeb5d15c34c37",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-SCHEMA-PY-2997C2512AD4",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/schema.py",
+      "purpose": "Canonical launch-monitor metric and session contracts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ColumnMapping",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImportManifest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImportOptions",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImportedSession",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MetricDefinition",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "IDENTITY_COLUMNS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "METRICS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "numeric_metric_columns",
+            "signature": "frame: pd.DataFrame"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/launch_monitor/test_importer.py",
+          "tests/shared/python/launch_monitor/test_profiles.py",
+          "tests/shared/python/launch_monitor/test_schema.py",
+          "tests/shared/python/sidekick/lab/mocap/test_schema.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "m/s",
+          "mm",
+          "rad",
+          "rad/s",
+          "rpm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 18889,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4b3eca9d3b86e5b65f2fd073fa60b785c19186b35953b44bd143370752bb40f1",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-STROKES-GAINED-PY-98B26F9BFCEC",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/strokes_gained.py",
+      "purpose": "Canonical source-backed strokes-gained analysis.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "YARDS_PER_METRE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "analyze_source_backed_strokes_gained",
+            "signature": "frame: pd.DataFrame, baseline: ExpectedStrokesBaselineLike, request: StrokesGainedRequestV1, *, context: AnalysisContextV2 | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "strokes_gained_contract_json_schema",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13468,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "bf224159d8d3432f87e438ca0944ebde6cadd6052813a2dfeb52bcf68f043e2d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-STROKES-GAINED-TYPES-PY-CCED0B327F89",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/strokes_gained_types.py",
+      "purpose": "Wire models for governed launch-monitor scoring analyses.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AvailabilityV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "BaselineProvenanceV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ConfidenceIntervalV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CourseStateColumnsV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CourseStateValueV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "EstimateSummaryV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ExcludedRowV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ExclusionSummaryV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ExpectedStrokesBaselineLike",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ExpectedStrokesStateLike",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroupSummaryV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroupingDimensionV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "InterpolationV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LongitudinalDimensionV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LongitudinalSummaryV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "OutcomeProxyRequestV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "OutcomeProxyResultV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "OutcomeProxyRowV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StrokesGainedAnalysisResultV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StrokesGainedRequestV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StrokesGainedRowV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StrokesGainedUncertaintyV1",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BASELINE_CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "OUTCOME_PROXY_CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "STROKES_GAINED_CONTRACT_VERSION",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9725,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7452d1630c13b6ee0411a6d67c7bb9414f16197015910125f5a4b4334055cae3",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-TREATMENT-PY-B79EEF92FE5F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/treatment.py",
+      "purpose": "Reproducible launch-monitor data-treatment pipeline.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FilterRule",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TreatmentConfig",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TreatmentResult",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "apply_treatment",
+            "signature": "frame: pd.DataFrame, config: TreatmentConfig"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/launch_monitor/test_treatment.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5662,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ddf42c11b779d4b52e55bccbafde57dda926cc7af1cb6cef562819e1a98a71bf",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-TRENDS-PY-6F4F424CAD39",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/trends.py",
+      "purpose": "Longitudinal player-performance trend analysis.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ChangeCandidate",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TemporalTrendResult",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "analyze_trend",
+            "signature": "frame: pd.DataFrame, *, metric: str, time_column: str='captured_at', rolling_window: int=10, ewma_span: int | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/launch_monitor/test_dispersion.py",
+          "tests/shared/python/launch_monitor/test_trends.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/shared/python/launch_monitor",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

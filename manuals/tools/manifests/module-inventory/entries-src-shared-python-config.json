@@ -1,0 +1,162 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 269,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "98fc7f6f365e087ee017494252290fb26d6e1446b7f7d230038104077c7abb10",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CONFIG-INIT-PY-164207F71D94",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/config/__init__.py",
+      "purpose": "Shared configuration helpers.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "EnvironmentError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_env",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_env_bool",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_env_float",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_env_int",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3490,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8cf487df26d39cdd033f23eb92f387d8b6a559b240ef9d39e76027b36470c88e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CONFIG-ENVIRONMENT-PY-6A1979F29846",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/config/environment.py",
+      "purpose": "Environment variable helpers for shared Tools modules.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "EnvironmentError",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_env",
+            "signature": "name: str, default: str | None=None, *, required: bool=False, strip: bool=True"
+          },
+          {
+            "kind": "function",
+            "name": "get_env_bool",
+            "signature": "name: str, default: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "get_env_float",
+            "signature": "name: str, default: float | None=None, *, min_value: float | None=None, max_value: float | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "get_env_int",
+            "signature": "name: str, default: int | None=None, *, min_value: int | None=None, max_value: int | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/conftest.py",
+          "tests/shared/python/ai/test_shared_dependency_imports.py",
+          "tests/shared/python/chat/test_adapter_lifecycle.py",
+          "tests/shared/python/chat/test_assistant_panel_inline_controls.py",
+          "tests/shared/python/chat/test_assistant_panel_memory_sync.py",
+          "tests/shared/python/chat/test_indexing_controller.py",
+          "tests/shared/python/chat/test_message_display.py",
+          "tests/shared/python/chat/test_panel_header.py",
+          "tests/shared/python/config/test_environment.py",
+          "tests/unit/ai/test_peer_review.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/shared/python/config",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

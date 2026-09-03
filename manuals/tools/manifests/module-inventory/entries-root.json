@@ -1,0 +1,1197 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2724,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d3d6d7f7eb5c18da6cfa0b25a63d00e54cd210ed3fd2e2c9e4856670b3f61f92",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-UNIFIEDTOOLSLAUNCHER-PY-34587AB30F5B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "UnifiedToolsLauncher.py",
+      "purpose": "Unified Tools Launcher - Modern PyQt6-based launcher for the Tools repository.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_REPO_ROOT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2659,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3961d9f57f02b3836af3f8fba6e5dcdce31ba4d89686abc8144436ef2a68040a",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-BOOTSTRAP-PY-1BD6F7FDF9B1",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "_bootstrap.py",
+      "purpose": "Repository-level bootstrap module.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "bootstrap",
+            "signature": "caller_file: str"
+          }
+        ],
+        "test_paths": [
+          "tests/architecture/test_shared_import_aliases_3316.py",
+          "tests/shared/python/ai/integrations/_bootstrap.py",
+          "tests/shared/python/ai/integrations/test_affine_client.py",
+          "tests/shared/python/ai/integrations/test_credential_isolation.py",
+          "tests/shared/python/ai/integrations/test_linear_client.py",
+          "tests/shared/python/ai/integrations/test_notion_client.py",
+          "tests/shared/python/ai/integrations/test_obsidian_client.py",
+          "tests/shared/python/gui_launcher/test_launcher_factories.py",
+          "tests/test_bootstrap.py"
+        ],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3655,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3c1d4195e330d5370066c1080bc3b44b999428570710ecc4f86f2139da8bcf9b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-BUILD-HOOKS-PY-FB7D001B336A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "build_hooks.py",
+      "purpose": "Fail-closed setuptools hooks for optional Rate of Closure web assets.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "RateWebBuildPy",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_COMMIT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_STATUS_ENTRY_LIMIT",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_web_asset_distribution.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2163,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "36290cd88aabbe25db95f1a53a0aaed7358b3361c5a93258203a0d8f017c1096",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-COMMIT-SCREENSAVER-PY-615C78A8B442",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "commit_screensaver.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "REPO_ROOT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "run",
+            "signature": "cmd: list[str]"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8311,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "684502fc437dea8e4b4d33efa17c13857f48f7dd11cb1e72b7232eb04bfc07c5",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-CONFTEST-PY-A31C7ED5D35F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "conftest.py",
+      "purpose": "Repository-level pytest hooks for cross-tree test discovery.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "BRIDGED_EMBEDDED_TEST_DIRS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REPO_ROOT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_REQUIRES_PYTHON_RE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "pytest_ignore_collect",
+            "signature": "collection_path: Path, config: pytest.Config"
+          },
+          {
+            "kind": "function",
+            "name": "repo_root",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/data_processing/data_processor/python/tests/conftest.py",
+          "src/document_processing/pdf_renamer/tests/conftest.py",
+          "src/movement_optimizer/tests/conftest.py",
+          "src/movement_optimizer/tests/test_animation_control.py",
+          "src/movement_optimizer/tests/test_cli.py",
+          "src/movement_optimizer/tests/test_comparison.py",
+          "src/movement_optimizer/tests/test_exercise_tab.py",
+          "src/movement_optimizer/tests/test_export.py",
+          "src/movement_optimizer/tests/test_export_excel.py",
+          "src/movement_optimizer/tests/test_import.py",
+          "src/movement_optimizer/tests/test_issue_217_decompose.py",
+          "src/movement_optimizer/tests/test_issue_222_decompose.py",
+          "src/movement_optimizer/tests/test_main_window.py",
+          "src/movement_optimizer/tests/test_observability_metrics.py",
+          "src/movement_optimizer/tests/test_optimization_mixin.py",
+          "src/movement_optimizer/tests/test_optimization_mixin_worker.py",
+          "src/movement_optimizer/tests/test_persistence.py",
+          "src/movement_optimizer/tests/test_result_analysis.py",
+          "src/movement_optimizer/tests/test_session_state.py",
+          "src/movement_optimizer/tests/test_thread_safety.py",
+          "src/p1am_control_system/backend/tests/conftest.py",
+          "src/pendulum_simulator/tests/conftest.py",
+          "src/pendulum_simulator/tests/test_perturbation_panel.py",
+          "src/pendulum_simulator/tests/test_swing_comparison_dialog.py",
+          "src/shared/python/sidekick/tests/conftest.py",
+          "src/signal_processing_studio/tests/conftest.py",
+          "src/urdf_builder_gui/tests/conftest.py",
+          "src/vessel_drafter/tests/conftest.py",
+          "src/web_applications/urdf_viewer/tests/conftest.py",
+          "tests/architecture/test_no_session_wide_skip_leak_4497.py",
+          "tests/benchmarks/conftest.py",
+          "tests/conftest.py",
+          "tests/e2e/conftest.py",
+          "tests/integration/conftest.py",
+          "tests/ode_solver/conftest.py",
+          "tests/p1am_control_system/conftest.py",
+          "tests/pendulum_simulator/conftest.py",
+          "tests/rate_of_closure/conftest.py",
+          "tests/shared/python/chat/test_chat_agent_label.py",
+          "tests/shared/python/launch_monitor/conftest.py",
+          "tests/shared/python/sidekick/process_calculators/conftest.py",
+          "tests/solar_system_model/conftest.py",
+          "tests/test_python_version_contract.py",
+          "tests/tools/folder_tools/conftest.py",
+          "tests/unit/ai/integrations/conftest.py",
+          "tests/unit/ai/integrations/github_mcp/conftest.py",
+          "tests/unit/ai/mcp/conftest.py",
+          "tests/unit/chat/conftest.py",
+          "tests/unit/codemap/conftest.py",
+          "tests/unit/lower_body_model/conftest.py",
+          "tests/unit/sidekick/conftest.py",
+          "tests/vessel_drafter/conftest.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "tests/test_python_version_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1581,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6a1766d9fcf3005cf7ae6baaeab212cedcb8716d36dea5ccb35cc17736cd9e17",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-CONVERT-TOOLS-ICON-PY-D2F66E3E0A3C",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "convert_tools_icon.py",
+      "purpose": "Convert tools_icon.png to high-quality ICO format for Windows shortcuts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "load_convert_png_to_ico",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1239,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "04be7cd1d3e25ccf3262f4edd4257159b360fd1dcc7bd79e2c6501f4d18c577f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-CREATE-LAUNCHER-SHORTCUT-PS1-D4B497809F2A",
+      "language": "powershell",
+      "maintainer": "Tools module maintainers",
+      "path": "create_launcher_shortcut.ps1",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1290,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d9ea15fff9a45c76c31352b69acec3e06846b2995813c316da43495068e45572",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-CREATE-LAUNCHER-SHORTCUT-PNG-PS1-4622F480E081",
+      "language": "powershell",
+      "maintainer": "Tools module maintainers",
+      "path": "create_launcher_shortcut_png.ps1",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2610,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8880a708d5e81b3e2e9acf73ce22af3e97a8279889c0f5d3df1567d57b3d7463",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-CREATE-REQUESTED-SHORTCUTS-PS1-E8973B9757E3",
+      "language": "powershell",
+      "maintainer": "Tools module maintainers",
+      "path": "create_requested_shortcuts.ps1",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10967,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "65da9b6e4a9ebd3cc0c4713e600c834cc45d0278d217748a5598ecad52503f21",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-GENERATE-REAL-ASSESSMENTS-PY-37065024ED54",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "generate_real_assessments.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "N",
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7587,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d331882e6ec09da618f2a7bcfc652e73263583d0d9b037c3f9ccea1f2f24e020",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-LAUNCH-PY-CC636C1B90D8",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "launch.py",
+      "purpose": "Thin command-line launcher over the one tool registry.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_REPO_ROOT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SHARED_PYTHON",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "discover_all_tools",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "get_registry",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "launch_tool",
+            "signature": "tool_identifier: str, surface: str='pyqt6'"
+          },
+          {
+            "kind": "function",
+            "name": "launch_web_surface",
+            "signature": "tool_name: str"
+          },
+          {
+            "kind": "function",
+            "name": "list_tools",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "rust_core/tools-core/tests/flight_ground_transfer.rs",
+          "src/optimizer_gui/tests/test_swing_chain_models.py",
+          "src/optimizer_gui/tests/test_swing_chain_tabs.py",
+          "src/p1am_control_system/backend/tests/test_database.py",
+          "src/pendulum_simulator/tests/test_default_dark_theme_and_button_width.py",
+          "src/pendulum_simulator/tests/test_ui_polish_fixes.py",
+          "src/python/tests/test_app_launch.py",
+          "src/rrt_path_planner/python/tests/test_star_wars_rrt.py",
+          "src/shared/python/sidekick/tests/process_calculators/test_psa_gui.py",
+          "src/shared/python/swing_sim/flight/tests/_regional_ground_pipeline_support.py",
+          "src/shared/python/swing_sim/flight/tests/test_capability_optimizer.py",
+          "src/shared/python/swing_sim/flight/tests/test_ground_bounce_execution.py",
+          "src/shared/python/swing_sim/flight/tests/test_ground_transfer.py",
+          "src/shared/python/swing_sim/flight/tests/test_launch_deriver.py",
+          "src/shared/python/swing_sim/flight/tests/test_models_physics.py",
+          "src/shared/python/swing_sim/flight/tests/test_parity_rust_flight.py",
+          "src/shared/python/swing_sim/flight/tests/test_pipeline.py",
+          "src/shared/python/swing_sim/flight/tests/test_regional_ground_pipeline.py",
+          "src/shared/python/swing_sim/flight/tests/test_surface_flight_cancellation.py",
+          "src/shared/python/swing_sim/flight/tests/test_wind_uncertainty.py",
+          "src/shared/python/swing_sim/flight_interchange/tests/test_flight_interchange.py",
+          "src/shared/python/swing_sim/impact/tests/test_models.py",
+          "src/shared/python/swing_sim/putting/tests/test_green.py",
+          "src/shared/python/swing_sim/putting/tests/test_impact.py",
+          "src/shared/python/swing_sim/putting/tests/test_result_wire.py",
+          "src/shared/python/swing_sim/putting/tests/test_stroke_interchange.py",
+          "src/shared/python/swing_sim/putting/tests/test_surface.py",
+          "src/shared/python/swing_sim/variation/tests/noise_response_test_support.py",
+          "src/shared/python/swing_sim/variation/tests/test_analysis.py",
+          "src/shared/python/swing_sim/variation/tests/test_dataset_io.py",
+          "src/shared/python/swing_sim/variation/tests/test_engine.py",
+          "src/shared/python/swing_sim/variation/tests/test_ensemble_geometry.py",
+          "src/shared/python/swing_sim/variation/tests/test_execution_metadata.py",
+          "src/shared/python/swing_sim/variation/tests/test_propagation.py",
+          "src/shared/python/swing_sim/variation/tests/test_spec.py",
+          "src/shared/python/swing_sim/variation/tests/test_trace_resampling.py",
+          "tests/p1am_control_system/test_control_tab_construction.py",
+          "tests/rate_of_closure/pyqt_variation_visual_state_probe.py",
+          "tests/rate_of_closure/test_capability_workflow.py",
+          "tests/rate_of_closure/test_chip_forgiveness_persistence.py",
+          "tests/rate_of_closure/test_flight_accepted_study.py",
+          "tests/rate_of_closure/test_flight_explorer.py",
+          "tests/rate_of_closure/test_flight_sample_inspector.py",
+          "tests/rate_of_closure/test_gui_registration.py",
+          "tests/rate_of_closure/test_impact_outcomes.py",
+          "tests/rate_of_closure/test_putting.py",
+          "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py",
+          "tests/rate_of_closure/test_rate_launch_web_authority.py",
+          "tests/rate_of_closure/test_regional_ground_authority_jobs.py",
+          "tests/rate_of_closure/test_regional_ground_execution_qualification.py",
+          "tests/rate_of_closure/test_regional_ground_variation_persistence.py",
+          "tests/rate_of_closure/test_regional_ground_variation_request_io.py",
+          "tests/rate_of_closure/test_simulation.py",
+          "tests/rate_of_closure/test_simulation_gui.py",
+          "tests/rate_of_closure/test_targets.py",
+          "tests/rate_of_closure/test_variation_dataset_io.py",
+          "tests/rate_of_closure/test_variation_gui.py",
+          "tests/rate_of_closure/test_variation_gui_execution.py",
+          "tests/rate_of_closure/test_variation_gui_roundtrip.py",
+          "tests/rate_of_closure/test_variation_visual_state.py",
+          "tests/rate_of_closure/test_wind_strategy_plot_adapter.py",
+          "tests/rate_of_closure/test_wind_strategy_worker.py",
+          "tests/rate_of_closure/test_workspace_variation_session.py",
+          "tests/scripts/test_generate_tools_json.py",
+          "tests/shared/python/chat/test_terminal_runtime.py",
+          "tests/shared/python/golf_club/test_putter_head.py",
+          "tests/shared/python/launch_monitor/test_importer.py",
+          "tests/test_asteroid_jumper/test_physics.py",
+          "tests/test_data_processor_embedding.py",
+          "tests/test_launch_cli_output.py",
+          "tests/test_launcher_factory.py",
+          "tests/test_movement_optimizer_provider_manifest.py",
+          "tests/unit/test_epic_2661_children_verification.py",
+          "tests/verification/test_verification_lod.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 9891,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "0daf2419878d66234899cc5a969247682d64a18655b12fcaba08ada7ffd84dab",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-LAUNCH-SIGNAL-TOOLKIT-PY-9D2DC211E028",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "launch_signal_toolkit.py",
+      "purpose": "Standalone launcher for Signal Toolkit + Polynomial Generator.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SignalToolkitLauncher",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_DARK_STYLESHEET",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "bar",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 237,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "be23190590814353e2368263907adaf1ef7d297dc904eafb98d13a88b08083f1",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SETUP-PY-60F61AB7A8D1",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "setup.py",
+      "purpose": "Setup script for Tools shared library.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "benchmarks/test_data_processor_baseline.py",
+          "src/data_processing/data_processor/python/tests/conftest.py",
+          "src/document_processing/pdf_renamer/tests/conftest.py",
+          "src/media_processing/video_processor/apps/web/test/setup.ts",
+          "src/movement_optimizer/tests/conftest.py",
+          "src/p1am_control_system/backend/tests/_power_supply_helpers.py",
+          "src/p1am_control_system/backend/tests/test_database.py",
+          "src/p1am_control_system/backend/tests/test_read_auth.py",
+          "src/p1am_control_system/backend/tests/test_temperature_controller.py",
+          "src/p1am_control_system/backend/tests/test_temperature_models.py",
+          "src/p1am_control_system/frontend/src/test/setup.ts",
+          "src/pendulum_simulator/tests/test_side_panel_tabs.py",
+          "src/rate_of_closure/web/src/test/setup.ts",
+          "src/rotation_converter/web/src/test/setup.ts",
+          "src/rrt_path_planner/matlab/tests/test_system.m",
+          "src/shared/python/plot_theme/tests/test_plot_theme.py",
+          "src/shared/python/programmatic_pid/tests/test_pipeline_e2e.py",
+          "src/shared/python/sidekick/tests/conftest.py",
+          "src/shared/python/sidekick/tests/test_launcher_factory.py",
+          "src/shared/python/swing_sim/flight/tests/test_ground_transfer.py",
+          "src/shared/python/swing_sim/flight/tests/test_parity_rust_flight.py",
+          "src/web_applications/urdf_viewer/tests/conftest.py",
+          "src/web_applications/urdf_viewer/tests/test_urdf_viewer.py",
+          "tests/data_processor_io/test_rust_engine_contract.py",
+          "tests/ops/test_release_workflow.py",
+          "tests/programmatic_pid/test_controls.py",
+          "tests/programmatic_pid/test_equipment.py",
+          "tests/programmatic_pid/test_instruments.py",
+          "tests/programmatic_pid/test_streams.py",
+          "tests/programmatic_pid/test_title_block.py",
+          "tests/rate_of_closure/pyqt_flight_sample_inspector_probe.py",
+          "tests/rate_of_closure/pyqt_plot_point_inspector_probe.py",
+          "tests/rate_of_closure/pyqt_putting_sample_inspector_probe.py",
+          "tests/rate_of_closure/pyqt_simulation_scrub_probe.py",
+          "tests/rate_of_closure/test_ball_setup.py",
+          "tests/rate_of_closure/test_ball_setup_parity.py",
+          "tests/rate_of_closure/test_morris_authority_child.py",
+          "tests/rate_of_closure/test_morris_pyqt_workspace.py",
+          "tests/rate_of_closure/test_morris_workspace.py",
+          "tests/rate_of_closure/test_visualization_tab_manifest.py",
+          "tests/scientific_modeling/test_star_wars_rrt_perf.py",
+          "tests/shared/python/ai/test_onnx_preflight.py",
+          "tests/shared/python/process_calculators/test_acid_gas_dewpoint_edge_cases.py",
+          "tests/shared/python/process_calculators/test_financial_calculator_edge_cases.py",
+          "tests/shared/python/process_calculators/test_syngas_compression_edge_cases.py",
+          "tests/shared/python/process_calculators/test_syngas_water_calculator_edge_cases.py",
+          "tests/shared/python/process_calculators/test_syngas_water_overflow.py",
+          "tests/shared/python/signal_toolkit/test_widget_mixins.py",
+          "tests/test_debug_utils.py",
+          "tests/test_dry_compliance.py",
+          "tests/test_integration_test_helpers.py",
+          "tests/test_path_setup.py",
+          "tests/test_test_utils.py",
+          "tests/unit/sidekick/test_sidekick_f4_collaborators.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/data_processor_io/test_rust_engine_contract.py",
+          "tests/scientific_modeling/test_star_wars_rrt_perf.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2948,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "aa717ccde1173b1ba9a090fe1bae65733eb6dbbdf1dfe5860238186e8584c9e2",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SETUP-DEV-PY-5440EBDEF569",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "setup_dev.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "CYAN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GREEN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "RED",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "RESET",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "YELLOW",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "check_python",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "install_node_deps",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "install_python_deps",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "log_step",
+            "signature": "message: str"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5071,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4c95047ae629557606c912e64860db256332e0034528256edf53a7baf6424499",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-START-GAAI-DAEMON-SH-CD0EC4600C2A",
+      "language": "shell",
+      "maintainer": "Tools module maintainers",
+      "path": "start-gaai-daemon.sh",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/scripts/test_start_gaai_daemon.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5009,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d647e9141b968bdece2c5110f0da8a2d2435727faf74e54686ee3e017d2d858b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-VERIFY-LAUNCHER-PY-770DC9B738CE",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "verify_launcher.py",
+      "purpose": "Launcher Verification Script",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 8932,
+      "classification": "calculation",
+      "classification_basis": "path-marker:solver",
+      "content_sha256_lf": "10eea4dbf2198959c07b3ab34260af5b71f0a3c5391ed2ac176f0e012760a543",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-WAVE-SOLVER-PY-8A1D594A91B7",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "wave_solver.py",
+      "purpose": "Autonomous issue-solving wave runner (hardened).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "WaveConfig",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_claude_argv",
+            "signature": "prompt: str, *, skip_permissions: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "build_pr_create_argv",
+            "signature": "num: int, title: str"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "config: WaveConfig | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "run_cmd",
+            "signature": "argv: Sequence[str], cwd: Path | None=None, ignore_err: bool=False, *, mutating: bool=False, config: WaveConfig | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/test_wave_solver.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "root",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

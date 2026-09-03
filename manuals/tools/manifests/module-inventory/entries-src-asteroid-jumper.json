@@ -1,0 +1,758 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 65,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "26f31d8c62f626641bb4b23118a0fd5a557a143293f0307ca565490a3958697c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-ASTEROID-JUMPER-INIT-PY-E131F6433DA2",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/asteroid_jumper/__init__.py",
+      "purpose": "Asteroid Jumper simulation package.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2011,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ee9c228a92bfb5095433f1c19224490cc85fdd058eddec63af24ced4bf054fd7",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-ASTEROID-JUMPER-APP-PY-EB61B71F6C16",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/asteroid_jumper/app.py",
+      "purpose": "Entry point for the Asteroid Jumper application.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "STYLESHEET",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6332,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "724b8d6a24665b6cc23990d49550f6ce01446135b3c12d64edc8f3d30bbc7bbe",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-ASTEROID-JUMPER-ASTEROID-SHAPE-PY-BEF2EB2FDDD8",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/asteroid_jumper/asteroid_shape.py",
+      "purpose": "Asteroid shape generation.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AsteroidShape",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ShapeKind",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "make_circle",
+            "signature": "radius: float, n_pts: int=32"
+          },
+          {
+            "kind": "function",
+            "name": "make_ellipse",
+            "signature": "semi_a: float, semi_b: float, n_pts: int=32"
+          },
+          {
+            "kind": "function",
+            "name": "make_random",
+            "signature": "base_radius: float, roughness: float=0.3, n_pts: int=20, seed: int | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "surface_normal_at_angle",
+            "signature": "shape: AsteroidShape, angle_rad: float"
+          },
+          {
+            "kind": "function",
+            "name": "surface_point_at_angle",
+            "signature": "shape: AsteroidShape, angle_rad: float"
+          }
+        ],
+        "test_paths": [
+          "tests/test_asteroid_jumper/test_controller.py",
+          "tests/test_asteroid_jumper/test_shapes.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10760,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4381933ee5b65ad23f5e1319804e041f0307e287788343ecb385d955b5cf47d4",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-ASTEROID-JUMPER-CONTROLLER-PY-706734BF7138",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/asteroid_jumper/controller.py",
+      "purpose": "Simulation controller for the Asteroid Jumper.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AsteroidJumperSnapshot",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SimController",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ASTEROID_DENSITY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ASTEROID_MASS_FACTOR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_ASTEROID_RADIUS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_IMPULSE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "JUMPER_HEIGHT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "JUMPER_MASS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "JUMPER_RADIUS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "JUMP_DURATION",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/test_asteroid_jumper/test_controller.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "kg",
+          "m/s",
+          "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7812,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "425fe9e1eae62af4bc17e7dcb1d26713d30ddc507b62b4a7e18a13d971e97f90",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-ASTEROID-JUMPER-CONTROLS-PANEL-PY-E96E25AFB3C4",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/asteroid_jumper/controls_panel.py",
+      "purpose": "Controls panel — sliders and buttons for the simulation.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ControlsPanel",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N",
+          "kg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5008,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1d1454bc392846ecba81550382a23eda56d11ae9a812bc1851e325a6189bf257",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-ASTEROID-JUMPER-MAIN-WINDOW-PY-6089948F36AE",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/asteroid_jumper/main_window.py",
+      "purpose": "Main window assembling all panels for the Asteroid Jumper simulation.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AsteroidJumperWindow",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_main_window.py",
+          "src/pendulum_simulator/tests/test_main_window.py",
+          "tests/ode_solver/test_main_window.py"
+        ],
+        "unit_mentions": [
+          "Hz",
+          "bar"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5668,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "fca1771fadc3ffa74e48c2a4e5a82acddf1e18b87256361e226552e79e4f02c6",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-ASTEROID-JUMPER-METRICS-PANEL-PY-12DF47A440BD",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/asteroid_jumper/metrics_panel.py",
+      "purpose": "Metrics panel — live physics metrics and educational explainer.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MetricsPanel",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "bar",
+          "kg",
+          "m/s",
+          "rad/s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 12732,
+      "classification": "calculation",
+      "classification_basis": "path-marker:physics",
+      "content_sha256_lf": "fee9b176ce0bb0ed7631c09e83672eab2c0fe499c78dec7515a8c28897e7e1b4",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-ASTEROID-JUMPER-PHYSICS-PY-29DA554C5A6A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/asteroid_jumper/physics.py",
+      "purpose": "Pure physics engine for the Asteroid Jumper simulation.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "RigidBody",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SimState",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SpringLaunch",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Vec2",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GRAVITY",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "apply_impulse",
+            "signature": "body: RigidBody, impulse: Vec2, torque_impulse: float"
+          },
+          {
+            "kind": "function",
+            "name": "compute_jump_impulse",
+            "signature": "force_magnitude: float, force_direction_rad: float, contact_point: Vec2, asteroid_com: Vec2, jumper_com: Vec2"
+          },
+          {
+            "kind": "function",
+            "name": "integrate_body",
+            "signature": "body: RigidBody, dt: float"
+          },
+          {
+            "kind": "function",
+            "name": "moment_of_inertia_disk",
+            "signature": "mass: float, radius: float"
+          },
+          {
+            "kind": "function",
+            "name": "moment_of_inertia_ellipse",
+            "signature": "mass: float, a: float, b: float"
+          },
+          {
+            "kind": "function",
+            "name": "moment_of_inertia_rod",
+            "signature": "mass: float, length: float"
+          },
+          {
+            "kind": "function",
+            "name": "off_centre_ratio",
+            "signature": "contact_point: Vec2, asteroid_com: Vec2, jumper_com: Vec2"
+          },
+          {
+            "kind": "function",
+            "name": "step_simulation",
+            "signature": "state: SimState, dt: float"
+          }
+        ],
+        "test_paths": [
+          "Chaotic_Pendulum/tests/test_physics.py",
+          "src/pendulum_simulator/tests/test_physics.py",
+          "tests/test_asteroid_jumper/test_physics.py"
+        ],
+        "unit_mentions": [
+          "J",
+          "N",
+          "kg",
+          "m/s",
+          "rad",
+          "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 20643,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2bfd377dbd07038b24708526a555e753b15b27385376c8a773424a664b022ae3",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-ASTEROID-JUMPER-RENDERER-PY-3D18888E5419",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/asteroid_jumper/renderer.py",
+      "purpose": "Simulation renderer widget — PyQt6 QPainter-based canvas.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AsteroidJumperRenderer",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C_BASE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C_BLUE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C_CRUST",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C_FLAMINGO",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C_GREEN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C_LAVENDER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C_MANTLE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C_MAUVE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C_PEACH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C_RED",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C_SKY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C_SUBTEXT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C_SURFACE0",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C_SURFACE1",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C_TEAL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C_TEXT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C_YELLOW",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FPS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "JUMPER_HEIGHT_REF",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SIM_SPEED",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "STAR_POSITIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TRAIL_LENGTH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "VIEWPORT_SCALE",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "m/s",
+          "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/asteroid_jumper",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

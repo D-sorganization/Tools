@@ -1,0 +1,349 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 714,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f71cc33d4aab3a1198e2046f8cb652f949771ebcca4b5c0cb7f8e826c731872e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LOGGING-PKG-INIT-PY-838D0A91D1FD",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/logging_pkg/__init__.py",
+      "purpose": "Shared logging helpers used by Tools and UpstreamDrift modules.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_SEED",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LOG_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LOG_LEVEL",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LogLevel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SensitiveDataFilter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "add_file_handler",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "add_rotating_file_handler",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "configure_gui_logging",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "configure_test_logging",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_logger",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "log_execution_time",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "set_seeds",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "setup_logging",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1476,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4cd72a2b54ba30a47f76cd18325b83166666517554a8bdfab58b4d563cc168dd",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LOGGING-PKG-LOGGER-UTILS-PY-CDB9E19913DB",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/logging_pkg/logger_utils.py",
+      "purpose": "Small logging utility helpers with optional reproducibility support.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "DEFAULT_SEED",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LOG_LEVEL",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "log_execution_time",
+            "signature": "operation_name: str, logger_obj: logging.Logger | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "set_seeds",
+            "signature": "seed: int=DEFAULT_SEED, *, validate: bool=True"
+          },
+          {
+            "kind": "re-export",
+            "name": "LOG_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_logger",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "setup_logging",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/python/tests/test_logger_utils.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6295,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f87179d03ab2565ba0c270cca604f07d52904bff569af9dff5301f94d29e5de3",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LOGGING-PKG-LOGGING-CONFIG-PY-9D54048F018B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/logging_pkg/logging_config.py",
+      "purpose": "Centralized logging configuration for shared Tools modules.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "LogLevel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SensitiveDataFilter",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_BACKUP_COUNT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_LOG_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_MAX_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DETAILED_LOG_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SIMPLE_LOG_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SENSITIVE_PATTERNS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "add_file_handler",
+            "signature": "logger: logging.Logger | None=None, filename: str | Path='tools.log', level: LogLevel | int=LogLevel.DEBUG, format_string: str | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "add_rotating_file_handler",
+            "signature": "logger: logging.Logger | None=None, filename: str | Path='tools.log', level: LogLevel | int=LogLevel.DEBUG, format_string: str | None=None, max_bytes: int=DEFAULT_MAX_BYTES, backup_count: int=DEFAULT_BACKUP_COUNT, enable_redaction: bool=True"
+          },
+          {
+            "kind": "function",
+            "name": "configure_gui_logging",
+            "signature": "*, level: LogLevel | int=LogLevel.INFO"
+          },
+          {
+            "kind": "function",
+            "name": "configure_test_logging",
+            "signature": "*, level: LogLevel | int=LogLevel.WARNING, capture_warnings: bool=True"
+          },
+          {
+            "kind": "function",
+            "name": "get_logger",
+            "signature": "name: str | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "setup_logging",
+            "signature": "*, level: LogLevel | int=LogLevel.INFO, format_string: str | None=None, stream: TextIO | None=None, filename: str | Path | None=None, filemode: str='a', datefmt: str | None=None, force: bool=False, use_simple_format: bool=False, use_detailed_format: bool=False, use_qt_handler: bool=False, quiet_libraries: list[str] | tuple[str, ...] | None=None, json_output: bool=False, dev_mode: bool=True, enable_structlog: bool=True, enable_redaction: bool=True"
+          }
+        ],
+        "test_paths": [
+          "tests/architecture/test_import_resolvability.py",
+          "tests/conftest.py",
+          "tests/shared/python/ai/integrations/_bootstrap.py",
+          "tests/shared/python/ai/test_authentication.py",
+          "tests/shared/python/ai/test_shared_dependency_imports.py",
+          "tests/shared/python/chat/test_adapter_lifecycle.py",
+          "tests/shared/python/chat/test_ai_memory_manager.py",
+          "tests/shared/python/chat/test_assistant_panel_inline_controls.py",
+          "tests/shared/python/chat/test_assistant_panel_memory_sync.py",
+          "tests/shared/python/chat/test_chat_chunk_batching.py",
+          "tests/shared/python/chat/test_chat_dock_widget.py",
+          "tests/shared/python/chat/test_chat_input_keybindings.py",
+          "tests/shared/python/chat/test_chat_queue_panel.py",
+          "tests/shared/python/chat/test_cli_agent_adapters.py",
+          "tests/shared/python/chat/test_cli_provider_dropdown.py",
+          "tests/shared/python/chat/test_history_sidebar.py",
+          "tests/shared/python/chat/test_indexing_controller.py",
+          "tests/shared/python/chat/test_message_display.py",
+          "tests/shared/python/chat/test_panel_header.py",
+          "tests/shared/python/chat/test_thinking_indicator.py",
+          "tests/unit/ai/gui/test_chat_export.py",
+          "tests/unit/ai/gui/test_session_manager_2872.py",
+          "tests/unit/ai/test_gemini_adapter.py",
+          "tests/unit/ai/test_peer_review.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/shared/python/logging_pkg",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

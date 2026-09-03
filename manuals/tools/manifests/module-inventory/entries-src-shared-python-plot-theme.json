@@ -1,0 +1,429 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1282,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "21b96544f5955ae54c300fc27ea8b17a700fd6c26d4a03ecd7dce509dc52171d",
+      "family": "plot-theme-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-THEME-INIT-PY-B1B58C29FB6A",
+      "language": "python",
+      "maintainer": "Plot theme maintainers",
+      "path": "src/shared/python/plot_theme/__init__.py",
+      "purpose": "Shared plot theming system for matplotlib and scientific visualizations.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "PLOT_THEMES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlotTheme",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlotThemeManager",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlotThemeMixin",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "apply_plot_theme",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "create_plot_theme_menu",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "create_themed_figure",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_plot_theme_manager",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_theme",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_theme_colors",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_theme_names",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "register_theme",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "setup_plot_theme_for_app",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "style_axis",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9065,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "bddf7accdb447a2251511033f7afcd89b096c476f52f618796768959968a8b22",
+      "family": "plot-theme-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-THEME-INTEGRATION-PY-B16DD47A8A1B",
+      "language": "python",
+      "maintainer": "Plot theme maintainers",
+      "path": "src/shared/python/plot_theme/integration.py",
+      "purpose": "Integration helpers for plot theming.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PlotThemeMixin",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "apply_plot_theme",
+            "signature": "theme_name: str | None=None, settings_app: str='PlotTheme'"
+          },
+          {
+            "kind": "function",
+            "name": "create_plot_theme_menu",
+            "signature": "parent: Any, menubar: Any | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "create_themed_figure",
+            "signature": "figsize: tuple[float, float]=(10, 6), theme_name: str | None=None, **kwargs: Any"
+          },
+          {
+            "kind": "function",
+            "name": "get_theme_colors",
+            "signature": "theme_name: str | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "setup_plot_theme_for_app",
+            "signature": "app: Any, window: Any, settings_app: str | None=None, add_menu: bool=True"
+          },
+          {
+            "kind": "function",
+            "name": "style_axis",
+            "signature": "ax: Axes, theme_name: str | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/plot_theme/tests/test_plot_theme.py",
+          "tests/shared/python/notes/test_integration.py",
+          "tests/shared/python/plot_theme/test_integration.py",
+          "tests/unit/ai/integrations/github_mcp/test_integration.py"
+        ],
+        "unit_mentions": [
+          "bar"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10478,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "caa213aca0d42b058df707739dd3fe04d08ae5853702e925ab4ea2c48defcb95",
+      "family": "plot-theme-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-THEME-MANAGER-PY-2C1661C5880B",
+      "language": "python",
+      "maintainer": "Plot theme maintainers",
+      "path": "src/shared/python/plot_theme/manager.py",
+      "purpose": "Plot theme manager for matplotlib visualizations.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PlotThemeManager",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_plot_theme_manager",
+            "signature": "settings_org: str='D-sorganization', settings_app: str='PlotTheme'"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/plot_theme/tests/test_plot_theme.py",
+          "tests/shared/python/plot_theme/test_integration.py",
+          "tests/shared/python/plot_theme/test_manager.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 18691,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8b30ba434937e711e31f794e4def7f5d8500bc47025ceb10ad117ba27fcdc017",
+      "family": "plot-theme-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-THEME-THEMES-PY-60BA9126588D",
+      "language": "python",
+      "maintainer": "Plot theme maintainers",
+      "path": "src/shared/python/plot_theme/themes.py",
+      "purpose": "Plot theme definitions for matplotlib visualizations.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PlotTheme",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CATPPUCCIN_LATTE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CATPPUCCIN_MOCHA",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CLASSIC_DARK",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CLASSIC_LIGHT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_THEME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FROST_DARK",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GRUVBOX_DARK",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MATERIAL_DARK",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "NORD",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PLOT_THEMES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCIENTIFIC_VIOLET",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCIENTIFIC_VIOLET_DARK",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SOLARIZED_DARK",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SOLARIZED_LIGHT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TOKYO_NIGHT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "VAMPIRE_DARK",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_theme",
+            "signature": "name: str"
+          },
+          {
+            "kind": "function",
+            "name": "get_theme_names",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "register_theme",
+            "signature": "name: str, theme: PlotTheme"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/plot_theme/tests/test_plot_theme.py",
+          "tests/shared/python/plot_theme/test_manager.py",
+          "tests/shared/python/plot_theme/test_themes.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/shared/python/plot_theme",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

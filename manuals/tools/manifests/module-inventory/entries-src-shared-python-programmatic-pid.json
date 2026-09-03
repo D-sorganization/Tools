@@ -1,0 +1,1450 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2813,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9e7f63429fe8cdeea9727de45ae675ee016a0aea2ed9d5c33ba2903f63bdd246",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-INIT-PY-E5B29D7D20BB",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/programmatic_pid/__init__.py",
+      "purpose": "programmatic-pid: Generate P&ID drawings from YAML specifications.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "BBox",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "EQUIPMENT_RENDERERS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LabelPlacer",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PIDDocument",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PROFILE_PRESETS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Point",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SpecAccessor",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SpecValidationError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ValidationIssue",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "add_arrow",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "add_box",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "add_control_loops",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "add_instrument",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "add_stream",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "add_text",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "apply_profile",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "collect_issues",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compute_layout_regions",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ensure_layer",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ensure_layers",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "equipment_anchor",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "equipment_center",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "equipment_dims",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "generate",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "generate_controls_sheet",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "generate_process_sheet",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "load_spec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "prepare_spec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "register_equipment",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "spread_instrument_positions",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "to_float",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "validate_spec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "validate_spec_json",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 25805,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "37b1df8d77643259acc46fe5da05d48075ee34bf54cbd7b8be97b3ebebf01aab",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-CLI-PY-532429F292A6",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/programmatic_pid/cli.py",
+      "purpose": "Command-line interface and sheet generation orchestration.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "mapped",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [
+          "out.svg"
+        ],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "add_equipment",
+            "signature": "msp: Any, eq: dict[str, Any], text_h: float, text_layer: str, notes_layer: str, show_inline_notes: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "derive_related_path",
+            "signature": "path: str | Path, suffix: str"
+          },
+          {
+            "kind": "function",
+            "name": "generate",
+            "signature": "spec_path: str | Path, out_path: str | Path, svg_path: str | Path | None=None, sheet_set: str='two', controls_out: str | Path | None=None, controls_svg: str | Path | None=None, profile: str='presentation'"
+          },
+          {
+            "kind": "function",
+            "name": "generate_controls_sheet",
+            "signature": "spec_path: str | Path, out_path: str | Path, svg_path: str | Path | None=None, profile: str | None='presentation', prepared_spec: dict[str, Any] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "generate_process_sheet",
+            "signature": "spec_path: str | Path, out_path: str | Path, svg_path: str | Path | None=None, profile: str | None='presentation', prepared_spec: dict[str, Any] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/programmatic_pid/test_cli.py",
+          "tests/programmatic_pid/test_pid_generation.py",
+          "tests/unit/test_project_metadata_contracts.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "tests/unit/test_project_metadata_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6148,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2d92b37078f1a34110cd055ebf282c7db7925d979712da7c8225e7f48246fcbe",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-CONTROLS-PY-7C9625E82CCE",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/programmatic_pid/controls.py",
+      "purpose": "Control loop rendering and signal line routing.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "add_control_loops",
+            "signature": "msp: Any, spec: dict[str, Any], text_h: float, text_layer: str, equipment_by_id: dict[str, dict[str, Any]], instrument_by_id: dict[str, dict[str, Any]], stream_points: dict[str, tuple[float, float]], process_bbox: tuple[float, float, float, float] | None=None, show_loop_tags: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "orthogonal_control_route",
+            "signature": "start: tuple[float, float], end: tuple[float, float], route_index: int=0, spread: float=4.0, corridor_y: float | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "resolve_reference_point",
+            "signature": "ref_id: str, equipment_by_id: dict[str, dict[str, Any]], instrument_by_id: dict[str, dict[str, Any]], stream_points: dict[str, tuple[float, float]]"
+          }
+        ],
+        "test_paths": [
+          "tests/programmatic_pid/test_controls.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9499,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "601a59b7a0586757f9dca6cead1520d38ba8f974ad08522b1fa3cc8e19d89c59",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-DOCUMENT-PY-7BC6028C5AC0",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/programmatic_pid/document.py",
+      "purpose": "PIDDocument — the primary public API for programmatic-pid.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PIDDocument",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/programmatic_pid/tests/test_pipeline_e2e.py",
+          "tests/programmatic_pid/test_document.py",
+          "tests/programmatic_pid/test_pid_generation.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 15218,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3a1839b2c5234b16a0762a6c8caae7598eed31e0d427d0881fa93d1c387e0805",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-EQUIPMENT-PY-FE69D371C2ED",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/programmatic_pid/equipment.py",
+      "purpose": "Equipment symbol rendering with extensible registry pattern.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "EQUIPMENT_RENDERERS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "draw_equipment_symbol",
+            "signature": "msp: Any, eq: dict[str, Any], layer: str"
+          },
+          {
+            "kind": "function",
+            "name": "equipment_anchor",
+            "signature": "eq: dict[str, Any], side: str | None, offset: float=0.0"
+          },
+          {
+            "kind": "function",
+            "name": "equipment_center",
+            "signature": "eq: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "equipment_dims",
+            "signature": "eq: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "equipment_side_anchors",
+            "signature": "eq: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "nearest_equipment_anchor",
+            "signature": "eq: dict[str, Any], source: tuple[float, float]"
+          },
+          {
+            "kind": "function",
+            "name": "register_equipment",
+            "signature": "type_name: str"
+          },
+          {
+            "kind": "function",
+            "name": "render_ball_valve",
+            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
+          },
+          {
+            "kind": "function",
+            "name": "render_bin",
+            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
+          },
+          {
+            "kind": "function",
+            "name": "render_box",
+            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
+          },
+          {
+            "kind": "function",
+            "name": "render_burner",
+            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
+          },
+          {
+            "kind": "function",
+            "name": "render_check_valve",
+            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
+          },
+          {
+            "kind": "function",
+            "name": "render_control_valve",
+            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
+          },
+          {
+            "kind": "function",
+            "name": "render_fan",
+            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
+          },
+          {
+            "kind": "function",
+            "name": "render_gate_valve",
+            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
+          },
+          {
+            "kind": "function",
+            "name": "render_globe_valve",
+            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
+          },
+          {
+            "kind": "function",
+            "name": "render_heat_exchanger",
+            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
+          },
+          {
+            "kind": "function",
+            "name": "render_hopper",
+            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
+          },
+          {
+            "kind": "function",
+            "name": "render_pump",
+            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
+          },
+          {
+            "kind": "function",
+            "name": "render_relief_valve",
+            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
+          },
+          {
+            "kind": "function",
+            "name": "render_rotary_valve",
+            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
+          },
+          {
+            "kind": "function",
+            "name": "render_rupture_disk",
+            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
+          },
+          {
+            "kind": "function",
+            "name": "render_tank",
+            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
+          }
+        ],
+        "test_paths": [
+          "tests/programmatic_pid/test_equipment.py"
+        ],
+        "unit_mentions": [
+          "bar"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2790,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2b7cdeded7fc612481028364f8722c8ef6ae36a9be63425959726de2e7371a08",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-GENERATOR-PY-3FC12D46BC0A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/programmatic_pid/generator.py",
+      "purpose": "P&ID generator — backward-compatible shim module.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "src/shared/python/programmatic_pid/tests/test_pipeline_e2e.py",
+          "tests/programmatic_pid/test_cli.py",
+          "tests/programmatic_pid/test_pid_integration.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 4176,
+      "classification": "calculation",
+      "classification_basis": "path-marker:geometry",
+      "content_sha256_lf": "202e25b9606f43016381b81f0244c43ffcd3d6b8f4ffb3763a98af954f149f69",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-GEOMETRY-PY-445FF6118AE2",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/programmatic_pid/geometry.py",
+      "purpose": "Geometry utilities for coordinate math, bounding boxes, and collision detection.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "clamp",
+            "signature": "value: float, lo: float, hi: float"
+          },
+          {
+            "kind": "function",
+            "name": "closest_point_on_rect",
+            "signature": "point: tuple[float, float], rect: tuple[float, float, float, float]"
+          },
+          {
+            "kind": "function",
+            "name": "dedupe_points",
+            "signature": "points: Sequence[tuple[float, float]]"
+          },
+          {
+            "kind": "function",
+            "name": "distance",
+            "signature": "a: tuple[float, float], b: tuple[float, float]"
+          },
+          {
+            "kind": "function",
+            "name": "find_free_region",
+            "signature": "occupied: list[BBox], width: float, height: float, search_origin: Point | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "rects_overlap",
+            "signature": "a: tuple[float, float, float, float], b: tuple[float, float, float, float], pad: float=0.0"
+          },
+          {
+            "kind": "function",
+            "name": "text_box",
+            "signature": "text: str, x: float, y: float, h: float, align: str='MIDDLE_CENTER'"
+          },
+          {
+            "kind": "function",
+            "name": "to_float",
+            "signature": "value: object, default: float=0.0"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/programmatic_pid/tests/test_edge_cases.py",
+          "src/shared/python/programmatic_pid/tests/test_geometry.py",
+          "tests/programmatic_pid/test_geometry.py",
+          "tests/programmatic_pid/test_geometry_extra.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1933,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b275bc4b6251505ad083363e40b05f67f586eb1df446f81bf1ed1d2580f63800",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-INSTRUMENTS-PY-6BD5CE757E57",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/programmatic_pid/instruments.py",
+      "purpose": "Instrument (bubble tag) rendering.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "add_instrument",
+            "signature": "msp: Any, instrument: dict[str, Any], text_h: float, text_layer: str, default_layer: str, radius: float, show_number_suffix: bool=False, label_placer: Any | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/programmatic_pid/test_instruments.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8674,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2355542bfa0f4faf9f98be27892a1c73a6f707a20dbe88622ae3b03ac24713ea",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-LAYOUT-PY-9336B1EEDAFA",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/programmatic_pid/layout.py",
+      "purpose": "Layout computation and label placement.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "LabelPlacer",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "compute_layout_regions",
+            "signature": "spec: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "get_equipment_bounds",
+            "signature": "spec: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "get_modelspace_extent",
+            "signature": "spec: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "spread_instrument_positions",
+            "signature": "instruments: list[dict[str, Any]], min_spacing: float=3.5"
+          }
+        ],
+        "test_paths": [
+          "tests/programmatic_pid/test_instruments.py",
+          "tests/programmatic_pid/test_layout.py",
+          "tests/programmatic_pid/test_title_block.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3528,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ec9f81246c8b84a4023a9e895e9f6a9837f3db77fdf366f1c20210cdbb916491",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-PROFILES-PY-6D1A66A1B144",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/programmatic_pid/profiles.py",
+      "purpose": "Layout profile presets for controlling visual density.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "PROFILE_PRESETS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "apply_profile",
+            "signature": "spec: dict[str, Any], profile: str | None"
+          }
+        ],
+        "test_paths": [
+          "tests/programmatic_pid/test_profiles.py",
+          "tests/programmatic_pid/test_profiles_extra.py",
+          "tests/shared/python/launch_monitor/test_profiles.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10637,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "335ab6bf16f0eeaec0944f8c86e6d8aa84203b6fc9233334900314ba10a5b4b2",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-RENDERING-PY-7ED158C0CC02",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/programmatic_pid/rendering.py",
+      "purpose": "Low-level DXF rendering primitives.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "add_arrow",
+            "signature": "msp: Any, s: Sequence[float], e: Sequence[float], layer: str, color: int | None=None, arrow_size: float=1.6"
+          },
+          {
+            "kind": "function",
+            "name": "add_arrow_head",
+            "signature": "msp: Any, s: Sequence[float], e: Sequence[float], layer: str, color: int | None=None, arrow_size: float=1.6"
+          },
+          {
+            "kind": "function",
+            "name": "add_box",
+            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
+          },
+          {
+            "kind": "function",
+            "name": "add_poly_arrow",
+            "signature": "msp: Any, verts: Sequence[Sequence[float]], layer: str, color: int | None=None, arrow_size: float=1.6"
+          },
+          {
+            "kind": "function",
+            "name": "add_text",
+            "signature": "msp: Any, text: str, x: float, y: float, h: float, layer: str='TEXT', align: str='MIDDLE_CENTER'"
+          },
+          {
+            "kind": "function",
+            "name": "add_text_panel",
+            "signature": "msp: Any, x: float, y: float, w: float, h: float, title: str, lines: Sequence[str | None], text_h: float, text_layer: str, border_layer: str, max_chars: int=42"
+          },
+          {
+            "kind": "function",
+            "name": "ensure_layer",
+            "signature": "doc: Any, name: str, color: int=7, linetype: str='CONTINUOUS'"
+          },
+          {
+            "kind": "function",
+            "name": "ensure_layers",
+            "signature": "doc: Any, spec: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "export_svg_from_dxf",
+            "signature": "spec: dict[str, Any], dxf_path: str | Path, svg_path: str | Path | None, fallback_extent: tuple[float, float, float, float]"
+          },
+          {
+            "kind": "function",
+            "name": "layer_name",
+            "signature": "layer_index: dict[str, str], *candidates: str, default: str='0'"
+          },
+          {
+            "kind": "function",
+            "name": "parse_alignment",
+            "signature": "align: Any"
+          },
+          {
+            "kind": "function",
+            "name": "wrap_text_lines",
+            "signature": "text: str, width: int"
+          }
+        ],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_rendering.py",
+          "tests/programmatic_pid/test_controls.py",
+          "tests/programmatic_pid/test_instruments.py",
+          "tests/programmatic_pid/test_rendering.py",
+          "tests/programmatic_pid/test_streams.py",
+          "tests/programmatic_pid/test_title_block.py"
+        ],
+        "unit_mentions": [
+          "cm",
+          "mm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10143,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0076685d96593ab21d37d7649b20553204b6ef6340d734551c944decc91cd1b8",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-SPEC-LOADER-PY-1451DECDC011",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/programmatic_pid/spec_loader.py",
+      "purpose": "Spec loading, accessor utilities, and configuration extraction.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SpecAccessor",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "ensure_drawing",
+            "signature": "spec: SpecDict"
+          },
+          {
+            "kind": "function",
+            "name": "get_drawing",
+            "signature": "spec: SpecDict"
+          },
+          {
+            "kind": "function",
+            "name": "get_layer_config",
+            "signature": "spec: SpecDict"
+          },
+          {
+            "kind": "function",
+            "name": "get_layout_config",
+            "signature": "spec: SpecDict"
+          },
+          {
+            "kind": "function",
+            "name": "get_project",
+            "signature": "spec: SpecDict"
+          },
+          {
+            "kind": "function",
+            "name": "get_text_config",
+            "signature": "spec: SpecDict"
+          },
+          {
+            "kind": "function",
+            "name": "load_spec",
+            "signature": "path: str | Path"
+          },
+          {
+            "kind": "function",
+            "name": "prepare_spec",
+            "signature": "spec_path: str | Path, profile: str | None"
+          }
+        ],
+        "test_paths": [
+          "tests/programmatic_pid/test_profiles.py",
+          "tests/programmatic_pid/test_spec_loader.py"
+        ],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5348,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c9959bf64a08fa281ebfdff460dc578dda1237284bc73e5f86dcd17a20b5d7b1",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-STREAMS-PY-79086A024825",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/programmatic_pid/streams.py",
+      "purpose": "Stream (pipe / flow path) rendering.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "add_stream",
+            "signature": "msp: Any, stream: dict[str, Any], text_h: float, text_layer: str, equipment_by_id: dict[str, dict[str, Any]], arrow_size: float, label_scale: float=0.82, label_placer: Any | None=None, draw_label_leader: bool=False, leader_layer: str='LEADERS'"
+          },
+          {
+            "kind": "function",
+            "name": "resolve_endpoint",
+            "signature": "endpoint: dict[str, Any] | None, equipment_by_id: dict[str, dict[str, Any]]"
+          }
+        ],
+        "test_paths": [
+          "tests/programmatic_pid/test_streams.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7521,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ee806999cf28b41781ea71d773320edd4175172853bb6b40f9fccde541b9f7e2",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-TITLE-BLOCK-PY-0EB02D220B6B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/programmatic_pid/title_block.py",
+      "purpose": "Title block, notes panels, and mass balance display.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "add_notes",
+            "signature": "msp: Any, spec: dict[str, Any], text_cfg: dict[str, float], text_layer: str, notes_layer: str, layout_regions: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "add_title_block",
+            "signature": "msp: Any, spec: dict[str, Any], text_cfg: dict[str, float], text_layer: str, notes_layer: str, title_box: tuple[float, float, float, float]"
+          },
+          {
+            "kind": "function",
+            "name": "get_mass_balance_values",
+            "signature": "spec: dict[str, Any]"
+          }
+        ],
+        "test_paths": [
+          "tests/programmatic_pid/test_title_block.py"
+        ],
+        "unit_mentions": [
+          "kg"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2922,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cbcca41ea3c124563445e68568ac09855aa2f196ab764a5de60e789177d1465c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-TYPES-PY-DCA6E8146841",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/programmatic_pid/types.py",
+      "purpose": "Core types, exceptions, and constants for programmatic-pid.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "BBox",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LayoutRegions",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Point",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SpecValidationError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TextConfig",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ValidationIssue",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/programmatic_pid/tests/test_edge_cases.py",
+          "src/shared/python/programmatic_pid/tests/test_geometry.py",
+          "src/shared/python/programmatic_pid/tests/test_pipeline_e2e.py",
+          "src/shared/python/programmatic_pid/tests/test_types.py",
+          "src/shared/python/programmatic_pid/tests/test_validation.py",
+          "tests/programmatic_pid/test_document.py",
+          "tests/programmatic_pid/test_geometry.py",
+          "tests/programmatic_pid/test_geometry_extra.py",
+          "tests/programmatic_pid/test_types.py",
+          "tests/programmatic_pid/test_validation.py"
+        ],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": [
+          "src/shared/python/programmatic_pid/tests/test_validation.py",
+          "tests/programmatic_pid/test_validation.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6623,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "eb04e6b08b5928689240f24cc79556fee1df727a4eeffeea409d78c1c7f73ea4",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-VALIDATION-PY-6E9C82C8DB2A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/programmatic_pid/validation.py",
+      "purpose": "Specification validation with structured error output.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_SCHEMA",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "collect_issues",
+            "signature": "spec: Any"
+          },
+          {
+            "kind": "function",
+            "name": "validate_spec",
+            "signature": "spec: Any"
+          },
+          {
+            "kind": "function",
+            "name": "validate_spec_json",
+            "signature": "spec: Any"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/programmatic_pid/tests/test_edge_cases.py",
+          "src/shared/python/programmatic_pid/tests/test_validation.py",
+          "tests/programmatic_pid/test_validation.py",
+          "tests/python/utils/test_validation.py",
+          "tests/shared/python/model_generation/test_validation.py",
+          "tests/test_validation.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "src/shared/python/programmatic_pid/tests/test_validation.py",
+          "tests/programmatic_pid/test_validation.py",
+          "tests/python/utils/test_validation.py",
+          "tests/shared/python/model_generation/test_validation.py",
+          "tests/test_validation.py"
+        ]
+      }
+    }
+  ],
+  "package": "src/shared/python/programmatic_pid",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

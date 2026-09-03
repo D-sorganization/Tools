@@ -1,0 +1,1611 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 115,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a1cf4621af7bfd5e6e0d40dacceccd5ccff96ea81a0f9ffe01ea98cdc5124476",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DOCUMENT-PROCESSING-INIT-PY-6CED6BAD48FB",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/document_processing/__init__.py",
+      "purpose": "Document processing tools namespace package.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 0,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DOCUMENT-PROCESSING-PDF-RENAMER-INIT-PY-3FB75422F1D6",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/document_processing/pdf_renamer/__init__.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5144,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ce6f38958e142b68eabb144bd111a6e26c83a06f79462876ec357f341c24300f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DOCUMENT-PROCESSING-PDF-RENAMER-CREATE-PDF-RENAMER-SHORTCUT-PS1-91B9056EBC25",
+      "language": "powershell",
+      "maintainer": "Tools module maintainers",
+      "path": "src/document_processing/pdf_renamer/create_pdf_renamer_shortcut.ps1",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 920,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f8c82a74a6575172f1ccfea438d1eb69fb5d70994890265ada5acffa346e5a22",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DOCUMENT-PROCESSING-PDF-RENAMER-CREATE-SHORTCUT-PS1-C57BCDB8FED7",
+      "language": "powershell",
+      "maintainer": "Tools module maintainers",
+      "path": "src/document_processing/pdf_renamer/create_shortcut.ps1",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 534,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0805a185b0a9797072e66fd8c0abed76e89462b969266f2f30e19a5b3d949bf4",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DOCUMENT-PROCESSING-PDF-RENAMER-GUI-REGISTRATION-PY-27DD3E28D878",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/document_processing/pdf_renamer/gui_registration.py",
+      "purpose": "GUI registration for PDF Renamer.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "GUI_INFO",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_gui_info",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_gui_registration.py",
+          "tests/rate_of_closure/test_gui_registration.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4120,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d5f2f0604f5090d8958f19dc91032557c4ec84aa03ff1d17da18f53749c00d00",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DOCUMENT-PROCESSING-PDF-RENAMER-LAUNCH-PDF-RENAMER-PY-CF3544573FA2",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/document_processing/pdf_renamer/launch_pdf_renamer.py",
+      "purpose": "Cross-platform launcher for PDF Renamer GUI.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://www.python.org/"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "check_dependencies",
+            "signature": "script_dir: Path"
+          },
+          {
+            "kind": "function",
+            "name": "check_python",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 537,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8f34afa7d7ec8a19a92d2c389d7afc47461e3eb0f466b9c9f4ff461d508f09a9",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DOCUMENT-PROCESSING-PDF-RENAMER-LAUNCH-PYQT6-PY-02729F13EF72",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/document_processing/pdf_renamer/launch_pyqt6.py",
+      "purpose": "Launcher script for PDF Renamer GUI.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_REPO_ROOT",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_launch_pyqt6.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 0,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DOCUMENT-PROCESSING-PDF-RENAMER-SCRIPTS-INIT-PY-370DE4ADC728",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/document_processing/pdf_renamer/scripts/__init__.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4526,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "658d871d0999a28e6beba98c89271a0cd86f0528273b72c453fce5d8f22000b1",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DOCUMENT-PROCESSING-PDF-RENAMER-SCRIPTS-SIMPLE-RENAMER-PY-9E1113EAFF2F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/document_processing/pdf_renamer/scripts/simple_renamer.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "extract_title_author",
+            "signature": "pdf_path: str | Path"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "rename_pdfs",
+            "signature": "root_folder: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2236,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4df29a0e19c1b6b27231ce5b391523c84fefea9f580a7af03d79ee46e78b51ba",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DOCUMENT-PROCESSING-PDF-RENAMER-SETUP-API-KEY-PY-31D58D6A5A21",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/document_processing/pdf_renamer/setup_api_key.py",
+      "purpose": "Interactive API key setup for PDF Renamer.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_REPO_ROOT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 163,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e0104bd503fb97ccd172a9bf40dae30c3b116fc24dc91f2c5cfcf9c659c544d4",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DOCUMENT-PROCESSING-PDF-RENAMER-SRC-PDF-RENAMER-INIT-PY-ECEB29E21B2D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/document_processing/pdf_renamer/src/pdf_renamer/__init__.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "GeminiTitleLLM",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TitleResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "extract_title",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10948,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "425a430063814f6af7536d19ab67f2ce9ee4c5d60944e231c1e715c82a5d76a6",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DOCUMENT-PROCESSING-PDF-RENAMER-SRC-PDF-RENAMER-API-MODE-PY-FAE30286944D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/document_processing/pdf_renamer/src/pdf_renamer/api_mode.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "APIRenameManager",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RenameProposal",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2675,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9ca0cf46c19396c482e6364c24c7b3de9aafbaf069e09fba90313eb1ca442fca",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DOCUMENT-PROCESSING-PDF-RENAMER-SRC-PDF-RENAMER-CACHE-PY-BCCFCC5ED065",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/document_processing/pdf_renamer/src/pdf_renamer/cache.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ResultCache",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/document_processing/pdf_renamer/tests/test_cache.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4684,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e0b016679ab9f4e3bcb06473df6ec2c667bd81ac238695729ea2784fc88fb535",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DOCUMENT-PROCESSING-PDF-RENAMER-SRC-PDF-RENAMER-CLI-PY-81728CB0187E",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/document_processing/pdf_renamer/src/pdf_renamer/cli.py",
+      "purpose": "Command-line interface for the PDF renamer tool.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "apply_style",
+            "signature": "title: str, style: str"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "process_file",
+            "signature": "file_path: Path, cache: ResultCache, llm: GeminiTitleLLM | None, dry_run: bool, style: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6887,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1e35c13805ee8957ba28ba6dc7067e9f5872d6028c36e0e77b2923218018d6c5",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DOCUMENT-PROCESSING-PDF-RENAMER-SRC-PDF-RENAMER-CONFIG-PY-2063AD2BBC20",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/document_processing/pdf_renamer/src/pdf_renamer/config.py",
+      "purpose": "Configuration management for PDF Renamer with secure API key handling.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://makersuite.google.com/app/apikey"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "API_KEY_NAMES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "KEYRING_SERVICE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "KEYRING_USERNAME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_REPO_ROOT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_api_key",
+            "signature": "key_name: str='GEMINI_API_KEY'"
+          },
+          {
+            "kind": "function",
+            "name": "get_config_dir",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "get_user_preferences",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "save_user_preferences",
+            "signature": "preferences: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "setup_api_key_interactive",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "update_last_directory",
+            "signature": "directory: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1320,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b1229ad4a476030ca79577ea4dfdd3c02a691c2b03ff28440334faab9a07bc5c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DOCUMENT-PROCESSING-PDF-RENAMER-SRC-PDF-RENAMER-CORE-PY-5D6A5A52D675",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/document_processing/pdf_renamer/src/pdf_renamer/core.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "extract_title",
+            "signature": "pdf_path: Path, llm: TitleLLM | None=None"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3063,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9174925fdffe3b3b0b00090d2193e1ccf427f11ac6918f08471dc62effeac5b7",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DOCUMENT-PROCESSING-PDF-RENAMER-SRC-PDF-RENAMER-DEDUPER-PY-61B4BAD11FFE",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/document_processing/pdf_renamer/src/pdf_renamer/deduper.py",
+      "purpose": "Enhanced duplicate detection with SHA256 hashing.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DuplicateFinder",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6198,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "22b3bd86d0092cf57e1f85ae8012927d6c42ad538233ef60d4bfd6f6908a822f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DOCUMENT-PROCESSING-PDF-RENAMER-SRC-PDF-RENAMER-EXTRACTORS-PY-883B704AC854",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/document_processing/pdf_renamer/src/pdf_renamer/extractors.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "TitleLLM",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BASE_CONFIDENCE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FONT_SCALE_FACTOR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_BONUS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MIN_FONT_THRESHOLD",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MIN_TITLE_FONT_SIZE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TOP_PAGE_FRACTION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "author_from_metadata",
+            "signature": "pdf_path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "title_from_first_page",
+            "signature": "pdf_path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "title_from_metadata",
+            "signature": "pdf_path: Path"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 37264,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "eef7ef1ebdcc78241b6be0c59a650dff48585c6c91bf0994c490d7b80e35a8f5",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DOCUMENT-PROCESSING-PDF-RENAMER-SRC-PDF-RENAMER-GUI-PY-119A55E2C24F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/document_processing/pdf_renamer/src/pdf_renamer/gui.py",
+      "purpose": "Modern PyQt6 GUI for PDF Renamer.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PDFRenamerGUI",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ProcessingThread",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "bar",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5388,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8af19a7921c6e5c381995a136a91fb621726b7d2f5a1299a1fb4c20fae211628",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DOCUMENT-PROCESSING-PDF-RENAMER-SRC-PDF-RENAMER-LLM-LAYER-PY-669730297D78",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/document_processing/pdf_renamer/src/pdf_renamer/llm_layer.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GeminiTitleLLM",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 61,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3129adff95e0f38b87ab34cddfc27082c7892bcaec267ff5d40f160fdf55b44a",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DOCUMENT-PROCESSING-PDF-RENAMER-SRC-PDF-RENAMER-MAIN-PY-4F13C919A658",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/document_processing/pdf_renamer/src/pdf_renamer/main.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3332,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "221908aea9f884f0e435589b90c9cdb0af5e621191151a41efa4e43896c7eb5f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DOCUMENT-PROCESSING-PDF-RENAMER-SRC-PDF-RENAMER-RENAMER-PY-331D7BF623F3",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/document_processing/pdf_renamer/src/pdf_renamer/renamer.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Renamer",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/document_processing/pdf_renamer/tests/test_renamer.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5251,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ed5e18c25481c80f1a61f24f41125ea1898141f58ede34b94ae31b22c92ae5af",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DOCUMENT-PROCESSING-PDF-RENAMER-SRC-PDF-RENAMER-TRANSACTION-LOG-PY-4CA7BC3D0B05",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/document_processing/pdf_renamer/src/pdf_renamer/transaction_log.py",
+      "purpose": "Transaction logging system for rollback capability.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "TransactionLog",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 184,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c71d3c980c52de64555a377023f72e1b0a86e7fc823106f574430c3b57cff38e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DOCUMENT-PROCESSING-PDF-RENAMER-SRC-PDF-RENAMER-TYPES-PY-53F318BE8A10",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/document_processing/pdf_renamer/src/pdf_renamer/types.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "TitleResult",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5859,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ab017f5d77b7af4dea5b33c563517cbe7c1eb29df57eda7a677bc2d0bd75df69",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DOCUMENT-PROCESSING-PDF-RENAMER-SRC-PDF-RENAMER-UTILS-PY-0ADF773F51D6",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/document_processing/pdf_renamer/src/pdf_renamer/utils.py",
+      "purpose": "Utility functions for PDF processing and filename handling.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "MAX_FILENAME_LENGTH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_TITLE_LENGTH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MINOR_WORDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "WINDOWS_RESERVED",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "clean_title",
+            "signature": "s: str"
+          },
+          {
+            "kind": "function",
+            "name": "get_last_name",
+            "signature": "author: str"
+          },
+          {
+            "kind": "function",
+            "name": "looks_like_title",
+            "signature": "s: str"
+          },
+          {
+            "kind": "function",
+            "name": "sanitize_filename",
+            "signature": "s: str, max_length: int=MAX_FILENAME_LENGTH"
+          },
+          {
+            "kind": "function",
+            "name": "sha256_file",
+            "signature": "path: Path, chunk_size: int=1024 * 1024"
+          },
+          {
+            "kind": "function",
+            "name": "to_kebab_case",
+            "signature": "s: str"
+          },
+          {
+            "kind": "function",
+            "name": "to_snake_case",
+            "signature": "s: str"
+          },
+          {
+            "kind": "function",
+            "name": "to_title_case",
+            "signature": "s: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10114,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0951c461d1002941acd198bb2b3f80ec82741f03a18217bd069eebf8e5e3d54b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DOCUMENT-PROCESSING-PDF-RENAMER-SRC-PDF-RENAMER-WORKER-PY-6FB8B783BC29",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/document_processing/pdf_renamer/src/pdf_renamer/worker.py",
+      "purpose": "Thread-safe worker module for parallel PDF processing.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ProcessingResult",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "process_single_file",
+            "signature": "file_path: Path, cache: ResultCache, transaction_log: TransactionLog, llm: TitleLLM | None=None, dry_run: bool=True, style: str='standard', include_author: bool=False, move_failed: bool=True, failed_folder: str='failed_renames'"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5143,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "995f355e4ad4d6149fb3803f16beacd237c9e3d0daed0d8a5a93bd737e6bbeb0",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DOCUMENT-PROCESSING-PDF-RENAMER-VERIFY-INSTALLATION-PY-5C449410F51C",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/document_processing/pdf_renamer/verify_installation.py",
+      "purpose": "Verify PDF Renamer installation and dependencies.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "BOLD",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GREEN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "RED",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "RESET",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "YELLOW",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "check_dependency",
+            "signature": "name: str, import_statement: str"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/document_processing",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

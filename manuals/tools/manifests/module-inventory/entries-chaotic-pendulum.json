@@ -1,0 +1,295 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 71,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "292ef562ca6409fd0307da5dd62bb8417c04f62ae0de42631b5ce6a1c7128696",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-CHAOTIC-PENDULUM-CHAOTIC-PENDULUM-INIT-PY-CDF70674EB19",
+      "language": "python",
+      "maintainer": "Pendulum maintainers",
+      "path": "Chaotic_Pendulum/chaotic_pendulum/__init__.py",
+      "purpose": "Chaotic Pendulum Toolkit with modular physics and extensible UI.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 829,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "d66907953a6d274af2fa0c57bb32652ec97bd516eaa32be235d5ed8d42c1226b",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-CHAOTIC-PENDULUM-CHAOTIC-PENDULUM-MAIN-PY-913DF832D7F2",
+      "language": "python",
+      "maintainer": "Pendulum maintainers",
+      "path": "Chaotic_Pendulum/chaotic_pendulum/__main__.py",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3774,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "56baa4add7cceecd945e2483c6125c824810e25a3a06203a8a031fc08dc3b167",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-CHAOTIC-PENDULUM-CHAOTIC-PENDULUM-CONFIG-PY-93A225079A2A",
+      "language": "python",
+      "maintainer": "Pendulum maintainers",
+      "path": "Chaotic_Pendulum/chaotic_pendulum/config.py",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PhysicsConfig",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RenderConfig",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "parse_args",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 9148,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "4349050d09353ab4192683b6c91672ffc30cc2f49a05a52eeeb97725004674bd",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-CHAOTIC-PENDULUM-CHAOTIC-PENDULUM-PHYSICS-PY-215E9223CAD0",
+      "language": "python",
+      "maintainer": "Pendulum maintainers",
+      "path": "Chaotic_Pendulum/chaotic_pendulum/physics.py",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PhysicsEngine",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "VectorsDict",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "Chaotic_Pendulum/tests/test_physics.py",
+          "src/pendulum_simulator/tests/test_physics.py",
+          "tests/test_asteroid_jumper/test_physics.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 26313,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "34e14fffdb96d80d475c78502dd6686012db6937f46e94754b91480ec146714f",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-CHAOTIC-PENDULUM-CHAOTIC-PENDULUM-RENDERER-PY-A8951F076B48",
+      "language": "python",
+      "maintainer": "Pendulum maintainers",
+      "path": "Chaotic_Pendulum/chaotic_pendulum/renderer.py",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PendulumRenderer",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N",
+          "rad",
+          "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "Chaotic_Pendulum",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

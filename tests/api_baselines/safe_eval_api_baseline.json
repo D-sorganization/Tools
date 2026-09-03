@@ -1,0 +1,92 @@
+{
+  "safe_eval.py": {
+    "__all__": [
+      "safe_eval",
+      "safe_eval_math",
+      "validate_expression",
+      "NUMPY_MATH_NAMESPACE",
+      "SCALAR_MATH_NAMESPACE"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "NUMPY_MATH_NAMESPACE": {
+        "type": "variable"
+      },
+      "SCALAR_MATH_NAMESPACE": {
+        "type": "variable"
+      },
+      "safe_eval": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "expression"
+            },
+            {
+              "annotation": "dict[str, Any]",
+              "default": null,
+              "kind": "arg",
+              "name": "namespace"
+            },
+            {
+              "annotation": "set[str] | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "allowed_names"
+            }
+          ],
+          "returns": "Any"
+        },
+        "type": "function"
+      },
+      "safe_eval_math": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "expression"
+            },
+            {
+              "annotation": "dict[str, Any] | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "variables"
+            },
+            {
+              "annotation": "bool",
+              "default": "True",
+              "kind": "kwonlyarg",
+              "name": "use_numpy"
+            }
+          ],
+          "returns": "Any"
+        },
+        "type": "function"
+      },
+      "validate_expression": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "expression"
+            },
+            {
+              "annotation": "set[str] | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "allowed_names"
+            }
+          ],
+          "returns": "ast.Expression"
+        },
+        "type": "function"
+      }
+    }
+  }
+}

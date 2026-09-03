@@ -1,0 +1,2649 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 23,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "fbf183646a24c25893d29f6abe1158131e91e225dd77b9c55676f77143fd38e7",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SHARED-INIT-PY-227DD6EC2A72",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/shared/__init__.py",
+      "purpose": "Package: shared.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8861,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "96179802ba854087953cff6a408947b9726d7f37f6ddee30190f036f820d97dd",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SHARED-PERFORMANCE-UTILS-PY-747EB1624E1D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/shared/performance_utils.py",
+      "purpose": "Performance utilities for optimizing common operations across the Tools repository.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FastHasher",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MemoryOptimizedProcessor",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "OptimizedFileScanner",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/python/test_performance_utils.py"
+        ],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 53,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e8a1d6ab41031f5c0082efea710c6d7528c314c9f657012c9bee44d6498af69c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-INIT-PY-C74A43C91E5F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/src/__init__.py",
+      "purpose": "Project package init.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 21,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "17478770257e5f247fc19749a7758c75f534da72da7f0763b6c48e0c7ed1579d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-CORE-INIT-PY-64172BB215AB",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/src/core/__init__.py",
+      "purpose": "Package: core.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11339,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2daaf2d60f6dab914368e81c52ce0a0894d1edd1a41da670af1789bba7b807a7",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-CORE-PLUGIN-MANAGER-PY-084516D2DD08",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/src/core/plugin_manager.py",
+      "purpose": "plugin_manager.py module.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PluginManager",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Tool",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_TOOL_CATEGORY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_TOOL_SCAN_DIRS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_TOOL_TYPE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TOOL_MANIFEST_FILENAME",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/python/test_plugin_manager_discovery.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 952,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2ce67bc2db37040a718e2d97854083c6e3549712be4919c98c14cd6be2c9aaaa",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-HELP-INIT-PY-6D00421FE2A7",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/src/help/__init__.py",
+      "purpose": "Help system module for the Unified Tools Launcher.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "HelpButton",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "HelpDialog",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TooltipManager",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_help_manager",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "load_help_from_file",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 24111,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6d05dcf0074d3b3a775e66d88a0d559482b54f13821e9465d3948a72fb2d3064",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-HELP-HELP-CONTENT-PY-BA65B13FC9A4",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/src/help/help_content.py",
+      "purpose": "Help content definitions for tool categories.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "CATEGORY_HELP_CONTENT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CATEGORY_TOPIC_MAPPINGS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GETTING_STARTED_CONTENT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TOOLTIPS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "initialize_help_manager",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "Hz",
+          "J",
+          "N",
+          "Nm",
+          "Pa",
+          "W",
+          "bar",
+          "g",
+          "kg",
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 30651,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "95fb42c2f3f1395c5b646fd5d5d9bd7afe2887c75fbec713e26086816edc2051",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-HELP-HELP-SYSTEM-PY-E6564F92819A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/src/help/help_system.py",
+      "purpose": "Help system components for the Unified Tools Launcher.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "HelpButton",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HelpDialog",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HelpManager",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TooltipManager",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_HEADER_MAP",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "create_help_menu_actions",
+            "signature": "parent: QWidget, help_manager: HelpManager"
+          },
+          {
+            "kind": "function",
+            "name": "get_help_manager",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "load_help_from_file",
+            "signature": "file_path: str | Path"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "bar",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 826,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "094addfa55cb174a4a48e4e1f14316231373c5fc1226c7f315ce1e459f8bb6c2",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-LOGGER-UTILS-PY-5495D590DBA5",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/src/logger_utils.py",
+      "purpose": "Logging utilities - DEPRECATED: Use utils.logging_utils instead.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_SEED",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SIMPLE_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_logger",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "logger",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "set_seeds",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "setup_logging",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/python/tests/test_logger_utils.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1567,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "07a75252e3585619bede98e31d79985ffbe788833c6f5031cbf15f26d2813cb5",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-UTILS-INIT-PY-8CC45391C76A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/src/utils/__init__.py",
+      "purpose": "Utils package providing common utilities across the repository.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1099,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "bb11746942736d4c8ab95be30db2cad4b5c73185d8d866bef3575ae41fe7053f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-UTILS-COMPATIBILITY-PY-EC048E60A0B3",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/src/utils/compatibility.py",
+      "purpose": "Compatibility Shim for Python Versions < 3.11.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "check_python_version",
+            "signature": ""
+          },
+          {
+            "kind": "re-export",
+            "name": "StrEnum",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "UTC",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/python/utils/test_compatibility.py",
+          "tests/shared/python/test_compatibility.py",
+          "tests/test_compatibility.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5755,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "910dc17a16e3eded8bcc01fa6c16ae557b0b274159dada653f1b5f1ff543eaef",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-UTILS-CONFIG-LOADER-PY-FDF02067F877",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/src/utils/config_loader.py",
+      "purpose": "Shared configuration loading utility for consistent configuration management.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ConfigLoader",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_xdg_config_dir",
+            "signature": "app_name: str"
+          },
+          {
+            "kind": "function",
+            "name": "load_config",
+            "signature": "config_path: Path | str, default_config: dict[str, Any] | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/test_config_loader.py",
+          "tests/tools/test_config_loader.py",
+          "tests/unit/ai/mcp/test_config_loader.py"
+        ],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3705,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f4bfbf565d194fc529b73c701eb1ba09552d9209251b43f48ddfe8d70622a4a4",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-UTILS-CONSTANTS-PY-D754BA297FF0",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/src/utils/constants.py",
+      "purpose": "Shared physical and mathematical constants for the Tools monorepo.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "ATM_TO_PA",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "AVOGADRO_NUMBER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BAR_TO_PA",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BOLTZMANN_CONSTANT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CELSIUS_TO_KELVIN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEG_TO_RAD",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "HOURS_TO_SECONDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ISO_STANDARD_TEMPERATURE_K",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "KJ_TO_J",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "KPA_TO_PA",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "KWH_TO_J",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MINUTES_TO_SECONDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MJ_TO_J",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MPA_TO_PA",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PSI_TO_PA",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "RAD_TO_DEG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "R_UNIVERSAL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SPEED_OF_LIGHT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "STANDARD_GRAVITY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "STANDARD_PRESSURE_PA",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "STANDARD_TEMPERATURE_K",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "J",
+          "Pa",
+          "m/s",
+          "rad",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4007,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7de1fe344948d56d6730e776b107bbcd97f49056428fc97f395921afeb7c9040",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-UTILS-CSV-UTILS-PY-D4E238EF1573",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/src/utils/csv_utils.py",
+      "purpose": "CSV file operation utilities for consistent CSV handling.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "merge_csv_files",
+            "signature": "file_paths: list[Path | str], output_path: Path | str, **kwargs: Any"
+          },
+          {
+            "kind": "function",
+            "name": "read_csv_with_validation",
+            "signature": "file_path: Path | str, required_columns: list[str] | None=None, **kwargs: Any"
+          },
+          {
+            "kind": "function",
+            "name": "safe_read_csv",
+            "signature": "file_path: Path | str, default: pd.DataFrame | None=None, **kwargs: Any"
+          },
+          {
+            "kind": "function",
+            "name": "safe_write_csv",
+            "signature": "df: pd.DataFrame, file_path: Path | str, create_parents: bool=True, **kwargs: Any"
+          }
+        ],
+        "test_paths": [
+          "tests/python/utils/test_csv_utils.py",
+          "tests/test_csv_utils.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13749,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9bce35f84d21ccd7a7f086c3fe2b8d85ae28d52b52ddc9c71ff757bc0c2a5c0d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-UTILS-DEBUG-HELPERS-PY-6FB34D317B21",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/src/utils/debug_helpers.py",
+      "purpose": "Debug helper utilities.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PerformanceWatchdog",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SystemDiagnostics",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "F",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "conditional_breakpoint",
+            "signature": "condition: bool, message: str=''"
+          },
+          {
+            "kind": "function",
+            "name": "debug_breakpoint",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "debug_exception",
+            "signature": "exc: BaseException | None=None, log_level: int=logging.ERROR"
+          },
+          {
+            "kind": "function",
+            "name": "debug_log",
+            "signature": "message: str, *args: Any, include_caller: bool=True, **kwargs: Any"
+          },
+          {
+            "kind": "function",
+            "name": "debug_on_error",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "debug_vars",
+            "signature": "**variables: Any"
+          },
+          {
+            "kind": "function",
+            "name": "deprecated",
+            "signature": "reason: str='', removal_version: str | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "format_diagnostics",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "format_exception_with_locals",
+            "signature": "exc: BaseException, include_locals: bool=True, max_frames: int=10"
+          },
+          {
+            "kind": "function",
+            "name": "get_system_diagnostics",
+            "signature": "include_env: bool=True, include_modules: bool=True, env_filter: list[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "print_diagnostics",
+            "signature": "file: Any=None"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "ms",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3611,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "20d5c5765d5067aabbc40167bde91fbe86333b65ecc0ec2427c60f2fdbaabe3d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-UTILS-DEBUG-MEMORY-PY-44FC9216B0AA",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/src/utils/debug_memory.py",
+      "purpose": "Memory profiling utilities.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MemoryStats",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "F",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_memory_usage",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "memory_profile",
+            "signature": "func: F"
+          },
+          {
+            "kind": "function",
+            "name": "memory_tracker",
+            "signature": "name: str='memory_block', log_result: bool=True"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6717,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1646e828f02d8f78ba7b1ad2d8138969ea446b6448ea34ee54ed020ced485b63",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-UTILS-DEBUG-PROFILING-PY-5D0CEB626374",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/src/utils/debug_profiling.py",
+      "purpose": "Profiling and timing utilities.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ProfileResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TimingStats",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "F",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "profile",
+            "signature": "output_file: str | Path | None=None, sort_by: str='cumulative', top_n: int=20"
+          },
+          {
+            "kind": "function",
+            "name": "profile_block",
+            "signature": "name: str='code_block', log_result: bool=True"
+          },
+          {
+            "kind": "function",
+            "name": "timed",
+            "signature": "log_level: int=logging.DEBUG, threshold_ms: float | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "timer",
+            "signature": "name: str='operation', log_level: int=logging.DEBUG"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "ms",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9136,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5b461711bc8722c7685fe3f773387dc37b13b20e0ee39158faccdd3e0a1d0acd",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-UTILS-DEBUG-TRACING-PY-B6DD98ECEDE9",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/src/utils/debug_tracing.py",
+      "purpose": "Execution tracing and stack inspection utilities.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ExecutionTracer",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StackFrame",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "F",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "format_call_stack",
+            "signature": "skip_frames: int=1, max_frames: int=10, include_locals: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "get_call_stack",
+            "signature": "skip_frames: int=1, max_frames: int=10, include_locals: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "get_caller_info",
+            "signature": "skip_frames: int=1"
+          },
+          {
+            "kind": "function",
+            "name": "print_call_stack",
+            "signature": "skip_frames: int=1, max_frames: int=10, include_locals: bool=False, file: Any=None"
+          },
+          {
+            "kind": "function",
+            "name": "trace_calls",
+            "signature": "include_modules: list[str] | None=None, max_depth: int=5"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3797,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "eb240102c7210ba5d14123936eb6b6a204fd156b0ee1af4b543ef49aa4875b4b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-UTILS-DEBUG-UTILS-PY-97AC5B6CABBD",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/src/utils/debug_utils.py",
+      "purpose": "Comprehensive debugging utilities for troubleshooting and profiling.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "F",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "T",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "debug_only",
+            "signature": "func: F"
+          },
+          {
+            "kind": "function",
+            "name": "get_watchdog",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "is_debug_mode",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "set_debug_mode",
+            "signature": "enabled: bool"
+          }
+        ],
+        "test_paths": [
+          "tests/test_debug_utils.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7521,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "06c66c10e11aa886c909c578455841f52ab818fbbfe74e8c07c0561b04e7de7b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-UTILS-DEPENDENCY-CHECKER-PY-8945E6428962",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/src/utils/dependency_checker.py",
+      "purpose": "Shared dependency checking utility for consistent dependency management.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DependencyStatus",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "check_dependencies",
+            "signature": "required: dict[str, str] | list[str], package_map: dict[str, str] | None=None, spec_finder: Callable[[str], object]=find_spec"
+          },
+          {
+            "kind": "function",
+            "name": "check_python_version",
+            "signature": "min_major: int=3, min_minor: int=10"
+          },
+          {
+            "kind": "function",
+            "name": "format_missing_dependencies",
+            "signature": "status: DependencyStatus"
+          },
+          {
+            "kind": "function",
+            "name": "has_module",
+            "signature": "name: str, spec_finder: Callable[[str], object]=find_spec"
+          },
+          {
+            "kind": "function",
+            "name": "install_from_requirements",
+            "signature": "requirements_path: str | None=None, upgrade_pip: bool=True"
+          },
+          {
+            "kind": "function",
+            "name": "install_missing_packages",
+            "signature": "packages: list[str], package_map: dict[str, str] | None=None, upgrade: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "install_package",
+            "signature": "package_name: str, package_map: dict[str, str] | None=None, upgrade: bool=False"
+          }
+        ],
+        "test_paths": [
+          "tests/test_dependency_checker.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5298,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b08aae0271f1a52b1ae8b657bac0532fbedd04078750b17d9517f1695a54e769",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-UTILS-ENV-UTILS-PY-01A823F5A533",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/src/utils/env_utils.py",
+      "purpose": "Environment variable and .env file utilities.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_REPO_ROOT_FALLBACK",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "find_env_file",
+            "signature": "filename: str='.env', start_path: Path | str | None=None, search_locations: list[Path | str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "get_env_bool",
+            "signature": "key: str, default: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "get_env_int",
+            "signature": "key: str, default: int=0"
+          },
+          {
+            "kind": "function",
+            "name": "get_env_var",
+            "signature": "key: str, default: str | None=None, required: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "load_env_file",
+            "signature": "env_path: Path | str | None=None, filename: str='.env', search_locations: list[Path | str] | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/python/utils/test_env_utils.py",
+          "tests/test_env_utils.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5439,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c8816247141492aef16406b09d84d5ea987dba60685f22220614e3d32e04b68b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-UTILS-ERROR-HANDLING-PY-C0B31A02DC52",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/src/utils/error_handling.py",
+      "purpose": "Shared error handling utility for consistent error management.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "T",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "exit_on_error",
+            "signature": "error_message: str, exit_code: int=1, log_error: bool=True"
+          },
+          {
+            "kind": "function",
+            "name": "handle_file_errors",
+            "signature": "default: T | None=None, log_error: bool=True, reraise: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "handle_import_error",
+            "signature": "module_name: str, package_name: str | None=None, default: Any=None"
+          },
+          {
+            "kind": "function",
+            "name": "log_and_continue",
+            "signature": "error_message: str, default: T | None=None, log_level: int=logging.WARNING"
+          },
+          {
+            "kind": "function",
+            "name": "safe_execute",
+            "signature": "func: Callable[..., T], *args: Any, default: T | None=None, log_error: bool=True, **kwargs: Any"
+          }
+        ],
+        "test_paths": [
+          "tests/python/utils/test_error_handling.py",
+          "tests/test_error_handling.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7372,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "060317002fdd7bf6a19a6e0a94a30985190c17baf96d09d63cdf1ef6fb4fd61d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-UTILS-FILE-UTILS-PY-6D5B8479CDCF",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/src/utils/file_utils.py",
+      "purpose": "Shared file I/O utility for consistent file operations.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "atomic_write_text",
+            "signature": "path: Path, text: str, *, encoding: str='utf-8'"
+          },
+          {
+            "kind": "function",
+            "name": "ensure_directory",
+            "signature": "path: Path | str, create: bool=True"
+          },
+          {
+            "kind": "function",
+            "name": "find_file_upwards",
+            "signature": "filename: str, start_path: Path | str | None=None, max_depth: int=10"
+          },
+          {
+            "kind": "function",
+            "name": "safe_read_json",
+            "signature": "file_path: Path | str, default: Any=None"
+          },
+          {
+            "kind": "function",
+            "name": "safe_read_text",
+            "signature": "file_path: Path | str, encoding: str='utf-8', default: str=''"
+          },
+          {
+            "kind": "function",
+            "name": "safe_write_json",
+            "signature": "file_path: Path | str, data: Any, indent: int=2, create_parents: bool=True, default: Callable[[Any], Any] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "safe_write_text",
+            "signature": "file_path: Path | str, content: str, encoding: str='utf-8', create_parents: bool=True"
+          }
+        ],
+        "test_paths": [
+          "src/data_processing/data_processor/python/tests/test_file_utils.py",
+          "tests/test_file_utils.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 25956,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "727ba05455c99255a7d6e1456f36f772296f07613c6d425eaf21ec3171a16b7d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-UTILS-INTEGRATION-TEST-HELPERS-PY-443AB501FFB4",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/src/utils/integration_test_helpers.py",
+      "purpose": "Integration test helpers for testing multi-component interactions.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://{self.host"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "APITestBase",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DataFileLoader",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DatabaseTestBase",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "EnvironmentManager",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "IntegrationTestBase",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MockServer",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ResourceManager",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ServiceStatus",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "F",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "T",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "async_event_loop",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "async_test",
+            "signature": "func: Callable[..., Any]"
+          },
+          {
+            "kind": "function",
+            "name": "check_command_available",
+            "signature": "command: str"
+          },
+          {
+            "kind": "function",
+            "name": "check_database_connection",
+            "signature": "connection_string: str, db_type: str='sqlite'"
+          },
+          {
+            "kind": "function",
+            "name": "check_http_service",
+            "signature": "url: str, timeout: float=5.0, expected_status: int=200"
+          },
+          {
+            "kind": "function",
+            "name": "check_port_available",
+            "signature": "host: str, port: int, timeout: float=2.0"
+          },
+          {
+            "kind": "function",
+            "name": "compare_dicts_deep",
+            "signature": "dict1: dict[str, Any], dict2: dict[str, Any], ignore_keys: list[str] | None=None, path: str=''"
+          },
+          {
+            "kind": "function",
+            "name": "retry_test",
+            "signature": "max_attempts: int=3, delay_seconds: float=1.0, exceptions: tuple[type[Exception], ...]=(Exception,)"
+          },
+          {
+            "kind": "function",
+            "name": "wait_for_condition",
+            "signature": "condition: Callable[[], bool], timeout: float=10.0, interval: float=0.1, description: str='condition'"
+          }
+        ],
+        "test_paths": [
+          "tests/test_integration_test_helpers.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8105,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f81a03d71f196613082415c1b1d4d66248007c8f9ee5f332eaf68e857b805ba3",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-UTILS-LOGGING-UTILS-PY-325561834A6D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/src/utils/logging_utils.py",
+      "purpose": "Comprehensive logging utilities for consistent logging across the repository.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "JsonFormatter",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LogExecutionTime",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_SEED",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "NUMPY_AVAILABLE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SIMPLE_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TORCH_AVAILABLE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_logger",
+            "signature": "name: str | None=None, level: int | str=logging.INFO, use_simple_format: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "init_default_logging",
+            "signature": "level: str | int=logging.INFO, json_logs: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "log_execution_time",
+            "signature": "name: str"
+          },
+          {
+            "kind": "function",
+            "name": "set_seeds",
+            "signature": "seed: int=DEFAULT_SEED"
+          },
+          {
+            "kind": "function",
+            "name": "setup_logging",
+            "signature": "level: int | str=logging.INFO, log_file: Path | str | None=None, format_string: str | None=None, json_logs: bool=False, force: bool=False"
+          }
+        ],
+        "test_paths": [
+          "tests/test_logging_utils.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3246,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0457ada04cfceba7f744bd72026bd3210bd0e314b1c0bd85bd7d1cb5b8721297",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-UTILS-OS-UTILS-PY-8D4CA5C1471F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/src/utils/os_utils.py",
+      "purpose": "OS path operation utilities for consistent path handling.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "change_directory",
+            "signature": "path: Path | str"
+          },
+          {
+            "kind": "function",
+            "name": "ensure_dir",
+            "signature": "path: Path | str, create: bool=True"
+          },
+          {
+            "kind": "function",
+            "name": "get_current_dir",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "path_exists",
+            "signature": "path: Path | str"
+          },
+          {
+            "kind": "function",
+            "name": "safe_join_path",
+            "signature": "base: Path | str, *parts: str"
+          }
+        ],
+        "test_paths": [
+          "tests/test_os_utils.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4306,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "235409dca39e9bc603b052e48114587e348f4a1b71ef9f49ff2c80aa95fdbeb2",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-UTILS-PATH-HELPERS-PY-B13EFCC9D02F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/src/utils/path_helpers.py",
+      "purpose": "Path helper utilities for common path operations.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "ensure_utils_in_path",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "find_nearest_dir",
+            "signature": "dirname: str, start_path: Path | str | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "find_nearest_file",
+            "signature": "filename: str, start_path: Path | str | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "get_file_dir",
+            "signature": "file_path: str | Path"
+          },
+          {
+            "kind": "function",
+            "name": "get_project_root_from_file",
+            "signature": "file_path: str | Path"
+          },
+          {
+            "kind": "function",
+            "name": "get_relative_path",
+            "signature": "from_path: Path | str, to_path: Path | str"
+          },
+          {
+            "kind": "function",
+            "name": "normalize_path",
+            "signature": "path: Path | str"
+          },
+          {
+            "kind": "function",
+            "name": "safe_join_path",
+            "signature": "base: Path | str, *parts: str"
+          }
+        ],
+        "test_paths": [
+          "tests/test_path_helpers.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4617,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ace83f79df5bd19deb6c483ee2d46fd7ebe4358ba7d0d7cc3903d0fedcb8767d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-UTILS-PATH-SETUP-PY-1239A9802DBC",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/src/utils/path_setup.py",
+      "purpose": "Shared path setup utility for consistent Python path configuration.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_DEPRECATION_MSG",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "add_utils_to_path",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "get_repo_root",
+            "signature": "start_path: Path | str | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "get_standard_paths",
+            "signature": "repo_root: Path | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "setup_python_path",
+            "signature": "repo_root: Path | None=None, additional_paths: list[Path] | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/test_path_setup.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4776,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "44bf4b1194b95e1d3920a75bd12dc1dba99c75bbb657ae1e43d6510a96bff706",
+      "family": "shared-plotting-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-UTILS-PLOTTING-PY-8769127CF0D1",
+      "language": "python",
+      "maintainer": "Plotting and visualization maintainers",
+      "path": "src/python/src/utils/plotting.py",
+      "purpose": "Plotting utilities for colorblind-safe visualizations and export support.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "COLORBLIND_SAFE_PALETTE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "COLORBLIND_SAFE_PALETTE_ALT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "apply_colorblind_safe_style",
+            "signature": "fig: Any=None, ax: Any=None"
+          },
+          {
+            "kind": "function",
+            "name": "export_plot",
+            "signature": "fig: Any, filename: str, formats: list[str] | None=None, dpi: int=300"
+          },
+          {
+            "kind": "function",
+            "name": "get_colorblind_safe_color",
+            "signature": "index: int, palette: str='default'"
+          },
+          {
+            "kind": "function",
+            "name": "get_colorblind_safe_colormap",
+            "signature": "name: str='default'"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_plotting.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2664,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9db1a61cdf1917102b6c690fbac09f42eb40ebe261aa8f78c2fdf1f8d3c98b4f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-UTILS-QUALITY-CHECKER-PY-F5CAC43DB48D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/src/utils/quality_checker.py",
+      "purpose": "Quality check script to verify AI-generated code meets standards.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4977,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5b2cdb2b9db30df2f7cf5bb212ec15f48b79a53ca6d55a899dece9e8b07403a3",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-UTILS-SECRETS-SCANNER-PY-B1BD1137A275",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/src/utils/secrets_scanner.py",
+      "purpose": "Secrets scanner utility for detecting hardcoded secrets in source code.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SecretFinding",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_IGNORE_PATTERNS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SECRET_PATTERNS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "report_findings",
+            "signature": "findings: list[SecretFinding], show_false_positives: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "scan_directory",
+            "signature": "directory: str | Path, exclude_dirs: set[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "scan_file",
+            "signature": "filepath: str | Path"
+          },
+          {
+            "kind": "function",
+            "name": "scan_line",
+            "signature": "line: str, line_num: int, filepath: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5329,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "609cf4bac81be23921351d0d64614a6a30a19d5448fe80b52b85feb662dfbae6",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-UTILS-SUBPROCESS-UTILS-PY-251099CA3597",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/src/utils/subprocess_utils.py",
+      "purpose": "Shared subprocess execution utility for consistent process management.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "check_command_available",
+            "signature": "command: str"
+          },
+          {
+            "kind": "function",
+            "name": "get_command_output",
+            "signature": "command: list[str], cwd: Path | str | None=None, timeout: int | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "run_command",
+            "signature": "command: list[str], cwd: Path | str | None=None, timeout: int | None=None, capture_output: bool=True, check: bool=False, text: bool=True, env: dict[str, str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "run_pip_command",
+            "signature": "command: str, packages: list[str] | None=None, requirements_file: Path | str | None=None, upgrade: bool=False, timeout: int | None=None, check: bool=True"
+          },
+          {
+            "kind": "function",
+            "name": "run_python_script",
+            "signature": "script_path: Path | str, args: list[str] | None=None, cwd: Path | str | None=None, timeout: int | None=None, check: bool=False"
+          }
+        ],
+        "test_paths": [
+          "tests/test_subprocess_utils.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5418,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "75eeb1c57b9e4b02fb6f81cff34acadc7017a9f3a1365e8048ed5ed7a7c59e2b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PYTHON-SRC-UTILS-VALIDATION-PY-F72BE060971C",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/python/src/utils/validation.py",
+      "purpose": "Shared validation utilities for consistent input validation.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "validate_file_extension",
+            "signature": "file_path: Path | str, allowed_extensions: list[str], case_sensitive: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "validate_in_range",
+            "signature": "value: int | float, min_val: int | float | None=None, max_val: int | float | None=None, name: str='value'"
+          },
+          {
+            "kind": "function",
+            "name": "validate_not_empty",
+            "signature": "value: str | list | dict, name: str='value'"
+          },
+          {
+            "kind": "function",
+            "name": "validate_not_none",
+            "signature": "value: Any, name: str='value'"
+          },
+          {
+            "kind": "function",
+            "name": "validate_path",
+            "signature": "path: Path | str, must_exist: bool=True, must_be_file: bool=False, must_be_dir: bool=False, must_be_within: Path | str | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "validate_python_version",
+            "signature": "min_major: int=3, min_minor: int=10, min_micro: int=0"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/programmatic_pid/tests/test_validation.py",
+          "tests/programmatic_pid/test_validation.py",
+          "tests/python/utils/test_validation.py",
+          "tests/shared/python/model_generation/test_validation.py",
+          "tests/test_validation.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "src/shared/python/programmatic_pid/tests/test_validation.py",
+          "tests/programmatic_pid/test_validation.py",
+          "tests/python/utils/test_validation.py",
+          "tests/shared/python/model_generation/test_validation.py",
+          "tests/test_validation.py"
+        ]
+      }
+    }
+  ],
+  "package": "src/python",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}
