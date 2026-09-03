@@ -141,5 +141,8 @@ def pytest_addoption(parser: pytest.Parser) -> None:
         "--regenerate-api-baseline",
         action="store_true",
         default=False,
-        help="Regenerate Sidekick API stability baseline json file",
+        help=(
+            "Regenerate the public-API stability baselines "
+            "(tests/sidekick_api_baseline.json and tests/api_baselines/*.json)"
+        ),
     )

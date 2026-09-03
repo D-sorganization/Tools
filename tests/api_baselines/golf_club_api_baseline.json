@@ -1,0 +1,5389 @@
+{
+  "__init__.py": {
+    "__all__": [
+      "CURRENT_FORMAT",
+      "CATEGORY_TURF",
+      "LEGACY_FORMAT",
+      "AssembledMassProperties",
+      "ClubAssembly",
+      "ClubComponent",
+      "ClubLengthConvention",
+      "ClubLengthMeasurement",
+      "ComponentMassProperties",
+      "ComponentRole",
+      "ContactSequence",
+      "ExtrapolationPolicy",
+      "Handedness",
+      "GroundPlane",
+      "InstantaneousScrewAxis",
+      "RigidTransform",
+      "ReducedTurfContactResult",
+      "SHAFT_PROFILE_FORMAT",
+      "ShaftProfile",
+      "ShaftProfileProvenance",
+      "ShaftProfileScaling",
+      "ShaftStation",
+      "ShaftModalResponse",
+      "ShaftModalSettings",
+      "ShaftTipLoad",
+      "ShaftTipResponse",
+      "TURF_PROFILE_FORMAT",
+      "TURF_DAMPING_KEY",
+      "TURF_FRICTION_KEY",
+      "TURF_PENETRATION_LIMIT_KEY",
+      "TURF_STIFFNESS_KEY",
+      "TURF_VARIABLE_KEYS",
+      "TurfVariationPlan",
+      "TurfCalibrationStatus",
+      "TurfContactKinematics",
+      "TurfContactProfile",
+      "TurfContactResponse",
+      "TurfContactStatus",
+      "TurfConvergenceStudy",
+      "TurfPreset",
+      "TurfProfileProvenance",
+      "WedgeHeadParameters",
+      "WedgeClearanceSample",
+      "WedgeContactCandidate",
+      "WedgeContactFeature",
+      "WedgeGroundClearanceAnalysis",
+      "WedgeGroundContactEvent",
+      "WedgeTurfPatchResponse",
+      "WedgeTurfWrench",
+      "WedgeKinematicAnalysis",
+      "WedgeKinematicState",
+      "WedgeGeometryProvenance",
+      "WEDGE_EXPORT_FORMAT",
+      "WEDGE_GROUND_CLEARANCE_FORMAT",
+      "WedgeExportArtifact",
+      "WedgeExportFormat",
+      "WedgeExportRequest",
+      "WedgeExportResult",
+      "WedgeMeasuredMetrics",
+      "WedgePreset",
+      "WedgeSolidResult",
+      "WEDGE_PARAMETERS_FORMAT",
+      "assemble_mass_properties",
+      "analyze_wedge_kinematics",
+      "analyze_wedge_ground_clearance",
+      "angle_of_attack_deg",
+      "assembly_from_json",
+      "assembly_from_json_dict",
+      "assembly_to_json",
+      "assembly_to_json_dict",
+      "build_wedge_solid",
+      "export_wedge_artifacts",
+      "evaluate_turf_contact",
+      "evaluate_wedge_turf_wrench",
+      "FITTING_DOCUMENT_FORMAT",
+      "ClubFittingDocument",
+      "FaceGeometry",
+      "FittingProvenance",
+      "MeshReference",
+      "fitting_document_from_json",
+      "fitting_document_to_json",
+      "FITTING_REPORT_FORMAT",
+      "ClubOutcome",
+      "CounterfactualSpec",
+      "FittingReport",
+      "compare_counterfactuals",
+      "evaluate_club",
+      "evaluate_counterfactual_set",
+      "fitting_report_to_json",
+      "IMPACT_COUPLING_REPORT_FORMAT",
+      "CoupledImpactConfig",
+      "CoupledImpactResult",
+      "GripBoundary",
+      "impact_coupling_report",
+      "simulate_coupled_impact",
+      "MeshInertiaReport",
+      "is_watertight",
+      "mesh_inertia",
+      "mesh_volume_centroid",
+      "PUTTER_CONTACT_TIME_S",
+      "PUTTER_FITTING_REPORT_FORMAT",
+      "PUTTER_HEAD_FORMAT",
+      "PutterHeadDocument",
+      "PutterHeadProvenance",
+      "PutterCounterfactual",
+      "PutterFittingReport",
+      "PutterStrikeResult",
+      "PutterTwist",
+      "PuttingOutcome",
+      "compare_putter_counterfactuals",
+      "putter_fitting_report_to_json",
+      "scenario_for_head",
+      "head_moi_for_strike",
+      "putter_head_from_json",
+      "putter_head_from_library",
+      "putter_head_from_mesh",
+      "putter_head_from_stl",
+      "putter_head_to_json",
+      "putter_spec",
+      "strike_with_head",
+      "twist_response",
+      "scale_shaft_profile",
+      "shaft_component_mass_properties",
+      "shaft_profile_from_csv",
+      "shaft_profile_from_json",
+      "shaft_profile_from_json_dict",
+      "shaft_profile_to_csv",
+      "shaft_profile_to_json",
+      "shaft_profile_to_json_dict",
+      "GripKinematics",
+      "ShaftDeliveryDeltas",
+      "ShaftTipMass",
+      "solve_shaft_delivery",
+      "solve_shaft_bending_modes",
+      "solve_cantilever_tip_response",
+      "simulate_reduced_turf_contact",
+      "run_turf_convergence_study",
+      "turf_profile_from_json",
+      "turf_profile_from_json_dict",
+      "turf_profile_preset",
+      "turf_profile_to_json",
+      "turf_profile_to_json_dict",
+      "turf_profiles_for_variation_plan",
+      "wedge_preset",
+      "wedge_body_profile_m",
+      "wedge_contact_candidates",
+      "wedge_face_contact_point_m",
+      "wedge_ground_clearance_to_json_dict",
+      "wedge_parameters_from_json",
+      "wedge_parameters_to_json"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "AssembledMassProperties": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "CATEGORY_TURF": {
+        "type": "variable"
+      },
+      "CURRENT_FORMAT": {
+        "type": "variable"
+      },
+      "ClubAssembly": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "from_json": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "text"
+                }
+              ],
+              "returns": "ClubAssembly"
+            },
+            "from_json_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "data"
+                }
+              ],
+              "returns": "ClubAssembly"
+            },
+            "mass_properties": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "AssembledMassProperties"
+            },
+            "to_json": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "str"
+            },
+            "to_json_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ClubComponent": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "component_id": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "str"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ClubFittingDocument": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ClubLengthConvention": {
+        "info": {
+          "bases": [
+            "str",
+            "Enum"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ClubLengthMeasurement": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ClubOutcome": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ComponentMassProperties": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ComponentRole": {
+        "info": {
+          "bases": [
+            "str",
+            "Enum"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ContactSequence": {
+        "info": {
+          "bases": [
+            "str",
+            "Enum"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "CounterfactualSpec": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "CoupledImpactConfig": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "CoupledImpactResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ExtrapolationPolicy": {
+        "info": {
+          "bases": [
+            "str",
+            "Enum"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "FITTING_DOCUMENT_FORMAT": {
+        "type": "variable"
+      },
+      "FITTING_REPORT_FORMAT": {
+        "type": "variable"
+      },
+      "FaceGeometry": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "FittingProvenance": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "FittingReport": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "GripBoundary": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "GripKinematics": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "GroundPlane": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "Handedness": {
+        "info": {
+          "bases": [
+            "str",
+            "Enum"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "IMPACT_COUPLING_REPORT_FORMAT": {
+        "type": "variable"
+      },
+      "InstantaneousScrewAxis": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "LEGACY_FORMAT": {
+        "type": "variable"
+      },
+      "MeshInertiaReport": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "inertia_array": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "np.ndarray"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "MeshReference": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "PUTTER_CONTACT_TIME_S": {
+        "type": "variable"
+      },
+      "PUTTER_FITTING_REPORT_FORMAT": {
+        "type": "variable"
+      },
+      "PUTTER_HEAD_FORMAT": {
+        "type": "variable"
+      },
+      "PutterCounterfactual": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "PutterFittingReport": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "PutterHeadDocument": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "PutterHeadProvenance": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "PutterStrikeResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "PutterTwist": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "PuttingOutcome": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ReducedTurfContactResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "RigidTransform": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "rotate_inertia_tensor": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "object",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "tensor"
+                }
+              ],
+              "returns": "Matrix3"
+            },
+            "transform_point": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "object",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "point_m"
+                }
+              ],
+              "returns": "Vector3"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "SHAFT_PROFILE_FORMAT": {
+        "type": "variable"
+      },
+      "ShaftDeliveryDeltas": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ShaftModalResponse": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ShaftModalSettings": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ShaftProfile": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "balance_point_from_raw_butt_m": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "float"
+            },
+            "cut_mass_kg": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "float"
+            },
+            "flexible_length_m": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "float"
+            },
+            "raw_mass_kg": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "float"
+            },
+            "station_at": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "position_m"
+                },
+                {
+                  "annotation": "ExtrapolationPolicy",
+                  "default": "ExtrapolationPolicy.REJECT",
+                  "kind": "arg",
+                  "name": "policy"
+                }
+              ],
+              "returns": "ShaftStation"
+            },
+            "total_mass_kg": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "float"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ShaftProfileProvenance": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ShaftProfileScaling": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ShaftStation": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ShaftTipLoad": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ShaftTipMass": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ShaftTipResponse": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "TURF_DAMPING_KEY": {
+        "type": "variable"
+      },
+      "TURF_FRICTION_KEY": {
+        "type": "variable"
+      },
+      "TURF_PENETRATION_LIMIT_KEY": {
+        "type": "variable"
+      },
+      "TURF_PROFILE_FORMAT": {
+        "type": "variable"
+      },
+      "TURF_STIFFNESS_KEY": {
+        "type": "variable"
+      },
+      "TURF_VARIABLE_KEYS": {
+        "type": "variable"
+      },
+      "TurfCalibrationStatus": {
+        "info": {
+          "bases": [
+            "str",
+            "Enum"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "TurfContactKinematics": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "TurfContactProfile": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "supports_turf_rankings": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "bool"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "TurfContactResponse": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "TurfContactStatus": {
+        "info": {
+          "bases": [
+            "str",
+            "Enum"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "TurfConvergenceStudy": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "TurfPreset": {
+        "info": {
+          "bases": [
+            "str",
+            "Enum"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "TurfProfileProvenance": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "TurfVariationPlan": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "resolved_base": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, float]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "WEDGE_EXPORT_FORMAT": {
+        "type": "variable"
+      },
+      "WEDGE_GROUND_CLEARANCE_FORMAT": {
+        "type": "variable"
+      },
+      "WEDGE_PARAMETERS_FORMAT": {
+        "type": "variable"
+      },
+      "WedgeClearanceSample": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeContactCandidate": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeContactFeature": {
+        "info": {
+          "bases": [
+            "str",
+            "Enum"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeExportArtifact": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeExportFormat": {
+        "info": {
+          "bases": [
+            "str",
+            "Enum"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeExportRequest": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeExportResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeGeometryProvenance": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeGroundClearanceAnalysis": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeGroundContactEvent": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeHeadParameters": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeKinematicAnalysis": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeKinematicState": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeMeasuredMetrics": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgePreset": {
+        "info": {
+          "bases": [
+            "str",
+            "Enum"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeSolidResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeTurfPatchResponse": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeTurfWrench": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "analyze_wedge_ground_clearance": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WedgeHeadParameters",
+              "default": null,
+              "kind": "arg",
+              "name": "parameters"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "times_s"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "poses"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "twists"
+            },
+            {
+              "annotation": "GroundPlane",
+              "default": null,
+              "kind": "arg",
+              "name": "ground"
+            },
+            {
+              "annotation": "float | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "ball_contact_time_s"
+            }
+          ],
+          "returns": "WedgeGroundClearanceAnalysis"
+        },
+        "type": "function"
+      },
+      "analyze_wedge_kinematics": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WedgeKinematicState",
+              "default": null,
+              "kind": "arg",
+              "name": "state"
+            }
+          ],
+          "returns": "WedgeKinematicAnalysis"
+        },
+        "type": "function"
+      },
+      "angle_of_attack_deg": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "velocity_mps"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "ground_up_unit"
+            }
+          ],
+          "returns": "float | None"
+        },
+        "type": "function"
+      },
+      "assemble_mass_properties": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Sequence[ClubComponent]",
+              "default": null,
+              "kind": "arg",
+              "name": "components"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "assembly_frame_id"
+            }
+          ],
+          "returns": "AssembledMassProperties"
+        },
+        "type": "function"
+      },
+      "assembly_from_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "text"
+            }
+          ],
+          "returns": "ClubAssembly"
+        },
+        "type": "function"
+      },
+      "assembly_from_json_dict": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Mapping[str, Any]",
+              "default": null,
+              "kind": "arg",
+              "name": "data"
+            }
+          ],
+          "returns": "ClubAssembly"
+        },
+        "type": "function"
+      },
+      "assembly_to_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ClubAssembly",
+              "default": null,
+              "kind": "arg",
+              "name": "assembly"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "assembly_to_json_dict": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ClubAssembly",
+              "default": null,
+              "kind": "arg",
+              "name": "assembly"
+            }
+          ],
+          "returns": "dict[str, Any]"
+        },
+        "type": "function"
+      },
+      "build_wedge_solid": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WedgeHeadParameters",
+              "default": null,
+              "kind": "arg",
+              "name": "parameters"
+            }
+          ],
+          "returns": "WedgeSolidResult"
+        },
+        "type": "function"
+      },
+      "compare_counterfactuals": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ClubFittingDocument",
+              "default": null,
+              "kind": "arg",
+              "name": "document"
+            },
+            {
+              "annotation": "GripKinematics",
+              "default": null,
+              "kind": "arg",
+              "name": "grip"
+            },
+            {
+              "annotation": "tuple[CounterfactualSpec, ...]",
+              "default": null,
+              "kind": "arg",
+              "name": "counterfactuals"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "kwonlyarg",
+              "name": "impact_offset_toe_mm"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "kwonlyarg",
+              "name": "impact_offset_high_mm"
+            },
+            {
+              "annotation": "str",
+              "default": "'waterloo_penner'",
+              "kind": "kwonlyarg",
+              "name": "flight_model"
+            }
+          ],
+          "returns": "FittingReport"
+        },
+        "type": "function"
+      },
+      "compare_putter_counterfactuals": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "PutterHeadDocument",
+              "default": null,
+              "kind": "arg",
+              "name": "head"
+            },
+            {
+              "annotation": "PuttScenario",
+              "default": null,
+              "kind": "arg",
+              "name": "scenario"
+            },
+            {
+              "annotation": "PuttVariationPlan",
+              "default": null,
+              "kind": "arg",
+              "name": "plan"
+            },
+            {
+              "annotation": "tuple[PutterCounterfactual, ...]",
+              "default": null,
+              "kind": "arg",
+              "name": "counterfactuals"
+            }
+          ],
+          "returns": "PutterFittingReport"
+        },
+        "type": "function"
+      },
+      "evaluate_club": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ClubFittingDocument",
+              "default": null,
+              "kind": "arg",
+              "name": "document"
+            },
+            {
+              "annotation": "GripKinematics",
+              "default": null,
+              "kind": "arg",
+              "name": "grip"
+            },
+            {
+              "annotation": "CounterfactualSpec | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "counterfactual"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "kwonlyarg",
+              "name": "impact_offset_toe_mm"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "kwonlyarg",
+              "name": "impact_offset_high_mm"
+            },
+            {
+              "annotation": "str",
+              "default": "'waterloo_penner'",
+              "kind": "kwonlyarg",
+              "name": "flight_model"
+            }
+          ],
+          "returns": "ClubOutcome"
+        },
+        "type": "function"
+      },
+      "evaluate_counterfactual_set": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "tuple[CounterfactualSpec, ...]",
+              "default": null,
+              "kind": "arg",
+              "name": "counterfactuals"
+            },
+            {
+              "annotation": "Callable[[CounterfactualSpec | None], OutcomeT]",
+              "default": null,
+              "kind": "arg",
+              "name": "evaluate"
+            }
+          ],
+          "returns": "tuple[OutcomeT, tuple[OutcomeT, ...]]"
+        },
+        "type": "function"
+      },
+      "evaluate_turf_contact": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "TurfContactProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "TurfContactKinematics",
+              "default": null,
+              "kind": "arg",
+              "name": "state"
+            }
+          ],
+          "returns": "TurfContactResponse"
+        },
+        "type": "function"
+      },
+      "evaluate_wedge_turf_wrench": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WedgeHeadParameters",
+              "default": null,
+              "kind": "arg",
+              "name": "parameters"
+            },
+            {
+              "annotation": "TurfContactProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "pose_head_to_ground"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "twist_at_head_origin"
+            },
+            {
+              "annotation": "GroundPlane",
+              "default": null,
+              "kind": "arg",
+              "name": "ground"
+            }
+          ],
+          "returns": "WedgeTurfWrench"
+        },
+        "type": "function"
+      },
+      "export_wedge_artifacts": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WedgeHeadParameters",
+              "default": null,
+              "kind": "arg",
+              "name": "parameters"
+            },
+            {
+              "annotation": "WedgeExportRequest",
+              "default": null,
+              "kind": "arg",
+              "name": "request"
+            }
+          ],
+          "returns": "WedgeExportResult"
+        },
+        "type": "function"
+      },
+      "fitting_document_from_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "text"
+            }
+          ],
+          "returns": "ClubFittingDocument"
+        },
+        "type": "function"
+      },
+      "fitting_document_to_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ClubFittingDocument",
+              "default": null,
+              "kind": "arg",
+              "name": "document"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "fitting_report_to_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "FittingReport",
+              "default": null,
+              "kind": "arg",
+              "name": "report"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "head_moi_for_strike": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "PutterHeadDocument",
+              "default": null,
+              "kind": "arg",
+              "name": "document"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "arg",
+              "name": "strike_offset_toe_mm"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "arg",
+              "name": "strike_offset_high_mm"
+            }
+          ],
+          "returns": "float | None"
+        },
+        "type": "function"
+      },
+      "impact_coupling_report": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "CoupledImpactConfig",
+              "default": null,
+              "kind": "arg",
+              "name": "baseline"
+            },
+            {
+              "annotation": "tuple[float, ...]",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "grip_stiffness_grid_n_m"
+            },
+            {
+              "annotation": "tuple[float, ...]",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "grip_mass_grid_kg"
+            },
+            {
+              "annotation": "tuple[float, ...]",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "shaft_stiffness_grid_n_m"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "is_watertight": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "triangles"
+            }
+          ],
+          "returns": "bool"
+        },
+        "type": "function"
+      },
+      "mesh_inertia": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "triangles"
+            },
+            {
+              "annotation": "float | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "density_kg_m3"
+            },
+            {
+              "annotation": "float | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "mass_kg"
+            }
+          ],
+          "returns": "MeshInertiaReport"
+        },
+        "type": "function"
+      },
+      "mesh_volume_centroid": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "triangles"
+            }
+          ],
+          "returns": "tuple[float, np.ndarray]"
+        },
+        "type": "function"
+      },
+      "putter_fitting_report_to_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "PutterFittingReport",
+              "default": null,
+              "kind": "arg",
+              "name": "report"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "putter_head_from_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "text"
+            }
+          ],
+          "returns": "PutterHeadDocument"
+        },
+        "type": "function"
+      },
+      "putter_head_from_library": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "library_name"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "head_mass_kg"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "loft_deg"
+            },
+            {
+              "annotation": "float",
+              "default": "DEFAULT_PUTTER_COR",
+              "kind": "kwonlyarg",
+              "name": "cor"
+            }
+          ],
+          "returns": "PutterHeadDocument"
+        },
+        "type": "function"
+      },
+      "putter_head_from_mesh": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "triangles"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "mesh_sha256"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "loft_deg"
+            },
+            {
+              "annotation": "float",
+              "default": "DEFAULT_PUTTER_COR",
+              "kind": "kwonlyarg",
+              "name": "cor"
+            },
+            {
+              "annotation": "float | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "density_kg_m3"
+            },
+            {
+              "annotation": "float | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "target_mass_kg"
+            }
+          ],
+          "returns": "PutterHeadDocument"
+        },
+        "type": "function"
+      },
+      "putter_head_from_stl": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            },
+            {
+              "annotation": "Path | str",
+              "default": null,
+              "kind": "arg",
+              "name": "stl_path"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "loft_deg"
+            },
+            {
+              "annotation": "float",
+              "default": "DEFAULT_PUTTER_COR",
+              "kind": "kwonlyarg",
+              "name": "cor"
+            },
+            {
+              "annotation": "float | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "density_kg_m3"
+            },
+            {
+              "annotation": "float | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "target_mass_kg"
+            }
+          ],
+          "returns": "PutterHeadDocument"
+        },
+        "type": "function"
+      },
+      "putter_head_to_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "PutterHeadDocument",
+              "default": null,
+              "kind": "arg",
+              "name": "document"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "putter_spec": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "PutterHeadDocument",
+              "default": null,
+              "kind": "arg",
+              "name": "document"
+            }
+          ],
+          "returns": "PutterSpec"
+        },
+        "type": "function"
+      },
+      "run_turf_convergence_study": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "TurfContactProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "initial_contact_velocity_mps"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "surface_normal_unit"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "effective_mass_kg"
+            },
+            {
+              "annotation": "tuple[float, ...]",
+              "default": "(2e-05, 1e-05, 5e-06)",
+              "kind": "kwonlyarg",
+              "name": "time_steps_s"
+            },
+            {
+              "annotation": "float",
+              "default": "0.02",
+              "kind": "kwonlyarg",
+              "name": "tolerance"
+            },
+            {
+              "annotation": "float",
+              "default": "0.1",
+              "kind": "kwonlyarg",
+              "name": "max_time_s"
+            },
+            {
+              "annotation": "Callable[[], bool] | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "cancel_check"
+            }
+          ],
+          "returns": "TurfConvergenceStudy"
+        },
+        "type": "function"
+      },
+      "scale_shaft_profile": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "ShaftProfileScaling",
+              "default": null,
+              "kind": "arg",
+              "name": "scaling"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "shaft_id"
+            }
+          ],
+          "returns": "ShaftProfile"
+        },
+        "type": "function"
+      },
+      "scenario_for_head": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "PutterHeadDocument",
+              "default": null,
+              "kind": "arg",
+              "name": "head"
+            },
+            {
+              "annotation": "PuttScenario",
+              "default": null,
+              "kind": "arg",
+              "name": "scenario"
+            }
+          ],
+          "returns": "PuttScenario"
+        },
+        "type": "function"
+      },
+      "shaft_component_mass_properties": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            }
+          ],
+          "returns": "ComponentMassProperties"
+        },
+        "type": "function"
+      },
+      "shaft_profile_from_csv": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "text"
+            }
+          ],
+          "returns": "ShaftProfile"
+        },
+        "type": "function"
+      },
+      "shaft_profile_from_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "text"
+            }
+          ],
+          "returns": "ShaftProfile"
+        },
+        "type": "function"
+      },
+      "shaft_profile_from_json_dict": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Mapping[str, Any]",
+              "default": null,
+              "kind": "arg",
+              "name": "data"
+            }
+          ],
+          "returns": "ShaftProfile"
+        },
+        "type": "function"
+      },
+      "shaft_profile_to_csv": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "shaft_profile_to_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "shaft_profile_to_json_dict": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            }
+          ],
+          "returns": "dict[str, Any]"
+        },
+        "type": "function"
+      },
+      "simulate_coupled_impact": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "CoupledImpactConfig",
+              "default": null,
+              "kind": "arg",
+              "name": "config"
+            }
+          ],
+          "returns": "CoupledImpactResult"
+        },
+        "type": "function"
+      },
+      "simulate_reduced_turf_contact": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "TurfContactProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "initial_contact_velocity_mps"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "surface_normal_unit"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "effective_mass_kg"
+            },
+            {
+              "annotation": "float",
+              "default": "5e-06",
+              "kind": "kwonlyarg",
+              "name": "time_step_s"
+            },
+            {
+              "annotation": "float",
+              "default": "_DEFAULT_MAX_TIME_S",
+              "kind": "kwonlyarg",
+              "name": "max_time_s"
+            },
+            {
+              "annotation": "Callable[[], bool] | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "cancel_check"
+            }
+          ],
+          "returns": "ReducedTurfContactResult"
+        },
+        "type": "function"
+      },
+      "solve_cantilever_tip_response": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "ShaftTipLoad",
+              "default": null,
+              "kind": "arg",
+              "name": "load"
+            }
+          ],
+          "returns": "ShaftTipResponse"
+        },
+        "type": "function"
+      },
+      "solve_shaft_bending_modes": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "ShaftModalSettings",
+              "default": "_DEFAULT_MODAL_SETTINGS",
+              "kind": "arg",
+              "name": "settings"
+            }
+          ],
+          "returns": "ShaftModalResponse"
+        },
+        "type": "function"
+      },
+      "solve_shaft_delivery": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "ShaftTipMass",
+              "default": null,
+              "kind": "arg",
+              "name": "tip_mass"
+            },
+            {
+              "annotation": "GripKinematics",
+              "default": null,
+              "kind": "arg",
+              "name": "grip"
+            }
+          ],
+          "returns": "ShaftDeliveryDeltas"
+        },
+        "type": "function"
+      },
+      "strike_with_head": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "PutterHeadDocument",
+              "default": null,
+              "kind": "arg",
+              "name": "document"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "clubhead_speed_mps"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "arg",
+              "name": "shaft_lean_deg"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "kwonlyarg",
+              "name": "aim_deg"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "kwonlyarg",
+              "name": "face_angle_deg"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "kwonlyarg",
+              "name": "path_angle_deg"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "kwonlyarg",
+              "name": "attack_angle_deg"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "kwonlyarg",
+              "name": "strike_offset_toe_mm"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "kwonlyarg",
+              "name": "strike_offset_high_mm"
+            }
+          ],
+          "returns": "PutterStrikeResult"
+        },
+        "type": "function"
+      },
+      "turf_profile_from_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "payload"
+            }
+          ],
+          "returns": "TurfContactProfile"
+        },
+        "type": "function"
+      },
+      "turf_profile_from_json_dict": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "source"
+            }
+          ],
+          "returns": "TurfContactProfile"
+        },
+        "type": "function"
+      },
+      "turf_profile_preset": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "TurfPreset",
+              "default": null,
+              "kind": "arg",
+              "name": "preset"
+            }
+          ],
+          "returns": "TurfContactProfile"
+        },
+        "type": "function"
+      },
+      "turf_profile_to_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "TurfContactProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "turf_profile_to_json_dict": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "TurfContactProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            }
+          ],
+          "returns": "dict[str, Any]"
+        },
+        "type": "function"
+      },
+      "turf_profiles_for_variation_plan": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "TurfVariationPlan",
+              "default": null,
+              "kind": "arg",
+              "name": "plan"
+            },
+            {
+              "annotation": "TurfContactProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "base_profile"
+            }
+          ],
+          "returns": "tuple[TurfContactProfile, ...]"
+        },
+        "type": "function"
+      },
+      "twist_response": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "PutterHeadDocument",
+              "default": null,
+              "kind": "arg",
+              "name": "document"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "clubhead_speed_mps"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "kwonlyarg",
+              "name": "shaft_lean_deg"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "kwonlyarg",
+              "name": "attack_angle_deg"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "kwonlyarg",
+              "name": "strike_offset_toe_mm"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "kwonlyarg",
+              "name": "strike_offset_high_mm"
+            }
+          ],
+          "returns": "PutterTwist"
+        },
+        "type": "function"
+      },
+      "wedge_body_profile_m": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WedgeHeadParameters",
+              "default": null,
+              "kind": "arg",
+              "name": "parameters"
+            }
+          ],
+          "returns": "tuple[tuple[float, float], ...]"
+        },
+        "type": "function"
+      },
+      "wedge_contact_candidates": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WedgeHeadParameters",
+              "default": null,
+              "kind": "arg",
+              "name": "parameters"
+            }
+          ],
+          "returns": "tuple[WedgeContactCandidate, ...]"
+        },
+        "type": "function"
+      },
+      "wedge_face_contact_point_m": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WedgeHeadParameters",
+              "default": null,
+              "kind": "arg",
+              "name": "parameters"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "toe_offset_m"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "high_offset_m"
+            }
+          ],
+          "returns": "Vector3"
+        },
+        "type": "function"
+      },
+      "wedge_ground_clearance_to_json_dict": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WedgeGroundClearanceAnalysis",
+              "default": null,
+              "kind": "arg",
+              "name": "analysis"
+            }
+          ],
+          "returns": "dict[str, Any]"
+        },
+        "type": "function"
+      },
+      "wedge_parameters_from_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "text"
+            }
+          ],
+          "returns": "WedgeHeadParameters"
+        },
+        "type": "function"
+      },
+      "wedge_parameters_to_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WedgeHeadParameters",
+              "default": null,
+              "kind": "arg",
+              "name": "parameters"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "wedge_preset": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WedgePreset",
+              "default": null,
+              "kind": "arg",
+              "name": "preset"
+            }
+          ],
+          "returns": "WedgeHeadParameters"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "_validation.py": {
+    "__all__": [
+      "Matrix3",
+      "Vector3",
+      "reject_unknown_fields",
+      "require_finite_float",
+      "require_identifier",
+      "require_inertia",
+      "require_mapping",
+      "require_matrix3",
+      "require_rotation",
+      "require_vector3"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "Matrix3": {
+        "type": "variable"
+      },
+      "Vector3": {
+        "type": "variable"
+      },
+      "reject_unknown_fields": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Mapping[str, Any]",
+              "default": null,
+              "kind": "arg",
+              "name": "data"
+            },
+            {
+              "annotation": "frozenset[str]",
+              "default": null,
+              "kind": "arg",
+              "name": "allowed"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      },
+      "require_finite_float": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            },
+            {
+              "annotation": "bool",
+              "default": "False",
+              "kind": "kwonlyarg",
+              "name": "positive"
+            }
+          ],
+          "returns": "float"
+        },
+        "type": "function"
+      },
+      "require_identifier": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "require_inertia": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            }
+          ],
+          "returns": "Matrix3"
+        },
+        "type": "function"
+      },
+      "require_mapping": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "Mapping[str, Any]"
+        },
+        "type": "function"
+      },
+      "require_matrix3": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "Matrix3"
+        },
+        "type": "function"
+      },
+      "require_rotation": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            }
+          ],
+          "returns": "Matrix3"
+        },
+        "type": "function"
+      },
+      "require_vector3": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "Vector3"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "_wedge_delivery_metrics.py": {
+    "__all__": [
+      "delivered_bounce_deg",
+      "path_projected_metrics"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "delivered_bounce_deg": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WedgeHeadParameters",
+              "default": null,
+              "kind": "arg",
+              "name": "parameters"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "pose"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "ground_normal"
+            }
+          ],
+          "returns": "float"
+        },
+        "type": "function"
+      },
+      "path_projected_metrics": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WedgeHeadParameters",
+              "default": null,
+              "kind": "arg",
+              "name": "parameters"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "pose"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "twist"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "ground_normal"
+            }
+          ],
+          "returns": "tuple[float | None, float | None, float | None]"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "_wedge_sweep.py": {
+    "__all__": [
+      "interpolated_pose",
+      "interpolated_twist",
+      "swept_times",
+      "validated_sweep_arrays"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "interpolated_pose": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "times"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "poses"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "time_s"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      },
+      "interpolated_twist": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "times"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "twists"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "time_s"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      },
+      "swept_times": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "times"
+            },
+            {
+              "annotation": "int",
+              "default": null,
+              "kind": "arg",
+              "name": "subdivisions"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      },
+      "validated_sweep_arrays": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "times_s"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "poses"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "twists"
+            }
+          ],
+          "returns": "tuple[np.ndarray, np.ndarray, np.ndarray]"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "assembly.py": {
+    "__all__": [
+      "ClubAssembly",
+      "assemble_mass_properties"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "ClubAssembly": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "from_json": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "text"
+                }
+              ],
+              "returns": "ClubAssembly"
+            },
+            "from_json_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "data"
+                }
+              ],
+              "returns": "ClubAssembly"
+            },
+            "mass_properties": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "AssembledMassProperties"
+            },
+            "to_json": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "str"
+            },
+            "to_json_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "assemble_mass_properties": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Sequence[ClubComponent]",
+              "default": null,
+              "kind": "arg",
+              "name": "components"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "assembly_frame_id"
+            }
+          ],
+          "returns": "AssembledMassProperties"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "cad_validation.py": {
+    "__all__": [
+      "CadGeometryReference",
+      "ExactCadValidation",
+      "reference_from_build123d_shape",
+      "validate_exact_cad"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "CadGeometryReference": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "minimum_span_m": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "float"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ExactCadValidation": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "reference_from_build123d_shape": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "shape"
+            }
+          ],
+          "returns": "CadGeometryReference"
+        },
+        "type": "function"
+      },
+      "validate_exact_cad": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Path | str",
+              "default": null,
+              "kind": "arg",
+              "name": "path"
+            },
+            {
+              "annotation": "CadGeometryReference",
+              "default": null,
+              "kind": "arg",
+              "name": "reference"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "format_name"
+            }
+          ],
+          "returns": "ExactCadValidation"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "fitting_document.py": {
+    "__all__": [
+      "FITTING_DOCUMENT_FORMAT",
+      "ClubFittingDocument",
+      "FaceGeometry",
+      "FittingProvenance",
+      "MeshReference",
+      "fitting_document_from_json",
+      "fitting_document_to_json"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "ClubFittingDocument": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "FITTING_DOCUMENT_FORMAT": {
+        "type": "variable"
+      },
+      "FaceGeometry": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "FittingProvenance": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "MeshReference": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "fitting_document_from_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "text"
+            }
+          ],
+          "returns": "ClubFittingDocument"
+        },
+        "type": "function"
+      },
+      "fitting_document_to_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ClubFittingDocument",
+              "default": null,
+              "kind": "arg",
+              "name": "document"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "fitting_engine.py": {
+    "__all__": [
+      "FITTING_REPORT_FORMAT",
+      "ClubOutcome",
+      "CounterfactualSpec",
+      "FittingReport",
+      "compare_counterfactuals",
+      "evaluate_club",
+      "evaluate_counterfactual_set",
+      "fitting_report_to_json"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "ClubOutcome": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "CounterfactualSpec": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "FITTING_REPORT_FORMAT": {
+        "type": "variable"
+      },
+      "FittingReport": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "compare_counterfactuals": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ClubFittingDocument",
+              "default": null,
+              "kind": "arg",
+              "name": "document"
+            },
+            {
+              "annotation": "GripKinematics",
+              "default": null,
+              "kind": "arg",
+              "name": "grip"
+            },
+            {
+              "annotation": "tuple[CounterfactualSpec, ...]",
+              "default": null,
+              "kind": "arg",
+              "name": "counterfactuals"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "kwonlyarg",
+              "name": "impact_offset_toe_mm"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "kwonlyarg",
+              "name": "impact_offset_high_mm"
+            },
+            {
+              "annotation": "str",
+              "default": "'waterloo_penner'",
+              "kind": "kwonlyarg",
+              "name": "flight_model"
+            }
+          ],
+          "returns": "FittingReport"
+        },
+        "type": "function"
+      },
+      "evaluate_club": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ClubFittingDocument",
+              "default": null,
+              "kind": "arg",
+              "name": "document"
+            },
+            {
+              "annotation": "GripKinematics",
+              "default": null,
+              "kind": "arg",
+              "name": "grip"
+            },
+            {
+              "annotation": "CounterfactualSpec | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "counterfactual"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "kwonlyarg",
+              "name": "impact_offset_toe_mm"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "kwonlyarg",
+              "name": "impact_offset_high_mm"
+            },
+            {
+              "annotation": "str",
+              "default": "'waterloo_penner'",
+              "kind": "kwonlyarg",
+              "name": "flight_model"
+            }
+          ],
+          "returns": "ClubOutcome"
+        },
+        "type": "function"
+      },
+      "evaluate_counterfactual_set": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "tuple[CounterfactualSpec, ...]",
+              "default": null,
+              "kind": "arg",
+              "name": "counterfactuals"
+            },
+            {
+              "annotation": "Callable[[CounterfactualSpec | None], OutcomeT]",
+              "default": null,
+              "kind": "arg",
+              "name": "evaluate"
+            }
+          ],
+          "returns": "tuple[OutcomeT, tuple[OutcomeT, ...]]"
+        },
+        "type": "function"
+      },
+      "fitting_report_to_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "FittingReport",
+              "default": null,
+              "kind": "arg",
+              "name": "report"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "impact_coupling.py": {
+    "__all__": [
+      "IMPACT_COUPLING_REPORT_FORMAT",
+      "CoupledImpactConfig",
+      "CoupledImpactResult",
+      "GripBoundary",
+      "impact_coupling_report",
+      "simulate_coupled_impact"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "CoupledImpactConfig": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "CoupledImpactResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "GripBoundary": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "IMPACT_COUPLING_REPORT_FORMAT": {
+        "type": "variable"
+      },
+      "impact_coupling_report": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "CoupledImpactConfig",
+              "default": null,
+              "kind": "arg",
+              "name": "baseline"
+            },
+            {
+              "annotation": "tuple[float, ...]",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "grip_stiffness_grid_n_m"
+            },
+            {
+              "annotation": "tuple[float, ...]",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "grip_mass_grid_kg"
+            },
+            {
+              "annotation": "tuple[float, ...]",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "shaft_stiffness_grid_n_m"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "simulate_coupled_impact": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "CoupledImpactConfig",
+              "default": null,
+              "kind": "arg",
+              "name": "config"
+            }
+          ],
+          "returns": "CoupledImpactResult"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "mesh_mass_properties.py": {
+    "__all__": [
+      "MeshInertiaReport",
+      "is_watertight",
+      "mesh_inertia",
+      "mesh_volume_centroid"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "MeshInertiaReport": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "inertia_array": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "np.ndarray"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "is_watertight": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "triangles"
+            }
+          ],
+          "returns": "bool"
+        },
+        "type": "function"
+      },
+      "mesh_inertia": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "triangles"
+            },
+            {
+              "annotation": "float | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "density_kg_m3"
+            },
+            {
+              "annotation": "float | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "mass_kg"
+            }
+          ],
+          "returns": "MeshInertiaReport"
+        },
+        "type": "function"
+      },
+      "mesh_volume_centroid": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "triangles"
+            }
+          ],
+          "returns": "tuple[float, np.ndarray]"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "putter_fitting.py": {
+    "__all__": [
+      "PUTTER_FITTING_REPORT_FORMAT",
+      "PutterCounterfactual",
+      "PutterFittingReport",
+      "PuttingOutcome",
+      "compare_putter_counterfactuals",
+      "putter_fitting_report_to_json",
+      "scenario_for_head"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "PUTTER_FITTING_REPORT_FORMAT": {
+        "type": "variable"
+      },
+      "PutterCounterfactual": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "PutterFittingReport": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "PuttingOutcome": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "compare_putter_counterfactuals": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "PutterHeadDocument",
+              "default": null,
+              "kind": "arg",
+              "name": "head"
+            },
+            {
+              "annotation": "PuttScenario",
+              "default": null,
+              "kind": "arg",
+              "name": "scenario"
+            },
+            {
+              "annotation": "PuttVariationPlan",
+              "default": null,
+              "kind": "arg",
+              "name": "plan"
+            },
+            {
+              "annotation": "tuple[PutterCounterfactual, ...]",
+              "default": null,
+              "kind": "arg",
+              "name": "counterfactuals"
+            }
+          ],
+          "returns": "PutterFittingReport"
+        },
+        "type": "function"
+      },
+      "putter_fitting_report_to_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "PutterFittingReport",
+              "default": null,
+              "kind": "arg",
+              "name": "report"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "scenario_for_head": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "PutterHeadDocument",
+              "default": null,
+              "kind": "arg",
+              "name": "head"
+            },
+            {
+              "annotation": "PuttScenario",
+              "default": null,
+              "kind": "arg",
+              "name": "scenario"
+            }
+          ],
+          "returns": "PuttScenario"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "putter_head.py": {
+    "__all__": [
+      "PUTTER_CONTACT_TIME_S",
+      "PUTTER_HEAD_FORMAT",
+      "PutterHeadDocument",
+      "PutterHeadProvenance",
+      "PutterStrikeResult",
+      "PutterTwist",
+      "head_moi_for_strike",
+      "putter_head_from_json",
+      "putter_head_from_library",
+      "putter_head_from_mesh",
+      "putter_head_from_stl",
+      "putter_head_to_json",
+      "putter_spec",
+      "strike_with_head",
+      "twist_response"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "PUTTER_CONTACT_TIME_S": {
+        "type": "variable"
+      },
+      "PUTTER_HEAD_FORMAT": {
+        "type": "variable"
+      },
+      "PutterHeadDocument": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "PutterHeadProvenance": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "PutterStrikeResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "PutterTwist": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "head_moi_for_strike": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "PutterHeadDocument",
+              "default": null,
+              "kind": "arg",
+              "name": "document"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "arg",
+              "name": "strike_offset_toe_mm"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "arg",
+              "name": "strike_offset_high_mm"
+            }
+          ],
+          "returns": "float | None"
+        },
+        "type": "function"
+      },
+      "putter_head_from_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "text"
+            }
+          ],
+          "returns": "PutterHeadDocument"
+        },
+        "type": "function"
+      },
+      "putter_head_from_library": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "library_name"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "head_mass_kg"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "loft_deg"
+            },
+            {
+              "annotation": "float",
+              "default": "DEFAULT_PUTTER_COR",
+              "kind": "kwonlyarg",
+              "name": "cor"
+            }
+          ],
+          "returns": "PutterHeadDocument"
+        },
+        "type": "function"
+      },
+      "putter_head_from_mesh": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "triangles"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "mesh_sha256"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "loft_deg"
+            },
+            {
+              "annotation": "float",
+              "default": "DEFAULT_PUTTER_COR",
+              "kind": "kwonlyarg",
+              "name": "cor"
+            },
+            {
+              "annotation": "float | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "density_kg_m3"
+            },
+            {
+              "annotation": "float | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "target_mass_kg"
+            }
+          ],
+          "returns": "PutterHeadDocument"
+        },
+        "type": "function"
+      },
+      "putter_head_from_stl": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            },
+            {
+              "annotation": "Path | str",
+              "default": null,
+              "kind": "arg",
+              "name": "stl_path"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "loft_deg"
+            },
+            {
+              "annotation": "float",
+              "default": "DEFAULT_PUTTER_COR",
+              "kind": "kwonlyarg",
+              "name": "cor"
+            },
+            {
+              "annotation": "float | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "density_kg_m3"
+            },
+            {
+              "annotation": "float | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "target_mass_kg"
+            }
+          ],
+          "returns": "PutterHeadDocument"
+        },
+        "type": "function"
+      },
+      "putter_head_to_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "PutterHeadDocument",
+              "default": null,
+              "kind": "arg",
+              "name": "document"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "putter_spec": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "PutterHeadDocument",
+              "default": null,
+              "kind": "arg",
+              "name": "document"
+            }
+          ],
+          "returns": "PutterSpec"
+        },
+        "type": "function"
+      },
+      "strike_with_head": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "PutterHeadDocument",
+              "default": null,
+              "kind": "arg",
+              "name": "document"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "clubhead_speed_mps"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "arg",
+              "name": "shaft_lean_deg"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "kwonlyarg",
+              "name": "aim_deg"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "kwonlyarg",
+              "name": "face_angle_deg"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "kwonlyarg",
+              "name": "path_angle_deg"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "kwonlyarg",
+              "name": "attack_angle_deg"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "kwonlyarg",
+              "name": "strike_offset_toe_mm"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "kwonlyarg",
+              "name": "strike_offset_high_mm"
+            }
+          ],
+          "returns": "PutterStrikeResult"
+        },
+        "type": "function"
+      },
+      "twist_response": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "PutterHeadDocument",
+              "default": null,
+              "kind": "arg",
+              "name": "document"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "clubhead_speed_mps"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "kwonlyarg",
+              "name": "shaft_lean_deg"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "kwonlyarg",
+              "name": "attack_angle_deg"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "kwonlyarg",
+              "name": "strike_offset_toe_mm"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "kwonlyarg",
+              "name": "strike_offset_high_mm"
+            }
+          ],
+          "returns": "PutterTwist"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "putter_head_serde.py": {
+    "__all__": [
+      "PUTTER_HEAD_FORMAT",
+      "putter_head_from_json",
+      "putter_head_to_json"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "PUTTER_HEAD_FORMAT": {
+        "type": "variable"
+      },
+      "putter_head_from_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "text"
+            }
+          ],
+          "returns": "PutterHeadDocument"
+        },
+        "type": "function"
+      },
+      "putter_head_to_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "PutterHeadDocument",
+              "default": null,
+              "kind": "arg",
+              "name": "document"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "serialization.py": {
+    "__all__": [
+      "CURRENT_FORMAT",
+      "LEGACY_FORMAT",
+      "assembly_from_json",
+      "assembly_from_json_dict",
+      "assembly_to_json",
+      "assembly_to_json_dict"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "CURRENT_FORMAT": {
+        "type": "variable"
+      },
+      "LEGACY_FORMAT": {
+        "type": "variable"
+      },
+      "assembly_from_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "text"
+            }
+          ],
+          "returns": "ClubAssembly"
+        },
+        "type": "function"
+      },
+      "assembly_from_json_dict": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Mapping[str, Any]",
+              "default": null,
+              "kind": "arg",
+              "name": "data"
+            }
+          ],
+          "returns": "ClubAssembly"
+        },
+        "type": "function"
+      },
+      "assembly_to_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ClubAssembly",
+              "default": null,
+              "kind": "arg",
+              "name": "assembly"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "assembly_to_json_dict": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ClubAssembly",
+              "default": null,
+              "kind": "arg",
+              "name": "assembly"
+            }
+          ],
+          "returns": "dict[str, Any]"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "shaft_assembly.py": {
+    "__all__": [
+      "shaft_component_mass_properties"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "shaft_component_mass_properties": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            }
+          ],
+          "returns": "ComponentMassProperties"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "shaft_delivery.py": {
+    "__all__": [
+      "GripKinematics",
+      "ShaftDeliveryDeltas",
+      "ShaftTipMass",
+      "solve_shaft_delivery"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "GripKinematics": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ShaftDeliveryDeltas": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ShaftTipMass": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "solve_shaft_delivery": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "ShaftTipMass",
+              "default": null,
+              "kind": "arg",
+              "name": "tip_mass"
+            },
+            {
+              "annotation": "GripKinematics",
+              "default": null,
+              "kind": "arg",
+              "name": "grip"
+            }
+          ],
+          "returns": "ShaftDeliveryDeltas"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "shaft_dynamics.py": {
+    "__all__": [
+      "ShaftModalResponse",
+      "ShaftModalSettings",
+      "solve_shaft_bending_modes"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "ShaftModalResponse": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ShaftModalSettings": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "solve_shaft_bending_modes": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "ShaftModalSettings",
+              "default": "_DEFAULT_MODAL_SETTINGS",
+              "kind": "arg",
+              "name": "settings"
+            }
+          ],
+          "returns": "ShaftModalResponse"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "shaft_profile.py": {
+    "__all__": [
+      "ExtrapolationPolicy",
+      "ShaftProfile",
+      "ShaftProfileProvenance",
+      "ShaftStation"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "ExtrapolationPolicy": {
+        "info": {
+          "bases": [
+            "str",
+            "Enum"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ShaftProfile": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "balance_point_from_raw_butt_m": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "float"
+            },
+            "cut_mass_kg": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "float"
+            },
+            "flexible_length_m": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "float"
+            },
+            "raw_mass_kg": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "float"
+            },
+            "station_at": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "position_m"
+                },
+                {
+                  "annotation": "ExtrapolationPolicy",
+                  "default": "ExtrapolationPolicy.REJECT",
+                  "kind": "arg",
+                  "name": "policy"
+                }
+              ],
+              "returns": "ShaftStation"
+            },
+            "total_mass_kg": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "float"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ShaftProfileProvenance": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ShaftStation": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      }
+    }
+  },
+  "shaft_scaling.py": {
+    "__all__": [
+      "ShaftProfileScaling",
+      "scale_shaft_profile"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "ShaftProfileScaling": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "scale_shaft_profile": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "ShaftProfileScaling",
+              "default": null,
+              "kind": "arg",
+              "name": "scaling"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "shaft_id"
+            }
+          ],
+          "returns": "ShaftProfile"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "shaft_serialization.py": {
+    "__all__": [
+      "SHAFT_PROFILE_FORMAT",
+      "shaft_profile_from_csv",
+      "shaft_profile_from_json",
+      "shaft_profile_from_json_dict",
+      "shaft_profile_to_csv",
+      "shaft_profile_to_json",
+      "shaft_profile_to_json_dict"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "SHAFT_PROFILE_FORMAT": {
+        "type": "variable"
+      },
+      "shaft_profile_from_csv": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "text"
+            }
+          ],
+          "returns": "ShaftProfile"
+        },
+        "type": "function"
+      },
+      "shaft_profile_from_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "text"
+            }
+          ],
+          "returns": "ShaftProfile"
+        },
+        "type": "function"
+      },
+      "shaft_profile_from_json_dict": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Mapping[str, Any]",
+              "default": null,
+              "kind": "arg",
+              "name": "data"
+            }
+          ],
+          "returns": "ShaftProfile"
+        },
+        "type": "function"
+      },
+      "shaft_profile_to_csv": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "shaft_profile_to_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "shaft_profile_to_json_dict": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            }
+          ],
+          "returns": "dict[str, Any]"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "shaft_statics.py": {
+    "__all__": [
+      "ShaftTipLoad",
+      "ShaftTipResponse",
+      "solve_cantilever_tip_response"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "ShaftTipLoad": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ShaftTipResponse": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "solve_cantilever_tip_response": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "ShaftTipLoad",
+              "default": null,
+              "kind": "arg",
+              "name": "load"
+            }
+          ],
+          "returns": "ShaftTipResponse"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "stl_validation.py": {
+    "__all__": [
+      "StlMeshValidation",
+      "read_binary_stl",
+      "validate_binary_stl"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "StlMeshValidation": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "read_binary_stl": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Path | str",
+              "default": null,
+              "kind": "arg",
+              "name": "path"
+            }
+          ],
+          "returns": "tuple[Triangle, ...]"
+        },
+        "type": "function"
+      },
+      "validate_binary_stl": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Path | str",
+              "default": null,
+              "kind": "arg",
+              "name": "path"
+            },
+            {
+              "annotation": "CadGeometryReference",
+              "default": null,
+              "kind": "arg",
+              "name": "reference"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "linear_tolerance_m"
+            }
+          ],
+          "returns": "StlMeshValidation"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "turf_contact.py": {
+    "__all__": [
+      "TurfCalibrationStatus",
+      "TurfContactKinematics",
+      "TurfContactProfile",
+      "TurfContactResponse",
+      "TurfContactStatus",
+      "TurfPreset",
+      "TurfProfileProvenance",
+      "evaluate_turf_contact",
+      "turf_profile_preset"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "TurfCalibrationStatus": {
+        "info": {
+          "bases": [
+            "str",
+            "Enum"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "TurfContactKinematics": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "TurfContactProfile": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "supports_turf_rankings": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "bool"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "TurfContactResponse": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "TurfContactStatus": {
+        "info": {
+          "bases": [
+            "str",
+            "Enum"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "TurfPreset": {
+        "info": {
+          "bases": [
+            "str",
+            "Enum"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "TurfProfileProvenance": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "evaluate_turf_contact": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "TurfContactProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "TurfContactKinematics",
+              "default": null,
+              "kind": "arg",
+              "name": "state"
+            }
+          ],
+          "returns": "TurfContactResponse"
+        },
+        "type": "function"
+      },
+      "turf_profile_preset": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "TurfPreset",
+              "default": null,
+              "kind": "arg",
+              "name": "preset"
+            }
+          ],
+          "returns": "TurfContactProfile"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "turf_convergence.py": {
+    "__all__": [
+      "TurfConvergenceStudy",
+      "run_turf_convergence_study"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "TurfConvergenceStudy": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "run_turf_convergence_study": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "TurfContactProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "initial_contact_velocity_mps"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "surface_normal_unit"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "effective_mass_kg"
+            },
+            {
+              "annotation": "tuple[float, ...]",
+              "default": "(2e-05, 1e-05, 5e-06)",
+              "kind": "kwonlyarg",
+              "name": "time_steps_s"
+            },
+            {
+              "annotation": "float",
+              "default": "0.02",
+              "kind": "kwonlyarg",
+              "name": "tolerance"
+            },
+            {
+              "annotation": "float",
+              "default": "0.1",
+              "kind": "kwonlyarg",
+              "name": "max_time_s"
+            },
+            {
+              "annotation": "Callable[[], bool] | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "cancel_check"
+            }
+          ],
+          "returns": "TurfConvergenceStudy"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "turf_dynamics.py": {
+    "__all__": [
+      "ReducedTurfContactResult",
+      "simulate_reduced_turf_contact"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "ReducedTurfContactResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "simulate_reduced_turf_contact": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "TurfContactProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "initial_contact_velocity_mps"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "surface_normal_unit"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "effective_mass_kg"
+            },
+            {
+              "annotation": "float",
+              "default": "5e-06",
+              "kind": "kwonlyarg",
+              "name": "time_step_s"
+            },
+            {
+              "annotation": "float",
+              "default": "_DEFAULT_MAX_TIME_S",
+              "kind": "kwonlyarg",
+              "name": "max_time_s"
+            },
+            {
+              "annotation": "Callable[[], bool] | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "cancel_check"
+            }
+          ],
+          "returns": "ReducedTurfContactResult"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "turf_serialization.py": {
+    "__all__": [
+      "TURF_PROFILE_FORMAT",
+      "turf_profile_from_json",
+      "turf_profile_from_json_dict",
+      "turf_profile_to_json",
+      "turf_profile_to_json_dict"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "TURF_PROFILE_FORMAT": {
+        "type": "variable"
+      },
+      "turf_profile_from_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "payload"
+            }
+          ],
+          "returns": "TurfContactProfile"
+        },
+        "type": "function"
+      },
+      "turf_profile_from_json_dict": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "source"
+            }
+          ],
+          "returns": "TurfContactProfile"
+        },
+        "type": "function"
+      },
+      "turf_profile_to_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "TurfContactProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "turf_profile_to_json_dict": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "TurfContactProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            }
+          ],
+          "returns": "dict[str, Any]"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "turf_variation.py": {
+    "__all__": [
+      "CATEGORY_TURF",
+      "TURF_DAMPING_KEY",
+      "TURF_FRICTION_KEY",
+      "TURF_PENETRATION_LIMIT_KEY",
+      "TURF_STIFFNESS_KEY",
+      "TURF_VARIABLE_KEYS",
+      "TurfVariationPlan",
+      "turf_profiles_for_variation_plan"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "CATEGORY_TURF": {
+        "type": "variable"
+      },
+      "TURF_DAMPING_KEY": {
+        "type": "variable"
+      },
+      "TURF_FRICTION_KEY": {
+        "type": "variable"
+      },
+      "TURF_PENETRATION_LIMIT_KEY": {
+        "type": "variable"
+      },
+      "TURF_STIFFNESS_KEY": {
+        "type": "variable"
+      },
+      "TURF_VARIABLE_KEYS": {
+        "type": "variable"
+      },
+      "TurfVariationPlan": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "resolved_base": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, float]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "turf_profiles_for_variation_plan": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "TurfVariationPlan",
+              "default": null,
+              "kind": "arg",
+              "name": "plan"
+            },
+            {
+              "annotation": "TurfContactProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "base_profile"
+            }
+          ],
+          "returns": "tuple[TurfContactProfile, ...]"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "types.py": {
+    "__all__": [
+      "AssembledMassProperties",
+      "ClubComponent",
+      "ClubLengthConvention",
+      "ClubLengthMeasurement",
+      "ComponentMassProperties",
+      "ComponentRole",
+      "RigidTransform"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "AssembledMassProperties": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ClubComponent": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "component_id": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "str"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ClubLengthConvention": {
+        "info": {
+          "bases": [
+            "str",
+            "Enum"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ClubLengthMeasurement": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ComponentMassProperties": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ComponentRole": {
+        "info": {
+          "bases": [
+            "str",
+            "Enum"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "RigidTransform": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "rotate_inertia_tensor": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "object",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "tensor"
+                }
+              ],
+              "returns": "Matrix3"
+            },
+            "transform_point": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "object",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "point_m"
+                }
+              ],
+              "returns": "Vector3"
+            }
+          }
+        },
+        "type": "class"
+      }
+    }
+  },
+  "wedge_cad.py": {
+    "__all__": [
+      "WedgeMeasuredMetrics",
+      "WedgeSolidResult",
+      "build_wedge_solid"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "WedgeMeasuredMetrics": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeSolidResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "build_wedge_solid": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WedgeHeadParameters",
+              "default": null,
+              "kind": "arg",
+              "name": "parameters"
+            }
+          ],
+          "returns": "WedgeSolidResult"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "wedge_export.py": {
+    "__all__": [
+      "WEDGE_EXPORT_FORMAT",
+      "WedgeExportArtifact",
+      "WedgeExportFormat",
+      "WedgeExportRequest",
+      "WedgeExportResult",
+      "export_wedge_artifacts"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "WEDGE_EXPORT_FORMAT": {
+        "type": "variable"
+      },
+      "WedgeExportArtifact": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeExportFormat": {
+        "info": {
+          "bases": [
+            "str",
+            "Enum"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeExportRequest": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeExportResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "export_wedge_artifacts": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WedgeHeadParameters",
+              "default": null,
+              "kind": "arg",
+              "name": "parameters"
+            },
+            {
+              "annotation": "WedgeExportRequest",
+              "default": null,
+              "kind": "arg",
+              "name": "request"
+            }
+          ],
+          "returns": "WedgeExportResult"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "wedge_geometry.py": {
+    "__all__": [
+      "WedgeContactCandidate",
+      "WedgeContactFeature",
+      "wedge_body_profile_m",
+      "wedge_contact_candidates",
+      "wedge_face_contact_point_m"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "WedgeContactCandidate": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeContactFeature": {
+        "info": {
+          "bases": [
+            "str",
+            "Enum"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "wedge_body_profile_m": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WedgeHeadParameters",
+              "default": null,
+              "kind": "arg",
+              "name": "parameters"
+            }
+          ],
+          "returns": "tuple[tuple[float, float], ...]"
+        },
+        "type": "function"
+      },
+      "wedge_contact_candidates": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WedgeHeadParameters",
+              "default": null,
+              "kind": "arg",
+              "name": "parameters"
+            }
+          ],
+          "returns": "tuple[WedgeContactCandidate, ...]"
+        },
+        "type": "function"
+      },
+      "wedge_face_contact_point_m": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WedgeHeadParameters",
+              "default": null,
+              "kind": "arg",
+              "name": "parameters"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "toe_offset_m"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "high_offset_m"
+            }
+          ],
+          "returns": "Vector3"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "wedge_ground_contact.py": {
+    "__all__": [
+      "ContactSequence",
+      "GroundPlane",
+      "WedgeClearanceSample",
+      "WedgeGroundClearanceAnalysis",
+      "WedgeGroundContactEvent",
+      "analyze_wedge_ground_clearance"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "ContactSequence": {
+        "info": {
+          "bases": [
+            "str",
+            "Enum"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "GroundPlane": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeClearanceSample": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeGroundClearanceAnalysis": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeGroundContactEvent": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "analyze_wedge_ground_clearance": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WedgeHeadParameters",
+              "default": null,
+              "kind": "arg",
+              "name": "parameters"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "times_s"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "poses"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "twists"
+            },
+            {
+              "annotation": "GroundPlane",
+              "default": null,
+              "kind": "arg",
+              "name": "ground"
+            },
+            {
+              "annotation": "float | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "ball_contact_time_s"
+            }
+          ],
+          "returns": "WedgeGroundClearanceAnalysis"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "wedge_ground_serialization.py": {
+    "__all__": [
+      "WEDGE_GROUND_CLEARANCE_FORMAT",
+      "wedge_ground_clearance_to_json_dict"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "WEDGE_GROUND_CLEARANCE_FORMAT": {
+        "type": "variable"
+      },
+      "wedge_ground_clearance_to_json_dict": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WedgeGroundClearanceAnalysis",
+              "default": null,
+              "kind": "arg",
+              "name": "analysis"
+            }
+          ],
+          "returns": "dict[str, Any]"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "wedge_kinematics.py": {
+    "__all__": [
+      "InstantaneousScrewAxis",
+      "WedgeKinematicAnalysis",
+      "WedgeKinematicState",
+      "analyze_wedge_kinematics",
+      "angle_of_attack_deg"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "InstantaneousScrewAxis": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeKinematicAnalysis": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeKinematicState": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "analyze_wedge_kinematics": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WedgeKinematicState",
+              "default": null,
+              "kind": "arg",
+              "name": "state"
+            }
+          ],
+          "returns": "WedgeKinematicAnalysis"
+        },
+        "type": "function"
+      },
+      "angle_of_attack_deg": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "velocity_mps"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "ground_up_unit"
+            }
+          ],
+          "returns": "float | None"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "wedge_parameters.py": {
+    "__all__": [
+      "Handedness",
+      "WedgeHeadParameters",
+      "WedgeGeometryProvenance",
+      "WedgePreset",
+      "wedge_preset"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "Handedness": {
+        "info": {
+          "bases": [
+            "str",
+            "Enum"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeGeometryProvenance": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeHeadParameters": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgePreset": {
+        "info": {
+          "bases": [
+            "str",
+            "Enum"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "wedge_preset": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WedgePreset",
+              "default": null,
+              "kind": "arg",
+              "name": "preset"
+            }
+          ],
+          "returns": "WedgeHeadParameters"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "wedge_serialization.py": {
+    "__all__": [
+      "WEDGE_PARAMETERS_FORMAT",
+      "wedge_parameters_from_json",
+      "wedge_parameters_to_json"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "WEDGE_PARAMETERS_FORMAT": {
+        "type": "variable"
+      },
+      "wedge_parameters_from_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "text"
+            }
+          ],
+          "returns": "WedgeHeadParameters"
+        },
+        "type": "function"
+      },
+      "wedge_parameters_to_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WedgeHeadParameters",
+              "default": null,
+              "kind": "arg",
+              "name": "parameters"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "wedge_turf_interaction.py": {
+    "__all__": [
+      "WedgeTurfPatchResponse",
+      "WedgeTurfWrench",
+      "evaluate_wedge_turf_wrench"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "WedgeTurfPatchResponse": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeTurfWrench": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "evaluate_wedge_turf_wrench": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WedgeHeadParameters",
+              "default": null,
+              "kind": "arg",
+              "name": "parameters"
+            },
+            {
+              "annotation": "TurfContactProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "pose_head_to_ground"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "twist_at_head_origin"
+            },
+            {
+              "annotation": "GroundPlane",
+              "default": null,
+              "kind": "arg",
+              "name": "ground"
+            }
+          ],
+          "returns": "WedgeTurfWrench"
+        },
+        "type": "function"
+      }
+    }
+  }
+}

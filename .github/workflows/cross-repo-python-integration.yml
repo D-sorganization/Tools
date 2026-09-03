@@ -121,7 +121,8 @@ jobs:
 
       - name: Checkout ${{ matrix.downstream.repo }}
         id: checkout_downstream
-        continue-on-error: true
+        # No continue-on-error (Tools #4920): a consumer this lane cannot
+        # check out is a failed contract check, not a skipped one.
         uses: actions/checkout@v7
         with:
           repository: ${{ matrix.downstream.repo }}
@@ -216,16 +217,25 @@ jobs:
             libxcb-xinput0 \
             libxcb-xfixes0
 
-      - name: Check downstream suite availability
+      - name: Require the downstream consumer-contract suite
         if: steps.checkout_downstream.outcome == 'success'
         working-directory: ${{ matrix.downstream.path }}
         id: suite
         run: |
-          if [ -d tests/shared_contracts ]; then
-            echo "available=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "available=false" >> "$GITHUB_OUTPUT"
+          # Tools #4920: a downstream without tests/shared_contracts/ used to
+          # be reported as "Skipped" and the lane went green. The suite is the
+          # consumer's half of the provider/consumer contract; its absence is
+          # a failure of this lane, and the fix belongs in the downstream repo
+          # ("Add tests/shared_contracts consumer suite (Tools #4920)").
+          if [ ! -d tests/shared_contracts ]; then
+            echo "::error::${{ matrix.downstream.repo }} has no tests/shared_contracts/ on its default branch; the consumer-contract lane cannot pass without it (Tools #4920)."
+            exit 1
           fi
+          if ! find tests/shared_contracts -name 'test_*.py' -o -name '*_test.py' | grep -q .; then
+            echo "::error::${{ matrix.downstream.repo }} tests/shared_contracts/ contains no test modules (Tools #4920)."
+            exit 1
+          fi
+          echo "available=true" >> "$GITHUB_OUTPUT"
 
       - name: Prepare Tools workspace for downstream tests
         if: steps.checkout_downstream.outcome == 'success' && steps.suite.outputs.available == 'true'
@@ -293,16 +303,3 @@ jobs:
             done
           fi
 
-      - name: Summary (suite missing)
-        if: steps.checkout_downstream.outcome == 'success' && steps.suite.outputs.available != 'true'
-        run: |
-          echo "## Cross-Repo Python Integration" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Downstream: ${{ matrix.downstream.repo }}" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Skipped: downstream default branch does not yet contain tests/shared_contracts/." >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Summary (skipped)
-        if: steps.checkout_downstream.outcome != 'success'
-        run: |
-          echo "## Cross-Repo Python Integration" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Downstream: ${{ matrix.downstream.repo }}" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Skipped: workflow token could not checkout the downstream repository." >> "$GITHUB_STEP_SUMMARY"

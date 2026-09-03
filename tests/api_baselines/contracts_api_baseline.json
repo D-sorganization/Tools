@@ -1,0 +1,767 @@
+{
+  "contracts.py": {
+    "__all__": [
+      "CONTRACTS_ENABLED",
+      "ContractChecker",
+      "ContractLevel",
+      "ContractViolationError",
+      "DBC_LEVEL",
+      "F",
+      "InvariantError",
+      "PostconditionError",
+      "PostconditionEvaluationError",
+      "PreconditionError",
+      "PreconditionEvaluationError",
+      "StateError",
+      "check_non_negative",
+      "check_positive",
+      "check_pressure",
+      "check_range",
+      "check_temperature",
+      "class_invariant",
+      "contract",
+      "ensure",
+      "ensure_valid_result",
+      "get_contract_level",
+      "has_finite_elements",
+      "invariant",
+      "invariant_checked",
+      "is_non_negative",
+      "is_positive",
+      "is_valid_result",
+      "logger",
+      "postcondition",
+      "precondition",
+      "require",
+      "require_finite",
+      "require_positive",
+      "require_unit_vector",
+      "set_contract_level",
+      "set_contracts_enabled"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "CONTRACTS_ENABLED": {
+        "type": "variable"
+      },
+      "ContractChecker": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "verify_invariants": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "bool"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ContractLevel": {
+        "info": {
+          "bases": [
+            "enum.Enum"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ContractViolationError": {
+        "info": {
+          "bases": [
+            "AssertionError",
+            "ValueError"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "condition_type"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "message"
+                },
+                {
+                  "annotation": "Any",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "value"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "DBC_LEVEL": {
+        "type": "variable"
+      },
+      "F": {
+        "type": "variable"
+      },
+      "InvariantError": {
+        "info": {
+          "bases": [
+            "ContractViolationError"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "message"
+                },
+                {
+                  "annotation": "Any",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "value"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "PostconditionError": {
+        "info": {
+          "bases": [
+            "ContractViolationError"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "message"
+                },
+                {
+                  "annotation": "Any",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "value"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "PostconditionEvaluationError": {
+        "info": {
+          "bases": [
+            "PostconditionError"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "message"
+                },
+                {
+                  "annotation": "Exception",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "underlying_error"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "PreconditionError": {
+        "info": {
+          "bases": [
+            "ContractViolationError"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "message"
+                },
+                {
+                  "annotation": "Any",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "value"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "PreconditionEvaluationError": {
+        "info": {
+          "bases": [
+            "PreconditionError"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "message"
+                },
+                {
+                  "annotation": "Exception",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "underlying_error"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "StateError": {
+        "info": {
+          "bases": [
+            "RuntimeError"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "check_non_negative": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "str",
+              "default": "'value'",
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      },
+      "check_positive": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "str",
+              "default": "'value'",
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      },
+      "check_pressure": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "str",
+              "default": "'pressure'",
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      },
+      "check_range": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "low"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "high"
+            },
+            {
+              "annotation": "str",
+              "default": "'value'",
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      },
+      "check_temperature": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "str",
+              "default": "'temperature'",
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      },
+      "class_invariant": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Callable[[Any], bool]",
+              "default": null,
+              "kind": "arg",
+              "name": "condition"
+            },
+            {
+              "annotation": "str",
+              "default": "'Invariant violated'",
+              "kind": "arg",
+              "name": "message"
+            }
+          ],
+          "returns": "Callable[[type], type]"
+        },
+        "type": "function"
+      },
+      "contract": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Callable[..., bool] | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "pre"
+            },
+            {
+              "annotation": "Callable[[Any], bool] | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "post"
+            },
+            {
+              "annotation": "str",
+              "default": "'Precondition violated'",
+              "kind": "arg",
+              "name": "pre_msg"
+            },
+            {
+              "annotation": "str",
+              "default": "'Postcondition violated'",
+              "kind": "arg",
+              "name": "post_msg"
+            }
+          ],
+          "returns": "Callable[[F], F]"
+        },
+        "type": "function"
+      },
+      "ensure": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "bool",
+              "default": null,
+              "kind": "arg",
+              "name": "condition"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "message"
+            },
+            {
+              "annotation": "Any",
+              "default": "None",
+              "kind": "arg",
+              "name": "value"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      },
+      "ensure_valid_result": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Any",
+              "default": null,
+              "kind": "arg",
+              "name": "result"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      },
+      "get_contract_level": {
+        "signature": {
+          "args": [],
+          "returns": "ContractLevel"
+        },
+        "type": "function"
+      },
+      "has_finite_elements": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Any",
+              "default": null,
+              "kind": "arg",
+              "name": "array"
+            }
+          ],
+          "returns": "bool"
+        },
+        "type": "function"
+      },
+      "invariant": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "bool",
+              "default": null,
+              "kind": "arg",
+              "name": "condition"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "message"
+            },
+            {
+              "annotation": "Any",
+              "default": "None",
+              "kind": "arg",
+              "name": "value"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      },
+      "invariant_checked": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "F",
+              "default": null,
+              "kind": "arg",
+              "name": "func"
+            }
+          ],
+          "returns": "F"
+        },
+        "type": "function"
+      },
+      "is_non_negative": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            }
+          ],
+          "returns": "bool"
+        },
+        "type": "function"
+      },
+      "is_positive": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            }
+          ],
+          "returns": "bool"
+        },
+        "type": "function"
+      },
+      "is_valid_result": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Any",
+              "default": null,
+              "kind": "arg",
+              "name": "result"
+            }
+          ],
+          "returns": "bool"
+        },
+        "type": "function"
+      },
+      "logger": {
+        "type": "variable"
+      },
+      "postcondition": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Callable[[Any], bool]",
+              "default": null,
+              "kind": "arg",
+              "name": "condition"
+            },
+            {
+              "annotation": "str",
+              "default": "'Postcondition failed'",
+              "kind": "arg",
+              "name": "message"
+            }
+          ],
+          "returns": "Callable[[F], F]"
+        },
+        "type": "function"
+      },
+      "precondition": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Callable[..., bool]",
+              "default": null,
+              "kind": "arg",
+              "name": "condition"
+            },
+            {
+              "annotation": "str",
+              "default": "'Precondition failed'",
+              "kind": "arg",
+              "name": "message"
+            }
+          ],
+          "returns": "Callable[[F], F]"
+        },
+        "type": "function"
+      },
+      "require": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "bool",
+              "default": null,
+              "kind": "arg",
+              "name": "condition"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "message"
+            },
+            {
+              "annotation": "Any",
+              "default": "None",
+              "kind": "arg",
+              "name": "value"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      },
+      "require_finite": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Any",
+              "default": null,
+              "kind": "arg",
+              "name": "array"
+            },
+            {
+              "annotation": "str",
+              "default": "'array'",
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      },
+      "require_positive": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "str",
+              "default": "'value'",
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      },
+      "require_unit_vector": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Any",
+              "default": null,
+              "kind": "arg",
+              "name": "vector"
+            },
+            {
+              "annotation": "str",
+              "default": "'vector'",
+              "kind": "arg",
+              "name": "name"
+            },
+            {
+              "annotation": "float",
+              "default": "1e-06",
+              "kind": "arg",
+              "name": "tol"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      },
+      "set_contract_level": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ContractLevel",
+              "default": null,
+              "kind": "arg",
+              "name": "level"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      },
+      "set_contracts_enabled": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "bool",
+              "default": null,
+              "kind": "arg",
+              "name": "enabled"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      }
+    }
+  }
+}

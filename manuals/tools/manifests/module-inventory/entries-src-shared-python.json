@@ -735,6 +735,7 @@
           "tests/test_launcher_factory.py",
           "tests/test_phase1_quick_wins.py",
           "tests/test_properties.py",
+          "tests/test_shared_package_api_stability.py",
           "tests/test_signal_core_coverage.py",
           "tests/tools/test_config_loader.py",
           "tests/tools/test_icon_utils.py",
@@ -1086,7 +1087,8 @@
         ],
         "test_paths": [
           "src/shared/python/sidekick/tests/test_calculator_plotting.py",
-          "tests/shared/python/test_safe_eval.py"
+          "tests/shared/python/test_safe_eval.py",
+          "tests/test_shared_package_api_stability.py"
         ],
         "unit_mentions": [
           "g"

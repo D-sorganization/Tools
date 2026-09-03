@@ -3289,6 +3289,85 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 3266,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "907991b9225de7a9d1edcad906e2b64cc7bb5f5ee9717cf284352e9777a6256c",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CHECK-WHEEL-BUILD-PY-BC6044943EAF",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/check_wheel_build.py",
+      "purpose": "Prove the ``ud-tools`` wheel builds and carries pyproject's name/version.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "REPO_ROOT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_wheel",
+            "signature": "outdir: Path"
+          },
+          {
+            "kind": "function",
+            "name": "expected_wheel_name",
+            "signature": "name: str, version: str"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "project_metadata",
+            "signature": "pyproject: Path=REPO_ROOT / 'pyproject.toml'"
+          },
+          {
+            "kind": "function",
+            "name": "verify",
+            "signature": "wheel: Path, name: str, version: str"
+          }
+        ],
+        "test_paths": [
+          "tests/scripts/test_check_wheel_build.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 4235,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
