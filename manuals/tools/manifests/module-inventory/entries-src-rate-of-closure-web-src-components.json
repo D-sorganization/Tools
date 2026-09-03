@@ -6519,10 +6519,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 14266,
+      "bytes_lf": 14577,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7f10d977d93a93d661b284e9f05523077e65262c356a7b7e6f6692223ca4a737",
+      "content_sha256_lf": "5e35cbb8a4b2917b9db13919cc1cdc7095c6baddf17b0fc8f833d3d2b956ecc6",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-VARIATIONSCATTER-TSX-8EA3AE816427",
       "language": "typescript-react",
