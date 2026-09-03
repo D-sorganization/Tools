@@ -111,7 +111,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "4949f5d9d9a5fe6e41cb546dbdb42cb877219b0d484ce9ea1ea88f618e2eb933",
+      "content_sha256_lf": "7fb7dc64d31e24c3ebffc8cb01257f233ece4789c700610f04dd97f7babe4467",
       "entry_count": 18,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
@@ -129,7 +129,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
     },
     {
-      "content_sha256_lf": "a87d8ca5a39ef502c1c13aaf0440a545ab75d31eb5052666b748fbcdc38ab45f",
+      "content_sha256_lf": "4d7dccbf44f42024899dd199db36efcb648a6b473c9ad3ef12d38e16ccd52273",
       "entry_count": 3,
       "package": "rust_core/file_watcher",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
@@ -429,7 +429,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-python.json"
     },
     {
-      "content_sha256_lf": "cebf650bf8de60a9744df134af4bd7abd19a351501608bc00a7dd5c8db893cc4",
+      "content_sha256_lf": "3b1d073470fccc823f00d16562dbfd2266b6958674e20771a32ed30818db3e0e",
       "entry_count": 59,
       "package": "src/rate_of_closure",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure.json"
@@ -579,7 +579,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "45fef31e1d9fe292a233f55f81c03f0c0c10487f81982cca57ea29cb45d5e088",
+      "content_sha256_lf": "573fc684abcf51a0d0fb3292d7b7fbe6fcd9ff1c8b4d36e881b6b1823bfac60e",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"

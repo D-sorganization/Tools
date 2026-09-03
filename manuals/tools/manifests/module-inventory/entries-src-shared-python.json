@@ -938,6 +938,7 @@
         ],
         "test_paths": [
           "tests/benchmarks/test_rotation_converter_perf.py",
+          "tests/rate_of_closure/test_launch_monitor_drift_gate_surface.py",
           "tests/shared/python/test_deprecation.py",
           "tests/test_wave4_launcher.py",
           "tests/unit/lower_body_model/test_public_api_contract.py",
