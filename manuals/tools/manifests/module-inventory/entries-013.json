@@ -2,6 +2,63 @@
   "authority": "D-sorganization/Tools",
   "entries": [
     {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2132,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c8e961ae7e158608eb9c1f66db6ce8475ff4121ed050f14fee8c81853073bc4b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-FLOW-RATE-PY-4F56AE605A79",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/routers/flow_rate.py",
+      "purpose": "Flow rate converter router.  See issue #608.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_TABLES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "convert_flow_rate",
+            "signature": "request: FlowRateConvertRequest"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "provisional",
       "bytes_lf": 4293,
       "classification": "calculation",
@@ -799,6 +856,7 @@
       "traceability": {
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-0022-chat-sidekick-boundary.md",
           "docs/adr/ADR-003-api-stability-policy.md"
         ],
         "artifact_sha256": [],
@@ -1535,6 +1593,7 @@
       "traceability": {
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-0022-chat-sidekick-boundary.md",
           "docs/adr/ADR-003-api-stability-policy.md"
         ],
         "artifact_sha256": [],
@@ -1909,6 +1968,7 @@
       "traceability": {
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-0022-chat-sidekick-boundary.md",
           "docs/adr/ADR-003-api-stability-policy.md"
         ],
         "artifact_sha256": [],
@@ -4006,6 +4066,7 @@
       "traceability": {
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-0022-chat-sidekick-boundary.md",
           "docs/adr/ADR-003-api-stability-policy.md"
         ],
         "artifact_sha256": [],
@@ -13370,7 +13431,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -14274,7 +14335,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -14339,7 +14400,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -14412,7 +14473,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -14494,7 +14555,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -14670,7 +14731,9 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0031-launch-monitor-canonical-shot-schema.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md",
+          "docs/adr/ADR-0048-launch-monitor-port-plan.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -14802,7 +14865,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -14914,7 +14977,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -15014,7 +15077,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -15069,7 +15132,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -15172,7 +15235,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -15235,7 +15298,8 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md",
+          "docs/adr/ADR-0048-launch-monitor-port-plan.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -15341,7 +15405,8 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0031-launch-monitor-canonical-shot-schema.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -15407,7 +15472,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -15474,7 +15539,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -15539,7 +15604,8 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0045-putting-integration-one-experience-two-preserved-stacks.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -15639,7 +15705,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -15701,7 +15767,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -15773,7 +15839,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -15828,7 +15894,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -15910,7 +15976,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -15991,7 +16057,8 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md",
+          "docs/adr/ADR-0048-launch-monitor-port-plan.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -16115,7 +16182,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -16204,7 +16271,8 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md",
+          "docs/adr/ADR-0048-launch-monitor-port-plan.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -16272,7 +16340,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -16373,7 +16441,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -16438,7 +16506,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -16613,7 +16681,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -16685,7 +16753,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -17339,90 +17407,6 @@
           }
         ],
         "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1203,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "84390a5904051bb43d7d1786674c4394782fb5340aed7e560aa8e383c491bbfc",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-API-REST-API-PY-BB713EA6D7D6",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/api/rest_api.py",
-      "purpose": "REST API for model_generation package.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "APIRequest",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "APIResponse",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "FastAPIAdapter",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "FlaskAdapter",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "HTTPMethod",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ModelGenerationAPI",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "Route",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/model_generation/tests/test_api_adapters.py"
-        ],
         "unit_mentions": [],
         "validation_paths": []
       }

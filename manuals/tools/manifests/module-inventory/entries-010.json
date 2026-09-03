@@ -3,6 +3,92 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 9794,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e5c22c87556a531a3f5cbf8de41bf6909881e97b28d95202ec21a7ad392d4bde",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-CLUBENGINEERINGSIDECAR-TS-9A650BE891B1",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/clubEngineeringSidecar.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "CLUBHEAD_ENGINEERING_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "CLUBHEAD_ENGINEERING_MEDIA_TYPE",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ClubheadDigestRuntime",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ClubheadEngineeringRuntime",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "buildClubheadEngineeringSidecar",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "defaultClubheadEngineeringFilename",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "downloadClubheadEngineeringSidecar",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "serializeClubheadEngineeringSidecar",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 3742,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -3368,7 +3454,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0047-trajectory-visualization-shared-wire-preserved-viewers.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -7685,7 +7771,7 @@
       "traceability": {
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0048-launch-monitor-port-plan.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -7735,7 +7821,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0048-launch-monitor-port-plan.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -10648,7 +10734,7 @@
       "traceability": {
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0047-trajectory-visualization-shared-wire-preserved-viewers.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -12229,7 +12315,7 @@
       "traceability": {
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0045-putting-integration-one-experience-two-preserved-stacks.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -12277,7 +12363,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0045-putting-integration-one-experience-two-preserved-stacks.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -12338,7 +12424,7 @@
       "traceability": {
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0045-putting-integration-one-experience-two-preserved-stacks.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -12386,7 +12472,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0045-putting-integration-one-experience-two-preserved-stacks.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -13884,48 +13970,6 @@
             "signature": null
           }
         ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3680,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "af24be9963516fc973b85dc7906e8a26f0627a6d7f35690b62a4981ab7e4b708",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-REGIONALGROUNDEXECUTIONPRESENTATION-TEST-TSX-D3FEAE00AD5A",
-      "language": "typescript-react",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/model/regionalGroundExecutionPresentation.test.tsx",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
         "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []

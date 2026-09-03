@@ -3,6 +3,51 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 16234,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "dcd3f83e9b1a838e58b00e32034c835acfafbdb985bbacfaaad4b37874988f02",
+      "family": "control-systems-non-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-INDEX-CSS-96CD5A6A9009",
+      "language": "css",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/frontend/src/index.css",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "bar",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 6563,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -15580,89 +15625,6 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 12308,
-      "classification": "calculation",
-      "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "fc0eb3e4014b5ff3604fca685a8617b1a11b69fff1a9fd92c49113d2a803a1f9",
-      "family": "pendulum-calculation",
-      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-ACTUATION-PY-65ED0AEB5C54",
-      "language": "python",
-      "maintainer": "Pendulum maintainers",
-      "path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/actuation.py",
-      "purpose": "Hill-type joint actuation limits for a golf downswing.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "10.1007/s12283-009-0020-9",
-          "10.1098/rspb.1938.0050",
-          "10.1123/jab.16.4.356",
-          "https://doi.org/10.1007/s12283-009-0020-9",
-          "https://doi.org/10.1098/rspb.1938.0050",
-          "https://doi.org/10.1123/jab.16.4.356"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "JointActuation",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SwingActuation",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "tour_hub_actuation",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "tour_wrist_actuation",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "src/pendulum_simulator/tests/test_actuation.py"
-        ],
-        "unit_mentions": [
-          "N",
-          "N*m",
-          "m/s",
-          "rad/s",
-          "s"
-        ],
         "validation_paths": []
       }
     }

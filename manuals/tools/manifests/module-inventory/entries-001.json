@@ -3,6 +3,80 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 5137,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7904f9281a639365341360d1f1ef14c7a1f721fb4b1a5beaca1bf916d9341f37",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CHECK-MINIMUM-TEST-CONTRACT-PY-D00C141F501F",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/check_minimum_test_contract.py",
+      "purpose": "Enforce minimum test contract for changed source packages.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "ROOT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "changed_files",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "has_tests",
+            "signature": "pkg_key: str"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "package_key",
+            "signature": "path: str"
+          }
+        ],
+        "test_paths": [
+          "tests/test_minimum_test_contract.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/test_minimum_test_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 13233,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -15322,77 +15396,6 @@
           "s"
         ],
         "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 14782,
-      "classification": "calculation",
-      "classification_basis": "path-marker:filter",
-      "content_sha256_lf": "d6f4d42e5fe14cfd473ce3031edb7cc50cf1f8acab3df64c2ff73ca5bbbd91b2",
-      "family": "data-processing-calculation",
-      "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-VECTORIZED-FILTER-ENGINE-PY-5CE9AD02C830",
-      "language": "python",
-      "maintainer": "Data processing maintainers",
-      "path": "src/data_processing/data_processor/python/data_processor/vectorized_filter_engine.py",
-      "purpose": "Facade for the vectorized filter engine and its extracted filter modules.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "FilterEngine",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "VectorizedFilterEngine",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "apply_filter",
-            "signature": "signal: pd.Series, filter_type: str, params: dict[str, Any], signal_name: str='', logger: Callable[..., Any] | None=None"
-          }
-        ],
-        "test_paths": [
-          "src/data_processing/data_processor/python/tests/test_vectorized_filter_engine_contracts.py",
-          "tests/data_processing/data_processor/test_script_generator_hardening.py",
-          "tests/data_processing/data_processor/test_vectorized_filter_split.py",
-          "tests/data_processor/test_vectorized_filter_engine.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "src/data_processing/data_processor/python/tests/test_vectorized_filter_engine_contracts.py"
-        ]
       }
     }
   ],
