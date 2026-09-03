@@ -1,7 +1,7 @@
 {
   "schema_version": "rate-of-closure-campaign/v1",
   "repository": "D-sorganization/Tools",
-  "as_of": "2026-08-12",
+  "as_of": "2026-09-03",
   "default_branch": "main",
   "required_main_checks": [
     "quality-gate",
@@ -11,6 +11,7 @@
     "specified_only",
     "implemented_on_feature_stack",
     "protected_merged_to_parent",
+    "implemented_unverified",
     "released_to_main"
   ],
   "campaign_release": {
@@ -1235,7 +1236,7 @@
       "issue": 4103,
       "title": "Swing-Impact-Ball-Flight Simulation Platform",
       "kind": "epic",
-      "delivery_stage": "implemented_on_feature_stack",
+      "delivery_stage": "implemented_unverified",
       "completion": "partial_implementation",
       "authorities": [
         {
@@ -1260,7 +1261,7 @@
       "evidence_ids": [
         "rate-stack-local-c182"
       ],
-      "evidence_gap": "The outer main-targeting carrier is conflicting, and conflict resolution requires fresh protected checks.",
+      "evidence_gap": "Package restructure, movement-optimizer swing source, Rust solver objective and WASM consumption in the React app remain open; re-scoped as the golf-app readiness epic absorbing #4135/#4218/#4571/#4237/#4238.",
       "limitations": [
         "The platform is not released to main and downstream application parity is incomplete.",
         "Impact-interval PR 4133 merged after its parent stack propagated and requires explicit reconciliation."
@@ -1270,6 +1271,15 @@
         "status": "not_released",
         "branch": "main",
         "sha": null
+      },
+      "main_reconciliation": {
+        "as_of": "2026-09-03",
+        "main_sha": "8b9935afece7",
+        "source": "Tools #4921 Phase 1",
+        "reference": "https://github.com/D-sorganization/Tools/issues/4103",
+        "landed": 16,
+        "partial": 12,
+        "missing": 1
       }
     },
     {
@@ -1329,6 +1339,11 @@
         "status": "not_released",
         "branch": "main",
         "sha": null
+      },
+      "main_reconciliation": {
+        "as_of": "2026-09-03",
+        "source": "Tools #4921 Phase 1",
+        "note": "Not reconciled in #4921 Phase 1; carriers closed unmerged with #4466. Variation-suite evidence overlaps the #4142 table."
       }
     },
     {
@@ -1376,6 +1391,11 @@
         "status": "not_released",
         "branch": "main",
         "sha": null
+      },
+      "main_reconciliation": {
+        "as_of": "2026-09-03",
+        "source": "Tools #4921 Phase 1",
+        "note": "Not reconciled in #4921 Phase 1; carriers closed unmerged with #4466."
       }
     },
     {
@@ -1417,13 +1437,18 @@
         "status": "not_released",
         "branch": "main",
         "sha": null
+      },
+      "main_reconciliation": {
+        "as_of": "2026-09-03",
+        "source": "Tools #4921 Phase 1",
+        "note": "Not reconciled in #4921 Phase 1. PR #4133 (impact-interval dynamics) merged into the closed feat stack only and its content is NOT on main: src/shared/python/swing_sim/impact_interval/** (types, contact law, solver, 3 test modules), impact/contact.py, docs/physics/IMPACT_INTERVAL_DYNAMICS.md and ui/pyqt6/impact_interval_view.py are absent at origin/main 8b9935afe (verified 2026-09-03 against PR head c7a869f9). Re-land candidate; not superseded by src/shared/python/swing_sim/impact/."
       }
     },
     {
       "issue": 4142,
       "title": "Ensemble Variation, Quiet Zones, and Sensitivity Attribution",
       "kind": "epic",
-      "delivery_stage": "implemented_on_feature_stack",
+      "delivery_stage": "implemented_unverified",
       "completion": "partial_implementation",
       "authorities": [
         {
@@ -1455,7 +1480,7 @@
       "evidence_ids": [
         "variation-local-d71"
       ],
-      "evidence_gap": "Global nonlinear sensitivity, localized execution, performance budgets, and downstream parity remain open.",
+      "evidence_gap": "R14.6 waits on #4433 (partial) and R15.3 needs an UpstreamDrift-side pinned parity golden; no protected gate has run.",
       "limitations": [
         "Existing local visualization evidence is not protected release evidence.",
         "UpstreamDrift does not yet consume an immutable released variation authority."
@@ -1467,6 +1492,15 @@
         "status": "not_released",
         "branch": "main",
         "sha": null
+      },
+      "main_reconciliation": {
+        "as_of": "2026-09-03",
+        "main_sha": "8b9935afece7",
+        "source": "Tools #4921 Phase 1",
+        "reference": "https://github.com/D-sorganization/Tools/issues/4142#issuecomment-5520715262",
+        "landed": 29,
+        "partial": 2,
+        "missing": 0
       }
     },
     {
@@ -1519,13 +1553,18 @@
         "status": "not_released",
         "branch": "main",
         "sha": null
+      },
+      "main_reconciliation": {
+        "as_of": "2026-09-03",
+        "source": "Tools #4921 Phase 1",
+        "note": "Not reconciled in #4921 Phase 1; src/shared/python/golf_club/ exists on main, C5 image fitting has no successor (RM #1506 follow-up)."
       }
     },
     {
       "issue": 4158,
       "title": "Wedge Delivery Kinematics, Bounce, and Chip-Shot Explorer",
       "kind": "epic",
-      "delivery_stage": "implemented_on_feature_stack",
+      "delivery_stage": "implemented_unverified",
       "completion": "partial_implementation",
       "authorities": [
         {
@@ -1572,7 +1611,7 @@
       "evidence_ids": [
         "rate-stack-local-c182"
       ],
-      "evidence_gap": "The complete wedge stack lacks protected release, downstream parity, and final scientific qualification.",
+      "evidence_gap": "#4162 delivery-metrics test and #4165 parity fixtures, wedge e2e spec and release evidence remain open.",
       "limitations": [
         "The worked shaft-rotation example is a declared sensitivity case rather than a measured wedge population norm.",
         "Current turf and forgiveness outputs remain model-conditional."
@@ -1585,13 +1624,22 @@
         "status": "not_released",
         "branch": "main",
         "sha": null
+      },
+      "main_reconciliation": {
+        "as_of": "2026-09-03",
+        "main_sha": "8b9935afece7",
+        "source": "Tools #4921 Phase 1",
+        "reference": "https://github.com/D-sorganization/Tools/issues/4158#issuecomment-5520751487",
+        "landed": 6,
+        "partial": 2,
+        "missing": 0
       }
     },
     {
       "issue": 4181,
       "title": "Launch Monitor Convention Registry and Comparability",
       "kind": "program",
-      "delivery_stage": "implemented_on_feature_stack",
+      "delivery_stage": "implemented_unverified",
       "completion": "implemented",
       "authorities": [
         {
@@ -1624,7 +1672,7 @@
       "evidence_ids": [
         "rate-stack-local-c182"
       ],
-      "evidence_gap": "The implemented registry has not reached a protected main release or immutable downstream pin.",
+      "evidence_gap": "Registry, TrackMan and Foresight adapters are on main (src/shared/python/swing_sim/conventions/); #4186 selector UI and #4187 definition matrix remain; no protected gate has run.",
       "limitations": [
         "Unavailable vendor conventions remain visibly unavailable rather than inferred.",
         "Cross-application convention parity is not released."
@@ -1636,13 +1684,22 @@
         "status": "not_released",
         "branch": "main",
         "sha": null
+      },
+      "main_reconciliation": {
+        "as_of": "2026-09-03",
+        "main_sha": "8b9935afece7",
+        "source": "Tools #4921 Phase 1",
+        "reference": "https://github.com/D-sorganization/Tools/issues/4180",
+        "landed": 3,
+        "partial": 2,
+        "missing": 0
       }
     },
     {
       "issue": 4189,
       "title": "Comprehensive 3D D-Plane Calculation and Visualization",
       "kind": "program",
-      "delivery_stage": "implemented_on_feature_stack",
+      "delivery_stage": "implemented_unverified",
       "completion": "implemented",
       "authorities": [
         {
@@ -1668,7 +1725,7 @@
       "evidence_ids": [
         "rate-stack-local-c182"
       ],
-      "evidence_gap": "D-plane parity has no protected main or downstream release evidence.",
+      "evidence_gap": "D-plane calculation, golden and docs are on main (src/shared/python/swing_sim/impact/dplane.py); no protected main or downstream release evidence.",
       "limitations": [
         "The feature remains nested below the launch-monitor and wedge carrier chain.",
         "Vendor comparison depends on explicitly available convention definitions."
@@ -1681,13 +1738,22 @@
         "status": "not_released",
         "branch": "main",
         "sha": null
+      },
+      "main_reconciliation": {
+        "as_of": "2026-09-03",
+        "main_sha": "8b9935afece7",
+        "source": "Tools #4921 Phase 1",
+        "reference": "https://github.com/D-sorganization/Tools/issues/4180",
+        "landed": 1,
+        "partial": 0,
+        "missing": 0
       }
     },
     {
       "issue": 4191,
       "title": "Shot Design, Wind Strategy, Inverse Flight, and 3D Playback",
       "kind": "epic",
-      "delivery_stage": "implemented_on_feature_stack",
+      "delivery_stage": "implemented_unverified",
       "completion": "partial_implementation",
       "authorities": [
         {
@@ -1759,7 +1825,7 @@
         "swing-parity-hosted-3186",
         "swing-parity-isolation-18fe"
       ],
-      "evidence_gap": "The current carriers require fresh hosted parity, protected main integration, scientific qualification, and downstream parity. A local exact-#4361 child now projects complete-rest regional-ground endpoints onto existing landing SpatialTarget geometry with bounded target ensembles, but it has no PR or protected evidence and deliberately excludes aerial trajectory evaluation, UI, persistence, solver/capability invocation, and compiled-runtime parity.",
+      "evidence_gap": "Only #4201 (release evidence gate) is open; inverse solver, wind, capability optimizer and 3D playback are on main with tests.",
       "limitations": [
         "Capability optimization is still-air carry to first ground crossing and excludes bounce, roll, and total distance.",
         "The local post-ground target candidate admits only regional COMPLETE plus ground COMPLETE/REST/summary evidence; aerial targets remain typed as requiring the flight trajectory and no solver consumes these target rows yet.",
@@ -1773,6 +1839,15 @@
         "status": "not_released",
         "branch": "main",
         "sha": null
+      },
+      "main_reconciliation": {
+        "as_of": "2026-09-03",
+        "main_sha": "8b9935afece7",
+        "source": "Tools #4921 Phase 1",
+        "reference": "https://github.com/D-sorganization/Tools/issues/4191",
+        "landed": 9,
+        "partial": 1,
+        "missing": 0
       }
     },
     {
@@ -1824,13 +1899,18 @@
         "status": "not_released",
         "branch": "main",
         "sha": null
+      },
+      "main_reconciliation": {
+        "as_of": "2026-09-03",
+        "source": "Tools #4921 Phase 1",
+        "note": "Release gate owned by Tools #4922; stays specified_only until the gate runs."
       }
     },
     {
       "issue": 4218,
       "title": "Modern Toolstrip, Persistence, and Workspace Modules",
       "kind": "epic",
-      "delivery_stage": "implemented_on_feature_stack",
+      "delivery_stage": "implemented_unverified",
       "completion": "partial_implementation",
       "authorities": [
         {
@@ -1928,7 +2008,7 @@
         "legend-rail-local-83b4",
         "moving-camera-local-01ae"
       ],
-      "evidence_gap": "Complete persistence adapters, synchronized multi-view state, camera snap controls, accessibility, and protected release remain open.",
+      "evidence_gap": "Persistence contracts are on main but every File command ships disabled (#4220); theme, legends, view-compositor toolstrip entries and release evidence remain open.",
       "limitations": [
         "Unavailable persistence actions remain disabled rather than simulating success.",
         "The camera tracking and canonical snap-view child has no implementation carrier.",
@@ -1948,6 +2028,15 @@
         "status": "not_released",
         "branch": "main",
         "sha": null
+      },
+      "main_reconciliation": {
+        "as_of": "2026-09-03",
+        "main_sha": "8b9935afece7",
+        "source": "Tools #4921 Phase 1",
+        "reference": "https://github.com/D-sorganization/Tools/issues/4218",
+        "landed": 6,
+        "partial": 16,
+        "missing": 3
       }
     },
     {
@@ -2000,13 +2089,18 @@
         "status": "not_released",
         "branch": "main",
         "sha": null
+      },
+      "main_reconciliation": {
+        "as_of": "2026-09-03",
+        "source": "Tools #4921 Phase 1",
+        "note": "Not reconciled in #4921 Phase 1; #4237/#4238 children reconciled and absorbed into #4103."
       }
     },
     {
       "issue": 4260,
       "title": "Golf Impact and Flight Authority with Four-Surface Parity",
       "kind": "epic",
-      "delivery_stage": "specified_only",
+      "delivery_stage": "implemented_unverified",
       "completion": "specified",
       "authorities": [
         {
@@ -2058,7 +2152,7 @@
         "upstreamdrift.react": "not_started"
       },
       "evidence_ids": [],
-      "evidence_gap": "No machine-readable four-surface capability matrix, immutable Tools pin, or installed conformance run exists. The local strict React import adapter for Python-owned regional scalar results is contract-only and does not establish browser physics or four-surface execution parity.",
+      "evidence_gap": "docs/release/four_surface_capability.v1.json now exists on main; the immutable Tools pin and installed conformance run are owned by #4920/#4922.",
       "limitations": [
         "A launcher tile does not establish an independent surface implementation.",
         "Current UpstreamDrift source resolution and React routing do not satisfy parity.",
@@ -2072,13 +2166,19 @@
         "status": "not_released",
         "branch": "main",
         "sha": null
+      },
+      "main_reconciliation": {
+        "as_of": "2026-09-03",
+        "main_sha": "8b9935afece7",
+        "source": "Tools #4921 Phase 1",
+        "reference": "https://github.com/D-sorganization/Tools/issues/4260"
       }
     },
     {
       "issue": 4267,
       "title": "Qualified Landing, Bounce, Roll, and Ground-Surface Modeling",
       "kind": "epic",
-      "delivery_stage": "implemented_on_feature_stack",
+      "delivery_stage": "implemented_unverified",
       "completion": "partial_implementation",
       "authorities": [
         {
@@ -2330,7 +2430,7 @@
         "ground-inclined-passivity-local-5d33",
         "ground-mirrored-property-local-08d6"
       ],
-      "evidence_gap": "The contract, flight-transfer, impact/bounce, static-plane skid/roll, regional-surface, regional-plan wire, regional-editor, regional request-I/O, regional execution, evidence-readback, complete-result, ledger-inspection, trajectory-export, repeated-bounce result-wire, repeated-bounce request-wire, UI-neutral repeated-bounce execution, flight-to-bounce composition, full flight-through-regional-ground composition, qualified study-adapter, matched ground-playback, post-ground target, and seeded base-material variation carriers remain open on PRs 4285, 4288, 4302, 4304, 4332, 4335, 4339, 4342, 4350, 4351, 4352, 4353, 4354, 4355, 4356, 4357, 4359, 4360, 4361, 4363, 4364, 4365, 4366, 4367, 4368, 4370, 4371, 4372, 4373, 4374, 4375, 4376, 4388, 4390, 4391, and 4392. The #4369 continuation includes strict canonical request persistence, App-owned React editor state, matched File commands, execution job/result/status authorities, complete-only execution controls, the registered Waterloo/Penner flight profile and qualified production runner, authenticated loopback APIs and clients, visible imported-job workflows, strict Python-authoritative current-editor job preparation, and cooperative cancellation through qualified Waterloo/Penner integration and evidence serialization. Published PR #4376 adds a locked versioned SQLite/WAL source-loopback authority store, fail-closed hard-loss reconciliation with no physics replay, exact complete-result survival, and explicit React GET-only retained-status recovery. The #4378 child on PR #4388 adds descriptor-bound network-silent static inspection, a deterministic web asset manifest, immutable Python readiness, no public source maps, fail-closed exact-revision wheel admission, stale-staging cleanup, and credential-free exact-head hosted clean-install qualification without claiming execution. The #4379 child on PR #4390 adds a Python-only exact-bundle same-origin companion, immutable in-memory runtime overlay, closed route broker, strict Host/origin/fetch/body and route-specific response-domain policies, event-loop-safe authority transport, all-method security headers, partial-start cleanup, child-owned ephemeral authority binding, token/port argv removal, normal reaping, and pre-request fresh-token hard-loss replacement without replay. Published PR #4391 for #4380 adds exact-revision Chromium, Firefox, and WebKit harness contracts plus an independent protected-job definition for static inspection and the same-origin companion. PR #4392 for #4385 adds fixed-local-NTFS state admission, exact protected owner/SYSTEM/Administrators DACLs, retained anti-substitution handles, reparse/hard-link/ADS rejection, bounded in-place migration and rollback, explicit retention, and clean installed-wheel restart recovery. The final handoff head still requires fresh protected evidence; the dedicated Windows 3.11/3.12 jobs cannot run until a restricted d-sorg-windows-security runner is registered. Frozen qualification, forced descendant-tree cleanup, fresh protected release evidence, regional-overlay variation, variable-wind scenario wire, measured calibration, changing geometry, rendered visual QA, camera presets/tracking, compiled-runtime physics, and downstream parity remain absent.",
+      "evidence_gap": "Physics core is on main; React ground-playback parity, validated surface presets, solver/wind integration and the UpstreamDrift exact-pin item remain open.",
       "limitations": [
         "The strict imported-job child mounts visible React Run/Cancel/progress/reconciliation and canonical job/result/CSV downloads over one App-owned authenticated authority workspace. PyQt6 mounts a dedicated Ground Study using bounded import, exact evidence, explicit confirmation, QThread cancellation, and atomic job/result/CSV writes; the source standalone injects the direct qualified Python runner. PR #4374 adds Python-authoritative current-editor preparation with strict bounded request/response binding, no enqueue or auto-run, exact Ground/Tee setup, current-hit staleness protection, and explicit UNVALIDATED calibration disclosure. PR #4375 makes qualified flight recomputation cooperatively cancellable; PR #4376 durably preserves source-loopback lifecycle evidence without automatic replay and removes obsolete retained rows only through static parameterized SQL. They do not enable static hosting, qualify frozen distributions or PyQt direct-worker restart recovery, prove compiled/downstream parity, or complete protected release.",
         "Historical prerequisite: matched Python/TypeScript presentation models first exposed exact compact job/model/provenance/input-digest identity while their controls remained disabled and unmounted. The newer imported-job child supersedes that UI state with visible, strict, authority-bound workflows without adding current-editor job construction.",
@@ -2367,7 +2467,20 @@
         "status": "not_released",
         "branch": "main",
         "sha": null
+      },
+      "main_reconciliation": {
+        "as_of": "2026-09-03",
+        "main_sha": "8b9935afece7",
+        "source": "Tools #4921 Phase 1",
+        "reference": "https://github.com/D-sorganization/Tools/issues/4267#issuecomment-5520732822",
+        "landed": 11,
+        "partial": 12,
+        "missing": 2
       }
     }
-  ]
+  ],
+  "stage_notes": {
+    "implemented_on_feature_stack": "Historical: the stacked feat/*/codex/* carriers were folded into #4466/#4449 and closed unmerged on 2026-08-20. No program is on a live feature stack any more.",
+    "implemented_unverified": "Implementation is on main per the Tools #4921 Phase 1 reconciliation (docs/release/closed_stack_gap_audit_decisions.v1.json and the per-epic tables linked below), but no protected release gate has run against it. The gate is owned by Tools #4922; release.status stays not_released until it does."
+  }
 }
