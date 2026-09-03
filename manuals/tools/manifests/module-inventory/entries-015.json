@@ -3,6 +3,193 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 13528,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "b9add4bd991a7d72029f2732999e30663d37dd2cf8f5d5978e77a6cc0b54333e",
+      "family": "process-calculators-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-PRESSURE-DROP-CALCULATOR-UTILS-PIPE-DATABASE-PY-17EE6A981E06",
+      "language": "python",
+      "maintainer": "Process calculator maintainers",
+      "path": "src/shared/python/sidekick/process_calculators/pressure_drop_calculator/utils/pipe_database.py",
+      "purpose": "Pipe database with standard sizes and material properties.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "MATERIAL_ROUGHNESS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "STEEL_PIPE_DIMENSIONS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "create_custom_pipe",
+            "signature": "inner_diameter_mm: float, material: str='Commercial Steel'"
+          },
+          {
+            "kind": "function",
+            "name": "get_pipe_spec",
+            "signature": "nominal_size: str, schedule: str, material: str='Commercial Steel'"
+          },
+          {
+            "kind": "function",
+            "name": "get_roughness",
+            "signature": "material: str, unit: str='m'"
+          },
+          {
+            "kind": "function",
+            "name": "list_available_sizes",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "list_schedules_for_size",
+            "signature": "nominal_size: str"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/process_calculators/test_pipe_database.py",
+          "tests/shared/python/sidekick/process_calculators/pressure_drop/test_pipe_database.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "mm"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 756,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "ffbfff93685d0481afd119833e5803748c1281d6eb40b726bb967cc92c091774",
+      "family": "process-calculators-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-PSA-PACKAGE-INIT-PY-049FD5FD0469",
+      "language": "python",
+      "maintainer": "Process calculator maintainers",
+      "path": "src/shared/python/sidekick/process_calculators/psa_package/__init__.py",
+      "purpose": "PSA (Pressure Swing Adsorption) Analysis Package.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "ComponentData",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_COMPONENTS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PSAModel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PSAResults",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StreamCompositions",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StreamFlows",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "calculate_o2_safety_analysis",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "calculate_sensitivity",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_flammability_status",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 31432,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
@@ -17762,136 +17949,6 @@
             "kind": "function",
             "name": "unit",
             "signature": "vector: Vector3, *, tolerance: float"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1070,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d489a34006ff294ec01dd717417c20349221b488e918bac0294722c5722d9648",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-BOUNCE-EXECUTION-PY-07C13173AFF0",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/bounce_execution.py",
-      "purpose": "UI-neutral execution binding for validated repeated-bounce requests.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "execute_repeated_bounce_request",
-            "signature": "request: RepeatedBounceRequest, *, is_cancelled: CancellationCheck | None=None"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_bounce_execution.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 4232,
-      "classification": "calculation",
-      "classification_basis": "path-marker:kinematic",
-      "content_sha256_lf": "422a08af8ba7c58cf7b84880fb9722701183434a7614029df9f62b7999655af4",
-      "family": "swing-simulation-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-BOUNCE-KINEMATICS-PY-95884738D159",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/bounce_kinematics.py",
-      "purpose": "Exact contact interpolation and ballistic hop kinematics.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "ballistic_state",
-            "signature": "initial: GroundContactState, elapsed_s: float, settings: BounceModelSettings"
-          },
-          {
-            "kind": "function",
-            "name": "contact_state_after_hop",
-            "signature": "outgoing: GroundContactState, request: GroundSimulationRequest, settings: BounceModelSettings"
-          },
-          {
-            "kind": "function",
-            "name": "interpolate_first_contact",
-            "signature": "request: GroundSimulationRequest"
-          },
-          {
-            "kind": "function",
-            "name": "next_contact_elapsed_s",
-            "signature": "outgoing: GroundContactState, request: GroundSimulationRequest, settings: BounceModelSettings"
-          },
-          {
-            "kind": "function",
-            "name": "trajectory_point",
-            "signature": "state: GroundContactState, phase: GroundPhase"
           }
         ],
         "test_paths": [],

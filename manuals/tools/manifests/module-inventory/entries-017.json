@@ -3,6 +3,111 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 12205,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "96d46bda7a507c75458b00a68b119761da546954db39b30bdd19a33153fc5d5d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-CORE-TIME-MANAGER-PY-BDD13BCC315F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/core/time_manager.py",
+      "purpose": "Time Manager",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SimulationTime",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TimeManager",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TimeScale",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 52,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "96de16abcc955dee2a871afc85ad13cda01710a4386589a3ef5b9f291cfe7b84",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-DATA-INIT-PY-FF53BF3ADADF",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/solar_system_model/solar_system/data/__init__.py",
+      "purpose": "Data module for additional solar system data.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 3581,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
