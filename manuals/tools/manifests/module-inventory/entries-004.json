@@ -6579,10 +6579,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 19470,
+      "bytes_lf": 19540,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "4a53329fa8906e43a8a24b6988e5d8630e9bb7024e2ced17c01473c9664fb052",
+      "content_sha256_lf": "4e5530d837fb9500d150b00e7f55ece50747d6cdcd125c3593aa62271ac71ffa",
       "family": "control-systems-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FIRMWARE-FIRMWARE-INO-7C2771175FA6",
       "language": "arduino",
