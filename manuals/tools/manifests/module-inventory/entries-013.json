@@ -2,6 +2,70 @@
   "authority": "D-sorganization/Tools",
   "entries": [
     {
+      "authority_status": "provisional",
+      "bytes_lf": 5174,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "fb4c929e3e77701f36f0f65713aec62372e4bf28b23586c57b124d267587cbae",
+      "family": "rotation-converter-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-ROTATION-CONVERTER-PY-EE8A718AEB80",
+      "language": "python",
+      "maintainer": "Rotation converter maintainers",
+      "path": "src/shared/python/calc_backend/routers/rotation_converter.py",
+      "purpose": "Rotation Converter calculator router.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "mapped",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [
+          "/reference-frame"
+        ],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "compute_reference_frame_conversion",
+            "signature": "request: ReferenceFrameConversionRequest"
+          },
+          {
+            "kind": "function",
+            "name": "compute_rotation",
+            "signature": "request: RotationConverterRequest"
+          }
+        ],
+        "test_paths": [
+          "matlab/test_rotation_converter.m"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "not-applicable",
       "bytes_lf": 6393,
       "classification": "non-calculation",
@@ -5556,6 +5620,7 @@
         ],
         "test_paths": [
           "src/data_processing/data_processor/python/tests/test_advanced_analysis.py",
+          "src/p1am_control_system/backend/tests/test_interlock_defaults_contract.py",
           "src/p1am_control_system/backend/tests/test_units_contract.py",
           "src/pendulum_simulator/pendulum-web/tests/forceSourceProfiles.test.ts",
           "src/pendulum_simulator/tests/test_companion_dialog.py",
@@ -5725,6 +5790,7 @@
           "s"
         ],
         "validation_paths": [
+          "src/p1am_control_system/backend/tests/test_interlock_defaults_contract.py",
           "src/p1am_control_system/backend/tests/test_units_contract.py",
           "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
           "src/shared/python/model_generation/tests/test_contracts.py",
@@ -17348,62 +17414,6 @@
           "src/shared/python/model_generation/tests/test_api_adapters.py"
         ],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4967,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b5a17aaf1240f6a07946363b933f1ca2d7f32638743168970b1e7c1a60681d96",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-API-REST-API-FASTAPI-PY-8F06BF869928",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/model_generation/api/rest_api_fastapi.py",
-      "purpose": "FastAPI adapter for the model generation REST API.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "FastAPIAdapter",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/model_generation/tests/test_api_adapters.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
         "validation_paths": []
       }
     }

@@ -63,7 +63,7 @@ class TagWritePayload(BaseModel):
     @field_validator("value")
     @classmethod
     def _check_finite(cls, value: float) -> float:
-        return hardware.require_finite_value(value, "value")
+        return float(hardware.require_finite_value(value, "value"))
 
 
 class MPCSimulatePayload(BaseModel):

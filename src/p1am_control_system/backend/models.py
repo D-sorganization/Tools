@@ -1,3 +1,4 @@
+# mypy: disable-error-code="unused-ignore"
 from datetime import datetime, timezone
 from typing import Any
 
@@ -233,7 +234,7 @@ def _finite(value: float, field_name: str) -> float:
     I/O handler -- which used to drop the PLC connection over a bad request
     body (issue #3974). Refuse it at the model boundary instead.
     """
-    return hardware.require_finite_value(value, field_name)
+    return float(hardware.require_finite_value(value, field_name))
 
 
 class PIDConfig(BaseModel):

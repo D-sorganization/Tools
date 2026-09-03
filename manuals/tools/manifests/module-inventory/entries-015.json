@@ -3,6 +3,58 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 31432,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "1623ac47796d63fa585d313f0be2facbb713ba083dd39c37a0df3a622c3bcf3e",
+      "family": "process-calculators-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-PSA-PACKAGE-PSA-CALCULATOR-HTML-310F9AC14DCC",
+      "language": "html",
+      "maintainer": "Process calculator maintainers",
+      "path": "src/shared/python/sidekick/process_calculators/psa_package/psa_calculator.html",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://cdn.plot.ly/plotly-2.27.0.min.js"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 40729,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
@@ -17844,102 +17896,6 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 11110,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9d7f1200df39b39dad71dcd220a27d6069a4fc166f3c07d5b252a74911743e56",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-BOUNCE-REQUEST-WIRE-PY-52001D35F011",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/ground/bounce_request_wire.py",
-      "purpose": "Strict execution-input wire and result pairing for repeated bounce.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "RepeatedBounceRequest",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RepeatedBounceRequestResultPair",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MAX_REPEATED_BOUNCE_REQUEST_WIRE_BYTES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "REPEATED_BOUNCE_REQUEST_SCHEMA_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "repeated_bounce_execution_input_sha256",
-            "signature": "ground_request_sha256: str, capture_speed_m_s: float"
-          },
-          {
-            "kind": "function",
-            "name": "repeated_bounce_request_from_dict",
-            "signature": "payload: object"
-          },
-          {
-            "kind": "function",
-            "name": "repeated_bounce_request_from_json",
-            "signature": "text: str"
-          },
-          {
-            "kind": "function",
-            "name": "repeated_bounce_request_to_dict",
-            "signature": "request: RepeatedBounceRequest"
-          },
-          {
-            "kind": "function",
-            "name": "repeated_bounce_request_to_json",
-            "signature": "request: RepeatedBounceRequest"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/ground/tests/test_bounce_request_wire.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
         "validation_paths": []
       }
     }
