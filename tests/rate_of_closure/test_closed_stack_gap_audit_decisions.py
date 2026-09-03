@@ -66,9 +66,9 @@ def test_every_audited_pr_and_file_has_a_decision() -> None:
             for f in cast(list[object], audit_pr["missing_files"])
         }
         undecided = sorted(audited - decided)
-        assert (
-            not undecided
-        ), f"#{number}: audited files without a decision: {undecided}"
+        assert not undecided, (
+            f"#{number}: audited files without a decision: {undecided}"
+        )
 
 
 def test_file_rows_are_well_formed_and_cite_real_superseders() -> None:
