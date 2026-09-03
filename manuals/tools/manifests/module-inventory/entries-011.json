@@ -3,6 +3,59 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 1603,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "48208142ec1ddb59ccf6b3c76edb78bc6d154ed13a9ab60ceea25dda4d749965",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-REGIONALGROUNDEXECUTIONPRESENTATION-TSX-E84E6A928A54",
+      "language": "typescript-react",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/regionalGroundExecutionPresentation.tsx",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "RegionalGroundExecutionPresentation",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 5565,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -14748,84 +14801,6 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 3961,
-      "classification": "calculation",
-      "classification_basis": "path-marker:rotation",
-      "content_sha256_lf": "a3fd751895d0f076c61dd10a20dc58796ab08c9e0d5e6e82858bca58f8d11da4",
-      "family": "rotation-converter-calculation",
-      "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-MODERN-ROBOTICS-PKG-TRAJECTORY-PY-9EBE69FDD204",
-      "language": "python",
-      "maintainer": "Rotation converter maintainers",
-      "path": "src/rotation_converter/modern_robotics_pkg/trajectory.py",
-      "purpose": "Trajectory Generation — time scaling and interpolation.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "CartesianTrajectory",
-            "signature": "Xstart: Any, Xend: Any, Tf: float, N: int, method: int"
-          },
-          {
-            "kind": "function",
-            "name": "CubicTimeScaling",
-            "signature": "Tf: float, t: float"
-          },
-          {
-            "kind": "function",
-            "name": "JointTrajectory",
-            "signature": "thetastart: Any, thetaend: Any, Tf: float, N: int, method: int"
-          },
-          {
-            "kind": "function",
-            "name": "QuinticTimeScaling",
-            "signature": "Tf: float, t: float"
-          },
-          {
-            "kind": "function",
-            "name": "ScrewTrajectory",
-            "signature": "Xstart: Any, Xend: Any, Tf: float, N: int, method: int=3"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "N",
-          "s"
-        ],
         "validation_paths": []
       }
     }

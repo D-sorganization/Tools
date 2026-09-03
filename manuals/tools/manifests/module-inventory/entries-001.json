@@ -3,6 +3,80 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 5137,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7904f9281a639365341360d1f1ef14c7a1f721fb4b1a5beaca1bf916d9341f37",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CHECK-MINIMUM-TEST-CONTRACT-PY-D00C141F501F",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/check_minimum_test_contract.py",
+      "purpose": "Enforce minimum test contract for changed source packages.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "ROOT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "changed_files",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "has_tests",
+            "signature": "pkg_key: str"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "package_key",
+            "signature": "path: str"
+          }
+        ],
+        "test_paths": [
+          "tests/test_minimum_test_contract.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/test_minimum_test_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 13233,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -15244,83 +15318,6 @@
         "validation_paths": [
           "src/data_processing/data_processor/python/tests/test_vectorized_filter_engine_contracts.py"
         ]
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 9550,
-      "classification": "calculation",
-      "classification_basis": "path-marker:filter",
-      "content_sha256_lf": "e6c4d856d90c8b3d2a2751b6292d8f889d0832894a13f00af58b7dce124d5f40",
-      "family": "data-processing-calculation",
-      "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-VECTORIZED-FILTER-FREQUENCY-DOMAIN-PY-54B02EC974D5",
-      "language": "python",
-      "maintainer": "Data processing maintainers",
-      "path": "src/data_processing/data_processor/python/data_processor/vectorized_filter_frequency_domain.py",
-      "purpose": "Frequency-domain filter kernels for the vectorized filter engine.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "apply_fft_filter_core",
-            "signature": "signal_data: np.ndarray, filter_coeffs: np.ndarray, zero_phase: bool"
-          },
-          {
-            "kind": "function",
-            "name": "apply_fft_filter_vectorized",
-            "signature": "signal: pd.Series, params: dict[str, Any], safe_get_param: ParamGetter, calculate_sampling_rate: SamplingRateCalculator, logger: Logger"
-          },
-          {
-            "kind": "function",
-            "name": "apply_window_function",
-            "signature": "filter_response: np.ndarray, window_shape: str"
-          },
-          {
-            "kind": "function",
-            "name": "calculate_frequency_response",
-            "signature": "filter_type: str, params: dict[str, Any], safe_get_param: ParamGetter, logger: Logger, n_freqs: int=1024"
-          },
-          {
-            "kind": "function",
-            "name": "design_frequency_window",
-            "signature": "filter_type: str, freq_low: float, freq_high: float, window_shape: str, n_samples: int, transition_bw: float"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "Hz"
-        ],
-        "validation_paths": []
       }
     }
   ],
