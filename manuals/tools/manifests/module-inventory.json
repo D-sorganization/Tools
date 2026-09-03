@@ -645,7 +645,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-golf-club.json"
     },
     {
-      "content_sha256_lf": "824a8cdb7795bcbb0b490aac7367f1e598fbe91b2636f6f7d1f9552e5ededf7f",
+      "content_sha256_lf": "2f5ae95ee72852084994269a1cad2837745b0d9d24ebdc323e2b553239ea25e2",
       "entry_count": 8,
       "package": "src/shared/python/gui_launcher",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-gui-launcher.json"
