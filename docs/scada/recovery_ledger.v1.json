@@ -1,0 +1,919 @@
+{
+  "schema_version": "scada-recovery-ledger/v1",
+  "repo": "D-sorganization/Tools",
+  "generated_at": "2026-09-03T16:38:08Z",
+  "base": {
+    "ref": "origin/main",
+    "sha": "90b7ff3c4639fd9e34864a97ffc6982706230c87"
+  },
+  "audit_issue": "#4912",
+  "program": "D-sorganization/Repository_Management#1505",
+  "sources": {
+    "union_head": {
+      "pr": "#4449",
+      "oid": "7fba01f5c5615ec62c2bc6eeef7f4c8afad9f580",
+      "added_absent": 105
+    },
+    "phase_stack_head": {
+      "pr": "#4091",
+      "oid": "2259f5915426471a4b13e8a4e1d3fe59ef1c15b4",
+      "added_absent": 84
+    },
+    "historian_head": {
+      "pr": "#4065",
+      "oid": "128bd1c3b492d7c74903f7335803c7cbb5b987c4",
+      "added_absent": 31
+    }
+  },
+  "decision_classes": {
+    "re-land": "self-contained, additive, plausibly correct against current main, and not safety- or licence-gated; worth re-applying as a clean commit",
+    "obsolete": "superseded by something already on main, or an artifact that must never be tracked",
+    "needs-owner": "safety-relevant, licence-encumbered, or architecturally entangled such that a human ruling is required before any re-land"
+  },
+  "method": "The file list is derived, not typed: each recorded head OID was diffed three-dot against main, status-A paths were kept, and each was probed with `git cat-file -e main:<path>`. Decisions come from reading each module's import list at the stack blob and asking whether it closes only inside the stack. The generator refuses to emit if any corpus file lacks a decision, if a clustered path is not in the corpus, or if a `re-land` file already exists on main.",
+  "recommended_base": "Take blobs from #4449 (7fba01f5), not #4091. #4449 is a superset in useful content, carries the enum_compat/TYPE_CHECKING guard that makes the modules importable on the 3.10 floor, and has already dropped the six .codex-worktrees gitlinks. The one thing not to take from it is tests/_route_inventory.py, which #4682 made redundant.",
+  "smallest_landable_cluster": {
+    "files": [
+      "src/p1am_control_system/backend/enum_compat.py",
+      "src/p1am_control_system/backend/process_overview.py",
+      "src/p1am_control_system/backend/tests/test_process_overview.py"
+    ],
+    "approx_lines": 250,
+    "external_imports": [
+      "pydantic",
+      "stdlib"
+    ],
+    "note": "process_overview.py imports nothing from the stack; its test imports only process_overview; enum_compat.py is stdlib-only and is included because it unlocks the next tier at zero marginal risk. No new third-party dependency, no DB, no router, no main.py wiring, no licence exposure.",
+    "why_not_landed_here": "These modules have no importer on main, so they would land as dead code in a safety subsystem and may trip the coverage and god-module policy gates. Adding unreferenced code does not move F06 off `missing` in any meaningful sense - F06 needs the faceplate/overview HMI, not a synthetic view model. Recorded so a future re-land is a reading task rather than a re-discovery task; landing it is an owner call, not an audit call."
+  },
+  "collision_note": "The real re-land hazard is the refactors main has merged SINCE this branch forked, not the stack being stale in general: #4678 added backend/data_quality.py and reworked historian.py (+374/-10) and poll_runtime.py (-404), and #4682 rewrote tests/test_route_authz_matrix.py. Verified separately: the Phase 0 interlock-reset, disabled-limit-default and NaN bad-quality work IS on main (firmware.ino calls SafetyInterlock::ClearTrip via coil 1; tests/test_alarm_nan_bad_quality.py and tests/test_interlock_defaults_contract.py are tracked), and the stack does not modify alarm_processing.py or scada_fallback.py at all, so there is no revert risk on those two files.",
+  "clusters": [
+    {
+      "id": "C0",
+      "name": "Compat leaf",
+      "decision": "re-land",
+      "file_count": 1,
+      "external_imports": [
+        "stdlib only (enum, sys, typing)"
+      ],
+      "rationale": "Zero-dependency StrEnum backport for the 3.10 floor; twelve stack modules gate on it. Mandatory prerequisite for every other cluster and safe on its own. It duplicates src/shared/python/compatibility.py by design, because the backend imports flat rather than by package path."
+    },
+    {
+      "id": "C1a",
+      "name": "Pure-pydantic synthetic domain models",
+      "decision": "re-land",
+      "file_count": 8,
+      "external_imports": [
+        "pydantic",
+        "stdlib (uuid)",
+        "enum_compat (C0)"
+      ],
+      "rationale": "Read-only view models whose identifiers are validated to begin with 'SYNTHETIC.', so they cannot bind to real plant data. Each test imports only its own module. process_overview.py imports nothing from the stack at all. They name safety concepts (AlarmState, InterlockState) as Literal aliases but actuate nothing."
+    },
+    {
+      "id": "C1b",
+      "name": "Notification / alarm-suppression policy",
+      "decision": "needs-owner",
+      "file_count": 2,
+      "external_imports": [
+        "pydantic"
+      ],
+      "rationale": "Technically as self-contained as C1a, but it implements alarm suppression, escalation and rate limiting (outcomes 'suppressed' and 'rate_limited'). ISA-18.2 suppression semantics need a human ruling even when synthetic-gated."
+    },
+    {
+      "id": "C2",
+      "name": "Identity / authn-authz",
+      "decision": "needs-owner",
+      "file_count": 7,
+      "external_imports": [
+        "stdlib (hashlib, hmac, secrets, threading)",
+        "fastapi"
+      ],
+      "rationale": "A credential registry and session store. identity.py alone would import cleanly, but identity_config and identity_router are mutually recursive, 23 stack modules depend on it, and the stack's modified auth_config.py switches to EnvironmentIdentityProvider/IdentityService. Landed alone it is dead security code; landed wired up it changes the authn model of a control system. This cluster gates C3-C7 and C15."
+    },
+    {
+      "id": "C3",
+      "name": "Append-only audit trail",
+      "decision": "needs-owner",
+      "file_count": 6,
+      "external_imports": [
+        "fastapi",
+        "sqlmodel",
+        "identity (C2)",
+        "models.utc_now"
+      ],
+      "rationale": "audit_log.install_append_only_guards is invoked from the stack's modified database.py, and main already ships a different audit.py AuditMiddleware that main.py mounts - two audit middlewares would coexist. Append-only database triggers on a SCADA audit table is a compliance decision, not a merge."
+    },
+    {
+      "id": "C4",
+      "name": "Alarm lifecycle, shelving and performance",
+      "decision": "needs-owner",
+      "file_count": 6,
+      "external_imports": [
+        "identity (C2)",
+        "enum_compat (C0)",
+        "models.RoutingConfig"
+      ],
+      "rationale": "A closed set inside the stack, entirely gated behind C2. Safety-relevant: shelving, first-out grouping and alarm performance reporting. This is the cluster that would move F03 off 'partial', and it is exactly the cluster that needs review rather than transplant."
+    },
+    {
+      "id": "C5",
+      "name": "Configuration workflow, recovery and system health",
+      "decision": "needs-owner",
+      "file_count": 12,
+      "external_imports": [
+        "alarm_service (C4)",
+        "identity (C2)",
+        "sqlmodel",
+        "fastapi"
+      ],
+      "rationale": "Cycle-adjacent: configuration_workflow -> alarm_service + identity; system_health -> configuration_workflow + recovery_package; recovery_package -> alarm_service + configuration_workflow. configuration_repository's ConfigurationRevisionRecord is imported by the stack's modified database.py. It writes control-configuration revisions, so it is safety-relevant and unlandable without C2 and C4."
+    },
+    {
+      "id": "C6",
+      "name": "Operations, shift log, investigations and managed bypass",
+      "decision": "needs-owner",
+      "file_count": 11,
+      "external_imports": [
+        "identity (C2)",
+        "process_overview (C1a)",
+        "fastapi"
+      ],
+      "rationale": "All gated on C2. protection_management.py is first-out, consequence and MANAGED-BYPASS authority - the highest-consequence file in the whole corpus. Bypass authority on a protection system is the single most owner-gated item here, and the epic's own contract says SCADA interlocks must never be presented as independent protection."
+    },
+    {
+      "id": "C7",
+      "name": "Product hub, advisory workspace, synthetic procedures, evidence",
+      "decision": "needs-owner",
+      "file_count": 14,
+      "external_imports": [
+        "advisory_workspace",
+        "availability (C1a)",
+        "connector_plugins (C1a)",
+        "notification_policy (C1b)",
+        "synthetic_procedure",
+        "identity (C2)"
+      ],
+      "rationale": "representative_product.py is a pure fan-in hub over five other stack modules - the definition of non-self-contained. scenario_evidence.py is pydantic-only and would re-land, but its test needs evidence_package.py (zipfile packager), so it cannot come with its coverage; re-landing it untested is not worth a PR."
+    },
+    {
+      "id": "C8",
+      "name": "Signal quality (competing design)",
+      "decision": "needs-owner",
+      "file_count": 2,
+      "external_imports": [
+        "enum_compat (C0)",
+        "stdlib (types.MappingProxyType)"
+      ],
+      "rationale": "Self-contained as code, but a COMPETING DESIGN against work already merged on main: #4678 shipped data_quality.py (DataQualityTracker) and reworked historian.py around a flat `quality: str` field, whereas this routes a structured SignalFrame/SignalQuality through historian.py, poll_runtime.py and main.py. Two quality vocabularies on one poll loop is an architecture ruling, not a merge."
+    },
+    {
+      "id": "C9",
+      "name": "Historian runtime (sink, shipper, wiring, Timescale writer)",
+      "decision": "needs-owner",
+      "file_count": 7,
+      "external_imports": [
+        "historian (rewritten on main by #4678)",
+        "signal_quality (C8)",
+        "psycopg (new runtime dependency)"
+      ],
+      "rationale": "historian_shipper.py is the near-miss: its own imports are stdlib only. But its test imports historian_sink, which imports signal_quality (C8) and `historian` - and main rewrote historian.py by +374/-10 after this branch forked, so the sink is written against an API that no longer exists. Any historian re-land is a rewrite, not a cherry-pick. timescale_writer.py also adds a hard psycopg dependency and targets the TSL schema in C10."
+    },
+    {
+      "id": "C10",
+      "name": "TimescaleDB schema (licence-encumbered)",
+      "decision": "needs-owner",
+      "file_count": 8,
+      "external_imports": [
+        "TimescaleDB extension 2.9+"
+      ],
+      "rationale": "Epic #4046's licensing warning is confirmed verbatim in the SQL, not merely flagged: 002 uses `WITH (timescaledb.continuous)`, 003 uses `timescaledb.compress` / `compress_segmentby` / `compress_orderby` + `add_compression_policy`, 004 uses `add_retention_policy`. Those are Timescale-License features, not Apache-2, and they are precisely the storage economics the historian depends on - so 'use the Apache build' is not a drop-in fallback. 001 comments a dependency on 2.9+ for the hierarchical continuous aggregate, so even the base schema is not licence-clean in isolation. ADR-007 is bundled here because it is the record that would RATIFY this choice; landing it before the ruling is worse than landing nothing."
+    },
+    {
+      "id": "C11",
+      "name": "Grafana provisioning and historian deployment (AGPLv3)",
+      "decision": "needs-owner",
+      "file_count": 9,
+      "external_imports": [
+        "grafana/grafana-oss:11.4.0 (AGPLv3)",
+        "timescale/timescaledb:2.17.2-pg16"
+      ],
+      "rationale": "The dashboards and provisioning YAML are our own artifacts and are not themselves AGPL-infected, but they are inert without the AGPL service, and docker-compose.yml is the artifact that makes the network-copyleft distribution question real for a repo that feeds customer-facing work. One owner ruling for the whole directory."
+    },
+    {
+      "id": "C13",
+      "name": "Route-inventory test helper",
+      "decision": "obsolete",
+      "file_count": 1,
+      "external_imports": [],
+      "rationale": "Superseded by merged PR #4682: main's tests/test_route_authz_matrix.py already has _app_routes(), which walks routes, unwraps _IncludedRouter markers via original_router/include_context AND merges app.openapi()['paths'] - a superset of this helper's openapi-only strategy. The only file in the corpus whose problem main has already solved.",
+      "superseded_by": [
+        "src/p1am_control_system/backend/tests/test_route_authz_matrix.py"
+      ],
+      "landed_via": [
+        "#4682"
+      ]
+    },
+    {
+      "id": "C14a",
+      "name": "Committed runtime database",
+      "decision": "obsolete",
+      "file_count": 1,
+      "external_imports": [],
+      "rationale": "A 4096-byte runtime SQLite file. main's .gitignore already names dcs_scada.db and its -wal/-shm sidecars explicitly as 'generated at runtime', so this was committed with `git add -f` or before the rule. Re-landing it would reintroduce a tracked file the repo has decided not to track. Never re-land."
+    },
+    {
+      "id": "C14b",
+      "name": "Accidental nested-worktree gitlinks",
+      "decision": "obsolete",
+      "file_count": 6,
+      "external_imports": [],
+      "rationale": "Mode-160000 gitlinks with no corresponding .gitmodules - accidental commits of nested agent worktrees that would leave main with six broken submodules. Present in #4091 and #4065 but already dropped by #4449, which is one reason to treat #4449 as the recovery base."
+    },
+    {
+      "id": "C15",
+      "name": "React operator components",
+      "decision": "needs-owner",
+      "file_count": 10,
+      "external_imports": [
+        "../api/schemas (modified: CommsHealth, ProfessionalAlarm, SystemHealth types absent on main)",
+        "../api/endpoints (modified: 171 -> 416 lines)"
+      ],
+      "rationale": "None is self-contained: every component imports types from ../api/schemas that do NOT exist on main, and four import ../api/endpoints, which the stack more than doubles. Each therefore requires the modified schemas.ts + endpoints.ts, which require the corresponding routers (C4/C5/C6), which require C2. ProfessionalAlarmPanel and OperatorWorkspace additionally render alarm and protection state to an operator, so they are safety-relevant HMI."
+    }
+  ],
+  "files": [
+    {
+      "path": ".codex-worktrees/friction-factors-3659",
+      "cluster": "C14b",
+      "decision": "obsolete",
+      "in_union_head": false
+    },
+    {
+      "path": ".codex-worktrees/pr-3602-fix",
+      "cluster": "C14b",
+      "decision": "obsolete",
+      "in_union_head": false
+    },
+    {
+      "path": ".codex-worktrees/pr-3752-movement",
+      "cluster": "C14b",
+      "decision": "obsolete",
+      "in_union_head": false
+    },
+    {
+      "path": ".codex-worktrees/pr-3766-modern-robotics-dbc",
+      "cluster": "C14b",
+      "decision": "obsolete",
+      "in_union_head": false
+    },
+    {
+      "path": ".codex-worktrees/pr-3780-pressure-flow",
+      "cluster": "C14b",
+      "decision": "obsolete",
+      "in_union_head": false
+    },
+    {
+      "path": ".codex-worktrees/pr-3784-deterministic-te",
+      "cluster": "C14b",
+      "decision": "obsolete",
+      "in_union_head": false
+    },
+    {
+      "path": "dcs_scada.db",
+      "cluster": "C14a",
+      "decision": "obsolete",
+      "in_union_head": true
+    },
+    {
+      "path": "docs/adr/ADR-007-plant-historian-timescaledb.md",
+      "cluster": "C10",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/advisory_router.py",
+      "cluster": "C7",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/advisory_workspace.py",
+      "cluster": "C7",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/alarm_lifecycle.py",
+      "cluster": "C4",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/alarm_router.py",
+      "cluster": "C4",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/alarm_service.py",
+      "cluster": "C4",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/asset_health.py",
+      "cluster": "C1a",
+      "decision": "re-land",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/audit_log.py",
+      "cluster": "C3",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/audit_middleware.py",
+      "cluster": "C3",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/audit_router.py",
+      "cluster": "C3",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/availability.py",
+      "cluster": "C1a",
+      "decision": "re-land",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/configuration_repository.py",
+      "cluster": "C5",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/configuration_router.py",
+      "cluster": "C5",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/configuration_workflow.py",
+      "cluster": "C5",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/connector_plugins.py",
+      "cluster": "C1a",
+      "decision": "re-land",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/enum_compat.py",
+      "cluster": "C0",
+      "decision": "re-land",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/evidence_package.py",
+      "cluster": "C7",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/historian_shipper.py",
+      "cluster": "C9",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/historian_sink.py",
+      "cluster": "C9",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/historian_wiring.py",
+      "cluster": "C9",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/identity.py",
+      "cluster": "C2",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/identity_config.py",
+      "cluster": "C2",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/identity_router.py",
+      "cluster": "C2",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/notification_policy.py",
+      "cluster": "C1b",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/operations_router.py",
+      "cluster": "C6",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/operator_router.py",
+      "cluster": "C6",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/process_overview.py",
+      "cluster": "C1a",
+      "decision": "re-land",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/product_router.py",
+      "cluster": "C7",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/protection_management.py",
+      "cluster": "C6",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/recovery_package.py",
+      "cluster": "C5",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/representative_product.py",
+      "cluster": "C7",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/saved_investigation.py",
+      "cluster": "C6",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/scenario_evidence.py",
+      "cluster": "C7",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/scenario_router.py",
+      "cluster": "C7",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/shift_log.py",
+      "cluster": "C6",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/shift_log_repository.py",
+      "cluster": "C6",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/signal_quality.py",
+      "cluster": "C8",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/synthetic_procedure.py",
+      "cluster": "C7",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/system_health.py",
+      "cluster": "C5",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/system_router.py",
+      "cluster": "C5",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/_route_inventory.py",
+      "cluster": "C13",
+      "decision": "obsolete",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_advisory_router.py",
+      "cluster": "C7",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_advisory_workspace.py",
+      "cluster": "C7",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_alarm_lifecycle.py",
+      "cluster": "C4",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_alarm_router.py",
+      "cluster": "C4",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_alarm_service.py",
+      "cluster": "C4",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_asset_health.py",
+      "cluster": "C1a",
+      "decision": "re-land",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_audit_log.py",
+      "cluster": "C3",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_audit_middleware.py",
+      "cluster": "C3",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_audit_router.py",
+      "cluster": "C3",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_availability.py",
+      "cluster": "C1a",
+      "decision": "re-land",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_configuration_repository.py",
+      "cluster": "C5",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_configuration_router.py",
+      "cluster": "C5",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_configuration_workflow.py",
+      "cluster": "C5",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_connector_plugins.py",
+      "cluster": "C1a",
+      "decision": "re-land",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_historian_shipper.py",
+      "cluster": "C9",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_historian_sink.py",
+      "cluster": "C9",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_historian_wiring.py",
+      "cluster": "C9",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_identity.py",
+      "cluster": "C2",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_identity_config.py",
+      "cluster": "C2",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_identity_main_integration.py",
+      "cluster": "C2",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_identity_router.py",
+      "cluster": "C2",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_notification_policy.py",
+      "cluster": "C1b",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_operations_router.py",
+      "cluster": "C6",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_operator_router.py",
+      "cluster": "C6",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_process_overview.py",
+      "cluster": "C1a",
+      "decision": "re-land",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_product_router.py",
+      "cluster": "C7",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_protection_management.py",
+      "cluster": "C6",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_recovery_package.py",
+      "cluster": "C5",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_saved_investigation.py",
+      "cluster": "C6",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_scenario_evidence.py",
+      "cluster": "C7",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_scenario_router.py",
+      "cluster": "C7",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_shift_log.py",
+      "cluster": "C6",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_signal_quality.py",
+      "cluster": "C8",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_synthetic_procedure.py",
+      "cluster": "C7",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_system_health.py",
+      "cluster": "C5",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/tests/test_system_router.py",
+      "cluster": "C5",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/timescale/001_schema.sql",
+      "cluster": "C10",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/timescale/002_continuous_aggregates.sql",
+      "cluster": "C10",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/timescale/003_compression.sql",
+      "cluster": "C10",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/timescale/004_retention.sql",
+      "cluster": "C10",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/timescale/005_event_log.sql",
+      "cluster": "C10",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/timescale/006_roles.sql",
+      "cluster": "C10",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/timescale/README.md",
+      "cluster": "C10",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/backend/timescale_writer.py",
+      "cluster": "C9",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/deploy/grafana/dashboards/alarm-performance.json",
+      "cluster": "C11",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/deploy/grafana/dashboards/campaign-comparison.json",
+      "cluster": "C11",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/deploy/grafana/dashboards/historian-health.json",
+      "cluster": "C11",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/deploy/grafana/dashboards/process-overview.json",
+      "cluster": "C11",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/deploy/grafana/provisioning/dashboards/dashboards.yaml",
+      "cluster": "C11",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/deploy/grafana/provisioning/datasources/timescale.yaml",
+      "cluster": "C11",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/deploy/historian/.env.example",
+      "cluster": "C11",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/deploy/historian/README.md",
+      "cluster": "C11",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/deploy/historian/docker-compose.yml",
+      "cluster": "C11",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/frontend/src/components/CommsQualityBadge.test.tsx",
+      "cluster": "C15",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/frontend/src/components/CommsQualityBadge.tsx",
+      "cluster": "C15",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/frontend/src/components/ConfigurationWorkflowPanel.test.tsx",
+      "cluster": "C15",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/frontend/src/components/ConfigurationWorkflowPanel.tsx",
+      "cluster": "C15",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/frontend/src/components/OperatorWorkspace.test.tsx",
+      "cluster": "C15",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/frontend/src/components/OperatorWorkspace.tsx",
+      "cluster": "C15",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/frontend/src/components/ProfessionalAlarmPanel.test.tsx",
+      "cluster": "C15",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/frontend/src/components/ProfessionalAlarmPanel.tsx",
+      "cluster": "C15",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/frontend/src/components/SystemHealthPanel.test.tsx",
+      "cluster": "C15",
+      "decision": "needs-owner",
+      "in_union_head": true
+    },
+    {
+      "path": "src/p1am_control_system/frontend/src/components/SystemHealthPanel.tsx",
+      "cluster": "C15",
+      "decision": "needs-owner",
+      "in_union_head": true
+    }
+  ],
+  "totals": {
+    "needs-owner": 94,
+    "obsolete": 8,
+    "re-land": 9,
+    "files_classified": 111
+  }
+}

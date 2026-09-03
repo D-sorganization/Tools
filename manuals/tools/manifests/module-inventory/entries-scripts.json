@@ -2726,10 +2726,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9585,
+      "bytes_lf": 14964,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "267fb92b4eee3a2b864fd0aa0d8b44c285a94288fb6379eb348894b7fea86325",
+      "content_sha256_lf": "1e53112e1975d85b587de207acd1ec78cca3507975e1f16ef988e195901ec24e",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CHECK-SCADA-F-MATRIX-PY-802B9FB2C7FD",
       "language": "python",
@@ -2765,12 +2765,27 @@
         "public_surfaces": [
           {
             "kind": "constant",
+            "name": "DECISIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
             "name": "EXPECTED_HISTORIAN_IDS",
             "signature": null
           },
           {
             "kind": "constant",
             "name": "EXPECTED_SCADA_IDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LEDGER_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LEDGER_SCHEMA_VERSION",
             "signature": null
           },
           {
@@ -2807,6 +2822,11 @@
             "kind": "constant",
             "name": "STATUSES",
             "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "load_ledger",
+            "signature": ""
           },
           {
             "kind": "function",

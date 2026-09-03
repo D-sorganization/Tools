@@ -208,3 +208,96 @@ def test_guard_rejects_a_stale_rendered_count(corrupt) -> None:
         data["totals"]["scada"]["missing"] += 1
 
     assert corrupt(mutate) == 1
+
+
+# --------------------------------------------------------------------------- #
+# Recovery ledger (docs/scada/recovery_ledger.v1.json)                        #
+# --------------------------------------------------------------------------- #
+LEDGER_PATH = ROOT / "docs" / "scada" / "recovery_ledger.v1.json"
+DECISIONS = {"re-land", "obsolete", "needs-owner"}
+
+
+def _ledger() -> dict[str, Any]:
+    return cast(dict[str, Any], json.loads(LEDGER_PATH.read_text(encoding="utf-8")))
+
+
+def test_every_recovered_file_carries_exactly_one_decision() -> None:
+    files = _ledger()["files"]
+    paths = [str(f["path"]) for f in files]
+    assert len(set(paths)) == len(paths), "a file is classified twice"
+    for entry in files:
+        assert entry["decision"] in DECISIONS, entry["path"]
+
+
+def test_re_land_files_are_actually_still_missing_from_main() -> None:
+    """A `re-land` that already exists is not a re-land -- it is a stale ledger.
+
+    This is the assertion that makes the ledger self-expiring: as the corpus is
+    recovered, the rows for landed files must be reclassified rather than left
+    claiming work that is already done.
+    """
+    for entry in _ledger()["files"]:
+        if entry["decision"] == "re-land":
+            assert not (ROOT / str(entry["path"])).exists(), entry["path"]
+
+
+def test_every_cluster_states_imports_and_a_rationale() -> None:
+    for cluster in _ledger()["clusters"]:
+        cid = cluster["id"]
+        assert str(cluster["rationale"]).strip(), cid
+        assert str(cluster["name"]).strip(), cid
+        assert "external_imports" in cluster, cid
+        assert cluster["decision"] in DECISIONS, cid
+
+
+def test_file_decisions_agree_with_their_cluster() -> None:
+    ledger = _ledger()
+    by_id = {str(c["id"]): c for c in ledger["clusters"]}
+    for entry in ledger["files"]:
+        cluster = by_id[str(entry["cluster"])]
+        assert entry["decision"] == cluster["decision"], entry["path"]
+
+
+def test_ledger_totals_survive_a_recount() -> None:
+    ledger = _ledger()
+    files = ledger["files"]
+    for decision in DECISIONS:
+        counted = sum(1 for f in files if f["decision"] == decision)
+        assert ledger["totals"][decision] == counted, decision
+    assert ledger["totals"]["files_classified"] == len(files)
+
+
+def test_the_never_track_artifacts_stay_obsolete() -> None:
+    """`dcs_scada.db` is a runtime file main's .gitignore already excludes.
+
+    Re-landing it would reintroduce a tracked file the repo decided not to
+    track, so its decision is pinned rather than left to judgement. Same for the
+    six accidental `.codex-worktrees` gitlinks, which have no `.gitmodules` and
+    would leave main with broken submodules.
+    """
+    by_path = {str(f["path"]): f for f in _ledger()["files"]}
+    assert by_path["dcs_scada.db"]["decision"] == "obsolete"
+    gitlinks = [p for p in by_path if p.startswith(".codex-worktrees/")]
+    assert len(gitlinks) == 6
+    for path in gitlinks:
+        assert by_path[path]["decision"] == "obsolete", path
+
+
+def test_the_licence_gated_clusters_are_not_marked_re_land() -> None:
+    """Grafana (AGPLv3) and the TSL-covered Timescale schema need a ruling first."""
+    by_path = {str(f["path"]): f for f in _ledger()["files"]}
+    encumbered = [
+        p
+        for p in by_path
+        if "/timescale/" in p or "/grafana/" in p or "/deploy/historian/" in p
+    ]
+    assert encumbered, "expected licence-gated files in the corpus"
+    for path in encumbered:
+        assert by_path[path]["decision"] == "needs-owner", path
+
+
+def test_the_managed_bypass_module_needs_an_owner() -> None:
+    """Bypass authority on a protection system is never an audit-time decision."""
+    by_path = {str(f["path"]): f for f in _ledger()["files"]}
+    key = "src/p1am_control_system/backend/protection_management.py"
+    assert by_path[key]["decision"] == "needs-owner"

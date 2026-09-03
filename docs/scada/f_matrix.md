@@ -1,6 +1,6 @@
 # P1AM SCADA requirement matrix (F01-F16, H1-H9)
 
-**Generated:** 2026-09-03T16:16:10Z · **Base:** `origin/main` @ `90b7ff3c4639`
+**Generated:** 2026-09-03T16:39:31Z · **Base:** `origin/main` @ `90b7ff3c4639`
 
 **Audit:** [#4912](https://github.com/D-sorganization/Tools/issues/4912) · 
 **Program:** D-sorganization/Repository_Management#1505
@@ -512,6 +512,17 @@ This matrix is the tracker of record, superseding the checklists on #4085, #4086
 - **#4095** - Stack tip; file set identical to #4091's.
 - **#4449** - Union of the #4091 and #4065 corpora plus exactly two unique files (backend/enum_compat.py, backend/tests/_route_inventory.py). Its closing note cites #4445, a 9-file CI-only PR with no SCADA content, so nothing it carried reached main.
 - **#4065** - The only carrier of TimescaleDB/Grafana content: 6 SQL migrations, 4 Grafana dashboards, provisioning YAML, a deploy compose file, ADR-007, and historian_sink/shipper/wiring + timescale_writer with tests. Also adds dcs_scada.db, a runtime SQLite artifact that must never be committed.
+
+## Recovery from the closed carrier PRs
+
+The per-file decision for every file these PRs added and `main` lacks lives in
+`docs/scada/recovery_ledger.v1.json` (`re-land` / `obsolete` / `needs-owner`,
+grouped into dependency clusters, each with its external imports and a
+rationale). It is gated by the same `scripts/check_scada_f_matrix.py --check`.
+
+The load-bearing rule there: a file marked `re-land` must still be absent from
+`main`. As the corpus is recovered, those rows must be reclassified rather than
+left claiming work that is already done - so the ledger expires itself.
 
 ## Needs an owner ruling
 

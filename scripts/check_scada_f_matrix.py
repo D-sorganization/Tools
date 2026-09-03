@@ -15,6 +15,13 @@ if it cannot rot, so this script asserts the properties that make it trustworthy
 * the published totals agree with a recount of the rows;
 * the rendered ``f_matrix.md`` is in step with the JSON.
 
+It also gates ``docs/scada/recovery_ledger.v1.json``, the per-file recovery
+decision for the closed carrier PRs: every file carries exactly one decision in
+exactly one cluster, every cluster states its external imports and a rationale,
+a file marked ``re-land`` is genuinely still absent from ``main`` (otherwise it
+is not a re-land, it is already there), an ``obsolete`` cluster that claims a
+superseder must cite a path that exists, and the totals must survive a recount.
+
 Run ``python scripts/check_scada_f_matrix.py --check`` (the flag is accepted for
 symmetry with the other repo checkers; the default action is the same).
 """
@@ -31,8 +38,11 @@ from typing import Any, cast
 ROOT = Path(__file__).resolve().parents[1]
 MATRIX_PATH = ROOT / "docs" / "scada" / "f_matrix.v1.json"
 RENDERED_PATH = ROOT / "docs" / "scada" / "f_matrix.md"
+LEDGER_PATH = ROOT / "docs" / "scada" / "recovery_ledger.v1.json"
 
 SCHEMA_VERSION = "scada-f-matrix/v1"
+LEDGER_SCHEMA_VERSION = "scada-recovery-ledger/v1"
+DECISIONS = ("re-land", "obsolete", "needs-owner")
 STATUSES = ("landed", "partial", "missing")
 SHA_PATTERN = re.compile(r"^[0-9a-f]{40}$")
 PR_REF_PATTERN = re.compile(r"^#\d{3,5}$")
@@ -46,6 +56,106 @@ def load_matrix() -> dict[str, Any]:
     if not MATRIX_PATH.is_file():
         raise SystemExit(f"missing matrix: {MATRIX_PATH.relative_to(ROOT)}")
     return cast(dict[str, Any], json.loads(MATRIX_PATH.read_text(encoding="utf-8")))
+
+
+def load_ledger() -> dict[str, Any]:
+    """Read the recovery ledger, or fail with a message rather than a traceback."""
+    if not LEDGER_PATH.is_file():
+        raise SystemExit(f"missing recovery ledger: {LEDGER_PATH.relative_to(ROOT)}")
+    return cast(dict[str, Any], json.loads(LEDGER_PATH.read_text(encoding="utf-8")))
+
+
+def _check_ledger(ledger: dict[str, Any], fail: list[str]) -> None:
+    if ledger.get("schema_version") != LEDGER_SCHEMA_VERSION:
+        fail.append(f"ledger schema_version must be {LEDGER_SCHEMA_VERSION!r}")
+    if ledger.get("audit_issue") != "#4912":
+        fail.append("ledger audit_issue must be #4912")
+    if set(ledger.get("decision_classes", {})) != set(DECISIONS):
+        fail.append(f"ledger decision_classes must define exactly {DECISIONS}")
+    if not str(ledger.get("method", "")).strip():
+        fail.append("ledger must state its method")
+
+    clusters = cast(list[dict[str, Any]], ledger.get("clusters") or [])
+    if not clusters:
+        fail.append("ledger has no clusters")
+    by_id: dict[str, dict[str, Any]] = {}
+    for cluster in clusters:
+        cid = str(cluster.get("id", ""))
+        if not cid:
+            fail.append("cluster with no id")
+            continue
+        if cid in by_id:
+            fail.append(f"duplicate cluster id {cid}")
+        by_id[cid] = cluster
+        if cluster.get("decision") not in DECISIONS:
+            fail.append(f"{cid}: decision {cluster.get('decision')!r} is invalid")
+        if not str(cluster.get("rationale", "")).strip():
+            fail.append(f"{cid}: needs a rationale")
+        if not str(cluster.get("name", "")).strip():
+            fail.append(f"{cid}: needs a name")
+        if "external_imports" not in cluster:
+            fail.append(f"{cid}: must declare external_imports (may be empty)")
+        # An obsolete cluster that names a superseder must name a real one.
+        for superseder in cluster.get("superseded_by", []):
+            if not (ROOT / str(superseder)).exists():
+                fail.append(
+                    f"{cid}: cites a superseder that does not exist: {superseder}"
+                )
+
+    files = cast(list[dict[str, Any]], ledger.get("files") or [])
+    if not files:
+        fail.append("ledger classifies no files")
+    seen: set[str] = set()
+    counted = {d: 0 for d in DECISIONS}
+    for entry in files:
+        path = str(entry.get("path", ""))
+        if not path:
+            fail.append("ledger file entry with no path")
+            continue
+        if path in seen:
+            fail.append(f"{path}: classified twice")
+        seen.add(path)
+        decision = str(entry.get("decision", ""))
+        if decision not in DECISIONS:
+            fail.append(f"{path}: decision {decision!r} is invalid")
+            continue
+        counted[decision] += 1
+        cid = str(entry.get("cluster", ""))
+        if cid not in by_id:
+            fail.append(f"{path}: cluster {cid!r} is not declared")
+        elif by_id[cid].get("decision") != decision:
+            fail.append(
+                f"{path}: decision {decision!r} disagrees with cluster "
+                f"{cid} ({by_id[cid].get('decision')!r})"
+            )
+        # The load-bearing one: a re-land must actually still be missing.
+        if decision == "re-land" and (ROOT / path).exists():
+            fail.append(
+                f"{path}: marked re-land but already present on main - "
+                "it has landed, so the ledger is stale"
+            )
+
+    for cluster in clusters:
+        cid = str(cluster.get("id", ""))
+        declared = cluster.get("file_count")
+        observed = sum(1 for f in files if str(f.get("cluster")) == cid)
+        if declared != observed:
+            fail.append(
+                f"{cid}: file_count {declared!r} but {observed} files reference it"
+            )
+
+    totals = ledger.get("totals") or {}
+    for decision in DECISIONS:
+        if totals.get(decision) != counted[decision]:
+            fail.append(
+                f"ledger totals.{decision}: published {totals.get(decision)!r}, "
+                f"recount {counted[decision]}"
+            )
+    if totals.get("files_classified") != len(files):
+        fail.append(
+            f"ledger totals.files_classified: published "
+            f"{totals.get('files_classified')!r}, recount {len(files)}"
+        )
 
 
 def _check_identity(matrix: dict[str, Any], fail: list[str]) -> None:
@@ -213,6 +323,7 @@ def main(argv: list[str] | None = None) -> int:
     _check_totals(matrix, rows, fail)
     _check_carrier_prs(matrix, fail)
     _check_rendered(matrix, rows, fail)
+    _check_ledger(load_ledger(), fail)
 
     if fail:
         sys.stderr.write("SCADA F-matrix check FAILED:\n")
@@ -222,6 +333,14 @@ def main(argv: list[str] | None = None) -> int:
 
     scada = (matrix.get("totals") or {}).get("scada") or {}
     hist = (matrix.get("totals") or {}).get("historian") or {}
+    ledger_totals = load_ledger().get("totals") or {}
+    sys.stdout.write(
+        "SCADA recovery ledger check passed "
+        f"({ledger_totals.get('files_classified')} files classified; "
+        f"{ledger_totals.get('re-land')} re-land / "
+        f"{ledger_totals.get('obsolete')} obsolete / "
+        f"{ledger_totals.get('needs-owner')} needs-owner)\n"
+    )
     sys.stdout.write(
         "SCADA F-matrix check passed "
         f"({len(rows)} requirements; "
