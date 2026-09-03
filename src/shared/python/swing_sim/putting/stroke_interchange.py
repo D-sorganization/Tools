@@ -227,13 +227,18 @@ class PuttingStroke:
 
 def _validated_triplet(value: Any) -> tuple[float, float, float]:
     """A finite 3-vector, reusing the delivery wire's own triple check."""
-    return TrajectorySample(
+    position = TrajectorySample(
         time_s=0.0,
         position_m=value,
         quaternion_wxyz=(1.0, 0.0, 0.0, 0.0),
         linear_velocity_mps=(0.0, 0.0, 0.0),
         angular_velocity_rad_s=(0.0, 0.0, 0.0),
     ).position_m
+    return (
+        float(position[0]),
+        float(position[1]),
+        float(position[2]),
+    )
 
 
 def putting_stroke_to_json(stroke: PuttingStroke) -> str:
