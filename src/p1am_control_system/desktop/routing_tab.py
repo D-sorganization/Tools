@@ -1,6 +1,7 @@
 # mypy: ignore-errors
 # ruff: noqa: E501
 import logging
+import math
 import os
 
 from PyQt6.QtCore import Qt
@@ -22,6 +23,25 @@ from PyQt6.QtWidgets import (
 from .workers import HttpWorker, start_http_request
 
 logger = logging.getLogger("p1am_control.desktop.routing")
+
+
+def _parse_limit_cell(text: str) -> float | None:
+    """Parse one interlock-limit table cell.
+
+    A blank cell means the side is disabled (``None``). Anything else must be
+    a finite float: NaN/Inf would be refused by the backend (#3974), so reject
+    it here with the same ``ValueError`` the caller already handles.
+
+    Raises:
+        ValueError: If ``text`` is neither blank nor a finite float.
+    """
+    stripped = text.strip()
+    if not stripped:
+        return None
+    value = float(stripped)
+    if not math.isfinite(value):
+        raise ValueError(f"limit must be finite, got {stripped!r}")
+    return value
 
 
 class RoutingTab(QWidget):
@@ -146,16 +166,17 @@ class RoutingTab(QWidget):
             )  # Tag ID is always read-only
             self.table.setItem(i, 0, id_item)
 
-            # Low/High Limits
+            # Low/High Limits. ``None`` (side disabled) is shown as a blank
+            # cell; a blank cell deploys back as ``None``.
             if i < len(config.interlocks):
                 low_val = config.interlocks[i].low_limit
                 high_val = config.interlocks[i].high_limit
             else:
-                low_val = 0.0
-                high_val = 100.0
+                low_val = None
+                high_val = None
 
-            low_item = QTableWidgetItem(f"{low_val:.2f}")
-            high_item = QTableWidgetItem(f"{high_val:.2f}")
+            low_item = QTableWidgetItem("" if low_val is None else f"{low_val:.2f}")
+            high_item = QTableWidgetItem("" if high_val is None else f"{high_val:.2f}")
 
             self.table.setItem(i, 1, low_item)
             self.table.setItem(i, 2, high_item)
@@ -195,13 +216,14 @@ class RoutingTab(QWidget):
             interlocks = []
             for i in range(32):
                 try:
-                    low_val = float(self.table.item(i, 1).text())
-                    high_val = float(self.table.item(i, 2).text())
+                    low_val = _parse_limit_cell(self.table.item(i, 1).text())
+                    high_val = _parse_limit_cell(self.table.item(i, 2).text())
                 except ValueError:
                     QMessageBox.critical(
                         self,
                         "Invalid Inputs",
-                        f"Interlock limit values for Tag {i} must be floats.",
+                        f"Interlock limit values for Tag {i} must be finite "
+                        "floats or blank (disabled).",
                     )
                     return
                 interlocks.append({"low_limit": low_val, "high_limit": high_val})

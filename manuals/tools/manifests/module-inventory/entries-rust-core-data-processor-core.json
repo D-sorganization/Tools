@@ -348,6 +348,7 @@
           "src/p1am_control_system/backend/tests/test_read_auth.py",
           "src/p1am_control_system/backend/tests/test_route_authz_matrix.py",
           "src/p1am_control_system/backend/tests/test_scada_fallback.py",
+          "src/p1am_control_system/backend/tests/test_tag_force_nonfinite.py",
           "src/p1am_control_system/backend/tests/test_trends_endpoint.py",
           "src/p1am_control_system/backend/tests/test_validation_guards_3745.py",
           "src/p1am_control_system/backend/tests/test_ws_backpressure.py",

@@ -74,7 +74,7 @@ MATH_IMPORT_PATTERN = re.compile(
 )
 URL_PATTERN = re.compile(r"https?://[^\s)\]}>\"']+")
 DOI_PATTERN = re.compile(r"\b10\.\d{4,9}/[-._;()/:A-Za-z0-9]+", re.IGNORECASE)
-ADR_PATTERN = re.compile(r"ADR-\d{3}", re.IGNORECASE)
+ADR_PATTERN = re.compile(r"ADR-\d{3,4}(?!\d)", re.IGNORECASE)
 EQUATION_PATTERN = re.compile(
     r"(?:@eq-|equation[_-]id[\s:=]+)([A-Za-z][A-Za-z0-9_.-]+)", re.IGNORECASE
 )
@@ -208,7 +208,7 @@ def _traceability(
     if surfaces:
         adr_paths.add("docs/adr/ADR-003-api-stability-policy.md")
     for name in explicit_adrs:
-        matches = sorted((ROOT / "docs" / "adr").glob(f"{name}*.md"))
+        matches = sorted((ROOT / "docs" / "adr").glob(f"{name}-*.md"))
         adr_paths.update(match.relative_to(ROOT).as_posix() for match in matches)
     citations = sorted(set(URL_PATTERN.findall(text)) | set(DOI_PATTERN.findall(text)))
     units = sorted(set(UNIT_PATTERN.findall(text)))

@@ -685,7 +685,7 @@
       },
       "traceability": {
         "adr_paths": [
-          "docs/adr/ADR-001-monorepo-workspaces.md",
+          "docs/adr/ADR-0016-error-handling-discipline.md",
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md"
         ],

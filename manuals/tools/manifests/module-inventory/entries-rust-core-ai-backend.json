@@ -183,7 +183,9 @@
           "src/p1am_control_system/backend/tests/test_backend_p1am_safety.py",
           "src/p1am_control_system/backend/tests/test_estop_endpoint_writes.py",
           "src/p1am_control_system/backend/tests/test_estop_reconnect.py",
+          "src/p1am_control_system/backend/tests/test_interlock_defaults_contract.py",
           "src/p1am_control_system/backend/tests/test_modbus_client.py",
+          "src/p1am_control_system/backend/tests/test_modbus_codec.py",
           "src/p1am_control_system/backend/tests/test_passthrough.py",
           "src/p1am_control_system/backend/tests/test_pid_tuning_tag_guards.py",
           "src/p1am_control_system/backend/tests/test_poll_data_quality.py",
@@ -319,6 +321,7 @@
           "s"
         ],
         "validation_paths": [
+          "src/p1am_control_system/backend/tests/test_interlock_defaults_contract.py",
           "src/p1am_control_system/backend/tests/test_validation_guards_3745.py",
           "tests/architecture/test_design_manual_governance_contract.py",
           "tests/architecture/test_tools_module_inventory_contract.py",
@@ -725,6 +728,7 @@
           "src/p1am_control_system/backend/tests/test_backend.py",
           "src/p1am_control_system/backend/tests/test_backend_p1am_safety.py",
           "src/p1am_control_system/backend/tests/test_data_explorer_router.py",
+          "src/p1am_control_system/backend/tests/test_tag_force_nonfinite.py",
           "tests/p1am_control_system/test_backend_security.py",
           "tests/rate_of_closure/test_club_view_camera.py",
           "tests/rate_of_closure/test_variation_geometry_properties.py",

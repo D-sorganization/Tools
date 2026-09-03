@@ -196,6 +196,7 @@
       "traceability": {
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-0022-chat-sidekick-boundary.md",
           "docs/adr/ADR-003-api-stability-policy.md"
         ],
         "artifact_sha256": [],
@@ -932,6 +933,7 @@
       "traceability": {
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-0022-chat-sidekick-boundary.md",
           "docs/adr/ADR-003-api-stability-policy.md"
         ],
         "artifact_sha256": [],
@@ -1306,6 +1308,7 @@
       "traceability": {
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-0022-chat-sidekick-boundary.md",
           "docs/adr/ADR-003-api-stability-policy.md"
         ],
         "artifact_sha256": [],
@@ -3403,6 +3406,7 @@
       "traceability": {
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-0022-chat-sidekick-boundary.md",
           "docs/adr/ADR-003-api-stability-policy.md"
         ],
         "artifact_sha256": [],

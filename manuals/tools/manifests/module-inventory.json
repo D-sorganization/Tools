@@ -117,19 +117,19 @@
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "0f67a7bb54f40f7610a09be31ed3174ec06caf29c29f7eeaf7bcc3f73d97616d",
+      "content_sha256_lf": "d7daf71f07173425c1f277c3bcb7c8eb7525c9205cde998a5c8a2d2fa65cb9d5",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
     },
     {
-      "content_sha256_lf": "6a4aa0bb20d0e607780e32b77e7796c8305f0fc8c2ba6db25fe92e51592dbdee",
+      "content_sha256_lf": "d5008c8df0fac09a372157c31e994e4b1b6808393010cc79b8b34f49bc2d2f66",
       "entry_count": 5,
       "package": "rust_core/data-processor-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
     },
     {
-      "content_sha256_lf": "995331a19f92a450cc2bb95d3f88fb64d31fd00b27ef692bdda8a8759a8d4eed",
+      "content_sha256_lf": "1167a8b75d79aaa901977c053171909c61d907bd334c274e1055cad6c75969c9",
       "entry_count": 3,
       "package": "rust_core/file_watcher",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "2c12ba1ea2e34803f8c16095da1f04b15a4431deba9917d35d8b3d84afc74ec3",
+      "content_sha256_lf": "3816e02ae994520111034823253104b680e665bcdaddfacee654bf7191997943",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -159,8 +159,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "3ab7c39b8b2d85621b721ea9b4855c9fecaea5e62bb15d976e730084ff9172b8",
-      "entry_count": 85,
+      "content_sha256_lf": "e343dc618b87964f53dced74cee85165a307618ebd3ab5e9d5baf5680fefe7ea",
+      "entry_count": 86,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
     },
@@ -171,7 +171,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-shared-scripts.json"
     },
     {
-      "content_sha256_lf": "bf273ae4dc1484883b7f5022dd95e57a307629947d682bf86d8aad073ea0a644",
+      "content_sha256_lf": "c7dfda2ae065d62e5775ea6e284cae2f20f742dd3fc66e531a44008e6ce3fe9d",
       "entry_count": 1,
       "package": "src",
       "path": "manuals/tools/manifests/module-inventory/entries-src.json"
@@ -381,8 +381,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-optimizer-gui.json"
     },
     {
-      "content_sha256_lf": "f9c67d7e4b7f0644d04fb928a3e280e0f31cfb6e49f755291e7a5a29286d8ce3",
-      "entry_count": 252,
+      "content_sha256_lf": "a3017d4176ae4f26244f9e7dc1965e147cb0b2cba5f5bbeb3a1e16f9de691063",
+      "entry_count": 253,
       "package": "src/p1am_control_system",
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
     },
@@ -429,7 +429,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-python.json"
     },
     {
-      "content_sha256_lf": "5b463d1e969f11ab3cbef6be3b6335f52033b299a4bb16eda2b170cc77fcadd5",
+      "content_sha256_lf": "cebf650bf8de60a9744df134af4bd7abd19a351501608bc00a7dd5c8db893cc4",
       "entry_count": 59,
       "package": "src/rate_of_closure",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure.json"
@@ -459,13 +459,13 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-scripts.json"
     },
     {
-      "content_sha256_lf": "29dd45f97608d0f6bb3ebc186ab253ffe936a04f49db2a38075f1bbbe2b16f98",
+      "content_sha256_lf": "9b9efbd4a1ef9f4007cc702d2d8beb662b10be21c5268a574505e7ed6f61f85f",
       "entry_count": 32,
       "package": "src/rate_of_closure/simulation",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-simulation.json"
     },
     {
-      "content_sha256_lf": "0349051cebddf3bc9ef9043fe2b13e384b710d1be0f61452b8f4b839304a007c",
+      "content_sha256_lf": "0eee7d59f727af1bbf29adff95ce2894b929af94f5bca5f3bf04cec5d8b65a84",
       "entry_count": 189,
       "package": "src/rate_of_closure/ui",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-ui.json"
@@ -483,7 +483,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web.json"
     },
     {
-      "content_sha256_lf": "d91e33067aec8f140dea6cee42c090c2f9491b7ff9af7225d34c25e4168b0e73",
+      "content_sha256_lf": "dae15c427258b8f1332f4576a58b01ba3498042fb7dca91aab0f278278250ebb",
       "entry_count": 16,
       "package": "src/rate_of_closure/web/e2e",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-e2e.json"
@@ -507,7 +507,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src.json"
     },
     {
-      "content_sha256_lf": "2d1d4d19909a7d782c8968dbdb001e494508145c0dba3d985f46139d624e7ef3",
+      "content_sha256_lf": "d42362f9d4fb551c87636bbc77f89a9dca6c1f89182ff2d24a063d13585f539f",
       "entry_count": 180,
       "package": "src/rate_of_closure/web/src/components",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-components.json"
@@ -519,7 +519,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-hooks.json"
     },
     {
-      "content_sha256_lf": "a94f4c152406836342a11a935eea609802c355de21f6c0070b0be50e706b8ae5",
+      "content_sha256_lf": "2703435a37d350d374be321e0e037d7b81c913d5a9b5d1af7c8e52221cccbe05",
       "entry_count": 400,
       "package": "src/rate_of_closure/web/src/model",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-model.json"
@@ -579,7 +579,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "5b9afe3dd911454574b19ef847d1ddf675b690d4893fa038885e041c58b52265",
+      "content_sha256_lf": "122c250b8edead1a4071b101bce464f90193632e9bc5236011e4bbb508429650",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
@@ -597,7 +597,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-calc-backend.json"
     },
     {
-      "content_sha256_lf": "37ecf822a9f8669e223a8efe641e118b6e14aa9b1a207169d68958498b6311e3",
+      "content_sha256_lf": "5b6ca60c632fde80c09d7834d47742365b75d4662209bce8d532f9e22b49f1cc",
       "entry_count": 48,
       "package": "src/shared/python/chat",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-chat.json"
@@ -657,7 +657,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-humanoid-character-builder.json"
     },
     {
-      "content_sha256_lf": "f03e1d6f2a30f9e04c3ed662178b39a2a67192d375c3110f10f000acaa4701c4",
+      "content_sha256_lf": "7f0dba43059779a512113a11283f78d9c16ab5948860770a14373e07c8174685",
       "entry_count": 29,
       "package": "src/shared/python/launch_monitor",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-launch-monitor.json"
@@ -723,7 +723,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-scripting.json"
     },
     {
-      "content_sha256_lf": "e8c065908636a8df59593650b720a13958d51c05afddc0f1a74ecc183310e3af",
+      "content_sha256_lf": "eba15c7c22bc2c2efc79000e366f4b401901bb5af4fcd18b70f12a9ae33ff1d5",
       "entry_count": 215,
       "package": "src/shared/python/sidekick",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick.json"
@@ -735,7 +735,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-signal-toolkit.json"
     },
     {
-      "content_sha256_lf": "50f9d130df175b788676254bd3a6df6e0cc141f82edadcd7a1a80eff4b56be7f",
+      "content_sha256_lf": "e34d836cc463afb2379624bbcb576ebf9e0df8fc069ae395822ddfdd35c667e0",
       "entry_count": 215,
       "package": "src/shared/python/swing_sim",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim.json"

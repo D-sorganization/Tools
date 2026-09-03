@@ -5118,7 +5118,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0047-trajectory-visualization-shared-wire-preserved-viewers.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -5243,7 +5243,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0047-trajectory-visualization-shared-wire-preserved-viewers.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -5308,7 +5308,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0047-trajectory-visualization-shared-wire-preserved-viewers.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -5374,7 +5374,8 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0045-putting-integration-one-experience-two-preserved-stacks.md",
+          "docs/adr/ADR-0047-trajectory-visualization-shared-wire-preserved-viewers.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],

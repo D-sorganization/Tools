@@ -27,12 +27,7 @@ def _build_alarm_engine(config: RoutingConfig) -> scada_fallback.AlarmEngine:
     """Mirror of ``main.build_alarm_engine`` over the pure-Python fallback."""
     return scada_fallback.AlarmEngine(
         {
-            tag_name: {
-                "lolo": interlock.lolo_limit,
-                "low": interlock.low_limit,
-                "high": interlock.high_limit,
-                "hihi": interlock.hihi_limit,
-            }
+            tag_name: interlock.engine_limits()
             for tag_name, interlock in config.interlocks.items()
         }
     )

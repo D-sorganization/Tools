@@ -35,7 +35,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -939,7 +939,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -1004,7 +1004,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -1077,7 +1077,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -1159,7 +1159,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -1335,7 +1335,9 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0031-launch-monitor-canonical-shot-schema.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md",
+          "docs/adr/ADR-0048-launch-monitor-port-plan.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -1467,7 +1469,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -1579,7 +1581,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -1679,7 +1681,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -1734,7 +1736,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -1837,7 +1839,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -1900,7 +1902,8 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md",
+          "docs/adr/ADR-0048-launch-monitor-port-plan.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -2006,7 +2009,8 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0031-launch-monitor-canonical-shot-schema.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -2072,7 +2076,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -2139,7 +2143,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -2204,7 +2208,8 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0045-putting-integration-one-experience-two-preserved-stacks.md",
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -2304,7 +2309,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -2366,7 +2371,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -2438,7 +2443,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -2493,7 +2498,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -2575,7 +2580,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -2656,7 +2661,8 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md",
+          "docs/adr/ADR-0048-launch-monitor-port-plan.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -2780,7 +2786,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -2869,7 +2875,8 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md",
+          "docs/adr/ADR-0048-launch-monitor-port-plan.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -2937,7 +2944,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -3038,7 +3045,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -3103,7 +3110,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -3278,7 +3285,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
@@ -3350,7 +3357,7 @@
         "adr_paths": [
           "docs/adr/ADR-002-shared-library-module-structure.md",
           "docs/adr/ADR-003-api-stability-policy.md",
-          "docs/adr/ADR-004-ruff-formatter.md"
+          "docs/adr/ADR-0046-launch-monitor-analytics-single-model-layer.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
