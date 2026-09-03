@@ -159,7 +159,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "2b2ca4fca3963c0af2b847f472bab9edb9d4c41ef5263380808edff926f2323c",
+      "content_sha256_lf": "0e75d447cde2e6d607af8969155999ebb945d2c6003b867e8ebc5a3ff1bc3238",
       "entry_count": 91,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
