@@ -59,9 +59,9 @@ def test_workflow_run_workflows_are_the_known_set() -> None:
     deliberately.
     """
     names = {path.name for path in _workflow_run_workflows()}
-    assert (
-        names == set()
-    ), "new workflow_run consumer: extend the guard and this list deliberately"
+    assert names == set(), (
+        "new workflow_run consumer: extend the guard and this list deliberately"
+    )
 
 
 @pytest.mark.parametrize("path", _workflow_run_workflows(), ids=lambda p: p.name)
