@@ -1,68 +1,99 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://schemas.d-sorganization.org/tools/module-inventory/1.0.0.json",
-  "title": "Tools Module Inventory",
+  "title": "Tools Module Inventory (thin index)",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "authority",
     "blockers",
-    "families",
     "hash_contract",
     "producer",
     "release_status",
     "schema_version",
     "scope",
-    "shards",
-    "source_tree_sha256",
-    "summary"
+    "shards"
   ],
   "properties": {
-    "authority": { "const": "D-sorganization/Tools" },
+    "authority": {
+      "const": "D-sorganization/Tools"
+    },
     "blockers": {
       "type": "array",
       "minItems": 1,
-      "items": { "$ref": "#/$defs/blocker" }
+      "items": {
+        "$ref": "#/$defs/blocker"
+      }
     },
     "shards": {
       "type": "array",
       "minItems": 1,
-      "items": { "$ref": "#/$defs/shardDescriptor" }
+      "items": {
+        "$ref": "#/$defs/shardDescriptor"
+      }
     },
-    "families": {
-      "type": "array",
-      "minItems": 1,
-      "items": { "$ref": "#/$defs/family" }
+    "hash_contract": {
+      "$ref": "#/$defs/hashContract"
     },
-    "hash_contract": { "$ref": "#/$defs/hashContract" },
-    "producer": { "$ref": "#/$defs/producer" },
-    "release_status": { "const": "blocked-pathways-required" },
-    "schema_version": { "const": "tools-module-inventory/1.0.0" },
-    "scope": { "$ref": "#/$defs/scope" },
-    "source_tree_sha256": { "$ref": "#/$defs/sha256" },
-    "summary": { "$ref": "#/$defs/summary" }
+    "producer": {
+      "$ref": "#/$defs/producer"
+    },
+    "release_status": {
+      "const": "blocked-pathways-required"
+    },
+    "schema_version": {
+      "const": "tools-module-inventory/1.0.0"
+    },
+    "scope": {
+      "$ref": "#/$defs/scope"
+    }
   },
   "$defs": {
     "authorityStatus": {
-      "enum": ["blocked", "not-applicable", "provisional"]
+      "enum": [
+        "blocked",
+        "not-applicable",
+        "provisional"
+      ]
     },
     "blocker": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "owner", "resolution"],
+      "required": [
+        "id",
+        "owner",
+        "resolution"
+      ],
       "properties": {
-        "id": { "type": "string", "minLength": 1 },
-        "owner": { "type": "string", "minLength": 1 },
-        "resolution": { "type": "string", "minLength": 1 }
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "resolution": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     },
     "classification": {
-      "enum": ["calculation", "non-calculation"]
+      "enum": [
+        "calculation",
+        "non-calculation"
+      ]
     },
-    "count": { "type": "integer", "minimum": 0 },
+    "count": {
+      "type": "integer",
+      "minimum": 0
+    },
     "counts": {
       "type": "object",
-      "additionalProperties": { "$ref": "#/$defs/count" }
+      "additionalProperties": {
+        "$ref": "#/$defs/count"
+      }
     },
     "entry": {
       "type": "object",
@@ -85,48 +116,116 @@
         "traceability"
       ],
       "properties": {
-        "authority_status": { "$ref": "#/$defs/authorityStatus" },
-        "bytes_lf": { "$ref": "#/$defs/count" },
-        "classification": { "$ref": "#/$defs/classification" },
-        "classification_basis": { "type": "string", "minLength": 1 },
-        "content_sha256_lf": { "$ref": "#/$defs/sha256" },
-        "family": { "type": "string", "pattern": "^[a-z0-9-]+$" },
-        "id": { "type": "string", "pattern": "^TOOLS-MODULE-[A-Z0-9-]+$" },
-        "language": { "type": "string", "minLength": 1 },
-        "maintainer": { "type": "string", "minLength": 1 },
-        "path": { "type": "string", "minLength": 1 },
-        "purpose": { "type": ["string", "null"] },
-        "review_status": { "$ref": "#/$defs/reviewStatus" },
-        "risk_tags": { "$ref": "#/$defs/stringArray" },
-        "states": { "$ref": "#/$defs/states" },
-        "traceability": { "$ref": "#/$defs/traceability" }
+        "authority_status": {
+          "$ref": "#/$defs/authorityStatus"
+        },
+        "bytes_lf": {
+          "$ref": "#/$defs/count"
+        },
+        "classification": {
+          "$ref": "#/$defs/classification"
+        },
+        "classification_basis": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content_sha256_lf": {
+          "$ref": "#/$defs/sha256"
+        },
+        "family": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^TOOLS-MODULE-[A-Z0-9-]+$"
+        },
+        "language": {
+          "type": "string",
+          "minLength": 1
+        },
+        "maintainer": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "purpose": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "review_status": {
+          "$ref": "#/$defs/reviewStatus"
+        },
+        "risk_tags": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "states": {
+          "$ref": "#/$defs/states"
+        },
+        "traceability": {
+          "$ref": "#/$defs/traceability"
+        }
       }
     },
     "family": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["classification", "id", "maintainer", "rationale"],
+      "required": [
+        "classification",
+        "id",
+        "maintainer",
+        "rationale"
+      ],
       "properties": {
-        "classification": { "$ref": "#/$defs/classification" },
-        "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
-        "maintainer": { "type": "string", "minLength": 1 },
-        "rationale": { "type": "string", "minLength": 1 }
+        "classification": {
+          "$ref": "#/$defs/classification"
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "maintainer": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     },
     "hashContract": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["algorithm", "line_endings", "tree_encoding"],
+      "required": [
+        "algorithm",
+        "line_endings",
+        "tree_encoding"
+      ],
       "properties": {
-        "algorithm": { "const": "sha256" },
-        "line_endings": { "const": "CRLF-and-CR-normalized-to-LF" },
-        "tree_encoding": { "const": "path-colon-content_sha256_lf-newline" }
+        "algorithm": {
+          "const": "sha256"
+        },
+        "line_endings": {
+          "const": "CRLF-and-CR-normalized-to-LF"
+        },
+        "tree_encoding": {
+          "const": "path-colon-content_sha256_lf-newline"
+        }
       }
     },
     "producer": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["generator_path", "schema_path"],
+      "required": [
+        "generator_path",
+        "schema_path"
+      ],
       "properties": {
         "generator_path": {
           "const": "scripts/build_tools_module_inventory.py"
@@ -139,27 +238,57 @@
     "publicSurface": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["kind", "name", "signature"],
+      "required": [
+        "kind",
+        "name",
+        "signature"
+      ],
       "properties": {
-        "kind": { "type": "string", "minLength": 1 },
-        "name": { "type": "string", "minLength": 1 },
-        "signature": { "type": ["string", "null"] }
+        "kind": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "signature": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
       }
     },
     "reviewStatus": {
-      "enum": ["blocked", "inventory-baseline", "review-required"]
+      "enum": [
+        "blocked",
+        "inventory-baseline",
+        "review-required"
+      ]
     },
     "scope": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["discovery", "exclusions", "roots", "suffixes"],
+      "required": [
+        "discovery",
+        "exclusions",
+        "roots",
+        "suffixes"
+      ],
       "properties": {
         "discovery": {
           "const": "tracked-implementation-and-governed-configuration-modules"
         },
-        "exclusions": { "$ref": "#/$defs/stringArray" },
-        "roots": { "$ref": "#/$defs/nonEmptyStringArray" },
-        "suffixes": { "$ref": "#/$defs/nonEmptyStringArray" }
+        "exclusions": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "roots": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        },
+        "suffixes": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        }
       }
     },
     "shardDescriptor": {
@@ -168,24 +297,32 @@
       "required": [
         "content_sha256_lf",
         "entry_count",
-        "first_path",
-        "last_path",
-        "path",
-        "shard_index"
+        "package",
+        "path"
       ],
       "properties": {
-        "content_sha256_lf": { "$ref": "#/$defs/sha256" },
-        "entry_count": { "type": "integer", "minimum": 1, "maximum": 200 },
-        "first_path": { "type": "string", "minLength": 1 },
-        "last_path": { "type": "string", "minLength": 1 },
+        "content_sha256_lf": {
+          "$ref": "#/$defs/sha256"
+        },
+        "entry_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "package": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Top-level package key: src/<pkg>, src/shared/python/<pkg>, rust_core/<crate>, or a root directory."
+        },
         "path": {
           "type": "string",
-          "pattern": "^manuals/tools/manifests/module-inventory/entries-[0-9]{3}\\.json$"
-        },
-        "shard_index": { "type": "integer", "minimum": 0 }
+          "pattern": "^manuals/tools/manifests/module-inventory/entries-[a-z0-9-]+\\.json$"
+        }
       }
     },
-    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
     "state": {
       "enum": [
         "blocked",
@@ -213,29 +350,57 @@
         "validation"
       ],
       "properties": {
-        "artifacts": { "$ref": "#/$defs/state" },
-        "adrs": { "$ref": "#/$defs/state" },
-        "chapters": { "$ref": "#/$defs/state" },
-        "citations": { "$ref": "#/$defs/state" },
-        "equation_pathway": { "$ref": "#/$defs/state" },
-        "publication": { "$ref": "#/$defs/state" },
-        "public_surfaces": { "$ref": "#/$defs/state" },
-        "routes": { "$ref": "#/$defs/state" },
-        "tests": { "$ref": "#/$defs/state" },
-        "units": { "$ref": "#/$defs/state" },
-        "validation": { "$ref": "#/$defs/state" }
+        "artifacts": {
+          "$ref": "#/$defs/state"
+        },
+        "adrs": {
+          "$ref": "#/$defs/state"
+        },
+        "chapters": {
+          "$ref": "#/$defs/state"
+        },
+        "citations": {
+          "$ref": "#/$defs/state"
+        },
+        "equation_pathway": {
+          "$ref": "#/$defs/state"
+        },
+        "publication": {
+          "$ref": "#/$defs/state"
+        },
+        "public_surfaces": {
+          "$ref": "#/$defs/state"
+        },
+        "routes": {
+          "$ref": "#/$defs/state"
+        },
+        "tests": {
+          "$ref": "#/$defs/state"
+        },
+        "units": {
+          "$ref": "#/$defs/state"
+        },
+        "validation": {
+          "$ref": "#/$defs/state"
+        }
       }
     },
     "stringArray": {
       "type": "array",
       "uniqueItems": true,
-      "items": { "type": "string", "minLength": 1 }
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
     },
     "nonEmptyStringArray": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
-      "items": { "type": "string", "minLength": 1 }
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
     },
     "summary": {
       "type": "object",
@@ -252,15 +417,34 @@
         "review_status_counts"
       ],
       "properties": {
-        "authority_status_counts": { "$ref": "#/$defs/counts" },
-        "blocked_count": { "$ref": "#/$defs/count" },
-        "calculation_count": { "$ref": "#/$defs/count" },
-        "classification_counts": { "$ref": "#/$defs/counts" },
-        "family_counts": { "$ref": "#/$defs/counts" },
-        "module_count": { "type": "integer", "minimum": 1 },
-        "non_calculation_count": { "$ref": "#/$defs/count" },
-        "provisional_count": { "$ref": "#/$defs/count" },
-        "review_status_counts": { "$ref": "#/$defs/counts" }
+        "authority_status_counts": {
+          "$ref": "#/$defs/counts"
+        },
+        "blocked_count": {
+          "$ref": "#/$defs/count"
+        },
+        "calculation_count": {
+          "$ref": "#/$defs/count"
+        },
+        "classification_counts": {
+          "$ref": "#/$defs/counts"
+        },
+        "family_counts": {
+          "$ref": "#/$defs/counts"
+        },
+        "module_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "non_calculation_count": {
+          "$ref": "#/$defs/count"
+        },
+        "provisional_count": {
+          "$ref": "#/$defs/count"
+        },
+        "review_status_counts": {
+          "$ref": "#/$defs/counts"
+        }
       }
     },
     "traceability": {
@@ -279,24 +463,45 @@
         "validation_paths"
       ],
       "properties": {
-        "adr_paths": { "$ref": "#/$defs/stringArray" },
+        "adr_paths": {
+          "$ref": "#/$defs/stringArray"
+        },
         "artifact_sha256": {
           "type": "array",
           "uniqueItems": true,
-          "items": { "$ref": "#/$defs/sha256" }
+          "items": {
+            "$ref": "#/$defs/sha256"
+          }
         },
-        "chapter_paths": { "$ref": "#/$defs/stringArray" },
-        "citation_refs": { "$ref": "#/$defs/stringArray" },
-        "equation_refs": { "$ref": "#/$defs/stringArray" },
+        "chapter_paths": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "citation_refs": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "equation_refs": {
+          "$ref": "#/$defs/stringArray"
+        },
         "public_surfaces": {
           "type": "array",
-          "items": { "$ref": "#/$defs/publicSurface" }
+          "items": {
+            "$ref": "#/$defs/publicSurface"
+          }
         },
-        "public_routes": { "$ref": "#/$defs/stringArray" },
-        "test_paths": { "$ref": "#/$defs/stringArray" },
-        "unit_mentions": { "$ref": "#/$defs/stringArray" },
-        "validation_paths": { "$ref": "#/$defs/stringArray" }
+        "public_routes": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "test_paths": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "unit_mentions": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "validation_paths": {
+          "$ref": "#/$defs/stringArray"
+        }
       }
     }
-  }
+  },
+  "description": "Thin, package-sharded index (Tools #4818/#4915): envelope metadata plus one descriptor per top-level-package shard. families, summary and source_tree_sha256 are derived from the shards at load time (scripts/tools_module_inventory_storage.py) and are not stored, so PRs touching different packages never conflict on this file."
 }

@@ -1,0 +1,104 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 31,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0fc1abdbbb779cfdff45d08e6e0160a4e069ec6b976961eb9dda6565252f9ab7",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-TOOL-PRO-INIT-PY-A27BB1CC0DE4",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_tool_pro/__init__.py",
+      "purpose": "Folder Tool Pro package.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2165,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "dfcdd8056ecb8801dd788a8225924c823fc15c84c018ee155edd106b0694f19d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-TOOL-PRO-BUILD-EXE-PY-DF75062C8BD6",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_tool_pro/build_exe.py",
+      "purpose": "Build script for Folder Fix Pro v3.0 executable.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "build_exe",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/project_packer/tests/test_build_exe.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/folder_tool_pro",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

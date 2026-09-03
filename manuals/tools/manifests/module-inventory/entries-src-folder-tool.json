@@ -1,0 +1,982 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5839,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "303a66160e5377c321ba4fe926b12601b1a36aa055347921d604f041570962c9",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-TOOL-FOLDERS-TOOL-R0-PY-B2D6D2020734",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_tool/Folders_Tool_r0.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FolderProcessorApp",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_REPO_ROOT",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_archive_ops.py",
+          "tests/folder_tool/test_folder_tool_analysis.py",
+          "tests/folder_tool/test_folder_tool_ui_processing.py",
+          "tests/folder_tool/test_folders_tool_r0.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-TOOL-INIT-PY-38B4CA8D3A66",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_tool/__init__.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8834,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "db07374cf3bfa694ad934e8b48d578d6c5cb6d43430fe0efb2e0fb6db76305f3",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-TOOL-ARCHIVE-OPS-PY-0F2ACCB50105",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_tool/archive_ops.py",
+      "purpose": "ArchiveOperationsMixin -- Archive extraction methods.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ArchiveOperationsMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_archive_ops.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 14929,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f3ed912f2a0e05efbecb7eb27aea7380bb3e780ce314bdb3e82500ae8b342607",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-TOOL-BACKUP-COPY-PY-FCA1D0DC0184",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_tool/backup_copy.py",
+      "purpose": "BackupCopyMixin -- Backup creation and safe file copy methods.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "BackupCopyMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_backup_copy.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8173,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "29a623d618e8e6e9c5b7b14b0c8285c258b213de0f66c6bf36fff7e37bffa98f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-TOOL-FILE-VALIDATION-PY-A9DE9BA73016",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_tool/file_validation.py",
+      "purpose": "FileValidationMixin -- File validation methods for FolderProcessorApp.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FileValidationMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_file_validation.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/folder_tool/test_file_validation.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 17155,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ee39da618c8b841d81f80b9c8c75eb717f072195abcf02a2f315f58edc6324a4",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-TOOL-FOLDER-OPS-PY-BFE1F1C3330F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_tool/folder_ops.py",
+      "purpose": "FolderOperationsMixin -- Folder-level operations for FolderProcessorApp.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FolderOperationsMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_folder_ops.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 14641,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c88c3c9ba677e131aef98b187d34b0c0e868b4927f1bcc07ad05647106acb2f8",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-TOOL-FOLDER-TOOL-ANALYSIS-PY-51DA0C35E05F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_tool/folder_tool_analysis.py",
+      "purpose": "AnalysisMixin -- Analysis report and input validation for FolderProcessorApp.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AnalysisMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_folder_tool_analysis.py"
+        ],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8152,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3bda0c667840df8c655d29bae242537472efb2662c61182a09dec43d43c0be9b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-TOOL-FOLDER-TOOL-ARCHIVE-PY-AC8EAAF6FA5A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_tool/folder_tool_archive.py",
+      "purpose": "ArchiveMixin -- ZIP archive creation for FolderProcessorApp.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ArchiveMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_folder_tool_archive.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 12004,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4c69bf5f4766dc8f547f565e8b873ae114fc471c62739ce6e17dd22356e2d700",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-TOOL-FOLDER-TOOL-CONSTANTS-PY-C60B9E68162B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_tool/folder_tool_constants.py",
+      "purpose": "Constants and validation for the Folder Tool application.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "CHARS_PER_DIALOG_LINE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_CHUNK_SIZE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DIALOG_HEIGHT_OFFSET",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DIALOG_WIDTH_OFFSET",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ICON_SIZES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LINE_HEIGHT_PIXELS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_ARCHIVE_SIZE_RATIO",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_COUNTER_ATTEMPTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_DIALOG_HEIGHT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_DIALOG_WIDTH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_FALLBACK_CONTENT_SIZE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_FILE_SIZE_MB",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_LOG_ENTRIES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_RETRY_ATTEMPTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_STATUS_LENGTH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_TEXT_CONTENT_SIZE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_TITLE_LENGTH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_TITLE_PREVIEW_LENGTH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_UI_UPDATE_FREQUENCY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MIN_DIALOG_HEIGHT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MIN_DIALOG_WIDTH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MIN_FILE_SIZE_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PROGRESS_BACKUP_PERCENT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PROGRESS_INCREMENT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PROGRESS_MAIN_OP_PERCENT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PROGRESS_START_MAIN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PROGRESS_START_ZIP",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PROGRESS_ZIP_PERCENT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_CONSTANTS_METADATA",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "export_constants_documentation",
+            "signature": "output_path: str"
+          },
+          {
+            "kind": "function",
+            "name": "get_constants_info",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "validate_constants",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_folder_tool_constants.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "bar",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1048,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "fbf815e6c531513bd541070666b23456ae0867551e05a3259498665a1e5b0562",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-TOOL-FOLDER-TOOL-FILE-OPS-PY-AE303BA17B41",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_tool/folder_tool_file_ops.py",
+      "purpose": "FileOperationsMixin -- Composite mixin for file operation methods.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FileOperationsMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_folder_tool_file_ops.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6539,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4fd782f6dcf82a625356afc5f3174d6f24b5debdf340ce2d7db1be471599bf2f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-TOOL-FOLDER-TOOL-PROCESSING-PY-89B5DDC1A7E0",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_tool/folder_tool_processing.py",
+      "purpose": "ProcessingMixin -- Processing and reporting methods for FolderProcessorApp.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ProcessingMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_folder_tool_processing.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 28818,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "42cdd940b3a3a2651eb0e7b894b4fe3ec4b021f4a80ed98865d0ce3d2b5b294d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-TOOL-FOLDER-TOOL-UI-PY-EC1E058664FD",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_tool/folder_tool_ui.py",
+      "purpose": "UICreationMixin -- UI widget creation methods for FolderProcessorApp.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "UICreationMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_folder_tool_ui.py"
+        ],
+        "unit_mentions": [
+          "W",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13834,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9632a057d34b41ad9852224a233fbfecd68b7d750afb3fc2057a237d857d8a4e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-TOOL-FOLDER-TOOL-UI-PROCESSING-PY-6EF5F167EA2F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_tool/folder_tool_ui_processing.py",
+      "purpose": "UIProcessingMixin -- UI dialogs, progress, status, threading.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "UIProcessingMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_folder_tool_ui_processing.py"
+        ],
+        "unit_mentions": [
+          "bar"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 528,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b82608b2a3e051143dc654b2389b57d3d57653a6006db98d5b30e79e37cf22fb",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-TOOL-GUI-REGISTRATION-PY-E3DB198A98AF",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_tool/gui_registration.py",
+      "purpose": "GUI registration for Folder Tool.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "GUI_INFO",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_gui_info",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_gui_registration.py",
+          "tests/rate_of_closure/test_gui_registration.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2393,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "26afca8a2232bdbb6e58e4ff6eb630152b24cf657c1a80e26ea3b5dd0fb77f24",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-TOOL-LAUNCH-PYQT6-PY-4AB1999F20C7",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_tool/launch_pyqt6.py",
+      "purpose": "Cross-platform launcher for Folder Tool.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_launch_pyqt6.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/folder_tool",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

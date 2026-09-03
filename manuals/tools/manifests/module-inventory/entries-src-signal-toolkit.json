@@ -1,0 +1,55 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 263,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "962ee517441626a7d79ad13ac02a021f928e4ba3695d0c8034655d5c57362c05",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SIGNAL-TOOLKIT-INIT-PY-4EE7EC57FD46",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/signal_toolkit/__init__.py",
+      "purpose": "Compatibility shim for the canonical ``shared.python.signal_toolkit`` package.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/signal_toolkit/test_signal_loader.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/signal_toolkit",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

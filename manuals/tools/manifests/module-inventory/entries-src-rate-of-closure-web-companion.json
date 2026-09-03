@@ -1,0 +1,630 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 734,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3bf83031bd600207f11b08ff5371edfd48a91a11ca3905f758c4d988f70e5fc8",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-COMPANION-INIT-PY-ECCB53D86EE4",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web_companion/__init__.py",
+      "purpose": "Same-origin source production companion for Rate of Closure.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "AuthoritySupervisor",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CompanionRequest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CompanionRequestRejected",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CompanionRoute",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CompanionRouteKind",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CompanionRuntime",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CompanionWebBundle",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_companion_bundle",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "classify_companion_request",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "create_companion_app",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "start_companion",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9065,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b5aeaf90b685dc17fb03dcab1bb98b4d746b7068dc909712ddc4d62fa8fadb53",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-COMPANION-APP-PY-ED02F6F41AB8",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web_companion/app.py",
+      "purpose": "FastAPI boundary for the same-origin Rate of Closure companion.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_CSP",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_JSON_MEDIA_TYPE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_MAX_DECLARED_BODY_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SECURITY_HEADERS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "create_companion_app",
+            "signature": "*, bundle: CompanionWebBundle, transport: RegionalGroundAuthorityTransport, expected_host: str"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_web_companion_app.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3398,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "663da93ef3bf9e57a74b50be3a30b0953f1869227f1ceffd79ab9561d070f78d",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-COMPANION-BUNDLE-PY-6295627DB0F6",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web_companion/bundle.py",
+      "purpose": "Verified in-memory web bundle with a fixed companion runtime overlay.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CompanionWebBundle",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SCRIPT_END",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SCRIPT_START",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_companion_bundle",
+            "signature": "bundle: ResolvedWebBundle"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/browser_companion_harness.py",
+          "tests/rate_of_closure/test_web_companion_app.py",
+          "tests/rate_of_closure/test_web_companion_bundle.py",
+          "tests/rate_of_closure/test_web_companion_runtime.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 453,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "71f71ebdefc4ee0f5a261fc827e17a0894dfad71b97acc4b1a1b8955df23464f",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-COMPANION-CLI-PY-80D35FCEEC0A",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web_companion/cli.py",
+      "purpose": "Console entry point for the source production web companion.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8106,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "81b8d0f75b6ba2c0bb3213fb7288bf63e8483590c0b8769f623974cb9ffbc940",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-COMPANION-CONTRACTS-PY-E9C79D06B82A",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web_companion/contracts.py",
+      "purpose": "Pure fail-closed request routing for the same-origin companion.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://{expected_host"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CompanionApiOperation",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CompanionRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CompanionRequestRejected",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CompanionRoute",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CompanionRouteKind",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_CANCEL_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_FORBIDDEN_HEADERS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_MAX_ERROR_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_MAX_RAW_PATH_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_PORTABLE_ASSET",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_RESULT_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_STABLE_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_STATUS_PATH",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "classify_companion_request",
+            "signature": "request: CompanionRequest, *, expected_host: str"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
+          "src/shared/python/model_generation/tests/test_contracts.py",
+          "tests/rate_of_closure/test_contracts.py",
+          "tests/rate_of_closure/test_web_companion_contracts.py",
+          "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
+          "tests/shared/python/test_contracts.py",
+          "tests/unit/ai/mcp/test_contracts.py",
+          "tests/unit/ai/peer_review/test_contracts.py",
+          "tests/unit/ai/skills/test_contracts.py",
+          "tests/unit/test_contracts.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
+          "src/shared/python/model_generation/tests/test_contracts.py",
+          "tests/rate_of_closure/test_contracts.py",
+          "tests/rate_of_closure/test_web_companion_contracts.py",
+          "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
+          "tests/shared/python/test_contracts.py",
+          "tests/unit/ai/mcp/test_contracts.py",
+          "tests/unit/ai/peer_review/test_contracts.py",
+          "tests/unit/ai/skills/test_contracts.py",
+          "tests/unit/test_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3963,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "bb69c568f60b3ca5b6325a4331ca738eb49c4a3e6451a40f912d5db31ebc4230",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-COMPANION-RESPONSE-CONTRACT-PY-85C0CC496C3F",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web_companion/response_contract.py",
+      "purpose": "Strict authority-response validation before public gateway publication.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "validate_authority_response",
+            "signature": "route: CompanionRoute, *, status: int, media_type: str, body: bytes"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6194,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "49b80097fb96b96b3433e738b8bec175ca2205d18c4e6b40356145e726879241",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-COMPANION-RUNTIME-PY-74F14D22C484",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web_companion/runtime.py",
+      "purpose": "Owned loopback lifecycle for the source production web companion.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://{LOOPBACK_HOST"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CompanionRuntime",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_COMMIT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_REQUEST_TIMEOUT_S",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SHUTDOWN_TIMEOUT_S",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_STARTUP_TIMEOUT_S",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "start_companion",
+            "signature": "*, bundle: CompanionWebBundle | None=None, state_root: Path | None=None, open_browser: bool=True, authority_app_factory: str=DEFAULT_AUTHORITY_APP_FACTORY"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/browser_companion_harness.py",
+          "tests/rate_of_closure/test_web_companion_runtime.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2723,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "891628b8eb3045417d2ef95c3c6279679563df243e8ecd671750414b35e4d200",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-COMPANION-SUPERVISOR-PY-E0CB711C7CF9",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web_companion/supervisor.py",
+      "purpose": "Single-flight authority replacement without automatic request replay.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AuthoritySupervisor",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/rate_of_closure/web_companion",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

@@ -1,0 +1,234 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 0,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-BENCHMARKS-INIT-PY-C154EEE9DECB",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "benchmarks/__init__.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1319,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e9078fd68a3fac3b9dcc934ed17b004f9b56dee02b58ffbca1078201656fa2dc",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-BENCHMARKS-BENCHMARK-JS-79715DAD7894",
+      "language": "javascript",
+      "maintainer": "Tools module maintainers",
+      "path": "benchmarks/benchmark.js",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1742,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9a926cd9fb0bf444c8d97bfe0fb13613256b188a2be85ec4ad3fd278befe8dd8",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-BENCHMARKS-BENCHMARK-LR-JS-BA8BB131B7D1",
+      "language": "javascript",
+      "maintainer": "Tools module maintainers",
+      "path": "benchmarks/benchmark_lr.js",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10901,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "128718c477d83debe170b12f5463474bf0160e1643c2ac79da1865e97941065e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-BENCHMARKS-RUN-BASELINE-CAPTURE-PY-61A54606EAE3",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "benchmarks/run_baseline_capture.py",
+      "purpose": "Standalone baseline capture script for issue #2989 Phase 1.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_NUM_SIGNALS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_REPEATS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_REPO_ROOT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SCALES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SEED",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "bench_csv_full_load",
+            "signature": "csv_paths: dict[int, Path], loader: DataLoader"
+          },
+          {
+            "kind": "function",
+            "name": "bench_csv_schema_preview",
+            "signature": "csv_paths: dict[int, Path]"
+          },
+          {
+            "kind": "function",
+            "name": "bench_filter_export",
+            "signature": "csv_paths: dict[int, Path]"
+          },
+          {
+            "kind": "function",
+            "name": "bench_memory_peak_csv",
+            "signature": "csv_paths: dict[int, Path]"
+          },
+          {
+            "kind": "function",
+            "name": "bench_parquet_full_load",
+            "signature": "parquet_paths: dict[int, Path]"
+          },
+          {
+            "kind": "function",
+            "name": "bench_ui_latency",
+            "signature": "csv_paths: dict[int, Path]"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "ms"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "benchmarks",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

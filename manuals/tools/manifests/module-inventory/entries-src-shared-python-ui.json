@@ -1,0 +1,247 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2031,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "78a92af3dc4830eb2f169a6a56018dadf3182c31c77554f00a28c896907494c7",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-UI-INIT-PY-5BDC8A3F65E9",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ui/__init__.py",
+      "purpose": "UI components for Golf Modeling Suite.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "apply_window_icon",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "resolve_icon_path",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "set_app_user_model_id",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2620,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a1e29015fc67bfd9b34e950e7637e99b94df0214e5e7d7a40c346e69fac6cbec",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-UI-AUTO-COMPLETE-PY-1155BA3AC432",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ui/auto_complete.py",
+      "purpose": "Auto-completing line edit and text edit widgets.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AutoCompleteLineEdit",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/tests/ui/test_auto_complete.py",
+          "tests/shared/python/ui/test_headless_import.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4960,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7ce092a3d94b2bac64aa5386b37ab2ac17acd7028ef161c81aa66a03545c6f6f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-UI-HOVER-COPY-BROWSER-PY-E31EE3500A22",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ui/hover_copy_browser.py",
+      "purpose": "Custom QTextBrowser with hover copy to clipboard capability.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "HoverCopyTextBrowser",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/tests/ui/test_hover_copy_browser.py",
+          "tests/shared/python/ui/test_headless_import.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6562,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9b8a63952858d19ace109e571ec548bf2f2d25af33a0eb2ab8fe1b506430b9b9",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-UI-WINDOW-ICON-PY-474BF1418F34",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ui/window_icon.py",
+      "purpose": "Cross-platform window-icon and taskbar-identity helpers.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "apply_window_icon",
+            "signature": "*, app: Any, window: Any, icon_candidates: Sequence[str | Path], app_id: str | None=None, icon_factory: Callable[[str], Any] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "resolve_icon_path",
+            "signature": "candidates: Iterable[str | Path]"
+          },
+          {
+            "kind": "function",
+            "name": "set_app_user_model_id",
+            "signature": "app_id: str"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/ui/test_window_icon.py"
+        ],
+        "unit_mentions": [
+          "bar",
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/shared/python/ui",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

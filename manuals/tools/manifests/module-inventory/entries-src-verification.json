@@ -1,0 +1,216 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 23,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ff69ebfc3e42dac7b73cb235586b90e570a3463bd17b74413bb94c1abf7bb74e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VERIFICATION-INIT-PY-A9DF39B75A04",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/verification/__init__.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2375,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2694ace6887e710d5da1b3345dfdf0d7472cbc138870ba93513a97e0da0c07da",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VERIFICATION-VERIFY-A11Y-PY-8066B4665CA5",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/verification/verify_a11y.py",
+      "purpose": "Accessibility verification script for Gas Density and Custom Unit inputs.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "mapped",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://localhost:8080"
+        ],
+        "equation_refs": [],
+        "public_routes": [
+          "verification/verification.png"
+        ],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "verify_a11y",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/verification/test_verification_lod.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2034,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a5df859a3118994f125273b07b40008ffb8b54bf4fef753c713b1d0fd8d86194",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VERIFICATION-VERIFY-PALETTE-PY-D6395AE10222",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/verification/verify_palette.py",
+      "purpose": "Verification script for Unit Converter accessibility and shortcut hints.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "mapped",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [
+          "verification/shortcut_hint.png"
+        ],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "run",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/verification/test_verification_lod.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2186,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8a1559c38160ef3581aa29a74beafb3ef4c677b0645add0d35dfb772f90bdb59",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VERIFICATION-VERIFY-PALETTE-FINAL-PY-50AFFCD19145",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/verification/verify_palette_final.py",
+      "purpose": "Final verification script for Unit Converter accessibility attributes and keyboard shortcuts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "mapped",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [
+          "verification/shortcut_hint_final.png"
+        ],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "run",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/verification/test_verification_lod.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/verification",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

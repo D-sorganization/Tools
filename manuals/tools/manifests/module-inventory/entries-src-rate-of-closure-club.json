@@ -1,0 +1,1166 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5127,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cf40586bbc59d2b9282f89b294243c60a67caf9f4b6e3be0e842e777e37ab706",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-CLUB-INIT-PY-7968F037DD15",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/club/__init__.py",
+      "purpose": "Club modeling: specs, library, inertia, and parametric head geometry.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "CLUB_LIBRARY",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ClubInertia",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ClubSpec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ClubType",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CogReport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "HeadStyle",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "REFERENCE_HEAD_MASS_KG",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_parametric_head",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "club_inertia",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "club_names",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "default_clubhead_stl_filename",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "face_center_point",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "face_normal_at_offset",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "face_sagitta",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_club",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "head_cog",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "hosel_point",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "is_watertight",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "mesh_volume_centroid",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "parametric_head_mesh",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "serialize_clubhead_stl",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "write_clubhead_stl_atomic",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10203,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0aca25055a28031633067fbe8bcf35aceadb79a7419a9ddad0b00dfeba7be727",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-CLUB-ASSEMBLY-BINDING-IO-PY-B5799E5F4805",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/club/_assembly_binding_io.py",
+      "purpose": "Version-one JSON I/O for selected-spec ClubAssembly bindings.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "kg"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1694,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "05151e0b5c45c693282056bf194bc32a2c4a909f4e24b7068d0d1eddd82a6e62",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-CLUB-ATOMIC-FILE-PY-FF43AD248F08",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/club/_atomic_file.py",
+      "purpose": "Internal same-directory atomic byte replacement for club artifacts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "write_bytes_atomic",
+            "signature": "payload: bytes, path: str | Path"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11327,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ede1786b34eebeac4b8d667ba910bc73d2c3dca7fb279e9c279cab7c56d99fc5",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-CLUB-ASSEMBLY-BINDING-PY-D45782AE5A66",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/club/assembly_binding.py",
+      "purpose": "Strict identity and provenance binding to a shared golf-club assembly.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ClubAssemblyBinding",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ClubAssemblySourceAuthority",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MassPropertyAuthorityKind",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CLUB_ASSEMBLY_BINDING_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CLUB_SPEC_IDENTITY_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_BINDING_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SELECTED_HEAD_FRAME_ID",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_club_assembly_binding",
+            "signature": "*, spec: ClubSpec, assembly: ClubAssembly, authority: ClubAssemblySourceAuthority, head_component_id: str, head_component_from_selected_head: RigidTransform"
+          },
+          {
+            "kind": "function",
+            "name": "club_assembly_identity",
+            "signature": "assembly: ClubAssembly"
+          },
+          {
+            "kind": "function",
+            "name": "club_assembly_identity_payload",
+            "signature": "assembly: ClubAssembly"
+          },
+          {
+            "kind": "function",
+            "name": "club_spec_identity",
+            "signature": "spec: ClubSpec"
+          },
+          {
+            "kind": "function",
+            "name": "club_spec_identity_payload",
+            "signature": "spec: ClubSpec"
+          },
+          {
+            "kind": "function",
+            "name": "parse_club_assembly_binding",
+            "signature": "spec: ClubSpec, payload: str | bytes"
+          },
+          {
+            "kind": "function",
+            "name": "serialize_club_assembly_binding",
+            "signature": "binding: ClubAssemblyBinding"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_club_assembly_binding.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13744,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5d6e3628b1ab90895a70d93a05ffed520127956abbb3177285f2f096f73a03f3",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-CLUB-ENGINEERING-SIDECAR-PY-A6A89DB47B3A",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/club/engineering_sidecar.py",
+      "purpose": "Strict engineering sidecar for the selected representative clubhead.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "CLUBHEAD_ENGINEERING_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CLUBHEAD_ENGINEERING_MEDIA_TYPE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_clubhead_engineering_sidecar",
+            "signature": "spec: ClubSpec, binding: ClubAssemblyBinding | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "default_clubhead_engineering_filename",
+            "signature": "spec: ClubSpec"
+          },
+          {
+            "kind": "function",
+            "name": "serialize_clubhead_engineering_sidecar",
+            "signature": "spec: ClubSpec, binding: ClubAssemblyBinding | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "write_clubhead_engineering_sidecar_atomic",
+            "signature": "spec: ClubSpec, path: str | Path, binding: ClubAssemblyBinding | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_club_assembly_binding.py",
+          "tests/rate_of_closure/test_clubhead_engineering_sidecar.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3848,
+      "classification": "calculation",
+      "classification_basis": "path-marker:geometry",
+      "content_sha256_lf": "80614ff0d5836bf43f6eb618fd0932cc72f199f26a473c8f2f819a47b5e93afd",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-CLUB-GEOMETRY-PY-B7ADF05E2739",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/club/geometry.py",
+      "purpose": "Shared superellipse-loft mesh helpers.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "RING_POINTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SUPERELLIPSE_EXPONENT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "cap_fan",
+            "signature": "center: np.ndarray, ring: np.ndarray, outward_x: bool"
+          },
+          {
+            "kind": "function",
+            "name": "loft_band",
+            "signature": "ring_a: np.ndarray, ring_b: np.ndarray, flip: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "superellipse_ring",
+            "signature": "x: float, half_height: float, half_width: float, points: int=RING_POINTS, exponent: float=SUPERELLIPSE_EXPONENT"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/programmatic_pid/tests/test_geometry.py",
+          "tests/programmatic_pid/test_geometry.py",
+          "tests/rate_of_closure/test_club.py",
+          "tests/rate_of_closure/test_club_heads.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 12542,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7017b8151f3f59a7d53b35f2a02103c454cdeb8b8c2f2ddf91fdbd8fd16e857e",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-CLUB-HEAD-PROFILES-PY-56C0CB8FD437",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/club/head_profiles.py",
+      "purpose": "Type-specific head profiles: cross-sections, hosel, face center (H1, #4125).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "HeadProfile",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BLADE_HOSEL_HEIGHT_FRACTION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PLUMBER_NECK_OFFSET_M",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "face_center_point",
+            "signature": "spec: ClubSpec"
+          },
+          {
+            "kind": "function",
+            "name": "hosel_point",
+            "signature": "spec: ClubSpec"
+          },
+          {
+            "kind": "function",
+            "name": "leading_edge_height",
+            "signature": "spec: ClubSpec"
+          },
+          {
+            "kind": "function",
+            "name": "lean_point",
+            "signature": "spec: ClubSpec, point: tuple[float, float, float]"
+          },
+          {
+            "kind": "function",
+            "name": "mass_scale",
+            "signature": "spec: ClubSpec"
+          },
+          {
+            "kind": "function",
+            "name": "profile_for",
+            "signature": "spec: ClubSpec"
+          },
+          {
+            "kind": "function",
+            "name": "resolved_style",
+            "signature": "spec: ClubSpec"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_club_heads.py",
+          "tests/rate_of_closure/test_club_profile_acceptance.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "mm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 4322,
+      "classification": "calculation",
+      "classification_basis": "path-marker:inertia",
+      "content_sha256_lf": "880f8a4bfecc781e94d62ad63a42ff9b1b9de45c92f1fd2d177925de40d5d5d1",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-CLUB-INERTIA-PY-813055346ED5",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/club/inertia.py",
+      "purpose": "Composite club inertial model: head + shaft + grip.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ClubInertia",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_GRIP_MASS_KG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_SHAFT_MASS_KG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GRIP_LENGTH_M",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GRIP_TUBE_RADIUS_M",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SHAFT_TUBE_RADIUS_M",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "club_inertia",
+            "signature": "spec: ClubSpec, shaft_mass_kg: float=DEFAULT_SHAFT_MASS_KG, grip_mass_kg: float=DEFAULT_GRIP_MASS_KG"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_club.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "mm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6027,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e0df479295e3e1c90252feba39f2744b2fd9dc6f1ee0f7a9e0ec8af017dcf05c",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-CLUB-LIBRARY-PY-929760CA8385",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/club/library.py",
+      "purpose": "A 16-club reference library in SI units.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "CLUB_LIBRARY",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "club_names",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "get_club",
+            "signature": "name: str"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/model_generation/tests/test_library.py",
+          "tests/rate_of_closure/test_club_mesh_inertia.py"
+        ],
+        "unit_mentions": [
+          "cm",
+          "g",
+          "kg",
+          "mm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11750,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c56dedda595fc275ef7113a555a6440938e08fa751c6c2bf3c9d69d7628ad33a",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-CLUB-PARAMETRIC-HEAD-PY-D3457B92491D",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/club/parametric_head.py",
+      "purpose": "Parametric clubhead meshes from a :class:`ClubSpec` — bulge & roll.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "BASE_SECTIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REFERENCE_HEAD_MASS_KG",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_parametric_head",
+            "signature": "spec: ClubSpec"
+          },
+          {
+            "kind": "function",
+            "name": "face_normal_at_offset",
+            "signature": "spec: ClubSpec, toe_mm: float, high_mm: float"
+          },
+          {
+            "kind": "function",
+            "name": "face_sagitta",
+            "signature": "spec: ClubSpec, toe_m: float, high_m: float"
+          },
+          {
+            "kind": "function",
+            "name": "parametric_head_mesh",
+            "signature": "spec: ClubSpec"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_club_heads.py",
+          "tests/rate_of_closure/test_club_mesh_inertia.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 7095,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "efc62230cc2a9061a9705ed42605544fff51b6960d1f48b935ceb563153e274f",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-CLUB-SIMULATION-ADAPTER-PY-826B5AD5AC97",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/club/simulation_adapter.py",
+      "purpose": "Strict ClubAssembly binding adapter for the impact-solver boundary.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ClubAssemblyImpactInputs",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SimulationCapabilityUse",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WorldFromHeadAttitude",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "APP_FRAME_ID",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "adapt_club_assembly_for_impact",
+            "signature": "spec: ClubSpec, binding: ClubAssemblyBinding | None, attitude: WorldFromHeadAttitude | None"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2862,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "907dc8934fec37fc9a36dc97d9790bdccb6560c8b1112a65a965d774cd62f4e1",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-CLUB-STL-EXPORT-PY-16245BD49B18",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/club/stl_export.py",
+      "purpose": "Portable STL serialization for selected parametric club specifications.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "default_clubhead_stl_filename",
+            "signature": "spec: ClubSpec"
+          },
+          {
+            "kind": "function",
+            "name": "serialize_clubhead_stl",
+            "signature": "spec: ClubSpec"
+          },
+          {
+            "kind": "function",
+            "name": "write_clubhead_stl_atomic",
+            "signature": "spec: ClubSpec, path: str | Path"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "mm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5365,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7abfd502f48d4b53f9d4e3dc3068f16d512cc3a46ece0d973d79a1d7bc1353ab",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-CLUB-TYPES-PY-1003F2F87407",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/club/types.py",
+      "purpose": "Club specification types — SI units throughout.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ClubSpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ClubType",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HeadStyle",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SPEC_BOUNDS",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "cm",
+          "g",
+          "kg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5009,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f63f066101031726ed02ed7e697261e6e65fc3cd7f5ca7ec4891698c1a9cb609",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-CLUB-VOLUMETRICS-PY-70B2BD594B54",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/club/volumetrics.py",
+      "purpose": "Closed-mesh volume and centroid via the divergence theorem (H1, #4125).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CogReport",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "HEAD_VOLUME_BOUNDS_M3",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "head_cog",
+            "signature": "spec: ClubSpec"
+          },
+          {
+            "kind": "function",
+            "name": "is_watertight",
+            "signature": "triangles: np.ndarray"
+          },
+          {
+            "kind": "function",
+            "name": "mesh_volume_centroid",
+            "signature": "triangles: np.ndarray"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_club_profile_acceptance.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/rate_of_closure/club",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

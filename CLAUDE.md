@@ -139,6 +139,8 @@ To ensure API stability for downstream consumers, the `sidekick` codebase adhere
    ```bash
    python3 -m pytest tests/test_sidekick_public_api_stability.py --regenerate-api-baseline
    ```
+5. **Every vendored package, not just sidekick (Tools #4920):** `theme`, `plot_theme`, `golf_club`, `swing_sim`, `launch_monitor`, `contracts` and `safe_eval` have baselines under `tests/api_baselines/` guarded by `tests/test_shared_package_api_stability.py`. Removing a public symbol or changing a signature fails CI; a breaking change must bump the baseline **in the same PR** (`python3 -m pytest tests/test_shared_package_api_stability.py --regenerate-api-baseline`), carry the conventional `!` marker in the PR title (the changelog is generated from it) and link the UpstreamDrift / Gasification_Model migration issues.
+6. **Consumption:** every GitHub release attaches the `ud_tools-<version>-py3-none-any.whl` wheel and a CycloneDX SBOM (`release.yml`), and every push to `main` uploads a `tools-wheel-<sha>` workflow artifact, so downstream repos pin by version or by commit instead of vendoring.
 
 ## Cross-Repo Dependencies
 

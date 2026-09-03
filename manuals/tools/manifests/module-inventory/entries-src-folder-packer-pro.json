@@ -1,0 +1,904 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 626,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b2c592fbde4fda00f8ad4f47bb7ff10422c14715383f0e0afcec9ca01d3b2656",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-PACKER-PRO-INIT-PY-A87E5FE532B2",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_packer_pro/__init__.py",
+      "purpose": "Folder Packer Pro package.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "EncryptionManager",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PackageManifest",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 15687,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9aecfe3dff7ebfe8a96137982b59f65cfeecbc48cf0db3e32e4f6b57641314ad",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-PACKER-PRO-APP-PY-132179C06414",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_packer_pro/app.py",
+      "purpose": "Main application for Folder Packer Pro.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FolderPackerPro",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "bar"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2549,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4a95921c14a732977a01511925661578a04ca84f21fb01dbd7cb98f853514b1f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-PACKER-PRO-BUILD-EXE-PY-2E47E3E6299D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_packer_pro/build_exe.py",
+      "purpose": "Build script for Folder Packer Pro v2.0 executable.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "build_exe",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/project_packer/tests/test_build_exe.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2684,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "94b7c4f0ea82c279eb7288b52b0809315e0d121489259a7f3d108178aa35f08f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-PACKER-PRO-CONSTANTS-PY-2848D2E83277",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_packer_pro/constants.py",
+      "purpose": "Constants for Folder Packer Pro.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "CODE_EXTENSIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "COMPRESSION_LEVELS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CONFIG_EXTENSIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DARK_THEME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_EXCLUDE_PATTERNS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LIGHT_THEME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LOG_FILENAME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MARKUP_EXTENSIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_FILE_SIZE_MB",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MIN_WINDOW_HEIGHT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MIN_WINDOW_WIDTH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PADDING_LARGE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PADDING_MEDIUM",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PADDING_SMALL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "WINDOW_HEIGHT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "WINDOW_WIDTH",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/test_folder_packer_pro.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5687,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "fa750009e94d065291fd165970fa26cc8621b8b5ab7825ad3bf7e4ab534c7f54",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-PACKER-PRO-DIALOGS-PY-57AFB8CCB1A1",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_packer_pro/dialogs.py",
+      "purpose": "Dialog windows for Folder Packer Pro.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DialogsMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2273,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d6cdaca98dbd92cd95b18fc8b37600c795b23035ac2ee600ced15bcd4c754fcc",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-PACKER-PRO-ENCRYPTION-PY-E6058F750ECA",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_packer_pro/encryption.py",
+      "purpose": "Encryption utilities for Folder Packer Pro.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "EncryptionManager",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4124,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "57ccdbff29eb1aa4e0e7354e560708deecd01fd6a1a30b6a976637ba4b8f0f39",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-PACKER-PRO-FILE-OPS-PY-77C4B5A8ADDC",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_packer_pro/file_ops.py",
+      "purpose": "File operations utilities for Folder Packer Pro.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "collect_folder_stats",
+            "signature": "folder: Path, exclude_patterns: set[str], include_git: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "format_size",
+            "signature": "size_bytes: int"
+          },
+          {
+            "kind": "function",
+            "name": "get_file_type",
+            "signature": "file_path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "should_exclude",
+            "signature": "path: Path, exclude_patterns: set[str], include_git: bool=False"
+          }
+        ],
+        "test_paths": [
+          "tests/folder_packer_pro/test_file_ops.py",
+          "tests/test_folder_packer_pro.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2394,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4d53feb4cb5adc10323499abf81a8132b43825bff9ed66590365ba435b90b48b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-PACKER-PRO-FOLDER-PACKER-PRO-PY-53A8278301CD",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_packer_pro/folder_packer_pro.py",
+      "purpose": "Folder Packer Pro v2.0 - Enhanced Professional Project Packing Tool.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/python/tests/test_folder_packer_pro.py",
+          "tests/test_folder_packer_pro.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 589,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2f2fc8e4bec8513da2ce9736a0d07f2caf304950ca351960a2ec9b6d10726acc",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-PACKER-PRO-GUI-REGISTRATION-PY-EB47930FB923",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_packer_pro/gui_registration.py",
+      "purpose": "GUI registration for Folder Packer Pro.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "GUI_INFO",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_gui_info",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_gui_registration.py",
+          "tests/rate_of_closure/test_gui_registration.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 136,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8f2b20799170c6582b9d68017c20e444b0f0739287bc6ed7f8f625028021f4ce",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-PACKER-PRO-LAUNCH-PYQT6-PY-DA4422C0CBED",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_packer_pro/launch_pyqt6.py",
+      "purpose": "Launcher for Folder Packer Pro.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/folder_tool/test_launch_pyqt6.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2343,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4365a9e06e8ddd234d05bb070fe4cb9b3c443392b29a950c2d54bb8e0e716350",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-PACKER-PRO-MANIFEST-PY-38C4DB0F736B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_packer_pro/manifest.py",
+      "purpose": "Package manifest management for Folder Packer Pro.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PackageManifest",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 17787,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2608fcc5a58d1c4b92f5e9535b4824326848a7dbd5eb5e5b052dca2b2cad40c1",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-PACKER-PRO-OPERATIONS-PY-617E4A89609B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_packer_pro/operations.py",
+      "purpose": "Pack/Unpack operation runners for Folder Packer Pro.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PackOperationMixin",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ScanPreviewMixin",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "UnpackOperationMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/folder_packer_pro/test_operations.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 14614,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1581a89d75f9cfa4fb4e211221632db43ff48fbe4e2cb50027929f39a0ec7e73",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-PACKER-PRO-PACK-ENGINE-PY-5A00E4D9956F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_packer_pro/pack_engine.py",
+      "purpose": "Core pack/unpack engine for Folder Packer Pro.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PackResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "UnpackResult",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "UNSAFE_ARCHIVE_PATH_MESSAGE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "collect_files",
+            "signature": "source_path: Path, exclude_patterns: set[str], include_git: bool=False, cancel_check: Any=None"
+          },
+          {
+            "kind": "function",
+            "name": "inspect_package",
+            "signature": "package_path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "pack_files",
+            "signature": "source_path: Path, output_path: Path, files_to_pack: list[Path], compression: str='balanced', encrypt: bool=False, password: str='', create_manifest: bool=True, progress_callback: Any=None, cancel_check: Any=None"
+          },
+          {
+            "kind": "function",
+            "name": "unpack_files",
+            "signature": "package_path: Path, dest_path: Path, encrypted: bool=False, password: str='', progress_callback: Any=None, cancel_check: Any=None"
+          }
+        ],
+        "test_paths": [
+          "tests/folder_packer_pro/test_operations.py",
+          "tests/folder_packer_pro/test_pack_engine.py",
+          "tests/test_folder_packer_pro.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 22287,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5120f43549993af993c6135e5a65bc1b02ddde42888ed415fbfb61bdc3c79b37",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-FOLDER-PACKER-PRO-UI-TABS-PY-04609D197D43",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/folder_packer_pro/ui_tabs.py",
+      "purpose": "UI tab creation for Folder Packer Pro.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "LogTabMixin",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PackTabMixin",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PreviewTabMixin",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "UnpackTabMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "bar",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/folder_packer_pro",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

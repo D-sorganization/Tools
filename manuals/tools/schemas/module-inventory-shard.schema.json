@@ -1,21 +1,32 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.d-sorganization.org/tools/module-inventory-shard/1.0.0.json",
-  "title": "Tools Module Inventory Shard",
+  "$id": "https://schemas.d-sorganization.org/tools/module-inventory-shard/1.1.0.json",
+  "title": "Tools Module Inventory Shard (one top-level package)",
   "type": "object",
   "additionalProperties": false,
-  "required": ["authority", "entries", "schema_version", "shard_index"],
+  "required": [
+    "authority",
+    "entries",
+    "package",
+    "schema_version"
+  ],
   "properties": {
-    "authority": { "const": "D-sorganization/Tools" },
+    "authority": {
+      "const": "D-sorganization/Tools"
+    },
     "entries": {
       "type": "array",
       "minItems": 1,
-      "maxItems": 200,
       "items": {
         "$ref": "https://schemas.d-sorganization.org/tools/module-inventory/1.0.0.json#/$defs/entry"
       }
     },
-    "schema_version": { "const": "tools-module-inventory-shard/1.0.0" },
-    "shard_index": { "type": "integer", "minimum": 0 }
+    "schema_version": {
+      "const": "tools-module-inventory-shard/1.1.0"
+    },
+    "package": {
+      "type": "string",
+      "minLength": 1
+    }
   }
 }

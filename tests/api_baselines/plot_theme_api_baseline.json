@@ -1,0 +1,1240 @@
+{
+  "__init__.py": {
+    "__all__": [
+      "PlotThemeManager",
+      "get_plot_theme_manager",
+      "PLOT_THEMES",
+      "PlotTheme",
+      "get_theme",
+      "get_theme_names",
+      "register_theme",
+      "apply_plot_theme",
+      "create_plot_theme_menu",
+      "create_themed_figure",
+      "get_theme_colors",
+      "PlotThemeMixin",
+      "setup_plot_theme_for_app",
+      "style_axis"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "PLOT_THEMES": {
+        "type": "variable"
+      },
+      "PlotTheme": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "get_color_cycle": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "list[str]"
+            },
+            "to_rcparams": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "PlotThemeManager": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": "'D-sorganization'",
+                  "kind": "arg",
+                  "name": "settings_org"
+                },
+                {
+                  "annotation": "str",
+                  "default": "'PlotTheme'",
+                  "kind": "arg",
+                  "name": "settings_app"
+                }
+              ],
+              "returns": "None"
+            },
+            "add_theme_change_callback": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "Any",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "callback"
+                }
+              ],
+              "returns": "None"
+            },
+            "apply_to_axes": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "Axes",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "ax"
+                }
+              ],
+              "returns": "None"
+            },
+            "apply_to_figure": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "Figure",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "fig"
+                }
+              ],
+              "returns": "None"
+            },
+            "apply_to_matplotlib": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "bool",
+                  "default": "False",
+                  "kind": "arg",
+                  "name": "update_existing"
+                }
+              ],
+              "returns": "None"
+            },
+            "current_theme": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "PlotTheme"
+            },
+            "current_theme_name": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "str"
+            },
+            "get_available_themes": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "list[str]"
+            },
+            "get_colors": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            },
+            "get_contour_style": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            },
+            "get_fit_line_style": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            },
+            "get_histogram_style": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            },
+            "get_line_style": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "int",
+                  "default": "0",
+                  "kind": "arg",
+                  "name": "index"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            },
+            "get_scatter_style": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            },
+            "get_theme_display_names": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, str]"
+            },
+            "remove_theme_change_callback": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "Any",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "callback"
+                }
+              ],
+              "returns": "None"
+            },
+            "set_theme": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "name"
+                },
+                {
+                  "annotation": "bool",
+                  "default": "True",
+                  "kind": "arg",
+                  "name": "save"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "PlotThemeMixin": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "get_plot_colors": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            },
+            "get_plot_theme_manager": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "PlotThemeManager | None"
+            },
+            "set_plot_theme": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "name"
+                }
+              ],
+              "returns": "None"
+            },
+            "setup_plot_theme": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": "'D-sorganization'",
+                  "kind": "arg",
+                  "name": "settings_org"
+                },
+                {
+                  "annotation": "str",
+                  "default": "'PlotTheme'",
+                  "kind": "arg",
+                  "name": "settings_app"
+                },
+                {
+                  "annotation": "bool",
+                  "default": "True",
+                  "kind": "arg",
+                  "name": "apply_immediately"
+                }
+              ],
+              "returns": "PlotThemeManager"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "apply_plot_theme": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "theme_name"
+            },
+            {
+              "annotation": "str",
+              "default": "'PlotTheme'",
+              "kind": "arg",
+              "name": "settings_app"
+            }
+          ],
+          "returns": "PlotThemeManager"
+        },
+        "type": "function"
+      },
+      "create_plot_theme_menu": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Any",
+              "default": null,
+              "kind": "arg",
+              "name": "parent"
+            },
+            {
+              "annotation": "Any | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "menubar"
+            }
+          ],
+          "returns": "Any"
+        },
+        "type": "function"
+      },
+      "create_themed_figure": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "tuple[float, float]",
+              "default": "(10, 6)",
+              "kind": "arg",
+              "name": "figsize"
+            },
+            {
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "theme_name"
+            },
+            {
+              "annotation": "Any",
+              "default": null,
+              "kind": "kwarg",
+              "name": "kwargs"
+            }
+          ],
+          "returns": "tuple[Figure, Axes]"
+        },
+        "type": "function"
+      },
+      "get_plot_theme_manager": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": "'D-sorganization'",
+              "kind": "arg",
+              "name": "settings_org"
+            },
+            {
+              "annotation": "str",
+              "default": "'PlotTheme'",
+              "kind": "arg",
+              "name": "settings_app"
+            }
+          ],
+          "returns": "PlotThemeManager"
+        },
+        "type": "function"
+      },
+      "get_theme": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "PlotTheme"
+        },
+        "type": "function"
+      },
+      "get_theme_colors": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "theme_name"
+            }
+          ],
+          "returns": "dict[str, Any]"
+        },
+        "type": "function"
+      },
+      "get_theme_names": {
+        "signature": {
+          "args": [],
+          "returns": "list[str]"
+        },
+        "type": "function"
+      },
+      "register_theme": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            },
+            {
+              "annotation": "PlotTheme",
+              "default": null,
+              "kind": "arg",
+              "name": "theme"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      },
+      "setup_plot_theme_for_app": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Any",
+              "default": null,
+              "kind": "arg",
+              "name": "app"
+            },
+            {
+              "annotation": "Any",
+              "default": null,
+              "kind": "arg",
+              "name": "window"
+            },
+            {
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "settings_app"
+            },
+            {
+              "annotation": "bool",
+              "default": "True",
+              "kind": "arg",
+              "name": "add_menu"
+            }
+          ],
+          "returns": "PlotThemeManager"
+        },
+        "type": "function"
+      },
+      "style_axis": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Axes",
+              "default": null,
+              "kind": "arg",
+              "name": "ax"
+            },
+            {
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "theme_name"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "integration.py": {
+    "__all__": [
+      "PlotThemeMixin",
+      "apply_plot_theme",
+      "create_plot_theme_menu",
+      "create_themed_figure",
+      "get_theme_colors",
+      "logger",
+      "setup_plot_theme_for_app",
+      "style_axis"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "PlotThemeMixin": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "get_plot_colors": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            },
+            "get_plot_theme_manager": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "PlotThemeManager | None"
+            },
+            "set_plot_theme": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "name"
+                }
+              ],
+              "returns": "None"
+            },
+            "setup_plot_theme": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": "'D-sorganization'",
+                  "kind": "arg",
+                  "name": "settings_org"
+                },
+                {
+                  "annotation": "str",
+                  "default": "'PlotTheme'",
+                  "kind": "arg",
+                  "name": "settings_app"
+                },
+                {
+                  "annotation": "bool",
+                  "default": "True",
+                  "kind": "arg",
+                  "name": "apply_immediately"
+                }
+              ],
+              "returns": "PlotThemeManager"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "apply_plot_theme": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "theme_name"
+            },
+            {
+              "annotation": "str",
+              "default": "'PlotTheme'",
+              "kind": "arg",
+              "name": "settings_app"
+            }
+          ],
+          "returns": "PlotThemeManager"
+        },
+        "type": "function"
+      },
+      "create_plot_theme_menu": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Any",
+              "default": null,
+              "kind": "arg",
+              "name": "parent"
+            },
+            {
+              "annotation": "Any | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "menubar"
+            }
+          ],
+          "returns": "Any"
+        },
+        "type": "function"
+      },
+      "create_themed_figure": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "tuple[float, float]",
+              "default": "(10, 6)",
+              "kind": "arg",
+              "name": "figsize"
+            },
+            {
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "theme_name"
+            },
+            {
+              "annotation": "Any",
+              "default": null,
+              "kind": "kwarg",
+              "name": "kwargs"
+            }
+          ],
+          "returns": "tuple[Figure, Axes]"
+        },
+        "type": "function"
+      },
+      "get_theme_colors": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "theme_name"
+            }
+          ],
+          "returns": "dict[str, Any]"
+        },
+        "type": "function"
+      },
+      "logger": {
+        "type": "variable"
+      },
+      "setup_plot_theme_for_app": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Any",
+              "default": null,
+              "kind": "arg",
+              "name": "app"
+            },
+            {
+              "annotation": "Any",
+              "default": null,
+              "kind": "arg",
+              "name": "window"
+            },
+            {
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "settings_app"
+            },
+            {
+              "annotation": "bool",
+              "default": "True",
+              "kind": "arg",
+              "name": "add_menu"
+            }
+          ],
+          "returns": "PlotThemeManager"
+        },
+        "type": "function"
+      },
+      "style_axis": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Axes",
+              "default": null,
+              "kind": "arg",
+              "name": "ax"
+            },
+            {
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "theme_name"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "manager.py": {
+    "__all__": [
+      "PlotThemeManager",
+      "get_plot_theme_manager",
+      "logger"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "PlotThemeManager": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": "'D-sorganization'",
+                  "kind": "arg",
+                  "name": "settings_org"
+                },
+                {
+                  "annotation": "str",
+                  "default": "'PlotTheme'",
+                  "kind": "arg",
+                  "name": "settings_app"
+                }
+              ],
+              "returns": "None"
+            },
+            "add_theme_change_callback": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "Any",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "callback"
+                }
+              ],
+              "returns": "None"
+            },
+            "apply_to_axes": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "Axes",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "ax"
+                }
+              ],
+              "returns": "None"
+            },
+            "apply_to_figure": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "Figure",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "fig"
+                }
+              ],
+              "returns": "None"
+            },
+            "apply_to_matplotlib": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "bool",
+                  "default": "False",
+                  "kind": "arg",
+                  "name": "update_existing"
+                }
+              ],
+              "returns": "None"
+            },
+            "current_theme": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "PlotTheme"
+            },
+            "current_theme_name": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "str"
+            },
+            "get_available_themes": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "list[str]"
+            },
+            "get_colors": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            },
+            "get_contour_style": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            },
+            "get_fit_line_style": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            },
+            "get_histogram_style": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            },
+            "get_line_style": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "int",
+                  "default": "0",
+                  "kind": "arg",
+                  "name": "index"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            },
+            "get_scatter_style": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            },
+            "get_theme_display_names": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, str]"
+            },
+            "remove_theme_change_callback": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "Any",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "callback"
+                }
+              ],
+              "returns": "None"
+            },
+            "set_theme": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "name"
+                },
+                {
+                  "annotation": "bool",
+                  "default": "True",
+                  "kind": "arg",
+                  "name": "save"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "get_plot_theme_manager": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": "'D-sorganization'",
+              "kind": "arg",
+              "name": "settings_org"
+            },
+            {
+              "annotation": "str",
+              "default": "'PlotTheme'",
+              "kind": "arg",
+              "name": "settings_app"
+            }
+          ],
+          "returns": "PlotThemeManager"
+        },
+        "type": "function"
+      },
+      "logger": {
+        "type": "variable"
+      }
+    }
+  },
+  "themes.py": {
+    "__all__": [
+      "CATPPUCCIN_LATTE",
+      "CATPPUCCIN_MOCHA",
+      "CLASSIC_DARK",
+      "CLASSIC_LIGHT",
+      "DEFAULT_THEME",
+      "FROST_DARK",
+      "GRUVBOX_DARK",
+      "MATERIAL_DARK",
+      "NORD",
+      "PLOT_THEMES",
+      "PlotTheme",
+      "SCIENTIFIC_VIOLET",
+      "SCIENTIFIC_VIOLET_DARK",
+      "SOLARIZED_DARK",
+      "SOLARIZED_LIGHT",
+      "TOKYO_NIGHT",
+      "VAMPIRE_DARK",
+      "get_theme",
+      "get_theme_names",
+      "register_theme"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "CATPPUCCIN_LATTE": {
+        "type": "variable"
+      },
+      "CATPPUCCIN_MOCHA": {
+        "type": "variable"
+      },
+      "CLASSIC_DARK": {
+        "type": "variable"
+      },
+      "CLASSIC_LIGHT": {
+        "type": "variable"
+      },
+      "DEFAULT_THEME": {
+        "type": "variable"
+      },
+      "FROST_DARK": {
+        "type": "variable"
+      },
+      "GRUVBOX_DARK": {
+        "type": "variable"
+      },
+      "MATERIAL_DARK": {
+        "type": "variable"
+      },
+      "NORD": {
+        "type": "variable"
+      },
+      "PLOT_THEMES": {
+        "type": "variable"
+      },
+      "PlotTheme": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "get_color_cycle": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "list[str]"
+            },
+            "to_rcparams": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "SCIENTIFIC_VIOLET": {
+        "type": "variable"
+      },
+      "SCIENTIFIC_VIOLET_DARK": {
+        "type": "variable"
+      },
+      "SOLARIZED_DARK": {
+        "type": "variable"
+      },
+      "SOLARIZED_LIGHT": {
+        "type": "variable"
+      },
+      "TOKYO_NIGHT": {
+        "type": "variable"
+      },
+      "VAMPIRE_DARK": {
+        "type": "variable"
+      },
+      "get_theme": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "PlotTheme"
+        },
+        "type": "function"
+      },
+      "get_theme_names": {
+        "signature": {
+          "args": [],
+          "returns": "list[str]"
+        },
+        "type": "function"
+      },
+      "register_theme": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            },
+            {
+              "annotation": "PlotTheme",
+              "default": null,
+              "kind": "arg",
+              "name": "theme"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      }
+    }
+  }
+}
