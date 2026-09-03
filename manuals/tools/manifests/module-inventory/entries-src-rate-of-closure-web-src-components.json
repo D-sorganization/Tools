@@ -7850,10 +7850,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9474,
+      "bytes_lf": 10023,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d3ae292d644fcec275082f498eb6e84c2be03ae4686d3d828d1abe1b66625c29",
+      "content_sha256_lf": "570d51c92c3148393a6d6a90495435950727365165d7f3e51c5596109190bc14",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-FLIGHTPLAYBACKDRAWING-TS-252C7531C035",
       "language": "typescript",
