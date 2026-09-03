@@ -165,8 +165,11 @@ def test_vendored_package_public_api_matches_baseline(
 
     if pytestconfig.getoption("--regenerate-api-baseline"):
         BASELINE_DIR.mkdir(exist_ok=True)
+        # LF regardless of platform: the baselines are tracked text files.
         path.write_text(
-            json.dumps(current, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+            json.dumps(current, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+            newline="\n",
         )
         log.info("Regenerated %s", path)
         return
@@ -178,9 +181,10 @@ def test_vendored_package_public_api_matches_baseline(
     problems = _diff(baseline, current)
     if problems:
         pytest.fail(
-            f"Public API of shared.python.{package} changed incompatibly. Additions are "
-            "fine; removals and signature changes need a baseline bump in the same PR "
-            "plus downstream issues (see module docstring):\n" + "\n".join(problems)
+            f"Public API of shared.python.{package} changed incompatibly. "
+            "Additions are fine; removals and signature changes need a baseline "
+            "bump in the same PR plus downstream issues (see module docstring):\n"
+            + "\n".join(problems)
         )
     # Additions are allowed but must be recorded so the baseline stays honest.
     added = sorted(set(current) - set(baseline))
