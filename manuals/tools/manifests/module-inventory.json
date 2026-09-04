@@ -159,13 +159,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-<<<<<<< HEAD
-      "content_sha256_lf": "c32b34569c393c33ec83bf3f00a9211993f1bff0005b54ae81de4b52899b0aff",
+      "content_sha256_lf": "a269a11a9575cd0b31e5d8603c0232f6882facb2c8ebe8613d0ed55e3924e38c",
       "entry_count": 91,
-=======
-      "content_sha256_lf": "91137c94b9ae3d4ec5b00dd008c4be8a3a63b514fee0785682f4cf6f6032d61a",
-      "entry_count": 90,
->>>>>>> origin/main
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
     },
