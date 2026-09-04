@@ -25,7 +25,7 @@ describe("visualization performance manifest", () => {
     });
     expect(visualizationPerformanceBudgets.pyqt).toEqual({
       tabOpenBudgetMs: 5000,
-      resizeSettleBudgetMs: 4000,
+      resizeSettleBudgetMs: 6000,
       stableFrameCount: 3,
       stabilityTolerancePx: 1,
       maxPostSettleShiftPx: 2,

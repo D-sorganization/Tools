@@ -25595,7 +25595,7 @@
       "bytes_lf": 2675,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8872872484ab8315e2a37af0b0357a4d578fa2277ff951afff013976cc578aa1",
+      "content_sha256_lf": "9f252c3c35fcb87833e38cbf3f043ccec7e829d645d55a6ed89e2eded0ed0dd0",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VISUALIZATIONPERFORMANCEMANIFEST-TEST-TS-602622665531",
       "language": "typescript",
