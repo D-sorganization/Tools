@@ -4563,10 +4563,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10072,
+      "bytes_lf": 11011,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d4581c98c5519839a902aa293bd9c9b621ead02132fb51b8050f36064d32f941",
+      "content_sha256_lf": "0d8dfb85a113979a910369e73b8519eec8e7a278e8f493000bb8119f29306de4",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-GENERATE-TOOLS-JSON-PY-4CB9321263B8",
       "language": "python",
