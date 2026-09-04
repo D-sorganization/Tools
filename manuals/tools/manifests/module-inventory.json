@@ -381,13 +381,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-optimizer-gui.json"
     },
     {
-<<<<<<< HEAD
-      "content_sha256_lf": "efacbf6b47756abd99e645adaefcc58df80f1d4fee5b00ac760820259f5d08f4",
+      "content_sha256_lf": "c3e19f4a340caee1dc9c220074875291b671686abdd7ab66f3b2fac86abdff1e",
       "entry_count": 254,
-=======
-      "content_sha256_lf": "43633298e297ca0debadcc533b4b64f8f142feb29afc23dd9a621c702a5020d2",
-      "entry_count": 253,
->>>>>>> origin/main
       "package": "src/p1am_control_system",
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
     },
