@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.123                                   |
+| **Spec Version**        | 1.18.124                                   |
 | **Last Spec Update**    | 2026-09-03                                 |
 
 ## 2. Purpose & Mission
@@ -5681,6 +5681,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-03 | #xxxx | perf(launch-monitor): replace O(N*M) array iterations with single-pass maps in launchMonitorAnalysis.ts and LaunchMonitorAnalyticsPanel.tsx. (spec 1.18.124) |
 | 2026-09-04 | #4930 | fix(ci): allow ControlTower and Oglaptop host font stack versions in `scripts/check_rate_pyqt_environment.py::verify_font_stack` to support heterogeneous fleet runner hosts. |
 | 2026-09-03 | #4947 | docs(scada, #4912, RM #1505 Phase 2): make `docs/scada/f_matrix.v1.json` (+ rendered `f_matrix.md`) the tracker of record for SCADA F01-F16 and historian H1-H9, superseding the checklists on #4085/#4086/#4087/#4088/#4089/#4046 that showed 38 of 38 boxes ticked while every carrier PR (#4091 #4093 #4094 #4095 #4449 #4065) sat closed unmerged; re-verified against main as 0 of 16 SCADA and 0 of 9 historian children landed. Adds `docs/scada/recovery_ledger.v1.json` with a per-file decision for all 111 files the closed heads add and main lacks (9 re-land, 8 obsolete, 94 needs-owner) in 16 dependency clusters; nothing is re-landed here. Gated by `scripts/check_scada_f_matrix.py --check` and `tests/scada/test_f_matrix.py` (26 tests, 8 negative guards). Three independent defects fixed with tests: #3976 `evaluate_output` returned 0.0 for a missing output key (now NaN) and `optimization.py` unpacked its tuple in the wrong order; #3986 the p1am derived-column sandbox now imports the shared `safe_eval` DoS limits by identity plus an iterative nesting-depth check; #3984 `plant_simulator.neural_simulator_client` imported `plc_interface`/`models` by package path while the backend imports them flat, executing both twice - now flat, with test inspecting AST directly without importing torch, and with the uninstantiable `neural` driver pinned by a strict xfail. |
 | 2026-09-03 | #1483 | chore(ci): retire 25 unowned Jules-* workflows, keep 3 (#1483). Format test_workflow_run_security_guards.py per ruff. |

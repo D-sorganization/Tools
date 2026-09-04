@@ -137,3 +137,6 @@
 ## 2026-09-03 - Prevent stack overflows and GC pressure in tight loops
 **Learning:** Using `Math.min(...arr)` or `Math.max(...arr)` on dynamically mapped arrays within render loops is an anti-pattern. It generates significant garbage collection overhead and risks stack overflows for large arrays.
 **Action:** Replace `Math.min(...spread)` / `Math.max(...spread)` with a single-pass `for` loop to compute bounds. This eliminates intermediate allocations and runs substantially faster while scaling to any data size.
+## 2026-09-03 - Optimize multi-column data array processing
+**Learning:** Operations like `.reduce()` nested inside `.filter()` mapped over dataset columns scale with `O(rows * columns)` and cause severe array allocation bottlenecks, particularly for CSV launch monitor payloads.
+**Action:** Replace `Array.flatMap()` plus map-reduce loops with single-pass iterator mapping using a `Map` structure for high-performance iteration.
