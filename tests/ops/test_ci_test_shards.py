@@ -12,6 +12,7 @@ import importlib.util
 import json
 import sys
 from pathlib import Path
+from typing import Any, cast
 
 import pytest
 import yaml
@@ -24,7 +25,7 @@ QUARANTINE = REPO_ROOT / "config" / "test_quarantine.json"
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
 
 
-def _load_shards_module():
+def _load_shards_module() -> Any:
     spec = importlib.util.spec_from_file_location("ci_test_shards", SHARDS_SCRIPT)
     assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)
@@ -34,8 +35,8 @@ def _load_shards_module():
     return module
 
 
-def _workflow() -> dict:
-    return yaml.safe_load(CI_STANDARD.read_text(encoding="utf-8"))
+def _workflow() -> dict[str, Any]:
+    return cast(dict[str, Any], yaml.safe_load(CI_STANDARD.read_text(encoding="utf-8")))
 
 
 def test_partition_claims_every_test_file_exactly_once() -> None:

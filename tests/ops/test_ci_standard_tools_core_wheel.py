@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from types import ModuleType
-from typing import Any
+from typing import Any, cast
 
 import pytest
 import yaml
@@ -15,7 +15,7 @@ RUST_BINDING_CONTRACT = REPO_ROOT / "tests" / "rust_bindings" / "test_rust_bindi
 
 
 def _ci_standard_workflow() -> dict[str, Any]:
-    return yaml.safe_load(CI_STANDARD.read_text(encoding="utf-8"))
+    return cast(dict[str, Any], yaml.safe_load(CI_STANDARD.read_text(encoding="utf-8")))
 
 
 def _step_by_name(steps: list[dict[str, Any]], name: str) -> dict[str, Any]:

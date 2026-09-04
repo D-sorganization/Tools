@@ -1,9 +1,13 @@
 """Shared pytest configuration for entire Tools repo."""
 
+from __future__ import annotations
+
 import importlib
 import sys
 import types
+from collections.abc import Generator
 from pathlib import Path
+from typing import Any, cast
 
 import pytest
 
@@ -44,10 +48,10 @@ def _setup_global_stubs(repo_root: Path) -> None:
                 module = importlib.import_module(name)
             except ImportError:
                 module = types.ModuleType(name)
-                module.__path__ = [package_path]  # type: ignore[attr-defined]
+                cast(Any, module).__path__ = [package_path]
                 sys.modules[name] = module
         existing_paths = list(getattr(module, "__path__", []))
-        module.__path__ = [  # type: ignore[attr-defined]
+        cast(Any, module).__path__ = [
             package_path,
             *(entry for entry in existing_paths if entry != package_path),
         ]
@@ -128,17 +132,19 @@ def pytest_ignore_collect(collection_path: Path, config: pytest.Config) -> bool 
             return None
         return True
 
+    return None
+
 
 try:
     import pytest
     from PyQt6.QtWidgets import QApplication
 
     @pytest.fixture(scope="session")
-    def qapp():
+    def qapp() -> Generator[QApplication, None, None]:
         app = QApplication.instance()
         if app is None:
             app = QApplication(sys.argv)
-        yield app
+        yield cast(QApplication, app)
 
 except ImportError:
     pass

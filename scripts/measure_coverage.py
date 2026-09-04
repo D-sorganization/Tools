@@ -17,11 +17,12 @@ import sys
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 
 def parse_coverage_xml(
     xml_file: Path, tracked_prefixes: list[str]
-) -> dict[str, object]:
+) -> dict[str, Any]:
     """Parse coverage.xml and extract per-package coverage metrics."""
     root = ET.parse(xml_file).getroot()
     total_line_rate = float(root.attrib.get("line-rate", "0"))
@@ -55,8 +56,8 @@ def parse_coverage_xml(
 
 
 def compare_coverage(
-    current: dict[str, object], baseline: dict[str, object], policy: dict[str, object]
-) -> tuple[dict[str, object], list[str]]:
+    current: dict[str, Any], baseline: dict[str, Any], policy: dict[str, Any]
+) -> tuple[dict[str, Any], list[str]]:
     """
     Compare current coverage against baseline and policy thresholds.
 
@@ -64,7 +65,7 @@ def compare_coverage(
         (report_dict, failures_list)
     """
     failures: list[str] = []
-    report: dict[str, object] = {
+    report: dict[str, Any] = {
         "current": current,
         "baseline": baseline,
         "timestamp": datetime.now().isoformat(),
@@ -98,8 +99,8 @@ def compare_coverage(
     }
 
     # Check package thresholds
-    pkg_current: dict[str, float] = current.get("package_percent", {})  # type: ignore[assignment]
-    pkg_min: dict[str, float] = policy.get("tracked_packages", {})  # type: ignore[assignment]
+    pkg_current: dict[str, float] = current.get("package_percent", {})
+    pkg_min: dict[str, float] = policy.get("tracked_packages", {})
 
     pkg_results = {}
     for pkg, threshold in pkg_min.items():

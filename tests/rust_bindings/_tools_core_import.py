@@ -1,8 +1,7 @@
-from __future__ import annotations
-
 import importlib
 import os
 from types import ModuleType
+from typing import cast
 
 import pytest
 
@@ -17,7 +16,10 @@ def import_required_tools_core() -> ModuleType:
     if os.environ.get(TOOLS_CORE_REQUIRED_ENV) == "1":
         return importlib.import_module("tools_core")
 
-    return pytest.importorskip(
-        "tools_core",
-        reason=TOOLS_CORE_MISSING_REASON,
+    return cast(
+        ModuleType,
+        pytest.importorskip(
+            "tools_core",
+            reason=TOOLS_CORE_MISSING_REASON,
+        ),
     )

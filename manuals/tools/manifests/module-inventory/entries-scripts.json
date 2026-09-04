@@ -5263,10 +5263,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 7077,
+      "bytes_lf": 7026,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9c315ee117093b680bb8e7c2909937c6848f565119776290addda63bfe4bd357",
+      "content_sha256_lf": "ca5734f1bb28e005a3c462d1e4f925a6c7fa7241abc11aa49595208c2451190a",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-MEASURE-COVERAGE-PY-7B242AF2D85C",
       "language": "python",
@@ -5303,7 +5303,7 @@
           {
             "kind": "function",
             "name": "compare_coverage",
-            "signature": "current: dict[str, object], baseline: dict[str, object], policy: dict[str, object]"
+            "signature": "current: dict[str, Any], baseline: dict[str, Any], policy: dict[str, Any]"
           },
           {
             "kind": "function",
