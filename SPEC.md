@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.124                                   |
+| **Spec Version**        | 1.18.123                                   |
 | **Last Spec Update**    | 2026-09-03                                 |
 
 ## 2. Purpose & Mission
@@ -5681,6 +5681,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-03 | #1483 | chore(ci): retire 25 unowned Jules-* workflows, keep 3 (#1483). Format test_workflow_run_security_guards.py per ruff. |
 | 2026-09-03 | #4960 | fix(a11y): add explicit `id` and `htmlFor` label associations to inputs in `ControlDashboard` and `TagInspector` to improve screen reader accessibility. |
 | 2026-09-03 | #4964 | test(rate-of-closure, #4844 item 3): one-time re-approval of the nine out-of-tolerance PyQt visual baselines from the retained trusted-run candidates (run 33804413699, commit 8e89bb5f05) — the whole-window glyph drift is the identified host font-stack upgrade (libfreetype6 2.13.2→2.14.2, libfontconfig1 2.15.0→2.17.1, confirmed from trusted run logs), not a regression; `pyqt/simulation` (within its widened tolerance) is deliberately untouched; `scripts/config/rate_pyqt_font_stack.v1.json` records the font stack the approved bytes were captured under so the checker (via #4963) names any future change. |
 | 2026-09-03 | #4963 | test(rate-of-closure, #4844): `compare_visual_baselines` now evaluates every entry and aggregates the drift report (one drifting tab no longer masks the others); `check_rate_pyqt_environment.py` requires the matplotlib constraint pin and gains a system font-stack probe + verify (libfreetype6/libfontconfig1 via dpkg-query, matplotlib's compiled freetype, checked against a committed expectations file) so a host font upgrade fails as a named environment change — root cause confirmed from the trusted run logs (font stack upgrade between the 2026-08-27 byte-identical run and the 2026-08-28 first failure). |

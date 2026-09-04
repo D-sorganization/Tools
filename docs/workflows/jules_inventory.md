@@ -2,8 +2,8 @@
 
 Snapshot taken 2026-09-03 for Tools #4923 (Fleet Readiness Program,
 Repository_Management#1505 Phase 1) as input to the fleet retirement campaign
-Repository_Management#1483. **Nothing is deleted by this document**; deletions
-are a fleet decision made in #1483. Acceptance for #4923 is "Jules workflow
+Repository_Management#1483. **The retirement has since been executed** - see
+"Decision (Repository_Management#1483)" at the foot of this file. Acceptance for #4923 is "Jules workflow
 count documented and <= 5 kept" — this inventory recommends keeping 5.
 
 Method: `ls .github/workflows/Jules-*.yml jules-assessment-runner.yml`, triggers
@@ -62,3 +62,74 @@ job-level escalation. Runs dated 2026-05-30 05:04-05:05 are one burst of
 - Recommended retire set (23): everything else, in one governed fleet PR under
   Repository_Management#1483 (`docs/workflows/WORKFLOW_TRACKING.md` rows to be
   removed in the same PR).
+
+## Decision (Repository_Management#1483)
+
+Executed 2026-09-03 as one governed campaign PR under the Fleet Readiness
+Program (Repository_Management#1505). **25 of the 28 retired, 3 kept.**
+
+### Kept (3)
+
+| Workflow | Why |
+| --- | --- |
+| `Jules-Auto-Assign-Issues.yml` | In use (success 2026-08-04) and holds an `issues: write` token only. |
+| `Jules-Issue-Mention-Handler.yml` | In use (success 2026-08-04). Token narrowed here: top level is now `contents: read`, and `contents: read` + `issues: write` sits on `fix-issue` alone. It never pushes and never uses `GITHUB_TOKEN` on a PR, so the old top-level `contents`/`pull-requests`/`issues: write` was unneeded. |
+| `Jules-Diff-Verifier.yml` | Runs on every PR with a read-only checkout. |
+
+### Retired (25)
+
+The inventory recommended retiring 23. `Jules-PR-AutoFix.yml` and
+`Jules-Control-Tower.yml` were left conditional on "whether the fleet wants
+automated CI repair at all". It does not: CI repair in this fleet is done by
+the Claude and Codex remediation agents and the desktop Autofix. Neither
+workflow has run at all since 2026-08-04 (Control-Tower not since 2026-05-22),
+and Control-Tower is the *only* caller of ten of the retired reusable
+workflows, so retiring it and its callees together keeps the call graph
+consistent - leaving either side would have left a broken pair.
+
+Explicit note on the 30-day rule: no retired workflow has had a successful run
+inside the 30 days before 2026-09-03. The closest are `Jules-PR-AutoFix.yml`
+and `Jules-Cleaner.yml`, whose last successes were 2026-08-04 and 2026-08-03 -
+exactly at/just outside the boundary, and every run of either since then was
+cancelled. Nothing retired here is a required status check: the only required
+context in the Tools `main` ruleset is `quality-gate`
+(`gh api repos/D-sorganization/Tools/rules/branches/main`). None of the 25 is
+one of the three agent-governance workflows that WORKFLOW_GOVERNANCE section
+2.3 mandates - Tools ships none of those three, which is a separate
+pre-existing gap and is not touched here.
+
+`tests/ops/test_workflow_run_security_guards.py` kept its `workflow_run`
+same-repository-guard contract; the known-set assertion is now the empty set
+and the two tests that pinned the retired files were removed.
+
+### Restore
+
+Any single workflow comes back with one command (base commit `90b7ff3c4639fd9e34864a97ffc6982706230c87`):
+
+```bash
+git checkout 90b7ff3c4639fd9e34864a97ffc6982706230c87 -- .github/workflows/Jules-Archivist.yml
+git checkout 90b7ff3c4639fd9e34864a97ffc6982706230c87 -- .github/workflows/Jules-Assessment-Generator.yml
+git checkout 90b7ff3c4639fd9e34864a97ffc6982706230c87 -- .github/workflows/Jules-Assessment-Remediator.yml
+git checkout 90b7ff3c4639fd9e34864a97ffc6982706230c87 -- .github/workflows/Jules-Auto-Rebase.yml
+git checkout 90b7ff3c4639fd9e34864a97ffc6982706230c87 -- .github/workflows/Jules-Auto-Refactor.yml
+git checkout 90b7ff3c4639fd9e34864a97ffc6982706230c87 -- .github/workflows/Jules-Auto-Repair.yml
+git checkout 90b7ff3c4639fd9e34864a97ffc6982706230c87 -- .github/workflows/Jules-Cleaner.yml
+git checkout 90b7ff3c4639fd9e34864a97ffc6982706230c87 -- .github/workflows/Jules-Code-Quality-Fixer.yml
+git checkout 90b7ff3c4639fd9e34864a97ffc6982706230c87 -- .github/workflows/Jules-Code-Quality-Reviewer.yml
+git checkout 90b7ff3c4639fd9e34864a97ffc6982706230c87 -- .github/workflows/Jules-Completist.yml
+git checkout 90b7ff3c4639fd9e34864a97ffc6982706230c87 -- .github/workflows/Jules-Comprehensive-Assessment.yml
+git checkout 90b7ff3c4639fd9e34864a97ffc6982706230c87 -- .github/workflows/Jules-Control-Tower.yml
+git checkout 90b7ff3c4639fd9e34864a97ffc6982706230c87 -- .github/workflows/Jules-Critics-Comments.yml
+git checkout 90b7ff3c4639fd9e34864a97ffc6982706230c87 -- .github/workflows/Jules-Documentation-Auditor.yml
+git checkout 90b7ff3c4639fd9e34864a97ffc6982706230c87 -- .github/workflows/Jules-Documentation-Scribe.yml
+git checkout 90b7ff3c4639fd9e34864a97ffc6982706230c87 -- .github/workflows/Jules-Hotfix-Creator.yml
+git checkout 90b7ff3c4639fd9e34864a97ffc6982706230c87 -- .github/workflows/Jules-Issue-Resolver.yml
+git checkout 90b7ff3c4639fd9e34864a97ffc6982706230c87 -- .github/workflows/Jules-Laymans-Terms-Writer.yml
+git checkout 90b7ff3c4639fd9e34864a97ffc6982706230c87 -- .github/workflows/Jules-PR-AutoFix.yml
+git checkout 90b7ff3c4639fd9e34864a97ffc6982706230c87 -- .github/workflows/Jules-PR-Cleanup.yml
+git checkout 90b7ff3c4639fd9e34864a97ffc6982706230c87 -- .github/workflows/Jules-Sentinel.yml
+git checkout 90b7ff3c4639fd9e34864a97ffc6982706230c87 -- .github/workflows/Jules-Supersede-Check.yml
+git checkout 90b7ff3c4639fd9e34864a97ffc6982706230c87 -- .github/workflows/Jules-Tech-Custodian.yml
+git checkout 90b7ff3c4639fd9e34864a97ffc6982706230c87 -- .github/workflows/Jules-Test-Generator.yml
+git checkout 90b7ff3c4639fd9e34864a97ffc6982706230c87 -- .github/workflows/jules-assessment-runner.yml
+```
