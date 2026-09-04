@@ -2861,6 +2861,128 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 14964,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1e53112e1975d85b587de207acd1ec78cca3507975e1f16ef988e195901ec24e",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CHECK-SCADA-F-MATRIX-PY-802B9FB2C7FD",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/check_scada_f_matrix.py",
+      "purpose": "Keep the P1AM SCADA requirement matrix honest (Tools #4912).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "DECISIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXPECTED_HISTORIAN_IDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXPECTED_SCADA_IDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LEDGER_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LEDGER_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MATRIX_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PR_REF_PATTERN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "RENDERED_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ROOT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SHA_PATTERN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "STATUSES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "load_ledger",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "load_matrix",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 6757,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",

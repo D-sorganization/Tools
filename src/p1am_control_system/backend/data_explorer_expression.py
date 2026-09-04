@@ -34,6 +34,38 @@ Edge handling
   collapsed to one via ``mean``/``sum`` etc.), it is broadcast to a 1-D array
   the length of the **first** variable in ``variables``.
 * Otherwise the result is returned as a 1-D float array.
+
+Complexity limits
+-----------------
+Expressions arrive from the HTTP derived-column endpoint, so passing the
+node-type allowlist is not sufficient: a very long or deeply nested expression
+can still exhaust CPU or the recursion stack. The static limits from issue
+#3290 are therefore imported from :mod:`shared.python.safe_eval` and enforced
+here *before* any evaluation, each as a clean :class:`ExpressionError`:
+:data:`MAX_EXPRESSION_LENGTH`, :data:`MAX_AST_NODES`, :data:`MAX_POW_EXPONENT`,
+:data:`MAX_POW_CHAIN_DEPTH`, plus the locally defined
+:data:`MAX_NESTING_DEPTH` (this evaluator recurses; the shared one compiles).
+
+Relationship to ``shared.python.safe_eval``
+-------------------------------------------
+This module shares the shared evaluator's **limits** but deliberately keeps its
+own **grammar and arithmetic**, because the two have incompatible contracts:
+
+* ``safe_eval`` permits ``Compare``, ``BoolOp``, ``IfExp`` and ``Subscript``. A
+  derived *column* must reject them -- a boolean, or a sliced single row, is not
+  a column -- so this module's allowlist is strictly narrower.
+* This module routes every binary operator through a numpy ufunc so that
+  divide-by-zero and overflow yield ``inf``/``nan`` per its documented contract,
+  where ``safe_eval`` raises.
+* This module enforces per-function arity so a 3-argument ``min``/``max`` cannot
+  reach numpy's ``out=`` parameter and write back into a caller's column, and it
+  copies every input column for the same reason.
+
+Collapsing the two evaluators into one would mean either loosening the
+derived-column grammar or changing ``safe_eval``'s arithmetic for its other
+callers. The DRY defect reported in #3986 was the *duplicated security
+hardening*, and that is what is now shared; the divergent semantics above are
+intentional and are the reason a full merge is not proposed.
 """
 
 from __future__ import annotations
@@ -44,7 +76,36 @@ from typing import Any
 
 import numpy as np
 
-__all__ = ["evaluate_expression", "ExpressionError"]
+# DRY (#3986): the complexity/DoS limits are *not* re-declared here. They are
+# imported from the hardened shared evaluator so there is exactly one place in
+# the repo where "how large may a user expression be" is decided, and so a
+# future tightening of the #3290 limits applies to this endpoint too.
+#
+# Only the *limits* are shared -- deliberately not the evaluator itself. See
+# "Relationship to shared.python.safe_eval" in the module docstring.
+from shared.python.safe_eval import (
+    MAX_AST_NODES,
+    MAX_EXPRESSION_LENGTH,
+    MAX_POW_CHAIN_DEPTH,
+    MAX_POW_EXPONENT,
+)
+
+__all__ = [
+    "MAX_AST_NODES",
+    "MAX_EXPRESSION_LENGTH",
+    "MAX_NESTING_DEPTH",
+    "MAX_POW_CHAIN_DEPTH",
+    "MAX_POW_EXPONENT",
+    "ExpressionError",
+    "evaluate_expression",
+]
+
+#: Maximum AST nesting depth. :func:`_eval_node` is recursive, so an expression
+#: nested deeper than the interpreter's recursion limit raised ``RecursionError``
+#: -- which is not an ``ExpressionError`` and so escaped the derived-column
+#: endpoint as a 500 instead of a clean client error (#3986). Enforced
+#: statically, before evaluation.
+MAX_NESTING_DEPTH = 50
 
 
 class ExpressionError(ValueError):
@@ -107,6 +168,69 @@ _VARIADIC_MINMAX = frozenset({"min", "max"})
 _TERNARY = frozenset({"clip"})
 
 
+def _reject_if_too_complex(tree: ast.Expression) -> None:
+    """Enforce the static complexity limits before any node is evaluated.
+
+    Every violation is an :class:`ExpressionError`, so the derived-column
+    endpoint reports a clean client error rather than a 500. Rejecting up front
+    -- instead of discovering the problem partway through -- also means no
+    partial numpy work is performed on a hostile expression.
+    """
+    node_count = 0
+    for node in ast.walk(tree):
+        node_count += 1
+        if node_count > MAX_AST_NODES:
+            raise ExpressionError(
+                f"expression too complex: more than {MAX_AST_NODES} AST nodes"
+            )
+        if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Pow):
+            _reject_bad_power(node)
+
+    _reject_if_too_deep(tree.body)
+
+
+def _reject_bad_power(node: ast.BinOp) -> None:
+    """Reject exponentiation bombs (``2 ** 10**9``, ``2 ** 3 ** 4 ** 5``)."""
+    exponent = node.right
+    if (
+        isinstance(exponent, ast.Constant)
+        and isinstance(exponent.value, (int, float))
+        and not isinstance(exponent.value, bool)
+        and exponent.value > MAX_POW_EXPONENT
+    ):
+        raise ExpressionError(
+            f"exponent too large (> {MAX_POW_EXPONENT}); possible exponentiation bomb"
+        )
+
+    depth = 1
+    walker: ast.AST = exponent
+    while isinstance(walker, ast.BinOp) and isinstance(walker.op, ast.Pow):
+        depth += 1
+        if depth > MAX_POW_CHAIN_DEPTH:
+            raise ExpressionError(
+                f"power chain deeper than {MAX_POW_CHAIN_DEPTH}; "
+                "possible exponentiation bomb"
+            )
+        walker = walker.right
+
+
+def _reject_if_too_deep(node: ast.AST) -> None:
+    """Reject nesting deeper than :data:`MAX_NESTING_DEPTH`.
+
+    Iterative on purpose: a recursive depth check would itself exhaust the stack
+    on exactly the input it exists to reject.
+    """
+    stack: list[tuple[ast.AST, int]] = [(node, 1)]
+    while stack:
+        current, depth = stack.pop()
+        if depth > MAX_NESTING_DEPTH:
+            raise ExpressionError(
+                f"expression nested deeper than {MAX_NESTING_DEPTH} levels"
+            )
+        for child in ast.iter_child_nodes(current):
+            stack.append((child, depth + 1))
+
+
 def evaluate_expression(expr: str, variables: Mapping[str, np.ndarray]) -> np.ndarray:
     """Safely evaluate ``expr`` against the named columns in ``variables``.
 
@@ -136,6 +260,12 @@ def evaluate_expression(expr: str, variables: Mapping[str, np.ndarray]) -> np.nd
     """
     if not isinstance(expr, str):
         raise TypeError("expr must be a str")
+    if len(expr) > MAX_EXPRESSION_LENGTH:
+        # Checked before ast.parse: parsing a multi-megabyte string is itself
+        # the denial of service.
+        raise ExpressionError(
+            f"expression too long ({len(expr)} chars, limit {MAX_EXPRESSION_LENGTH})"
+        )
     if not isinstance(variables, Mapping):
         raise TypeError("variables must be a mapping of str -> ndarray")
     if len(variables) == 0:
@@ -155,8 +285,19 @@ def evaluate_expression(expr: str, variables: Mapping[str, np.ndarray]) -> np.nd
         tree = ast.parse(expr, mode="eval")
     except SyntaxError as exc:
         raise ExpressionError(f"invalid expression syntax: {exc}") from exc
+    except (RecursionError, MemoryError, ValueError) as exc:
+        # CPython's own parser can blow up on pathological input; that must
+        # still surface as a clean client error, never a 500.
+        raise ExpressionError(f"expression too complex to parse: {exc}") from exc
 
-    result = _eval_node(tree.body, coerced)
+    _reject_if_too_complex(tree)
+
+    try:
+        result = _eval_node(tree.body, coerced)
+    except RecursionError as exc:  # pragma: no cover - defence in depth
+        # _reject_if_too_deep should already have rejected this; the conversion
+        # stays so a limit regression can never become a 500.
+        raise ExpressionError("expression nested too deeply") from exc
 
     first_len = len(next(iter(coerced.values())))
     array = np.asarray(result, dtype=float)
