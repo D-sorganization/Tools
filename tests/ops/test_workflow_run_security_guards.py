@@ -49,11 +49,19 @@ def _workflow_run_workflows() -> list[Path]:
 
 
 def test_workflow_run_workflows_are_the_known_set() -> None:
+    """No ``workflow_run`` consumer is left in this repository.
+
+    ``Jules-Control-Tower.yml`` and ``Jules-PR-AutoFix.yml`` - the two that the
+    guard above was written for - were retired by the Jules retirement campaign
+    (Repository_Management#1483). The contract is kept, not deleted: any new
+    ``workflow_run`` workflow must carry the same-repository guard on every job
+    (enforced by the parametrized test below) and must be added here
+    deliberately.
+    """
     names = {path.name for path in _workflow_run_workflows()}
-    assert names == {
-        "Jules-Control-Tower.yml",
-        "Jules-PR-AutoFix.yml",
-    }, "new workflow_run consumer: extend the guard and this list deliberately"
+    assert names == set(), (
+        "new workflow_run consumer: extend the guard and this list deliberately"
+    )
 
 
 @pytest.mark.parametrize("path", _workflow_run_workflows(), ids=lambda p: p.name)
@@ -67,28 +75,6 @@ def test_every_job_of_a_workflow_run_workflow_carries_the_same_repo_guard(
             f"{path.name}: job {job_id!r} runs on workflow_run without the "
             f"same-repository guard ({SAME_REPO_GUARD})"
         )
-
-
-def test_pr_autofix_guard_covers_the_write_capable_job() -> None:
-    workflow = _load(WORKFLOWS / "Jules-PR-AutoFix.yml")
-    assert workflow["permissions"]["contents"] == "write"
-    fix = workflow["jobs"]["iterative-fix"]
-    assert SAME_REPO_GUARD in fix["if"]
-    # The failure-only gate stays; the guard is added, not substituted.
-    assert "github.event.workflow_run.conclusion == 'failure'" in fix["if"]
-
-
-def test_control_tower_dispatch_jobs_are_guarded_before_calling_writers() -> None:
-    workflow = _load(WORKFLOWS / "Jules-Control-Tower.yml")
-    callers = {
-        job_id: job
-        for job_id, job in workflow["jobs"].items()
-        if str(job.get("uses", "")).startswith("./.github/workflows/")
-    }
-    assert callers, "Control-Tower dispatches reusable workflows"
-    for job_id, job in callers.items():
-        assert SAME_REPO_GUARD in job["if"], job_id
-        assert "needs.triage.outputs.target" in job["if"], job_id
 
 
 def test_codeql_is_enabled_for_python_and_javascript() -> None:
