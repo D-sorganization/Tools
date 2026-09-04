@@ -22,6 +22,7 @@ class TestODESolverMainWindow:
         """Create mock Qt application for headless testing."""
         try:
             import PyQt6.QtWidgets  # noqa: F401
+
             yield
         except ImportError:
             with patch.dict(

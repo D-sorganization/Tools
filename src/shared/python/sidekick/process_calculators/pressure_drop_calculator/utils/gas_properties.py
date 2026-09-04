@@ -678,7 +678,10 @@ def _compute_pure_viscosities(
     for component in composition.keys():
         comp_key = component
         if comp_key not in GAS_DATABASE:
-            _logger.warning("Component '%s' not in database, falling back to Air properties", comp_key)
+            _logger.warning(
+                "Component '%s' not in database, falling back to Air properties",
+                comp_key,
+            )
             comp_key = "Air"
 
         props = GAS_DATABASE[comp_key]

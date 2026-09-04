@@ -178,7 +178,9 @@ def test_toggle_notes_attaches_and_toggles_dock(app, monkeypatch):
     monkeypatch.setitem(sys.modules, "notes", notes_module)
     monkeypatch.setitem(sys.modules, "notes.integration", integration_module)
     monkeypatch.setitem(sys.modules, "shared.python.notes", notes_module)
-    monkeypatch.setitem(sys.modules, "shared.python.notes.integration", integration_module)
+    monkeypatch.setitem(
+        sys.modules, "shared.python.notes.integration", integration_module
+    )
 
     window = FinancialCalculatorMainWindow()
     window._toggle_notes()
