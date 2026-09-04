@@ -402,6 +402,7 @@
           "tests/rate_of_closure/test_tooltips.py",
           "tests/rate_of_closure/test_viewers_gui.py",
           "tests/rate_of_closure/test_web_asset_distribution.py",
+          "tests/scada/test_f_matrix.py",
           "tests/scripts/test_audit_closed_stack_branches.py",
           "tests/scripts/test_check_changed_python_policy.py",
           "tests/scripts/test_check_rate_visual_evidence_changes.py",

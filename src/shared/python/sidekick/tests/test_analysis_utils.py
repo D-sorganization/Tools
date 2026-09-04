@@ -62,11 +62,33 @@ class TestEvaluateOutput:
         called_kwargs = self.engine.calculate.call_args.kwargs
         assert called_kwargs.get("x") == 10.0
 
-    def test_missing_output_variable_returns_zero(self):
-        """When output_variable not in result, returns 0.0."""
+    def test_missing_output_variable_returns_nan(self):
+        """When output_variable is not in the result, returns NaN (#3976).
+
+        Previously asserted 0.0, which cemented the defect: a missing key was
+        indistinguishable from a genuine zero objective and silently poisoned
+        the gradient estimator and multi-parameter sweeps.
+        """
         self.engine.calculate.return_value = {"other": 99.0}
-        value, _, _ = evaluate_output(self.engine, {}, 0.0, "nonexistent")
+        value, state, composition = evaluate_output(self.engine, {}, 0.0, "nonexistent")
+        assert math.isnan(value)
+        assert state == {}
+        assert composition == {}
+
+    def test_non_numeric_output_variable_returns_nan(self):
+        """A non-numeric value under the requested key returns NaN (#3976)."""
+        self.engine.calculate.return_value = {"out": object()}
+        value, state, composition = evaluate_output(self.engine, {}, 0.0, "out")
+        assert math.isnan(value)
+        assert state == {}
+        assert composition == {}
+
+    def test_legitimate_zero_is_not_treated_as_failure(self):
+        """0.0 remains a valid objective value, distinct from the sentinel."""
+        self.engine.calculate.return_value = {"out": 0.0}
+        value, _, _ = evaluate_output(self.engine, {}, 0.0, "out")
         assert value == pytest.approx(0.0)
+        assert not math.isnan(value)
 
     def test_missing_state_returns_empty_dict(self):
         """When 'state' key not in result, returns empty dict."""

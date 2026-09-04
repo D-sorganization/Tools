@@ -3,8 +3,40 @@ from typing import Optional
 
 import torch
 
-from p1am_control_system.backend.models import RoutingConfig
-from p1am_control_system.backend.plc_interface import BasePLCClient
+# Imported flat -- deliberately, and this is load-bearing (issue #3984).
+#
+# The p1am backend imports its own modules flat (`from plc_interface import
+# BasePLCClient` in plc_factory/modbus_client/simulator_client) because
+# `src/p1am_control_system/backend` is what lands on sys.path: in the container
+# the build context *is* `backend/` and `PYTHONPATH=/app`, and under pytest the
+# same directory is listed in `[tool.pytest.ini_options] pythonpath`. In neither
+# environment is the backend imported as `p1am_control_system.backend`.
+#
+# This module previously used the package path. `plc_interface.py` was therefore
+# executed twice -- once as `plc_interface`, once as
+# `p1am_control_system.backend.plc_interface` -- yielding two distinct
+# `BasePLCClient` classes. `NeuralSimulatorClient` subclassed the package-path
+# one while `PLCFactory.create_client` is annotated as returning the flat-path
+# one, so `isinstance(client, BasePLCClient)` was False for the neural driver
+# and any `isinstance` check or ABC registration would have failed silently.
+# `RoutingConfig` was duplicated the same way, so a pydantic/isinstance check
+# against the backend's own class would also have failed.
+#
+# Importing flat makes both names resolve to the single module object the
+# backend itself uses, which removes the duplicate classes *and* the
+# package-level `p1am_control_system` <-> `plant_simulator` cycle: nothing here
+# names `p1am_control_system` any more. Safe because this module has exactly one
+# importer -- the lazy `driver == "neural"` branch of `PLCFactory.create_client`
+# -- so the backend directory is always on sys.path by the time it is reached.
+#
+# The *proper* fix is to stop importing the backend flat at all (package
+# `__init__`, package-absolute imports throughout, and a Dockerfile whose build
+# context is the package root). That touches ~50 modules and changes the
+# container layout, so it is escalated rather than done here; see #3984.
+# `tests/plant_simulator/test_plc_contract_identity.py` pins the invariant so
+# the duplicate classes cannot come back.
+from models import RoutingConfig
+from plc_interface import BasePLCClient
 
 from .model import PlantSimulatorLSTM
 

@@ -123,7 +123,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
     },
     {
-      "content_sha256_lf": "bf460e44a70cb639ea5b680c8a3c82d29ce1f9335d0c7bee9b665643a01bd18c",
+      "content_sha256_lf": "7aebf3f0363cc8b40872dad98da865eddedd5ba8da6dc619730310c0606a1a87",
       "entry_count": 5,
       "package": "rust_core/data-processor-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "28bdaf029a8d40cb42cd271745aa50e7903d3dcd246079ecd974fa5be6a1c188",
+      "content_sha256_lf": "3ed9858a36fddb633acca7293f41266017af5c513ffa2114fe35800d73e13c68",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -159,8 +159,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "a431dc1b426079080e9b8d7bf9f61c767e13acbabe25152fde7c9eaf7d4cf187",
-      "entry_count": 90,
+      "content_sha256_lf": "ca9119d73e4fb0da3e7edad1814eefc0824ca67a07c6926b4788873a9b1a0525",
+      "entry_count": 91,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
     },
@@ -381,7 +381,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-optimizer-gui.json"
     },
     {
-      "content_sha256_lf": "c3e19f4a340caee1dc9c220074875291b671686abdd7ab66f3b2fac86abdff1e",
+      "content_sha256_lf": "faec15789a07f2d016659e0da890d07668e3f406a3c5e088f62572d83983c524",
       "entry_count": 254,
       "package": "src/p1am_control_system",
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
@@ -399,7 +399,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-pid-generator.json"
     },
     {
-      "content_sha256_lf": "a155b62e88560b3cf24d98d5d7c804770c60707d63c45b1ff44658681bb965b8",
+      "content_sha256_lf": "f96f0744e0e295f8c9c8f39ceb90fee2d0bcd510a61d606bdeda79666d8959ed",
       "entry_count": 5,
       "package": "src/plant_simulator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-plant-simulator.json"
@@ -579,7 +579,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "821ce6434eee8b97751e0bfaef2e5036b6f8825b3920b4d24d9d176e47fd14b0",
+      "content_sha256_lf": "061d59ca4e6d6c2a2490467ddb730f9c178f1116d9a7e2c2feddefde172d7a86",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
@@ -723,7 +723,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-scripting.json"
     },
     {
-      "content_sha256_lf": "eba15c7c22bc2c2efc79000e366f4b401901bb5af4fcd18b70f12a9ae33ff1d5",
+      "content_sha256_lf": "65b5b8d059694101c8da06517740c627f5f37af9a6f402d3932304fee339ca0e",
       "entry_count": 215,
       "package": "src/shared/python/sidekick",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick.json"

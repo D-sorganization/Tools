@@ -898,10 +898,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9178,
+      "bytes_lf": 15305,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "912e2a9314b31b35119a3e93f2ffc9888711e36cc55b132a2d17253eb5faa6c6",
+      "content_sha256_lf": "008647f63f77ef4c69002a76f904dbe9d3dc795eb1e5ed71ff3559085fc10942",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-DATA-EXPLORER-EXPRESSION-PY-8D2A6C639F3C",
       "language": "python",
@@ -942,9 +942,34 @@
             "signature": null
           },
           {
+            "kind": "constant",
+            "name": "MAX_NESTING_DEPTH",
+            "signature": null
+          },
+          {
             "kind": "function",
             "name": "evaluate_expression",
             "signature": "expr: str, variables: Mapping[str, np.ndarray]"
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_AST_NODES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_EXPRESSION_LENGTH",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_POW_CHAIN_DEPTH",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_POW_EXPONENT",
+            "signature": null
           }
         ],
         "test_paths": [

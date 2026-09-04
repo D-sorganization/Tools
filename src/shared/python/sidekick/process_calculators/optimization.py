@@ -204,9 +204,14 @@ def _evaluate_and_record(
         raise ValueError("st must be provided")
     overrides = _build_override_mapping(st.parameter_names, st.values.tolist())
     objective: float
-    composition: dict[str, float]
     state: dict[str, float]
-    objective, composition, state = evaluate_output(
+    composition: dict[str, float]
+    # `evaluate_output` returns (value, state, composition) -- in that order.
+    # This unpacked it as (objective, composition, state), so `best_state`
+    # was populated with the composition dict and `best_composition` with the
+    # state dict; the reported optimizer payload had the two swapped. Found
+    # while fixing the NaN-sentinel contract (#3976).
+    objective, state, composition = evaluate_output(
         engine, st.base_params, manual_hhv, st.output_name, overrides
     )
 
