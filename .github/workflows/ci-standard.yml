@@ -14,9 +14,10 @@ on:
     types: [opened, synchronize, reopened]
     # NOTE: **.md intentionally NOT excluded so quality-gate runs on docs-only
     # PRs and satisfies branch protection required status checks.
+    # .gitignore likewise: a .gitignore-only PR must still be able to
+    # satisfy the required quality-gate context.
     paths-ignore:
       - "LICENSE"
-      - ".gitignore"
   workflow_dispatch:
 
 concurrency:
