@@ -4184,10 +4184,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10380,
+      "bytes_lf": 10893,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ec14f07b8dae249a9653e505c25b4b64b19b36110394d8cff87ad90231a1eb1f",
+      "content_sha256_lf": "109985c4fee92f3f3bfc1502b451f26f105d5d8694e97f2addded282a2ca460f",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-VISUAL-BASELINE-COMPARE-PY-69563454C58A",
       "language": "python",

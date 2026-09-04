@@ -159,7 +159,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "9e2001651b442d6346e9c07c536f685c8d0c7b16268505762744d34776825410",
+      "content_sha256_lf": "a431dc1b426079080e9b8d7bf9f61c767e13acbabe25152fde7c9eaf7d4cf187",
       "entry_count": 90,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
@@ -429,7 +429,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-python.json"
     },
     {
-      "content_sha256_lf": "3b1d073470fccc823f00d16562dbfd2266b6958674e20771a32ed30818db3e0e",
+      "content_sha256_lf": "29707e53aeb5cc63cb7ef49ee5950c16e4700896d6d9f1a447f6168138783ae1",
       "entry_count": 59,
       "package": "src/rate_of_closure",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure.json"
