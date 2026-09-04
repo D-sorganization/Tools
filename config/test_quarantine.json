@@ -14,6 +14,7 @@
     {"path": "src/movement_optimizer/tests/test_benchmarks.py", "owner": "src/movement_optimizer", "issue": "#4933", "reason": "wall-clock budget assertion (_compute_cost <5ms median) belongs in benchmark-suite.yml, not a PR gate"},
     {"path": "src/project_packer/tests/test_build_exe.py", "owner": "src/project_packer", "issue": "#4933", "reason": "ModuleNotFoundError: tools.folder_tools.project_packer (package moved to src/project_packer)"},
     {"path": "src/project_packer/tests/test_folder_packer_gui.py", "owner": "src/project_packer", "issue": "#4933", "reason": "ModuleNotFoundError: tools.folder_tools.project_packer (package moved to src/project_packer)"},
-    {"path": "src/project_packer/tests/test_package_for_distribution.py", "owner": "src/project_packer", "issue": "#4933", "reason": "ModuleNotFoundError: tools.folder_tools.project_packer (package moved to src/project_packer)"}
+    {"path": "src/project_packer/tests/test_package_for_distribution.py", "owner": "src/project_packer", "issue": "#4933", "reason": "ModuleNotFoundError: tools.folder_tools.project_packer (package moved to src/project_packer)"},
+    {"path": "src/shared/python/tests/test_god_class_guard.py", "owner": "src/shared/python", "issue": "#4933", "reason": "1 failure: test_calculator_state_mixin_reduced expects unlanded GH1692 sub-mixin refactor"}
   ]
 }

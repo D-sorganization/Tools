@@ -139,7 +139,7 @@ def test_calculator_state_mixin_reduced() -> None:
     extracting _SplitterStateMixin and _ClipboardMixin sub-mixins.
     """
     filepath = (
-        _SHARED_PYTHON / "upstream_drift_tools/ui/mixins/calculator_state_mixin.py"
+        _SHARED_PYTHON / "sidekick/ui/mixins/calculator_state_mixin.py"
     )
     counts = _get_class_method_counts(filepath)
 

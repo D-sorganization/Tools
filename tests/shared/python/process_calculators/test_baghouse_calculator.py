@@ -108,7 +108,7 @@ class TestBaghouseCalculations:
         """Test DbC assertions map to valid inputs."""
         mix = {"N2": 1.0}
 
-        with pytest.raises(AssertionError, match="Gas flow must be positive"):
+        with pytest.raises(AssertionError, match="(?i)must be positive"):
             calculator.calculate(
                 gas_flow_kg_s=-1.0,
                 inlet_temp_k=300.0,

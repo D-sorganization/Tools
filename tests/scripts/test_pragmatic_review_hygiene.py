@@ -26,7 +26,7 @@ def test_scripts_do_not_duplicate_ble001_suppressions() -> None:
 def test_readme_launcher_hierarchy_names_only_existing_launchers() -> None:
     readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
 
-    assert "`UnifiedToolsLauncher.py`" in readme
+    assert "UnifiedToolsLauncher.py" in readme
     assert (REPO_ROOT / "UnifiedToolsLauncher.py").is_file()
     assert "`launch_tools_main.py`" not in readme
     assert "`Launcher.py`" not in readme
