@@ -183,8 +183,9 @@ export const TagInspector: React.FC<{
             </span>
           </div>
           <div className="input-group">
-            <label className="input-label">Override Force Value</label>
+            <label htmlFor="override-val" className="input-label">Override Force Value</label>
             <input
+              id="override-val"
               type="number"
               step="0.1"
               className="form-input"
@@ -295,8 +296,9 @@ export const TagInspector: React.FC<{
             </span>
           </div>
           <div className="input-group">
-            <label className="input-label">High Trip Limit (Alarm High)</label>
+            <label htmlFor={`high-limit-${view.tagId}`} className="input-label">High Trip Limit (Alarm High)</label>
             <input
+              id={`high-limit-${view.tagId}`}
               type="number"
               step="0.5"
               className="form-input"
@@ -312,8 +314,9 @@ export const TagInspector: React.FC<{
             />
           </div>
           <div className="input-group">
-            <label className="input-label">Low Trip Limit (Alarm Low)</label>
+            <label htmlFor={`low-limit-${view.tagId}`} className="input-label">Low Trip Limit (Alarm Low)</label>
             <input
+              id={`low-limit-${view.tagId}`}
               type="number"
               step="0.5"
               className="form-input"
