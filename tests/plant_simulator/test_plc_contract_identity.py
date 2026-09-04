@@ -27,8 +27,6 @@ of every class in it. Two concrete consequences, not hypotheticals:
 
 from __future__ import annotations
 
-import importlib
-
 import pytest
 
 
@@ -37,18 +35,31 @@ def test_neural_client_does_not_name_the_package_path() -> None:
 
     ``neural_simulator_client`` must not import ``p1am_control_system.*``: doing
     so re-creates the duplicate classes *and* re-creates the package-level
-    import cycle between the two applications.
+    import cycle between the two applications. Inspect AST / source directly
+    so the contract holds even in lean CI environments without torch.
     """
-    module = importlib.import_module("plant_simulator.neural_simulator_client")
-    assert module.__file__ is not None
-    with open(module.__file__, encoding="utf-8") as handle:
-        source = handle.read()
+    import ast
+    from pathlib import Path
 
-    offending = [
-        line
-        for line in source.splitlines()
-        if line.startswith(("import ", "from ")) and "p1am_control_system" in line
-    ]
+    target_file = (
+        Path(__file__).resolve().parents[2]
+        / "src"
+        / "plant_simulator"
+        / "neural_simulator_client.py"
+    )
+    assert target_file.is_file()
+    source = target_file.read_text(encoding="utf-8")
+
+    tree = ast.parse(source, filename=str(target_file))
+    offending: list[str] = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                if "p1am_control_system" in alias.name:
+                    offending.append(alias.name)
+        elif isinstance(node, ast.ImportFrom):
+            if node.module and "p1am_control_system" in node.module:
+                offending.append(node.module)
     assert offending == [], (
         "neural_simulator_client must import the p1am contract flat, the way the "
         f"backend itself does (#3984); found: {offending}"
