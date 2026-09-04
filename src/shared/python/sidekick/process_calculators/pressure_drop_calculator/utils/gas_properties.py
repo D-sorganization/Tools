@@ -376,8 +376,7 @@ def calculate_mixture_molecular_weight(composition: dict[str, float]) -> float:
     mw_mix = 0.0
     for component, mole_frac in composition.items():
         if component not in GAS_DATABASE:
-            _logger.warning(f"Component '{component}' not in database, skipping")
-            continue
+            raise ValueError(f"Unknown gas species: {component}")
         mw_mix += mole_frac * GAS_DATABASE[component].molecular_weight
 
     _logger.debug(f"Mixture MW = {mw_mix:.3f} kg/kmol")
@@ -678,11 +677,7 @@ def _compute_pure_viscosities(
     for component in composition.keys():
         comp_key = component
         if comp_key not in GAS_DATABASE:
-            _logger.warning(
-                "Component '%s' not in database, falling back to Air properties",
-                comp_key,
-            )
-            comp_key = "Air"
+            raise ValueError(f"Unknown gas species: {comp_key}")
 
         props = GAS_DATABASE[comp_key]
 

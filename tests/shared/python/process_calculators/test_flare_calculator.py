@@ -39,7 +39,7 @@ class TestFlareCalculator:
 
     def test_flare_size_preconditions(self, calculator: FlareCalculator) -> None:
         """Verify preconditions block invalid states."""
-        with pytest.raises(AssertionError, match="must be positive"):
+        with pytest.raises((AssertionError, ValueError), match="must be positive"):
             calculator.calculate_flare_size(
                 total_flow=-50.0,
                 gas_composition={"CH4": 1.0},

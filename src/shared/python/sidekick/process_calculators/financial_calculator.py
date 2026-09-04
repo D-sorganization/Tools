@@ -324,7 +324,10 @@ class FinancialModelCalculator:
         Raises:
             ValueError: If inflation rates are negative
         """
-        if years <= 0:
+        if years == 0:
+            self.yearly_projections = []
+            return []
+        if years < 0:
             raise ValueError(f"years must be positive, got {years}")
 
         # Use instance or provided inflation rates

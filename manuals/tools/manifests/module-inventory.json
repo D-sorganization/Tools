@@ -357,7 +357,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-movement-optimizer.json"
     },
     {
-      "content_sha256_lf": "dfc6cfdd6a9ccad38aa7af7ade50a4654e3878be12a24196008e8e5525a79d4f",
+      "content_sha256_lf": "a351c452586e0b8f49e6d178f2ba934cd5f4fa5e39301fa2be216e2d6dff16ee",
       "entry_count": 7,
       "package": "src/multi_param_analysis",
       "path": "manuals/tools/manifests/module-inventory/entries-src-multi-param-analysis.json"
@@ -723,7 +723,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-scripting.json"
     },
     {
-      "content_sha256_lf": "a1867ddeab70586bbd54005a9481bb7103c1cfca11e88b88f852b8a1973044e1",
+      "content_sha256_lf": "7110adea9a063fa8d627cc2a665183f259214deabb8ada5ccf65792f5d8bb698",
       "entry_count": 215,
       "package": "src/shared/python/sidekick",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick.json"
