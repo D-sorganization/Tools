@@ -7,6 +7,11 @@ import pytest
 np = pytest.importorskip("numpy")
 
 from data_explorer_expression import (  # noqa: E402
+    MAX_AST_NODES,
+    MAX_EXPRESSION_LENGTH,
+    MAX_NESTING_DEPTH,
+    MAX_POW_CHAIN_DEPTH,
+    MAX_POW_EXPONENT,
     ExpressionError,
     evaluate_expression,
 )
@@ -242,12 +247,107 @@ def test_mean_requires_one_arg() -> None:
         evaluate_expression("mean(a, b)", _vars(a=[1, 2], b=[3, 4]))
 
 
-def test_large_exponent_yields_inf_not_overflow() -> None:
-    # Must NOT raise a bare OverflowError; numpy ufuncs give inf instead.
-    out = evaluate_expression("2.0 ** (2.0 ** 2.0 ** 2.0 ** 100)", _vars(a=[1.0]))
+def test_deep_power_chain_is_rejected_as_a_bomb() -> None:
+    """A long ``**`` chain is refused statically (#3986 / #3290 limits).
+
+    This assertion replaces an earlier one that expected ``inf``. The original
+    intent -- "must NOT raise a bare OverflowError" -- is preserved: the caller
+    still sees ``ExpressionError``, the module's clean client error, never a raw
+    arithmetic exception. The change is that the chain is now refused *before*
+    any numpy work happens, matching the shared evaluator's policy.
+    """
+    with pytest.raises(ExpressionError, match="power chain"):
+        evaluate_expression("2.0 ** (2.0 ** 2.0 ** 2.0 ** 100)", _vars(a=[1.0]))
+
+
+def test_within_limit_power_chain_still_yields_inf_not_overflow() -> None:
+    """A chain at the permitted depth keeps the documented inf behaviour."""
+    assert MAX_POW_CHAIN_DEPTH >= 2
+    out = evaluate_expression("2.0 ** 2.0 ** 999.0", _vars(a=[1.0]))
     assert np.isinf(out).all()
 
 
 def test_scalar_divide_by_zero_is_inf_not_exception() -> None:
     out = evaluate_expression("a / 0", _vars(a=[1.0, 2.0]))
     assert np.isinf(out).all()
+
+
+# --------------------------------------------------------------------------- #
+# Complexity / DoS limits (issue #3986; limits shared from #3290)             #
+# --------------------------------------------------------------------------- #
+def test_limits_are_the_shared_ones_not_a_local_copy() -> None:
+    """The limits must be imported from the shared evaluator, not re-declared.
+
+    This is the DRY half of #3986: the p1am evaluator previously had *no*
+    complexity limits while ``shared.python.safe_eval`` had four. Asserting
+    identity (not just equality) means a future tightening of the shared limits
+    cannot silently leave this HTTP-facing endpoint behind.
+    """
+    from shared.python import safe_eval as shared_safe_eval
+
+    assert MAX_EXPRESSION_LENGTH is shared_safe_eval.MAX_EXPRESSION_LENGTH
+    assert MAX_AST_NODES is shared_safe_eval.MAX_AST_NODES
+    assert MAX_POW_EXPONENT is shared_safe_eval.MAX_POW_EXPONENT
+    assert MAX_POW_CHAIN_DEPTH is shared_safe_eval.MAX_POW_CHAIN_DEPTH
+
+
+def test_over_long_expression_is_rejected() -> None:
+    """Rejected before ``ast.parse``: parsing the string is itself the DoS."""
+    expr = "a" + " + a" * MAX_EXPRESSION_LENGTH
+    assert len(expr) > MAX_EXPRESSION_LENGTH
+    with pytest.raises(ExpressionError, match="too long"):
+        evaluate_expression(expr, _vars(a=[1.0]))
+
+
+def test_expression_at_the_length_limit_is_not_rejected_for_length() -> None:
+    """The length guard must be a ``>`` boundary, not ``>=``."""
+    expr = "a" * MAX_EXPRESSION_LENGTH
+    # Rejected for being an unknown name, i.e. it got past the length gate.
+    with pytest.raises(ExpressionError, match="unknown name"):
+        evaluate_expression(expr, _vars(a=[1.0]))
+
+
+def test_too_many_ast_nodes_is_rejected() -> None:
+    """A wide (not deep) expression is capped by the node count."""
+    expr = " + ".join(["a"] * (MAX_AST_NODES + 10))
+    with pytest.raises(ExpressionError, match="too complex"):
+        evaluate_expression(expr, _vars(a=[1.0]))
+
+
+def test_deep_nesting_raises_expression_error_not_recursion_error() -> None:
+    """The defect in #3986: deep nesting used to escape as ``RecursionError``.
+
+    ``_eval_node`` recurses, so before this guard a nested expression from the
+    HTTP derived-column endpoint produced a ``RecursionError`` -- not an
+    ``ExpressionError`` -- and therefore surfaced to the operator as a 500
+    instead of a clean 4xx. Parenthesised unary minus nests one level per
+    character pair, so this reaches the depth limit well inside the AST node
+    budget.
+    """
+    depth = MAX_NESTING_DEPTH + 20
+    expr = "-" * depth + "a"
+    with pytest.raises(ExpressionError) as excinfo:
+        evaluate_expression(expr, _vars(a=[1.0]))
+    assert not isinstance(excinfo.value, RecursionError)
+    assert "nested" in str(excinfo.value)
+
+
+def test_nesting_guard_does_not_reject_ordinary_expressions() -> None:
+    """A realistic derived column must still evaluate."""
+    out = evaluate_expression(
+        "clip(sqrt(abs(a * b)) + mean(a) / 2.0, 0.0, 100.0)",
+        _vars(a=[1.0, 4.0], b=[9.0, 16.0]),
+    )
+    assert np.all(np.isfinite(out))
+
+
+def test_large_constant_exponent_is_rejected() -> None:
+    """A single huge exponent is refused rather than silently returning inf."""
+    with pytest.raises(ExpressionError, match="exponent too large"):
+        evaluate_expression(f"a ** {MAX_POW_EXPONENT + 1}", _vars(a=[2.0]))
+
+
+def test_column_exponent_is_still_allowed() -> None:
+    """A runtime (non-constant) exponent is not a static bomb; keep it working."""
+    out = evaluate_expression("a ** b", _vars(a=[2.0, 3.0], b=[2.0, 2.0]))
+    np.testing.assert_allclose(out, [4.0, 9.0])
