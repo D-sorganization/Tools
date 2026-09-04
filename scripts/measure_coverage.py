@@ -20,9 +20,7 @@ from pathlib import Path
 from typing import Any
 
 
-def parse_coverage_xml(
-    xml_file: Path, tracked_prefixes: list[str]
-) -> dict[str, Any]:
+def parse_coverage_xml(xml_file: Path, tracked_prefixes: list[str]) -> dict[str, Any]:
     """Parse coverage.xml and extract per-package coverage metrics."""
     root = ET.parse(xml_file).getroot()
     total_line_rate = float(root.attrib.get("line-rate", "0"))
