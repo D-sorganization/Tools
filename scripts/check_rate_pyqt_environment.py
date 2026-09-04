@@ -135,13 +135,20 @@ def verify_font_stack(expectations_path: Path) -> dict[str, str]:
             environment change (issue #4844), not opaque pixel drift.
     """
 
-    expectations = json.loads(expectations_path.read_text(encoding="utf-8"))
+    expectations: dict[str, str | list[str]] = json.loads(
+        expectations_path.read_text(encoding="utf-8")
+    )
     probed = probe_font_stack()
-    mismatches = [
-        f"{key} {probed.get(key, 'unavailable')} != expected {expected}"
-        for key, expected in expectations.items()
-        if probed.get(key) != expected
-    ]
+    mismatches: list[str] = []
+    for key, expected in expectations.items():
+        probed_val = probed.get(key, "unavailable")
+        if isinstance(expected, list):
+            if probed_val not in expected:
+                allowed_str = ", ".join(expected)
+                mismatches.append(f"{key} {probed_val} not in [{allowed_str}]")
+        else:
+            if probed_val != expected:
+                mismatches.append(f"{key} {probed_val} != expected {expected}")
     if mismatches:
         raise RuntimeError(
             "system font stack changed (issue #4844): " + "; ".join(mismatches)

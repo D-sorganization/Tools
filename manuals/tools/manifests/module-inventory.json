@@ -159,7 +159,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "ca9119d73e4fb0da3e7edad1814eefc0824ca67a07c6926b4788873a9b1a0525",
+      "content_sha256_lf": "8bc3437ce0d36dcc0010a6eb32ae4d2cce9ee453597a4928ac5731f433408f2a",
       "entry_count": 91,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
@@ -585,7 +585,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
     },
     {
-      "content_sha256_lf": "22ddf55df2e54bda9bef1fdae8ff9c7d7a4ef58e2e954218eee76e37cf77a51c",
+      "content_sha256_lf": "46895070bdba1435dd3fc760860460d28e5d88355239fe39da3a0f96548b8c9b",
       "entry_count": 112,
       "package": "src/shared/python/ai",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-ai.json"
