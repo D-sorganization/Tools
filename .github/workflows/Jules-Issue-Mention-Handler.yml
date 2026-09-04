@@ -7,10 +7,12 @@ on:
   issue_comment:
     types: [created]
 
+# Least privilege (Repository_Management#1483): the workflow never pushes and
+# never touches a PR with GITHUB_TOKEN - it checks out (contents: read) and
+# comments on the issue, while the Jules API opens any PR itself. The write
+# scope lives only on `fix-issue`, the one job that needs it.
 permissions:
-  contents: write
-  pull-requests: write
-  issues: write
+  contents: read
 
 concurrency:
   group: jules-issue-fix-${{ github.event.issue.number }}
@@ -96,6 +98,9 @@ jobs:
 
   fix-issue:
     timeout-minutes: 30
+    permissions:
+      contents: read
+      issues: write
     needs: [pick-runner, check-mention]
     if: needs.check-mention.outputs.should_run == 'true' && !github.event.issue.pull_request
     runs-on: d-sorg-fleet
