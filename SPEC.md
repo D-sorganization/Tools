@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.123                                   |
-| **Last Spec Update**    | 2026-09-03                                 |
+| **Spec Version**        | 1.18.124                                   |
+| **Last Spec Update**    | 2026-09-04                                 |
 
 ## 2. Purpose & Mission
 
@@ -5681,6 +5681,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-04 | #4966 | fix(ai): initialize message controller before loading session history in AIAssistantPanel. |
 | 2026-09-04 | #4930 | fix(ci): allow ControlTower and Oglaptop host font stack versions in `scripts/check_rate_pyqt_environment.py::verify_font_stack` to support heterogeneous fleet runner hosts. |
 | 2026-09-03 | #4947 | docs(scada, #4912, RM #1505 Phase 2): make `docs/scada/f_matrix.v1.json` (+ rendered `f_matrix.md`) the tracker of record for SCADA F01-F16 and historian H1-H9, superseding the checklists on #4085/#4086/#4087/#4088/#4089/#4046 that showed 38 of 38 boxes ticked while every carrier PR (#4091 #4093 #4094 #4095 #4449 #4065) sat closed unmerged; re-verified against main as 0 of 16 SCADA and 0 of 9 historian children landed. Adds `docs/scada/recovery_ledger.v1.json` with a per-file decision for all 111 files the closed heads add and main lacks (9 re-land, 8 obsolete, 94 needs-owner) in 16 dependency clusters; nothing is re-landed here. Gated by `scripts/check_scada_f_matrix.py --check` and `tests/scada/test_f_matrix.py` (26 tests, 8 negative guards). Three independent defects fixed with tests: #3976 `evaluate_output` returned 0.0 for a missing output key (now NaN) and `optimization.py` unpacked its tuple in the wrong order; #3986 the p1am derived-column sandbox now imports the shared `safe_eval` DoS limits by identity plus an iterative nesting-depth check; #3984 `plant_simulator.neural_simulator_client` imported `plc_interface`/`models` by package path while the backend imports them flat, executing both twice - now flat, with test inspecting AST directly without importing torch, and with the uninstantiable `neural` driver pinned by a strict xfail. |
 | 2026-09-03 | #1483 | chore(ci): retire 25 unowned Jules-* workflows, keep 3 (#1483). Format test_workflow_run_security_guards.py per ruff. |
@@ -7169,3 +7170,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-02: Module Inventory Merge Driver (#4818)
 
 - **2026-09-02**: feat(repository-tooling, #4818) — Add a local git merge driver (`scripts/git/module_inventory_merge_driver.py`, registered via `scripts/git/install_merge_drivers.py`) that resolves conflicts on the generated `manuals/tools/manifests/module-inventory.json` and its `module-inventory/entries-*.json` shards by regenerating from the merged tree instead of leaving conflict markers, since the inventory is a pure function of the other tracked files and never reads its own prior content. Because a merge driver runs before git finishes checking out every other path, its regeneration can still be stale for concurrent changes elsewhere in the same merge (confirmed empirically); a companion hook, `scripts/git/regenerate_module_inventory_during_merge.py`, is the authoritative fixup that runs once the fully merged tree is on disk. It is registered on git's `pre-merge-commit` hook, not plain `pre-commit` (confirmed empirically that git does not invoke `pre-commit` for merge commits at all), so it needs its own `pre-commit install --hook-type pre-merge-commit` in addition to the default install (both wired into `scripts/setup_precommit.sh` / `scripts/setup_hooks.py`). Also confirmed empirically: `MERGE_HEAD` does not exist yet at the point `pre-merge-commit` fires, so the hook does not (and cannot) gate on it -- it relies solely on being wired to a hook type that only ever fires for merge commits. The merge-driver registration is wired into `scripts/setup_precommit.sh` and `scripts/setup_hooks.py` so it happens automatically for anyone running this repo's documented local setup, since `.gitattributes` alone cannot embed the driver command (local git config only, by design). Does not cover `auto-update-prs.yml`'s server-side `pulls.updateBranch` merges, which run entirely on GitHub's infrastructure and never consult repo-local git config or pre-commit hooks.
+
+## 2026-09-04: AIAssistantPanel Controller Initialization Order (#4966)
+
+- **2026-09-04**: fix(ai, #4966) — Defer `_load_history()` in `AIAssistantPanel.__init__` until after all GUI controllers (`_header`, `_messages`, `_adapter_mgr`, `_indexer`, `_input_container`) are instantiated and wired, preventing an `AttributeError: 'AIAssistantPanel' object has no attribute '_messages'` crash when an active chat session is reloaded on startup.
