@@ -64,7 +64,7 @@ wait for #4844's environment fix — re-approving it now would launder that
 glyph drift. The 390x844 overflow had TWO 6 px sources: the P8 transport row
 (#4927) and F2's green-import row (#4936), whose file input's font-dependent
 intrinsic width blocked shrinking. **Correcting #4936's own claim:** that fix
-does *not* change the approved 1440x900 image — baselines are viewport-only
+does _not_ change the approved 1440x900 image — baselines are viewport-only
 screenshots and the import row sits near y=1149, below the fold — so it was
 the 390x844 document width, not the captured first viewport, that it fixed.
 ADR-0047 H4 (UD #9353) wired the Flight Explorer tab's "Import Trajectory
