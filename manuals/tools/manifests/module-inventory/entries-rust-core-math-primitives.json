@@ -1151,6 +1151,7 @@
           "tests/test_signal_processing_expanded.py",
           "tests/test_test_utils.py",
           "tests/test_wave_solver_security.py",
+          "tests/test_workflow_required_contexts.py",
           "tests/tools/test_scientific_auditor.py",
           "tests/unit/ai/gui/test_chat_export.py",
           "tests/unit/ai/gui/test_session_manager_2872.py",
