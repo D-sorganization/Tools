@@ -806,7 +806,7 @@ jobs:
       - name: Run Tests with Coverage (Python ${{ matrix.python-version }})
         id: run_tests
         run: |
-          export PYTHONPATH="src/data_processing/data_processor/python:src/media_processing/video_processor/python:src/python/src:src:${PYTHONPATH:-}"
+          export PYTHONPATH="src/data_processing/data_processor/python:src/media_processing/video_processor/python:src/python/src:src/shared/python:src:${PYTHONPATH:-}"
           if [ "${{ matrix.python-version }}" = "3.11" ]; then
             # tests/rust_bindings must hard-fail (not skip) when the tools_core
             # wheel built above is missing from the required lane.

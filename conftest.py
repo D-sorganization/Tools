@@ -29,6 +29,7 @@ def _setup_global_stubs(repo_root: Path) -> None:
     for import_root in (
         repo_root / "src",
         repo_root / "src" / "python" / "src",
+        repo_root / "src" / "shared" / "python",
     ):
         import_path = str(import_root)
         if import_path in sys.path:
