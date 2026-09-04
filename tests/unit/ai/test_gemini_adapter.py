@@ -127,23 +127,38 @@ def fake_genai(monkeypatch: pytest.MonkeyPatch) -> types.SimpleNamespace:
     monkeypatch.setitem(sys.modules, "google.generativeai", fake_module)
     monkeypatch.setitem(sys.modules, "google.generativeai.types", fake_types_module)
 
-    # Re-import the adapter module so it picks up the fakes. We pop it from
-    # ``sys.modules`` first to force a fresh import that binds to our fakes.
-    monkeypatch.delitem(
-        sys.modules, "src.shared.python.ai.adapters.gemini_adapter", raising=False
-    )
+    # Re-import the adapter module so it picks up the fakes. We pop all alias
+    # spellings from ``sys.modules`` first to force a fresh import that binds
+    # to our fakes.
+    for alias in (
+        "src.shared.python.ai.adapters.gemini_adapter",
+        "shared.python.ai.adapters.gemini_adapter",
+        "ai.adapters.gemini_adapter",
+    ):
+        monkeypatch.delitem(sys.modules, alias, raising=False)
 
     return types.SimpleNamespace(module=fake_module, configured=configured)
 
 
 def _adapter_cls(fake_genai: types.SimpleNamespace) -> Any:
     """Import ``GeminiAdapter`` after the fake SDK is installed."""
-    # Drop any cached copy on the parent package so the import below truly
+    # Drop any cached copy on parent packages so the import below truly
     # re-executes the module body and rebinds to the fixture's fake genai.
-    parent = sys.modules.get("src.shared.python.ai.adapters")
-    if parent is not None and hasattr(parent, "gemini_adapter"):
-        delattr(parent, "gemini_adapter")
-    sys.modules.pop("src.shared.python.ai.adapters.gemini_adapter", None)
+    for parent_name in (
+        "src.shared.python.ai.adapters",
+        "shared.python.ai.adapters",
+        "ai.adapters",
+    ):
+        parent = sys.modules.get(parent_name)
+        if parent is not None and hasattr(parent, "gemini_adapter"):
+            delattr(parent, "gemini_adapter")
+
+    for alias in (
+        "src.shared.python.ai.adapters.gemini_adapter",
+        "shared.python.ai.adapters.gemini_adapter",
+        "ai.adapters.gemini_adapter",
+    ):
+        sys.modules.pop(alias, None)
 
     import importlib
 

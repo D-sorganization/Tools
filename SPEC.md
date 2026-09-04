@@ -7175,3 +7175,8 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-04: AIAssistantPanel Controller Initialization Order (#4966)
 
 - **2026-09-04**: fix(ai, #4966) — Defer `_load_history()` in `AIAssistantPanel.__init__` until after all GUI controllers (`_header`, `_messages`, `_adapter_mgr`, `_indexer`, `_input_container`) are instantiated and wired, preventing an `AttributeError: 'AIAssistantPanel' object has no attribute '_messages'` crash when an active chat session is reloaded on startup.
+
+## 2026-09-04: Full Suite CI Shards and Test Hardening (#4938)
+
+- **2026-09-04**: ci(tests, #4938) — Run the complete test tree across dedicated test shards in CI with coverage collection, evict all import alias keys in `test_gemini_adapter`, and update module inventory (#4913).
+
