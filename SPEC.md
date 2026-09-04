@@ -5681,6 +5681,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-04 | #4916 | fix(registry): report tools dropped for a missing launcher instead of hiding them. `src/p1am_control_system` declared a full pyqt6 block but ships no launch_pyqt6.py, so `_discover_registrations()` hit a bare `continue` and the tool vanished from tools.json, tool_surface_contract.json and the README with a green --check and no output; deleting any launcher shim silently deleted its tool. The drop is still correct but is now logged, a shrink-only ledger records the one existing gap, and two tests require every catalog-visible registration to reach the catalog or be recorded. A further guard forbids two catalog-visible directories claiming one tool_name, skipping `catalog_visible: False` registrations because those exit before the dedup - src/optimizer_gui sharing movement_optimizer is the intended compatibility pattern. |
 | 2026-09-04 | #4977 | fix(sidekick): replace token keyword in theme logger to prevent Semgrep credential disclosure false positive (#4977). |
 | 2026-09-04 | #4968 | fix(rate): increase PyQt resize budget to 6000ms, ensure visual element viewport visibility before intersection check in web E2E, and sanitize token getter logging in chat_tab.py (#4968). |
 | 2026-09-04 | #4966 | fix(ai): initialize message controller before loading session history in AIAssistantPanel. |
