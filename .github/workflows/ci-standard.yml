@@ -12,11 +12,12 @@ on:
       - ".gitignore"
   pull_request:
     types: [opened, synchronize, reopened]
-    # NOTE: **.md intentionally NOT excluded so quality-gate runs on docs-only
-    # PRs and satisfies branch protection required status checks.
-    paths-ignore:
-      - "LICENSE"
-      - ".gitignore"
+    # NOTE: no `paths`/`paths-ignore` filter here, deliberately. `quality-gate` is
+    # a required status check on main, so a PR that skips this workflow never
+    # reports it and can never merge -- it sits BLOCKED with zero failures and
+    # nothing pending. That is why `**.md` was already left out of this filter;
+    # `LICENSE` and `.gitignore` were dropped for exactly the same reason. `push`
+    # below still ignores them: post-merge CI does not gate the required context.
   workflow_dispatch:
 
 concurrency:

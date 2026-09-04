@@ -483,7 +483,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web.json"
     },
     {
-      "content_sha256_lf": "8333a781749fdfe6e85b737af315e6b4a5ac5f462c618cf561e980ba6910aef6",
+      "content_sha256_lf": "755a47015c0eaa8170362132894b3b566883402b4a2e2fd4f2a6f20b68e99030",
       "entry_count": 16,
       "package": "src/rate_of_closure/web/e2e",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-e2e.json"
@@ -723,7 +723,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-scripting.json"
     },
     {
-      "content_sha256_lf": "c189b4c5510baf8a8e8c411e8827d3798a402b8b088a64e66bff16d3281527b4",
+      "content_sha256_lf": "4f13c238d8fa076e8fa7018896cdd99dbc117d0ea7b65707ae3793f773c4f130",
       "entry_count": 215,
       "package": "src/shared/python/sidekick",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick.json"
