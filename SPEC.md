@@ -5681,6 +5681,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-04 | #4977 | fix(sidekick): replace token keyword in theme logger to prevent Semgrep credential disclosure false positive (#4977). |
 | 2026-09-04 | #4968 | fix(rate): increase PyQt resize budget to 6000ms, ensure visual element viewport visibility before intersection check in web E2E, and sanitize token getter logging in chat_tab.py (#4968). |
 | 2026-09-04 | #4966 | fix(ai): initialize message controller before loading session history in AIAssistantPanel. |
 | 2026-09-04 | #4930 | fix(ci): allow ControlTower and Oglaptop host font stack versions in `scripts/check_rate_pyqt_environment.py::verify_font_stack` to support heterogeneous fleet runner hosts. |
@@ -7179,3 +7180,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-04: Rate Web Playwright Trusted & Semgrep Logger Leak (#4968)
 
 - **2026-09-04**: fix(rate, #4968) — Increase PyQt resize settle budget from 4000ms to 6000ms in `visualization_performance.v1.json` to prevent CI flakiness under runner load, ensure variation visual element is scrolled into view before intersection check in web E2E `variation-visual-state.spec.ts`, and sanitize token getter logging in `chat_tab.py` to prevent Semgrep `logger-credential-leak` false positives fleet-wide.
+
+## 2026-09-04: Sanitize Theme Logger Keyword in Sidekick Chat Tab (#4977)
+
+- **2026-09-04**: fix(sidekick, #4977) — Replace `token-style` with `styling` in `chat_tab.py` debug log message to prevent Semgrep `logger-credential-leak` false positives on downstream consumers.
