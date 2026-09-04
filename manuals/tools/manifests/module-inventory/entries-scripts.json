@@ -2462,10 +2462,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3288,
+      "bytes_lf": 6686,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "07210c3d0eb52b189cf796ab3eed0fa0b5d15adabb54bb9bbf4849f06180db1d",
+      "content_sha256_lf": "df984aac9deaf1908e71fd713584c9d754602ce5c7e17e3b5cb06d20ab26a030",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CHECK-RATE-PYQT-ENVIRONMENT-PY-2A2535B6274E",
       "language": "python",
@@ -2501,6 +2501,11 @@
         "public_surfaces": [
           {
             "kind": "constant",
+            "name": "DEFAULT_FONT_STACK_EXPECTATIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
             "name": "LOGGER",
             "signature": null
           },
@@ -2510,14 +2515,29 @@
             "signature": null
           },
           {
+            "kind": "constant",
+            "name": "_FONT_STACK_PACKAGES",
+            "signature": null
+          },
+          {
             "kind": "function",
             "name": "main",
             "signature": ""
           },
           {
             "kind": "function",
+            "name": "probe_font_stack",
+            "signature": ""
+          },
+          {
+            "kind": "function",
             "name": "read_expected_versions",
             "signature": "constraints_path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "verify_font_stack",
+            "signature": "expectations_path: Path"
           },
           {
             "kind": "function",
@@ -2529,6 +2549,8 @@
           "tests/scripts/test_check_rate_pyqt_environment.py"
         ],
         "unit_mentions": [
+          "W",
+          "g",
           "s"
         ],
         "validation_paths": []
