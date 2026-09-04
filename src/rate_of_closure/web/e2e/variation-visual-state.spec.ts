@@ -45,7 +45,9 @@ async function capture(page: Page, testInfo: TestInfo, state: StateName) {
       ? frame.getByRole("group", { name: "Scatter matrix with marginal histograms" })
       : frame.getByRole("img", { name: "Variation analysis workflow preview" });
   await expect(visual).toBeVisible();
-  await visual.scrollIntoViewIfNeeded();
+  if (["result", "individual-result"].includes(state)) {
+    await visual.scrollIntoViewIfNeeded();
+  }
   const narrow = page.viewportSize()?.width === 390;
   const minimum = { width: narrow ? 120 : 240, height: narrow ? 180 : 240 };
   if (["empty", "result", "individual-result"].includes(state)) {
