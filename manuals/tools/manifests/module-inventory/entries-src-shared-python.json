@@ -716,6 +716,7 @@
           "tests/scripts/test_check_tools_manifest_workflow.py",
           "tests/shared/python/ai/test_codex_cli_adapter.py",
           "tests/shared/python/ai/test_gemini_cli_adapter.py",
+          "tests/shared/python/ai/test_sample_tools_placeholder_honesty.py",
           "tests/shared/python/chat/test_cli_agent_adapters.py",
           "tests/shared/python/chat/test_ollama_latency_tuning.py",
           "tests/shared/python/chat/test_terminal_contracts.py",
@@ -1088,6 +1089,7 @@
           }
         ],
         "test_paths": [
+          "src/p1am_control_system/backend/tests/test_data_explorer_expression.py",
           "src/shared/python/sidekick/tests/test_calculator_plotting.py",
           "tests/shared/python/test_safe_eval.py",
           "tests/test_shared_package_api_stability.py"

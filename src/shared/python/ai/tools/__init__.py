@@ -19,6 +19,11 @@ from shared.python.ai.tools.codemap_tools import (
     CODEMAP_TOOL_NAMES,
     register_codemap_tools,
 )
+from shared.python.ai.tools.sidekick_analytics import (
+    SIDEKICK_ANALYTICS_TOOL_NAME,
+    register_sidekick_analytics_tools,
+    summarize_simulation_run,
+)
 
 __all__ = [
     # CLI Tools
@@ -37,4 +42,8 @@ __all__ = [
     # Codemap
     "CODEMAP_TOOL_NAMES",
     "register_codemap_tools",
+    # Sidekick analytics
+    "SIDEKICK_ANALYTICS_TOOL_NAME",
+    "register_sidekick_analytics_tools",
+    "summarize_simulation_run",
 ]

@@ -29,7 +29,7 @@ def test_packaged_manifest_binds_exact_reviewed_bytes() -> None:
     manifest = load_visual_baseline_manifest()
 
     assert manifest.source_artifact_commit == (
-        "1f3f6ca769276a9dbec5471e04ea576f8728eb9a"  # pragma: allowlist secret
+        "8e89bb5f05b6656a32474c9932c3cd7c39c36730"  # pragma: allowlist secret
     )
     assert len(manifest.baselines) == 20
     package = files("rate_of_closure")
@@ -197,6 +197,92 @@ def test_exact_and_bounded_small_drift_pass(tmp_path: Path) -> None:
 def test_material_drift_fails_closed(tmp_path: Path) -> None:
     with pytest.raises(VisualBaselineComparisonError, match="exceeds limits"):
         _compare(tmp_path, changed=80)
+
+
+def test_drift_report_names_every_offender_not_just_the_first(
+    tmp_path: Path,
+) -> None:
+    """#4844: one drifting tab must not mask the others behind it.
+
+    The trusted run's single-line failure named only ``pyqt/clubhead``
+    because the comparator raised on the first offender; eight further
+    drifting tabs were never evaluated. This pins the aggregate report:
+    every drifting entry is evaluated and named.
+    """
+
+    package_root = tmp_path / "package"
+    reference_root = package_root / "visual_baselines" / "v1"
+    candidate_root = tmp_path / "candidates"
+    tolerance = VisualBaselineTolerance(8, 10_000, 100_000)
+    entries = []
+    for tab_id, _drift in (
+        ("clubhead", 80),
+        ("plots", 80),
+        ("glossary", 0),
+    ):
+        filename = f"initial-{tab_id}.png"
+        digest = _png(reference_root / "pyqt" / filename, (24, 24, 24))
+        entries.append(
+            VisualBaselineEntry(
+                "pyqt", tab_id, "hosted-pyqt", filename, digest, tolerance
+            )
+        )
+    manifest = VisualBaselineManifest(
+        "rate-of-closure/visual-baselines",
+        1,
+        "proposed-off-default-branch-approved-after-protected-merge",
+        "1" * 40,
+        tuple(entries),
+    )
+
+    captures = []
+    for tab_id, drift in (("clubhead", 80), ("plots", 80), ("glossary", 0)):
+        filename = f"initial-{tab_id}.png"
+        digest = _png(candidate_root / "pyqt" / filename, (24, 24, 24), drift)
+        captures.append({"tab_id": tab_id, "file": filename, "sha256": digest})
+    document = {
+        "schema_id": "rate-of-closure/visual-baseline-candidates",
+        "schema_version": 1,
+        "artifact_policy": "candidate-diagnostic-not-approved-until-protected-merge",
+        "source_commit": "2" * 40,
+        "surface": "pyqt",
+        "environment": "hosted-pyqt",
+        "captures": captures,
+    }
+    (candidate_root / "pyqt" / "manifest.json").write_text(
+        json.dumps(document), encoding="utf-8"
+    )
+    react_document = {
+        "schemaId": "rate-of-closure/visual-baseline-candidates",
+        "schemaVersion": 1,
+        "artifactPolicy": ("candidate-diagnostic-not-approved-until-protected-merge"),
+        "sourceCommit": "2" * 40,
+        "surface": "react",
+        "environment": "hosted-react",
+        "captures": [],
+    }
+    (candidate_root / "react").mkdir(parents=True, exist_ok=True)
+    (candidate_root / "react" / "manifest.json").write_text(
+        json.dumps(react_document), encoding="utf-8"
+    )
+
+    with (
+        patch(
+            "rate_of_closure.visual_baseline_compare.load_visual_baseline_manifest",
+            return_value=manifest,
+        ),
+        patch(
+            "rate_of_closure.visual_baseline_compare.files",
+            return_value=package_root,
+        ),
+        pytest.raises(VisualBaselineComparisonError) as raised,
+    ):
+        compare_visual_baselines(candidate_root, "2" * 40)
+
+    message = str(raised.value)
+    assert "pyqt/clubhead" in message
+    assert "pyqt/plots" in message
+    assert "pyqt/glossary" not in message
 
 
 @pytest.mark.parametrize(

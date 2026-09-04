@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import argparse
 import importlib
+import json
 import logging
+import subprocess
 from importlib.metadata import version as metadata_version
 from pathlib import Path
 
@@ -16,7 +18,20 @@ REQUIRED_DISTRIBUTIONS = {
     "numpy": "numpy",
     "scipy": "scipy",
     "pyqt6": "PyQt6",
+    "matplotlib": "matplotlib",
 }
+
+# The system font stack the trusted PyQt renders depend on (issue #4844: a
+# host libfreetype6/libfontconfig1 upgrade re-rasterized every glyph and
+# surfaced as opaque pixel drift 4-13x the calibrated envelope). Probed via
+# dpkg-query on the Ubuntu runner host; unavailable elsewhere.
+_FONT_STACK_PACKAGES = {
+    "libfreetype6": "libfreetype6",
+    "libfontconfig1": "libfontconfig1",
+}
+DEFAULT_FONT_STACK_EXPECTATIONS = (
+    Path(__file__).resolve().parent / "config" / "rate_pyqt_font_stack.v1.json"
+)
 
 
 def read_expected_versions(constraints_path: Path) -> dict[str, str]:
@@ -69,6 +84,78 @@ def _import_runtime() -> None:
         importlib.import_module(module_name)
 
 
+def _MATPLOTLIB_FREETYPE_VERSION() -> str:
+    """Return matplotlib's compiled freetype version, or ``unknown``."""
+
+    from matplotlib import ft2font
+
+    return str(getattr(ft2font, "__freetype_version__", "unknown"))
+
+
+def probe_font_stack() -> dict[str, str]:
+    """Probe the system font stack the trusted PyQt renders depend on.
+
+    Returns:
+        Probed font-stack identifiers: matplotlib's compiled freetype
+        version plus the host package versions from
+        ``_FONT_STACK_PACKAGES`` (``unavailable`` when not probeable, e.g.
+        non-Ubuntu development hosts).
+    """
+
+    stack: dict[str, str] = {"matplotlib_freetype": _MATPLOTLIB_FREETYPE_VERSION()}
+    for key, package in _FONT_STACK_PACKAGES.items():
+        try:
+            result = subprocess.run(
+                ["dpkg-query", "-W", "-f=${Version}", package],
+                capture_output=True,
+                text=True,
+                check=False,
+                timeout=10,
+            )
+        except (OSError, subprocess.SubprocessError):
+            stack[key] = "unavailable"
+            continue
+        stack[key] = result.stdout.strip() if result.returncode == 0 else "unavailable"
+    return stack
+
+
+def verify_font_stack(expectations_path: Path) -> dict[str, str]:
+    """Fail with a named cause when the system font stack changed.
+
+    Args:
+        expectations_path: Committed JSON mapping font-stack identifiers
+            to the versions the approved baselines were captured under.
+
+    Returns:
+        The probed font stack when it matches the recorded expectations.
+
+    Raises:
+        RuntimeError: Naming every identifier whose live probe differs
+            from the recorded expectations — a host font upgrade is an
+            environment change (issue #4844), not opaque pixel drift.
+    """
+
+    expectations: dict[str, str | list[str]] = json.loads(
+        expectations_path.read_text(encoding="utf-8")
+    )
+    probed = probe_font_stack()
+    mismatches: list[str] = []
+    for key, expected in expectations.items():
+        probed_val = probed.get(key, "unavailable")
+        if isinstance(expected, list):
+            if probed_val not in expected:
+                allowed_str = ", ".join(expected)
+                mismatches.append(f"{key} {probed_val} not in [{allowed_str}]")
+        else:
+            if probed_val != expected:
+                mismatches.append(f"{key} {probed_val} != expected {expected}")
+    if mismatches:
+        raise RuntimeError(
+            "system font stack changed (issue #4844): " + "; ".join(mismatches)
+        )
+    return probed
+
+
 def verify_runtime(constraints_path: Path) -> dict[str, str]:
     """Verify exact installed versions, then import the binary runtime."""
     expected = read_expected_versions(constraints_path)
@@ -92,9 +179,22 @@ def main() -> int:
     """Run the trusted Rate PyQt environment check."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--constraints", required=True, type=Path)
+    parser.add_argument("--font-stack", type=Path, default=None)
+    parser.add_argument(
+        "--print-font-stack",
+        action="store_true",
+        help="print the probed font stack as JSON and exit (for capture)",
+    )
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
+    if args.print_font_stack:
+        print(json.dumps(probe_font_stack(), indent=1, sort_keys=True))
+        return 0
     verify_runtime(args.constraints)
+    expectations = args.font_stack or DEFAULT_FONT_STACK_EXPECTATIONS
+    if expectations.is_file():
+        stack = verify_font_stack(expectations)
+        LOGGER.info("Verified system font stack: %s", stack)
     return 0
 
 

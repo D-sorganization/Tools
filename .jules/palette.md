@@ -70,3 +70,6 @@
 ## 2026-08-31 - Focus Rings on Rate of Closure Buttons
 **Learning:** Found an accessibility issue pattern where buttons in Rate of Closure use standard utility classes or `.buttonClass` but lack focus indicators, making keyboard navigation difficult.
 **Action:** Append `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500` to utility classes and hardcoded button classes to preserve keyboard accessibility while styling interactive elements.
+## 2024-05-14 - explicit label associations
+**Learning:** Found inputs using CSS class `input-label` visually formatted correctly but lacking implicit or explicit `htmlFor` bindings. Without these explicit bindings, standard screen readers and test utilities fail to correctly read out the label description, breaking accessibility.
+**Action:** Always provide `htmlFor` and unique `id` pairing on UI input elements and `<label>` pairs, rather than just relying on generic class names like `input-label` and visual cues.

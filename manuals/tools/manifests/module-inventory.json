@@ -123,7 +123,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
     },
     {
-      "content_sha256_lf": "bf460e44a70cb639ea5b680c8a3c82d29ce1f9335d0c7bee9b665643a01bd18c",
+      "content_sha256_lf": "7aebf3f0363cc8b40872dad98da865eddedd5ba8da6dc619730310c0606a1a87",
       "entry_count": 5,
       "package": "rust_core/data-processor-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "28bdaf029a8d40cb42cd271745aa50e7903d3dcd246079ecd974fa5be6a1c188",
+      "content_sha256_lf": "3ed9858a36fddb633acca7293f41266017af5c513ffa2114fe35800d73e13c68",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -159,8 +159,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "4e8ee9b411dd9b0789f56fe9bc10c08ed476853c2ef7a69a7bf1728a4c836ed4",
-      "entry_count": 90,
+      "content_sha256_lf": "54037bf6dc25c90df39316e4c9e924f228fb85f9f29db4c0b97f36d2c3e64547",
+      "entry_count": 91,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
     },
@@ -381,7 +381,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-optimizer-gui.json"
     },
     {
-      "content_sha256_lf": "a3017d4176ae4f26244f9e7dc1965e147cb0b2cba5f5bbeb3a1e16f9de691063",
+      "content_sha256_lf": "df2e5f9e79aaf9b90159d2005222d3236526f74eb838898f9086fc5abe17d6c7",
       "entry_count": 253,
       "package": "src/p1am_control_system",
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
@@ -399,7 +399,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-pid-generator.json"
     },
     {
-      "content_sha256_lf": "a155b62e88560b3cf24d98d5d7c804770c60707d63c45b1ff44658681bb965b8",
+      "content_sha256_lf": "f96f0744e0e295f8c9c8f39ceb90fee2d0bcd510a61d606bdeda79666d8959ed",
       "entry_count": 5,
       "package": "src/plant_simulator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-plant-simulator.json"
@@ -429,7 +429,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-python.json"
     },
     {
-      "content_sha256_lf": "3b1d073470fccc823f00d16562dbfd2266b6958674e20771a32ed30818db3e0e",
+      "content_sha256_lf": "29707e53aeb5cc63cb7ef49ee5950c16e4700896d6d9f1a447f6168138783ae1",
       "entry_count": 59,
       "package": "src/rate_of_closure",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure.json"
@@ -483,7 +483,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web.json"
     },
     {
-      "content_sha256_lf": "8333a781749fdfe6e85b737af315e6b4a5ac5f462c618cf561e980ba6910aef6",
+      "content_sha256_lf": "755a47015c0eaa8170362132894b3b566883402b4a2e2fd4f2a6f20b68e99030",
       "entry_count": 16,
       "package": "src/rate_of_closure/web/e2e",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-e2e.json"
@@ -579,14 +579,14 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "573fc684abcf51a0d0fb3292d7b7fbe6fcd9ff1c8b4d36e881b6b1823bfac60e",
+      "content_sha256_lf": "061d59ca4e6d6c2a2490467ddb730f9c178f1116d9a7e2c2feddefde172d7a86",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
     },
     {
-      "content_sha256_lf": "4faa4b592285ba0866b98ab380b8e59ded69fac99b79a65b18ca68e29723dce9",
-      "entry_count": 111,
+      "content_sha256_lf": "46895070bdba1435dd3fc760860460d28e5d88355239fe39da3a0f96548b8c9b",
+      "entry_count": 112,
       "package": "src/shared/python/ai",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-ai.json"
     },
@@ -723,7 +723,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-scripting.json"
     },
     {
-      "content_sha256_lf": "eba15c7c22bc2c2efc79000e366f4b401901bb5af4fcd18b70f12a9ae33ff1d5",
+      "content_sha256_lf": "ed4f5f5ac7d5913c5d9f488b970c309c9d74deffc13369b3f0a80c2e5fa81b79",
       "entry_count": 215,
       "package": "src/shared/python/sidekick",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick.json"

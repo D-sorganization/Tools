@@ -128,8 +128,9 @@ export const ControlDashboard: React.FC<ControlDashboardProps> = ({
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
               <div className="input-group">
-                <label className="input-label">Process Variable (PV) Tag</label>
+                <label htmlFor="pv-tag" className="input-label">Process Variable (PV) Tag</label>
                 <select
+                  id="pv-tag"
                   className="form-input"
                   value={activePid.pv_tag_id}
                   onChange={(e) => handlePidChange("pv_tag_id", Number(e.target.value))}
@@ -141,8 +142,9 @@ export const ControlDashboard: React.FC<ControlDashboardProps> = ({
               </div>
 
               <div className="input-group">
-                <label className="input-label">Control Variable (CV) Tag</label>
+                <label htmlFor="cv-tag" className="input-label">Control Variable (CV) Tag</label>
                 <select
+                  id="cv-tag"
                   className="form-input"
                   value={activePid.cv_tag_id}
                   onChange={(e) => handlePidChange("cv_tag_id", Number(e.target.value))}
@@ -154,8 +156,9 @@ export const ControlDashboard: React.FC<ControlDashboardProps> = ({
               </div>
 
               <div className="input-group">
-                <label className="input-label">Setpoint</label>
+                <label htmlFor="setpoint" className="input-label">Setpoint</label>
                 <input
+                  id="setpoint"
                   type="number"
                   step="0.1"
                   className="form-input"
@@ -165,8 +168,9 @@ export const ControlDashboard: React.FC<ControlDashboardProps> = ({
               </div>
 
               <div className="input-group">
-                <label className="input-label">Proportional Gain (Kp)</label>
+                <label htmlFor="kp" className="input-label">Proportional Gain (Kp)</label>
                 <input
+                  id="kp"
                   type="number"
                   step="0.01"
                   className="form-input"
@@ -176,8 +180,9 @@ export const ControlDashboard: React.FC<ControlDashboardProps> = ({
               </div>
 
               <div className="input-group">
-                <label className="input-label">Integral Gain (Ki)</label>
+                <label htmlFor="ki" className="input-label">Integral Gain (Ki)</label>
                 <input
+                  id="ki"
                   type="number"
                   step="0.01"
                   className="form-input"
@@ -187,8 +192,9 @@ export const ControlDashboard: React.FC<ControlDashboardProps> = ({
               </div>
 
               <div className="input-group">
-                <label className="input-label">Derivative Gain (Kd)</label>
+                <label htmlFor="kd" className="input-label">Derivative Gain (Kd)</label>
                 <input
+                  id="kd"
                   type="number"
                   step="0.01"
                   className="form-input"
@@ -204,8 +210,9 @@ export const ControlDashboard: React.FC<ControlDashboardProps> = ({
           <div>
             <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.25rem", flexWrap: "wrap", maxHeight: "80px", overflowY: "auto" }}>
               <div className="input-group" style={{ width: "100%", marginBottom: "0.5rem" }}>
-                <label className="input-label">Select Signal Broker Tag to Secure</label>
+                <label htmlFor="interlock-select" className="input-label">Select Signal Broker Tag to Secure</label>
                 <select
+                  id="interlock-select"
                   className="form-input"
                   value={selectedInterlockIdx}
                   onChange={(e) => setSelectedInterlockIdx(Number(e.target.value))}
@@ -219,8 +226,9 @@ export const ControlDashboard: React.FC<ControlDashboardProps> = ({
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
               <div className="input-group">
-                <label className="input-label">High Trip Limit (Alarm High)</label>
+                <label htmlFor="high-trip-limit" className="input-label">High Trip Limit (Alarm High)</label>
                 <input
+                  id="high-trip-limit"
                   type="number"
                   step="0.5"
                   className="form-input"
@@ -231,8 +239,9 @@ export const ControlDashboard: React.FC<ControlDashboardProps> = ({
               </div>
 
               <div className="input-group">
-                <label className="input-label">Low Trip Limit (Alarm Low)</label>
+                <label htmlFor="low-trip-limit" className="input-label">Low Trip Limit (Alarm Low)</label>
                 <input
+                  id="low-trip-limit"
                   type="number"
                   step="0.5"
                   className="form-input"
