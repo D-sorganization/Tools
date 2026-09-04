@@ -17,38 +17,8 @@ Global status note: Paused for catching up.
 | codeql-analysis.yml                | Active (PR to main, push to main, weekly; RM #1507) | CodeQL security-and-quality for python + javascript-typescript on d-sorg-fleet (Tools #4923). |
 | Comment-to-Issue-Converter.yml     | Defined (see global status note) | See workflow YAML header/name for execution role. |
 | docs-governance.yml                | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-Archivist.yml                | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-Assessment-AutoFix.yml       | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-Assessment-Generator.yml     | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-Assessment-Remediator.yml    | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| jules-assessment-runner.yml        | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-Auto-Assign-Issues.yml       | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-Auto-Rebase.yml              | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-Auto-Refactor.yml            | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-Auto-Repair.yml              | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-Cleaner.yml                  | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-Code-Quality-Fixer.yml       | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-Code-Quality-Reviewer.yml    | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-Comment-Processor.yml        | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-Completist.yml               | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-Comprehensive-Assessment.yml | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-Consolidator.yml             | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-Control-Tower.yml            | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-Critics-Comments.yml         | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-Documentation-Auditor.yml    | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-Documentation-Scribe.yml     | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-DRY-Orthogonality.yml        | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-Hotfix-Creator.yml           | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-Issue-Mention-Handler.yml    | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-Issue-Resolver.yml           | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-Laymans-Terms-Writer.yml     | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-PR-AutoFix.yml               | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-PR-Cleanup.yml               | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-PR-Compiler.yml              | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-Sentinel.yml                 | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-Supersede-Check.yml          | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-Tech-Custodian.yml           | Defined (see global status note) | See workflow YAML header/name for execution role. |
-| Jules-Test-Generator.yml           | Defined (see global status note) | See workflow YAML header/name for execution role. |
+| Jules-Auto-Assign-Issues.yml       | Active (issues; `issues: write` only) | Assigns newly opened issues; kept by Repository_Management#1483 (last success 2026-08-04). |
+| Jules-Issue-Mention-Handler.yml    | Active (issue_comment `@jules`; token narrowed to `fix-issue`) | Hands an @jules-mentioned issue to the Jules API; kept by Repository_Management#1483. |
 | Maintenance-Global-Control.yml     | Defined (see global status note) | See workflow YAML header/name for execution role. |
 | Nightly-Doc-Organizer.yml          | Defined (see global status note) | See workflow YAML header/name for execution role. |
 | release.yml                        | Defined (bump gated on feat/fix/perf or dispatch; RM #1507) | Version bump PR + GitHub release; changelog delta via scripts/release_changelog.py. |
@@ -67,4 +37,8 @@ For governance, see Repository_Management/docs/architecture/WORKFLOW_GOVERNANCE.
 - 2026-09-03: `ci-standard.yml` gains one stdlib-only job `divergence-ledger-gate` (pull_request only, `ubuntu-24.04`, `fetch-depth: 0`) running `python scripts/check_divergence_ledger.py` — a PR touching a ledgered shadowed module must name its paired UpstreamDrift PR (`UD-PAIR:`) unless the ledger rules the module tools-canonical (Tools #4915; governed edit, Repository_Management#1507).
 - 2026-09-03: `cross-repo-python-integration.yml` fails when a downstream lacks `tests/shared_contracts/` (was a green skip) and no longer tolerates a failed downstream checkout; `release.yml` `validate` runs `scripts/check_wheel_build.py --check`, `github-release` attaches the `ud_tools` wheel + CycloneDX SBOM, and the new `wheel-artifact` job uploads `tools-wheel-<sha>` on every push to main (Tools #4920, Repository_Management#1507).
 - 2026-09-03: `codeql-analysis.yml.disabled` re-enabled as `codeql-analysis.yml` (python, javascript-typescript; PR + weekly). Every job of the two `workflow_run` consumers (`Jules-PR-AutoFix.yml`, `Jules-Control-Tower.yml`) now carries `github.event.workflow_run.head_repository.full_name == github.repository`. The undated `--ignore-vuln CVE-2026-4539` was removed from `ci-standard.yml` pip-audit (fixed in pygments 2.20.0; requirements pins >=2.21.0). Jules-* workflows are inventoried in `jules_inventory.md` for the Repository_Management#1483 retirement campaign; none deleted here (Tools #4923, Repository_Management#1507).
+<<<<<<< HEAD
 - 2026-09-03: `ci-standard.yml` `tests` job is now a `python-version × shard` matrix over the partition in `scripts/ci_test_shards.py` (whole tree, incl. `src/pendulum_simulator` and `src/movement_optimizer`); new `tests-gate` job owns the required `tests (3.11)` context, verifies every shard passed and applies the single coverage floor from pyproject to the combined data. The `core_tests` allowlist, changed-file selection, branch-name conditionals and the Provider-Contract step (its suites are in the `tests-shared` shard) are gone (Tools #4913, Repository_Management#1507).
+=======
+- 2026-09-03: **Jules suite retired** under Repository_Management#1483 (program #1505). 25 workflow files deleted; the 3 kept are `Jules-Auto-Assign-Issues.yml`, `Jules-Diff-Verifier.yml` and `Jules-Issue-Mention-Handler.yml` (whose top-level `contents`/`pull-requests`/`issues: write` token is narrowed to `contents: read` top-level plus `contents: read, issues: write` on the `fix-issue` job). 5 stale rows for files that no longer exist (`Jules-Assessment-AutoFix.yml`, `Jules-Comment-Processor.yml`, `Jules-Consolidator.yml`, `Jules-DRY-Orthogonality.yml`, `Jules-PR-Compiler.yml`) were removed in the same pass. Per-workflow evidence and the restore commands are in `jules_inventory.md`.
+>>>>>>> origin/main
