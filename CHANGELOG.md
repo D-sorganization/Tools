@@ -1,5 +1,48 @@
 # Changelog
 
+## [1.15.1] - 2026-09-04 (patch bump)
+
+### Changes
+
+#### Features
+
+- feat(spec): key SPEC.md change-log rows by PR instead of a serial version (#1520) (#4949)
+- feat(swing_sim): re-land impact-interval club dynamics from PR #4133 (#4130) (#4945)
+- feat(governance): divergence ledger + paired-PR gate; package-sharded module inventory (#4915, #4818) (#4934)
+
+#### Fixes
+
+- fix(sidekick): replace token keyword in theme logger to prevent Semgrep credential disclosure false positive (#4978)
+- fix(rate): raise pyqt resize budget and ensure visual state viewport visibility (#4968) (#4973)
+- fix(ai): initialize message controller before loading session history (#4966) (#4970)
+- fix(ci): allow ControlTower and Oglaptop font stack versions in Rate PyQt check (#4930) (#4965)
+- fix(ai): honest chat placeholders and live Sidekick analytics registration (UD #9474) (#4959)
+- fix(rate-web): close the second 6 px putting overflow at 390x844 — the green-import row (RM #1507) (#4936)
+- fix(hooks): actually register the spec-rows merge driver (#1520) (#4956)
+- fix(spec): register the spec-rows merge driver by a worktree-relative path (#1520) (#4953)
+- fix(p1am): wire the PLC interlock reset path and stop backend defaults from tripping unmapped tags (#4911) (#4928)
+- fix(ci): main-green — rate web narrow-viewport overflow, ci-standard concurrency (RM #1507) (#4927)
+
+#### Other
+
+- ci: drop the remaining pull_request path filter (#4976)
+- chore(security): ignore agent-local permission state (#4974)
+- docs(scada): F-matrix as the tracker of record + three independent defect fixes (#4912) (#4947)
+- chore(ci): retire 25 unowned Jules-* workflows, keep 3 (#1483) (#4948)
+- 🎨 Palette: Add explicit label-input associations for accessibility (#4940)
+- test(rate-of-closure, #4844): name every visual-drift offender; verify the system font stack (#4963)
+- test(rate-of-closure, #4844): re-approve the nine drifted PyQt baselines under the recorded new font stack (#4964)
+- test(rate-of-closure): re-approve the stale react/putting visual baseline (RM #1507 main-green) (#4958)
+- ⚡ Bolt: [Performance] Replace Math.min/max spread with single-pass loop in VariationScatter (#4942)
+- ⚡ Bolt: Optimize 3D projection bounds calculation (#4943)
+- docs(spec): correct the merge-abort claim left in driver_command (#1520) (#4955)
+- docs(spec-merge-driver): correct the merge-abort claim shipped in #4949/#4953 (#4954)
+- refactor(rate-of-closure): launch-monitor tab consumes the canonical layer where twins permit (ADR-0046 Stage 2) (#4944)
+- ci(security): re-enable CodeQL, same-repo guard on workflow_run jobs, drop dead pip-audit ignore, Jules inventory (#4923) (#4937)
+- ci(contracts): fail without a downstream suite, API baselines for every vendored package, wheel + SBOM per release (#4920) (#4939)
+- docs(release): closed-stack gap-audit decisions and campaign states (#4921 Phase 1) (#4932)
+- docs(adr): fleet ADR home — mirror ADR-0016/0022/0031/0045-0048, add ADR-0049 + reference gate, fix ADR-007 duplicate (#4914) (#4931)
+
 All notable changes to this repository are documented here, newest first.
 Sections are written **per release**, as a delta since the previous release
 marker (the newest `v*` tag), by `scripts/release_changelog.py`; the release
