@@ -5681,6 +5681,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-04 | #4968 | fix(rate): increase PyQt resize budget to 6000ms, ensure visual element viewport visibility before intersection check in web E2E, and sanitize token getter logging in chat_tab.py (#4968). |
 | 2026-09-04 | #4966 | fix(ai): initialize message controller before loading session history in AIAssistantPanel. |
 | 2026-09-04 | #4930 | fix(ci): allow ControlTower and Oglaptop host font stack versions in `scripts/check_rate_pyqt_environment.py::verify_font_stack` to support heterogeneous fleet runner hosts. |
 | 2026-09-03 | #4947 | docs(scada, #4912, RM #1505 Phase 2): make `docs/scada/f_matrix.v1.json` (+ rendered `f_matrix.md`) the tracker of record for SCADA F01-F16 and historian H1-H9, superseding the checklists on #4085/#4086/#4087/#4088/#4089/#4046 that showed 38 of 38 boxes ticked while every carrier PR (#4091 #4093 #4094 #4095 #4449 #4065) sat closed unmerged; re-verified against main as 0 of 16 SCADA and 0 of 9 historian children landed. Adds `docs/scada/recovery_ledger.v1.json` with a per-file decision for all 111 files the closed heads add and main lacks (9 re-land, 8 obsolete, 94 needs-owner) in 16 dependency clusters; nothing is re-landed here. Gated by `scripts/check_scada_f_matrix.py --check` and `tests/scada/test_f_matrix.py` (26 tests, 8 negative guards). Three independent defects fixed with tests: #3976 `evaluate_output` returned 0.0 for a missing output key (now NaN) and `optimization.py` unpacked its tuple in the wrong order; #3986 the p1am derived-column sandbox now imports the shared `safe_eval` DoS limits by identity plus an iterative nesting-depth check; #3984 `plant_simulator.neural_simulator_client` imported `plc_interface`/`models` by package path while the backend imports them flat, executing both twice - now flat, with test inspecting AST directly without importing torch, and with the uninstantiable `neural` driver pinned by a strict xfail. |
@@ -7174,3 +7175,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-04: AIAssistantPanel Controller Initialization Order (#4966)
 
 - **2026-09-04**: fix(ai, #4966) — Defer `_load_history()` in `AIAssistantPanel.__init__` until after all GUI controllers (`_header`, `_messages`, `_adapter_mgr`, `_indexer`, `_input_container`) are instantiated and wired, preventing an `AttributeError: 'AIAssistantPanel' object has no attribute '_messages'` crash when an active chat session is reloaded on startup.
+
+## 2026-09-04: Rate Web Playwright Trusted & Semgrep Logger Leak (#4968)
+
+- **2026-09-04**: fix(rate, #4968) — Increase PyQt resize settle budget from 4000ms to 6000ms in `visualization_performance.v1.json` to prevent CI flakiness under runner load, ensure variation visual element is scrolled into view before intersection check in web E2E `variation-visual-state.spec.ts`, and sanitize token getter logging in `chat_tab.py` to prevent Semgrep `logger-credential-leak` false positives fleet-wide.
