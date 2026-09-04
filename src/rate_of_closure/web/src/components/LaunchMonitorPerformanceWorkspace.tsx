@@ -74,8 +74,18 @@ export function LaunchMonitorPerformanceWorkspace({ rows, sourceName }: Props) {
   } catch (caught) { setError(caught instanceof Error ? caught.message : String(caught)); } };
 
   const select = (label: string, value: string, update: (value: string) => void, choices = numeric) => <label className="text-sm">{label}<select aria-label={label} title={`Select ${label.toLowerCase()} with an explicit unit or identity role.`} value={value} onChange={(event) => update(event.target.value)} className={`${field} ml-2`}><option value="">Select</option>{choices.map((choice) => <option key={choice}>{choice}</option>)}</select></label>;
-  const xRange = dispersion ? Math.max(...dispersion.points.map((point) => point.carryYards), 1) : 1;
-  const yRange = dispersion ? Math.max(...dispersion.points.map((point) => Math.abs(point.lateralYards)), 1) : 1;
+  // ⚡ Bolt Optimization: Compute chart domain bounds using a single-pass loop instead of mapped spreads
+  // to avoid O(N) intermediate array allocations and V8 call stack size limit overflows.
+  let xRange = 1;
+  let yRange = 1;
+  if (dispersion) {
+    for (let i = 0; i < dispersion.points.length; i++) {
+      const point = dispersion.points[i];
+      if (point.carryYards > xRange) xRange = point.carryYards;
+      const absY = Math.abs(point.lateralYards);
+      if (absY > yRange) yRange = absY;
+    }
+  }
 
   return <section aria-label="Launch monitor performance analytics" className="space-y-4 rounded-xl border border-slate-800 bg-slate-900/60 p-4">
     <h3 className="font-semibold">Dispersion, Scoring & Session Trends</h3>
