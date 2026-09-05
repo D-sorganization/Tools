@@ -110,8 +110,18 @@ const completePairs = (rows: LaunchMonitorRow[], request: CovariationRequest): P
 
 const pairStatus = (pairs: Pair[], minimum: number): string => {
   if (pairs.length < minimum) return "insufficient_samples";
-  const constantX = Math.max(...pairs.map((pair) => pair.x)) === Math.min(...pairs.map((pair) => pair.x));
-  const constantY = Math.max(...pairs.map((pair) => pair.y)) === Math.min(...pairs.map((pair) => pair.y));
+  if (pairs.length === 0) return "ok";
+  // ⚡ Bolt Optimization: Replace multiple .map() and Math.max/min spreads with a single-pass loop
+  // to eliminate intermediate allocations, avoid call stack limits, and exit early.
+  let constantX = true;
+  let constantY = true;
+  const firstX = pairs[0].x;
+  const firstY = pairs[0].y;
+  for (let i = 1; i < pairs.length; i++) {
+    if (constantX && pairs[i].x !== firstX) constantX = false;
+    if (constantY && pairs[i].y !== firstY) constantY = false;
+    if (!constantX && !constantY) break;
+  }
   if (constantX && constantY) return "constant_both";
   if (constantX) return "constant_x";
   if (constantY) return "constant_y";
