@@ -29,10 +29,22 @@ export type {
 } from "./launchMonitorAnalysisTypes";
 
 export function numericLaunchMonitorColumns(rows: LaunchMonitorRow[]): string[] {
-  const columns = new Set(rows.flatMap((row) => Object.keys(row)));
-  return [...columns].filter((column) => rows.reduce(
-    (count, row) => count + (finiteLaunchMonitorScalar(row[column]) === null ? 0 : 1), 0,
-  ) >= 3).sort();
+  // ⚡ Bolt Optimization: Single-pass column counting avoids O(rows * columns) iterations and large flatMap allocations
+  const counts = new Map<string, number>();
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    for (const key in row) {
+      if ((counts.get(key) || 0) >= 3) continue;
+      if (finiteLaunchMonitorScalar(row[key]) !== null) {
+        counts.set(key, (counts.get(key) || 0) + 1);
+      }
+    }
+  }
+  const result: string[] = [];
+  for (const [key, count] of counts.entries()) {
+    if (count >= 3) result.push(key);
+  }
+  return result.sort();
 }
 
 const validate = (rows: LaunchMonitorRow[], request: LaunchMonitorAnalysisRequest): void => {

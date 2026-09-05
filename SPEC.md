@@ -5681,6 +5681,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-04 | #4971 | perf(launch-monitor): replace O(N*M) array iterations with single-pass maps in launchMonitorAnalysis.ts and LaunchMonitorAnalyticsPanel.tsx (#4971). |
 | 2026-09-05 | #4977 | fix(rate-web): preserve caller scroll position across visual capture in variation lifecycle E2E (#4977). |
 | 2026-09-05 | #4858 | fix(rate-of-closure): support explicit exemption markers via commit trailers, environment variables, or CLI in visual evidence gate (#4858). |
 | 2026-09-04 | #4983 | added `tests/test_workflow_required_contexts.py`, an executable guard against required status checks that can never report. A `paths`/`paths-ignore` filter on a workflow's `pull_request` trigger skips the workflow when a PR touches only filtered paths, so a required context defined there never reports and the PR is permanently unmergeable -- BLOCKED with zero failures and nothing pending. That was live here: ci-standard.yml filtered `LICENSE` and `.gitignore` while `quality-gate` was required (fixed in #4974 and #4976). Ships two tests because the filter check alone goes vacuous if a job is renamed; the second fails when a declared required context has no job to report it. `push` filters and `types` filters remain allowed. Mirrors Runner_Dashboard#1167 and Repository_Management#1530 (program #1505). |
