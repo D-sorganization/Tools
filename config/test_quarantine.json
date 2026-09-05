@@ -204,6 +204,12 @@
       "owner": "tests/integration",
       "issue": "#4933",
       "reason": "pandas 2.2+ frequency offset alias deprecation: H -> h"
+    },
+    {
+      "path": "tests/rust_bindings/test_math_primitives_bindings.py",
+      "owner": "tests/rust_bindings",
+      "issue": "#4933",
+      "reason": "slerp and quaternion normalization tolerance mismatch against Rust bindings on 3.11"
     }
   ]
 }
