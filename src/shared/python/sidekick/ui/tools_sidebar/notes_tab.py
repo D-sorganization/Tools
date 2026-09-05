@@ -101,11 +101,17 @@ class SidekickNotesWidget(QtWidgets.QWidget):
 
     def save_notes(self) -> None:
         """Persist the current notes text to the active markdown card."""
-        color = self._color.text().strip() or "#fff7cc"
+        if hasattr(self, "_autosave") and self._autosave.isActive():
+            self._autosave.stop()
+        try:
+            color = self._color.text().strip() or "#fff7cc"
+            body = self._editor.toPlainText()
+        except RuntimeError:
+            return
         if self._active_card_id is None:
             card = self._store.create_note(
                 "Project Notes",
-                self._editor.toPlainText(),
+                body,
                 color=color,
             )
             self._active_card_id = card.note_id
@@ -113,41 +119,68 @@ class SidekickNotesWidget(QtWidgets.QWidget):
             self._store.update_note(
                 self._active_card_id,
                 title="Project Notes",
-                markdown_body=self._editor.toPlainText(),
+                markdown_body=body,
                 color=color,
             )
         self.apply_colors(save_note=False)
-        self._status.setText("Saved")
+        try:
+            self._status.setText("Saved")
+        except RuntimeError:
+            pass
 
     def clear_notes(self) -> None:
         """Clear notes while preserving the active markdown card."""
-        self._editor.setPlainText("")
+        if hasattr(self, "_autosave") and self._autosave.isActive():
+            self._autosave.stop()
+        try:
+            self._editor.setPlainText("")
+        except RuntimeError:
+            return
         self.save_notes()
-        self._status.setText("Cleared")
+        try:
+            self._status.setText("Cleared")
+        except RuntimeError:
+            pass
 
     def restore_latest(self) -> None:
         """Restore the latest recycled note file when available."""
+        if hasattr(self, "_autosave") and self._autosave.isActive():
+            self._autosave.stop()
         item_id = self._store.latest_recycled_id()
         restored = None if item_id is None else self._store.restore_note(item_id)
         if restored is None:
-            self._status.setText("Nothing to restore")
+            try:
+                self._status.setText("Nothing to restore")
+            except RuntimeError:
+                pass
             return
         self._active_card_id = restored.note_id
-        self._editor.setPlainText(restored.markdown_body)
-        self._color.setText(restored.color)
+        try:
+            self._editor.setPlainText(restored.markdown_body)
+            self._color.setText(restored.color)
+        except RuntimeError:
+            return
         self._apply_card_style(restored.color)
-        self._status.setText("Restored")
+        try:
+            self._status.setText("Restored")
+        except RuntimeError:
+            pass
 
     def apply_colors(self, *, save_note: bool = True) -> None:
         """Validate and persist note-card and board colors."""
         from shared.python.notes.models import NotesBoardSettings, normalize_color
 
-        note_color = normalize_color(self._color.text().strip() or "#fff7cc")
-        board = NotesBoardSettings(
-            background_color=self._board_color.text().strip() or "#f7f7f7"
-        )
-        self._color.setText(note_color)
-        self._board_color.setText(board.background_color)
+        try:
+            note_color = normalize_color(self._color.text().strip() or "#fff7cc")
+            board_color = self._board_color.text().strip() or "#f7f7f7"
+        except RuntimeError:
+            return
+        board = NotesBoardSettings(background_color=board_color)
+        try:
+            self._color.setText(note_color)
+            self._board_color.setText(board.background_color)
+        except RuntimeError:
+            return
         self._store.save_settings(board)
         self._apply_card_style(note_color)
         self._apply_board_style()
@@ -169,18 +202,32 @@ class SidekickNotesWidget(QtWidgets.QWidget):
         self._board_color.setText(self._store.load_settings().background_color)
 
     def _apply_board_style(self) -> None:
-        color = self._store.load_settings().background_color
-        self.setStyleSheet(f"#{SIDEKICK_NOTES_OBJECT_NAME} {{ background: {color}; }}")
+        try:
+            color = self._store.load_settings().background_color
+            self.setStyleSheet(
+                f"#{SIDEKICK_NOTES_OBJECT_NAME} {{ background: {color}; }}"
+            )
+        except RuntimeError:
+            pass
 
     def _apply_card_style(self, color: str) -> None:
-        self._card_frame.setStyleSheet(
-            "#SidekickNotesCard { "
-            f"background: {color}; border: 1px solid #d0d0d0; border-radius: 6px;"
-            " }"
-        )
+        try:
+            self._card_frame.setStyleSheet(
+                "#SidekickNotesCard { "
+                f"background: {color}; border: 1px solid #d0d0d0; border-radius: 6px;"
+                " }"
+            )
+        except RuntimeError:
+            pass
 
     def _schedule_autosave(self) -> None:
         self._autosave.start()
+
+    def closeEvent(self, event: Any) -> None:
+        if hasattr(self, "_autosave") and self._autosave.isActive():
+            self._autosave.stop()
+        if event is not None and hasattr(super(), "closeEvent"):
+            super().closeEvent(event)
 
 
 def _note_card_store(project_root: Path) -> Any:
