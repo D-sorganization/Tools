@@ -381,7 +381,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-optimizer-gui.json"
     },
     {
-      "content_sha256_lf": "faec15789a07f2d016659e0da890d07668e3f406a3c5e088f62572d83983c524",
+      "content_sha256_lf": "a831e927c62089628207a19fd002a04de922b3e4cc9bd590619eb39e64ae58d1",
       "entry_count": 254,
       "package": "src/p1am_control_system",
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
@@ -399,7 +399,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-pid-generator.json"
     },
     {
-      "content_sha256_lf": "f96f0744e0e295f8c9c8f39ceb90fee2d0bcd510a61d606bdeda79666d8959ed",
+      "content_sha256_lf": "8af424e78328f20e5b89e60f4ae565581089249cd7fb93f4df95bcdb5202b80e",
       "entry_count": 5,
       "package": "src/plant_simulator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-plant-simulator.json"
@@ -507,7 +507,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src.json"
     },
     {
-      "content_sha256_lf": "5692be43328b808696256079bb84549c6ad7a9899d10a659472ac25582e286d2",
+      "content_sha256_lf": "097576b5a55545de198f9e4399ce3673b01c33c55bf6e514782fd23982d053a5",
       "entry_count": 180,
       "package": "src/rate_of_closure/web/src/components",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-components.json"

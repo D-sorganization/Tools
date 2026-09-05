@@ -140,6 +140,10 @@
 ## 2026-09-03 - Optimize multi-column data array processing
 **Learning:** Operations like `.reduce()` nested inside `.filter()` mapped over dataset columns scale with `O(rows * columns)` and cause severe array allocation bottlenecks, particularly for CSV launch monitor payloads.
 **Action:** Replace `Array.flatMap()` plus map-reduce loops with single-pass iterator mapping using a `Map` structure for high-performance iteration.
+## 2026-09-05 - Prevent stack overflow and GC pressure in 3D scene bounds
+**Learning:** Using chained `.flatMap().map()` combined with `Math.max(...spread)` for computing extents of 3D entities (e.g., flight points and articulated swing links) generates massive intermediate arrays and risks call stack size exceeded errors during React renders.
+**Action:** Replace functional array chaining + `Math.max(...spread)` with single-pass `for` loops when calculating multi-dimensional extents in rendering paths.
+
 ## 2026-09-05 - Array Spread & Map Allocation Elimination in Tight Validation Loops
 **Learning:** Using chained `.map()` calls and array spread `Math.min(...array)` syntax creates significant garbage collection pressure and CPU overhead when computing bounds (min, max, span) in hot paths (e.g., evaluating thousands of optimization candidates). Array creation and spreads degrade to O(N) memory allocations, scaling poorly for high-frequency loop environments.
 **Action:** When validating simulated state sequences in optimization loops, replace `path.map()` chaining and spread-based min/max aggregations with a single-pass `for` loop to accumulate bounds dynamically without allocating intermediate arrays, leading to significantly higher throughput.
