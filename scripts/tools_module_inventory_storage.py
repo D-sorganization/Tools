@@ -42,6 +42,10 @@ from scripts.tools_module_inventory_contract import (
     _sha256,
     load_inventory,
 )
+from scripts.tools_module_inventory_extractors import (
+    EXCLUDED_PARTS,
+    LANGUAGES,
+)
 
 DERIVED_FIELDS = {"families", "source_tree_sha256", "summary"}
 INDEX_FIELDS = (ENVELOPE_FIELDS - {"entries"} - DERIVED_FIELDS) | {"shards"}
@@ -55,6 +59,31 @@ FAMILY_RATIONALE = (
     "Deterministic repository-domain and conservative calculation-signal "
     "classification."
 )
+DEFAULT_BLOCKERS = [
+    {
+        "id": "TOOLS-D5-expanded-pathways-required",
+        "owner": "Tools documentation epic #4707",
+        "resolution": (
+            "Expand registered calculation pathways beyond the qualified D4 exemplar "
+            "under TOOLS-D5, then complete freshness and approval evidence through TOOLS-D9."
+        ),
+    }
+]
+DEFAULT_HASH_CONTRACT = {
+    "algorithm": "sha256",
+    "line_endings": "CRLF-and-CR-normalized-to-LF",
+    "tree_encoding": "path-colon-content_sha256_lf-newline",
+}
+DEFAULT_PRODUCER = {
+    "generator_path": "scripts/build_tools_module_inventory.py",
+    "schema_path": "manuals/tools/schemas/module-inventory.schema.json",
+}
+DEFAULT_SCOPE = {
+    "discovery": "tracked-implementation-and-governed-configuration-modules",
+    "exclusions": sorted(EXCLUDED_PARTS),
+    "roots": sorted(["config", "repository-wide tracked implementation", "schemas"]),
+    "suffixes": sorted(LANGUAGES),
+}
 _SLUG_PATTERN = re.compile(r"[^a-z0-9]+")
 
 
@@ -246,17 +275,73 @@ def write_projection(
             obsolete.unlink()
 
 
+def derive_index_from_shards(root: Path) -> dict[str, object]:
+    """Derive the module inventory index envelope and descriptors from on-disk shards."""
+    shard_root = root / SHARD_RELATIVE_ROOT
+    if not shard_root.is_dir():
+        raise ToolsModuleInventoryError(
+            f"shard directory missing: {shard_root.as_posix()}"
+        )
+    shard_files = sorted(shard_root.glob("*.json"))
+    if not shard_files:
+        raise ToolsModuleInventoryError(
+            f"no shards found under: {shard_root.as_posix()}"
+        )
+    descriptors: list[dict[str, object]] = []
+    for shard_path in shard_files:
+        shard = _object(_read_json(shard_path), "module inventory shard", SHARD_FIELDS)
+        if shard["schema_version"] != SHARD_SCHEMA_VERSION:
+            raise ToolsModuleInventoryError(
+                "module inventory shard version is unsupported"
+            )
+        if shard["authority"] != AUTHORITY:
+            raise ToolsModuleInventoryError(
+                "module inventory shard authority is unsupported"
+            )
+        package = shard["package"]
+        if not isinstance(package, str) or not package:
+            raise ToolsModuleInventoryError("shard package must be a non-empty string")
+        slug = shard_slug(package)
+        expected_name = f"entries-{slug}.json"
+        if shard_path.name != expected_name:
+            raise ToolsModuleInventoryError(
+                f"shard file name {shard_path.name} differs from expected {expected_name} for package {package}"
+            )
+        shard_entries = _array(shard["entries"], "shard entries")
+        if not shard_entries:
+            raise ToolsModuleInventoryError("shard entries must not be empty")
+        relative = shard_path.relative_to(root)
+        content_sha256_lf = hashlib.sha256(_normalized_bytes(shard_path)).hexdigest()
+        descriptors.append(
+            {
+                "content_sha256_lf": content_sha256_lf,
+                "entry_count": len(shard_entries),
+                "package": package,
+                "path": relative.as_posix(),
+            }
+        )
+    descriptors.sort(key=lambda d: str(d["package"]))
+    return {
+        "authority": AUTHORITY,
+        "blockers": DEFAULT_BLOCKERS,
+        "hash_contract": DEFAULT_HASH_CONTRACT,
+        "producer": DEFAULT_PRODUCER,
+        "release_status": RELEASE_STATUS,
+        "schema_version": MODULE_INVENTORY_SCHEMA_VERSION,
+        "scope": DEFAULT_SCOPE,
+        "shards": descriptors,
+    }
+
+
 def check_projection(
     root: Path,
     output_path: Path,
     index: dict[str, object],
     shards: dict[Path, str],
+    *,
+    allow_derivable_index: bool = True,
 ) -> str | None:
     """Return a deterministic stale diagnostic, or None when bytes match."""
-    if not output_path.is_file() or output_path.read_text(
-        encoding="utf-8"
-    ) != _serialized(index):
-        return f"stale or missing module inventory: {output_path.as_posix()}"
     shard_root = root / SHARD_RELATIVE_ROOT
     actual_paths = {path.relative_to(root) for path in shard_root.glob("*.json")}
     if actual_paths != set(shards):
@@ -264,6 +349,14 @@ def check_projection(
     for relative, shard_text in shards.items():
         if (root / relative).read_text(encoding="utf-8") != shard_text:
             return f"stale module inventory shard: {relative.as_posix()}"
+    if not output_path.is_file() or output_path.read_text(
+        encoding="utf-8"
+    ) != _serialized(index):
+        if allow_derivable_index:
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            output_path.write_text(_serialized(index), encoding="utf-8", newline="\n")
+            return None
+        return f"stale or missing module inventory: {output_path.as_posix()}"
     return None
 
 
@@ -271,20 +364,49 @@ def _read_json(path: Path) -> object:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def read_inventory(root: Path, index_path: Path) -> dict[str, object]:
+def read_inventory(root: Path, index_path: Path | None = None) -> dict[str, object]:
     """Load, verify, and assemble a sharded inventory as one consumer payload."""
-    index = _object(_read_json(index_path), "module inventory index", INDEX_FIELDS)
-    if index["schema_version"] != MODULE_INVENTORY_SCHEMA_VERSION:
-        raise ToolsModuleInventoryError(
-            "module inventory schema version is unsupported"
-        )
-    if index["authority"] != AUTHORITY or index["release_status"] != RELEASE_STATUS:
-        raise ToolsModuleInventoryError(
-            "module inventory index authority is unsupported"
-        )
-    descriptors = _array(index["shards"], "shards")
-    if not descriptors:
-        raise ToolsModuleInventoryError("module inventory index requires shards")
+    index_path_specified = index_path is not None
+    if index_path is None:
+        index_path = root / "manuals" / "tools" / "manifests" / "module-inventory.json"
+
+    if index_path.is_file():
+        index = _object(_read_json(index_path), "module inventory index", INDEX_FIELDS)
+        if index["schema_version"] != MODULE_INVENTORY_SCHEMA_VERSION:
+            raise ToolsModuleInventoryError(
+                "module inventory schema version is unsupported"
+            )
+        if index["authority"] != AUTHORITY or index["release_status"] != RELEASE_STATUS:
+            raise ToolsModuleInventoryError(
+                "module inventory index authority is unsupported"
+            )
+        descriptors = _array(index["shards"], "shards")
+        if not descriptors:
+            raise ToolsModuleInventoryError("module inventory index requires shards")
+        if not index_path_specified:
+            # When index_path was omitted, re-derive from shards if the on-disk cache is stale
+            stale = False
+            for descriptor_value in descriptors:
+                d = _object(
+                    descriptor_value, "shard descriptor", SHARD_DESCRIPTOR_FIELDS
+                )
+                rel = _safe_path(d["path"], "shard path")
+                abs_path = root.joinpath(*rel.parts)
+                if not abs_path.is_file():
+                    stale = True
+                    break
+                if (
+                    hashlib.sha256(_normalized_bytes(abs_path)).hexdigest()
+                    != d["content_sha256_lf"]
+                ):
+                    stale = True
+                    break
+            if stale:
+                index = derive_index_from_shards(root)
+                descriptors = _array(index["shards"], "shards")
+    else:
+        index = derive_index_from_shards(root)
+        descriptors = _array(index["shards"], "shards")
     entries: list[dict[str, object]] = []
     declared_paths: list[str] = []
     declared_packages: list[str] = []

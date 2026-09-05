@@ -21,7 +21,10 @@ from scripts.tools_module_inventory_contract import (
     ToolsModuleInventoryError,
     load_inventory,
 )
-from scripts.tools_module_inventory_storage import read_inventory
+from scripts.tools_module_inventory_storage import (
+    derive_index_from_shards,
+    read_inventory,
+)
 
 ROOT = Path(__file__).resolve().parents[2]
 MANIFEST = ROOT / "manuals" / "tools" / "manifests" / "module-inventory.json"
@@ -248,17 +251,86 @@ def test_summary_retains_denominator_and_authority_boundaries() -> None:
     assert _payload()["blockers"]
 
 
-def test_check_mode_rejects_missing_or_stale_manifest(
+def test_check_mode_derives_index_when_missing_or_stale(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     from scripts import build_tools_module_inventory as inventory_module
+    from scripts.tools_module_inventory_storage import check_projection
 
+    monkeypatch.setattr(inventory_module, "build_inventory", lambda _root: _payload())
     missing = tmp_path / "module-inventory.json"
     monkeypatch.setattr(inventory_module, "OUTPUT_PATH", missing)
-    assert main(["--check"]) == 1
+    # When index is missing, check mode derives and writes it from fresh shards
+    assert main(["--check"]) == 0
+    assert missing.is_file()
 
-    missing.write_text("{}\n", encoding="utf-8")
-    assert main(["--check"]) == 1
+    # Fast unit checks on check_projection logic
+    index: dict[str, object] = {"shards": []}
+    shards: dict[Path, str] = {}
+    stale_file = tmp_path / "stale.json"
+    stale_file.write_text("{}\n", encoding="utf-8")
+
+    # With allow_derivable_index=True, stale index is refreshed and check returns None
+    assert (
+        check_projection(
+            tmp_path, stale_file, index, shards, allow_derivable_index=True
+        )
+        is None
+    )
+    assert stale_file.read_text(encoding="utf-8") != "{}\n"
+
+    # In strict mode (allow_derivable_index=False), missing or stale index fails closed
+    absent = tmp_path / "absent.json"
+    assert (
+        check_projection(tmp_path, absent, index, shards, allow_derivable_index=False)
+        is not None
+    )
+    stale_payload: dict[str, object] = {"shards": [1]}
+    assert (
+        check_projection(
+            tmp_path, stale_file, stale_payload, shards, allow_derivable_index=False
+        )
+        is not None
+    )
+
+
+def test_check_mode_fails_closed_when_shard_is_stale(tmp_path: Path) -> None:
+    from scripts.tools_module_inventory_storage import check_projection
+
+    # Shards are authoritative: if any shard is stale, check_projection must fail
+    index: dict[str, object] = {"shards": []}
+    shard_rel = Path("manuals/tools/manifests/module-inventory/entries-fake.json")
+    shard_file = tmp_path / shard_rel
+    shard_file.parent.mkdir(parents=True, exist_ok=True)
+    shard_file.write_text('{"actual": true}\n', encoding="utf-8")
+
+    diagnostic = check_projection(
+        tmp_path,
+        tmp_path / "module-inventory.json",
+        index,
+        {shard_rel: '{"expected": true}\n'},
+        allow_derivable_index=True,
+    )
+    assert diagnostic is not None
+    assert "stale module inventory shard" in diagnostic
+
+
+def test_read_inventory_derives_index_when_omitted_or_missing(tmp_path: Path) -> None:
+    # 1. Calling read_inventory without index_path derives directly from shards
+    payload_omitted = read_inventory(ROOT)
+    assert payload_omitted["entries"] == _payload()["entries"]
+    assert payload_omitted["summary"] == _payload()["summary"]
+
+    # 2. Calling read_inventory with non-existent index_path derives from shards
+    payload_missing = read_inventory(ROOT, tmp_path / "nonexistent-index.json")
+    assert payload_missing["entries"] == _payload()["entries"]
+    assert payload_missing["source_tree_sha256"] == _payload()["source_tree_sha256"]
+
+
+def test_derive_index_from_shards_matches_checked_in_index() -> None:
+    derived = derive_index_from_shards(ROOT)
+    assert derived["shards"] == _index()["shards"]
+    assert derived == _index()
 
 
 # ---------------------------------------------------------------------------
