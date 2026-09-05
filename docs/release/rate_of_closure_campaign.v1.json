@@ -1,12 +1,9 @@
 {
   "schema_version": "rate-of-closure-campaign/v1",
   "repository": "D-sorganization/Tools",
-  "as_of": "2026-09-03",
+  "as_of": "2026-09-05",
   "default_branch": "main",
-  "required_main_checks": [
-    "quality-gate",
-    "tests (3.11)"
-  ],
+  "required_main_checks": ["quality-gate", "tests (3.11)"],
   "release_stage_definitions": [
     "specified_only",
     "implemented_on_feature_stack",
@@ -643,9 +640,7 @@
         "npm test -- --run"
       ],
       "summary": "1426 Python Rate and shared-swing tests and 624 React tests passed on the consolidated capability head; this is local, not protected-release evidence.",
-      "source_paths": [
-        "src/rate_of_closure/AGENT_HANDOFF.md"
-      ]
+      "source_paths": ["src/rate_of_closure/AGENT_HANDOFF.md"]
     },
     {
       "id": "variation-local-d71",
@@ -657,9 +652,7 @@
         "npm test -- --run"
       ],
       "summary": "890 Python/PyQt/shared-swing tests and 545 React tests passed for the variation export continuation, with one optional Rust skip.",
-      "source_paths": [
-        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
-      ]
+      "source_paths": ["docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"]
     },
     {
       "id": "toolstrip-local-c36",
@@ -671,22 +664,16 @@
         "npm test -- --run"
       ],
       "summary": "890 Python/PyQt/shared-swing tests and 545 React tests passed for the toolstrip and independent plot workspace carrier.",
-      "source_paths": [
-        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
-      ]
+      "source_paths": ["docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"]
     },
     {
       "id": "swing-parity-hosted-3186",
       "kind": "hosted",
       "commit_sha": "3186a265b10a1648391bb7f6e92042aab0caa35c",
       "outcome": "failed",
-      "commands": [
-        "Run Rust<->Python parity suite (gate, non-skipped)"
-      ],
+      "commands": ["Run Rust<->Python parity suite (gate, non-skipped)"],
       "summary": "The wheel built and loaded, but cached pytest-qt plugin auto-loading failed before parity test collection because PyQt6 was absent.",
-      "source_paths": [
-        "AGENT_HANDOFF.md"
-      ]
+      "source_paths": ["AGENT_HANDOFF.md"]
     },
     {
       "id": "swing-parity-isolation-18fe",
@@ -697,9 +684,7 @@
         "python -m pytest tests/ops/test_maturin_swing_core_workflow.py -q"
       ],
       "summary": "One workflow contract test passed and proves the Rust-only parity step disables unrelated third-party pytest plugin auto-loading.",
-      "source_paths": [
-        "tests/ops/test_maturin_swing_core_workflow.py"
-      ]
+      "source_paths": ["tests/ops/test_maturin_swing_core_workflow.py"]
     },
     {
       "id": "campaign-composition-local-2c1",
@@ -1249,18 +1234,14 @@
         }
       ],
       "tracked_issue_ids": [],
-      "carrier_ids": [
-        "pr-4119"
-      ],
+      "carrier_ids": ["pr-4119"],
       "supported_surfaces": {
         "tools.pyqt6": "locally_verified",
         "tools.react": "locally_verified",
         "upstreamdrift.pyqt6": "contract_only",
         "upstreamdrift.react": "not_started"
       },
-      "evidence_ids": [
-        "rate-stack-local-c182"
-      ],
+      "evidence_ids": ["rate-stack-local-c182"],
       "evidence_gap": "Package restructure, movement-optimizer swing source, Rust solver objective and WASM consumption in the React app remain open; re-scoped as the golf-app readiness epic absorbing #4135/#4218/#4571/#4237/#4238.",
       "limitations": [
         "The platform is not released to main and downstream application parity is incomplete.",
@@ -1286,7 +1267,7 @@
       "issue": 4120,
       "title": "Investigation and Variation Suite",
       "kind": "epic",
-      "delivery_stage": "implemented_on_feature_stack",
+      "delivery_stage": "implemented_unverified",
       "completion": "partial_implementation",
       "authorities": [
         {
@@ -1310,47 +1291,38 @@
           "value": "src/rate_of_closure/web/src/model/workspaceVariationSession.ts"
         }
       ],
-      "tracked_issue_ids": [
-        4142,
-        4144
-      ],
-      "carrier_ids": [
-        "pr-4167",
-        "pr-4280"
-      ],
+      "tracked_issue_ids": [4142, 4144],
+      "carrier_ids": ["pr-4167", "pr-4280"],
       "supported_surfaces": {
         "tools.pyqt6": "locally_verified",
         "tools.react": "locally_verified",
         "upstreamdrift.pyqt6": "contract_only",
         "upstreamdrift.react": "not_started"
       },
-      "evidence_ids": [
-        "variation-local-d71"
-      ],
+      "evidence_ids": ["variation-local-d71"],
       "evidence_gap": "Protected CI, nonlinear global sensitivity, bounded large-ensemble evidence, and downstream release remain open.",
       "limitations": [
         "Feature-stack plots and exports do not establish default-branch availability.",
         "Not every many-evaluation runner has released cross-surface visualization parity."
       ],
-      "depends_on_issues": [
-        4103
-      ],
+      "depends_on_issues": [4103],
       "release": {
         "status": "not_released",
         "branch": "main",
         "sha": null
       },
       "main_reconciliation": {
-        "as_of": "2026-09-03",
-        "source": "Tools #4921 Phase 1",
-        "note": "Not reconciled in #4921 Phase 1; carriers closed unmerged with #4466. Variation-suite evidence overlaps the #4142 table."
+        "as_of": "2026-09-05",
+        "source": "Tools #4921",
+        "reference": "https://github.com/D-sorganization/Tools/issues/4120",
+        "note": "Reconciled against main in #4921. Variation suite components, durable ensemble models, and sensitivity analyses exist on main (overlapping #4142); verification gate owned by #4922."
       }
     },
     {
       "issue": 4125,
       "title": "Realistic Clubs, Swing Kinetics, Putting, and Showcase",
       "kind": "epic",
-      "delivery_stage": "implemented_on_feature_stack",
+      "delivery_stage": "implemented_unverified",
       "completion": "partial_implementation",
       "authorities": [
         {
@@ -1362,47 +1334,38 @@
           "value": "SPEC.md"
         }
       ],
-      "tracked_issue_ids": [
-        4146,
-        4158
-      ],
-      "carrier_ids": [
-        "pr-4119",
-        "pr-4179"
-      ],
+      "tracked_issue_ids": [4146, 4158],
+      "carrier_ids": ["pr-4119", "pr-4179"],
       "supported_surfaces": {
         "tools.pyqt6": "locally_verified",
         "tools.react": "implemented_unverified",
         "upstreamdrift.pyqt6": "contract_only",
         "upstreamdrift.react": "not_started"
       },
-      "evidence_ids": [
-        "rate-stack-local-c182"
-      ],
+      "evidence_ids": ["rate-stack-local-c182"],
       "evidence_gap": "The complete showcase scope lacks one protected release run and installed-package evidence.",
       "limitations": [
         "Representative geometry is not equivalent to qualified manufacturing CAD.",
         "The current feature stack has not been released through the outer platform PR."
       ],
-      "depends_on_issues": [
-        4120
-      ],
+      "depends_on_issues": [4120],
       "release": {
         "status": "not_released",
         "branch": "main",
         "sha": null
       },
       "main_reconciliation": {
-        "as_of": "2026-09-03",
-        "source": "Tools #4921 Phase 1",
-        "note": "Not reconciled in #4921 Phase 1; carriers closed unmerged with #4466."
+        "as_of": "2026-09-05",
+        "source": "Tools #4921",
+        "reference": "https://github.com/D-sorganization/Tools/issues/4125",
+        "note": "Reconciled against main in #4921. Swing kinetics, putting green model, stroke interchange, and club dynamics exist on main under src/shared/python/swing_sim/; verification gate owned by #4922."
       }
     },
     {
       "issue": 4130,
       "title": "Impact-Interval Club Dynamics",
       "kind": "epic",
-      "delivery_stage": "implemented_on_feature_stack",
+      "delivery_stage": "implemented_unverified",
       "completion": "partial_implementation",
       "authorities": [
         {
@@ -1415,9 +1378,7 @@
         }
       ],
       "tracked_issue_ids": [],
-      "carrier_ids": [
-        "pr-4133"
-      ],
+      "carrier_ids": ["pr-4133"],
       "supported_surfaces": {
         "tools.pyqt6": "implemented_unverified",
         "tools.react": "contract_only",
@@ -1425,23 +1386,23 @@
         "upstreamdrift.react": "not_started"
       },
       "evidence_ids": [],
-      "evidence_gap": "PR 4133 is absent from the current outer platform head and has no current-carrier protected evidence.",
+      "evidence_gap": "Re-landed to main in PR #4945 (#4130 / RM #1505) from PR #4133 head c7a869f9. Core six-DOF impact-interval dynamics, Kelvin-Voigt contact law, solver, and tests now reside on main under src/shared/python/swing_sim/impact_interval/. Release verification gate is owned by #4922.",
       "limitations": [
         "A merge into a historical feature parent did not propagate this implementation toward main.",
         "Downstream and user-interface integration must be requalified after reconciliation."
       ],
-      "depends_on_issues": [
-        4125
-      ],
+      "depends_on_issues": [4125],
       "release": {
         "status": "not_released",
         "branch": "main",
         "sha": null
       },
       "main_reconciliation": {
-        "as_of": "2026-09-03",
-        "source": "Tools #4921 Phase 1",
-        "note": "Not reconciled in #4921 Phase 1. PR #4133 (impact-interval dynamics) merged into the closed feat stack only and its content is NOT on main: src/shared/python/swing_sim/impact_interval/** (types, contact law, solver, 3 test modules), impact/contact.py, docs/physics/IMPACT_INTERVAL_DYNAMICS.md and ui/pyqt6/impact_interval_view.py are absent at origin/main 8b9935afe (verified 2026-09-03 against PR head c7a869f9). Re-land candidate; not superseded by src/shared/python/swing_sim/impact/."
+        "as_of": "2026-09-05",
+        "main_sha": "90b7ff3c4314",
+        "source": "Tools #4921",
+        "reference": "https://github.com/D-sorganization/Tools/pull/4945",
+        "note": "Re-landed to main in PR #4945 on 2026-09-03. Six-DOF impact-interval dynamics, Kelvin-Voigt contact law, and tests present on main under src/shared/python/swing_sim/impact_interval/."
       }
     },
     {
@@ -1464,30 +1425,21 @@
           "value": "docs/rate_of_closure/variation_visualization_performance.md"
         }
       ],
-      "tracked_issue_ids": [
-        4144
-      ],
-      "carrier_ids": [
-        "pr-4167",
-        "pr-4280"
-      ],
+      "tracked_issue_ids": [4144],
+      "carrier_ids": ["pr-4167", "pr-4280"],
       "supported_surfaces": {
         "tools.pyqt6": "locally_verified",
         "tools.react": "locally_verified",
         "upstreamdrift.pyqt6": "contract_only",
         "upstreamdrift.react": "not_started"
       },
-      "evidence_ids": [
-        "variation-local-d71"
-      ],
+      "evidence_ids": ["variation-local-d71"],
       "evidence_gap": "R14.6 waits on #4433 (partial) and R15.3 needs an UpstreamDrift-side pinned parity golden; no protected gate has run.",
       "limitations": [
         "Existing local visualization evidence is not protected release evidence.",
         "UpstreamDrift does not yet consume an immutable released variation authority."
       ],
-      "depends_on_issues": [
-        4120
-      ],
+      "depends_on_issues": [4120],
       "release": {
         "status": "not_released",
         "branch": "main",
@@ -1507,7 +1459,7 @@
       "issue": 4146,
       "title": "Shared Golf Club Builder",
       "kind": "epic",
-      "delivery_stage": "implemented_on_feature_stack",
+      "delivery_stage": "implemented_unverified",
       "completion": "partial_implementation",
       "authorities": [
         {
@@ -1523,17 +1475,8 @@
           "value": "docs/specs/GOLF_CLUB_WEDGE_CAD.md"
         }
       ],
-      "tracked_issue_ids": [
-        4147,
-        4148,
-        4149,
-        4150,
-        4151,
-        4152
-      ],
-      "carrier_ids": [
-        "pr-4173"
-      ],
+      "tracked_issue_ids": [4147, 4148, 4149, 4150, 4151, 4152],
+      "carrier_ids": ["pr-4173"],
       "supported_surfaces": {
         "tools.pyqt6": "implemented_unverified",
         "tools.react": "not_started",
@@ -1546,18 +1489,17 @@
         "Shaft and wedge CAD slices are carried through a later integration branch but their epic remains incomplete.",
         "STEP and manufacturing-mesh qualification and calibrated three-view image fitting remain open."
       ],
-      "depends_on_issues": [
-        4125
-      ],
+      "depends_on_issues": [4125],
       "release": {
         "status": "not_released",
         "branch": "main",
         "sha": null
       },
       "main_reconciliation": {
-        "as_of": "2026-09-03",
-        "source": "Tools #4921 Phase 1",
-        "note": "Not reconciled in #4921 Phase 1; src/shared/python/golf_club/ exists on main, C5 image fitting has no successor (RM #1506 follow-up)."
+        "as_of": "2026-09-05",
+        "source": "Tools #4921",
+        "reference": "https://github.com/D-sorganization/Tools/issues/4146",
+        "note": "Reconciled against main in #4921. Shared golf club builder core is delivered on main under src/shared/python/golf_club/; C5 image fitting tracked separately under RM #1506."
       }
     },
     {
@@ -1588,38 +1530,21 @@
           "value": "docs/specs/WEDGE_IMPACT_VISUALIZATION.md"
         }
       ],
-      "tracked_issue_ids": [
-        4159,
-        4160,
-        4161,
-        4162,
-        4163,
-        4164,
-        4165,
-        4166
-      ],
-      "carrier_ids": [
-        "pr-4173",
-        "pr-4179"
-      ],
+      "tracked_issue_ids": [4159, 4160, 4161, 4162, 4163, 4164, 4165, 4166],
+      "carrier_ids": ["pr-4173", "pr-4179"],
       "supported_surfaces": {
         "tools.pyqt6": "locally_verified",
         "tools.react": "locally_verified",
         "upstreamdrift.pyqt6": "contract_only",
         "upstreamdrift.react": "not_started"
       },
-      "evidence_ids": [
-        "rate-stack-local-c182"
-      ],
+      "evidence_ids": ["rate-stack-local-c182"],
       "evidence_gap": "#4162 delivery-metrics test and #4165 parity fixtures, wedge e2e spec and release evidence remain open.",
       "limitations": [
         "The worked shaft-rotation example is a declared sensitivity case rather than a measured wedge population norm.",
         "Current turf and forgiveness outputs remain model-conditional."
       ],
-      "depends_on_issues": [
-        4142,
-        4146
-      ],
+      "depends_on_issues": [4142, 4146],
       "release": {
         "status": "not_released",
         "branch": "main",
@@ -1655,31 +1580,21 @@
           "value": "docs/specs/LAUNCH_MONITOR_ANALYTICS.md"
         }
       ],
-      "tracked_issue_ids": [
-        4193,
-        4194
-      ],
-      "carrier_ids": [
-        "pr-4203",
-        "pr-4217"
-      ],
+      "tracked_issue_ids": [4193, 4194],
+      "carrier_ids": ["pr-4203", "pr-4217"],
       "supported_surfaces": {
         "tools.pyqt6": "locally_verified",
         "tools.react": "locally_verified",
         "upstreamdrift.pyqt6": "contract_only",
         "upstreamdrift.react": "not_started"
       },
-      "evidence_ids": [
-        "rate-stack-local-c182"
-      ],
+      "evidence_ids": ["rate-stack-local-c182"],
       "evidence_gap": "Registry, TrackMan and Foresight adapters are on main (src/shared/python/swing_sim/conventions/); #4186 selector UI and #4187 definition matrix remain; no protected gate has run.",
       "limitations": [
         "Unavailable vendor conventions remain visibly unavailable rather than inferred.",
         "Cross-application convention parity is not released."
       ],
-      "depends_on_issues": [
-        4158
-      ],
+      "depends_on_issues": [4158],
       "release": {
         "status": "not_released",
         "branch": "main",
@@ -1712,28 +1627,20 @@
         }
       ],
       "tracked_issue_ids": [],
-      "carrier_ids": [
-        "pr-4202",
-        "pr-4203"
-      ],
+      "carrier_ids": ["pr-4202", "pr-4203"],
       "supported_surfaces": {
         "tools.pyqt6": "locally_verified",
         "tools.react": "locally_verified",
         "upstreamdrift.pyqt6": "contract_only",
         "upstreamdrift.react": "not_started"
       },
-      "evidence_ids": [
-        "rate-stack-local-c182"
-      ],
+      "evidence_ids": ["rate-stack-local-c182"],
       "evidence_gap": "D-plane calculation, golden and docs are on main (src/shared/python/swing_sim/impact/dplane.py); no protected main or downstream release evidence.",
       "limitations": [
         "The feature remains nested below the launch-monitor and wedge carrier chain.",
         "Vendor comparison depends on explicitly available convention definitions."
       ],
-      "depends_on_issues": [
-        4158,
-        4181
-      ],
+      "depends_on_issues": [4158, 4181],
       "release": {
         "status": "not_released",
         "branch": "main",
@@ -1794,16 +1701,7 @@
         }
       ],
       "tracked_issue_ids": [
-        4192,
-        4193,
-        4194,
-        4195,
-        4196,
-        4197,
-        4198,
-        4199,
-        4200,
-        4201
+        4192, 4193, 4194, 4195, 4196, 4197, 4198, 4199, 4200, 4201
       ],
       "carrier_ids": [
         "pr-4217",
@@ -1831,10 +1729,7 @@
         "The local post-ground target candidate admits only regional COMPLETE plus ground COMPLETE/REST/summary evidence; aerial targets remain typed as requiring the flight trajectory and no solver consumes these target rows yet.",
         "Feature-parent merges for capability slices were not protected main releases."
       ],
-      "depends_on_issues": [
-        4181,
-        4189
-      ],
+      "depends_on_issues": [4181, 4189],
       "release": {
         "status": "not_released",
         "branch": "main",
@@ -1888,13 +1783,7 @@
         "Local test totals cannot satisfy this release gate.",
         "A successful workflow configuration regression does not replace the queued hosted parity execution."
       ],
-      "depends_on_issues": [
-        4191,
-        4218,
-        4234,
-        4260,
-        4267
-      ],
+      "depends_on_issues": [4191, 4218, 4234, 4260, 4267],
       "release": {
         "status": "not_released",
         "branch": "main",
@@ -1979,22 +1868,9 @@
         }
       ],
       "tracked_issue_ids": [
-        4219,
-        4220,
-        4221,
-        4222,
-        4223,
-        4224,
-        4225,
-        4284,
-        4300
+        4219, 4220, 4221, 4222, 4223, 4224, 4225, 4284, 4300
       ],
-      "carrier_ids": [
-        "pr-4279",
-        "pr-4298",
-        "pr-4301",
-        "pr-4303"
-      ],
+      "carrier_ids": ["pr-4279", "pr-4298", "pr-4301", "pr-4303"],
       "supported_surfaces": {
         "tools.pyqt6": "locally_verified",
         "tools.react": "locally_verified",
@@ -2021,9 +1897,7 @@
         "Draft PR 4303 publishes share-ready moving-subject camera defaults across PyQt6 and React at immutable evidence commit 01ae99f0f42876c7a6948c30f50e13618da14eca; protected integration and remaining issue 4300 layout work remain open.",
         "The local #4218/#4284 camera-preference continuation composes exact published #4343, #4331, and #4303 heads and adds strict cross-runtime view-workspace v2 persistence across QSettings, localStorage, File operations, and five camera adapters without persisting targets or per-frame tracking; immutable commit evidence, protected review/CI, rendered qualification, and UpstreamDrift consumers remain open."
       ],
-      "depends_on_issues": [
-        4191
-      ],
+      "depends_on_issues": [4191],
       "release": {
         "status": "not_released",
         "branch": "main",
@@ -2043,7 +1917,7 @@
       "issue": 4234,
       "title": "Production-Grade Visual Design, Layout, Context, and Error UX",
       "kind": "epic",
-      "delivery_stage": "implemented_on_feature_stack",
+      "delivery_stage": "implemented_unverified",
       "completion": "partial_implementation",
       "authorities": [
         {
@@ -2055,17 +1929,8 @@
           "value": "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
         }
       ],
-      "tracked_issue_ids": [
-        4235,
-        4236,
-        4237,
-        4238,
-        4239
-      ],
-      "carrier_ids": [
-        "pr-4279",
-        "pr-4282"
-      ],
+      "tracked_issue_ids": [4235, 4236, 4237, 4238, 4239],
+      "carrier_ids": ["pr-4279", "pr-4282"],
       "supported_surfaces": {
         "tools.pyqt6": "locally_verified",
         "tools.react": "implemented_unverified",
@@ -2082,18 +1947,17 @@
         "Rendered fixes cover selected desktop sizes rather than the complete product matrix.",
         "Current Calculation and error-recovery acceptance criteria are not complete across four surfaces."
       ],
-      "depends_on_issues": [
-        4218
-      ],
+      "depends_on_issues": [4218],
       "release": {
         "status": "not_released",
         "branch": "main",
         "sha": null
       },
       "main_reconciliation": {
-        "as_of": "2026-09-03",
-        "source": "Tools #4921 Phase 1",
-        "note": "Not reconciled in #4921 Phase 1; #4237/#4238 children reconciled and absorbed into #4103."
+        "as_of": "2026-09-05",
+        "source": "Tools #4921",
+        "reference": "https://github.com/D-sorganization/Tools/issues/4234",
+        "note": "Reconciled against main in #4921. Visual design system, responsive layouts, theme sync, and error UX delivered on main; child issues #4237/#4238 absorbed into readiness epic #4103."
       }
     },
     {
@@ -2136,14 +2000,7 @@
           "value": "src/rate_of_closure/runtime_manifest.py"
         }
       ],
-      "tracked_issue_ids": [
-        4261,
-        4262,
-        4263,
-        4264,
-        4265,
-        4266
-      ],
+      "tracked_issue_ids": [4261, 4262, 4263, 4264, 4265, 4266],
       "carrier_ids": [],
       "supported_surfaces": {
         "tools.pyqt6": "contract_only",
@@ -2159,9 +2016,7 @@
         "Strict result import preserves Python evidence but does not establish a browser Run claim, physics authority, or downstream integration.",
         "The machine-readable matrix is complete for its governed declared scope but must not be treated as exhaustive for narrative features that have not been promoted into a structured campaign record or linked active specification."
       ],
-      "depends_on_issues": [
-        4191
-      ],
+      "depends_on_issues": [4191],
       "release": {
         "status": "not_released",
         "branch": "main",
@@ -2343,21 +2198,8 @@
         }
       ],
       "tracked_issue_ids": [
-        4268,
-        4269,
-        4270,
-        4271,
-        4272,
-        4273,
-        4274,
-        4275,
-        4276,
-        4369,
-        4377,
-        4378,
-        4379,
-        4380,
-        4385
+        4268, 4269, 4270, 4271, 4272, 4273, 4274, 4275, 4276, 4369, 4377, 4378,
+        4379, 4380, 4385
       ],
       "carrier_ids": [
         "pr-4285",
@@ -2460,9 +2302,7 @@
         "ground-result/v1 carries no producing-request fingerprint, so #4273 records an exact caller-request context digest and exact source-result digest but does not claim they are an attested pair; exact attribution requires a result-side fingerprint.",
         "Solver admission preserves declared result calibration and provenance and rejects estimated, unvalidated, or zero-confidence calibration; provenance is auditable context rather than producer certification."
       ],
-      "depends_on_issues": [
-        4191
-      ],
+      "depends_on_issues": [4191],
       "release": {
         "status": "not_released",
         "branch": "main",
@@ -2480,7 +2320,66 @@
     }
   ],
   "stage_notes": {
-    "implemented_on_feature_stack": "Historical: the stacked feat/*/codex/* carriers were folded into #4466/#4449 and closed unmerged on 2026-08-20. No program is on a live feature stack any more.",
-    "implemented_unverified": "Implementation is on main per the Tools #4921 Phase 1 reconciliation (docs/release/closed_stack_gap_audit_decisions.v1.json and the per-epic tables linked below), but no protected release gate has run against it. The gate is owned by Tools #4922; release.status stays not_released until it does."
+    "implemented_on_feature_stack": "Historical: the stacked feat/*/codex/* carriers were folded into #4466/#4449 and closed unmerged on 2026-08-20. Reconciled in #4921: zero programs remain on a feature stack.",
+    "implemented_unverified": "Implementation is on main per the Tools #4921 reconciliation (docs/release/closed_stack_gap_audit_decisions.v1.json, docs/release/closed_stack_gap_audit.md, and the per-epic audit tables), but no protected release gate has run against it. The gate is owned by Tools #4922; release.status stays not_released until it does."
+  },
+  "gap_audit_reconciliation": {
+    "as_of": "2026-09-05",
+    "audit_issue": 4921,
+    "summary": "Reconciliation of golf program states, closed-stack PRs (#4466 / #4449), and epic checklists against main.",
+    "slices": {
+      "inverse_flight_solver": {
+        "status": "delivered",
+        "epics": [4191, 4195, 4196],
+        "delivered_on_main": true,
+        "notes": "Inverse flight solver and impact solution families fully re-landed on main (0 files missing beyond noise)."
+      },
+      "wind_strategy": {
+        "status": "partially_delivered",
+        "epics": [4191, 4198, 4199],
+        "delivered_on_main": true,
+        "missing_slices": [
+          "src/rate_of_closure/web/src/workers/windStrategy.worker.ts",
+          "tests/rate_of_closure/test_wind_strategy_panel.py"
+        ],
+        "notes": "Wind physics (#4198) and scalar adapter / uncertainty (#4199) re-landed on main. Wind workflow UI panel and worker missing, tracked in re-slice #4960."
+      },
+      "camera_controls": {
+        "status": "partially_delivered",
+        "epics": [4218, 4571],
+        "delivered_on_main": false,
+        "missing_slices": [
+          "camera_preference_persistence",
+          "camera_preset_parity",
+          "camera_snap_tracking",
+          "view_compositor_app"
+        ],
+        "notes": "Viewport contract CAMERA_VIEWPORT_CONTROLS.md on main; camera preference persistence, presets, and synchronized view compositor missing from main, tracked in re-slice #4961."
+      },
+      "screw_axis_analytics": {
+        "status": "delivered",
+        "epics": [4108, 4169],
+        "delivered_on_main": true,
+        "notes": "Substantially delivered on main via simulation/screw_analysis.py, ui/pyqt6/screw_overlay.py, web screwPresentation.ts, and tests/rate_of_closure/test_screw_analysis.py."
+      },
+      "impact_interval_dynamics": {
+        "status": "delivered",
+        "epics": [4130],
+        "delivered_on_main": true,
+        "notes": "Re-landed to main in PR #4945 from PR #4133 head c7a869f9 under src/shared/python/swing_sim/impact_interval/."
+      },
+      "ground_bounce_regional": {
+        "status": "delivered",
+        "epics": [4267],
+        "delivered_on_main": true,
+        "notes": "Regional ground physics core and execution authorities fully re-landed on main across ~30 ground branches; shared stack base residue tracked in #4960."
+      },
+      "shared_golf_club_builder": {
+        "status": "delivered",
+        "epics": [4146],
+        "delivered_on_main": true,
+        "notes": "Shared club builder core delivered on main under src/shared/python/golf_club/; C5 image fitting tracked separately under RM #1506."
+      }
+    }
   }
 }
