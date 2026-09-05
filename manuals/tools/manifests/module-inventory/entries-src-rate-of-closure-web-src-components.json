@@ -8765,10 +8765,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10679,
+      "bytes_lf": 11198,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "df009f4e5ba9588662ad3d162ce65c9f7a32bd4b3a78efcf95f98eae53ea7347",
+      "content_sha256_lf": "ed6a8816feb7ff901287cee1f58efa351893ae1b632ea4160bfad2dde49b6e0b",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-SWINGSCENEDRAW-TS-0D3D1B481AFB",
       "language": "typescript",

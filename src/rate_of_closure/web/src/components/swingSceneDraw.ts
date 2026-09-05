@@ -118,18 +118,30 @@ export function drawSwingScene(
   // Scale separation (#4120): the scene stays at swing scale unless
   // the opt-in 'Show Ball Flight' toggle expands it past impact.
   const inFlight = impactTime !== null && time > impactTime && showFlight;
-  const extentX = inFlight
-    ? Math.max(10, ...run.flight.map((p) => Math.abs(p.position[0]))) * 1.05
-    : Math.max(
-        1.5,
-        ...run.swing.flatMap((p) => [p.position, ...p.joints].map((v) => Math.abs(v[0]))),
-      ) * 1.15;
-  const extentY = inFlight
-    ? Math.max(5, ...run.flight.map((p) => p.position[1])) * 1.3
-    : Math.max(
-        1.5,
-        ...run.swing.flatMap((p) => [p.position, ...p.joints].map((v) => Math.abs(v[1]))),
-      ) * 1.15;
+  let extentX = 10, extentY = 5;
+  // ⚡ Bolt Optimization: Replace chained flatMap/map array spreads with single-pass loops
+  if (inFlight) {
+    for (let i = 0; i < run.flight.length; i++) {
+      const p = run.flight[i].position;
+      if (Math.abs(p[0]) > extentX) extentX = Math.abs(p[0]);
+      if (p[1] > extentY) extentY = p[1];
+    }
+    extentX *= 1.05;
+    extentY *= 1.3;
+  } else {
+    extentX = 1.5; extentY = 1.5;
+    for (let i = 0; i < run.swing.length; i++) {
+      const frame = run.swing[i];
+      if (Math.abs(frame.position[0]) > extentX) extentX = Math.abs(frame.position[0]);
+      if (Math.abs(frame.position[1]) > extentY) extentY = Math.abs(frame.position[1]);
+      for (let j = 0; j < frame.joints.length; j++) {
+        if (Math.abs(frame.joints[j][0]) > extentX) extentX = Math.abs(frame.joints[j][0]);
+        if (Math.abs(frame.joints[j][1]) > extentY) extentY = Math.abs(frame.joints[j][1]);
+      }
+    }
+    extentX *= 1.15;
+    extentY *= 1.15;
+  }
   const originX = inFlight ? 30 : width / 2;
   const scaleX = (width - 60) / (inFlight ? extentX : 2 * extentX);
   const scaleY = (height - 40) / (inFlight ? extentY : 2 * extentY);
