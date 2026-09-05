@@ -100,24 +100,8 @@ def _discover_registrations(repo_root: Path) -> list[ToolRegistration]:
             and (tool_dir / "launch_gui.py").exists()
         )
 
-        # A registration that declares a surface it cannot launch is a
-        # contradiction, not an absence: `src/p1am_control_system` declared a
-        # full "pyqt6" block but shipped no launch_pyqt6.py, so it vanished from
-        # tools.json, tool_surface_contract.json and the README with a green
-        # --check and no output at all (Tools#4916). Dropping it stays the
-        # behaviour -- the catalog cannot advertise something with no entry
-        # point -- but it is now reported, so deleting a launcher shim can no
-        # longer silently delete a tool.
+        # Skip tools with no available surface
         if not has_pyqt6 and not has_web and not has_legacy_gui:
-            declared = sorted(k for k in ("pyqt6", "web", "tkinter") if k in info)
-            if declared:
-                logger.warning(
-                    "Registration %s declares %s but ships no matching launcher "
-                    "script; omitting '%s' from generated catalogs",
-                    reg_file,
-                    ", ".join(declared),
-                    tool_id,
-                )
             continue
 
         registration = ToolRegistration(

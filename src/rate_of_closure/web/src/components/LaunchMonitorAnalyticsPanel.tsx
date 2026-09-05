@@ -12,7 +12,6 @@ import {
   type CorrelationMethod,
   type LaunchMonitorAnalysisResult,
   type LaunchMonitorRow,
-  type LaunchMonitorScalar,
   type MissingPolicy,
 } from "../model/launchMonitorAnalysis";
 import {
@@ -84,24 +83,8 @@ export function LaunchMonitorAnalyticsPanel() {
   const importEpoch = useRef(0);
   const numeric = useMemo(() => numericLaunchMonitorColumns(rows), [rows]);
   const grouping = useMemo(() => {
-    // ⚡ Bolt Optimization: Single-pass grouping avoids O(rows * columns) array allocations
-    const counts = new Map<string, Set<LaunchMonitorScalar>>();
-    for (let i = 0; i < rows.length; i++) {
-      const row = rows[i];
-      for (const key in row) {
-        let set = counts.get(key);
-        if (!set) {
-          set = new Set();
-          counts.set(key, set);
-        }
-        if (set.size <= 100) set.add(row[key]);
-      }
-    }
-    const result: string[] = [];
-    for (const [key, set] of counts.entries()) {
-      if (set.size <= 100) result.push(key);
-    }
-    return result.sort();
+    const columns = new Set(rows.flatMap((row) => Object.keys(row)));
+    return [...columns].filter((column) => new Set(rows.map((row) => row[column])).size <= 100).sort();
   }, [rows]);
   const parameter = PARAMETER_IDS.includes(outcome as ParameterId) ? outcome as ParameterId : "club_speed";
   const definition = conventionRegistry().definition(convention, parameter);
