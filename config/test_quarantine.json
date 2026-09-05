@@ -1,23 +1,203 @@
 {
   "_comment": "Test modules kept out of the sharded PR lane (Tools #4913). Quarantine individual modules only, never directories; every entry needs an owner cluster and a tracked issue, and `python scripts/ci_test_shards.py --check` fails when a path no longer exists. Remove entries as they are fixed; #4933 closes when this list is empty.",
   "entries": [
-    {"path": "src/pendulum_simulator/tests/test_perturbation_panel.py", "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)", "issue": "#4933", "reason": "13 errors: fixture '_app' not found in any conftest"},
-    {"path": "src/pendulum_simulator/tests/test_swing_comparison_dialog.py", "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)", "issue": "#4933", "reason": "14 errors: fixture '_app' not found in any conftest"},
-    {"path": "src/pendulum_simulator/tests/test_diagnostics.py", "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)", "issue": "#4933", "reason": "7 failures: gui/diagnostics.py:351 TypeError 'NoneType' object is not callable"},
-    {"path": "src/pendulum_simulator/tests/test_chart_data_dialog.py", "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)", "issue": "#4933", "reason": "5 failures: ChartDataDialog requires model_type; ChartDataDialog is not a QWidget for addWidget"},
-    {"path": "src/pendulum_simulator/tests/test_perturbation_analysis.py", "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)", "issue": "#4933", "reason": "2 failures: perturbation_analysis.py raises AssertionError where tests expect ValueError"},
-    {"path": "src/pendulum_simulator/tests/test_controls_widget.py", "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)", "issue": "#4933", "reason": "1 failure: sidekick UnitAwareInput.setValue(str) API drift / MockUAI has no attribute value"},
-    {"path": "src/pendulum_simulator/tests/test_controls_widget_base.py", "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)", "issue": "#4933", "reason": "1 failure: controls_utils.py:212 MockUAI has no attribute value"},
-    {"path": "src/pendulum_simulator/tests/test_controls_widget_golfer.py", "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)", "issue": "#4933", "reason": "1 failure: sidekick UnitAwareInput.setValue(str) API drift"},
-    {"path": "src/pendulum_simulator/tests/test_ellipsoid_scale_and_emoji.py", "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)", "issue": "#4933", "reason": "2 failures: asserts on glyphs the runner's default font cannot render"},
-    {"path": "src/pendulum_simulator/tests/test_companion_dialog.py", "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)", "issue": "#4933", "reason": "1 failure on main"},
-    {"path": "src/movement_optimizer/tests/test_benchmarks.py", "owner": "src/movement_optimizer", "issue": "#4933", "reason": "wall-clock budget assertion (_compute_cost <5ms median) belongs in benchmark-suite.yml, not a PR gate"},
-    {"path": "src/project_packer/tests/test_build_exe.py", "owner": "src/project_packer", "issue": "#4933", "reason": "ModuleNotFoundError: tools.folder_tools.project_packer (package moved to src/project_packer)"},
-    {"path": "src/project_packer/tests/test_folder_packer_gui.py", "owner": "src/project_packer", "issue": "#4933", "reason": "ModuleNotFoundError: tools.folder_tools.project_packer (package moved to src/project_packer)"},
-    {"path": "src/project_packer/tests/test_package_for_distribution.py", "owner": "src/project_packer", "issue": "#4933", "reason": "ModuleNotFoundError: tools.folder_tools.project_packer (package moved to src/project_packer)"},
-    {"path": "src/pendulum_simulator/tests/test_analysis_tab.py", "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)", "issue": "#4933", "reason": "API drift in pendulum_simulator test doubles (_ax_2d, matplotlib canvas patch)"},
-    {"path": "src/pendulum_simulator/tests/test_popout_chart.py", "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)", "issue": "#4933", "reason": "API drift in pendulum_simulator PopoutChart test doubles"},
-    {"path": "src/pendulum_simulator/tests/test_simulation_panel.py", "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)", "issue": "#4933", "reason": "API drift in pendulum_simulator MockOpt._on_run / worker API"},
-    {"path": "src/shared/python/tests/test_god_class_guard.py", "owner": "src/shared/python", "issue": "#4933", "reason": "1 failure: test_calculator_state_mixin_reduced expects unlanded GH1692 sub-mixin refactor"}
+    {
+      "path": "src/pendulum_simulator/tests/test_perturbation_panel.py",
+      "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)",
+      "issue": "#4933",
+      "reason": "13 errors: fixture '_app' not found in any conftest"
+    },
+    {
+      "path": "src/pendulum_simulator/tests/test_swing_comparison_dialog.py",
+      "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)",
+      "issue": "#4933",
+      "reason": "14 errors: fixture '_app' not found in any conftest"
+    },
+    {
+      "path": "src/pendulum_simulator/tests/test_diagnostics.py",
+      "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)",
+      "issue": "#4933",
+      "reason": "7 failures: gui/diagnostics.py:351 TypeError 'NoneType' object is not callable"
+    },
+    {
+      "path": "src/pendulum_simulator/tests/test_chart_data_dialog.py",
+      "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)",
+      "issue": "#4933",
+      "reason": "5 failures: ChartDataDialog requires model_type; ChartDataDialog is not a QWidget for addWidget"
+    },
+    {
+      "path": "src/pendulum_simulator/tests/test_perturbation_analysis.py",
+      "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)",
+      "issue": "#4933",
+      "reason": "2 failures: perturbation_analysis.py raises AssertionError where tests expect ValueError"
+    },
+    {
+      "path": "src/pendulum_simulator/tests/test_controls_widget.py",
+      "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)",
+      "issue": "#4933",
+      "reason": "1 failure: sidekick UnitAwareInput.setValue(str) API drift / MockUAI has no attribute value"
+    },
+    {
+      "path": "src/pendulum_simulator/tests/test_controls_widget_base.py",
+      "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)",
+      "issue": "#4933",
+      "reason": "1 failure: controls_utils.py:212 MockUAI has no attribute value"
+    },
+    {
+      "path": "src/pendulum_simulator/tests/test_controls_widget_golfer.py",
+      "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)",
+      "issue": "#4933",
+      "reason": "1 failure: sidekick UnitAwareInput.setValue(str) API drift"
+    },
+    {
+      "path": "src/pendulum_simulator/tests/test_ellipsoid_scale_and_emoji.py",
+      "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)",
+      "issue": "#4933",
+      "reason": "2 failures: asserts on glyphs the runner's default font cannot render"
+    },
+    {
+      "path": "src/pendulum_simulator/tests/test_companion_dialog.py",
+      "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)",
+      "issue": "#4933",
+      "reason": "1 failure on main"
+    },
+    {
+      "path": "src/movement_optimizer/tests/test_benchmarks.py",
+      "owner": "src/movement_optimizer",
+      "issue": "#4933",
+      "reason": "wall-clock budget assertion (_compute_cost <5ms median) belongs in benchmark-suite.yml, not a PR gate"
+    },
+    {
+      "path": "src/project_packer/tests/test_build_exe.py",
+      "owner": "src/project_packer",
+      "issue": "#4933",
+      "reason": "ModuleNotFoundError: tools.folder_tools.project_packer (package moved to src/project_packer)"
+    },
+    {
+      "path": "src/project_packer/tests/test_folder_packer_gui.py",
+      "owner": "src/project_packer",
+      "issue": "#4933",
+      "reason": "ModuleNotFoundError: tools.folder_tools.project_packer (package moved to src/project_packer)"
+    },
+    {
+      "path": "src/project_packer/tests/test_package_for_distribution.py",
+      "owner": "src/project_packer",
+      "issue": "#4933",
+      "reason": "ModuleNotFoundError: tools.folder_tools.project_packer (package moved to src/project_packer)"
+    },
+    {
+      "path": "src/pendulum_simulator/tests/test_analysis_tab.py",
+      "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)",
+      "issue": "#4933",
+      "reason": "API drift in pendulum_simulator test doubles (_ax_2d, matplotlib canvas patch)"
+    },
+    {
+      "path": "src/pendulum_simulator/tests/test_popout_chart.py",
+      "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)",
+      "issue": "#4933",
+      "reason": "API drift in pendulum_simulator PopoutChart test doubles"
+    },
+    {
+      "path": "src/pendulum_simulator/tests/test_simulation_panel.py",
+      "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)",
+      "issue": "#4933",
+      "reason": "API drift in pendulum_simulator MockOpt._on_run / worker API"
+    },
+    {
+      "path": "src/shared/python/tests/test_god_class_guard.py",
+      "owner": "src/shared/python",
+      "issue": "#4933",
+      "reason": "1 failure: test_calculator_state_mixin_reduced expects unlanded GH1692 sub-mixin refactor"
+    },
+    {
+      "path": "tests/folder_tool/test_backup_copy.py",
+      "owner": "tests/folder_tool",
+      "issue": "#4933",
+      "reason": "1 failure: _safe_copy_file ValueError vs AssertionError and stat error mock"
+    },
+    {
+      "path": "tests/folder_tool/test_folder_tool_ui.py",
+      "owner": "tests/folder_tool",
+      "issue": "#4933",
+      "reason": "Tkinter widget instantiation crashes headless CI runner without X server"
+    },
+    {
+      "path": "tests/folder_tool/test_folders_tool_r0.py",
+      "owner": "tests/folder_tool",
+      "issue": "#4933",
+      "reason": "Tkinter root instantiation and DbC contract error expectations"
+    },
+    {
+      "path": "tests/integration/test_cross_repo_contracts.py",
+      "owner": "tests/integration",
+      "issue": "#4933",
+      "reason": "FlareCalculator/FinancialCalculator calculate API drift on main"
+    },
+    {
+      "path": "tests/project_packer_fixes/test_folder_packer_gui_lod.py",
+      "owner": "tests/project_packer_fixes",
+      "issue": "#4933",
+      "reason": "Precondition raises ValueError where test expects AssertionError"
+    },
+    {
+      "path": "tests/test_bootstrap.py",
+      "owner": "tests",
+      "issue": "#4933",
+      "reason": "assert repo_root matches temp mock repo layout on main"
+    },
+    {
+      "path": "tests/test_calculators_expanded.py",
+      "owner": "tests",
+      "issue": "#4933",
+      "reason": "PressureDropCalculator calculate_pressure_drop signature drift on main"
+    },
+    {
+      "path": "tests/test_dry_compliance.py",
+      "owner": "tests",
+      "issue": "#4933",
+      "reason": "launch_pyqt6 DRY pattern expectation drift on main"
+    },
+    {
+      "path": "tests/test_gh1732_logging_consistency.py",
+      "owner": "tests",
+      "issue": "#4933",
+      "reason": "18 unguarded print calls in vendor/codegen files on main"
+    },
+    {
+      "path": "tests/test_model_generation_api_adapters.py",
+      "owner": "tests",
+      "issue": "#4933",
+      "reason": "Flask endpoint and adapter shim size drift on main"
+    },
+    {
+      "path": "tests/test_phase1_quick_wins.py",
+      "owner": "tests",
+      "issue": "#4933",
+      "reason": "gitignore root artifact assertion drift on main"
+    },
+    {
+      "path": "tests/test_python_version_contract.py",
+      "owner": "tests",
+      "issue": "#4933",
+      "reason": "conftest floor resolution across sub-packages on CI"
+    },
+    {
+      "path": "tests/test_shared_package_api_stability.py",
+      "owner": "tests",
+      "issue": "#4933",
+      "reason": "swing_sim public API baseline drift on main"
+    },
+    {
+      "path": "tests/test_wave_solver.py",
+      "owner": "tests",
+      "issue": "#4933",
+      "reason": "external wave solver binary missing on runner"
+    },
+    {
+      "path": "tests/vessel_drafter/test_contracts_fallback.py",
+      "owner": "tests/vessel_drafter",
+      "issue": "#4933",
+      "reason": "monorepo shared contracts imported instead of fallback"
+    }
   ]
 }
