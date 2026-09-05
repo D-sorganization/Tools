@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from vessel_drafter.analysis.vessel_drafter_metrics import build_material_metrics_report
+from vessel_drafter.contracts import require
 from vessel_drafter.models.vessel_drafter import (
     DEFAULT_VESSEL_DRAFTER_LAYOUT,
     VesselDrafterLayout,
@@ -30,8 +31,7 @@ def export_vessel(
 
     Returns a mapping of format name to output path.
     """
-    if layout is None:
-        raise ValueError("layout must be provided")
+    require(layout is not None, "layout must be provided")
     from build123d import Compound  # lazy import — optional dep
 
     output_path = Path(output_dir)
@@ -108,8 +108,7 @@ def _write_manifest(
     output_path: Path,
     stem: str,
 ) -> Path:
-    if layout is None:
-        raise ValueError("layout must be provided")
+    require(layout is not None, "layout must be provided")
     report = build_material_metrics_report(layout)
     manifest = {
         "layout": layout.__dict__ if hasattr(layout, "__dict__") else str(layout),

@@ -7,6 +7,8 @@ import json
 from pathlib import Path
 from typing import Any
 
+import pytest
+
 SCRIPT_PATH = (
     Path(__file__).resolve().parents[2] / "scripts" / "check_coverage_policy.py"
 )
@@ -151,64 +153,61 @@ def test_full_suite_nightly_enforces_repo_wide_coverage_policy() -> None:
     assert "--changed-files" not in gate_block
 
 
-def test_ci_provider_contract_coverage_updates_policy_xml() -> None:
-    """Provider coverage must update coverage.xml before the policy gate reads it."""
-    root = Path(__file__).resolve().parents[2]
-    workflow = (root / ".github" / "workflows" / "ci-standard.yml").read_text(
-        encoding="utf-8"
-    )
-
-    provider_block = workflow.split(
-        "- name: Provider-Contract Suite (Exported Packages)",
-        maxsplit=1,
-    )[1].split("- name: Coverage Policy Gate", maxsplit=1)[0]
-
-    assert "--cov-append" in provider_block
-    assert "--cov-report=xml:coverage.xml" in provider_block
-
-
-def test_ci_import_canonicalization_skips_changed_package_coverage_gate() -> None:
-    """The broad import migration uses focused contract gates, not package ratchets."""
-    root = Path(__file__).resolve().parents[2]
-    workflow = (root / ".github" / "workflows" / "ci-standard.yml").read_text(
-        encoding="utf-8"
-    )
-
-    coverage_inputs_block = workflow.split(
-        "- name: Collect Changed Coverage Inputs",
-        maxsplit=1,
-    )[1].split("- name: Run Tests with Coverage", maxsplit=1)[0]
-
-    assert "BRANCH_NAME: ${{ github.head_ref || github.ref_name }}" in workflow
-    assert 'BRANCH_NAME="${{ github.head_ref || github.ref_name }}"' not in workflow
-    assert "codex/tools-3316-import-canonicalization" in coverage_inputs_block
-    assert "coverage_gate_required=false" in coverage_inputs_block
-
-
-def test_large_consolidation_branch_skips_changed_test_expansion() -> None:
-    """Large consolidation branches keep required tests focused on core gates."""
-    root = Path(__file__).resolve().parents[2]
-    workflow = (root / ".github" / "workflows" / "ci-standard.yml").read_text(
-        encoding="utf-8"
-    )
-
-    run_tests_block = workflow.split(
-        "- name: Run Tests with Coverage",
-        maxsplit=1,
-    )[1].split("- name: Provider-Contract Suite", maxsplit=1)[0]
-
-    assert "large_consolidation_branch=false" in run_tests_block
-    assert 'BRANCH_NAME" = "consolidate/open-prs-20260620' in run_tests_block
-    assert "run_changed_tests=false" in run_tests_block
-
-
 def test_committed_baseline_does_not_undercut_policy_target() -> None:
     """The committed baseline should support ratcheting, not redefine the floor."""
+    module = _load_coverage_policy_module()
     root = Path(__file__).resolve().parents[2]
-    policy = json.loads((root / "config" / "coverage_policy.json").read_text())
     baseline = json.loads((root / "config" / "coverage_baseline.json").read_text())
 
-    assert baseline["total_percent"] >= policy["minimum_total_percent"]
+    assert baseline["total_percent"] >= module.coverage_floor()
+
+
+def test_coverage_floor_is_declared_once_in_pyproject() -> None:
+    """Tools #4913: one floor, in pyproject; nothing else may declare one."""
+    module = _load_coverage_policy_module()
+    root = Path(__file__).resolve().parents[2]
+
+    assert module.coverage_floor() > 0
+    policy = json.loads((root / "config" / "coverage_policy.json").read_text())
+    assert "minimum_total_percent" not in policy
+    assert not (root / ".coveragerc").exists()
+    ci_standard = (root / ".github" / "workflows" / "ci-standard.yml").read_text(
+        encoding="utf-8"
+    )
+    assert "--cov-fail-under" not in ci_standard
+    claude_md = (root / "CLAUDE.md").read_text(encoding="utf-8")
+    assert "coverage minimum**" not in claude_md
+
+
+def test_policy_file_declaring_a_floor_is_rejected(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    module = _load_coverage_policy_module()
+    policy = tmp_path / "policy.json"
+    policy.write_text(json.dumps({"minimum_total_percent": 60.0}), encoding="utf-8")
+    baseline = tmp_path / "baseline.json"
+    baseline.write_text(json.dumps({"total_percent": 60.0}), encoding="utf-8")
+    coverage = tmp_path / "coverage.xml"
+    coverage.write_text(
+        '<coverage line-rate="0.5"><sources><source>src</source></sources></coverage>',
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "check_coverage_policy.py",
+            "--coverage-file",
+            str(coverage),
+            "--policy-file",
+            str(policy),
+            "--baseline-file",
+            str(baseline),
+            "--output-json",
+            str(tmp_path / "trend.json"),
+        ],
+    )
+
+    assert module.main() == 1
 
 
 def test_coverage_policy_tracks_safe_eval_files() -> None:

@@ -213,9 +213,7 @@ class TestDataProcessorEngineQueries:
 
     def test_filter_data_operator_in(self, eng: DataProcessorEngine) -> None:
         """Filters with string operator works."""
-        # Bypassing the filter by patching is not strictly necessary for unit tests of the tool itself.
-        # It's an internal test of the tool.
-        res = eng.query("C == 'cat'")
+        res = eng.filter_data("C", "==", "cat")
         assert res.success
         assert eng.data is not None
         assert len(eng.data) == 2

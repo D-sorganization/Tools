@@ -4,10 +4,26 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import tomllib
 from pathlib import Path
 from typing import Any, TypedDict
 
 import defusedxml.ElementTree as ET
+
+PYPROJECT = Path(__file__).resolve().parents[1] / "pyproject.toml"
+
+
+def coverage_floor(pyproject: Path = PYPROJECT) -> float:
+    """Return the single repo-wide floor: ``[tool.coverage.report] fail_under``.
+
+    This is the only place the floor is declared (Tools #4913); CI enforces it
+    through ``coverage report`` on the combined full-suite data and this script
+    reads it so the policy gate can never disagree with pytest-cov.
+    """
+    with pyproject.open("rb") as handle:
+        data = tomllib.load(handle)
+    report = data.get("tool", {}).get("coverage", {}).get("report", {})
+    return float(report.get("fail_under", 0.0))
 
 
 class CoverageStats(TypedDict):
@@ -110,6 +126,11 @@ def main() -> int:
     ap.add_argument("--coverage-file", default="coverage.xml")
     ap.add_argument("--policy-file", default="config/coverage_policy.json")
     ap.add_argument("--baseline-file", default="config/coverage_baseline.json")
+    ap.add_argument(
+        "--pyproject",
+        default=str(PYPROJECT),
+        help="pyproject.toml carrying [tool.coverage.report] fail_under (the floor).",
+    )
     ap.add_argument("--output-json", default="coverage_trend.json")
     ap.add_argument(
         "--changed-files",
@@ -138,7 +159,14 @@ def main() -> int:
     )
     current = parse_coverage(Path(args.coverage_file), tracked)
 
-    min_total = _json_float(policy, "minimum_total_percent")
+    if "minimum_total_percent" in policy:
+        sys.stderr.write(
+            "Coverage policy failed:\n- minimum_total_percent must not be declared "
+            "in the policy file; the floor is pyproject [tool.coverage.report] "
+            "fail_under (Tools #4913)\n"
+        )
+        return 1
+    min_total = coverage_floor(Path(args.pyproject))
     max_drop = _json_float(policy, "max_total_drop_percent")
     baseline_total = _json_float(baseline, "total_percent")
 

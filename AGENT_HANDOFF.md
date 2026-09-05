@@ -86,7 +86,9 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
 ```bash
 python3 -m ruff check .                          # lint
 python3 -m ruff format --check .                  # format check (Ruff, NOT Black)
-python3 -m pytest -n auto --timeout=60            # full test suite
+python3 -m pytest -n auto --timeout=60            # full test suite (tests/ only)
+python3 scripts/ci_test_shards.py --check        # every test file claimed by exactly one CI shard (#4913)
+python3 scripts/ci_test_shards.py --run src-embedded --fanout auto   # one PR-lane shard locally (pendulum + movement_optimizer)
 python3 -m pytest -m contract                     # API contract tests (downstream-facing)
 python3 -m pytest tests/test_shared_package_api_stability.py   # vendored-package API baselines (#4920); --regenerate-api-baseline only with a coordinated breaking change
 python3 scripts/check_wheel_build.py --check     # ud-tools wheel builds with pyproject name/version (#4920)

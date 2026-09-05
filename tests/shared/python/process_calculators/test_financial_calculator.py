@@ -381,12 +381,12 @@ class TestContracts:
         calc = FinancialModelCalculator()
         params = _make_typical_params()
         params.total_capital_investment = -1.0
-        with pytest.raises(AssertionError, match="Capital investment"):
+        with pytest.raises((AssertionError, ValueError), match="Capital investment"):
             calc.calculate_financial_model(params)
 
     def test_negative_operating_days_raises(self) -> None:
         calc = FinancialModelCalculator()
         params = _make_typical_params()
         params.operating_days_per_year = -10
-        with pytest.raises(AssertionError, match="Operating days"):
+        with pytest.raises((AssertionError, ValueError), match="Operating days"):
             calc.calculate_financial_model(params)

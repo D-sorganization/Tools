@@ -769,10 +769,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 16114,
+      "bytes_lf": 16595,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3d555be2ab131d6e5f5da2affb0130b0787e892f76793499a20caf53f3e49265",
+      "content_sha256_lf": "f92062bb7bea921b1aec23a0cbb93fcb2bf463d1003450b68c10f69fa5e9b37a",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-BUILD-TOOLS-MODULE-INVENTORY-PY-FFBDFD4ACF17",
       "language": "python",
@@ -1608,10 +1608,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6945,
+      "bytes_lf": 8065,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d96236c5b816d365253624ff8b112fc61c1d37ad4fe53513d139efab77ac3947",
+      "content_sha256_lf": "a1560c15e74046735a8d71497b75b0b1c6dc92849562e97140679860e212f5d6",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CHECK-COVERAGE-POLICY-PY-C9DF4E1A43BB",
       "language": "python",
@@ -1649,6 +1649,16 @@
             "kind": "class",
             "name": "CoverageStats",
             "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PYPROJECT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "coverage_floor",
+            "signature": "pyproject: Path=PYPROJECT"
           },
           {
             "kind": "function",
@@ -2789,10 +2799,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6807,
+      "bytes_lf": 6754,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "bdc7261f6c50dd42156ce262b9b1d9357a38ce5a3a3848cc21214d2b2419c7ff",
+      "content_sha256_lf": "62a2507a533e37c858842fafb6b06f5b76255a978d3feb31b85ac8570ffaea25",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CHECK-ROOT-ALLOWLIST-PY-94782E1774B7",
       "language": "python",
@@ -3718,6 +3728,155 @@
         ],
         "unit_mentions": [
           "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13695,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6b0c77eb992da80f748e2a430850061bf78d0f859b20db96d1b2289c1a6ffa35",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CI-TEST-SHARDS-PY-F0C2918F82E4",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/ci_test_shards.py",
+      "purpose": "Partition the whole Tools test tree into CI shards (Tools #4913).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Invocation",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Shard",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PYTEST_MARKER_EXPR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "QUARANTINE_FILE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REPO_ROOT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SHARDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SHARD_NAMES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_NOT_TEST_MODULES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SKIP_DIRS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SRC_OWNED_ELSEWHERE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_TESTS_OWNED_ELSEWHERE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "check_partition",
+            "signature": "repo_root: Path=REPO_ROOT"
+          },
+          {
+            "kind": "function",
+            "name": "iter_test_files",
+            "signature": "repo_root: Path=REPO_ROOT"
+          },
+          {
+            "kind": "function",
+            "name": "load_quarantine",
+            "signature": "path: Path=QUARANTINE_FILE"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "pytest_command",
+            "signature": "invocation: Invocation, *, fanout: str, extra: tuple[str, ...]=(), quarantine: tuple[str, ...]=()"
+          },
+          {
+            "kind": "function",
+            "name": "quarantined_paths",
+            "signature": "path: Path=QUARANTINE_FILE"
+          },
+          {
+            "kind": "function",
+            "name": "run_shard",
+            "signature": "name: str, *, fanout: str, coverage_data: str | None, dry_run: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "shard_by_name",
+            "signature": "name: str"
+          },
+          {
+            "kind": "function",
+            "name": "verify_status",
+            "signature": "status_dir: Path, python_version: str"
+          }
+        ],
+        "test_paths": [
+          "tests/ops/test_ci_test_shards.py"
+        ],
+        "unit_mentions": [
           "s"
         ],
         "validation_paths": []
@@ -5296,10 +5455,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6973,
+      "bytes_lf": 7020,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "fd424699f6350d7790ee392aae47dab228e72abe3fce180fdd09642c98561c52",
+      "content_sha256_lf": "6f74f71d08c3437ce1c780222fab0d9db3c3dcd1d8e1feb1642b5a757ec0c32e",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-MEASURE-COVERAGE-PY-7B242AF2D85C",
       "language": "python",
@@ -5336,7 +5495,7 @@
           {
             "kind": "function",
             "name": "compare_coverage",
-            "signature": "current: dict[str, object], baseline: dict[str, object], policy: dict[str, object]"
+            "signature": "current: dict[str, Any], baseline: dict[str, Any], policy: dict[str, Any]"
           },
           {
             "kind": "function",
@@ -6263,10 +6422,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1906,
+      "bytes_lf": 2112,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b27b1a2a02ea7f7ba080344a7fe766a71f38f1ad696cf25be28d4067631a604c",
+      "content_sha256_lf": "a03e285b02bae3145bf7850415a5760c952f6c1c9767e8ce76669ae99ce3f0e2",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-RUN-COVERAGE-SH-2D7A39885F00",
       "language": "shell",
@@ -7424,10 +7583,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 14956,
+      "bytes_lf": 20023,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ce3f556edcab4b8efd4d0c53f6fe9b6efd62ec698588681e3cde90766daf20f5",
+      "content_sha256_lf": "e8324867464df8615256cf840afce81057576924221dc314a0b7bc7ebcd6bfe0",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-TOOLS-MODULE-INVENTORY-STORAGE-PY-59B3E90AF61F",
       "language": "python",
@@ -7461,6 +7620,26 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "DEFAULT_BLOCKERS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_HASH_CONTRACT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_PRODUCER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_SCOPE",
+            "signature": null
+          },
           {
             "kind": "constant",
             "name": "DERIVED_FIELDS",
@@ -7514,12 +7693,17 @@
           {
             "kind": "function",
             "name": "check_projection",
-            "signature": "root: Path, output_path: Path, index: dict[str, object], shards: dict[Path, str]"
+            "signature": "root: Path, output_path: Path, index: dict[str, object], shards: dict[Path, str], *, allow_derivable_index: bool=True"
           },
           {
             "kind": "function",
             "name": "derive_families",
             "signature": "entries: list[dict[str, object]]"
+          },
+          {
+            "kind": "function",
+            "name": "derive_index_from_shards",
+            "signature": "root: Path"
           },
           {
             "kind": "function",
@@ -7544,7 +7728,7 @@
           {
             "kind": "function",
             "name": "read_inventory",
-            "signature": "root: Path, index_path: Path"
+            "signature": "root: Path, index_path: Path | None=None"
           },
           {
             "kind": "function",

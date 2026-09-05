@@ -458,9 +458,19 @@ jobs:
           fi
 
   tests:
-    # The required 3.11 lane must survive a first-use Python download plus
-    # dependency installation, Rust-wheel build, and the actual test suite.
-    timeout-minutes: 150
+    # One job per (python, shard). The required check is NOT this job: it is
+    # `tests (3.11)`, owned by the `tests-gate` job below, which fails unless
+    # every shard of the lane recorded success and the combined coverage
+    # clears the pyproject floor. Shards are the partition in
+    # scripts/ci_test_shards.py (Tools #4913, RM #1507): the whole tree,
+    # including src/pendulum_simulator and src/movement_optimizer, which the
+    # old changed-file lane excluded with a grep and a hand-curated
+    # allowlist of always-on test files (#3975, #4460).
+    name: tests-shard (${{ matrix.python-version }}, ${{ matrix.shard }})
+    # Each shard is sized to stay well under this on the fleet; the budget
+    # still has to absorb a first-use Python download, dependency install and
+    # the Rust-wheel build on a cold cache.
+    timeout-minutes: 90
     # Parallelized: tests do not consume any quality-gate outputs (quality-gate
     # declares no `outputs:` block, and no step in this job references
     # `needs.quality-gate.*`). Fanning out after pick-runner removes the
@@ -488,7 +498,7 @@ jobs:
       fail-fast: false
       matrix:
         # Starts at the root ``requires-python`` floor. This job runs the
-        # root-package suite (core_tests is entirely ``tests/**`` and
+        # root-package suite (the always-on set was entirely ``tests/**`` and
         # ``src/shared/python/**`), none of which can execute below 3.11, so a
         # 3.10 lane here collects nothing and only ever reported configuration
         # noise. The ten sub-packages and crates that do declare >=3.10 are
@@ -496,6 +506,17 @@ jobs:
         # where that compatibility is actually proven.
         # Enforced by tests/test_python_version_contract.py.
         python-version: ["3.11", "3.12"]
+        # Keep in sync with scripts/ci_test_shards.py (tests/ops/test_ci_test_shards.py
+        # asserts equality). Adding a test directory needs no edit here: the
+        # *-rest shards collect whatever the named shards do not claim.
+        shard:
+          - tests-shared
+          - tests-rate
+          - tests-unit
+          - tests-rest
+          - src-shared
+          - src-embedded
+          - src-rest
     env:
       # Persistent per-host download cache.  Do not also enable setup-python's
       # Actions cache on this self-hosted lane: its post-job upload can occupy a
@@ -521,7 +542,6 @@ jobs:
       # was resolving pytest/pluggy from ~/.local while native deps came from
       # the per-job tool cache, producing repeatable exit-134 aborts.
       PYTHONNOUSERSITE: "1"
-      BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
     steps:
       - name: Git HTTP/1.1 workaround
         run: git config --global http.version HTTP/1.1
@@ -784,12 +804,112 @@ jobs:
           # PyQt6 widgets render off-screen; all Qt widget tests run safely.
           echo "QT_QPA_PLATFORM=offscreen" >> $GITHUB_ENV
 
-      - name: Collect Changed Coverage Inputs
-        id: coverage_inputs
-        env:
-          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+      - name: Run Tests with Coverage (Python ${{ matrix.python-version }})
+        id: run_tests
         run: |
-          coverage_gate_required=true
+          export PYTHONPATH="src/data_processing/data_processor/python:src/media_processing/video_processor/python:src/python/src:src/shared/python:src:${PYTHONPATH:-}"
+          if [ "${{ matrix.python-version }}" = "3.11" ]; then
+            # tests/rust_bindings must hard-fail (not skip) when the tools_core
+            # wheel built above is missing from the required lane.
+            export TOOLS_CORE_REQUIRED=1
+          fi
+          # Prove the partition before running it: every test file under
+          # tests/ and src/ is claimed by exactly one shard and every
+          # quarantined module still exists.
+          python scripts/ci_test_shards.py --check
+          # `-n` is chosen per runner class (PYTEST_FANOUT above). Coverage is
+          # measured per shard into a uniquely named data file and combined in
+          # tests-gate, where the single pyproject floor is applied.
+          python scripts/ci_test_shards.py --run "${{ matrix.shard }}" \
+            --fanout "${PYTEST_FANOUT:-0}" \
+            --coverage-data ".coverage.py${{ matrix.python-version }}.${{ matrix.shard }}"
+
+      - name: Record shard status
+        if: always()
+        run: |
+          mkdir -p shard-status
+          echo "${{ steps.run_tests.outcome }}" > "shard-status/${{ matrix.python-version }}-${{ matrix.shard }}"
+
+      - name: Upload shard status
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: shard-status-${{ matrix.python-version }}-${{ matrix.shard }}
+          path: shard-status/
+          retention-days: 3
+
+      - name: Upload coverage data
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-data-${{ matrix.python-version }}-${{ matrix.shard }}
+          path: .coverage.py*
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 3
+
+  # ── Test gate ─────────────────────────────────────────────────────────────
+  # Owns the required `tests (3.11)` status-check context (branch protection).
+  # Runs even when shards fail (`if: always()`) so the context is always
+  # created, then fails unless every shard of this Python lane recorded
+  # `success`. Combines the shard coverage data and applies the one floor
+  # declared in pyproject `[tool.coverage.report] fail_under` (Tools #4913).
+  tests-gate:
+    name: tests (${{ matrix.python-version }})
+    needs: [pick-runner, tests]
+    if: always()
+    runs-on: ${{ needs.pick-runner.outputs.runner }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    env:
+      PYTHONNOUSERSITE: "1"
+    steps:
+      - name: Git HTTP/1.1 workaround
+        run: git config --global http.version HTTP/1.1
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install coverage tooling
+        run: python -m pip install "coverage[toml]>=7.4" defusedxml
+
+      - name: Download shard status
+        uses: actions/download-artifact@v8
+        with:
+          pattern: shard-status-${{ matrix.python-version }}-*
+          path: shard-status
+          merge-multiple: true
+
+      - name: Require every shard to pass
+        run: |
+          python scripts/ci_test_shards.py --verify-status shard-status --python-version "${{ matrix.python-version }}"
+
+      - name: Download coverage data
+        uses: actions/download-artifact@v8
+        with:
+          pattern: coverage-data-${{ matrix.python-version }}-*
+          path: coverage-data
+          merge-multiple: true
+
+      - name: Combine coverage and apply the floor
+        run: |
+          set -o pipefail
+          ls -la coverage-data
+          python -m coverage combine --keep coverage-data/.coverage.py*
+          python -m coverage xml -o coverage.xml
+          # `coverage report` exits 2 when the total is below
+          # [tool.coverage.report] fail_under -- the only floor in the repo.
+          total="$(python -m coverage report --format=total)"
+          echo "## Combined coverage (Python ${{ matrix.python-version }})" >> "$GITHUB_STEP_SUMMARY"
+          echo "Line coverage over src/: **${total}%** (floor: pyproject \`[tool.coverage.report] fail_under\`)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Collect changed Python files
+        run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             git fetch origin "${{ github.base_ref }}"
             BASE_SHA=$(git merge-base "origin/${{ github.base_ref }}" HEAD || true)
@@ -801,279 +921,24 @@ jobs:
           else
             BASE_SHA="HEAD~1"
           fi
-
-          git diff --diff-filter=ACMRT --name-only "$BASE_SHA" HEAD -- 'tests/test_*.py' 'tests/**/test_*.py' 'tests/**/*test.py' 'src/**/tests/test_*.py' 'src/**/tests/**/test_*.py' 'src/**/tests/**/*test.py' > changed_test_files.txt || echo "No previous commit found (initial commit?)"
-          # Vendored self-contained sub-apps run their tests in their origin repos,
-          # not in the monorepo changed-test lane (they need their own env, e.g.
-          # scipy<1.18 / offscreen Qt). Mirror the ruff/mypy/bandit exclude lists.
-          grep -v -E '^src/movement_optimizer/|^src/pendulum_simulator/' changed_test_files.txt > changed_test_files.filtered.txt || true
-          mv changed_test_files.filtered.txt changed_test_files.txt
-          git diff --diff-filter=ACMRT --name-only "$BASE_SHA" HEAD -- '*.py' > changed_python_files.txt || echo "No previous commit found (initial commit?)"
-
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            if [ "$BRANCH_NAME" = "codex/tools-3316-import-canonicalization" ]; then
-              # This import-root migration touches coverage-tracked packages broadly
-              # while behavior is guarded by focused import/provider contract suites.
-              coverage_gate_required=false
-            elif [ ! -s changed_test_files.txt ] && [ ! -s changed_python_files.txt ]; then
-              coverage_gate_required=false
-            else
-              TRACKED_REGEX=$(python3 -c 'import json, re; d = json.load(open("config/coverage_policy.json", encoding="utf-8"))["tracked_packages"]; p = [(re.escape(k) + "$" if k.endswith(".py") else re.escape(k) + "/") for k in d]; print("^(" + "|".join(p) + ")")')
-              if ! grep -q -E "$TRACKED_REGEX" changed_python_files.txt; then
-                coverage_gate_required=false
-              fi
-            fi
-          fi
-
-          cat changed_test_files.txt
+          git diff --diff-filter=ACMRT --name-only "$BASE_SHA" HEAD -- '*.py' > changed_python_files.txt || true
           cat changed_python_files.txt
-          echo "coverage_gate_required=$coverage_gate_required" >> "$GITHUB_OUTPUT"
-
-      - name: Run Tests with Coverage (Python ${{ matrix.python-version }})
-        run: |
-          export PYTHONPATH="src/data_processing/data_processor/python:src/media_processing/video_processor/python:src/python/src:src:${PYTHONPATH:-}"
-          # Core required test suite — always runs regardless of which files changed.
-          # Covers: utilities, shared-library contracts, architecture boundaries,
-          # rotation math, process calculator constants, and manifest generation.
-          # Expanded from 3-file smoke set to representative cross-module slice (issue #1577).
-          core_tests=(
-            # Utility + error handling (original smoke tests)
-            "tests/test_path_helpers.py"
-            "tests/test_error_handling.py"
-            # Notes storage (original smoke test)
-            "tests/shared/python/notes/test_storage.py"
-            # Shared-library contracts and security primitives
-            "tests/shared/python/test_contracts.py"
-            "tests/shared/python/test_safe_eval.py"
-            # Architecture / import-boundary enforcement — the WHOLE directory,
-            # not a hand-picked file list. These guards assert properties of the
-            # tree as a whole, so the file a guard protects is almost never the
-            # guard's own file; under changed-file selection they only ran when
-            # someone happened to edit the guard itself. That blind spot let
-            # test_sidekick_external_imports_3316.py sit red against main until a
-            # cosmetic reformat enlisted it and blocked PR #4446. Directory entry
-            # (not a file list) so new guards are covered the day they land.
-            "tests/architecture/"
-            # CI/workflow contracts — same blind spot, same fix. These assert on
-            # .github/workflows/*.yml, so editing a workflow never enlists them;
-            # three had been red against main since quality-gate moved to a
-            # hosted runner and left the self-hosted tool-cache steps behind.
-            # Whole directory, and cheap: 130 tests in ~2 s, no Python provisioning.
-            "tests/ops/"
-            # Core rotation math (shared library used across many tools)
-            "tests/rotation_converter/test_rotation_core.py"
-            # Process calculator constants (always fast, catches unit regressions)
-            "tests/shared/python/process_calculators/test_constants.py"
-            # Tools manifest integrity
-            "tests/scripts/test_generate_tools_json.py"
-            # GUI launcher: data-driven manifest loader (issue #1863)
-            "tests/shared/python/gui_launcher/test_manifest_loader.py"
-            "tests/shared/python/gui_launcher/test_registry.py"
-            # Notes model coverage (keeps total coverage above 25% floor)
-            "tests/shared/python/notes/test_models.py"
-            # Sidekick unit tests
-            "src/shared/python/sidekick/tests/test_latex_renderer.py"
-            "src/shared/python/sidekick/tests/test_notes_store.py"
-            "src/shared/python/sidekick/tests/test_notes_tab.py"
-            "src/shared/python/sidekick/tests/test_selected_tab_panel.py"
-            "src/shared/python/sidekick/tests/test_symbolic_engine.py"
-            "src/shared/python/sidekick/tests/test_tab_context_menu.py"
-            # Package rename compat shim unit test
-            "tests/unit/test_sidekick_package_rename.py"
-            # P1AM HMI/PLC backend tests
-            "tests/p1am_control_system/"
-            "src/p1am_control_system/backend/tests/"
-          )
-          if [ "${{ matrix.python-version }}" = "3.11" ]; then
-            export TOOLS_CORE_REQUIRED=1
-            core_tests+=("tests/rust_bindings/test_rust_bindings.py")
-          fi
-          large_consolidation_branch=false
-          if [ "$BRANCH_NAME" = "codex/consolidate-open-prs-20260611-tools" ] || [ "$BRANCH_NAME" = "consolidate/open-prs-20260620" ]; then
-            large_consolidation_branch=true
-          fi
-          # The former `!= "3.10"` guard here is gone with the 3.10 lane; every
-          # remaining lane is at or above the root floor and can run sidekick.
-          if [ "$large_consolidation_branch" != "true" ] && grep -q -E '^src/shared/python/sidekick/' changed_python_files.txt; then
-            sidekick_runtime_tests_required=false
-            if grep -q -E '^src/shared/python/sidekick/(api|calculators|data_processing|lab|notes_|selected_tab_panel|symbolic_engine|tab_context_menu|ui|utils|workspace)' changed_python_files.txt; then
-              sidekick_runtime_tests_required=true
-            fi
-            if [ "$sidekick_runtime_tests_required" = "true" ]; then
-              core_tests+=(
-                "src/shared/python/sidekick/tests/test_state_manager.py"
-                "src/shared/python/sidekick/tests/test_state_manager_atomic.py"
-                "src/shared/python/sidekick/tests/test_state_manager_side_effects.py"
-                "tests/unit/sidekick"
-                "tests/unit/test_check_sidekick_coverage.py"
-              )
-            fi
-          fi
-          if grep -q -E '^src/shared/python/codemap/' changed_python_files.txt; then
-            core_tests+=("tests/unit/codemap")
-          fi
-          if grep -q -E '^src/shared/python/signal_toolkit/' changed_python_files.txt; then
-            core_tests+=("tests/shared/python/signal_toolkit")
-          fi
-          if grep -q -E '^src/shared/python/upstream_drift_tools/' changed_python_files.txt; then
-            core_tests+=("tests/shared/python/upstream_drift_tools")
-          fi
-          if grep -q -E '^src/shared/python/file_watcher/' changed_python_files.txt; then
-            core_tests+=("tests/shared/python/file_watcher")
-          fi
-          if grep -q -E '^src/shared/python/safe_pandas_eval\.py$' changed_python_files.txt; then
-            core_tests+=("tests/shared/python/test_safe_pandas_eval.py")
-          fi
-          if [ "$BRANCH_NAME" = "codex/tools-3316-import-canonicalization" ]; then
-            # This branch is a broad import canonicalization codemod. Running
-            # every changed test in every matrix lane exhausts the self-hosted
-            # runners during collection, so keep the blocking matrix focused on
-            # the canonical import identity contracts and always-on core tests.
-            core_tests+=(
-              "tests/architecture/test_shared_import_aliases_3316.py"
-              "tests/architecture/test_sidekick_external_imports_3316.py"
-              "tests/architecture/test_compatibility_imports_3316.py"
-              "tests/unit/test_project_metadata_contracts.py"
-              "tests/unit/sidekick/test_bootstrap_coverage.py"
-              "tests/integration/sidekick/test_sidekick_host_integration.py"
-              "tests/unit/test_sidekick_import_deprecation.py"
-              "tests/shared/python/upstream_drift_tools/test_compatibility_shim.py"
-            )
-          fi
-          # Use `python -m pytest` rather than the `pytest` console script so
-          # the active Python interpreter resolves pytest-cov (and other pip
-          # plugins) via its own site-packages. On self-hosted runners where
-          # setup-python provisions a per-job tool dir under _work/_tool,
-          # `pip install` can land pytest-cov in the user-site of the runner
-          # user (~/.local) while the `pytest` console script's shebang
-          # points at a different Python that does not load that user-site,
-          # producing `pytest: error: unrecognized arguments: --cov=.`.
-          pytest_args=(-m "not live_simulation" --import-mode=importlib)
-          if [ "${{ steps.coverage_inputs.outputs.coverage_gate_required }}" = "true" ]; then
-            pytest_args+=(--cov=. --cov-report=xml:coverage.xml)
-          fi
-          # Large consolidation PRs can collect hundreds of changed tests. The
-          # memory-constrained local runner fleet has repeatedly crashed xdist
-          # workers even at low fan-out, so serial is still correct THERE. On a
-          # hosted runner it is not: see PYTEST_FANOUT above. `--dist loadscope`
-          # from the repo addopts keeps a module's tests on one worker, which
-          # matters for the load-sensitive Qt tests.
-          pytest_args+=(-n "${PYTEST_FANOUT:-0}")
-
-          # Guard: every entry in the always-on core_tests smoke set must
-          # actually collect at least one test. Six of these files were
-          # previously 0 bytes, so the "always-on" contract/architecture/
-          # rotation/constants/manifest coverage existed in name only and
-          # passed silently (issue #3324). Fail loudly if any entry is vacuous.
-          empty_core=()
-          for ct in "${core_tests[@]}"; do
-            collect_output="$(mktemp)"
-            if ! python -m pytest --collect-only --quiet --quiet "$ct" >"$collect_output"; then
-              cat "$collect_output"
-              rm -f "$collect_output"
-              exit 1
-            fi
-            collected=$(grep -cE '::' "$collect_output" || true)
-            rm -f "$collect_output"
-            if [ "$collected" -eq 0 ]; then
-              empty_core+=("$ct")
-            fi
-          done
-          if [ "${#empty_core[@]}" -gt 0 ]; then
-            echo "::error::core_tests entries collected 0 tests (issue #3324): ${empty_core[*]}"
-            exit 1
-          fi
-
-          # Source-keyed selection (issue #3324): translate changed *source*
-          # files to the test directories that exercise them, so editing
-          # production code without touching its test file still runs that
-          # code's tests. Reuses changed_python_files.txt from the collect step.
-          source_keyed_tests=()
-          if [ -s changed_python_files.txt ]; then
-            mapfile -t source_keyed_tests < <(python scripts/select_tests_for_changes.py changed_python_files.txt)
-          fi
-          if [ "$BRANCH_NAME" = "codex/src-assert-contracts-3674" ]; then
-            # This mechanical source-contract cleanup changes many packages at
-            # once; source-keyed directory expansion OOMs constrained runners
-            # during pytest collection. Changed tests plus core_tests still run.
-            source_keyed_tests=()
-          fi
-
-          run_changed_tests=true
-          if [ "$large_consolidation_branch" = "true" ] || [ "$BRANCH_NAME" = "codex/tools-3316-import-canonicalization" ]; then
-            # These large repository-wide branches can collect hundreds of
-            # changed tests in every matrix lane and exhaust local runner
-            # capacity before assertions execute. Keep the blocking matrix
-            # focused on compatibility/core contracts while each branch adds
-            # its own targeted contract tests to core_tests above.
-            run_changed_tests=false
-          fi
-
-          if [ "$run_changed_tests" = "true" ] && [ -s changed_test_files.txt ]; then
-            mapfile -t changed_test_files < changed_test_files.txt
-            python -m pytest "${changed_test_files[@]}" "${source_keyed_tests[@]}" "${core_tests[@]}" "${pytest_args[@]}"
-          elif [ "$run_changed_tests" = "true" ] && [ "${#source_keyed_tests[@]}" -gt 0 ]; then
-            python -m pytest "${source_keyed_tests[@]}" "${core_tests[@]}" "${pytest_args[@]}"
-          else
-            python -m pytest "${core_tests[@]}" "${pytest_args[@]}"
-          fi
-
-      - name: Provider-Contract Suite (Exported Packages)
-        # Always runs — unconditional, not gated on changed files.
-        # Enforces that breaking imports or minimal-runtime regressions in core
-        # exported packages (upstream_drift_tools, signal_toolkit, model_generation,
-        # theme) fail CI. Coverage is reported for the three non-GUI packages;
-        # theme tests run for import verification (PyQt6 present via requirements.txt).
-        # Resolves: https://github.com/D-sorganization/Tools/issues/1547
-        # CONTRACT ENFORCEMENT (GH1701): This step satisfies the requirement that
-        # API-surface / contract tests run on every PR. Tests marked @pytest.mark.contract
-        # and tests in shared_contracts/ directories are always executed here.
-        run: |
-          xvfb-run -a python -m pytest \
-            tests/shared/python/upstream_drift_tools/ \
-            tests/shared/python/signal_toolkit/ \
-            tests/shared/python/model_generation/ \
-            tests/shared/python/theme/ \
-            -m "not live_simulation" \
-            --import-mode=importlib \
-            -n 0 \
-            --cov=src/shared/python/upstream_drift_tools \
-            --cov=src/shared/python/signal_toolkit \
-            --cov=src/shared/python/model_generation \
-            --cov-append \
-            --cov-report=xml:coverage.xml \
-            --cov-report=term \
-            --cov-fail-under=0
-
-
-          echo "## Provider-Contract Suite (Python ${{ matrix.python-version }})" >> $GITHUB_STEP_SUMMARY
-          echo "Packages verified: upstream_drift_tools, signal_toolkit, model_generation, theme" >> $GITHUB_STEP_SUMMARY
-          echo "Coverage gate: ≥10% for upstream_drift_tools + signal_toolkit + model_generation" >> $GITHUB_STEP_SUMMARY
 
       - name: Coverage Policy Gate
-        if: steps.coverage_inputs.outputs.coverage_gate_required == 'true'
+        # Per-package ratchets for the packages this change touched; the
+        # repo-wide floor was applied above on the same combined data.
         run: python3 scripts/check_coverage_policy.py --coverage-file coverage.xml --policy-file config/coverage_policy.json --baseline-file config/coverage_baseline.json --output-json coverage_trend_${{ matrix.python-version }}.json --changed-files changed_python_files.txt
 
       - name: Sidekick Per-File Coverage Gate
-        if: steps.coverage_inputs.outputs.coverage_gate_required == 'true'
         run: python3 scripts/check_sidekick_coverage.py --coverage-file coverage.xml --changed-files changed_python_files.txt
 
       - name: Upload Coverage Trend
-        if: steps.coverage_inputs.outputs.coverage_gate_required == 'true'
         uses: actions/upload-artifact@v7
         with:
           name: coverage-trend-${{ matrix.python-version }}
-          path: coverage_trend_${{ matrix.python-version }}.json
-
-      - name: Coverage Summary
-        if: always()
-        run: |
-          echo "## Coverage Report (Python ${{ matrix.python-version }})" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ steps.coverage_inputs.outputs.coverage_gate_required }}" = "true" ]; then
-            echo "Coverage policy gate enforced via scripts/check_coverage_policy.py (minimum + non-regression)." >> $GITHUB_STEP_SUMMARY
-          else
-            echo "Coverage policy gate skipped because this change did not touch a tracked coverage-policy package." >> $GITHUB_STEP_SUMMARY
-          fi
+          path: |
+            coverage_trend_${{ matrix.python-version }}.json
+            coverage.xml
 
   # ── Rust Quality Gate ─────────────────────────────────────────────────────
   # Only runs when Rust source files or Cargo manifests change.

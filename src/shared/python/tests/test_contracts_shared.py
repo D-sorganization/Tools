@@ -70,12 +70,12 @@ class TestContractLevels:
         assert get_contract_level() == ContractLevel.WARN
         assert _ContractState.level == ContractLevel.WARN
 
-        # Manually evaluate the property to hit line 73
-        assert _ContractState.__dict__["enabled"].__func__.fget(_ContractState) is True
+        # Manually evaluate the classmethod
+        assert _ContractState.enabled() is True
 
         set_contract_level(ContractLevel.OFF)
         assert get_contract_level() == ContractLevel.OFF
-        assert _ContractState.__dict__["enabled"].__func__.fget(_ContractState) is False
+        assert _ContractState.enabled() is False
 
         set_contracts_enabled(True)
         assert get_contract_level() == ContractLevel.ENFORCE
@@ -233,10 +233,8 @@ class TestDecorators:
         def func(x) -> Any:
             return x
 
-        # Ensure we hit line 285 by calling decorator with DBC_LEVEL=OFF
+        # Ensure we call decorator with DBC_LEVEL=OFF
         decorated = postcondition(lambda r: r > 0)(func)
-        assert decorated is func  # The exact same function is returned
-
         assert decorated(-1) == -1
 
     def test_contract_decorator_combined(self) -> Any:

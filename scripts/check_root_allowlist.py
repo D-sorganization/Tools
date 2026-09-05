@@ -36,7 +36,6 @@ ROOT_ALLOWLIST: frozenset[str] = frozenset(
         ".benchmarks",  # performance SLA docs, not pytest-benchmark output
         ".cargo",  # cargo-audit configuration for rust_core
         ".claude",
-        ".coveragerc",
         ".cursor",  # Cursor IDE rules
         ".docker",  # container entrypoint
         ".dockerignore",
@@ -95,7 +94,6 @@ ROOT_ALLOWLIST: frozenset[str] = frozenset(
         "matlab",  # legacy MATLAB tools; relocation is Phase 1 work
         "model_pack.yaml",
         "mypy.ini",
-        "mypy_baseline.json",
         "output",  # only a .gitkeep; tool output directory
         "package-lock.json",
         "package.json",

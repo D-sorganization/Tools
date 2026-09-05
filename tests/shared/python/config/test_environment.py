@@ -1,4 +1,4 @@
-"""Focused coverage for shared environment configuration helpers."""
+"""Focused coverage for shared environment configuration helpers (issue #4913)."""
 
 from __future__ import annotations
 

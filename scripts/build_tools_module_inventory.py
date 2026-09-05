@@ -241,24 +241,32 @@ def _states(classification: str, trace: dict[str, object]) -> dict[str, str]:
         "artifacts": "unmapped-pending-TOOLS-D7" if calculation else "not-applicable",
         "adrs": "mapped" if trace["adr_paths"] else "unavailable",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped"
-        if trace["citation_refs"]
-        else ("unavailable" if calculation else "not-applicable"),
-        "equation_pathway": "unmapped-pending-TOOLS-D4"
-        if calculation
-        else "not-applicable",
+        "citations": (
+            "mapped"
+            if trace["citation_refs"]
+            else ("unavailable" if calculation else "not-applicable")
+        ),
+        "equation_pathway": (
+            "unmapped-pending-TOOLS-D4" if calculation else "not-applicable"
+        ),
         "publication": "blocked",
         "public_surfaces": "mapped" if trace["public_surfaces"] else "unavailable",
         "routes": "mapped" if trace["public_routes"] else "not-applicable",
-        "tests": "mapped"
-        if trace["test_paths"]
-        else ("unavailable" if calculation else "not-applicable"),
-        "units": "mapped"
-        if trace["unit_mentions"]
-        else ("unavailable" if calculation else "not-applicable"),
-        "validation": "mapped"
-        if trace["validation_paths"]
-        else ("unavailable" if calculation else "not-applicable"),
+        "tests": (
+            "mapped"
+            if trace["test_paths"]
+            else ("unavailable" if calculation else "not-applicable")
+        ),
+        "units": (
+            "mapped"
+            if trace["unit_mentions"]
+            else ("unavailable" if calculation else "not-applicable")
+        ),
+        "validation": (
+            "mapped"
+            if trace["validation_paths"]
+            else ("unavailable" if calculation else "not-applicable")
+        ),
     }
 
 
@@ -294,9 +302,13 @@ def _entry(root: Path, path: Path, tests: TestIndex) -> dict[str, object]:
     if blocked:
         risks.add("parse-or-encoding-blocker")
     return {
-        "authority_status": "blocked"
-        if blocked
-        else ("provisional" if classification == "calculation" else "not-applicable"),
+        "authority_status": (
+            "blocked"
+            if blocked
+            else (
+                "provisional" if classification == "calculation" else "not-applicable"
+            )
+        ),
         "bytes_lf": len(normalized),
         "classification": classification,
         "classification_basis": basis,
@@ -307,12 +319,14 @@ def _entry(root: Path, path: Path, tests: TestIndex) -> dict[str, object]:
         "maintainer": owner,
         "path": path.as_posix(),
         "purpose": purpose,
-        "review_status": "blocked"
-        if blocked
-        else (
-            "review-required"
-            if classification == "calculation"
-            else "inventory-baseline"
+        "review_status": (
+            "blocked"
+            if blocked
+            else (
+                "review-required"
+                if classification == "calculation"
+                else "inventory-baseline"
+            )
         ),
         "risk_tags": sorted(risks),
         "states": _states(classification, trace),
@@ -404,10 +418,17 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument(
         "--check", action="store_true", help="fail if the registry is missing or stale"
     )
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="require checked-in index to match byte-for-byte without check-time derivation",
+    )
     args = parser.parse_args(argv)
     index, shards = project_shards(build_inventory(ROOT))
     if args.check:
-        diagnostic = check_projection(ROOT, OUTPUT_PATH, index, shards)
+        diagnostic = check_projection(
+            ROOT, OUTPUT_PATH, index, shards, allow_derivable_index=not args.strict
+        )
         if diagnostic is not None:
             print(f"ERROR: {diagnostic}", file=sys.stderr)
             return 1
