@@ -50,10 +50,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 804,
+      "bytes_lf": 904,
       "classification": "calculation",
       "classification_basis": "path-marker:solver",
-      "content_sha256_lf": "14919e6c01d7d4a3a62f9b7cef9e202db485acb5a5f0844a8339802f992bc5d2",
+      "content_sha256_lf": "8fd59a206395c58ee4b714387b404f91e1a03348a0aca39e746e6cdfc4845598",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-ODE-SOLVER-GUI-REGISTRATION-PY-0992D80822BC",
       "language": "python",
@@ -167,6 +167,61 @@
         "test_paths": [
           "tests/folder_tool/test_launch_pyqt6.py"
         ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 437,
+      "classification": "calculation",
+      "classification_basis": "path-marker:solver",
+      "content_sha256_lf": "fe0712acaa2de658b936b826ef80790dd0d9dc8d932948a8a75e4e995fb25d3a",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-ODE-SOLVER-LAUNCH-WEB-PY-8A9019D050B9",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/ode_solver/launch_web.py",
+      "purpose": "Launch the ode_solver React web application (Vite dev server).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_REPO_ROOT",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []
       }

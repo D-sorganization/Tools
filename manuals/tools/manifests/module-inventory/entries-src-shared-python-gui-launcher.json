@@ -450,10 +450,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6744,
+      "bytes_lf": 6762,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "92f22f1a6eea4a831dd668e30ae79a7e8e187e7db9ec67d95bb4c297cc570537",
+      "content_sha256_lf": "50f77d5d6a7d30cc45fa36a76433b0f5f532285f81247dd0793dddb5dbb00029",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GUI-LAUNCHER-LAUNCHER-WEB-PY-4771EFF330F4",
       "language": "python",
@@ -516,12 +516,12 @@
           {
             "kind": "function",
             "name": "launch_web_app",
-            "signature": "tool_name: str, web_dir: Path, port: int=5173, auto_open_browser: bool=True, npm_args: list[str] | None=None, env_vars: dict[str, str] | None=None, process_started: Callable[[subprocess.Popen], None] | None=None"
+            "signature": "tool_name: str, web_dir: Path, port: int=5173, auto_open_browser: bool=True, npm_args: list[str] | None=None, env_vars: Mapping[str, str] | None=None, process_started: Callable[[subprocess.Popen], None] | None=None"
           },
           {
             "kind": "function",
             "name": "launch_web_from_gui_info",
-            "signature": "gui_info: dict[str, object], caller_file: str, *, env_vars: dict[str, str] | None=None"
+            "signature": "gui_info: Mapping[str, object], caller_file: str, *, env_vars: Mapping[str, str] | None=None"
           }
         ],
         "test_paths": [],

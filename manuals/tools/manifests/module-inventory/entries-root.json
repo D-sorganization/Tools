@@ -596,16 +596,16 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5686,
+      "bytes_lf": 7587,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f92fca265823f31d59bb0364c471c39c9e63d9c9924e40eee07a70a37f1bdc19",
+      "content_sha256_lf": "d331882e6ec09da618f2a7bcfc652e73263583d0d9b037c3f9ccea1f2f24e020",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-LAUNCH-PY-CC636C1B90D8",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "launch.py",
-      "purpose": "Unified tool launcher for the Tools repository.",
+      "purpose": "Thin command-line launcher over the one tool registry.",
       "review_status": "inventory-baseline",
       "risk_tags": [
         "public-api"
@@ -620,7 +620,7 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
+        "units": "mapped",
         "validation": "not-applicable"
       },
       "traceability": {
@@ -656,7 +656,12 @@
           {
             "kind": "function",
             "name": "launch_tool",
-            "signature": "tool_identifier: str"
+            "signature": "tool_identifier: str, surface: str='pyqt6'"
+          },
+          {
+            "kind": "function",
+            "name": "launch_web_surface",
+            "signature": "tool_name: str"
           },
           {
             "kind": "function",
@@ -745,7 +750,9 @@
           "tests/unit/test_epic_2661_children_verification.py",
           "tests/verification/test_verification_lod.py"
         ],
-        "unit_mentions": [],
+        "unit_mentions": [
+          "s"
+        ],
         "validation_paths": []
       }
     },
@@ -813,46 +820,6 @@
           "bar",
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 119,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "412df231e6fe47ae29c6ae2b140450d4a5b1fcfee2b83b66172542f7cb4d343c",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-RUN-TILE-LAUNCHER-PY-1067CD641911",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "run_tile_launcher.py",
-      "purpose": "Run the PyQt6 tile-based tools launcher.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "unavailable",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     },

@@ -103,7 +103,6 @@ ROOT_ALLOWLIST: frozenset[str] = frozenset(
         "requirements.txt",
         "ruff.toml",
         "run_impact_explorer.bat",
-        "run_tile_launcher.py",
         "rust-toolchain.toml",
         "rust_core",
         "schema",  # pid_spec JSON schema (singular, legacy location)

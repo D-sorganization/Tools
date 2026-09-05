@@ -137,10 +137,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 759,
+      "bytes_lf": 753,
       "classification": "calculation",
       "classification_basis": "path-marker:signal",
-      "content_sha256_lf": "b115b79fff340a870519f4bfbe5d9375121698b6d1f870dd501d011d38532559",
+      "content_sha256_lf": "1a7eb413bb54014134d8c09718475da80262df9c5fd4e7e7242d6935b0ba1bed",
       "family": "signal-processing-calculation",
       "id": "TOOLS-MODULE-SRC-SIGNAL-PROCESSING-STUDIO-GUI-REGISTRATION-PY-3B82B1014183",
       "language": "python",

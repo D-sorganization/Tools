@@ -16,6 +16,11 @@ GUI_INFO = {
         "dependencies": ["PyQt6", "numpy", "scipy", "sympy"],
         "settings_app": "ODESolver",
     },
+    "web": {
+        "path": "web",
+        "port": 5174,
+        "auto_open_browser": True,
+    },
 }
 
 GUI_METADATA = {

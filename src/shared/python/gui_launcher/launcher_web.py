@@ -10,7 +10,7 @@ import subprocess
 import threading
 import time
 import webbrowser
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -114,7 +114,7 @@ def launch_web_app(
     port: int = 5173,
     auto_open_browser: bool = True,
     npm_args: list[str] | None = None,
-    env_vars: dict[str, str] | None = None,
+    env_vars: Mapping[str, str] | None = None,
     process_started: Callable[[subprocess.Popen], None] | None = None,
 ) -> int:
     """Launch a React/Vite web application dev server."""
@@ -191,10 +191,10 @@ def _reap_child(process: subprocess.Popen) -> int:
 
 
 def launch_web_from_gui_info(
-    gui_info: dict[str, object],
+    gui_info: Mapping[str, object],
     caller_file: str,
     *,
-    env_vars: dict[str, str] | None = None,
+    env_vars: Mapping[str, str] | None = None,
 ) -> int:
     """Launch a React web app from a ``GUI_INFO`` dict."""
     if gui_info is None:

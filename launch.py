@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Unified tool launcher for the Tools repository.
+"""Thin command-line launcher over the one tool registry.
 
-This is the single entry point for launching any registered PyQt6 tool.
-It auto-discovers all tools via their gui_registration.py files and can
-launch them by name.
+The registry is the set of ``src/**/gui_registration.py`` ``GUI_INFO`` dicts;
+``UnifiedToolsLauncher.py`` reads the same registry through the generated
+``tools.json`` (``scripts/generate_tools_json.py``). This CLI auto-discovers
+the registrations and launches a tool by name on either surface.
 
 Usage:
     # List all available tools
@@ -15,7 +16,10 @@ Usage:
     # Launch by tool_name identifier
     python launch.py --tool pressure_drop_calculator
 
-    # Launch the unified tools launcher (default)
+    # Launch a tool's web surface (runs its launch_web.py)
+    python launch.py --tool rate_of_closure --surface web
+
+    # List tools (default)
     python launch.py
 """
 
@@ -85,11 +89,47 @@ def list_tools() -> None:
             _emit_stdout()
 
 
-def launch_tool(tool_identifier: str) -> int:
+def launch_web_surface(tool_name: str) -> int:
+    """Run ``src/**/<tool>/launch_web.py`` for a registered tool in a subprocess."""
+    import subprocess
+
+    for reg_file in sorted((_REPO_ROOT / "src").glob("**/gui_registration.py")):
+        if "node_modules" in reg_file.parts:
+            continue
+        candidate = reg_file.parent / "launch_web.py"
+        if reg_file.parent.name == tool_name or _registered_name(reg_file) == tool_name:
+            if not candidate.is_file():
+                _emit_stdout(f"Tool '{tool_name}' has no web surface (launch_web.py).")
+                return 1
+            _emit_stdout(f"Launching web surface: {tool_name}")
+            return int(subprocess.call([sys.executable, str(candidate)]))
+    _emit_stdout(f"Tool '{tool_name}' not found.")
+    return 1
+
+
+def _registered_name(reg_file: Path) -> str | None:
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(
+        f"reg_{reg_file.parent.name}", reg_file
+    )
+    if spec is None or spec.loader is None:
+        return None
+    module = importlib.util.module_from_spec(spec)
+    try:
+        spec.loader.exec_module(module)
+    except Exception:  # noqa: BLE001
+        return None
+    info = getattr(module, "GUI_INFO", None)
+    return info.get("tool_name") if isinstance(info, dict) else None
+
+
+def launch_tool(tool_identifier: str, surface: str = "pyqt6") -> int:
     """Launch a tool by name or tool_name.
 
     Args:
         tool_identifier: Either the display name or the tool_name.
+        surface: ``"pyqt6"`` (default) or ``"web"``.
 
     Returns:
         Exit code.
@@ -102,6 +142,8 @@ def launch_tool(tool_identifier: str) -> int:
         raise TypeError(f"tool_identifier must be a str, got {type(tool_identifier)}")
     if not tool_identifier:
         raise ValueError("tool_identifier must not be an empty string")
+    if surface == "web":
+        return launch_web_surface(tool_identifier)
 
     discover_all_tools()
     registry = get_registry()
@@ -177,6 +219,12 @@ Examples:
         type=str,
         help="Tool name or identifier to launch",
     )
+    parser.add_argument(
+        "--surface",
+        choices=("pyqt6", "web"),
+        default="pyqt6",
+        help="Which registered surface to launch (default: pyqt6)",
+    )
 
     args = parser.parse_args()
 
@@ -184,7 +232,7 @@ Examples:
         list_tools()
         return 0
 
-    return launch_tool(args.tool)
+    return launch_tool(args.tool, args.surface)
 
 
 if __name__ == "__main__":

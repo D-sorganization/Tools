@@ -16718,10 +16718,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 635,
+      "bytes_lf": 756,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "cd416bb569253192b4e6a8c88b9c55d66fa1c25f62443ef1488d80d5aa3d748b",
+      "content_sha256_lf": "5ad76974f219a391dfb33f1fa688ec94563d854eca2955bb63a29ef9dcea108e",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-GUI-REGISTRATION-PY-67C6D0314501",
       "language": "python",
@@ -16812,6 +16812,57 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 456,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "08c918e8de01ab509ff585d8a26b38faa38d186cebd79f893869e3d933a85cc7",
+      "family": "control-systems-non-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-LAUNCH-WEB-PY-A56D0A5E6138",
+      "language": "python",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/launch_web.py",
+      "purpose": "Launch the P1AM DCS React frontend (Vite dev server on port 3002).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_REPO_ROOT",
+            "signature": null
+          }
+        ],
         "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []

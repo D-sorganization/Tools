@@ -111,8 +111,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "d1e4102ab917f3c8fc2332b9d3c4edfea1da8cbd118bf04ddb1831f5feaae1b9",
-      "entry_count": 18,
+      "content_sha256_lf": "a15dbd56156bec50ed0c5eed0d3163b5250a2bf926b41d4b93fd465b8c032abb",
+      "entry_count": 17,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
@@ -129,13 +129,13 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
     },
     {
-      "content_sha256_lf": "07a39ce60a2b5af88143fd46bd4a04962d874d518cd1442cf15a9b72492f403e",
+      "content_sha256_lf": "0923ceb5d568e0b99d111fbb115e4721a618d2d79d1347a49489ac455dbea21e",
       "entry_count": 3,
       "package": "rust_core/file_watcher",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "d10e3bcc3f0217aca0c300e02279b057838bea6d24f0a2efc761408eac775f7a",
+      "content_sha256_lf": "79b76a9d474d2c87acff6ac74cee0e2d6c2972f005dcd7d618c264a22a2496a2",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -159,7 +159,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "4c48d640f009d1f08beb50d673fe98123baf77543654f09092ba97446bfa8396",
+      "content_sha256_lf": "006aceca987e134ad15d0518ea98d3e162bce91eb912d03b306e591ca9010132",
       "entry_count": 92,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
@@ -231,8 +231,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-core.json"
     },
     {
-      "content_sha256_lf": "7ae631e5c93f59601229c495f250137693ed6390e135b06a551c2811e99aef88",
-      "entry_count": 4,
+      "content_sha256_lf": "1ea75c9946691c63b378aa20ca846aa23f2d6e8e2383d1d43d199c98f90e75bf",
+      "entry_count": 6,
       "package": "src/data_explorer",
       "path": "manuals/tools/manifests/module-inventory/entries-src-data-explorer.json"
     },
@@ -279,7 +279,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-folder-packer-pro.json"
     },
     {
-      "content_sha256_lf": "31c61ebe94d03fee6348ed39e202f6e2af7d7a26d91d74dd60f0f0601f207d21",
+      "content_sha256_lf": "376bc58e430f46541b43f52f160d0c1056fc3a1b348c59142a369b0a4fc2281b",
       "entry_count": 15,
       "package": "src/folder_tool",
       "path": "manuals/tools/manifests/module-inventory/entries-src-folder-tool.json"
@@ -369,8 +369,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-notes.json"
     },
     {
-      "content_sha256_lf": "e679f72278b4cc2e2b9514d424bef9f846e6a4ca3f2c523b7653b929901744fd",
-      "entry_count": 18,
+      "content_sha256_lf": "ffb40917c08ad2776337e5b45ce5a976a4647f543650e7e716776da22280b3c0",
+      "entry_count": 19,
       "package": "src/ode_solver",
       "path": "manuals/tools/manifests/module-inventory/entries-src-ode-solver.json"
     },
@@ -381,14 +381,14 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-optimizer-gui.json"
     },
     {
-      "content_sha256_lf": "df2e5f9e79aaf9b90159d2005222d3236526f74eb838898f9086fc5abe17d6c7",
-      "entry_count": 253,
+      "content_sha256_lf": "faec15789a07f2d016659e0da890d07668e3f406a3c5e088f62572d83983c524",
+      "entry_count": 254,
       "package": "src/p1am_control_system",
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
     },
     {
-      "content_sha256_lf": "3bed365641c013e9d23461f10610d36b3a319579ff9c7f070c1d2630bde03086",
-      "entry_count": 165,
+      "content_sha256_lf": "4d3f3b2d73e06a8f1d1b7007b6740ad2c266292629530ee969d8e631b972c74c",
+      "entry_count": 167,
       "package": "src/pendulum_simulator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pendulum-simulator.json"
     },
@@ -423,8 +423,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-project-packer.json"
     },
     {
-      "content_sha256_lf": "0b81e1315e5c4591653ef6b80480f7d8e209921d41da74a0eead7aa3b57f27ce",
-      "entry_count": 38,
+      "content_sha256_lf": "64ff4ae7758f5a42a442141f9ee7fdc0c2a9a9df0fecd494ff3bdd9793c1378f",
+      "entry_count": 33,
       "package": "src/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-python.json"
     },
@@ -645,7 +645,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-golf-club.json"
     },
     {
-      "content_sha256_lf": "824a8cdb7795bcbb0b490aac7367f1e598fbe91b2636f6f7d1f9552e5ededf7f",
+      "content_sha256_lf": "2f5ae95ee72852084994269a1cad2837745b0d9d24ebdc323e2b553239ea25e2",
       "entry_count": 8,
       "package": "src/shared/python/gui_launcher",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-gui-launcher.json"
@@ -765,7 +765,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-sidekick.json"
     },
     {
-      "content_sha256_lf": "6a4ecf22a0393d8def497623b422856a1c3f2675c5800239b84a24032c663d95",
+      "content_sha256_lf": "1b28f61c07abbb7c157cf83100301618213b3e7542f9a400bd6e4fc7da47919e",
       "entry_count": 7,
       "package": "src/signal_processing_studio",
       "path": "manuals/tools/manifests/module-inventory/entries-src-signal-processing-studio.json"
@@ -783,8 +783,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-solar-system-model.json"
     },
     {
-      "content_sha256_lf": "0e0d3c9618871c3c748e3a54c32402257d873c858348595a6ce96e485fdc36ab",
-      "entry_count": 18,
+      "content_sha256_lf": "277fb4c1b81a87e675ebbd2dced0cf6e6274176c630ecc8972e06a794677c66d",
+      "entry_count": 19,
       "package": "src/steam_engine_calculator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-steam-engine-calculator.json"
     },
@@ -831,8 +831,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-video-analyzer.json"
     },
     {
-      "content_sha256_lf": "c40f4213643f0c66a65de2a0347579be010eb426258370c8b4f3ebf5402c3377",
-      "entry_count": 32,
+      "content_sha256_lf": "ea4f10b70c3c1a2cc1fb1b876ac79ddb1e17afd7894f3b2585ca5d318e94c3cd",
+      "entry_count": 33,
       "package": "src/web_applications",
       "path": "manuals/tools/manifests/module-inventory/entries-src-web-applications.json"
     }

@@ -13,7 +13,7 @@ GUI_INFO = {
     "icon": "signal",
     "pyqt6": {
         "module": "signal_processing_studio.main_window",
-        "class": "SignalProcessingStudioWindow",
+        "class": "SignalProcessingStudio",
         "dependencies": ["PyQt6", "matplotlib", "numpy", "scipy", "sympy"],
         "settings_app": "SignalProcessingStudio",
     },
