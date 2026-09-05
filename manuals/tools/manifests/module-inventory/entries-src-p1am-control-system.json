@@ -3266,10 +3266,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3049,
+      "bytes_lf": 2817,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b3974c0ae7e732fc2fe9081f8b571d66fa02f71204744e955afafada4187a5d7",
+      "content_sha256_lf": "dad8d00486e9fa022154fa4867fdea01c844df4b9affaf0f3f7a4a222cd11e1c",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-PLC-FACTORY-PY-CB81A14A6CAF",
       "language": "python",
