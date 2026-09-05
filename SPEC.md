@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.124                                   |
+| **Spec Version**        | 1.18.125                                   |
 | **Last Spec Update**    | 2026-09-05                                 |
 
 ## 2. Purpose & Mission
@@ -5681,6 +5681,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-05 | 1.18.125 | perf(rate-web): replace chained flatMap/map array spreads with single-pass loops to compute 3D bounds in swingSceneDraw.ts. |
 | 2026-09-05 | #4957 | feat(inventory): make module-inventory index derivable from shards to eliminate PR serialization (#4957). The top-level `manuals/tools/manifests/module-inventory.json` is treated as a derivable cache: `derive_index_from_shards` derives the envelope and per-package descriptors from the governed shards on disk, `read_inventory` reconstructs directly from shards when the index is omitted or absent, and `build_tools_module_inventory --check` verifies per-package shard freshness against the tracked working tree while deriving/refreshing the index at check time without failing. |
 | 2026-09-04 | #4971 | perf(launch-monitor): replace O(N*M) array iterations with single-pass maps in launchMonitorAnalysis.ts and LaunchMonitorAnalyticsPanel.tsx (#4971). |
 | 2026-09-05 | #4977 | fix(rate-web): preserve caller scroll position across visual capture in variation lifecycle E2E (#4977). |
