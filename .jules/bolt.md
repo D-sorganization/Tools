@@ -144,6 +144,10 @@
 **Learning:** Using chained `.flatMap().map()` combined with `Math.max(...spread)` for computing extents of 3D entities (e.g., flight points and articulated swing links) generates massive intermediate arrays and risks call stack size exceeded errors during React renders.
 **Action:** Replace functional array chaining + `Math.max(...spread)` with single-pass `for` loops when calculating multi-dimensional extents in rendering paths.
 
+## 2026-09-05 - Array Spread & Map Allocation Elimination in Tight Validation Loops
+**Learning:** Using chained `.map()` calls and array spread `Math.min(...array)` syntax creates significant garbage collection pressure and CPU overhead when computing bounds (min, max, span) in hot paths (e.g., evaluating thousands of optimization candidates). Array creation and spreads degrade to O(N) memory allocations, scaling poorly for high-frequency loop environments.
+**Action:** When validating simulated state sequences in optimization loops, replace `path.map()` chaining and spread-based min/max aggregations with a single-pass `for` loop to accumulate bounds dynamically without allocating intermediate arrays, leading to significantly higher throughput.
+
 ## 2026-09-05 - Eliminate Math.max(...spread) after chained maps
 **Learning:** Launch Monitor analysis code contained `Math.max(...array.map())` for determining constant coordinates, which is O(N) in memory and crashes with large datasets due to call stack limits.
 **Action:** Always replace spread-based max/min with single-pass loops, especially when combined with chained map operations on unbounded datasets.
