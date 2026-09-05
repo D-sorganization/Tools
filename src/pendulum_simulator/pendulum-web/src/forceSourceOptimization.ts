@@ -370,10 +370,6 @@ export function buildCandidateSet(config: BrowserOptimizationConfig): ForceSourc
     return candidates;
 }
 
-function span(values: number[]): number {
-    return Math.max(...values) - Math.min(...values);
-}
-
 export function golfLikeImpactIndex(
     states: State[],
     params: PendulumParams,
@@ -388,17 +384,33 @@ export function golfLikeImpactIndex(
         && state[0] + state[1] >= target);
     if (impact < 1) return null;
     const path = states.slice(0, impact + 1);
-    const arms = path.map(state => state[0]);
-    const wrists = path.map(state => state[1]);
-    const clubs = path.map(state => state[0] + state[1]);
-    if (Math.min(...arms) < radians(constraints.armAngleDeg.min)
-        || Math.max(...arms) > radians(constraints.armAngleDeg.max)
-        || Math.min(...arms) < initialArm - radians(15)
-        || span(arms) > radians(constraints.maxArmTravelDeg)
-        || Math.min(...clubs) < initialClub - radians(45)
-        || span(clubs) > radians(constraints.maxClubTravelDeg)
-        || Math.min(...wrists) < radians(constraints.wristAngleDeg.min)
-        || Math.max(...wrists) > radians(constraints.wristAngleDeg.max)) return null;
+
+    // ⚡ Bolt Optimization: Replace map and spread min/max with single-pass loop
+    let minArm = Infinity, maxArm = -Infinity;
+    let minWrist = Infinity, maxWrist = -Infinity;
+    let minClub = Infinity, maxClub = -Infinity;
+
+    for (let i = 0; i < path.length; i++) {
+        const arm = path[i][0];
+        const wrist = path[i][1];
+        const club = arm + wrist;
+
+        if (arm < minArm) minArm = arm;
+        if (arm > maxArm) maxArm = arm;
+        if (wrist < minWrist) minWrist = wrist;
+        if (wrist > maxWrist) maxWrist = wrist;
+        if (club < minClub) minClub = club;
+        if (club > maxClub) maxClub = club;
+    }
+
+    if (minArm < radians(constraints.armAngleDeg.min)
+        || maxArm > radians(constraints.armAngleDeg.max)
+        || minArm < initialArm - radians(15)
+        || maxArm - minArm > radians(constraints.maxArmTravelDeg)
+        || minClub < initialClub - radians(45)
+        || maxClub - minClub > radians(constraints.maxClubTravelDeg)
+        || minWrist < radians(constraints.wristAngleDeg.min)
+        || maxWrist > radians(constraints.wristAngleDeg.max)) return null;
     return qualifiesImpact(path[impact], params, constraints) ? impact : null;
 }
 
