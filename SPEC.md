@@ -5681,10 +5681,11 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-05 | #4977 | fix(rate-web): preserve caller scroll position across visual capture in variation lifecycle E2E (#4977). |
 | 2026-09-05 | #4858 | fix(rate-of-closure): support explicit exemption markers via commit trailers, environment variables, or CLI in visual evidence gate (#4858). |
 | 2026-09-04 | #4983 | added `tests/test_workflow_required_contexts.py`, an executable guard against required status checks that can never report. A `paths`/`paths-ignore` filter on a workflow's `pull_request` trigger skips the workflow when a PR touches only filtered paths, so a required context defined there never reports and the PR is permanently unmergeable -- BLOCKED with zero failures and nothing pending. That was live here: ci-standard.yml filtered `LICENSE` and `.gitignore` while `quality-gate` was required (fixed in #4974 and #4976). Ships two tests because the filter check alone goes vacuous if a job is renamed; the second fails when a declared required context has no job to report it. `push` filters and `types` filters remain allowed. Mirrors Runner_Dashboard#1167 and Repository_Management#1530 (program #1505). |
 | 2026-09-04 | #4916 | fix(registry): report tools dropped for a missing launcher instead of hiding them. `src/p1am_control_system` declared a full pyqt6 block but ships no launch_pyqt6.py, so `_discover_registrations()` hit a bare `continue` and the tool vanished from tools.json, tool_surface_contract.json and the README with a green --check and no output; deleting any launcher shim silently deleted its tool. The drop is still correct but is now logged, a shrink-only ledger records the one existing gap, and two tests require every catalog-visible registration to reach the catalog or be recorded. A further guard forbids two catalog-visible directories claiming one tool_name, skipping `catalog_visible: False` registrations because those exit before the dedup - src/optimizer_gui sharing movement_optimizer is the intended compatibility pattern. |
-| 2026-09-04 | #4977 | fix(sidekick): replace token keyword in theme logger to prevent Semgrep credential disclosure false positive (#4977). |
+| 2026-09-04 | #4978 | fix(sidekick): replace token keyword in theme logger to prevent Semgrep credential disclosure false positive (#4978). |
 | 2026-09-04 | #4968 | fix(rate): increase PyQt resize budget to 6000ms, ensure visual element viewport visibility before intersection check in web E2E, and sanitize token getter logging in chat_tab.py (#4968). |
 | 2026-09-04 | #4966 | fix(ai): initialize message controller before loading session history in AIAssistantPanel. |
 | 2026-09-04 | #4930 | fix(ci): allow ControlTower and Oglaptop host font stack versions in `scripts/check_rate_pyqt_environment.py::verify_font_stack` to support heterogeneous fleet runner hosts. |
@@ -7184,6 +7185,6 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 
 - **2026-09-04**: fix(rate, #4968) — Increase PyQt resize settle budget from 4000ms to 6000ms in `visualization_performance.v1.json` to prevent CI flakiness under runner load, ensure variation visual element is scrolled into view before intersection check in web E2E `variation-visual-state.spec.ts`, and sanitize token getter logging in `chat_tab.py` to prevent Semgrep `logger-credential-leak` false positives fleet-wide.
 
-## 2026-09-04: Sanitize Theme Logger Keyword in Sidekick Chat Tab (#4977)
+## 2026-09-04: Sanitize Theme Logger Keyword in Sidekick Chat Tab (#4978)
 
-- **2026-09-04**: fix(sidekick, #4977) — Replace `token-style` with `styling` in `chat_tab.py` debug log message to prevent Semgrep `logger-credential-leak` false positives on downstream consumers.
+- **2026-09-04**: fix(sidekick, #4978) — Replace `token-style` with `styling` in `chat_tab.py` debug log message to prevent Semgrep `logger-credential-leak` false positives on downstream consumers.
