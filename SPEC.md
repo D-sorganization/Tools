@@ -5681,6 +5681,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-05 | #4997 | chore(release): bump version to v1.15.4. |
 | 2026-09-05 | #4993 | perf(rate-web): replace chained flatMap/map array spreads with single-pass loops to compute 3D bounds in swingSceneDraw.ts (#4993). |
 | 2026-09-05 | #4950 | fix(safety): withdraw uninstantiable neural PLC driver branch from PLCFactory (#4950). The experimental neural plant simulator driver (`NeuralSimulatorClient`) does not implement `clear_estop` and its signatures have drifted from `BasePLCClient`, causing `PLCFactory.create_client(P1AMSettings(plc_driver='neural'))` to raise `TypeError`. Withdrew the `'neural'` branch from `PLCFactory.create_client` so selecting `plc_driver='neural'` safely falls through to `SimulatedPLCClient` with a prominent warning banner. Replaced the strict xfail test with `test_neural_driver_withdrawn_from_factory`, and updated `NeuralSimulatorClient` docstrings documenting its quarantine status. |
 | 2026-09-05 | #4991 | perf(pendulum-simulator): replace map and spread with single-pass bounds tracking in golfLikeImpactIndex (#4991). |
@@ -7199,4 +7200,4 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-04: Full Suite CI Shards and Test Hardening (#4938)
 
 - **2026-09-04**: ci(tests, #4938) — Run the complete test tree across dedicated test shards in CI with coverage collection, evict all import alias keys in `test_gemini_adapter`, resolve shard contract and zero-length projection handling in sidekick process calculators, add GUI metadata to multi-param analysis launcher, quarantine drifted pendulum simulator tests, and update module inventory (#4913).
-| 2026-09-05 | #4992 | perf(rate_of_closure): Replace array spreads with single-pass loops in launchMonitorCovariation's pairStatus to eliminate intermediate allocations and call stack crashes. |
+  | 2026-09-05 | #4992 | perf(rate_of_closure): Replace array spreads with single-pass loops in launchMonitorCovariation's pairStatus to eliminate intermediate allocations and call stack crashes. |
