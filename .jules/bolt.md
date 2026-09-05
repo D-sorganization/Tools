@@ -127,7 +127,7 @@
 **Learning:** Using `Math.max(...spread)` chained with `.map()` on large chart plotting paths creates massive call stack expansions and heavy garbage collection pressure, which could even throw "Maximum call stack size exceeded" on larger dynamic arrays.
 **Action:** Use a single-pass `for` loop for minimum/maximum bound extraction in data-intensive charting paths.
 
-## 2024-05-19 - Array map Math.abs spread overhead
+## 2024-11-21 - Array map Math.abs spread overhead
 **Learning:** Using `Math.max(...array.map(Math.abs))` creates an intermediate array and passes all items to the call stack via the spread operator, causing noticeable GC pressure and risking call stack size exceeded errors on large datasets.
 **Action:** Replace `Math.max(...array.map(Math.abs))` with a standard O(N) single-pass `for` loop in numerical hotspots.
 ## 2024-11-20 - Chart Bounds Calculation O(N^2) Optimization
@@ -143,3 +143,7 @@
 ## 2026-09-05 - Prevent stack overflow and GC pressure in 3D scene bounds
 **Learning:** Using chained `.flatMap().map()` combined with `Math.max(...spread)` for computing extents of 3D entities (e.g., flight points and articulated swing links) generates massive intermediate arrays and risks call stack size exceeded errors during React renders.
 **Action:** Replace functional array chaining + `Math.max(...spread)` with single-pass `for` loops when calculating multi-dimensional extents in rendering paths.
+
+## 2026-09-05 - Eliminate Math.max(...spread) after chained maps
+**Learning:** Launch Monitor analysis code contained `Math.max(...array.map())` for determining constant coordinates, which is O(N) in memory and crashes with large datasets due to call stack limits.
+**Action:** Always replace spread-based max/min with single-pass loops, especially when combined with chained map operations on unbounded datasets.
