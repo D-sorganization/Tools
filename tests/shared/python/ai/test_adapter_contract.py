@@ -335,10 +335,14 @@ def test_stream_response_always_emits_final_chunk(name: str, factory: Any) -> No
         return
 
     if name == "rust":
-        adapter = factory()
-        ctx = ConversationContext()
-        adapter.engine.stream_response.return_value = ["hello ", "world"]
-        _assert_stream_terminates(adapter.stream_response("hello", ctx, []), name)
+        with patch(
+            "src.shared.python.ai.adapters.rust_adapter._make_rust_stream_worker_class",
+            return_value=None,
+        ):
+            adapter = factory()
+            ctx = ConversationContext()
+            adapter.engine.stream_response.return_value = ["hello ", "world"]
+            _assert_stream_terminates(adapter.stream_response("hello", ctx, []), name)
         return
 
     if name == "gemini":

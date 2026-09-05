@@ -45,10 +45,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 669,
+      "bytes_lf": 903,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3bc41db4ff68ea8385bf51e3a7db41f1f4827d60da67acf9cd4c53cd806ee8e2",
+      "content_sha256_lf": "9a4c30d5f8124434f2ed15b1e1d0991c6074768a5b694943f5192e0cc7c5d5e4",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-MULTI-PARAM-ANALYSIS-GUI-REGISTRATION-PY-5E0CD6D137DC",
       "language": "python",
@@ -89,6 +89,11 @@
             "signature": null
           },
           {
+            "kind": "constant",
+            "name": "GUI_METADATA",
+            "signature": null
+          },
+          {
             "kind": "function",
             "name": "get_gui_info",
             "signature": ""
@@ -104,10 +109,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 353,
+      "bytes_lf": 444,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "04fea7e34782883452228ed17a4669154c035544a9b0212acf3835d05c64304e",
+      "content_sha256_lf": "6459a1461e7bd210928aaea689588126c8752e875f59dcc5e74d8338ec0c7260",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-MULTI-PARAM-ANALYSIS-LAUNCH-PYQT6-PY-1E3EE92A0A47",
       "language": "python",
@@ -115,14 +120,16 @@
       "path": "src/multi_param_analysis/launch_pyqt6.py",
       "purpose": "Standalone PyQt6 launcher for Multi-Parameter Analysis.",
       "review_status": "inventory-baseline",
-      "risk_tags": [],
+      "risk_tags": [
+        "public-api"
+      ],
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
         "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
+        "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
@@ -131,14 +138,21 @@
       },
       "traceability": {
         "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
         "citation_refs": [],
         "equation_refs": [],
         "public_routes": [],
-        "public_surfaces": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
         "test_paths": [
           "tests/folder_tool/test_launch_pyqt6.py"
         ],

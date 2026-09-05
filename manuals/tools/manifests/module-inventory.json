@@ -99,7 +99,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-benchmarks.json"
     },
     {
-      "content_sha256_lf": "464e92dfd79a13e19515ef80fa05e13923c1351135e2d9a04091133694eac35b",
+      "content_sha256_lf": "8a1dee8239ac9daa0b5723bb9d95cf4d9139aac1cea5fa8b7c73049d19a546c9",
       "entry_count": 4,
       "package": "config",
       "path": "manuals/tools/manifests/module-inventory/entries-config.json"
@@ -111,13 +111,13 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "7fb7dc64d31e24c3ebffc8cb01257f233ece4789c700610f04dd97f7babe4467",
+      "content_sha256_lf": "d1e4102ab917f3c8fc2332b9d3c4edfea1da8cbd118bf04ddb1831f5feaae1b9",
       "entry_count": 18,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "d7daf71f07173425c1f277c3bcb7c8eb7525c9205cde998a5c8a2d2fa65cb9d5",
+      "content_sha256_lf": "e8058f87800722e13f84937251be0f6181c770e54c38e1e3ae9c1fbf8469f570",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
@@ -159,8 +159,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "ca39bc3fbac985fb3b46c6e56bc9b0a66ec0fc650b36d554952cb1f06d94eebd",
-      "entry_count": 91,
+      "content_sha256_lf": "4c48d640f009d1f08beb50d673fe98123baf77543654f09092ba97446bfa8396",
+      "entry_count": 92,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
     },
@@ -357,7 +357,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-movement-optimizer.json"
     },
     {
-      "content_sha256_lf": "dfc6cfdd6a9ccad38aa7af7ade50a4654e3878be12a24196008e8e5525a79d4f",
+      "content_sha256_lf": "a351c452586e0b8f49e6d178f2ba934cd5f4fa5e39301fa2be216e2d6dff16ee",
       "entry_count": 7,
       "package": "src/multi_param_analysis",
       "path": "manuals/tools/manifests/module-inventory/entries-src-multi-param-analysis.json"
@@ -483,7 +483,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web.json"
     },
     {
-      "content_sha256_lf": "feefcc35519019779d2d995662a3e0588e02455798c90dc60d14ab313edcd958",
+      "content_sha256_lf": "3142d8ab42349a4bb603ed80b2703c502bf82c690f39d73f41bb8343a14f708e",
       "entry_count": 16,
       "package": "src/rate_of_closure/web/e2e",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-e2e.json"
@@ -519,7 +519,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-hooks.json"
     },
     {
-      "content_sha256_lf": "7ae1ec14c5c2a15908af19ebb864a4916ec1b3d3aac03141801b0a5093109525",
+      "content_sha256_lf": "0eb5136a0cc9f9b39a392ba5de122511ae3404a31959df4262d6e46ea42d7402",
       "entry_count": 400,
       "package": "src/rate_of_closure/web/src/model",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-model.json"
@@ -723,7 +723,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-scripting.json"
     },
     {
-      "content_sha256_lf": "ed4f5f5ac7d5913c5d9f488b970c309c9d74deffc13369b3f0a80c2e5fa81b79",
+      "content_sha256_lf": "c3e5f4db334e8e37bd674073b170accae320dce6f309d17bdf528c647985f10d",
       "entry_count": 215,
       "package": "src/shared/python/sidekick",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick.json"
@@ -819,7 +819,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-verification.json"
     },
     {
-      "content_sha256_lf": "c30ecea6a62b98da5ce65d10adf90bc7b5fdf4518bc534d688d52b1226ea6040",
+      "content_sha256_lf": "e1f9281eb06ff7660bd518e1d8e53ab85a81c12ba89766449d1e5ebc38b3ce20",
       "entry_count": 33,
       "package": "src/vessel_drafter",
       "path": "manuals/tools/manifests/module-inventory/entries-src-vessel-drafter.json"

@@ -10,6 +10,7 @@ from build123d import export_step
 from vessel_drafter.analysis.vessel_drafter_metrics import (
     build_material_metrics_report,
 )
+from vessel_drafter.contracts import require
 from vessel_drafter.models.cylindrical_bath import (
     DEFAULT_CYLINDRICAL_BATH_LAYOUT,
     CylindricalBathLayout,
@@ -38,8 +39,7 @@ def export_default_layout_step(
     manifest_path: Path | None = None,
     layout: ElectrodeAdvisorLayout = DEFAULT_ELECTRODE_ADVISOR_LAYOUT,
 ) -> Path:
-    if output_path is None:
-        raise ValueError("output_path must be provided")
+    require(output_path is not None, "output_path must be provided")
     output_dir = output_path.parent
     output_dir.mkdir(parents=True, exist_ok=True)
     shape = build_default_layout_shape(layout)
@@ -61,8 +61,7 @@ def export_cylindrical_bath_layout_step(
     manifest_path: Path | None = None,
     layout: CylindricalBathLayout = DEFAULT_CYLINDRICAL_BATH_LAYOUT,
 ) -> Path:
-    if output_path is None:
-        raise ValueError("output_path must be provided")
+    require(output_path is not None, "output_path must be provided")
     output_dir = output_path.parent
     output_dir.mkdir(parents=True, exist_ok=True)
     shape = build_cylindrical_bath_layout_shape(layout)
@@ -84,8 +83,7 @@ def export_vessel_drafter_step(
     manifest_path: Path | None = None,
     layout: VesselDrafterLayout = DEFAULT_VESSEL_DRAFTER_LAYOUT,
 ) -> Path:
-    if output_path is None:
-        raise ValueError("output_path must be provided")
+    require(output_path is not None, "output_path must be provided")
     output_dir = output_path.parent
     output_dir.mkdir(parents=True, exist_ok=True)
     shape = build_vessel_drafter_shape(layout)

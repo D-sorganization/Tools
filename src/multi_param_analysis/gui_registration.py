@@ -19,6 +19,14 @@ GUI_INFO = {
 }
 
 
+GUI_METADATA = {
+    "name": "Multi-Parameter Analysis",
+    "description": "Run multi-parameter sensitivity analysis with grid evaluation",
+    "category": "analysis",
+    "entry_point": "multi_param_analysis.launch_pyqt6:main",
+}
+
+
 def get_gui_info() -> dict[str, Any]:
     """Return GUI registration information."""
     return GUI_INFO

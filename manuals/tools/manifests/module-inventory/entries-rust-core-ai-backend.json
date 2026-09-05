@@ -245,6 +245,7 @@
           "tests/folder_tool/test_folders_tool_r0.py",
           "tests/integration/obsidian/test_vault_client.py",
           "tests/integration/sidekick/test_sidekick_host_integration.py",
+          "tests/ops/test_ci_test_shards.py",
           "tests/ops/test_full_suite_nightly_workflow.py",
           "tests/p1am_control_system/firmware/test_dcs.cpp",
           "tests/p1am_control_system/test_cors_config.py",

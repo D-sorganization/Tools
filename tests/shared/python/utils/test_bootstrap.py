@@ -34,7 +34,7 @@ class TestEnsurePaths:
         original = list(sys.path)
         try:
             ensure_paths(repo_root=tmp_path)
-            assert str(shared) in sys.path
+            assert str(shared) not in sys.path
             assert str(src) in sys.path
             assert str(py_src) in sys.path
         finally:
@@ -42,15 +42,15 @@ class TestEnsurePaths:
             sys.path[:] = original
 
     def test_idempotent(self, tmp_path: Path) -> None:
-        shared = tmp_path / "src" / "shared" / "python"
-        shared.mkdir(parents=True)
+        src = tmp_path / "src"
+        src.mkdir(parents=True)
 
         original = list(sys.path)
         try:
             ensure_paths(repo_root=tmp_path)
-            count_1 = sys.path.count(str(shared))
+            count_1 = sys.path.count(str(src))
             ensure_paths(repo_root=tmp_path)
-            count_2 = sys.path.count(str(shared))
+            count_2 = sys.path.count(str(src))
             assert count_1 == count_2 == 1
         finally:
             sys.path[:] = original

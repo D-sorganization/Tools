@@ -20,16 +20,21 @@ class TestODESolverMainWindow:
     @pytest.fixture
     def mock_qt_app(self) -> Any:
         """Create mock Qt application for headless testing."""
-        with patch.dict(
-            sys.modules,
-            {
-                "PyQt6": MagicMock(),
-                "PyQt6.QtWidgets": MagicMock(),
-                "PyQt6.QtCore": MagicMock(),
-                "PyQt6.QtGui": MagicMock(),
-            },
-        ):
+        try:
+            import PyQt6.QtWidgets  # noqa: F401
+
             yield
+        except ImportError:
+            with patch.dict(
+                sys.modules,
+                {
+                    "PyQt6": MagicMock(),
+                    "PyQt6.QtWidgets": MagicMock(),
+                    "PyQt6.QtCore": MagicMock(),
+                    "PyQt6.QtGui": MagicMock(),
+                },
+            ):
+                yield
 
     def test_main_window_imports(self, mock_qt_app) -> Any:
         """Test that main window module can be imported."""

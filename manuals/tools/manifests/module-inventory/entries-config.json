@@ -3,10 +3,10 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 252,
+      "bytes_lf": 420,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ce590e277717463c1c074e8453b2537e537727d897fb947f0e45cd4341dd8a7e",
+      "content_sha256_lf": "aaf8af152cc8a5172efce2b5c2b1d8833f2bcbb1465b934a3299835e43c88953",
       "family": "repository-governance-non-calculation",
       "id": "TOOLS-MODULE-CONFIG-COVERAGE-BASELINE-JSON-19F283CB661C",
       "language": "json",
@@ -43,10 +43,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 721,
+      "bytes_lf": 760,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f06c7c0162cb31806e7caa238afd3ada9d4ce9b0dd93768d6d16cda8ae964bcc",
+      "content_sha256_lf": "6780b803e2090778dfb9f696f64a6facebc6787be75df2c69d79d5ed74a4ff71",
       "family": "repository-governance-non-calculation",
       "id": "TOOLS-MODULE-CONFIG-COVERAGE-POLICY-JSON-37185D254DC2",
       "language": "json",

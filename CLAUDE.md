@@ -58,10 +58,10 @@ for downstream repos.
   `rotation_converter`, `tools-core`, `swing-core`, `ai_backend`,
   `data-processor-core`, `file_watcher`, and the movement-optimizer crate.
 - **`ci-standard.yml` runs `["3.11", "3.12"]` and must not go below 3.11.** That
-  job runs the root-package suite — `core_tests` is entirely `tests/**` and
-  `src/shared/python/**` — none of which can execute on 3.10, so a 3.10 lane
-  there collects nothing and reports configuration noise. Only **3.11** is a
-  required check.
+  job runs the whole test tree (`tests/**` and every `src/**/tests`) as the
+  shards of `scripts/ci_test_shards.py`; the root-package parts cannot execute
+  on 3.10, so a 3.10 lane there collects nothing and reports configuration
+  noise. Only **`tests (3.11)`** (the shard gate) is a required check.
 - **3.10 support is proven by the maturin workflows**, not by `ci-standard`.
   Each crate's `maturin-*.yml` runs a build + parity gate across 3.10/3.11/3.12
   that builds the wheel, installs it, and asserts the extension imports and the
@@ -97,7 +97,7 @@ python3 -m pytest -m dwsim                        # DWSIM integration tests
 3. Changed-file delta checks: ruff and mypy on diff only (but full-repo checks also run)
 4. Cross-repo integration tests — verify UpstreamDrift and Gasification_Model compatibility
 5. Manifest validation — adding a module requires a manifest entry
-6. pytest with **10% coverage minimum**, must not regress on touched files
+6. pytest: the whole tree (`tests/` and every `src/**/tests`) runs on every PR as the shards of `scripts/ci_test_shards.py`; the single coverage floor is `[tool.coverage.report] fail_under` in `pyproject.toml`, applied to the combined data in the `tests (3.11)` gate, plus the per-package ratchets in `config/coverage_policy.json` for touched packages
 7. No `print()` in `src/` — use logging
 8. No TODO/FIXME unless tied to a tracked GitHub issue
 9. **Sidekick Per-File Coverage:** Every sidekick module under `src/shared/python/sidekick/` (specifically the six target modules: `latex_renderer.py`, `notes_store.py`, `notes_tab.py`, `selected_tab_panel.py`, `tab_context_menu.py`, `symbolic_engine.py` plus any modified sidekick files) must maintain at least **50% per-file coverage**.

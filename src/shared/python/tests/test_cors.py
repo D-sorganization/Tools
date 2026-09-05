@@ -53,7 +53,7 @@ def test_add_cors_middleware_default(clean_env) -> Any:
     assert kwargs["allow_origins"] == DEFAULT_ORIGINS
     assert kwargs["allow_methods"] == DEFAULT_ALLOW_METHODS
     assert kwargs["allow_headers"] == DEFAULT_ALLOW_HEADERS
-    assert kwargs["allow_credentials"] is True
+    assert kwargs["allow_credentials"] is False
 
 
 def test_add_cors_middleware_explicit_origins(clean_env) -> Any:

@@ -79,7 +79,7 @@ def test_surface_budgets_are_bounded_and_toolkit_honest() -> None:
     assert react.max_post_settle_shift_px == 2
     assert react.max_layout_shift_score_microunits == 100_000
     assert pyqt.tab_open_budget_ms == 5_000
-    assert pyqt.resize_settle_budget_ms == 4_000
+    assert pyqt.resize_settle_budget_ms == 6_000
     assert pyqt.max_layout_shift_score_microunits is None
     assert isinstance(manifest.surfaces, MappingProxyType)
 

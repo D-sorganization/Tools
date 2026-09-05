@@ -76,7 +76,7 @@
 - ci: drop the remaining pull_request path filter (#4976)
 - chore(security): ignore agent-local permission state (#4974)
 - docs(scada): F-matrix as the tracker of record + three independent defect fixes (#4912) (#4947)
-- chore(ci): retire 25 unowned Jules-* workflows, keep 3 (#1483) (#4948)
+- chore(ci): retire 25 unowned Jules-\* workflows, keep 3 (#1483) (#4948)
 - 🎨 Palette: Add explicit label-input associations for accessibility (#4940)
 - test(rate-of-closure, #4844): name every visual-drift offender; verify the system font stack (#4963)
 - test(rate-of-closure, #4844): re-approve the nine drifted PyQt baselines under the recorded new font stack (#4964)

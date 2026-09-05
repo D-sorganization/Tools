@@ -106,9 +106,9 @@ class TestPlotThemeMixin:
 
         obj = TestClass()
         obj.setup_plot_theme(apply_immediately=False)
-        obj.set_plot_theme("dracula")
+        obj.set_plot_theme("vampire_dark")
 
-        assert obj._plot_theme_manager.current_theme_name == "dracula"
+        assert obj._plot_theme_manager.current_theme_name == "vampire_dark"
 
     def test_get_plot_colors(self) -> None:
         """Test getting plot colors via mixin."""

@@ -2,7 +2,8 @@
 # Run comprehensive coverage measurement with all report formats
 #
 # Usage:
-#   ./scripts/run_coverage.sh [--min-coverage 60] [--baseline-comparison]
+#   ./scripts/run_coverage.sh [MIN_COVERAGE] [--baseline-comparison]
+#   MIN_COVERAGE defaults to pyproject [tool.coverage.report] fail_under (Tools #4913).
 #
 # Output:
 #   - htmlcov/index.html — interactive HTML coverage report
@@ -16,7 +17,7 @@
 
 set -e
 
-MIN_COVERAGE="${1:-60}"
+MIN_COVERAGE="${1:-$(python3 -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['tool']['coverage']['report']['fail_under'])")}"
 BASELINE_COMPARISON="${2:-}"
 
 echo "================================"

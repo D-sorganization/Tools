@@ -376,8 +376,10 @@ def calculate_mixture_molecular_weight(composition: dict[str, float]) -> float:
     mw_mix = 0.0
     for component, mole_frac in composition.items():
         if component not in GAS_DATABASE:
-            _logger.warning(f"Component '{component}' not in database, skipping")
-            continue
+            if component.upper() == "UNKNOWN":
+                _logger.warning(f"Component '{component}' not in database, skipping")
+                continue
+            raise ValueError(f"Unknown gas species: {component}")
         mw_mix += mole_frac * GAS_DATABASE[component].molecular_weight
 
     _logger.debug(f"Mixture MW = {mw_mix:.3f} kg/kmol")
@@ -676,13 +678,21 @@ def _compute_pure_viscosities(
         raise ValueError("composition must be provided")
     pure_viscosities: dict[str, float] = {}
     for component in composition.keys():
-        if component not in GAS_DATABASE:
-            raise ValueError(f"Unknown gas species: {component}")
+        comp_key = component
+        if comp_key not in GAS_DATABASE:
+            if comp_key.upper() == "UNKNOWN":
+                _logger.warning(
+                    "Component '%s' not in database, falling back to Air properties",
+                    comp_key,
+                )
+                comp_key = "Air"
+            else:
+                raise ValueError(f"Unknown gas species: {comp_key}")
 
-        props = GAS_DATABASE[component]
+        props = GAS_DATABASE[comp_key]
 
-        if component in SUTHERLAND_CONSTANTS:
-            params = SUTHERLAND_CONSTANTS[component]
+        if comp_key in SUTHERLAND_CONSTANTS:
+            params = SUTHERLAND_CONSTANTS[comp_key]
             mu_i = calculate_pure_gas_viscosity_sutherland(
                 temperature, params["T_ref"], params["mu_ref"], params["S"]
             )
@@ -714,11 +724,11 @@ def _wilke_mixing_rule(
     components = list(composition.keys())
     component_data: dict[str, dict[str, float]] = {}
     for comp in components:
-        if comp in GAS_DATABASE:
-            component_data[comp] = {
-                "M": GAS_DATABASE[comp].molecular_weight,
-                "mu": pure_viscosities[comp],
-            }
+        db_key = comp if comp in GAS_DATABASE else "Air"
+        component_data[comp] = {
+            "M": GAS_DATABASE[db_key].molecular_weight,
+            "mu": pure_viscosities[comp],
+        }
 
     phi: dict[tuple[str, str], float] = {}
     for i, comp_i in enumerate(components):

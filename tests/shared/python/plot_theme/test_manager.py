@@ -83,12 +83,12 @@ class TestPlotThemeManager:
         callback = MagicMock()
 
         manager.add_theme_change_callback(callback)
-        manager.set_theme("dracula", save=False)
+        manager.set_theme("vampire_dark", save=False)
 
         callback.assert_called_once()
         # Check the theme was passed
         call_args = callback.call_args[0]
-        assert call_args[0].name == "Dracula"
+        assert call_args[0].name == "Vampire Dark"
 
     def test_remove_callback(self) -> None:
         """Test removing a callback."""
@@ -97,7 +97,7 @@ class TestPlotThemeManager:
 
         manager.add_theme_change_callback(callback)
         manager.remove_theme_change_callback(callback)
-        manager.set_theme("dracula", save=False)
+        manager.set_theme("vampire_dark", save=False)
 
         callback.assert_not_called()
 

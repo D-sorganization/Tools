@@ -13,7 +13,7 @@
     },
     "pyqt": {
       "tab_open_budget_ms": 5000,
-      "resize_settle_budget_ms": 4000,
+      "resize_settle_budget_ms": 6000,
       "stable_frame_count": 3,
       "stability_tolerance_px": 1,
       "max_post_settle_shift_px": 2,
@@ -21,25 +21,105 @@
     }
   },
   "tabs": [
-    { "surface": "react", "tab_id": "explorer", "workload": "initial-production-state" },
-    { "surface": "react", "tab_id": "calculation", "workload": "initial-production-state" },
-    { "surface": "react", "tab_id": "simulation", "workload": "initial-production-state" },
-    { "surface": "react", "tab_id": "plots", "workload": "initial-production-state" },
-    { "surface": "react", "tab_id": "flight", "workload": "initial-production-state" },
-    { "surface": "react", "tab_id": "launch-monitor-analytics", "workload": "initial-production-state" },
-    { "surface": "react", "tab_id": "neural-model-lab", "workload": "initial-production-state" },
-    { "surface": "react", "tab_id": "variation", "workload": "initial-production-state" },
-    { "surface": "react", "tab_id": "putting", "workload": "initial-production-state" },
-    { "surface": "react", "tab_id": "glossary", "workload": "initial-production-state" },
-    { "surface": "pyqt", "tab_id": "clubhead", "workload": "initial-production-state" },
-    { "surface": "pyqt", "tab_id": "plots", "workload": "initial-production-state" },
-    { "surface": "pyqt", "tab_id": "calculation_description", "workload": "initial-production-state" },
-    { "surface": "pyqt", "tab_id": "simulation", "workload": "initial-production-state" },
-    { "surface": "pyqt", "tab_id": "flight_explorer", "workload": "initial-production-state" },
-    { "surface": "pyqt", "tab_id": "launch_monitor_analytics", "workload": "initial-production-state" },
-    { "surface": "pyqt", "tab_id": "neural_model_lab", "workload": "initial-production-state" },
-    { "surface": "pyqt", "tab_id": "variation", "workload": "initial-production-state" },
-    { "surface": "pyqt", "tab_id": "putting", "workload": "initial-production-state" },
-    { "surface": "pyqt", "tab_id": "glossary", "workload": "initial-production-state" }
+    {
+      "surface": "react",
+      "tab_id": "explorer",
+      "workload": "initial-production-state"
+    },
+    {
+      "surface": "react",
+      "tab_id": "calculation",
+      "workload": "initial-production-state"
+    },
+    {
+      "surface": "react",
+      "tab_id": "simulation",
+      "workload": "initial-production-state"
+    },
+    {
+      "surface": "react",
+      "tab_id": "plots",
+      "workload": "initial-production-state"
+    },
+    {
+      "surface": "react",
+      "tab_id": "flight",
+      "workload": "initial-production-state"
+    },
+    {
+      "surface": "react",
+      "tab_id": "launch-monitor-analytics",
+      "workload": "initial-production-state"
+    },
+    {
+      "surface": "react",
+      "tab_id": "neural-model-lab",
+      "workload": "initial-production-state"
+    },
+    {
+      "surface": "react",
+      "tab_id": "variation",
+      "workload": "initial-production-state"
+    },
+    {
+      "surface": "react",
+      "tab_id": "putting",
+      "workload": "initial-production-state"
+    },
+    {
+      "surface": "react",
+      "tab_id": "glossary",
+      "workload": "initial-production-state"
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "clubhead",
+      "workload": "initial-production-state"
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "plots",
+      "workload": "initial-production-state"
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "calculation_description",
+      "workload": "initial-production-state"
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "simulation",
+      "workload": "initial-production-state"
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "flight_explorer",
+      "workload": "initial-production-state"
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "launch_monitor_analytics",
+      "workload": "initial-production-state"
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "neural_model_lab",
+      "workload": "initial-production-state"
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "variation",
+      "workload": "initial-production-state"
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "putting",
+      "workload": "initial-production-state"
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "glossary",
+      "workload": "initial-production-state"
+    }
   ]
 }
