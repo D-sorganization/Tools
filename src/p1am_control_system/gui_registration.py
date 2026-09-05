@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-GUI_INFO = {
+GUI_INFO: dict[str, Any] = {
     "name": "P1AM HMI Control System",
     "tool_name": "p1am_control_system",
     "description": "HMI Control System for P1AM-100 PLC",
@@ -15,6 +15,11 @@ GUI_INFO = {
         "class": "P1AMMainWindow",
         "dependencies": ["PyQt6"],
         "settings_app": "P1AMControlSystem",
+    },
+    "web": {
+        "path": "frontend",
+        "port": 3002,
+        "auto_open_browser": True,
     },
 }
 
