@@ -483,7 +483,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web.json"
     },
     {
-      "content_sha256_lf": "755a47015c0eaa8170362132894b3b566883402b4a2e2fd4f2a6f20b68e99030",
+      "content_sha256_lf": "feefcc35519019779d2d995662a3e0588e02455798c90dc60d14ab313edcd958",
       "entry_count": 16,
       "package": "src/rate_of_closure/web/e2e",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-e2e.json"
