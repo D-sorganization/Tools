@@ -2548,10 +2548,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5882,
+      "bytes_lf": 8437,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "28f799440024450d5a748371b8094dc8ed2bf88ca7e64a6d62753ba4a12d80c1",
+      "content_sha256_lf": "9bd527deb8781d4f03510c8365cdd58276dab4b6f800b5cd18049bc5cf0ee9df",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CHECK-RATE-VISUAL-EVIDENCE-CHANGES-PY-8242FB71D4B6",
       "language": "python",
@@ -2617,6 +2617,11 @@
           },
           {
             "kind": "constant",
+            "name": "_EXEMPTION_PATTERN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
             "name": "_PYQT_PATTERNS",
             "signature": null
           },
@@ -2632,13 +2637,18 @@
           },
           {
             "kind": "function",
+            "name": "extract_exemption_reason",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
             "name": "main",
             "signature": "argv: Sequence[str] | None=None"
           },
           {
             "kind": "function",
             "name": "validate_visual_evidence_changes",
-            "signature": "changed_files: Iterable[str]"
+            "signature": "changed_files: Iterable[str], *, exemption_reason: str | None=None"
           }
         ],
         "test_paths": [
@@ -4563,10 +4573,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10072,
+      "bytes_lf": 11011,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d4581c98c5519839a902aa293bd9c9b621ead02132fb51b8050f36064d32f941",
+      "content_sha256_lf": "0d8dfb85a113979a910369e73b8519eec8e7a278e8f493000bb8119f29306de4",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-GENERATE-TOOLS-JSON-PY-4CB9321263B8",
       "language": "python",

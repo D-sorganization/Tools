@@ -136,3 +136,71 @@ def test_memory_sync_loads_archived_sessions_without_switching_context(
 
     panel.deleteLater()
     app.processEvents()
+
+
+def test_assistant_panel_loads_active_session_on_init(monkeypatch) -> None:
+    """Regression for #4966: active sessions loaded on init must not crash
+    accessing _messages.
+    """
+    from PyQt6.QtWidgets import QApplication
+
+    from src.shared.python.ai.gui import assistant_panel
+    from src.shared.python.ai.gui.assistant_panel import AIAssistantPanel
+    from src.shared.python.ai.gui.settings_dialog import (
+        AIProvider,
+        AISettings,
+        provider_default_model,
+    )
+    from src.shared.python.ai.types import ConversationContext
+
+    app = QApplication.instance() or QApplication([])
+
+    initial = AISettings(
+        provider=AIProvider.OLLAMA,
+        model=provider_default_model(AIProvider.OLLAMA),
+        chat_mode="ask",
+    )
+    state = {"settings": initial}
+
+    monkeypatch.setattr(
+        AISettings, "load", classmethod(lambda cls: replace(state["settings"]))
+    )
+    monkeypatch.setattr(AISettings, "save", lambda self: None)
+    monkeypatch.setattr(
+        AIAssistantPanel,
+        "apply_settings",
+        lambda self, settings: setattr(self, "_current_settings", settings),
+    )
+
+    existing_context = ConversationContext(session_id="saved-session-1")
+    existing_context.add_user_message("Hello past self")
+    existing_context.add_assistant_message("Hello from the past")
+
+    monkeypatch.setattr(
+        assistant_panel.ChatSessionManager,
+        "list_sessions",
+        lambda self: [{"id": "saved-session-1", "archived": False}],
+    )
+    monkeypatch.setattr(
+        assistant_panel.ChatSessionManager,
+        "load_session",
+        lambda self, session_id, emit=True: (
+            self.session_loaded.emit(existing_context) if emit else None,
+            existing_context,
+        )[1],
+    )
+
+    panel = AIAssistantPanel()
+    assert panel._context.session_id == "saved-session-1"
+    assert panel._messages is not None
+    # 1 system welcome message + 2 conversation messages + 1 stretch item
+    # Check that MessageWidgets for the 2 conversation messages were added
+    widgets = [
+        panel._messages.message_layout.itemAt(i).widget()
+        for i in range(panel._messages.message_layout.count())
+        if panel._messages.message_layout.itemAt(i).widget() is not None
+    ]
+    assert len(widgets) >= 3  # welcome + 2 messages
+
+    panel.deleteLater()
+    app.processEvents()
