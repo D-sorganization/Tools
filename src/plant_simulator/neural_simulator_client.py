@@ -25,9 +25,9 @@ import torch
 # Importing flat makes both names resolve to the single module object the
 # backend itself uses, which removes the duplicate classes *and* the
 # package-level `p1am_control_system` <-> `plant_simulator` cycle: nothing here
-# names `p1am_control_system` any more. Safe because this module has exactly one
-# importer -- the lazy `driver == "neural"` branch of `PLCFactory.create_client`
-# -- so the backend directory is always on sys.path by the time it is reached.
+# names `p1am_control_system` any more. Formerly reached via the lazy
+# `driver == "neural"` branch of `PLCFactory.create_client`, which was withdrawn
+# in issue #4950 because clear_estop was not implemented and signatures drifted.
 #
 # The *proper* fix is to stop importing the backend flat at all (package
 # `__init__`, package-absolute imports throughout, and a Dockerfile whose build
@@ -44,9 +44,11 @@ logger = logging.getLogger(__name__)
 
 
 class NeuralSimulatorClient(BasePLCClient):
-    """
+    """EXPERIMENTAL / QUARANTINED (see issue #4950).
+
     Concrete PLC client simulating plant process dynamics using a Neural Network.
-    Adheres to the BasePLCClient interface.
+    Withdrawn from PLCFactory because it does not implement clear_estop and its
+    signatures have drifted from BasePLCClient. Do not select in production.
     """
 
     def __init__(
