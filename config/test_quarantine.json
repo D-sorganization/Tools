@@ -198,6 +198,12 @@
       "owner": "tests/vessel_drafter",
       "issue": "#4933",
       "reason": "monorepo shared contracts imported instead of fallback"
+    },
+    {
+      "path": "tests/integration/test_tool_interactions.py",
+      "owner": "tests/integration",
+      "issue": "#4933",
+      "reason": "pandas 2.2+ frequency offset alias deprecation: H -> h"
     }
   ]
 }
