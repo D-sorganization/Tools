@@ -5,8 +5,6 @@ from __future__ import annotations
 import argparse
 import fnmatch
 import logging
-import os
-import re
 import subprocess
 from collections.abc import Iterable, Sequence
 from pathlib import Path
@@ -22,10 +20,6 @@ REACT_FIRST_VIEWPORT_TEST: Final = (
 )
 PYQT_FIRST_VIEWPORT_TEST: Final = (
     "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py"
-)
-
-_EXEMPTION_PATTERN: Final = re.compile(
-    r"(?mi)^\s*(?:rate[-_]visual[-_]exempt(?:ion)?|no[-_]visual[-_]change)\s*(?::\s*(.+))?$"
 )
 
 _REACT_PATTERNS: Final = (
@@ -90,25 +84,7 @@ def _surface_requirements(surface: str) -> tuple[str, ...]:
     raise ValueError(f"unknown visual surface: {surface}")
 
 
-def extract_exemption_reason(text: str) -> str | None:
-    """Extract an explicit visual-evidence exemption reason from text."""
-
-    if not text:
-        return None
-    for raw_line in text.splitlines():
-        line = raw_line.strip()
-        match = _EXEMPTION_PATTERN.match(line)
-        if match:
-            reason = (match.group(1) or "").strip()
-            return reason or "declared no-visual-change marker"
-    return None
-
-
-def validate_visual_evidence_changes(
-    changed_files: Iterable[str],
-    *,
-    exemption_reason: str | None = None,
-) -> tuple[str, ...]:
+def validate_visual_evidence_changes(changed_files: Iterable[str]) -> tuple[str, ...]:
     """Return deterministic errors for incomplete visual-evidence co-changes.
 
     Preconditions:
@@ -117,11 +93,8 @@ def validate_visual_evidence_changes(
     Postconditions:
         An empty result means every triggered surface includes its manifest,
         acceptance authority, audit, and first-viewport evidence update in the
-        same change set, or an explicit non-empty exemption reason was declared.
+        same change set.
     """
-
-    if exemption_reason is not None and not exemption_reason.strip():
-        raise ValueError("exemption_reason must be nonempty when provided")
 
     changed = _normalize_paths(changed_files)
     surfaces: list[str] = []
@@ -131,16 +104,6 @@ def validate_visual_evidence_changes(
         surfaces.append("pyqt")
     if changed.intersection(_SHARED_VISUAL_PATHS):
         surfaces = ["react", "pyqt"]
-
-    if not surfaces:
-        return ()
-
-    if exemption_reason is not None:
-        LOGGER.info(
-            "Rate-of-Closure visual evidence requirements exempted: %s",
-            exemption_reason.strip(),
-        )
-        return ()
 
     errors: list[str] = []
     for surface in surfaces:
@@ -165,35 +128,6 @@ def _git_changed_files(base_ref: str) -> tuple[str, ...]:
     return tuple(result.stdout.splitlines())
 
 
-def _git_commit_messages(base_ref: str) -> str:
-    """Read commit messages between base_ref and HEAD."""
-
-    if not base_ref.strip():
-        raise ValueError("base_ref must be nonempty")
-    result = subprocess.run(
-        ["git", "log", "--format=%B", f"{base_ref}...HEAD"],
-        check=True,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-    )
-    return result.stdout
-
-
-def _env_exemption_reason() -> str | None:
-    """Check environment variables for a declared visual exemption."""
-
-    for var_name in ("RATE_VISUAL_EXEMPTION", "PR_BODY"):
-        value = os.environ.get(var_name)
-        if value and value.strip():
-            extracted = extract_exemption_reason(value)
-            if extracted:
-                return extracted
-            if var_name == "RATE_VISUAL_EXEMPTION":
-                return value.strip()
-    return None
-
-
 def _file_changed_paths(path: Path) -> tuple[str, ...]:
     """Read a deterministic newline-delimited changed-path fixture."""
 
@@ -207,10 +141,6 @@ def _parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
     source = parser.add_mutually_exclusive_group(required=True)
     source.add_argument("--base-ref", help="Git base revision for base...HEAD")
     source.add_argument("--changed-files", type=Path, help="Newline-delimited paths")
-    parser.add_argument(
-        "--exemption-reason",
-        help="Explicit declared reason why visual evidence co-change is not required",
-    )
     return parser.parse_args(argv)
 
 
@@ -225,16 +155,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             if args.base_ref is not None
             else _file_changed_paths(args.changed_files)
         )
-        exemption = args.exemption_reason
-        if exemption is None and args.base_ref is not None:
-            try:
-                commit_msgs = _git_commit_messages(args.base_ref)
-                exemption = extract_exemption_reason(commit_msgs)
-            except (OSError, subprocess.CalledProcessError):
-                pass
-        if exemption is None:
-            exemption = _env_exemption_reason()
-        errors = validate_visual_evidence_changes(paths, exemption_reason=exemption)
+        errors = validate_visual_evidence_changes(paths)
     except (OSError, subprocess.CalledProcessError, ValueError) as exc:
         LOGGER.error("visual evidence governance could not evaluate changes: %s", exc)
         return 2
