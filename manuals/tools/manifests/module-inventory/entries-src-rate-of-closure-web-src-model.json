@@ -9872,10 +9872,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6272,
+      "bytes_lf": 6628,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "18235343c2e4fdaea1949b7915146a2805b872781a85910a2bed7901c3999883",
+      "content_sha256_lf": "a15bd9a2f38a95e908b6d408b69f619c92d597a8acbecce58a8620b6e60f2eca",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-LAUNCHMONITORANALYSIS-TS-44404647D624",
       "language": "typescript",
