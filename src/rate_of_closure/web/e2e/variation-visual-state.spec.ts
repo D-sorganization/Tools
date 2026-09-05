@@ -36,7 +36,6 @@ const intersection = (locator: Locator) => locator.evaluate((element) => {
 });
 
 async function capture(page: Page, testInfo: TestInfo, state: StateName) {
-  const initialScrollY = await page.evaluate(() => scrollY);
   const frame = page.locator("[data-visual-origin]").last();
   await expect(frame).toHaveAttribute("data-phase", expectedState[state].phase);
   await expect(frame).toHaveAttribute("data-visual-origin", expectedState[state].origin);
@@ -46,7 +45,6 @@ async function capture(page: Page, testInfo: TestInfo, state: StateName) {
       ? frame.getByRole("group", { name: "Scatter matrix with marginal histograms" })
       : frame.getByRole("img", { name: "Variation analysis workflow preview" });
   await expect(visual).toBeVisible();
-  await visual.scrollIntoViewIfNeeded();
   const narrow = page.viewportSize()?.width === 390;
   const minimum = { width: narrow ? 120 : 240, height: narrow ? 180 : 240 };
   if (["empty", "result", "individual-result"].includes(state)) {
@@ -75,7 +73,6 @@ async function capture(page: Page, testInfo: TestInfo, state: StateName) {
     expect(box.y + box.height <= controls.y || controls.y + controls.height <= box.y ||
       box.x + box.width <= controls.x || controls.x + controls.width <= box.x).toBe(true);
   }
-  await page.evaluate((y) => window.scrollTo(0, y), initialScrollY);
   expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBe(0);
 }
 
