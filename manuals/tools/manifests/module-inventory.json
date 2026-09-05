@@ -135,7 +135,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "3f5527159d3708b8ee9160047c6b2ca1f2928cdc771dd218b3657f2a24dad91c",
+      "content_sha256_lf": "d10e3bcc3f0217aca0c300e02279b057838bea6d24f0a2efc761408eac775f7a",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -159,7 +159,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "54037bf6dc25c90df39316e4c9e924f228fb85f9f29db4c0b97f36d2c3e64547",
+      "content_sha256_lf": "e45e0a6a151aef23c761819aa35cbb0f9b000403733f264126a66890707007ca",
       "entry_count": 91,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
@@ -483,7 +483,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web.json"
     },
     {
-      "content_sha256_lf": "cc8464a5be3bfaf95a55f246a4c76d28bfaa84b4938ec67d9bb9242a8ce05ab9",
+      "content_sha256_lf": "feefcc35519019779d2d995662a3e0588e02455798c90dc60d14ab313edcd958",
       "entry_count": 16,
       "package": "src/rate_of_closure/web/e2e",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-e2e.json"
@@ -507,7 +507,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src.json"
     },
     {
-      "content_sha256_lf": "27b7a36c01707dd2123a2e8637e70d76a4e14597fb9827cbb15a6647ef52344f",
+      "content_sha256_lf": "fec2023fc46ad552998a636501611dc6caa637a5562586ded10355077c769104",
       "entry_count": 180,
       "package": "src/rate_of_closure/web/src/components",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-components.json"
@@ -585,7 +585,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
     },
     {
-      "content_sha256_lf": "22ddf55df2e54bda9bef1fdae8ff9c7d7a4ef58e2e954218eee76e37cf77a51c",
+      "content_sha256_lf": "46895070bdba1435dd3fc760860460d28e5d88355239fe39da3a0f96548b8c9b",
       "entry_count": 112,
       "package": "src/shared/python/ai",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-ai.json"
@@ -723,7 +723,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-scripting.json"
     },
     {
-      "content_sha256_lf": "65b5b8d059694101c8da06517740c627f5f37af9a6f402d3932304fee339ca0e",
+      "content_sha256_lf": "ed4f5f5ac7d5913c5d9f488b970c309c9d74deffc13369b3f0a80c2e5fa81b79",
       "entry_count": 215,
       "package": "src/shared/python/sidekick",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick.json"
