@@ -389,10 +389,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9184,
+      "bytes_lf": 9314,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7f6a2ac3498d46cca0718ce630a30bd72c3bbe3d818c046f6b33944dfea1584d",
+      "content_sha256_lf": "5d8c43d303a65cd97f71b056158774e510b7adcc86d0548a77cee7b1d6eb267f",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-E2E-VARIATION-VISUAL-STATE-SPEC-TS-F1ADF41124E4",
       "language": "typescript",
