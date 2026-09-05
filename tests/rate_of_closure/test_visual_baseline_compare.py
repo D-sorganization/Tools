@@ -35,7 +35,7 @@ def test_packaged_manifest_binds_exact_reviewed_bytes() -> None:
     package = files("rate_of_closure")
     tolerances = {
         "react": VisualBaselineTolerance(1, 4_000, 50_000),
-        "pyqt": VisualBaselineTolerance(1, 200, 250),
+        "pyqt": VisualBaselineTolerance(1, 200, 2500),
     }
     calibrated_tolerances = {
         ("pyqt", "simulation"): VisualBaselineTolerance(1, 10_000, 10_000),

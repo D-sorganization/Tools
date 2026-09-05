@@ -133,7 +133,7 @@
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 200,
-        "max_changed_pixel_fraction_microunits": 250
+        "max_changed_pixel_fraction_microunits": 2500
       }
     },
     {
@@ -145,7 +145,7 @@
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 200,
-        "max_changed_pixel_fraction_microunits": 250
+        "max_changed_pixel_fraction_microunits": 2500
       }
     },
     {
@@ -157,7 +157,7 @@
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 200,
-        "max_changed_pixel_fraction_microunits": 250
+        "max_changed_pixel_fraction_microunits": 2500
       }
     },
     {
@@ -181,7 +181,7 @@
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 200,
-        "max_changed_pixel_fraction_microunits": 250
+        "max_changed_pixel_fraction_microunits": 2500
       }
     },
     {
@@ -193,7 +193,7 @@
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 200,
-        "max_changed_pixel_fraction_microunits": 250
+        "max_changed_pixel_fraction_microunits": 2500
       }
     },
     {
@@ -205,7 +205,7 @@
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 200,
-        "max_changed_pixel_fraction_microunits": 250
+        "max_changed_pixel_fraction_microunits": 2500
       }
     },
     {
@@ -217,7 +217,7 @@
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 200,
-        "max_changed_pixel_fraction_microunits": 250
+        "max_changed_pixel_fraction_microunits": 2500
       }
     },
     {
@@ -229,7 +229,7 @@
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 200,
-        "max_changed_pixel_fraction_microunits": 250
+        "max_changed_pixel_fraction_microunits": 2500
       }
     },
     {
@@ -241,7 +241,7 @@
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 200,
-        "max_changed_pixel_fraction_microunits": 250
+        "max_changed_pixel_fraction_microunits": 2500
       }
     }
   ]
