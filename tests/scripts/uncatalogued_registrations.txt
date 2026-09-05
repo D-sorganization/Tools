@@ -8,4 +8,3 @@
 # must be removed from this file. Entries are retired by Tools#4916.
 #
 # Each line is a path relative to the repository root.
-src/p1am_control_system
