@@ -769,10 +769,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 16114,
+      "bytes_lf": 16595,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3d555be2ab131d6e5f5da2affb0130b0787e892f76793499a20caf53f3e49265",
+      "content_sha256_lf": "f92062bb7bea921b1aec23a0cbb93fcb2bf463d1003450b68c10f69fa5e9b37a",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-BUILD-TOOLS-MODULE-INVENTORY-PY-FFBDFD4ACF17",
       "language": "python",
@@ -7364,10 +7364,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 14956,
+      "bytes_lf": 20023,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ce3f556edcab4b8efd4d0c53f6fe9b6efd62ec698588681e3cde90766daf20f5",
+      "content_sha256_lf": "e8324867464df8615256cf840afce81057576924221dc314a0b7bc7ebcd6bfe0",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-TOOLS-MODULE-INVENTORY-STORAGE-PY-59B3E90AF61F",
       "language": "python",
@@ -7401,6 +7401,26 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "DEFAULT_BLOCKERS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_HASH_CONTRACT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_PRODUCER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_SCOPE",
+            "signature": null
+          },
           {
             "kind": "constant",
             "name": "DERIVED_FIELDS",
@@ -7454,12 +7474,17 @@
           {
             "kind": "function",
             "name": "check_projection",
-            "signature": "root: Path, output_path: Path, index: dict[str, object], shards: dict[Path, str]"
+            "signature": "root: Path, output_path: Path, index: dict[str, object], shards: dict[Path, str], *, allow_derivable_index: bool=True"
           },
           {
             "kind": "function",
             "name": "derive_families",
             "signature": "entries: list[dict[str, object]]"
+          },
+          {
+            "kind": "function",
+            "name": "derive_index_from_shards",
+            "signature": "root: Path"
           },
           {
             "kind": "function",
@@ -7484,7 +7509,7 @@
           {
             "kind": "function",
             "name": "read_inventory",
-            "signature": "root: Path, index_path: Path"
+            "signature": "root: Path, index_path: Path | None=None"
           },
           {
             "kind": "function",
