@@ -7197,3 +7197,4 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-04: Full Suite CI Shards and Test Hardening (#4938)
 
 - **2026-09-04**: ci(tests, #4938) — Run the complete test tree across dedicated test shards in CI with coverage collection, evict all import alias keys in `test_gemini_adapter`, resolve shard contract and zero-length projection handling in sidekick process calculators, add GUI metadata to multi-param analysis launcher, quarantine drifted pendulum simulator tests, and update module inventory (#4913).
+| 2026-09-05 | #4992 | perf(rate_of_closure): Replace array spreads with single-pass loops in launchMonitorCovariation's pairStatus to eliminate intermediate allocations and call stack crashes. |

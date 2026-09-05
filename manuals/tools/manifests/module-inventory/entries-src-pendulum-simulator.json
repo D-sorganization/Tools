@@ -3585,10 +3585,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 47892,
+      "bytes_lf": 47872,
       "classification": "calculation",
       "classification_basis": "path-marker:force",
-      "content_sha256_lf": "1de75e038806e7ef0590f316c001a129d80a97b78d017399fbbc55068f05e319",
+      "content_sha256_lf": "a7ac25eef33a4f280990d6ff6b19467c79047f76af460028a24fa7b931b37b88",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-FORCESOURCEOPTIMIZATION-TS-F6C0040C15CC",
       "language": "typescript",
