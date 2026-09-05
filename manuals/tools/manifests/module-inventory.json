@@ -723,7 +723,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-scripting.json"
     },
     {
-      "content_sha256_lf": "d6bd0e63abbe29fe3f651f1b2307c96e9888f0745d0b614e39f13dfc87cafdce",
+      "content_sha256_lf": "c3e5f4db334e8e37bd674073b170accae320dce6f309d17bdf528c647985f10d",
       "entry_count": 215,
       "package": "src/shared/python/sidekick",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick.json"
@@ -819,7 +819,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-verification.json"
     },
     {
-      "content_sha256_lf": "c30ecea6a62b98da5ce65d10adf90bc7b5fdf4518bc534d688d52b1226ea6040",
+      "content_sha256_lf": "e1f9281eb06ff7660bd518e1d8e53ab85a81c12ba89766449d1e5ebc38b3ce20",
       "entry_count": 33,
       "package": "src/vessel_drafter",
       "path": "manuals/tools/manifests/module-inventory/entries-src-vessel-drafter.json"

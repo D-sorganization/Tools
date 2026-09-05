@@ -15410,10 +15410,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8779,
+      "bytes_lf": 8730,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2f37735ec87fe8118f6a4789394afcc973e13e9945dc7d631531914a7c20764d",
+      "content_sha256_lf": "10f12262a39ed5a9cb941bf8c8a1339e99e5f1a2e15a98db56e01124e8cc99d4",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-NOTES-TAB-PY-9F1DD11B69BA",
       "language": "python",

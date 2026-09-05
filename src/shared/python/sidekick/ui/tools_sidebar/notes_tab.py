@@ -29,6 +29,7 @@ class SidekickNotesWidget(QtWidgets.QWidget):
         self._autosave.setSingleShot(True)
         self._autosave.setInterval(500)
         self._autosave.timeout.connect(self.save_notes)
+        self.destroyed.connect(self._on_destroyed)
         self._build_ui()
         self._load_first_card()
         self._apply_board_style()
@@ -223,11 +224,9 @@ class SidekickNotesWidget(QtWidgets.QWidget):
     def _schedule_autosave(self) -> None:
         self._autosave.start()
 
-    def closeEvent(self, event: Any) -> None:
+    def _on_destroyed(self, *args: Any) -> None:
         if hasattr(self, "_autosave") and self._autosave.isActive():
             self._autosave.stop()
-        if event is not None and hasattr(super(), "closeEvent"):
-            super().closeEvent(event)
 
 
 def _note_card_store(project_root: Path) -> Any:
