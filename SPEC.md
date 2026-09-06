@@ -38,7 +38,8 @@ Unquarantined `tests/vessel_drafter/test_contracts_fallback.py` and
 `tests/test_python_version_contract.py` from `config/test_quarantine.json`.
 Hardened `_load_fallback_contracts` to explicitly block `shared.python.contracts`
 and parent namespaces from `sys.modules`, ensuring standalone fallback DbC
-contracts are verified without monorepo bleed.
+contracts are verified without monorepo bleed. Isolated root conftest loading in
+`test_python_version_contract.py` using explicit spec loading rather than bare imports.
 
 ### 2026-09-06 Pressure-Drop Public-Name Hygiene (#3991)
 

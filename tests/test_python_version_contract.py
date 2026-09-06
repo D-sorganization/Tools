@@ -33,6 +33,22 @@ _MYPY_PYTHON_RE = re.compile(
 _MATRIX_RE = re.compile(r"""python-version:\s*\[([^\]]*)\]""")
 
 
+def _load_root_conftest():
+    import importlib.util
+    import sys
+
+    root_conftest_path = REPO_ROOT / "conftest.py"
+    spec = importlib.util.spec_from_file_location("root_conftest", root_conftest_path)
+    if spec is None or spec.loader is None:
+        raise ImportError("Failed to load root conftest.py")
+    mod = importlib.util.module_from_spec(spec)
+    # Ensure src and root are in sys.path
+    if str(REPO_ROOT / "src") not in sys.path:
+        sys.path.insert(0, str(REPO_ROOT / "src"))
+    spec.loader.exec_module(mod)
+    return mod
+
+
 def _floor(pyproject: Path) -> tuple[int, int]:
     match = _REQUIRES_PYTHON_RE.search(pyproject.read_text(encoding="utf-8"))
     assert match is not None, (
@@ -202,7 +218,7 @@ def test_conftest_reads_each_package_declared_floor() -> None:
     across platforms, so a failure here should name the package rather than leave
     it to be inferred from a downstream assertion.
     """
-    import conftest  # noqa: PLC0415 - guard under test
+    conftest = _load_root_conftest()
 
     root_code = REPO_ROOT / "src" / "p1am_control_system" / "backend" / "tests"
     assert conftest._declared_python_floor(root_code) == _floor(ROOT_PYPROJECT), (
@@ -232,7 +248,7 @@ def test_root_package_tests_are_skipped_below_the_root_floor() -> None:
     and where ``asyncio.wait_for`` semantics differ. The interpreter is passed in
     rather than patched, so this runs on every lane including the required 3.11.
     """
-    import conftest  # noqa: PLC0415 - guard under test
+    conftest = _load_root_conftest()
 
     root_code = REPO_ROOT / "src" / "p1am_control_system" / "backend" / "tests"
     root_floor = _floor(ROOT_PYPROJECT)
@@ -254,7 +270,7 @@ def test_each_sub_package_is_collected_at_its_own_declared_floor() -> None:
     legitimately excluded on 3.9, so a single lower-floored package elsewhere in
     the tree would make this fail for reasons that are not a defect.
     """
-    import conftest  # noqa: PLC0415 - guard under test
+    conftest = _load_root_conftest()
 
     root_floor = _floor(ROOT_PYPROJECT)
     lower = [path for path in _sub_pyprojects() if _floor(path) < root_floor]
@@ -279,7 +295,7 @@ def test_nested_distributions_do_not_widen_their_parent_tree() -> None:
     The nested package may claim 3.10, but its parent tree must stay at the root
     floor — otherwise the lower lane would start collecting root code again.
     """
-    import conftest  # noqa: PLC0415 - guard under test
+    conftest = _load_root_conftest()
 
     root_floor = _floor(ROOT_PYPROJECT)
     for pyproject in _sub_pyprojects():
