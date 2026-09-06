@@ -145,6 +145,129 @@
     },
     {
       "authority_status": "provisional",
+      "bytes_lf": 931,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "42aa60cc153aa728f07d817a04ea0542dbdc88db1412306a88e59f2ae97de5bf",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-GUI-REGISTRATION-PY-BFA4C7AADBF5",
+      "language": "python",
+      "maintainer": "Pendulum maintainers",
+      "path": "src/pendulum_simulator/gui_registration.py",
+      "purpose": "GUI registration for the Pendulum Simulator (PyQt6 app + Vite web twin).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "GUI_INFO",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_gui_info",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_gui_registration.py",
+          "tests/rate_of_closure/test_gui_registration.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 682,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "2bd4d271f27fbade9c56a9cd7e5b50d42919604ba313436434021a99f7178f9f",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-LAUNCH-PYQT6-PY-49EDD1362ADA",
+      "language": "python",
+      "maintainer": "Pendulum maintainers",
+      "path": "src/pendulum_simulator/launch_pyqt6.py",
+      "purpose": "Standalone PyQt6 launcher for the Pendulum Simulator.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_PACKAGE_SRC",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_launch_pyqt6.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 3644,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
@@ -3462,10 +3585,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 47530,
+      "bytes_lf": 47872,
       "classification": "calculation",
       "classification_basis": "path-marker:force",
-      "content_sha256_lf": "346ba2a181184eb98ae64652d63bf75e4eccb6f8816191b2fbc4a712da9e9bac",
+      "content_sha256_lf": "a7ac25eef33a4f280990d6ff6b19467c79047f76af460028a24fa7b931b37b88",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-FORCESOURCEOPTIMIZATION-TS-F6C0040C15CC",
       "language": "typescript",

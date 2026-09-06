@@ -94,28 +94,26 @@ def test_every_backend_client_subclasses_the_flat_contract() -> None:
     assert issubclass(AsyncModbusManager, BasePLCClient)
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "The 'neural' driver does not satisfy BasePLCClient and cannot be "
-        "instantiated: clear_estop (added to the ABC by #3415 for the E-stop "
-        "reset path) was never implemented, and read_tags/write_tag drifted "
-        "from the ABC signatures (list[float] vs dict[str, float] | None; "
-        "tag_id: int vs tag_name: str). PLCFactory therefore raises TypeError "
-        "for plc_driver='neural'. Left failing on purpose: this is a safety "
-        "path in an experimental, untested driver, so whether to complete it "
-        "or withdraw the factory branch is an owner decision -- see #3984. "
-        "strict=True so this flips loudly the moment it is fixed."
-    ),
-)
-def test_neural_driver_is_instantiable() -> None:
-    """The neural driver should satisfy the contract it claims to implement."""
-    pytest.importorskip("torch")
+def test_neural_driver_withdrawn_from_factory(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """The uninstantiable 'neural' driver has been withdrawn from PLCFactory (#4950).
+
+    Selecting plc_driver='neural' must not attempt to construct the unmaintained
+    NeuralSimulatorClient; it falls back to SimulatedPLCClient with an explicit
+    boot banner.
+    """
+    import logging
 
     from plc_factory import PLCFactory
-    from plc_interface import BasePLCClient
     from settings import P1AMSettings
+    from simulator_client import SimulatedPLCClient
 
-    client = PLCFactory.create_client(P1AMSettings(plc_driver="neural"))
+    with caplog.at_level(logging.WARNING):
+        client = PLCFactory.create_client(P1AMSettings(plc_driver="neural"))
 
-    assert isinstance(client, BasePLCClient)
+    assert isinstance(client, SimulatedPLCClient)
+    assert (
+        "PLC_DRIVER='neural' is not a known driver; FELL BACK to the simulator"
+        in caplog.text
+    )

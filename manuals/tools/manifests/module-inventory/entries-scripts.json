@@ -2799,10 +2799,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6786,
+      "bytes_lf": 6754,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3695617cbe38ae65b271080638bbbe04aff86fbe4066277de74d22855a9e089a",
+      "content_sha256_lf": "62a2507a533e37c858842fafb6b06f5b76255a978d3feb31b85ac8570ffaea25",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CHECK-ROOT-ALLOWLIST-PY-94782E1774B7",
       "language": "python",
@@ -4732,16 +4732,16 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11011,
+      "bytes_lf": 23702,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0d8dfb85a113979a910369e73b8519eec8e7a278e8f493000bb8119f29306de4",
+      "content_sha256_lf": "0b33920adbe4ff5b6116b1305dabcfb3498c5a0a5e0af1885bf26dd1f4cb5e2a",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-GENERATE-TOOLS-JSON-PY-4CB9321263B8",
       "language": "python",
       "maintainer": "Repository tooling maintainers",
       "path": "scripts/generate_tools_json.py",
-      "purpose": "Generate tools.json and tool_surface_contract.json from gui_registration.py files.",
+      "purpose": "Generate every tool catalog from the one registry: ``src/**/gui_registration.py``.",
       "review_status": "inventory-baseline",
       "risk_tags": [
         "public-api"
@@ -4780,6 +4780,46 @@
             "signature": null
           },
           {
+            "kind": "constant",
+            "name": "MATURITIES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "README_END",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "README_START",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_MIN_COLUMN_WIDTH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SEPARATOR_CELL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SKIP_DIRS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_TABLE_CELL_SPLIT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "check",
+            "signature": "repo_root: Path"
+          },
+          {
             "kind": "function",
             "name": "generate_contract_data",
             "signature": "repo_root: Path"
@@ -4791,13 +4831,33 @@
           },
           {
             "kind": "function",
+            "name": "generate_readme_catalog",
+            "signature": "repo_root: Path"
+          },
+          {
+            "kind": "function",
             "name": "load_gui_info",
             "signature": "path: Path"
           },
           {
             "kind": "function",
             "name": "main",
-            "signature": ""
+            "signature": "argv: Sequence[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "readme_catalog_is_fresh",
+            "signature": "repo_root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "unreachable_web_apps",
+            "signature": "repo_root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "write_readme_catalog",
+            "signature": "repo_root: Path"
           }
         ],
         "test_paths": [

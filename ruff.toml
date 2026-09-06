@@ -138,7 +138,6 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 "src/project_packer/folder_packer_gui.py" = ["E501"]
 "src/project_packer/tests/test_build_exe.py" = ["E501"]
 "src/python/src/help/help_content.py" = ["E501"]
-"src/python/src/tile_launcher/ui.py" = ["E501"]
 "src/python/src/utils/test_utils.py" = ["E501"]
 "src/python/src/utils/validation.py" = ["E501"]
 "src/rotation_converter/modern_robotics.py" = ["E501"]

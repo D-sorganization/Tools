@@ -9,6 +9,9 @@ GUI_INFO = {
     "description": "Directory Management Utility",
     "category": "Development Tools",
     "icon": "folder",
+    # Headless import (Tools #4916): module Folders_Tool_r0 exposes
+    # FolderProcessorApp, not FolderTool; promote once the entry class is fixed.
+    "maturity": "experimental",
     "pyqt6": {
         "module": "Folders_Tool_r0",
         "class": "FolderTool",

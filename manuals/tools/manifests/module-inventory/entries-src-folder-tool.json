@@ -866,10 +866,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 528,
+      "bytes_lf": 709,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b82608b2a3e051143dc654b2389b57d3d57653a6006db98d5b30e79e37cf22fb",
+      "content_sha256_lf": "9350f7d3c15bdc39ffd8b2d704fb4b6ca6f9d5a3862e9a2f4e6d164d2f82bf25",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-FOLDER-TOOL-GUI-REGISTRATION-PY-E3DB198A98AF",
       "language": "python",

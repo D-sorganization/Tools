@@ -20,7 +20,6 @@ python/
 ├── src/                   # Shared source modules
 │   ├── __init__.py
 │   ├── logger_utils.py    # Logging and seed management
-│   └── tile_launcher/     # GUI launcher components
 └── tests/                 # Unit tests
 ```
 

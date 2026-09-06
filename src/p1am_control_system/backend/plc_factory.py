@@ -24,11 +24,6 @@ class PLCFactory:
             from modbus_client import AsyncModbusManager
 
             return AsyncModbusManager(host=settings.plc_ip, port=settings.plc_port)
-        elif driver == "neural":
-            # Add src to sys.path to allow importing plant_simulator
-            from plant_simulator.neural_simulator_client import NeuralSimulatorClient
-
-            return NeuralSimulatorClient()
         elif driver == "modbus":
             from modbus_client import AsyncModbusManager
 

@@ -30,6 +30,7 @@ def _clean_env(monkeypatch: pytest.MonkeyPatch) -> None:
         ("p1am", AsyncModbusManager),
         ("modbus", AsyncModbusManager),
         ("does-not-exist", SimulatedPLCClient),  # unknown -> safe simulator
+        ("neural", SimulatedPLCClient),  # withdrawn (#4950) -> safe simulator
     ],
 )
 def test_driver_selection(

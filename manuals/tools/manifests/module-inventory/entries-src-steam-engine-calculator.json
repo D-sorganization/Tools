@@ -127,10 +127,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 927,
+      "bytes_lf": 1027,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "82c9b39241a5b73ca78ce24b0716833a3b06a4d4995f389531f463e8429762bc",
+      "content_sha256_lf": "dedc37bc8394d2786923f21b5634abb871d0000576c7504aa212fea64b7fb338",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-STEAM-ENGINE-CALCULATOR-GUI-REGISTRATION-PY-ABD3C8D00041",
       "language": "python",
@@ -236,6 +236,61 @@
         "test_paths": [
           "tests/folder_tool/test_launch_pyqt6.py"
         ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 463,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "2f9d3600c8e2659fd499a4754967f8d353645161e47e5c7574e3d3fced7d21f0",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-STEAM-ENGINE-CALCULATOR-LAUNCH-WEB-PY-CB50D9A8FEEF",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/steam_engine_calculator/launch_web.py",
+      "purpose": "Launch the steam_engine_calculator React web application (Vite dev server).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_REPO_ROOT",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []
       }
