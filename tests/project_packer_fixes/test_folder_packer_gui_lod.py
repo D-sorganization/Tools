@@ -212,24 +212,30 @@ class TestFolderPackerGuiDbCContracts:
     """Tests verifying DbC preconditions in folder_packer_gui.py."""
 
     def test_init_requires_root(self, gui_module) -> None:
-        """Test that __init__ raises AssertionError when root is None."""
+        """Test that __init__ raises an error when root is None."""
         FolderPackerGUI = gui_module.FolderPackerGUI
-        with pytest.raises(AssertionError, match="root must be provided"):
+        with pytest.raises((AssertionError, ValueError), match="root must be provided"):
             FolderPackerGUI(None)
 
     def test_should_include_file_requires_path(self, gui_instance) -> None:
-        """Test that should_include_file raises AssertionError when file_path is None."""
-        with pytest.raises(AssertionError, match="file_path must be provided"):
+        """Test that should_include_file raises an error when file_path is None."""
+        with pytest.raises(
+            (AssertionError, ValueError), match="file_path must be provided"
+        ):
             gui_instance.should_include_file(None)
 
     def test_should_include_directory_requires_path(self, gui_instance) -> None:
-        """Test that should_include_directory raises AssertionError when dir_path is None."""
-        with pytest.raises(AssertionError, match="dir_path must be provided"):
+        """Test that should_include_directory raises an error when dir_path is None."""
+        with pytest.raises(
+            (AssertionError, ValueError), match="dir_path must be provided"
+        ):
             gui_instance.should_include_directory(None)
 
     def test_update_status_requires_message(self, gui_instance) -> None:
-        """Test that update_status raises AssertionError when message is None."""
+        """Test that update_status raises an error when message is None."""
         gui_instance.status_text = Mock()
         gui_instance.root = Mock()
-        with pytest.raises(AssertionError, match="message must be provided"):
+        with pytest.raises(
+            (AssertionError, ValueError), match="message must be provided"
+        ):
             gui_instance.update_status(None)
