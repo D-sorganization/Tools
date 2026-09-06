@@ -46,7 +46,6 @@ src/inertia_calculator/python/inertia_calculator/ui/pyqt6/main_window.py
 src/lower_body_model/simulator.py
 src/multi_param_analysis/python/multi_param_analysis/ui/pyqt6/main_window.py
 src/ode_solver/python/ode_solver/ui/pyqt6/main_window.py
-src/optimizer_gui/python/optimizer_gui/ui/pyqt6/main_window.py
 src/p1am_control_system/backend/main.py
 src/pendulum_simulator/pendulum-core/python/physics_native.py
 src/pendulum_simulator/pendulum-core/src/cmaes.rs

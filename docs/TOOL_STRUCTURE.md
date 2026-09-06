@@ -196,10 +196,10 @@ src/financial_calculator/
 **Variant C: Tool with Backend Engine**
 
 ```
-src/optimizer_gui/
+src/ode_solver/
 ├── __init__.py
 ├── python/
-│   └── optimizer_gui/
+│   └── ode_solver/
 │       ├── __init__.py
 │       ├── engine.py           # Main computation engine
 │       └── ui/

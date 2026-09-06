@@ -38,6 +38,3 @@ acceleration backend with a pure-NumPy fallback.
 - **#3411** — carry over the code-quality findings from the origin-repo audit
   (elbow-bias bug, bench-press inertia convention, parity-only physics tests,
   GUI-thread blocking, scipy<1.16 pin, etc.) and fix them here.
-- The divergent swingset/chain model API in `src/optimizer_gui` should be
-  reconciled against this package's richer `models/swingset.py` /
-  `models/chain_forces.py` and then de-duplicated.

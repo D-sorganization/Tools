@@ -111,31 +111,31 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "a15dbd56156bec50ed0c5eed0d3163b5250a2bf926b41d4b93fd465b8c032abb",
+      "content_sha256_lf": "607ec54d66cd8623f74eccf02ccde2f6601943567f5d5952f23b6ba8ce7f2a7d",
       "entry_count": 17,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "e8058f87800722e13f84937251be0f6181c770e54c38e1e3ae9c1fbf8469f570",
+      "content_sha256_lf": "9ace8ed0829d711e41d3d92ce62611c6663352eb5611ba7472d088f943c70e7c",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
     },
     {
-      "content_sha256_lf": "3479e14030f1a3eae5508af1c69d7920eb351eb434227a431b30355146ab974b",
+      "content_sha256_lf": "94d7602986b54d81aaf67e5f3c5d92fee21fec0ed390e15bfaa6b08bbf4d00ce",
       "entry_count": 5,
       "package": "rust_core/data-processor-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
     },
     {
-      "content_sha256_lf": "1f7bd5e97662eb1a1cf1868531bbafc0835b985f29f8ec2caab2ba988df1b039",
+      "content_sha256_lf": "f014e1f06fe53b10833af6a3f4a7cb47abb4b7253e894ad16974c031845173f9",
       "entry_count": 3,
       "package": "rust_core/file_watcher",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "79b76a9d474d2c87acff6ac74cee0e2d6c2972f005dcd7d618c264a22a2496a2",
+      "content_sha256_lf": "138e53f045d2a929e64b74b840df323f6ad2c746837af8d7a1e61d5e40c97f3c",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "3ed9858a36fddb633acca7293f41266017af5c513ffa2114fe35800d73e13c68",
+      "content_sha256_lf": "208ba9bb6548c08e7116f23138515bbe1f60523d29432223269ec6903d0b670e",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -351,7 +351,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-model-generation.json"
     },
     {
-      "content_sha256_lf": "9d7150b437061160b653ece555e1ffe3a494cc334a37029aff8a5c0eb3a441f3",
+      "content_sha256_lf": "5fa362740ee292d9cdf90b475e8b5ea7412a0989f35c9343dffd893fb7d525f1",
       "entry_count": 93,
       "package": "src/movement_optimizer",
       "path": "manuals/tools/manifests/module-inventory/entries-src-movement-optimizer.json"
@@ -375,8 +375,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-ode-solver.json"
     },
     {
-      "content_sha256_lf": "eb1c1285df395fcdd05990783c6259c684f14ef965b734b72476ea12e8379026",
-      "entry_count": 11,
+      "content_sha256_lf": "57beca751e02fc7fe3da389b0bb9f9a000835d7253a1c8f56f13624ee03b560f",
+      "entry_count": 3,
       "package": "src/optimizer_gui",
       "path": "manuals/tools/manifests/module-inventory/entries-src-optimizer-gui.json"
     },
@@ -423,7 +423,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-project-packer.json"
     },
     {
-      "content_sha256_lf": "64ff4ae7758f5a42a442141f9ee7fdc0c2a9a9df0fecd494ff3bdd9793c1378f",
+      "content_sha256_lf": "3cdc1fed32367f164d20250a2e26a460ae9ca5c14375251b03111f3b97c6c203",
       "entry_count": 33,
       "package": "src/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-python.json"

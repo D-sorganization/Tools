@@ -2250,9 +2250,9 @@
           "src/movement_optimizer/tests/test_optimization_mixin_worker.py",
           "src/movement_optimizer/tests/test_theming.py",
           "src/movement_optimizer/tests/test_undo_redo_menu.py",
-          "src/optimizer_gui/tests/test_swing_chain_tabs.py",
           "src/pendulum_simulator/tests/test_main_window.py",
           "tests/ode_solver/test_main_window.py",
+          "tests/optimizer_gui/test_registration_shim.py",
           "tests/test_movement_optimizer_provider_manifest.py"
         ],
         "unit_mentions": [

@@ -519,23 +519,14 @@ python src/multi_param_analysis/launch_pyqt6.py
 
 ---
 
-### 7.6 Optimizer GUI
+### 7.6 Optimizer GUI (legacy shim)
 
 **Location**: `src/optimizer_gui/`
 
-**Purpose**: Adam-based optimization for multi-parameter systems.
-
-**Features**:
-
-- Adam optimizer with configurable hyperparameters
-- Alternative methods: Grid Search, L-BFGS-B, Differential Evolution
-- Parameter bounds and constraints
-- Convergence tracking
-- Optimization history
-
-**Inputs**: Parameter table, hyperparameters, objective function
-
-**Outputs**: Optimal parameters, convergence history
+**Purpose**: Compatibility launcher for the canonical Movement Optimizer
+application. The standalone optimizer GUI that used to live here was
+consolidated into `src/movement_optimizer` (Tools #3983); the drifted vendored
+copy was removed and only the registration/launcher shim remains.
 
 **Launch**:
 
@@ -543,7 +534,8 @@ python src/multi_param_analysis/launch_pyqt6.py
 python src/optimizer_gui/launch_pyqt6.py
 ```
 
-**Status**: Fully Implemented
+The command starts the canonical Movement Optimizer PyQt6 application from
+`src/movement_optimizer`.
 
 ---
 
