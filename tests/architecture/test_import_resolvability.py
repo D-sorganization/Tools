@@ -109,9 +109,8 @@ def _resolves(module: str) -> bool:
 def _is_production_file(path: Path) -> bool:
     """Production code only — mirrors the #3316 guard's tests exemption.
 
-    Test files are out of scope: several import ``tools.folder_tools.*``
-    submodules that do not exist, and that tree is already excluded from
-    ruff/mypy/bandit in ci-standard.yml as known pre-existing debt.
+    Test files are out of scope: the #3316 guard exempts them from the
+    resolvability contract (they may target optional sub-app layouts).
     """
     relative = path.relative_to(REPO_ROOT)
     if "__pycache__" in relative.parts:

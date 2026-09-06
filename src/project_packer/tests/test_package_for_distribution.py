@@ -1,4 +1,5 @@
-"""Tests for package_for_distribution.py module."""
+# ruff: noqa: E501
+"""Tests for project_packer.package_for_distribution.py module."""
 
 import zipfile
 from pathlib import Path
@@ -6,7 +7,7 @@ from unittest.mock import patch
 
 import pytest
 
-from tools.folder_tools.project_packer.package_for_distribution import (
+from project_packer.package_for_distribution import (
     copy_required_files,
     create_deployment_package,
     create_zip_archive,
@@ -19,7 +20,7 @@ class TestPackageForDistribution:
 
     def test_create_deployment_package_success(self, tmp_path: Path) -> None:
         """Test successful deployment package creation."""
-        with patch("package_for_distribution.Path") as mock_path_class:
+        with patch("project_packer.package_for_distribution.Path") as mock_path_class:
             # Mock the Path class to return our tmp_path
             mock_path_class.return_value.parent = tmp_path
 
@@ -27,9 +28,13 @@ class TestPackageForDistribution:
             packages_dir = tmp_path / "packages"
             packages_dir.mkdir()
 
-            with patch("package_for_distribution.copy_required_files") as mock_copy:
+            with patch(
+                "project_packer.package_for_distribution.copy_required_files"
+            ) as mock_copy:
                 mock_copy.return_value = True
-                with patch("package_for_distribution.create_zip_archive") as mock_zip:
+                with patch(
+                    "project_packer.package_for_distribution.create_zip_archive"
+                ) as mock_zip:
                     result = create_deployment_package()
                     assert result is True
                     mock_copy.assert_called_once()
@@ -37,14 +42,16 @@ class TestPackageForDistribution:
 
     def test_create_deployment_package_copy_failure(self, tmp_path: Path) -> None:
         """Test deployment package creation when file copying fails."""
-        with patch("package_for_distribution.Path") as mock_path_class:
+        with patch("project_packer.package_for_distribution.Path") as mock_path_class:
             # Mock the Path class to return our tmp_path
             mock_path_class.return_value.parent = tmp_path
 
             packages_dir = tmp_path / "packages"
             packages_dir.mkdir()
 
-            with patch("package_for_distribution.copy_required_files") as mock_copy:
+            with patch(
+                "project_packer.package_for_distribution.copy_required_files"
+            ) as mock_copy:
                 mock_copy.return_value = False
                 result = create_deployment_package()
                 assert result is False
@@ -61,7 +68,9 @@ class TestPackageForDistribution:
         for file in test_files:
             (source_dir / file).write_text("test content")
 
-        with patch("package_for_distribution.REQUIRED_FILES", test_files):
+        with patch(
+            "project_packer.package_for_distribution.REQUIRED_FILES", test_files
+        ):
             result = copy_required_files(source_dir, package_dir)
             assert result is True
 
@@ -82,7 +91,9 @@ class TestPackageForDistribution:
         for file in existing_files:
             (source_dir / file).write_text("test content")
 
-        with patch("package_for_distribution.REQUIRED_FILES", test_files):
+        with patch(
+            "project_packer.package_for_distribution.REQUIRED_FILES", test_files
+        ):
             result = copy_required_files(source_dir, package_dir)
             assert result is True
 
@@ -102,7 +113,9 @@ class TestPackageForDistribution:
         (source_dir / test_file).write_text("test content")
 
         with (
-            patch("package_for_distribution.REQUIRED_FILES", [test_file]),
+            patch(
+                "project_packer.package_for_distribution.REQUIRED_FILES", [test_file]
+            ),
             patch("shutil.copy2") as mock_copy,
         ):
             mock_copy.side_effect = OSError("Permission denied")
@@ -146,7 +159,9 @@ class TestPackageForDistribution:
 
     def test_main_success(self) -> None:
         """Test main function when package creation succeeds."""
-        with patch("package_for_distribution.create_deployment_package") as mock_create:
+        with patch(
+            "project_packer.package_for_distribution.create_deployment_package"
+        ) as mock_create:
             mock_create.return_value = True
             with patch("sys.exit") as mock_exit:
                 main()
@@ -154,7 +169,9 @@ class TestPackageForDistribution:
 
     def test_main_failure(self) -> None:
         """Test main function when package creation fails."""
-        with patch("package_for_distribution.create_deployment_package") as mock_create:
+        with patch(
+            "project_packer.package_for_distribution.create_deployment_package"
+        ) as mock_create:
             mock_create.return_value = False
             with patch("sys.exit") as mock_exit:
                 main()
@@ -162,21 +179,21 @@ class TestPackageForDistribution:
 
     def test_package_version_constant(self) -> None:
         """Test that package version constant is properly defined."""
-        from package_for_distribution import PACKAGE_VERSION
+        from project_packer.package_for_distribution import PACKAGE_VERSION
 
         assert isinstance(PACKAGE_VERSION, str)
         assert len(PACKAGE_VERSION) > 0
 
     def test_package_base_name_constant(self) -> None:
         """Test that package base name constant is properly defined."""
-        from package_for_distribution import PACKAGE_BASE_NAME
+        from project_packer.package_for_distribution import PACKAGE_BASE_NAME
 
         assert isinstance(PACKAGE_BASE_NAME, str)
         assert len(PACKAGE_BASE_NAME) > 0
 
     def test_required_files_constant(self) -> None:
         """Test that required files constant is properly defined."""
-        from package_for_distribution import REQUIRED_FILES
+        from project_packer.package_for_distribution import REQUIRED_FILES
 
         assert isinstance(REQUIRED_FILES, list)
         assert len(REQUIRED_FILES) > 0

@@ -1172,7 +1172,7 @@ uvicorn app:app --reload
 
 ### 12.1 Folder Packer Pro
 
-**Location**: `tools/folder_tools/`
+**Location**: `src/folder_packer_pro/`
 
 **Purpose**: Project archiving and distribution tool.
 
@@ -1187,24 +1187,7 @@ uvicorn app:app --reload
 
 ---
 
-### 12.2 Folder Fix Pro
-
-**Location**: `tools/folder_tools/`
-
-**Purpose**: Automated folder structure cleanup and organization.
-
-**Features**:
-
-- Empty folder detection and removal
-- Duplicate file detection
-- Structure validation
-- Batch renaming
-
-**Status**: Fully Implemented
-
----
-
-### 12.3 PDF Renamer
+### 12.2 PDF Renamer
 
 **Location**: `src/document_processing/`
 

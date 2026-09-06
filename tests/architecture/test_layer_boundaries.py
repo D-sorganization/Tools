@@ -38,7 +38,6 @@ TOOL_PACKAGES = {
     "electrode_advisor",
     "data_processing",
     "document_processing",
-    "folder_tools",
     "humanoid_builder_gui",
     "scientific_modeling",
     "rotation_converter",
