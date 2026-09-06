@@ -195,15 +195,16 @@ class PerturbationConfig:
     seed: int | None = None
 
     def __post_init__(self) -> None:
-        assert self.n_trials > 0, f"n_trials must be positive, got {self.n_trials}"
-        assert self.noise_amplitude >= 0, (
-            f"noise_amplitude must be non-negative, got {self.noise_amplitude}"
-        )
-        assert self.noise_type in {
-            "white",
-            "pink",
-            "brown",
-        }, f"noise_type must be 'white', 'pink', or 'brown', got {self.noise_type!r}"
+        if self.n_trials <= 0:
+            raise ValueError(f"n_trials must be positive, got {self.n_trials}")
+        if self.noise_amplitude < 0:
+            raise ValueError(
+                f"noise_amplitude must be non-negative, got {self.noise_amplitude}"
+            )
+        if self.noise_type not in {"white", "pink", "brown"}:
+            raise ValueError(
+                f"noise_type must be 'white', 'pink', or 'brown', got {self.noise_type!r}"
+            )
 
 
 # ---------------------------------------------------------------------------

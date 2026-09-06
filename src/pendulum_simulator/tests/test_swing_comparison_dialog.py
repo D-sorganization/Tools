@@ -39,6 +39,11 @@ def app():
     yield a
 
 
+@pytest.fixture(scope="module")
+def _app(app):
+    return app
+
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -270,9 +275,7 @@ class TestSwingComparisonExecution:
             }
             dialog._on_preset_done("Preset A", summary)
 
-            with patch(
-                "double_pendulum_golf.gui.swing_comparison_dialog._HAS_MPL", False
-            ):
+            with patch("double_pendulum_golf.gui.swing_comparison_dialog._HAS_MPL", False):
                 dialog._on_all_done([("Preset A", summary)])
 
             from double_pendulum_golf.gui.swing_comparison_dialog import _HAS_MPL
@@ -302,9 +305,7 @@ class TestSwingComparisonExecution:
         dialog._results = [("Preset A", summary)]
 
         # no path
-        with patch(
-            "PyQt6.QtWidgets.QFileDialog.getSaveFileName", return_value=("", "")
-        ):
+        with patch("PyQt6.QtWidgets.QFileDialog.getSaveFileName", return_value=("", "")):
             dialog._on_export()
 
         csv_file = tmp_path / "test.csv"

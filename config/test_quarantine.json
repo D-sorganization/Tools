@@ -2,18 +2,6 @@
   "_comment": "Test modules kept out of the sharded PR lane (Tools #4913). Quarantine individual modules only, never directories; every entry needs an owner cluster and a tracked issue, and `python scripts/ci_test_shards.py --check` fails when a path no longer exists. Remove entries as they are fixed; #4933 closes when this list is empty.",
   "entries": [
     {
-      "path": "src/pendulum_simulator/tests/test_perturbation_panel.py",
-      "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)",
-      "issue": "#4933",
-      "reason": "13 errors: fixture '_app' not found in any conftest"
-    },
-    {
-      "path": "src/pendulum_simulator/tests/test_swing_comparison_dialog.py",
-      "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)",
-      "issue": "#4933",
-      "reason": "14 errors: fixture '_app' not found in any conftest"
-    },
-    {
       "path": "src/pendulum_simulator/tests/test_diagnostics.py",
       "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)",
       "issue": "#4933",
@@ -24,12 +12,6 @@
       "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)",
       "issue": "#4933",
       "reason": "5 failures: ChartDataDialog requires model_type; ChartDataDialog is not a QWidget for addWidget"
-    },
-    {
-      "path": "src/pendulum_simulator/tests/test_perturbation_analysis.py",
-      "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)",
-      "issue": "#4933",
-      "reason": "2 failures: perturbation_analysis.py raises AssertionError where tests expect ValueError"
     },
     {
       "path": "src/pendulum_simulator/tests/test_controls_widget.py",
@@ -60,12 +42,6 @@
       "owner": "src/pendulum_simulator (AGENT_HANDOFF.md)",
       "issue": "#4933",
       "reason": "1 failure on main"
-    },
-    {
-      "path": "src/movement_optimizer/tests/test_benchmarks.py",
-      "owner": "src/movement_optimizer",
-      "issue": "#4933",
-      "reason": "wall-clock budget assertion (_compute_cost <5ms median) belongs in benchmark-suite.yml, not a PR gate"
     },
     {
       "path": "src/pendulum_simulator/tests/test_analysis_tab.py",
@@ -180,12 +156,6 @@
       "owner": "tests/vessel_drafter",
       "issue": "#4933",
       "reason": "monorepo shared contracts imported instead of fallback"
-    },
-    {
-      "path": "tests/integration/test_tool_interactions.py",
-      "owner": "tests/integration",
-      "issue": "#4933",
-      "reason": "pandas 2.2+ frequency offset alias deprecation: H -> h"
     },
     {
       "path": "tests/rust_bindings/test_math_primitives_bindings.py",
