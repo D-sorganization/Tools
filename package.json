@@ -1,6 +1,6 @@
 {
   "name": "tools-workspace",
-  "version": "1.15.4",
+  "version": "1.15.5",
   "description": "D-Sorganization Tools monorepo workspace root",
   "private": true,
   "workspaces": [
