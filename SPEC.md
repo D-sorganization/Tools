@@ -27,10 +27,19 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.126                                   |
+| **Spec Version**        | 1.18.127                                   |
 | **Last Spec Update**    | 2026-09-06                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-09-06 Test Quarantine Unquarantine (#4933)
+
+Unquarantined `tests/vessel_drafter/test_contracts_fallback.py` and
+`tests/test_python_version_contract.py` from `config/test_quarantine.json`.
+Hardened `_load_fallback_contracts` to explicitly block `shared.python.contracts`
+and parent namespaces from `sys.modules`, ensuring standalone fallback DbC
+contracts are verified without monorepo bleed. Isolated root conftest loading in
+`test_python_version_contract.py` using explicit spec loading rather than bare imports.
 
 ### 2026-09-06 Pressure-Drop Public-Name Hygiene (#3991)
 
@@ -5692,6 +5701,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-06 | #5023 | fix(tests, #4933): unquarantine vessel drafter contracts fallback and python version contract tests (#4933). |
 | 2026-09-06 | #5021 | test(rate-of-closure, #5021): re-approve pyqt visual baselines from trusted push run 34045862045 (commit be71b03676eda7bbfa40c880ded3a3bb7112b868). Synchronize all 10 PyQt baseline PNGs and their sha256 checksums with the runner-captured candidates and rebind source_artifact_commit in visual_baselines.v1.json and test_visual_baseline_compare.py. |
 | 2026-09-06 | #5017 | a11y(rate-of-closure, #5017): add standard focus-visible ring styling to interactive button elements in PlotsPanel to enhance keyboard navigation accessibility. |
 | 2026-09-06 | #5015 | perf(rate-web, #5015): replace map and array spread in PuttingVisuals with single-pass loop for charting domain bounds calculation. |
@@ -7239,8 +7249,8 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 - **2026-09-05**: refactor(folder-tools, #3985) — Delete vendored folder_tools leftover and update dead tests to test canonical implementations.
 
 ### 2026-09-05: P1AM Interlock Limits Domain Enforcement (#4032)
- 
- - **2026-09-05**: fix(p1am, #4032) — Remove blanket [0,100] tag clamp and enforce interlock limit domain at the boundary so engineering-unit limits trip correctly.
+
+- **2026-09-05**: fix(p1am, #4032) — Remove blanket [0,100] tag clamp and enforce interlock limit domain at the boundary so engineering-unit limits trip correctly.
 
 ## 2026-09-06: Re-approve PyQt Visual Baselines From Trusted Push (#5021)
 

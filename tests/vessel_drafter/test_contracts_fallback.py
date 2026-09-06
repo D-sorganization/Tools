@@ -26,6 +26,9 @@ def _load_fallback_contracts(
 
     monkeypatch.setenv("DBC_LEVEL", dbc_level)
     monkeypatch.setitem(sys.modules, "contracts", None)
+    monkeypatch.setitem(sys.modules, "shared", None)
+    monkeypatch.setitem(sys.modules, "shared.python", None)
+    monkeypatch.setitem(sys.modules, "shared.python.contracts", None)
 
     spec = importlib.util.spec_from_file_location(module_name, module_path)
     assert spec is not None
