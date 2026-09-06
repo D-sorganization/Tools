@@ -7350,6 +7350,23 @@
               ],
               "returns": "None"
             },
+            "select_best_engine": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "engine",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
             "calculate_properties": {
               "args": [
                 {
@@ -7746,6 +7763,23 @@
                 }
               ],
               "returns": "None"
+            },
+            "select_best_engine": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "engine",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
             },
             "calculate_properties": {
               "args": [
