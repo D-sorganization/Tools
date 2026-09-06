@@ -5680,7 +5680,8 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 <!-- prettier-ignore-start -->
 
 | Date       | PR         | Changes    |
-| 2026-09-05 | #5004 | feat(wind): re-land wind strategy panel, worker, and responsive flight explorer integration (#4960). Re-integrates the wind strategy panel and its web worker into the Flight Explorer tab with responsive tab switching, custom renderer hooks and typing on PlotCanvasPane, accessibility bound reconciliation, and clean worker lifecycle teardown on window close. |
+| ---------- | ---------- | ---------- |
+| 2026-09-05 | #5004 | feat(wind): re-land wind strategy panel, worker, and responsive flight explorer integration (#4960). Re-integrates the wind strategy panel and its web worker into the Flight Explorer tab with responsive tab switching, custom renderer hooks on PlotCanvasPane, typed legend placement, accessibility audit control count bounds, and clean worker lifecycle teardown on window close. |
 | 2026-09-05 | #4921 | docs(audit, #4921): reconcile golf app gap audit and rate of closure campaign ledger; reconcile program states for #4120, #4125, #4130, #4146, #4234 to implemented_unverified, reflecting PR #4945 re-landing impact-interval dynamics (#4133) and main presence of core packages; document delivered vs missing slices (inverse solver, wind, camera, screw analysis, ground bounce) and epic checklists; add campaign release manifest validation tests. (spec 1.18.125) |
 | 2026-09-05 | #4997 | chore(release): bump version to v1.15.4. |
 | 2026-09-05 | #4993 | perf(rate-web): replace chained flatMap/map array spreads with single-pass loops to compute 3D bounds in swingSceneDraw.ts (#4993). |

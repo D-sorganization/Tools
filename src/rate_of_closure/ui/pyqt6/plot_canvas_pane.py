@@ -240,7 +240,7 @@ class PlotCanvasPane(PlotCanvasInspectorMixin, QFrame):
     def _apply_legend(self, _index: int = 0) -> None:
         placement = self.legend_placement()
         for axes in self._figure.axes:
-            legend = cast(Any, axes.get_legend())
+            legend = axes.get_legend()
             if legend is None:
                 continue
             if placement == "hidden":
@@ -248,17 +248,17 @@ class PlotCanvasPane(PlotCanvasInspectorMixin, QFrame):
                 continue
             legend.set_visible(True)
             if placement == "outside_right":
-                legend.set_loc("upper left")
+                cast(Any, legend).set_loc("upper left")
                 legend.set_bbox_to_anchor((1.02, 1.0))
             else:
                 legend.set_bbox_to_anchor(None)
-                loc_map = {
+                loc_map: dict[str, str] = {
                     "inside_upper_right": "upper right",
                     "inside_lower_right": "lower right",
                     "inside_lower_left": "lower left",
                 }
-                legend.set_loc(loc_map.get(placement, "best"))
-        self._canvas.draw_idle()
+                cast(Any, legend).set_loc(loc_map[placement])
+            self._canvas.draw_idle()
 
     def _on_scroll(self, event: MouseEvent) -> None:
         if event.button == "up":

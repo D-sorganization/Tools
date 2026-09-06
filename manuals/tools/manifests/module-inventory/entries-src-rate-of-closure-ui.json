@@ -5433,10 +5433,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10383,
+      "bytes_lf": 10402,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "99c0aa172a5f4e7a02c481a85f8c0d49b8427c76aa25db6ec1403b08b9410d53",
+      "content_sha256_lf": "5b8a4659eb60f7ede7f8275abc791ccbc14c5f558e3fe1a650de700e9b599444",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-PLOT-CANVAS-PANE-PY-11A16D5BF66F",
       "language": "python",

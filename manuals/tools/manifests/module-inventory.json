@@ -465,7 +465,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-simulation.json"
     },
     {
-      "content_sha256_lf": "89c1643090161c17b17c37976236d871d39c57599d783c49153b23422040f95b",
+      "content_sha256_lf": "5cfab397aede884a1c6adfd020a342395d446511392aefc9103b182066366e95",
       "entry_count": 189,
       "package": "src/rate_of_closure/ui",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-ui.json"
