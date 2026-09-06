@@ -1037,6 +1037,7 @@
           "src/multi_param_analysis/tests/test_multi_param_analysis_gui.py",
           "src/p1am_control_system/backend/tests/test_data_explorer_stats.py",
           "src/p1am_control_system/backend/tests/test_estop_write_seams.py",
+          "src/p1am_control_system/backend/tests/test_interlock_limit_domain.py",
           "src/p1am_control_system/backend/tests/test_modbus_codec.py",
           "src/p1am_control_system/backend/tests/test_system_state.py",
           "src/p1am_control_system/backend/tests/test_validation_guards_3745.py",

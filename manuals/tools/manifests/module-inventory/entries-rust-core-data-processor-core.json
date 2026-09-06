@@ -341,6 +341,7 @@
           "src/p1am_control_system/backend/tests/test_estop_clear_endpoint.py",
           "src/p1am_control_system/backend/tests/test_estop_endpoint_writes.py",
           "src/p1am_control_system/backend/tests/test_estop_shutdown_safe_state.py",
+          "src/p1am_control_system/backend/tests/test_interlock_limit_domain.py",
           "src/p1am_control_system/backend/tests/test_pid_tuning_tag_guards.py",
           "src/p1am_control_system/backend/tests/test_poll_loop_cadence.py",
           "src/p1am_control_system/backend/tests/test_poll_once.py",
