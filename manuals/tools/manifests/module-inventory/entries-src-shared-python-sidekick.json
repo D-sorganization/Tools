@@ -3034,10 +3034,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 44492,
+      "bytes_lf": 44487,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "629194cafbce08511d45e076176e47842a24cccb3e479db0c7bc53bb500b2f72",
+      "content_sha256_lf": "28dbbd6bb3c4992c34ed4406b47833a581bfba1f9cb90bff2ee7f2c3bb33462c",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-CALCULATORS-THERMO-STEAM-ENGINE-PY-00675BB67F5A",
       "language": "python",
