@@ -32,10 +32,10 @@ No `missing` files.
 - Diff ref: `origin/feat/4163-impact-inspector` | diffstat: 812 files changed, 93904 insertions(+), 2574 deletions(-) | added 500, modified 312, deleted 0
 - Recommendation: drop (only non-product groups are missing)
 
-| group | class | files | landed-elsewhere / missing / obsolete |
-|---|---|---:|---|
-| `.codex-worktrees` | obsolete | 6 | 0 / 0 / 6 |
-| `src/movement_optimizer/gui` | missing | 1 | 0 / 1 / 0 |
+| group                        | class    | files | landed-elsewhere / missing / obsolete |
+| ---------------------------- | -------- | ----: | ------------------------------------- |
+| `.codex-worktrees`           | obsolete |     6 | 0 / 0 / 6                             |
+| `src/movement_optimizer/gui` | missing  |     1 | 0 / 1 / 0                             |
 
 Missing files (1):
 
@@ -48,10 +48,10 @@ Missing files (1):
 - Diff ref: `origin/feat/4161-wedge-ground-clearance` | diffstat: 812 files changed, 93904 insertions(+), 2574 deletions(-) | added 500, modified 312, deleted 0
 - Recommendation: drop (only non-product groups are missing)
 
-| group | class | files | landed-elsewhere / missing / obsolete |
-|---|---|---:|---|
-| `.codex-worktrees` | obsolete | 6 | 0 / 0 / 6 |
-| `src/movement_optimizer/gui` | missing | 1 | 0 / 1 / 0 |
+| group                        | class    | files | landed-elsewhere / missing / obsolete |
+| ---------------------------- | -------- | ----: | ------------------------------------- |
+| `.codex-worktrees`           | obsolete |     6 | 0 / 0 / 6                             |
+| `src/movement_optimizer/gui` | missing  |     1 | 0 / 1 / 0                             |
 
 Missing files (1):
 
@@ -64,9 +64,9 @@ Missing files (1):
 - Diff ref: `origin/feat/4193-launch-direction-registry-integration` | diffstat: 865 files changed, 103125 insertions(+), 2559 deletions(-) | added 551, modified 314, deleted 0
 - Recommendation: drop (only non-product groups are missing)
 
-| group | class | files | landed-elsewhere / missing / obsolete |
-|---|---|---:|---|
-| `src/movement_optimizer/gui` | missing | 1 | 0 / 1 / 0 |
+| group                        | class   | files | landed-elsewhere / missing / obsolete |
+| ---------------------------- | ------- | ----: | ------------------------------------- |
+| `src/movement_optimizer/gui` | missing |     1 | 0 / 1 / 0                             |
 
 Missing files (1):
 
@@ -79,14 +79,14 @@ Missing files (1):
 - Diff ref: `origin/feat/4205-launch-monitor-analytics` (branch tip `2ec1decaf2c9` differs from PR head SHA) | diffstat: 881 files changed, 105548 insertions(+), 2560 deletions(-) | added 567, modified 314, deleted 0
 - Recommendation: keep for review: missing product/test groups src/rate_of_closure, src/rate_of_closure/ui, src/rate_of_closure/web, tests/rate_of_closure
 
-| group | class | files | landed-elsewhere / missing / obsolete |
-|---|---|---:|---|
-| `docs/rate_of_closure` | missing | 1 | 0 / 1 / 0 |
-| `src/movement_optimizer/gui` | missing | 1 | 0 / 1 / 0 |
-| `src/rate_of_closure` | missing | 2 | 0 / 2 / 0 |
-| `src/rate_of_closure/ui` | missing | 5 | 1 / 4 / 0 |
-| `src/rate_of_closure/web` | missing | 10 | 1 / 9 / 0 |
-| `tests/rate_of_closure` | missing | 1 | 0 / 1 / 0 |
+| group                        | class   | files | landed-elsewhere / missing / obsolete |
+| ---------------------------- | ------- | ----: | ------------------------------------- |
+| `docs/rate_of_closure`       | missing |     1 | 0 / 1 / 0                             |
+| `src/movement_optimizer/gui` | missing |     1 | 0 / 1 / 0                             |
+| `src/rate_of_closure`        | missing |     2 | 0 / 2 / 0                             |
+| `src/rate_of_closure/ui`     | missing |     5 | 1 / 4 / 0                             |
+| `src/rate_of_closure/web`    | missing |    10 | 1 / 9 / 0                             |
+| `tests/rate_of_closure`      | missing |     1 | 0 / 1 / 0                             |
 
 Missing files (18):
 
@@ -116,9 +116,9 @@ Missing files (18):
 - Diff ref: `origin/codex/ballflight-campaign-integration` | diffstat: 992 files changed, 126599 insertions(+), 2559 deletions(-) | added 678, modified 314, deleted 0
 - Recommendation: drop (only non-product groups are missing)
 
-| group | class | files | landed-elsewhere / missing / obsolete |
-|---|---|---:|---|
-| `src/movement_optimizer/gui` | missing | 1 | 0 / 1 / 0 |
+| group                        | class   | files | landed-elsewhere / missing / obsolete |
+| ---------------------------- | ------- | ----: | ------------------------------------- |
+| `src/movement_optimizer/gui` | missing |     1 | 0 / 1 / 0                             |
 
 Missing files (1):
 
@@ -131,14 +131,14 @@ Missing files (1):
 - Diff ref: `origin/feat/4226-launch-monitor-player-platform` (branch tip `d4ebc8a1872e` differs from PR head SHA) | diffstat: 913 files changed, 110484 insertions(+), 2560 deletions(-) | added 599, modified 314, deleted 0
 - Recommendation: keep for review: missing product/test groups src/rate_of_closure, src/rate_of_closure/ui, src/rate_of_closure/web, tests/rate_of_closure
 
-| group | class | files | landed-elsewhere / missing / obsolete |
-|---|---|---:|---|
-| `docs/rate_of_closure` | missing | 2 | 0 / 2 / 0 |
-| `src/movement_optimizer/gui` | missing | 1 | 0 / 1 / 0 |
-| `src/rate_of_closure` | missing | 4 | 0 / 4 / 0 |
-| `src/rate_of_closure/ui` | missing | 11 | 1 / 10 / 0 |
-| `src/rate_of_closure/web` | missing | 15 | 1 / 14 / 0 |
-| `tests/rate_of_closure` | missing | 3 | 0 / 3 / 0 |
+| group                        | class   | files | landed-elsewhere / missing / obsolete |
+| ---------------------------- | ------- | ----: | ------------------------------------- |
+| `docs/rate_of_closure`       | missing |     2 | 0 / 2 / 0                             |
+| `src/movement_optimizer/gui` | missing |     1 | 0 / 1 / 0                             |
+| `src/rate_of_closure`        | missing |     4 | 0 / 4 / 0                             |
+| `src/rate_of_closure/ui`     | missing |    11 | 1 / 10 / 0                            |
+| `src/rate_of_closure/web`    | missing |    15 | 1 / 14 / 0                            |
+| `tests/rate_of_closure`      | missing |     3 | 0 / 3 / 0                             |
 
 Missing files (34):
 
@@ -184,14 +184,14 @@ Missing files (34):
 - Diff ref: `origin/feat/4240-neural-model-lab` | diffstat: 896 files changed, 108082 insertions(+), 2560 deletions(-) | added 582, modified 314, deleted 0
 - Recommendation: keep for review: missing product/test groups src/rate_of_closure, src/rate_of_closure/ui, src/rate_of_closure/web, tests/rate_of_closure
 
-| group | class | files | landed-elsewhere / missing / obsolete |
-|---|---|---:|---|
-| `docs/rate_of_closure` | missing | 2 | 0 / 2 / 0 |
-| `src/movement_optimizer/gui` | missing | 1 | 0 / 1 / 0 |
-| `src/rate_of_closure` | missing | 4 | 0 / 4 / 0 |
-| `src/rate_of_closure/ui` | missing | 7 | 1 / 6 / 0 |
-| `src/rate_of_closure/web` | missing | 15 | 1 / 14 / 0 |
-| `tests/rate_of_closure` | missing | 3 | 0 / 3 / 0 |
+| group                        | class   | files | landed-elsewhere / missing / obsolete |
+| ---------------------------- | ------- | ----: | ------------------------------------- |
+| `docs/rate_of_closure`       | missing |     2 | 0 / 2 / 0                             |
+| `src/movement_optimizer/gui` | missing |     1 | 0 / 1 / 0                             |
+| `src/rate_of_closure`        | missing |     4 | 0 / 4 / 0                             |
+| `src/rate_of_closure/ui`     | missing |     7 | 1 / 6 / 0                             |
+| `src/rate_of_closure/web`    | missing |    15 | 1 / 14 / 0                            |
+| `tests/rate_of_closure`      | missing |     3 | 0 / 3 / 0                             |
 
 Missing files (30):
 
@@ -233,11 +233,11 @@ Missing files (30):
 - Diff ref: `origin/agent/sasho-face-center-rotational-aoa` | diffstat: 1202 files changed, 167955 insertions(+), 2582 deletions(-) | added 880, modified 322, deleted 0
 - Recommendation: keep for review: missing product/test groups src/rate_of_closure/web
 
-| group | class | files | landed-elsewhere / missing / obsolete |
-|---|---|---:|---|
-| `.codex-worktrees` | obsolete | 6 | 0 / 0 / 6 |
-| `src/movement_optimizer/gui` | missing | 1 | 0 / 1 / 0 |
-| `src/rate_of_closure/web` | missing | 1 | 0 / 1 / 0 |
+| group                        | class    | files | landed-elsewhere / missing / obsolete |
+| ---------------------------- | -------- | ----: | ------------------------------------- |
+| `.codex-worktrees`           | obsolete |     6 | 0 / 0 / 6                             |
+| `src/movement_optimizer/gui` | missing  |     1 | 0 / 1 / 0                             |
+| `src/rate_of_closure/web`    | missing  |     1 | 0 / 1 / 0                             |
 
 Missing files (2):
 
@@ -251,13 +251,13 @@ Missing files (2):
 - Diff ref: `origin/consolidated/p1am-platform-2026-08-13` | diffstat: 140 files changed, 16678 insertions(+), 226 deletions(-) | added 105, modified 35, deleted 0
 - Recommendation: drop (only non-product groups are missing)
 
-| group | class | files | landed-elsewhere / missing / obsolete |
-|---|---|---:|---|
-| `dcs_scada.db` | missing | 1 | 0 / 1 / 0 |
-| `docs/adr` | missing | 1 | 0 / 1 / 0 |
-| `src/p1am_control_system/backend` | missing | 84 | 0 / 84 / 0 |
-| `src/p1am_control_system/deploy` | missing | 9 | 0 / 9 / 0 |
-| `src/p1am_control_system/frontend` | missing | 10 | 0 / 10 / 0 |
+| group                              | class   | files | landed-elsewhere / missing / obsolete |
+| ---------------------------------- | ------- | ----: | ------------------------------------- |
+| `dcs_scada.db`                     | missing |     1 | 0 / 1 / 0                             |
+| `docs/adr`                         | missing |     1 | 0 / 1 / 0                             |
+| `src/p1am_control_system/backend`  | missing |    84 | 0 / 84 / 0                            |
+| `src/p1am_control_system/deploy`   | missing |     9 | 0 / 9 / 0                             |
+| `src/p1am_control_system/frontend` | missing |    10 | 0 / 10 / 0                            |
 
 Missing files (105):
 
@@ -330,16 +330,16 @@ Missing files (105):
 - Diff ref: `origin/consolidated/rate-closure-remainder-2026-08-13` | diffstat: 1385 files changed, 258896 insertions(+), 451 deletions(-) | added 1344, modified 41, deleted 0
 - Recommendation: keep for review: missing product/test groups src/rate_of_closure, src/rate_of_closure/web, tests/ops, tests/rate_of_closure, tests/shared
 
-| group | class | files | landed-elsewhere / missing / obsolete |
-|---|---|---:|---|
-| `.github/workflows` | missing | 1 | 0 / 1 / 0 |
-| `scripts` | missing | 4 | 0 / 4 / 0 |
-| `src/movement_optimizer/gui` | missing | 1 | 0 / 1 / 0 |
-| `src/rate_of_closure` | missing | 5 | 1 / 4 / 0 |
-| `src/rate_of_closure/web` | missing | 20 | 0 / 20 / 0 |
-| `tests/ops` | missing | 1 | 0 / 1 / 0 |
-| `tests/rate_of_closure` | missing | 19 | 0 / 19 / 0 |
-| `tests/shared` | missing | 1 | 0 / 1 / 0 |
+| group                        | class   | files | landed-elsewhere / missing / obsolete |
+| ---------------------------- | ------- | ----: | ------------------------------------- |
+| `.github/workflows`          | missing |     1 | 0 / 1 / 0                             |
+| `scripts`                    | missing |     4 | 0 / 4 / 0                             |
+| `src/movement_optimizer/gui` | missing |     1 | 0 / 1 / 0                             |
+| `src/rate_of_closure`        | missing |     5 | 1 / 4 / 0                             |
+| `src/rate_of_closure/web`    | missing |    20 | 0 / 20 / 0                            |
+| `tests/ops`                  | missing |     1 | 0 / 1 / 0                             |
+| `tests/rate_of_closure`      | missing |    19 | 0 / 19 / 0                            |
+| `tests/shared`               | missing |     1 | 0 / 1 / 0                             |
 
 Missing files (51):
 
@@ -400,3 +400,49 @@ Missing files (51):
 - PRs audited: 11 (reachable 11, unreachable 0)
 - Files absent from main: 269 (landed-elsewhere 7, missing 244, obsolete 18)
 - Groups: 40 (landed-elsewhere 0, missing 37, obsolete 3)
+
+## Golf App Gap Audit & Epic Checklist Reconciliation (Tools #4921)
+
+Reconciled as of: 2026-09-05  
+Audit Issue: Tools #4921 (Fleet Readiness Program Phase 0/1)
+
+### Executive Summary
+
+PRs recorded as "merged" across golf epics (#4169, #4173, #4174, #4209, #4212, #4217, #4233, #4246, #4436) had actually merged into stacked `feat/*`/`codex/*` carriers that were folded into #4466 and closed unmerged on 2026-08-20. Forensics across 355 remote stack branches identified substantive lost slices alongside substantial re-landings. All golf program states in `docs/release/rate_of_closure_campaign.v1.json` are reconciled to `main`: zero programs remain in `implemented_on_feature_stack`.
+
+### Delivered versus Missing Slices
+
+| Slice                               | Branches / PRs                                                                                         | Status on `main`                                                                                                                                                                     | Verdict & Action                                                                                    |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
+| **Inverse Flight Solver**           | #4195, #4196 (`feat/4195-inverse-flight-solver`, `feat/4196-impact-solution-families`)                 | Fully on `main` under `src/rate_of_closure/` and `src/shared/python/` (0 files missing beyond noise)                                                                                 | Delivered. Reconciled in #4191.                                                                     |
+| **Wind Physics & Uncertainty**      | #4198, #4199 (`feat/4198-wind-physics`, `feat/4199-wind-uncertainty`, `feat/4199-wind-scalar-adapter`) | Fully on `main` (0 files missing beyond noise)                                                                                                                                       | Delivered. Reconciled in #4191.                                                                     |
+| **Wind Workflow UI**                | #4199 (`feat/4199-wind-workflow`)                                                                      | Missing: `windStrategy.worker.ts`, `test_wind_strategy_panel.py`, manifest tooling                                                                                                   | Missing. Tracked in re-slice **#4960**.                                                             |
+| **Camera Controls & Preferences**   | #4218, #4571 (`feat/4218-camera-preference-persistence`, `feat/4284-*`)                                | Missing: `camera-controls.pw.ts`, `ClubCanvasCamera.test.tsx`, `test_camera_controls_gui.py`, `SynchronizedSimulationViews.tsx`, `ViewCompositorApp`                                 | Missing. Tracked in re-slice **#4961**.                                                             |
+| **Screw-Axis Analytics**            | #4108, #4169 (`feat/screw-axis-analysis`)                                                              | Substantially on `main`: `src/rate_of_closure/simulation/screw_analysis.py`, `ui/pyqt6/screw_overlay.py`, web `screwPresentation.ts`, `tests/rate_of_closure/test_screw_analysis.py` | Delivered. Reconciled in #4108 / #4169.                                                             |
+| **Impact-Interval Dynamics**        | #4130 / PR #4133 (`feat/impact-interval-dynamics`)                                                     | Re-landed to `main` via PR #4945: `src/shared/python/swing_sim/impact_interval/` (solver, contact law, types, tests), `docs/physics/IMPACT_INTERVAL_DYNAMICS.md`                     | Delivered via PR **#4945**. Reconciled in #4130.                                                    |
+| **Ground / Bounce / Regional**      | #4267, #4268–#4285 (~30 branches)                                                                      | Physics core and execution authorities fully on `main`; shared stack-base residue belongs to wind/capability slice                                                                   | Delivered on `main`; UI/manifest residue tracked in **#4960**.                                      |
+| **Multi-view Compositor**           | #4225 family (`feat/4225-multiview-compositor`, `-persistence`)                                        | Multi-view workspace landed via newer re-implementations on `main`; branch-specific paths superseded                                                                                 | Verified and dropped as superseded.                                                                 |
+| **Shared Golf Club Builder**        | #4146                                                                                                  | Core builder modules on `main` (`src/shared/python/golf_club/`); C5 image fitting tracked under RM #1506                                                                             | Core delivered; C5 tracked separately.                                                              |
+| **LM Player Platform / Neural Lab** | #4212, #4233, #4246                                                                                    | All 19 LM files and 12 v1 Neural Lab files superseded by ADR-0046 canonical layer (`src/shared/python/launch_monitor/`) and v2 models                                                | Superseded. 0 re-land, 85 obsolete, 3 needs-owner (per `closed_stack_gap_audit_decisions.v1.json`). |
+
+### Reconciled Golf Epic Checklists
+
+| Epic              | Title                                              | Delivery Stage           | Status on `main`                                                                               | Action / Follow-up                         |
+| ----------------- | -------------------------------------------------- | ------------------------ | ---------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| **#4103**         | Swing-Impact-Ball-Flight Simulation Platform       | `implemented_unverified` | Re-scoped as golf-app readiness epic; absorbs #4135, #4218, #4571, #4237, #4238                | Release gate owned by #4922                |
+| **#4120**         | Investigation and Variation Suite                  | `implemented_unverified` | Durable ensemble, variation session, noise response, and Morris sensitivity analysis on `main` | Overlaps #4142; gate owned by #4922        |
+| **#4125**         | Realistic Clubs, Swing Kinetics, Putting, Showcase | `implemented_unverified` | Swing kinetics, putting green model, stroke interchange, and club dynamics on `main`           | Gate owned by #4922                        |
+| **#4130**         | Impact-Interval Club Dynamics                      | `implemented_unverified` | Core six-DOF impact dynamics re-landed via PR #4945                                            | Re-landed in PR #4945; gate owned by #4922 |
+| **#4142**         | Ensemble Variation, Quiet Zones, Attribution       | `implemented_unverified` | Durable ensemble authorities and variation tabs on `main` (29 landed, 2 partial, 0 missing)    | Open for R14.6 (#4433) and R15.3 golden    |
+| **#4146**         | Shared Golf Club Builder                           | `implemented_unverified` | Core builder modules on `main` (`src/shared/python/golf_club/`)                                | Core delivered; C5 tracked under RM #1506  |
+| **#4158**         | Wedge Delivery Kinematics & Chip-Shot Explorer     | `implemented_unverified` | Wedge delivery kinematics and chip-shot models on `main` (6 landed, 2 partial)                 | Open for #4162 metrics, #4165 parity       |
+| **#4180 / #4181** | LM Convention Registry & Comparability             | `implemented_unverified` | Folded to convention layer; registry and comparability models on `main` (3 landed, 2 partial)  | Open for convention refinements            |
+| **#4189**         | Comprehensive 3D D-Plane Calculation               | `implemented_unverified` | 3D D-plane models and visual calculations on `main` (1 landed, 0 partial, 0 missing)           | Delivered on `main`                        |
+| **#4191**         | Shot Design, Wind Strategy, Inverse Flight         | `implemented_unverified` | Inverse solver and wind physics on `main` (9 landed, 1 partial); UI panel in #4960             | Open for #4201 / #4922 gate and #4960 UI   |
+| **#4201**         | Cross-Interface Validation & Release Evidence      | `specified_only`         | Release gating framework and evidence definitions specified                                    | Gate owned by #4922                        |
+| **#4218**         | Modern Toolstrip, Persistence, Workspace           | `implemented_unverified` | Toolstrip, layout, and workspace on `main` (6 landed, 16 partial, 3 missing)                   | Camera persistence tracked in #4961        |
+| **#4234**         | Production-Grade Visual Design & Error UX          | `implemented_unverified` | Visual design, theme integration, layout, and error UX on `main`; children in #4103            | Absorbed into #4103; gate in #4922         |
+| **#4260**         | Golf Impact & Flight Four-Surface Parity           | `implemented_unverified` | Four-surface capability matrix `docs/release/four_surface_capability.v1.json` on `main`        | Conformance run owned by #4920/#4922       |
+| **#4267**         | Qualified Landing, Bounce, Roll, Ground Modeling   | `implemented_unverified` | Physics core and execution authorities on `main` (11 landed, 12 partial, 2 missing)            | Open for playback parity and #4960         |
+| **#4433**         | Visual-First Tab Visibility                        | `implemented_unverified` | Core tab implementations on `main`; audit automation manifest open                             | V4 audit automation tracked                |
+| **#4571**         | Camera Controls & Presets                          | `implemented_unverified` | Camera contract on `main`; controls, presets, and snap-tracking open                           | Tracked in re-slice #4961                  |

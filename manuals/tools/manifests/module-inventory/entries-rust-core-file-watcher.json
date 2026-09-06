@@ -171,6 +171,7 @@
           "tests/ops/test_workflow_run_security_guards.py",
           "tests/python/test_performance_utils.py",
           "tests/python/test_plugin_manager_discovery.py",
+          "tests/rate_of_closure/test_campaign_release_manifest.py",
           "tests/rate_of_closure/test_complete_trial_standalone_wheel.py",
           "tests/rate_of_closure/test_epic_4142_requirement_evidence.py",
           "tests/rate_of_closure/test_launch_monitor_drift_gate_surface.py",
