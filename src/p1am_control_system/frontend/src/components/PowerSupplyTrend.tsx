@@ -140,9 +140,30 @@ export const PowerSupplyTrend: React.FC<Props> = ({
   const iPts = down.map((s) => ({ t: s.t, v: toPct(s.i, currentFullScale) }));
   const vPts = down.map((s) => ({ t: s.t, v: toPct(s.v, voltageFullScale) }));
   const pPts = down.map((s) => ({ t: s.t, v: toPct(s.p, powerFullScale) }));
+
+  // ⚡ Bolt Optimization: Use a single-pass loop over the source array
+  // to compute domain extents. This avoids allocating massive intermediate
+  // arrays and prevents call stack expansions from array spreads.
+  let currentMin = Infinity;
+  let currentMax = -Infinity;
+  if (down.length > 0) {
+    for (let i = 0; i < down.length; i++) {
+      const s = down[i];
+      const iv = toPct(s.i, currentFullScale);
+      const vv = toPct(s.v, voltageFullScale);
+      const pv = toPct(s.p, powerFullScale);
+      if (iv < currentMin) currentMin = iv;
+      if (iv > currentMax) currentMax = iv;
+      if (vv < currentMin) currentMin = vv;
+      if (vv > currentMax) currentMax = vv;
+      if (pv < currentMin) currentMin = pv;
+      if (pv > currentMax) currentMax = pv;
+    }
+  }
+
   const { min, max } = resolveRange(
     axis,
-    [...iPts, ...vPts, ...pPts].map((p) => p.v),
+    down.length > 0 ? [currentMin, currentMax] : [],
     { min: 0, max: 100 },
   );
 
