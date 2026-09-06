@@ -11,7 +11,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from .pressure_drop_results import _wrap_text
+from .pressure_drop_results import wrap_text
 from .utils.fitting_loss_coefficients import FITTING_K_FACTORS
 from .utils.flow_rate_converter import (
     MASS_FLOW_CONVERSIONS,
@@ -169,7 +169,7 @@ def _log_validation_report(
             "║ ERRORS (must fix):                                                ║"
         )
         for error in errors:
-            for line in _wrap_text(error, 64):
+            for line in wrap_text(error, 64):
                 _logger.info(f"║   ❌ {line:62s}║")
 
     if warnings:
@@ -177,7 +177,7 @@ def _log_validation_report(
             "║ WARNINGS (review):                                                ║"
         )
         for warning in warnings:
-            for line in _wrap_text(warning, 64):
+            for line in wrap_text(warning, 64):
                 _logger.info(f"║   ⚠️  {line:61s}║")
 
     if is_valid:

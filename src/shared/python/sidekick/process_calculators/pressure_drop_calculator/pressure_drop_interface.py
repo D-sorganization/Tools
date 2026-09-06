@@ -4,10 +4,10 @@
 
 Refactored from a single 1407-line file into focused submodules (issue #1952):
 
-    pressure_drop_units.py      — _convert_temperature, _convert_pressure
+    pressure_drop_units.py      — convert_temperature, convert_pressure
     pressure_drop_validation.py — validate_inputs, _validate_* helpers
-    pressure_drop_results.py    — _format_results, print_results, _print_*,
-                                   _generate_recommendations, _wrap_text
+    pressure_drop_results.py    — format_results, print_results, _print_*,
+                                   _generate_recommendations, wrap_text
 
 All public symbols remain importable from this module.
 
@@ -63,19 +63,19 @@ from .models.pressure_drop_data_models import (
 
 # Re-export submodule symbols so callers that import from here continue to work
 from .pressure_drop_results import (  # noqa: F401
-    _format_results,
     _generate_recommendations,
     _print_breakdown_section,
     _print_flow_and_gas_sections,
     _print_safety_section,
     _print_summary_section,
     _print_warnings_and_recommendations,
-    _wrap_text,
+    format_results,
     print_results,
+    wrap_text,
 )
 from .pressure_drop_units import (  # noqa: F401
-    _convert_pressure,
-    _convert_temperature,
+    convert_pressure,
+    convert_temperature,
 )
 from .pressure_drop_validation import (  # noqa: F401
     _log_validation_report,
@@ -679,8 +679,8 @@ def calculate_pressure_drop(
     _validate_calculate_pressure_drop_boundary(
         pipe_length, flow_rate, flow_unit, pressure, friction_method
     )
-    temp_k = _convert_temperature(temperature, temperature_unit, "K")
-    pressure_pa = _convert_pressure(pressure, pressure_unit, "Pa")
+    temp_k = convert_temperature(temperature, temperature_unit, "K")
+    pressure_pa = convert_pressure(pressure, pressure_unit, "Pa")
     inputs = _build_pressure_drop_inputs(
         pipe_size,
         pipe_schedule,
@@ -701,7 +701,7 @@ def calculate_pressure_drop(
     )
     engine = PressureDropCalculationEngine()
     results = engine.calculate(inputs)
-    formatted_results: dict[str, Any] = _format_results(results)
+    formatted_results: dict[str, Any] = format_results(results)
     return formatted_results
 
 
