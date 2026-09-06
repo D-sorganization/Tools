@@ -110,12 +110,6 @@
       "reason": "18 unguarded print calls in vendor/codegen files on main"
     },
     {
-      "path": "tests/test_model_generation_api_adapters.py",
-      "owner": "tests",
-      "issue": "#4933",
-      "reason": "Flask endpoint and adapter shim size drift on main"
-    },
-    {
       "path": "tests/test_shared_package_api_stability.py",
       "owner": "tests",
       "issue": "#4933",
