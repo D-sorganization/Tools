@@ -268,6 +268,15 @@ class InterlockConfig(BaseModel):
     This is the default for every tag that is not a routed input (#4001): the
     old ``low_limit=5.0`` for all 32 tags tripped the firmware on any unrouted
     tag reading 0.0 -- and on a routed thermocouple at room temperature.
+
+    A numeric limit must be an actionable percent of span in
+    ``[hardware.INTERLOCK_LIMIT_MIN, INTERLOCK_LIMIT_MAX]`` = [0, 100] (issue
+    #4032): the firmware compares readings against it in that same domain, so
+    a limit outside the span -- e.g. a degC value like 900 typed into the
+    percent-domain field -- could never be exceeded and would silently
+    disable the trip. Out-of-domain limits are rejected here (HTTP 422 at
+    ``POST /api/routing``) with the expected unit named; express engineering
+    units with ``hardware.celsius_to_percent`` or send ``None`` to disable.
     """
 
     lolo_limit: float | None = None
@@ -277,10 +286,25 @@ class InterlockConfig(BaseModel):
 
     @field_validator("lolo_limit", "low_limit", "high_limit", "hihi_limit")
     @classmethod
-    def _check_finite_or_none(cls, value: float | None, info: Any) -> float | None:
+    def _check_limit_is_actionable(cls, value: float | None, info: Any) -> float | None:
+        """None disables the side; a number must be an actionable limit."""
         if value is None:
             return None
-        return _finite(value, info.field_name)
+        checked = _finite(value, info.field_name)
+        if not (
+            hardware.INTERLOCK_LIMIT_MIN <= checked <= hardware.INTERLOCK_LIMIT_MAX
+        ):
+            raise ValueError(
+                f"{info.field_name} must be a percent of span in "
+                f"[{hardware.INTERLOCK_LIMIT_MIN}, "
+                f"{hardware.INTERLOCK_LIMIT_MAX:g}] (the register contract's "
+                "tag domain; 100 % == "
+                f"{hardware.THERMOCOUPLE_FULL_SCALE_C:g} degC on the type-K "
+                f"channel), got {checked}. Convert engineering units with "
+                "hardware.celsius_to_percent(), or send null to disable "
+                "this side."
+            )
+        return checked
 
     def is_disabled(self) -> bool:
         """True when no side of this tag is interlocked or alarmed."""

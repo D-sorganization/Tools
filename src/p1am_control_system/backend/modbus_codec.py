@@ -133,17 +133,36 @@ def encode_high_limit(limit: float | None) -> list[int]:
 
 
 def decode_low_limit(low: int, high: int) -> float | None:
-    """Decode a low-side limit; at/below the disabled sentinel reads as ``None``."""
+    """Decode a low-side limit; anything the firmware cannot act on is ``None``.
+
+    The disabled sentinel decodes to ``None`` (#4001), and so does anything
+    outside the [INTERLOCK_LIMIT_MIN, INTERLOCK_LIMIT_MAX] percent-of-span
+    limit domain (#4032): a limit the interlock can never trip on -- a
+    non-finite register value, or a finite engineering-unit number like the
+    issue's 900 degC typed into the percent-domain register -- is a disabled
+    limit, not a live one. The API boundary (models.InterlockConfig) rejects
+    writing one in the first place; this keeps a legacy/garbage register
+    image from feeding the alarm engine an unreachable threshold either.
+    """
     value = registers_to_float(low, high)
     if not math.isfinite(value) or value <= hardware.INTERLOCK_DISABLED_LOW:
+        return None
+    if not (hardware.INTERLOCK_LIMIT_MIN <= value <= hardware.INTERLOCK_LIMIT_MAX):
         return None
     return value
 
 
 def decode_high_limit(low: int, high: int) -> float | None:
-    """Decode a high-side limit; at/above the disabled sentinel reads as ``None``."""
+    """Decode a high-side limit; anything the firmware cannot act on is ``None``.
+
+    Mirror of :func:`decode_low_limit`: the disabled sentinel (#4001) and any
+    value outside the [INTERLOCK_LIMIT_MIN, INTERLOCK_LIMIT_MAX]
+    percent-of-span limit domain (#4032) read as ``None``.
+    """
     value = registers_to_float(low, high)
     if not math.isfinite(value) or value >= hardware.INTERLOCK_DISABLED_HIGH:
+        return None
+    if not (hardware.INTERLOCK_LIMIT_MIN <= value <= hardware.INTERLOCK_LIMIT_MAX):
         return None
     return value
 
@@ -151,9 +170,9 @@ def decode_high_limit(low: int, high: int) -> float | None:
 def decode_interlocks(registers: list[int]) -> dict[str, InterlockConfig]:
     """Decode the 256-register interlock block into per-tag limits.
 
-    The firmware's disabled sentinels (and any non-finite register garbage)
-    decode to ``None`` rather than a number the alarm engine would compare
-    against (#3973).
+    The firmware's disabled sentinels, non-finite register garbage, and any
+    value outside the percent-of-span limit domain decode to ``None`` rather
+    than a number the alarm engine would compare against (#3973, #4032).
     """
     interlocks: dict[str, InterlockConfig] = {}
     for tag_index in range(TAG_COUNT):

@@ -99,7 +99,7 @@ def sample_routing_config() -> RoutingConfig:
     ]
     interlocks = {
         f"TAG_{i}": InterlockConfig(
-            hihi_limit=105.0, high_limit=95.0, low_limit=10.0, lolo_limit=5.0
+            hihi_limit=100.0, high_limit=95.0, low_limit=10.0, lolo_limit=5.0
         )
         for i in range(32)
     }

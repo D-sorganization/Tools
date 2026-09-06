@@ -140,14 +140,14 @@ def test_codec_default_for_absent_tag_is_disabled() -> None:
 def test_none_round_trips_through_the_register_contract() -> None:
     config = {
         "TAG_3": InterlockConfig(high_limit=95.0, hihi_limit=100.0),
-        "TAG_9": InterlockConfig(lolo_limit=-2.5, low_limit=1.0),
+        "TAG_9": InterlockConfig(lolo_limit=0.5, low_limit=1.0),
     }
     decoded = decode_interlocks(encode_interlocks(config))
     assert decoded["TAG_3"].lolo_limit is None
     assert decoded["TAG_3"].low_limit is None
     assert decoded["TAG_3"].high_limit == pytest.approx(95.0)
     assert decoded["TAG_3"].hihi_limit == pytest.approx(100.0)
-    assert decoded["TAG_9"].lolo_limit == pytest.approx(-2.5)
+    assert decoded["TAG_9"].lolo_limit == pytest.approx(0.5)
     assert decoded["TAG_9"].low_limit == pytest.approx(1.0)
     assert decoded["TAG_9"].high_limit is None
     assert decoded["TAG_9"].hihi_limit is None
