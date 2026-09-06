@@ -58,7 +58,7 @@ class TestEnsurePaths:
         repo_root = get_repo_root()
         ensure_paths(repo_root)
 
-        expected_in_path = repo_root / "src" / "shared" / "python"
+        expected_in_path = repo_root / "src"
         assert str(expected_in_path) in sys.path
 
     def test_returns_repo_root(self) -> None:

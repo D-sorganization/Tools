@@ -1008,6 +1008,7 @@
           }
         ],
         "test_paths": [
+          "tests/rate_of_closure/test_capability_gui.py",
           "tests/rate_of_closure/test_capability_result_export.py",
           "tests/rate_of_closure/test_capability_worker.py",
           "tests/rate_of_closure/test_capability_workflow.py"

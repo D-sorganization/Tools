@@ -26756,10 +26756,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 16078,
+      "bytes_lf": 16359,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a9ff80c735ff40f0cd6edcda39c9698f6692c5320c7968715336d1707cdb3b0e",
+      "content_sha256_lf": "600562cd184c6f2b1ac5b11aad343faefaa9e32bf47fcff87febfe907ee4319c",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-WINDUNCERTAINTY-TS-622CD0A2E871",
       "language": "typescript",

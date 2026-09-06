@@ -2679,6 +2679,7 @@
           "tests/rate_of_closure/test_simulation.py",
           "tests/rate_of_closure/test_units.py",
           "tests/rate_of_closure/test_variation_plot_definition_domain.py",
+          "tests/rate_of_closure/test_wind_strategy_panel.py",
           "tests/rate_of_closure/test_wind_strategy_plot_adapter.py",
           "tests/rate_of_closure/test_wind_strategy_worker.py",
           "tests/rotation_converter/test_converter.py",

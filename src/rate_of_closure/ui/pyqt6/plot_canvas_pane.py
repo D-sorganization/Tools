@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from textwrap import fill
+from typing import Any, cast
 
 from matplotlib.artist import Artist
 from matplotlib.backend_bases import MouseEvent
@@ -38,6 +39,7 @@ class PlotCanvasPane(PlotCanvasInspectorMixin, QFrame):
         self.setFrameShape(QFrame.Shape.StyledPanel)
         self.setAccessibleName(f"{label} Plot Viewport")
         self._data: PlotData | None = None
+        self._custom_renderer: Callable[[Figure], None] | None = None
         self._zoom = 1.0
         self._figure = Figure(figsize=(5.2, 3.5), tight_layout=True)
         self._canvas = FigureCanvas(self._figure)
@@ -93,6 +95,7 @@ class PlotCanvasPane(PlotCanvasInspectorMixin, QFrame):
 
     def render_data(self, data: PlotData) -> None:
         """Stage and atomically publish new data with a fresh figure."""
+        self._custom_renderer = None
         plan, inspection_error = self._plan_for_data(data)
         size = self._figure.get_size_inches()
         candidate = Figure(
@@ -113,6 +116,49 @@ class PlotCanvasPane(PlotCanvasInspectorMixin, QFrame):
         self._zoom = 1.0
         self._zoom_label.setText("100%")
         self._apply_legend()
+        self._update_inspection_status()
+        self._canvas.draw_idle()
+
+    def render_custom(self, renderer: Callable[[Figure], None]) -> None:
+        """Render caller-owned plot data with the same managed controls."""
+        if not callable(renderer):
+            raise TypeError("renderer must be callable")
+        self._data = None
+        self._custom_renderer = renderer
+        self._inspection_plan = None
+        self._inspection_error = None
+        self._selection = None
+        self._selection_artists = []
+        size = self._figure.get_size_inches()
+        candidate = Figure(
+            figsize=(float(size[0]), float(size[1])),
+            dpi=self._figure.dpi,
+            tight_layout=True,
+        )
+        renderer(candidate)
+        self._wrap_figure_titles(candidate)
+        self._figure = candidate
+        self._canvas.figure = candidate
+        candidate.set_canvas(self._canvas)
+        self._toolbar.update()
+        self._zoom = 1.0
+        self._zoom_label.setText("100%")
+        self._apply_legend()
+        self._update_inspection_status()
+        self._canvas.draw_idle()
+
+    def clear(self) -> None:
+        """Remove current data so Auto Fit cannot resurrect a stale result."""
+        self._data = None
+        self._custom_renderer = None
+        self._inspection_plan = None
+        self._inspection_error = None
+        self._selection = None
+        self._selection_artists = []
+        self._figure.clear()
+        self._toolbar.update()
+        self._zoom = 1.0
+        self._zoom_label.setText("100%")
         self._update_inspection_status()
         self._canvas.draw_idle()
 
@@ -164,9 +210,12 @@ class PlotCanvasPane(PlotCanvasInspectorMixin, QFrame):
 
     def auto_fit(self) -> None:
         """Restore data-derived axis limits and a 5% margin."""
-        if self._data is None:
+        if self._data is not None:
+            render_plot(self._data, self._figure)
+        elif self._custom_renderer is not None:
+            self._custom_renderer(self._figure)
+        else:
             return
-        render_plot(self._data, self._figure)
         self._zoom = 1.0
         self._zoom_label.setText("100%")
         self._apply_legend()
@@ -199,18 +248,17 @@ class PlotCanvasPane(PlotCanvasInspectorMixin, QFrame):
                 continue
             legend.set_visible(True)
             if placement == "outside_right":
-                legend.set_loc("upper left")
+                cast(Any, legend).set_loc("upper left")
                 legend.set_bbox_to_anchor((1.02, 1.0))
             else:
                 legend.set_bbox_to_anchor(None)
-                legend.set_loc(
-                    {
-                        "inside_upper_right": "upper right",
-                        "inside_lower_right": "lower right",
-                        "inside_lower_left": "lower left",
-                    }[placement]
-                )
-        self._canvas.draw_idle()
+                loc_map: dict[str, str] = {
+                    "inside_upper_right": "upper right",
+                    "inside_lower_right": "lower right",
+                    "inside_lower_left": "lower left",
+                }
+                cast(Any, legend).set_loc(loc_map[placement])
+            self._canvas.draw_idle()
 
     def _on_scroll(self, event: MouseEvent) -> None:
         if event.button == "up":

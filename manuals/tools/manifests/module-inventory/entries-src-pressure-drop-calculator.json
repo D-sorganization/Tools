@@ -452,6 +452,7 @@
           "tests/rate_of_closure/test_visual_layout_gui.py",
           "tests/rate_of_closure/test_visual_layout_preferences.py",
           "tests/rate_of_closure/test_web_companion_app.py",
+          "tests/rate_of_closure/test_wind_strategy_panel.py",
           "tests/shared/python/ai/test_ai_hardening_3179.py",
           "tests/shared/python/ai/test_bitnet_adapter.py",
           "tests/shared/python/ai/test_provider_config_registry.py",
