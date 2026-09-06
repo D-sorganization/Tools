@@ -2252,6 +2252,7 @@
           "src/movement_optimizer/tests/test_undo_redo_menu.py",
           "src/pendulum_simulator/tests/test_main_window.py",
           "tests/ode_solver/test_main_window.py",
+          "tests/optimizer_gui/test_registration_shim.py",
           "tests/test_movement_optimizer_provider_manifest.py"
         ],
         "unit_mentions": [

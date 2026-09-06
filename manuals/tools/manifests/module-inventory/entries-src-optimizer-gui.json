@@ -96,6 +96,7 @@
         ],
         "test_paths": [
           "tests/folder_tool/test_gui_registration.py",
+          "tests/optimizer_gui/test_registration_shim.py",
           "tests/rate_of_closure/test_gui_registration.py",
           "tests/test_movement_optimizer_provider_manifest.py"
         ],

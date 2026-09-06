@@ -123,7 +123,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
     },
     {
-      "content_sha256_lf": "5c09b2c52e86f08a4432ca1ac40f49177db3799c436b77602f705bd78e580c61",
+      "content_sha256_lf": "94d7602986b54d81aaf67e5f3c5d92fee21fec0ed390e15bfaa6b08bbf4d00ce",
       "entry_count": 5,
       "package": "rust_core/data-processor-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
@@ -351,7 +351,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-model-generation.json"
     },
     {
-      "content_sha256_lf": "aedba5252967b86eed68879fb69ca8d23fb1541935f1b77a24c6e5515b1b2b88",
+      "content_sha256_lf": "5fa362740ee292d9cdf90b475e8b5ea7412a0989f35c9343dffd893fb7d525f1",
       "entry_count": 93,
       "package": "src/movement_optimizer",
       "path": "manuals/tools/manifests/module-inventory/entries-src-movement-optimizer.json"
@@ -375,7 +375,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-ode-solver.json"
     },
     {
-      "content_sha256_lf": "ae71f50b4deb077904a44266ed5e3905d3d5064199eb5f24ec2ba21dba1f0def",
+      "content_sha256_lf": "57beca751e02fc7fe3da389b0bb9f9a000835d7253a1c8f56f13624ee03b560f",
       "entry_count": 3,
       "package": "src/optimizer_gui",
       "path": "manuals/tools/manifests/module-inventory/entries-src-optimizer-gui.json"

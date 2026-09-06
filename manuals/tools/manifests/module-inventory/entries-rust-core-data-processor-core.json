@@ -375,6 +375,7 @@
           "tests/media_processing/test_video_analyzer_launcher.py",
           "tests/ode_solver/test_main_window.py",
           "tests/ops/test_anti_phantom_merge_guard.py",
+          "tests/optimizer_gui/test_registration_shim.py",
           "tests/p1am_control_system/conftest.py",
           "tests/p1am_control_system/firmware/test_dcs.cpp",
           "tests/p1am_control_system/test_alicat_manager.py",
