@@ -6637,6 +6637,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 | 2026-09-05 | #4999 | Check file existence before library check in C3D reader and show error state on failure (#3978). |
 | 2026-09-05 | #5001 | Remove dead vendored optimizer GUI copy and keep canonical registration shim (#3983). |
 | 2026-09-05 | #5002 | Delete vendored folder_tools leftover and update dead tests (#3985). |
+| 2026-09-05 | #5003 | Remove blanket [0,100] tag clamp and enforce interlock limit domain at boundary (#4032). |
 ---
 
 <!--
@@ -7217,3 +7218,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-05: Folder Tools Vendored Cleanup (#3985)
 
 - **2026-09-05**: refactor(folder-tools, #3985) — Delete vendored folder_tools leftover and update dead tests to test canonical implementations.
+
+## 2026-09-05: P1AM Interlock Limits Domain Enforcement (#4032)
+
+- **2026-09-05**: fix(p1am, #4032) — Remove blanket [0,100] tag clamp and enforce interlock limit domain at the boundary so engineering-unit limits trip correctly.

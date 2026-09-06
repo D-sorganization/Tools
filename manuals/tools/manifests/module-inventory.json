@@ -117,13 +117,13 @@
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "5edc7b2afbe46c7d51510dd02e28cd75dfd245b3306c92183243340a6f2c3feb",
+      "content_sha256_lf": "4021f669805372988ace0e3d2017ae0d8370d9b6414893c66c6fa1a797e36690",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
     },
     {
-      "content_sha256_lf": "94d7602986b54d81aaf67e5f3c5d92fee21fec0ed390e15bfaa6b08bbf4d00ce",
+      "content_sha256_lf": "3b2ec684abb0cacee0ee1351b17798031bbe12c9122cf1ff98deb49c921c7421",
       "entry_count": 5,
       "package": "rust_core/data-processor-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
@@ -135,7 +135,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "138e53f045d2a929e64b74b840df323f6ad2c746837af8d7a1e61d5e40c97f3c",
+      "content_sha256_lf": "5c03c51cc3947fc07daa381054876b6e11bf70faf61496ce85dc5a31b85f58dd",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -381,7 +381,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-optimizer-gui.json"
     },
     {
-      "content_sha256_lf": "a831e927c62089628207a19fd002a04de922b3e4cc9bd590619eb39e64ae58d1",
+      "content_sha256_lf": "3e993ac2762c0f77e93f4ba1638f7d0fe572aa346da376f568dfcbe2ba2430b0",
       "entry_count": 254,
       "package": "src/p1am_control_system",
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"

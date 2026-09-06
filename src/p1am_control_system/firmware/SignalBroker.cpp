@@ -12,17 +12,16 @@ bool IsValidRoutingTagId(int tag_id) {
   return tag_id == SignalBroker::kUnmappedTag || IsValidTagId(tag_id);
 }
 
-// Global percent-of-span clamp; NaN passes through as the bad-quality marker.
-// See the SetTag contract in SignalBroker.h for why NaN is not mapped to 0.
-float ClampTagValue(float value) {
+// Percent-of-span passthrough: the broker does NOT clamp tag values (#4032).
+// A finite value is stored and returned exactly as written -- thermocouple
+// channels read degC scaled by kThermocoupleFullScaleC and may sit below 0 %
+// or above 100 % near over-range, and an interlock limit above the old clamp
+// ceiling must be able to trip. Only a non-finite value is mapped to NaN, the
+// broker's bad-quality marker. See the SetTag contract in SignalBroker.h for
+// why NaN is not mapped to 0.
+float NormalizeTagValue(float value) {
   if (!std::isfinite(value)) {
     return std::numeric_limits<float>::quiet_NaN();
-  }
-  if (value < 0.0f) {
-    return 0.0f;
-  }
-  if (value > 100.0f) {
-    return 100.0f;
   }
   return value;
 }
@@ -50,15 +49,14 @@ float SignalBroker::GetTag(int tag_id) const {
     return 0.0f;
   }
 
-  return ClampTagValue(tags_[tag_id]);
+  return tags_[tag_id];
 }
 
 void SignalBroker::SetTag(int tag_id, float value) {
   if (!IsValidTagId(tag_id)) {
     return;
   }
-
-  tags_[tag_id] = ClampTagValue(value);
+  tags_[tag_id] = NormalizeTagValue(value);
 }
 
 bool SignalBroker::IsTagValid(int tag_id) const {
@@ -133,9 +131,15 @@ void SignalBroker::WriteHardwareOutputs(HardwareInterface& hw) {
     int source_tag = output_routing_[i];
     if (source_tag != kUnmappedTag) {
       float val = GetTag(source_tag);
-      // A bad-quality source tag must not reach the DAC: drive the safe 0.0 %.
-      if (!std::isfinite(val)) {
+      // The DAC contract is [0, 100] percent (4-20 mA; see
+      // HardwareInterface.h). A tag may read outside that span -- an
+      // over-range runaway (#4032) or a sub-zero degC reading -- so the
+      // write seam saturates the command at the physical span. A bad-quality
+      // source tag must not reach the DAC: drive the safe 0.0 %.
+      if (!std::isfinite(val) || val < 0.0f) {
         val = 0.0f;
+      } else if (val > 100.0f) {
+        val = 100.0f;
       }
       hw.WriteAnalogOutput(i, val);
     } else {

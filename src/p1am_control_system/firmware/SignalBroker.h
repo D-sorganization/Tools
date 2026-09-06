@@ -26,24 +26,28 @@ class SignalBroker {
 
   // Read the value of a tag.
   // Precondition: 0 <= tag_id < kNumTags
-  // Postcondition: Returns a finite value in [0.0, 100.0], or NaN when the
-  // tag holds a bad-quality (non-finite) reading. See SetTag.
+  // Postcondition: Returns the stored value unchanged -- a percent-of-span
+  // float that may sit below 0.0 or above 100.0 near over-range (issue
+  // #4032) -- or NaN when the tag holds a bad-quality (non-finite) reading.
+  // See SetTag.
   float GetTag(int tag_id) const;
 
   // Set the value of a tag.
   // Precondition: 0 <= tag_id < kNumTags
-  // Postcondition: A finite value is clamped to [0.0, 100.0] and stored. A
-  // non-finite value is stored as NaN -- the broker's "bad quality" marker --
-  // and is NEVER coerced to 0.0: a sensor fault is not a measurement, and
-  // 0.0 % sits below every low limit and looks like a valid cold reading to
-  // the host (issue #4032, hardware.py `_require_finite_number`).
-  //
-  // The [0, 100] clamp itself is deliberate and global for now: every tag is
-  // a percent-of-span quantity (thermocouples are scaled by
-  // kThermocoupleFullScaleC in ReadHardwareInputs, AI/AO are 0-100 % by the
-  // module), and the interlock limits are compared in the same domain. Per-tag
-  // engineering-unit classes (which would need a unit tag in the register
-  // contract) are tracked in issue #4032 and are NOT decided here.
+  // Postcondition: A finite value is stored exactly as given -- the broker
+  // does NOT clamp (issue #4032). Tags are percent-of-span floats:
+  // thermocouples are degC scaled by kThermocoupleFullScaleC in
+  // ReadHardwareInputs and may read below 0 % or above 100 % near over-range;
+  // AI/AO are 0-100 % by the module. The former global [0, 100] clamp
+  // truncated genuine over-range readings and silently disabled any
+  // interlock limit above the clamp ceiling, so it is gone; the physical AO
+  // saturates at the DAC span in WriteHardwareOutputs instead, and the
+  // actionable limit domain [0, 100] percent is enforced by the host at the
+  // API boundary (hardware.INTERLOCK_LIMIT_MIN / _MAX). A non-finite value
+  // is stored as NaN -- the broker's "bad quality" marker -- and is NEVER
+  // coerced to 0.0: a sensor fault is not a measurement, and 0.0 % sits
+  // below every low limit and looks like a valid cold reading to the host
+  // (hardware.py `_require_finite_number`).
   void SetTag(int tag_id, float value);
 
   // True when the tag holds a finite reading, false for bad quality / invalid id.

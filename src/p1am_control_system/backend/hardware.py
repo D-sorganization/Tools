@@ -54,6 +54,22 @@ PID_COUNT = 4
 # src/p1am_control_system/backend/tests/test_interlock_defaults_contract.py.
 INTERLOCK_DISABLED_LOW = -99999.0
 INTERLOCK_DISABLED_HIGH = 99999.0
+
+# ---- Interlock limit domain --------------------------------------------
+# A limit the firmware cannot act on must never be accepted. The broker no
+# longer clamps tag values (issue #4032), so a limit outside the tag span --
+# the issue's ``high_limit = 900`` typed in degC against a percent-domain
+# register -- would trip never and silently disable the interlock. The
+# register contract therefore defines every actionable limit as a
+# percent-of-span float in [INTERLOCK_LIMIT_MIN, INTERLOCK_LIMIT_MAX]:
+# 100 % == THERMOCOUPLE_FULL_SCALE_C on the type-K channels. ``None``
+# (encoded as the sentinels above) disables a side. The operator-facing
+# boundary enforces this (models.InterlockConfig -> HTTP 422); the firmware
+# itself accepts any float in the limit registers because the register
+# contract carries no unit tag -- the host owns the validation.
+INTERLOCK_LIMIT_MIN = 0.0
+INTERLOCK_LIMIT_MAX = 100.0
+
 # Host-liveness watchdog. The firmware proves the host is alive from a CHANGE
 # to this register (the value itself is meaningless), not from its content. If
 # it sees neither a Modbus TCP connection nor a heartbeat change for
@@ -188,7 +204,9 @@ def percent_to_celsius(percent: float, full_scale_c: float | None = None) -> flo
     the conversion cannot drift between subsystems (issues #3998, #4003).
 
     Args:
-        percent: Tag value in [0, 100] as published by the firmware broker.
+        percent: Broker tag value as percent of full scale. The broker no
+            longer clamps tag values (issue #4032): a thermocouple tag may
+            read below 0 (sub-zero degC) or above 100 near over-range.
         full_scale_c: Override for a channel with a different range. Defaults
             to the firmware contract value.
 
@@ -208,7 +226,10 @@ def celsius_to_percent(celsius: float, full_scale_c: float | None = None) -> flo
     """Convert degrees Celsius to a broker tag percentage.
 
     Inverse of :func:`percent_to_celsius`. Used to express a degC threshold in
-    the tag domain the firmware interlock actually compares against.
+    the tag domain the firmware interlock actually compares against. Interlock
+    limits live in that same percent domain, bounded to
+    ``[INTERLOCK_LIMIT_MIN, INTERLOCK_LIMIT_MAX]`` -- a degC threshold beyond
+    the span cannot trip and is rejected at the configuration boundary.
 
     Raises:
         TypeError: If an argument is not a real number.

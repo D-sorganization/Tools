@@ -105,13 +105,26 @@ breaks Ethernet SPI.
 | coil 2   | 1     | Heater relay command (temperature controller); interlock always wins       |
 | coil 3   | 1     | THM burnout direction: 1 = HIGH-side (fail-safe), 0 = LOW-side             |
 
-Finite tag values are clamped 0.0–100.0 by the broker (percent of span; the
-thermocouple full scale is `kThermocoupleFullScaleC`). A non-finite reading is
-kept as NaN — the broker's bad-quality marker — and is never coerced to 0.0 %.
-A NaN source tag drives its AO to 0.0 %, a NaN PV de-energizes its PID CV, and
-a NaN on an *interlocked* tag trips (a sensor fault cannot be proven safe). AO
-outputs scale linearly: 0.0% -> 4.000 mA, 100.0% -> 20.000 mA. AI readings are
-pre-scaled by the P1AM library before reaching the broker.
+Tag values are percent-of-span floats and are NOT clamped by the broker
+(issue #4032): a finite value passes through `SetTag`/`GetTag` unchanged.
+Thermocouples are degC scaled to percent of `kThermocoupleFullScaleC` and may
+read below 0 % (sub-zero degC) or above 100 % near over-range; AI readings
+are pre-scaled to 0-100 % by the P1AM library before reaching the broker. A
+non-finite reading is kept as NaN — the broker's bad-quality marker — and is
+never coerced to 0.0 %. A NaN source tag drives its AO to 0.0 %, a NaN PV
+de-energizes its PID CV, and a NaN on an *interlocked* tag trips (a sensor
+fault cannot be proven safe). AO writes saturate at the physical DAC span:
+`WriteHardwareOutputs` clamps the command to [0, 100] % before writing, then
+the output scales linearly 0.0 % -> 4.000 mA, 100.0 % -> 20.000 mA.
+
+Interlock limits live in the same percent-of-span domain: an actionable
+limit is a float in [0, 100] (100 % == `kThermocoupleFullScaleC`), and a
+disabled limit is the ±99999 sentinel below. The firmware accepts any float
+in the limit registers — the register contract carries no unit tag, so the
+host owns the validation — and the backend rejects out-of-domain limits at
+the configuration boundary (`hardware.INTERLOCK_LIMIT_MIN/_MAX` +
+`models.InterlockConfig`), so a limit like a 900 degC threshold typed into
+the percent domain can never silently disable a trip (#4032).
 
 ### Interlock latch and reset (issue #4001)
 

@@ -65,16 +65,15 @@ class TestRoutingCodec:
     def test_interlocks_round_trip_and_default_fill(self) -> None:
         interlocks = {
             "TAG_3": InterlockConfig(
-                lolo_limit=-1.0,
+                lolo_limit=0.0,
                 low_limit=2.0,
                 high_limit=90.0,
-                hihi_limit=101.0,
+                hihi_limit=100.0,
             )
         }
         decoded = decode_interlocks(encode_interlocks(interlocks))
         assert len(decoded) == TAG_COUNT
-        assert decoded["TAG_3"].hihi_limit == pytest.approx(101.0)
-        # A tag absent from the config is NOT interlocked (#4001), never 0/5/95/100.
+        assert decoded["TAG_3"].hihi_limit == pytest.approx(100.0)
         assert decoded["TAG_0"].low_limit is None
         assert decoded["TAG_0"].is_disabled()
 

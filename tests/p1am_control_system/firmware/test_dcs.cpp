@@ -65,6 +65,61 @@ void TestSignalBroker() {
   std::cout << "TestSignalBroker PASSED!" << std::endl;
 }
 
+// Issue #4032: the broker used to clamp every tag into [0, 100] percent of
+// span. A high limit entered above that ceiling (e.g. an operator typing a
+// 900 degC limit straight into the percent-domain register) could never be
+// exceeded -- the clamp capped the reading below it and the trip silently
+// never fired. The clamp is gone: finite values pass through SetTag/GetTag
+// unchanged, and only the physical AO write saturates at the DAC's [0, 100].
+void TestEngineeringUnitTagsAndLimits() {
+  std::cout << "Running TestEngineeringUnitTagsAndLimits..." << std::endl;
+  MockHardware hw;
+  SignalBroker broker;
+  SafetyInterlock interlock;
+
+  // (a) A high limit above the old clamp ceiling CAN trip when exceeded.
+  //     Before the fix GetTag capped the reading at 100.0, so val > 101 was
+  //     never true and the interlock was silently disabled.
+  interlock.SetHighLimit(5, 101.0f);
+  broker.SetTag(5, 101.5f);
+  interlock.Evaluate(broker, hw);
+  assert(interlock.IsTripped());
+  assert(interlock.GetTripTagId() == 5);
+  interlock.Reset();
+
+  // (b) A genuine reading above 100 % of span is not truncated. 1470 degC on
+  //     the type-K full scale is 105 % -- a runaway must be visible as such,
+  //     not flattened onto a valid 100 % (top-of-range).
+  broker.SetTag(6, 140.0f);
+  assert(FloatEquals(broker.GetTag(6), 140.0f));
+  broker.SetTag(7, -10.0f);  // -140 degC: sub-zero reads as negative percent
+  assert(FloatEquals(broker.GetTag(7), -10.0f));
+
+  hw.SetThermocouple(2, 1470.0f);
+  broker.SetInputRouting(2, 8);
+  broker.ReadHardwareInputs(hw);
+  const float kRunawayPct = 1470.0f * (100.0f / SignalBroker::kThermocoupleFullScaleC);
+  assert(FloatEquals(broker.GetTag(8), kRunawayPct));
+  assert(broker.GetTag(8) > 100.0f);
+
+  // The DAC contract is unchanged: a routed over-range tag drives the analog
+  // output at full scale, while the tag itself still reads back untruncated.
+  broker.SetOutputRouting(0, 8);
+  broker.WriteHardwareOutputs(hw);
+  assert(FloatEquals(hw.GetAnalogOutput(0), 100.0f));
+  assert(FloatEquals(broker.GetTag(8), kRunawayPct));
+  broker.SetOutputRouting(0, SignalBroker::kUnmappedTag);
+
+  // (d) Non-finite stays bad-quality: never coerced, never stored as 0.0.
+  const float nan = std::numeric_limits<float>::quiet_NaN();
+  broker.SetTag(9, nan);
+  assert(std::isnan(broker.GetTag(9)));
+  assert(!broker.IsTagValid(9));
+
+  std::cout << "TestEngineeringUnitTagsAndLimits PASSED!" << std::endl;
+}
+
+
 void TestPIDController() {
   std::cout << "Running TestPIDController..." << std::endl;
   SignalBroker broker;
@@ -243,17 +298,18 @@ void TestSoftFailRuntimeContracts() {
   assert(broker.GetOutputRouting(99) == SignalBroker::kUnmappedTag);
 
   // Bad hardware samples are kept as NaN (bad quality), never coerced to a
-  // 0.0 that reads as a valid cold measurement (#4032). Finite values still
-  // clamp to the percent-of-span domain.
+  // 0.0 that reads as a valid cold measurement (#4032). Finite values are
+  // stored unchanged: the broker does not clamp (#4032), so a sub-zero degC
+  // reading is a negative percent and an over-range runaway reads above 100.
   broker.SetTag(1, nan);
   broker.SetTag(2, -10.0f);
   broker.SetTag(3, 140.0f);
   broker.SetTag(999, 50.0f);
   assert(std::isnan(broker.GetTag(1)));
   assert(!broker.IsTagValid(1));
-  assert(FloatEquals(broker.GetTag(2), 0.0f));
+  assert(FloatEquals(broker.GetTag(2), -10.0f));
   assert(broker.IsTagValid(2));
-  assert(FloatEquals(broker.GetTag(3), 100.0f));
+  assert(FloatEquals(broker.GetTag(3), 140.0f));
   assert(FloatEquals(broker.GetTag(999), 0.0f));
   assert(!broker.IsTagValid(999));
 
@@ -545,6 +601,7 @@ void TestCommsWatchdog() {
 int main() {
   std::cout << "=== DCS CORE FIRMWARE TDD TEST RUNNER ===" << std::endl;
   TestSignalBroker();
+  TestEngineeringUnitTagsAndLimits();
   TestPIDController();
   TestSafetyInterlock();
   TestStorageManager();

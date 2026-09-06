@@ -1768,10 +1768,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10785,
+      "bytes_lf": 12063,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6f588a61d0f78fb960a60ad40a14eed116cdbbc4e4ff56341aac78103770611d",
+      "content_sha256_lf": "0abbc1ee87469284d15a4ba1eb5919c7907bbb2fd1b0bf4425fa11128f9601a4",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-HARDWARE-PY-5C4DB8BBEC0B",
       "language": "python",
@@ -1849,6 +1849,16 @@
           {
             "kind": "constant",
             "name": "INTERLOCK_DISABLED_LOW",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "INTERLOCK_LIMIT_MAX",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "INTERLOCK_LIMIT_MIN",
             "signature": null
           },
           {
@@ -2356,10 +2366,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8419,
+      "bytes_lf": 9491,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6186bfa5b0e806f871a66683da91971cfc1f9db496238b72b92a38a8542fd613",
+      "content_sha256_lf": "1ceb9f6d55f1591b6c8e80399312d87245a6cf5c0a3dd3ec79f0d989c26e4388",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-MODBUS-CODEC-PY-BC02AD876958",
       "language": "python",
@@ -2516,10 +2526,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 12818,
+      "bytes_lf": 14167,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8b3d5d15741ed667e9d96b46f5938efe9f9760b4337264dae801e8906277a5fd",
+      "content_sha256_lf": "38cbcf9ef731b30925a25c9ec974150a1d2146ea2543fe6d258d5a57cfe2520e",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-MODELS-PY-DDB50293189B",
       "language": "python",
@@ -6852,10 +6862,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 3578,
+      "bytes_lf": 4158,
       "classification": "calculation",
       "classification_basis": "path-marker:signal",
-      "content_sha256_lf": "3cc848ac9f65bf614221833e44517eb95516eb0b0288839ecd59f8945f8edacd",
+      "content_sha256_lf": "e396cab75807c04038511018ffac2a8931a8c81b9becb39573ad8f8b5fd95051",
       "family": "control-systems-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FIRMWARE-SIGNALBROKER-CPP-F19ABFBB4FC8",
       "language": "cpp",
@@ -6879,7 +6889,7 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "unavailable",
-        "units": "unavailable",
+        "units": "mapped",
         "validation": "unavailable"
       },
       "traceability": {
@@ -6893,16 +6903,18 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [],
-        "unit_mentions": [],
+        "unit_mentions": [
+          "s"
+        ],
         "validation_paths": []
       }
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 3789,
+      "bytes_lf": 4072,
       "classification": "calculation",
       "classification_basis": "path-marker:signal",
-      "content_sha256_lf": "9a0034ab6a85a1d9096a691e7cf5375849003872194dedf4e85ad79c0aeb1916",
+      "content_sha256_lf": "03b6bb6d6961adf97d236f27abe21920a531248c111cf2a2fa68b8892638b3be",
       "family": "control-systems-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FIRMWARE-SIGNALBROKER-H-0AC413AEEC6E",
       "language": "c-header",
