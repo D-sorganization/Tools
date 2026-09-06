@@ -630,7 +630,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "not-applicable"
       },
@@ -651,7 +651,9 @@
             "signature": null
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/rate_of_closure/test_capability_gui.py"
+        ],
         "unit_mentions": [
           "deg",
           "g",
@@ -740,7 +742,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "not-applicable",
         "validation": "not-applicable"
       },
@@ -761,7 +763,9 @@
             "signature": null
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/rate_of_closure/test_capability_gui.py"
+        ],
         "unit_mentions": [],
         "validation_paths": []
       }
@@ -2055,10 +2059,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 19144,
+      "bytes_lf": 20439,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "80d69e51b89a1fe678a46c169edae319f951f2b68b6b87b1c17e31d692f78813",
+      "content_sha256_lf": "45bbf5d3a7bc49a83ec067a78803e1edefe83533d69ee9d1bfb79919e9f74897",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-FLIGHT-EXPLORER-TAB-PY-153D3EC45B95",
       "language": "python",
@@ -2112,7 +2116,8 @@
           "tests/rate_of_closure/test_flight_sample_inspector_gui.py",
           "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py",
           "tests/rate_of_closure/test_spatial_target_gui.py",
-          "tests/rate_of_closure/test_viewers_gui.py"
+          "tests/rate_of_closure/test_viewers_gui.py",
+          "tests/rate_of_closure/test_wind_strategy_panel.py"
         ],
         "unit_mentions": [
           "m/s",
@@ -4311,10 +4316,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 19210,
+      "bytes_lf": 19251,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ac82e383084df2398119d512e192ab2f1e92f9bf669ba104692f8dd9d3d2dda5",
+      "content_sha256_lf": "665ebda8719e5bd185d0797acdf3103d63c06710290df46d3715b346727eeb43",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-MAIN-WINDOW-PY-6C6A148D71CA",
       "language": "python",
@@ -4380,7 +4385,8 @@
           "tests/rate_of_closure/test_tooltips.py",
           "tests/rate_of_closure/test_viewers_gui.py",
           "tests/rate_of_closure/test_visual_layout_gui.py",
-          "tests/rate_of_closure/test_visualization_accessibility.py"
+          "tests/rate_of_closure/test_visualization_accessibility.py",
+          "tests/rate_of_closure/test_wind_strategy_panel.py"
         ],
         "unit_mentions": [
           "s"
@@ -5427,10 +5433,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8568,
+      "bytes_lf": 10383,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "824ee2daacb990b10b458c2dac92792448c98b53076246ed206770d45a2afd1f",
+      "content_sha256_lf": "99c0aa172a5f4e7a02c481a85f8c0d49b8427c76aa25db6ec1403b08b9410d53",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-PLOT-CANVAS-PANE-PY-11A16D5BF66F",
       "language": "python",
@@ -10887,7 +10893,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "not-applicable"
       },
@@ -10938,7 +10944,9 @@
             "signature": null
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/rate_of_closure/test_wind_strategy_panel.py"
+        ],
         "unit_mentions": [
           "g"
         ],
@@ -11026,7 +11034,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "not-applicable"
       },
@@ -11047,7 +11055,9 @@
             "signature": null
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/rate_of_closure/test_wind_strategy_panel.py"
+        ],
         "unit_mentions": [
           "m/s",
           "s"

@@ -397,6 +397,7 @@ class RateOfClosureMainWindow(
             event.ignore()
             return
         self._close_pending = False
+        self._flight_explorer_tab.stop()
         super().closeEvent(event)
 
     def _resume_pending_close(self) -> None:

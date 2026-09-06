@@ -27,6 +27,7 @@ from PyQt6.QtWidgets import (
     QScrollArea,
     QSplitter,
     QStackedWidget,
+    QTabWidget,
     QTextBrowser,
     QVBoxLayout,
     QWidget,
@@ -55,9 +56,12 @@ from rate_of_closure.ui.pyqt6.result_row import ResultRow, explanation_html
 from rate_of_closure.ui.pyqt6.spatial_target_workflow import (
     build_spatial_target_workflow,
 )
+from rate_of_closure.ui.pyqt6.wind_strategy_launch import WindStrategyLaunchContext
+from rate_of_closure.ui.pyqt6.wind_strategy_panel import WindStrategyPanel
 from rate_of_closure.units import FIELD_GUIDANCE, SPEED_UNITS
 from shared.python.swing_sim.flight import (
     LAUNCH_DIRECTION_DEFINITIONS,
+    LaunchConditions,
     LaunchDirectionConvention,
     launch_direction_sign_labels,
 )
@@ -138,7 +142,15 @@ class FlightExplorerTab(FlightExplorerRunMixin, QWidget):
         right_layout.addWidget(self._context_status)
         right_layout.addWidget(self._sample_status)
         right_layout.addWidget(self._import_button)
-        right_layout.addWidget(self._flight_panel, stretch=1)
+        right_tabs = QTabWidget()
+        right_tabs.setAccessibleName("Flight Explorer Workspaces")
+        right_tabs.addTab(self._flight_panel, "Flight Playback")
+        self._wind_strategy_panel = WindStrategyPanel(self._wind_strategy_context)
+        right_tabs.addTab(self._wind_strategy_panel, "Wind Strategy")
+        right_tabs.setTabToolTip(
+            1, "Analyze current-launch dispersion under uncertain wind."
+        )
+        right_layout.addWidget(right_tabs, stretch=1)
         splitter.addWidget(right)
         splitter.setStretchFactor(0, 0)
         splitter.setStretchFactor(1, 1)
@@ -309,6 +321,23 @@ class FlightExplorerTab(FlightExplorerRunMixin, QWidget):
     def accepted_study(self) -> AcceptedFlightStudy | None:
         """The complete immutable accepted authority, if one has committed."""
         return self._accepted
+
+    def current_launch(self) -> LaunchConditions:
+        """Build launch conditions from the current visible controls."""
+        launch, _context = self._candidate_context()
+        return launch
+
+    def _wind_strategy_context(self) -> WindStrategyLaunchContext:
+        """Return the current launch/target/model context for wind analysis."""
+        return WindStrategyLaunchContext(
+            self.current_launch(),
+            self._spatial_target_panel.target(),
+            self._model_combo.currentText(),
+        )
+
+    def stop(self) -> None:
+        """Cancel and join background wind analysis during shutdown."""
+        self._wind_strategy_panel.stop()
 
     # ── internals ──────────────────────────────────────────────────
     def _import_trajectory_record(self) -> None:

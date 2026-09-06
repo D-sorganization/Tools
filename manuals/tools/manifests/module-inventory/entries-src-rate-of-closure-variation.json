@@ -4514,6 +4514,7 @@
           }
         ],
         "test_paths": [
+          "tests/rate_of_closure/test_wind_strategy_panel.py",
           "tests/rate_of_closure/test_wind_strategy_plot_adapter.py"
         ],
         "unit_mentions": [
