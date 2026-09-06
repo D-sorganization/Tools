@@ -331,13 +331,18 @@ class C3DViewerWindow(ThemedWindowMixin, QMainWindow):
             return
 
         self._current_file = Path(file_path)
-        self.file_label.setText(self._current_file.name)
-        self.file_label.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['green']};")
 
         try:
             self._load_c3d_data()
         except ImportError:
             self._show_demo_data()
+        except (ValueError, RuntimeError, OSError) as exc:
+            self._show_load_error(exc)
+        else:
+            # Paint "loaded" only after the data actually loaded (#3978).
+            self.file_label.setText(self._current_file.name)
+            self.file_label.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['green']};")
+            self.export_status.setPlainText("")
 
     def _load_c3d_data(self) -> None:
         """Load actual C3D data using the reader."""
@@ -352,6 +357,16 @@ class C3DViewerWindow(ThemedWindowMixin, QMainWindow):
 
     def _show_demo_data(self) -> None:
         """Show demo data when ezc3d is not available."""
+        # Annotate the file label: demo numbers must never be presented as
+        # the contents of the user's chosen file (#3978).
+        if self._current_file is not None:
+            self.file_label.setText(
+                f"{self._current_file.name} (demo data - library unavailable)"
+            )
+        else:
+            self.file_label.setText("demo data - library unavailable")
+        self.file_label.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['yellow']};")
+
         # Demo metadata
         self.info_labels["marker_count"].setText("12 (demo)")
         self.info_labels["frame_count"].setText("1000 (demo)")
@@ -409,6 +424,34 @@ class C3DViewerWindow(ThemedWindowMixin, QMainWindow):
             "Install with: pip install ezc3d"
         )
         self.export_status.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['yellow']};")
+
+    def _show_load_error(self, exc: Exception) -> None:
+        """Show a visible error state when the C3D file fails to load.
+
+        Reader failures (ValueError/RuntimeError/OSError) must never escape
+        the Qt slot uncaught, and a failure must never leave a stale
+        "loaded" state on screen: the file label switches to the error color
+        and panels populated by any previous load are cleared (#3978).
+        """
+        if self._current_file is None:
+            raise ValueError("a file must be selected before reporting an error")
+        self.file_label.setText(f"{self._current_file.name} (load failed)")
+        self.file_label.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['red']};")
+        self._reset_data_panels()
+        self.export_status.setPlainText(
+            f"Could not load '{self._current_file.name}': {exc}\n"
+            "Choose a valid C3D file and try again."
+        )
+        self.export_status.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['red']};")
+
+    def _reset_data_panels(self) -> None:
+        """Clear data panels to their empty placeholders after a failed load."""
+        for value_label in self.info_labels.values():
+            value_label.setText("-")
+        self.events_list.clear()
+        self.marker_list.clear()
+        self.analog_table.setRowCount(0)
+        self.end_frame_spin.setValue(self.end_frame_spin.maximum())
 
     def _update_metadata_display(self, metadata: Any) -> None:
         """Update the metadata display from C3D metadata."""
