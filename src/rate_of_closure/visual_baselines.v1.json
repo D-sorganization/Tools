@@ -177,7 +177,7 @@
       "tab_id": "flight_explorer",
       "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-flight_explorer-dpi-1.0.png",
-      "sha256": "a4feba9f1bea3b9463f5c377cc4d88a4a3af1b3fa6ab545fe3338a13b24d6f2c",
+      "sha256": "5abe4a83bc30c20f6631a4e94031b9c6dee7815aa3a18dcf1783ae31a6819136",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 200,
