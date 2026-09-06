@@ -260,7 +260,7 @@ class TestBackupCopyMixin:
         original_stat = Path.stat
 
         def mock_stat(self_path, **kwargs):
-            if self_path.name == "file.txt":
+            if self_path.name == "dest.txt":
                 raise OSError("stat error")
             return original_stat(self_path, **kwargs)
 
