@@ -11,9 +11,8 @@ from .models.pressure_drop_data_models import (
     PipeFitting,
     PressureDropInputs,
 )
-from .pressure_drop_results import _format_results as format_results
-from .pressure_drop_units import _convert_pressure as convert_pressure
-from .pressure_drop_units import _convert_temperature as convert_temperature
+from .pressure_drop_results import format_results
+from .pressure_drop_units import convert_pressure, convert_temperature
 from .utils.fitting_loss_coefficients import FITTING_K_FACTORS
 from .utils.flow_rate_converter import convert_flow_rate_to_mass
 from .utils.gas_properties import calculate_mixture_molecular_weight

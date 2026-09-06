@@ -1,8 +1,8 @@
 # ruff: noqa: E501
 """Result formatting and rendering helpers for the pressure drop calculator.
 
-This module contains ``_format_results``, all ``_print_*`` helpers,
-``print_results``, ``_generate_recommendations``, and ``_wrap_text``.
+This module contains ``format_results``, all ``_print_*`` helpers,
+``print_results``, ``_generate_recommendations``, and ``wrap_text``.
 """
 
 from __future__ import annotations
@@ -17,7 +17,7 @@ __all__ = [
 _logger = logging.getLogger(__name__)
 
 
-def _wrap_text(text: str, width: int) -> list[str]:
+def wrap_text(text: str, width: int) -> list[str]:
     """Wrap text to specified width."""
     if text is None:
         raise ValueError("text must be provided")
@@ -39,7 +39,7 @@ def _wrap_text(text: str, width: int) -> list[str]:
     return lines if lines else [""]
 
 
-def _format_results(results: Any) -> dict[str, Any]:
+def format_results(results: Any) -> dict[str, Any]:
     """Format results into a comprehensive dictionary."""
     return {
         # Pressure drops
@@ -193,7 +193,7 @@ def _print_warnings_and_recommendations(
             _logger.warning("│" + " ⚠️  WARNINGS ".center(78) + "│")
             _logger.info("├" + "─" * 78 + "┤")
             for warning in warnings:
-                wrapped = _wrap_text(warning, 74)
+                wrapped = wrap_text(warning, 74)
                 for line in wrapped:
                     _logger.info(f"│  {line:74s}  │")
             _logger.info("└" + "─" * 78 + "┘")
@@ -205,7 +205,7 @@ def _print_warnings_and_recommendations(
             _logger.info("│" + " 💡 RECOMMENDATIONS ".center(78) + "│")
             _logger.info("├" + "─" * 78 + "┤")
             for rec in recommendations:
-                wrapped = _wrap_text(rec, 74)
+                wrapped = wrap_text(rec, 74)
                 for line in wrapped:
                     _logger.info(f"│  {line:74s}  │")
             _logger.info("└" + "─" * 78 + "┘")

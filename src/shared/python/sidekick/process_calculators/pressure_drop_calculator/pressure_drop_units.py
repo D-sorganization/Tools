@@ -12,7 +12,7 @@ __all__ = [
 ]
 
 
-def _convert_temperature(value: float, from_unit: str, to_unit: str) -> float:
+def convert_temperature(value: float, from_unit: str, to_unit: str) -> float:
     """Convert temperature between units."""
     if value is None:
         raise ValueError("value must be provided")
@@ -39,7 +39,7 @@ def _convert_temperature(value: float, from_unit: str, to_unit: str) -> float:
     raise ValueError(f"Unknown temperature unit: {to_unit}")
 
 
-def _convert_pressure(value: float, from_unit: str, to_unit: str) -> float:
+def convert_pressure(value: float, from_unit: str, to_unit: str) -> float:
     """Convert pressure between units."""
     # Conversion factors to Pa
     to_pa = {
@@ -61,3 +61,8 @@ def _convert_pressure(value: float, from_unit: str, to_unit: str) -> float:
 
     pa = value * to_pa[from_unit]
     return pa / to_pa[to_unit]
+
+
+# Backward compatibility aliases for existing tests/callers
+_convert_temperature = convert_temperature
+_convert_pressure = convert_pressure
