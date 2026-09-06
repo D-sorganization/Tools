@@ -3580,10 +3580,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 12057,
+      "bytes_lf": 12232,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3d05aa72acd258d2524fabec1ea7448a1a8db56570f76b0b0fdd64d3d8ff9c25",
+      "content_sha256_lf": "2d32e51f89263fe0bafa26fca6b61d0d0dd72577080526860d6ec6a05b6e6410",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-PLOTSPANEL-TSX-5416C13F0271",
       "language": "typescript-react",

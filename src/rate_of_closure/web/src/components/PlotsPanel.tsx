@@ -137,7 +137,7 @@ export function PlotsPanel({ scenario, loftDeg, executeSimulation }: Props) {
   const button =
     "rounded-lg border border-slate-700 bg-slate-900/70 px-3 py-1.5 text-xs " +
     "font-medium text-slate-200 transition-all hover:border-sky-400/60 " +
-    "hover:text-sky-300";
+    "hover:text-sky-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500";
   const select =
     "w-full rounded-lg border border-slate-700 bg-slate-900/70 px-2 py-1.5 " +
     "text-sm text-slate-100";
@@ -163,7 +163,8 @@ export function PlotsPanel({ scenario, loftDeg, executeSimulation }: Props) {
                   "w-full rounded-lg border px-3 py-1.5 text-left text-sm " +
                   (plot.id === selectedId
                     ? "border-sky-400/60 bg-sky-500/10 text-sky-200"
-                    : "border-slate-800 bg-slate-900/50 text-slate-300 hover:border-slate-600")
+                    : "border-slate-800 bg-slate-900/50 text-slate-300 hover:border-slate-600") +
+                  " focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                 }
               >
                 {plot.label}
