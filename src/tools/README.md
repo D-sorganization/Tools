@@ -22,7 +22,6 @@ src/tools/
 ├── quality_utils.py              # Python quality-check helpers
 ├── scientific_auditor.py         # Scientific code auditor
 ├── ui_utils.py                   # Shared UI helpers
-├── folder_tools/                 # Folder utility tools
 ├── gui/                          # GUI utility modules
 ├── matlab_code_analyzer_gui/     # MATLAB analysis GUI tool
 └── matlab_utilities/             # MATLAB quality utilities package

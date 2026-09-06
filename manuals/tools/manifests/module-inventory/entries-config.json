@@ -126,10 +126,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1087,
+      "bytes_lf": 949,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2174370ec725670746f1f4fb0af8b2140cc705f42ca1b35e5e88339ffdca242c",
+      "content_sha256_lf": "8a4560405cd5355e1cb4344e7a900254bc0892fcb31c53379465c7ea0e2f8f8d",
       "family": "repository-governance-non-calculation",
       "id": "TOOLS-MODULE-CONFIG-MODULE-SIZE-BUDGET-BASELINE-JSON-486F02965545",
       "language": "json",

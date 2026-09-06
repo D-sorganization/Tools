@@ -70,7 +70,7 @@ def main() -> int:
         marker = "  "
         if count == 0:
             marker = "👻"  # Phantom exclusion
-        elif "tools/" in pat or "folder_tools" in pat:
+        elif "tools/" in pat:
             marker = "🔧"  # Tools exclusion
         elif "shared" in pat:
             marker = "📦"  # Shared package exclusion

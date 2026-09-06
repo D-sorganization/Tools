@@ -79,7 +79,6 @@ These are NOT tools themselves but shared code consumed by multiple tools.
 - matlab_quality_utils.py, quality_utils.py — code quality
 - mypy_autofix_agent.py — type checking automation
 - scientific_auditor.py — scientific code validation
-- folder_tools/ — legacy folder utilities
 
 ## Canonical Structure (Target, Phase 2+)
 

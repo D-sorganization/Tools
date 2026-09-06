@@ -120,16 +120,8 @@ def main() -> int:
         "src/folder_packer_pro",  # tests/folder_packer_pro/test_file_ops.py
         "src/media_processing",  # src/media_processing/.../tests_video_processor/test_api.py
     }
-    # Legacy directories explicitly excluded from ruff linting in pyproject.toml.
-    # These directories pre-date the test contract and are not required to have tests
-    # until they are promoted out of legacy status.
-    LEGACY_EXEMPT = {
-        "src/tools/folder_tools",  # excluded from ruff; legacy monolith, no unit tests yet
-    }
     violations = [
-        pkg
-        for pkg in packages
-        if pkg not in KNOWN_TESTED and pkg not in LEGACY_EXEMPT and not has_tests(pkg)
+        pkg for pkg in packages if pkg not in KNOWN_TESTED and not has_tests(pkg)
     ]
     if violations:
         sys.stderr.write("Minimum test contract failed for changed packages:\n")

@@ -211,8 +211,6 @@
           "src/pendulum_simulator/tests/test_perturbation_analysis.py",
           "src/pendulum_simulator/tests/test_perturbation_panel.py",
           "src/pendulum_simulator/tests/test_swing_comparison_dialog.py",
-          "src/project_packer/tests/test_folder_packer_gui.py",
-          "src/python/tests/test_folder_packer_pro.py",
           "src/shared/python/ai/tests/test_rag_context_provider.py",
           "src/shared/python/chat/tests/test_chat_ws_error_handling.py",
           "src/shared/python/humanoid_character_builder/tests/test_api.py",

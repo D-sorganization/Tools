@@ -11,7 +11,5 @@
   "src/shared/python/chat/_chat_dock_widget_qt.py": 2091,
   "src/shared/python/sidekick/ui/tools_sidebar/runtime_tabs.py": 1250,
   "src/shared/python/signal_toolkit/widget.py": 1794,
-  "src/shared/python/upstream_drift_tools/process_calculators/syngas_compression_calculator.py": 1218,
-  "src/tools/folder_tools/folder_packer_pro/folder_packer_pro.py": 1911,
-  "src/tools/folder_tools/folder_tool/Folders_Tool_r0.py": 3288
+  "src/shared/python/upstream_drift_tools/process_calculators/syngas_compression_calculator.py": 1218
 }

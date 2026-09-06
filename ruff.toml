@@ -22,7 +22,6 @@ exclude = [
     # Exclude directories/files with syntax errors or intentional non-compliance
     "src/document_processing",
     "src/scientific_modeling",
-    "src/tools/folder_tools",
     "src/tools/code_quality_check.py",
     "src/pendulum_simulator",
     # Vendored self-contained sub-app (migrated from D-sorganization/Movement_Optimizer,

@@ -6,7 +6,7 @@
 
 ## 10.1 Folder Tool
 
-**Source:** `src/tools/folder_tools/folder_tool/`
+**Source:** `src/folder_tool/`
 **Status:** ✅ Implemented
 
 ### 10.1.1 Purpose
@@ -25,7 +25,7 @@ Directory management utility for organizing, sorting, and managing file structur
 
 ## 10.2 Folder Packer Pro
 
-**Source:** `src/tools/folder_tools/folder_packer_pro/`
+**Source:** `src/folder_packer_pro/`
 **Status:** ✅ Implemented
 
 ### 10.2.1 Purpose
@@ -43,7 +43,7 @@ Advanced directory packing tool for creating compressed archives of project dire
 
 ## 10.3 Project Packer
 
-**Source:** `src/tools/folder_tools/project_packer/`
+**Source:** `src/project_packer/`
 **Status:** ✅ Implemented
 
 ### 10.3.1 Purpose

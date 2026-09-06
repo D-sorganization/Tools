@@ -402,7 +402,6 @@ omit = [
     "src/data_processing/*",
     "src/document_processing/*",
     "src/scientific_modeling/*",
-    "src/tools/folder_tools/*",
     "src/tools/code_quality_check.py",
 ]
 

@@ -111,7 +111,6 @@
           "tests/shared/python/launch_monitor/conftest.py",
           "tests/shared/python/sidekick/process_calculators/conftest.py",
           "tests/solar_system_model/conftest.py",
-          "tests/tools/folder_tools/conftest.py",
           "tests/unit/ai/integrations/conftest.py",
           "tests/unit/ai/integrations/github_mcp/conftest.py",
           "tests/unit/ai/mcp/conftest.py",

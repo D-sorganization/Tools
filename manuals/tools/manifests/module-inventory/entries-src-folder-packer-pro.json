@@ -82,7 +82,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "not-applicable"
       },
@@ -103,7 +103,9 @@
             "signature": null
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "src/python/tests/test_folder_packer_pro.py"
+        ],
         "unit_mentions": [
           "bar"
         ],
@@ -371,7 +373,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "not-applicable",
         "validation": "not-applicable"
       },
@@ -392,7 +394,9 @@
             "signature": null
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "src/python/tests/test_folder_packer_pro.py"
+        ],
         "unit_mentions": [],
         "validation_paths": []
       }
@@ -651,7 +655,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "not-applicable",
         "validation": "not-applicable"
       },
@@ -672,7 +676,9 @@
             "signature": null
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "src/python/tests/test_folder_packer_pro.py"
+        ],
         "unit_mentions": [],
         "validation_paths": []
       }
