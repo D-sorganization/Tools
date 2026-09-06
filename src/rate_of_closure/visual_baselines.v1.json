@@ -2,7 +2,7 @@
   "schema_id": "rate-of-closure/visual-baselines",
   "schema_version": 1,
   "approval_policy": "proposed-off-default-branch-approved-after-protected-merge",
-  "source_artifact_commit": "0c3297ac5e3f8e1cff5983c442d62829ac9371b5",
+  "source_artifact_commit": "be71b03676eda7bbfa40c880ded3a3bb7112b868",
   "baselines": [
     {
       "surface": "react",
@@ -129,7 +129,7 @@
       "tab_id": "clubhead",
       "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-clubhead-dpi-1.0.png",
-      "sha256": "5ab1bd9f278e87e0b8b984add8c78f1abc39db7c1b4cbd0219e1ec6b63d83629",
+      "sha256": "4ef309788c40ebf88d3b240eb8a9709f1062c7ed7752f62cef586f5069a8149a",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 200,
@@ -141,7 +141,7 @@
       "tab_id": "plots",
       "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-plots-dpi-1.0.png",
-      "sha256": "823ae0b7c9260853f6889a6d9977bafc852cd3e1792e4892345ea9c5cac59b49",
+      "sha256": "b320a12490d1d18c9a26e9cb6732d434374ff58ecda72dc99ed762509aa0fbe4",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 200,
@@ -153,7 +153,7 @@
       "tab_id": "calculation_description",
       "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-calculation_description-dpi-1.0.png",
-      "sha256": "ec0aca97e903f2650f319a7ddc8e5b6481a5b868656341cabe85b3bb3ea18baa",
+      "sha256": "9183ccec65a56b2cd4905281cc7a1cefc9bb61351c512ed38d497258c2304824",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 200,
@@ -165,7 +165,7 @@
       "tab_id": "simulation",
       "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-simulation-dpi-1.0.png",
-      "sha256": "e1a8ca61d1e021d1217862f058fd9d16cdf8e2439f92296da508e1b4b2e7d519",
+      "sha256": "1dcccc190fc56fe383cb7af5ad9d2b37aecd688b7d2148708468812e1d5d6f75",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 10000,
@@ -177,7 +177,7 @@
       "tab_id": "flight_explorer",
       "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-flight_explorer-dpi-1.0.png",
-      "sha256": "1bf239ea7c966eb89cd5477ce335c899ee049e479c4517ae8d0a3e75c62bffa0",
+      "sha256": "5abe4a83bc30c20f6631a4e94031b9c6dee7815aa3a18dcf1783ae31a6819136",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 200,
@@ -189,7 +189,7 @@
       "tab_id": "launch_monitor_analytics",
       "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-launch_monitor_analytics-dpi-1.0.png",
-      "sha256": "92b5a5f72a4ae982f4d0b3fde2c127bac3b55e150d5b53d9549e97706ffbca40",
+      "sha256": "066a1ae87000f737d04672b301ee18e93f024ccafe442aedca6c96753872dad1",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 200,
@@ -201,7 +201,7 @@
       "tab_id": "neural_model_lab",
       "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-neural_model_lab-dpi-1.0.png",
-      "sha256": "0b06ce2be450dc1c0080bfcc632940841e37910c9abd87072aad120f99fea083",
+      "sha256": "c3ac1875fa028b0e6ec538e9c1a114f4eaf30e3834aa5eb02699955ad2869c0b",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 200,
@@ -213,7 +213,7 @@
       "tab_id": "variation",
       "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-variation-dpi-1.0.png",
-      "sha256": "22f6640e896e9ea5c740e9db7e3d3201cdf7264f2cf1cff33966b539354f1d40",
+      "sha256": "650267b346dab8651b6163d83046ed46cbe604c83c71908cca2b1168e84a78cd",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 200,
@@ -225,7 +225,7 @@
       "tab_id": "putting",
       "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-putting-dpi-1.0.png",
-      "sha256": "b4eb9c2e20f19e99f96f7420df14713a22aa33a1e5321a08998434ab28ee4f79",
+      "sha256": "88a5d16870e1acc8d377ca5d468b5ceec3483e26c018838494637c4c518cd207",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 200,
@@ -237,7 +237,7 @@
       "tab_id": "glossary",
       "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-glossary-dpi-1.0.png",
-      "sha256": "aedf5325b2908cadd1f86ad52faa3ad9bb40312fb8a48a01849df92ebe2d88bd",
+      "sha256": "1e1d6f140f3268931f842e2c2f73cd130f986cd32ac65b45b3f05bb0ce2fea94",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 200,
