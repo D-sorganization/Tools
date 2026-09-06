@@ -195,8 +195,11 @@ class BackupCopyMixin:
                     return True
 
                 # Verification failed; clean up and potentially retry
-                if dest_path_obj.exists():
-                    dest_path_obj.unlink()
+                try:
+                    if dest_path_obj.exists():
+                        dest_path_obj.unlink()
+                except OSError:
+                    pass
                 if attempt < MAX_RETRY_ATTEMPTS - 1:
                     logger.info(
                         "Retrying copy due to verification failure "
@@ -283,10 +286,10 @@ class BackupCopyMixin:
         """
         if source_path_obj is None:
             raise ValueError("source_path_obj must be provided")
-        if not dest_path_obj.exists():
-            logger.error(f"Destination file was not created: {dest_path}")
-            return False
         try:
+            if not dest_path_obj.exists():
+                logger.error(f"Destination file was not created: {dest_path}")
+                return False
             source_size = source_path_obj.stat().st_size
             dest_size = dest_path_obj.stat().st_size
             if source_size == dest_size:

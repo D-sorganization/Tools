@@ -27,19 +27,20 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.127                                   |
+| **Spec Version**        | 1.18.128                                   |
 | **Last Spec Update**    | 2026-09-06                                 |
 
 ## 2. Purpose & Mission
 
 ### 2026-09-06 Test Quarantine Unquarantine (#4933)
 
-Unquarantined `tests/vessel_drafter/test_contracts_fallback.py` and
-`tests/test_python_version_contract.py` from `config/test_quarantine.json`.
-Hardened `_load_fallback_contracts` to explicitly block `shared.python.contracts`
-and parent namespaces from `sys.modules`, ensuring standalone fallback DbC
-contracts are verified without monorepo bleed. Isolated root conftest loading in
-`test_python_version_contract.py` using explicit spec loading rather than bare imports.
+Unquarantined `tests/folder_tool/test_backup_copy.py`,
+`tests/project_packer_fixes/test_folder_packer_gui_lod.py`, and
+`tests/test_phase1_quick_wins.py` from `config/test_quarantine.json`.
+Updated DbC contract tests in `test_folder_packer_gui_lod.py` and
+`test_backup_copy.py` to allow `(AssertionError, ValueError)` on invalid
+inputs, verified graceful handling of stat errors during copy size verification,
+and ensured root artifact ignore entries are present in `.gitignore`.
 
 ### 2026-09-06 Pressure-Drop Public-Name Hygiene (#3991)
 
@@ -5701,6 +5702,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-06 | #5025 | fix(tests, #4933): unquarantine project packer, backup copy, and phase 1 quick wins tests (#4933); handle OSError gracefully during copy verification and dest cleanup. |
 | 2026-09-06 | #5023 | fix(tests, #4933): unquarantine vessel drafter contracts fallback and python version contract tests (#4933). |
 | 2026-09-06 | #5021 | test(rate-of-closure, #5021): re-approve pyqt visual baselines from trusted push run 34045862045 (commit be71b03676eda7bbfa40c880ded3a3bb7112b868). Synchronize all 10 PyQt baseline PNGs and their sha256 checksums with the runner-captured candidates and rebind source_artifact_commit in visual_baselines.v1.json and test_visual_baseline_compare.py. |
 | 2026-09-06 | #5017 | a11y(rate-of-closure, #5017): add standard focus-visible ring styling to interactive button elements in PlotsPanel to enhance keyboard navigation accessibility. |
@@ -7255,3 +7257,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-06: Re-approve PyQt Visual Baselines From Trusted Push (#5021)
 
 - **2026-09-06**: test(rate-of-closure, #5021) — Re-approve PyQt visual baselines from trusted push run 34045862045 (commit `be71b03676eda7bbfa40c880ded3a3bb7112b868`) following PuttingVisuals rendering optimizations.
+
+## 2026-09-06: Test Quarantine Unquarantine (#4933 / #5025)
+
+- **2026-09-06**: fix(tests, #4933) — Unquarantine `tests/folder_tool/test_backup_copy.py`, `tests/project_packer_fixes/test_folder_packer_gui_lod.py`, and `tests/test_phase1_quick_wins.py` after updating DbC contract test assertions and `.gitignore` stale artifact blocks.
