@@ -2589,7 +2589,6 @@
           "src/media_processing/video_processor/python/tests_video_processor/test_example.py",
           "src/movement_optimizer/tests/test_gait_sts.py",
           "src/movement_optimizer/tests/test_parameter_validation.py",
-          "src/optimizer_gui/tests/test_swing_chain_models.py",
           "src/p1am_control_system/backend/tests/test_alarm_nan_bad_quality.py",
           "src/p1am_control_system/backend/tests/test_backend_p1am_safety.py",
           "src/p1am_control_system/backend/tests/test_interlock_defaults_contract.py",

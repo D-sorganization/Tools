@@ -177,7 +177,6 @@
           "src/movement_optimizer/tests/test_swingset_chain_models.py",
           "src/movement_optimizer/tests/test_swingset_forces.py",
           "src/movement_optimizer/tests/test_trajectory_optimization.py",
-          "src/optimizer_gui/tests/test_swing_chain_models.py",
           "src/p1am_control_system/backend/tests/_power_supply_helpers.py",
           "src/p1am_control_system/backend/tests/test_alarm_ack_engine.py",
           "src/p1am_control_system/backend/tests/test_backend_p1am_safety.py",

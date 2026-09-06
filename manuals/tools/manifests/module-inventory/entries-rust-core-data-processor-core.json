@@ -332,7 +332,6 @@
           "src/movement_optimizer/tests/test_thread_safety.py",
           "src/multi_param_analysis/tests/test_multi_param_analysis_gui.py",
           "src/ode_solver/tests/test_ode_solver_gui.py",
-          "src/optimizer_gui/tests/test_optimizer_gui.py",
           "src/p1am_control_system/backend/tests/conftest.py",
           "src/p1am_control_system/backend/tests/test_alarm_ack_engine.py",
           "src/p1am_control_system/backend/tests/test_backend.py",

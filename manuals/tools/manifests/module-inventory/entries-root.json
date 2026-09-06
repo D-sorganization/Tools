@@ -676,8 +676,6 @@
         ],
         "test_paths": [
           "rust_core/tools-core/tests/flight_ground_transfer.rs",
-          "src/optimizer_gui/tests/test_swing_chain_models.py",
-          "src/optimizer_gui/tests/test_swing_chain_tabs.py",
           "src/p1am_control_system/backend/tests/test_database.py",
           "src/pendulum_simulator/tests/test_default_dark_theme_and_button_width.py",
           "src/pendulum_simulator/tests/test_ui_polish_fixes.py",

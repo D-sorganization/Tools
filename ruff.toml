@@ -131,7 +131,6 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 "src/multi_param_analysis/python/multi_param_analysis/ui/pyqt6/main_window.py" = ["E501"]
 "src/multi_param_analysis/tests/test_multi_param_analysis_gui.py" = ["E501"]
 "src/ode_solver/python/ode_solver/ui/pyqt6/main_window.py" = ["E501"]
-"src/optimizer_gui/python/optimizer_gui/ui/pyqt6/main_window.py" = ["E501"]
 "src/pressure_drop_calculator/gui_registration.py" = ["E501"]
 "src/pressure_drop_calculator/python/pressure_drop_calculator/ui/pyqt6/main_window.py" = ["E501"]
 "src/pressure_drop_calculator/tests/test_pressure_drop_calculator_gui.py" = ["E501"]

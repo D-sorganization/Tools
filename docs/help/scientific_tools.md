@@ -279,59 +279,14 @@ Variance-based global sensitivity analysis.
 
 ---
 
-## Optimizer GUI
+## Optimizer GUI (legacy shim)
 
-Adam-based optimization for multi-parameter systems.
-
-### Optimization Methods
-
-#### Adam Optimizer
-
-Adaptive learning rate optimizer (deep learning standard).
-
-**Parameters**:
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| Learning Rate | 0.001 | Step size |
-| Beta1 | 0.9 | First moment decay |
-| Beta2 | 0.999 | Second moment decay |
-| Epsilon | 1e-8 | Numerical stability |
-
-#### Grid Search
-
-Exhaustive search over parameter grid.
-
-#### L-BFGS-B
-
-Quasi-Newton method with bounds.
-
-- Good for smooth functions
-- Handles parameter constraints
-
-#### Differential Evolution
-
-Evolutionary algorithm.
-
-- Good for non-convex functions
-- Global search capability
-- No gradient required
-
-### Setting Up Optimization
-
-1. Define parameter table (name, min, max, initial)
-2. Define objective function
-3. Select optimization method
-4. Set hyperparameters
-5. Run optimization
-6. Review convergence history
-
-### Outputs
-
-- Optimal parameters
-- Final objective value
-- Convergence plot
-- Parameter trajectory
-- Gradient information (if applicable)
+`src/optimizer_gui` is now a compatibility launcher only. The standalone
+PyQt6 optimizer GUI that used to live there was consolidated into the
+Movement Optimizer application (`src/movement_optimizer`), and the drifted
+vendored copy of its models was removed (Tools #3983). Launching
+`python src/optimizer_gui/launch_pyqt6.py` opens the canonical Movement
+Optimizer application.
 
 ---
 

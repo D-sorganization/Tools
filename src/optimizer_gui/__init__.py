@@ -1,13 +1,8 @@
-"""Movement Optimizer GUI for standalone use.
+"""Legacy Movement Optimizer GUI shim.
 
-The source package lives under ``src/optimizer_gui/python`` so direct
-launcher execution extends this package path at import time.
+The vendored GUI package that used to live under ``src/optimizer_gui/python``
+was consolidated into ``src/movement_optimizer`` (Tools #3983). This package
+now only carries the compatibility registration and launcher shim:
+``gui_registration.py`` redirects catalog metadata to the canonical
+``movement_optimizer`` PyQt6 app and ``launch_pyqt6.py`` launches it.
 """
-
-from __future__ import annotations
-
-from pathlib import Path
-
-_NESTED_PACKAGE = Path(__file__).resolve().parent / "python" / "optimizer_gui"
-if _NESTED_PACKAGE.exists():
-    __path__.append(str(_NESTED_PACKAGE))

@@ -261,15 +261,11 @@ Sensitivity analysis across multiple parameter dimensions.
 - Sphere (simple convex)
 - Himmelblau (multiple minima)
 
-## Optimizer GUI
+## Optimizer GUI (legacy shim)
 
-Adam-based optimization for multi-parameter systems.
-
-**Methods:**
-- Adam optimizer
-- Grid Search
-- L-BFGS-B
-- Differential Evolution
+`src/optimizer_gui` is now a compatibility launcher only. The standalone
+optimizer GUI was consolidated into the Movement Optimizer app
+(`src/movement_optimizer`); launching the old path opens that application.
 
 ## Tips
 

@@ -834,53 +834,18 @@ Thermal reactor/converter vessel design tool for sizing and mechanical design of
 
 ---
 
-## 3.17 Optimizer GUI
+## 3.17 Optimizer GUI (legacy shim)
 
 **Source:** `process_calculators/optimization.py`
-**GUI:** `src/optimizer_gui/` (PyQt6)
-**Status:** ✅ Fully Implemented
+**GUI:** `src/optimizer_gui/launch_pyqt6.py` (compatibility launcher)
+**Status:** ⚠️ Legacy shim — retired standalone GUI (Tools #3983)
 
-### 3.17.1 Purpose
-
-Process parameter optimization using multiple methods.
-
-### 3.17.2 Mathematical Model
-
-**Adam Optimizer (Kingma & Ba, 2014):**
-
-Gradient computation via finite differences:
-
-$$g_i = \frac{f(x + \delta e_i) - f(x - \delta e_i)}{2\delta}$$
-
-First moment estimate:
-
-$$m_t = \beta_1 \cdot m_{t-1} + (1 - \beta_1) \cdot g_t$$
-
-Second moment estimate:
-
-$$v_t = \beta_2 \cdot v_{t-1} + (1 - \beta_2) \cdot g_t^2$$
-
-Bias-corrected estimates:
-
-$$\hat{m}_t = \frac{m_t}{1 - \beta_1^t}$$
-
-$$\hat{v}_t = \frac{v_t}{1 - \beta_2^t}$$
-
-Parameter update:
-
-$$x_{t+1} = x_t + \alpha \cdot \frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon}$$
-
-(Sign is positive for maximization, negative for minimization.)
-
-**Surface Optimization Methods:**
-
-| Method                 | Algorithm             | Description              |
-| ---------------------- | --------------------- | ------------------------ |
-| Grid Search            | Exhaustive 15×15 grid | Brute-force evaluation   |
-| L-BFGS-B               | Quasi-Newton          | Bounded gradient descent |
-| Differential Evolution | Stochastic            | Global optimization      |
-
-All surface methods use `scipy.interpolate.RegularGridInterpolator` for evaluation.
+The standalone PyQt6 optimizer GUI that used to live in `src/optimizer_gui/`
+was consolidated into `src/movement_optimizer/`, and its drifted vendored copy
+of the swing/chain models was deleted. The directory now only carries a hidden
+catalog registration and a compatibility launcher that starts the canonical
+Movement Optimizer application. For the maintained optimization surface, see
+the Movement Optimizer documentation.
 
 ---
 

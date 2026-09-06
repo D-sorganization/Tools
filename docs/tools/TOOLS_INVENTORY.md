@@ -59,7 +59,6 @@ parity between surfaces.
 | ---------------------- | :---: | :-: | :---: | --------------------------- |
 | `ode_solver`           |  Yes  | Yes |  No   | Differential equations      |
 | `pendulum_simulator`   |  Yes  | Yes |  Yes  | Multibody dynamics          |
-| `optimizer_gui`        |  Yes  | No  |  No   | Numerical optimization      |
 | `multi_param_analysis` |  Yes  | No  |  No   | Parameter sweeps            |
 | `solar_system_model`   |  No   | No  |  No   | Orbital mechanics, API only |
 | `rotation_converter`   |  Yes  | Yes |  Yes  | Spatial rotation math       |
@@ -108,11 +107,11 @@ Served as static files from `src/web_applications/`.
 
 **No web surface**
 
-Fifteen desktop applications have no browser implementation:
+Fourteen desktop applications have no browser implementation:
 `inertia_calculator`, `vessel_drafter`, `pid_generator`,
 `signal_processing_studio`, `data_explorer`, `document_processing`,
 `video_analyzer`, `urdf_builder_gui`, `humanoid_builder_gui`,
-`movement_optimizer`, `lower_body_model`, `c3d_viewer`, `optimizer_gui`,
+`movement_optimizer`, `lower_body_model`, `c3d_viewer`,
 `multi_param_analysis`, and `asteroid_jumper`, plus the three file-management
 tools, which are inherently local.
 

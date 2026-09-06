@@ -107,7 +107,6 @@
           "src/flow_rate_converter/tests/test_flow_rate_converter_gui.py",
           "src/inertia_calculator/tests/test_inertia_calculator_gui.py",
           "src/media_processing/tests/test_media_processing_smoke.py",
-          "src/optimizer_gui/tests/test_swing_chain_models.py",
           "src/p1am_control_system/backend/tests/test_alarm_nan_bad_quality.py",
           "src/pendulum_simulator/tests/test_native_backend.py",
           "src/pendulum_simulator/tests/test_native_backend_extended.py",

@@ -139,7 +139,7 @@ Tools/
 │   ├── psa_package/              # Tool: Pressure swing adsorption
 │   ├── steam_engine_calculator/  # Tool: Steam engine calculator
 │   ├── trc_vessel_designer/      # Tool: TRC vessel designer
-│   ├── optimizer_gui/            # Tool: Process optimizer
+│   ├── optimizer_gui/            # Legacy launcher shim → movement_optimizer
 │   ├── multi_param_analysis/     # Tool: Multi-parameter analysis
 │   ├── inertia_calculator/       # Tool: Inertia calculator
 │   ├── function_generator/       # Tool: Function generator
