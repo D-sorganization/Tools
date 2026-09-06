@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.125                                   |
+| **Spec Version**        | 1.18.126                                   |
 | **Last Spec Update**    | 2026-09-05                                 |
 
 ## 2. Purpose & Mission
@@ -5681,6 +5681,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-06 | #[PR] | perf(rate-web): optimize chart layout bounds calculation in PuttingVisuals. Replace array spreads with single-pass loops to reduce GC pressure. | #[PR] (spec 1.18.126) |
 | 2026-09-06 | #5008 | test(rate-of-closure, #5008): re-approve the pyqt/flight_explorer visual baseline from the fleet-captured trusted candidate (run 34019151967, commit 4a9a61d659c8). The legitimate visual drift was introduced when PR #5004 re-integrated the wind strategy panel and worker into the Flight Explorer tab workspace; rebind the baseline sha256 in visual_baselines.v1.json. |
 | 2026-09-06 | #4933 | fix(tests): unquarantine pendulum and interaction tests with DbC and fixture fixes (#4933). Unquarantine test_perturbation_panel.py, test_swing_comparison_dialog.py, test_perturbation_analysis.py, test_benchmarks.py, and test_tool_interactions.py after fixing DbC parameter validation, missing _app test fixtures, and pandas 2.2 frequency offset deprecation. |
 | 2026-09-05 | #5004 | feat(wind): re-land wind strategy panel, worker, and responsive flight explorer integration (#4960). Re-integrates the wind strategy panel and its web worker into the Flight Explorer tab with responsive tab switching, custom renderer hooks on PlotCanvasPane, typed legend placement, accessibility audit control count bounds, clean worker lifecycle teardown on window close, and canonicalized shared python root test alignment. |

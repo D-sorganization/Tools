@@ -145,9 +145,23 @@ function GreenView(props: PuttingVisualsProps) {
   const { result, plan } = props;
   if (!result || !plan) return <p className="text-sm text-slate-400">Inputs out of range.</p>;
   const samples = plan.samples;
-  const maxX = Math.max(props.holeX + 0.5, ...samples.map(({ xM }) => xM)) + 0.3;
-  const minX = Math.min(0, ...samples.map(({ xM }) => xM)) - 0.3;
-  const spanY = Math.max(0.8, 2 * Math.max(...samples.map(({ yM }) => Math.abs(yM)), 0.3));
+
+  // ⚡ BOLT: Calculate min/max dynamically in a single pass to eliminate O(N) array allocation
+  // and reduce garbage collection pressure caused by array spreads.
+  let dynamicMaxX = props.holeX + 0.5;
+  let dynamicMinX = 0;
+  let dynamicMaxYAbs = 0.3;
+  for (let i = 0; i < samples.length; i++) {
+    const { xM, yM } = samples[i];
+    if (xM > dynamicMaxX) dynamicMaxX = xM;
+    if (xM < dynamicMinX) dynamicMinX = xM;
+    const absY = Math.abs(yM);
+    if (absY > dynamicMaxYAbs) dynamicMaxYAbs = absY;
+  }
+  const maxX = dynamicMaxX + 0.3;
+  const minX = dynamicMinX - 0.3;
+  const spanY = Math.max(0.8, 2 * dynamicMaxYAbs);
+
   const scaleX = (value: number) => ((value - minX) / (maxX - minX)) * PATH_WIDTH;
   const scaleY = (value: number) => PATH_HEIGHT / 2 - (value / spanY) * PATH_HEIGHT;
   const points = samples.map(({ rawIndex, xM, yM }) => ({
@@ -203,7 +217,15 @@ function SpeedPlot(props: PuttingVisualsProps) {
   const { result, plan } = props;
   if (!result || !plan) return null;
   const maxDistance = Math.max(plan.cumulativeDistanceM[plan.rawCount - 1], 0.1);
-  const maxSpeed = Math.max(...plan.samples.map(({ speedMps }) => speedMps), captureSpeedMps()) * 1.08;
+
+  // ⚡ BOLT: Calculate min/max dynamically in a single pass to eliminate O(N) array allocation
+  // and reduce garbage collection pressure caused by array spreads.
+  let dynamicMaxSpeed = captureSpeedMps();
+  for (let i = 0; i < plan.samples.length; i++) {
+    if (plan.samples[i].speedMps > dynamicMaxSpeed) dynamicMaxSpeed = plan.samples[i].speedMps;
+  }
+  const maxSpeed = dynamicMaxSpeed * 1.08;
+
   const scaleX = (value: number) => (value / maxDistance) * (SPEED_WIDTH - 20) + 10;
   const scaleY = (value: number) => SPEED_HEIGHT - 16 - (value / maxSpeed) * (SPEED_HEIGHT - 32);
   const points = plan.samples.map(({ rawIndex, cumulativeDistanceM, speedMps }) => ({
