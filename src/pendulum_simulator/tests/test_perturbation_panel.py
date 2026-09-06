@@ -42,6 +42,11 @@ def app():
     # Do NOT call a.quit() — other tests may still need it
 
 
+@pytest.fixture(scope="module")
+def _app(app):
+    return app
+
+
 @pytest.fixture
 def panel(_app):  # app fixture ensures QApplication exists
     from double_pendulum_golf.gui.perturbation_panel import PerturbationPanel

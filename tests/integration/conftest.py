@@ -114,7 +114,7 @@ def sample_processing_data_csv(integration_temp_dir: Path) -> Path:
 
     # Create realistic data processing dataset
     data = {
-        "timestamp": pd.date_range("2024-01-01", periods=100, freq="H"),
+        "timestamp": pd.date_range("2024-01-01", periods=100, freq="h"),
         "temperature_c": [20 + 5 * (i % 10) for i in range(100)],
         "pressure_bar": [1.0 + 0.1 * (i % 5) for i in range(100)],
         "flow_rate_l_min": [50 + 10 * (i % 7) for i in range(100)],
@@ -292,7 +292,7 @@ def data_processor_with_outliers() -> pd.DataFrame:
     df = pd.DataFrame(
         {
             "value": [10.0 + i for i in range(50)],
-            "measured_at": pd.date_range("2024-01-01", periods=50, freq="1H"),
+            "measured_at": pd.date_range("2024-01-01", periods=50, freq="1h"),
         }
     )
 
@@ -420,7 +420,7 @@ def multi_step_workflow_data(integration_temp_dir: Path) -> dict[str, Path]:
             "sensor_id": [1, 2, 3, 4, 5] * 10,
             "temperature": [20 + i * 0.1 for i in range(50)],
             "humidity": [50 + i * 0.2 for i in range(50)],
-            "timestamp": pd.date_range("2024-01-01", periods=50, freq="1H"),
+            "timestamp": pd.date_range("2024-01-01", periods=50, freq="1h"),
         }
     )
     input_df.to_csv(csv_path, index=False)
