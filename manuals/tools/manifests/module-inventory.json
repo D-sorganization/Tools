@@ -129,7 +129,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
     },
     {
-      "content_sha256_lf": "8bd0a4089e9502364bbedf7b98edce56a8d41c98c3913bff9532b0994f097350",
+      "content_sha256_lf": "1f7bd5e97662eb1a1cf1868531bbafc0835b985f29f8ec2caab2ba988df1b039",
       "entry_count": 3,
       "package": "rust_core/file_watcher",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
@@ -189,7 +189,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-asteroid-jumper.json"
     },
     {
-      "content_sha256_lf": "a781f1447076399f7741bbbafdaf2c01a608fccdce022ddd9698e5d73c94dc66",
+      "content_sha256_lf": "741d8998afdddc50a9570223a9cb15e6c56a426a3e7481a5f92267e6036c527c",
       "entry_count": 7,
       "package": "src/c3d_viewer",
       "path": "manuals/tools/manifests/module-inventory/entries-src-c3d-viewer.json"
@@ -723,7 +723,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-scripting.json"
     },
     {
-      "content_sha256_lf": "c3e5f4db334e8e37bd674073b170accae320dce6f309d17bdf528c647985f10d",
+      "content_sha256_lf": "91e66af87bd181cd431ba682e65e6a9db9cc981de554d878fc50ce18cb092458",
       "entry_count": 215,
       "package": "src/shared/python/sidekick",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick.json"

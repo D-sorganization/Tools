@@ -6634,6 +6634,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 | 2026-05-12 | n/a | Resolved type-checking errors by properly implementing abstract methods (send_message, validate_connection, capabilities) for RustAgentAdapter, and fixed GUI theme and categorization issues in UpstreamDrift chat functionality. (spec 1.1.136) |
 | 2026-05-19 | n/a | Replaced `.reduce()` with a standard `for` loop in `calculatePhaseConfidence` to eliminate callback allocation and garbage collection overhead during high-frequency pose frame confidence calculations in the video processor. (spec 1.1.184) |
 | 2026-05-20 | #3020 | Clarified shared chat provider dropdown ownership by removing stale UpstreamDrift issue references from Tools-owned source and tests, and synchronized the GitHub CLI provider descriptor with the default terminal registry (#3020). (spec 1.1.193) |
+| 2026-09-05 | #4999 | Check file existence before library check in C3D reader and show error state on failure (#3978). |
 ---
 
 <!--
@@ -7202,3 +7203,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 
 - **2026-09-04**: ci(tests, #4938) — Run the complete test tree across dedicated test shards in CI with coverage collection, evict all import alias keys in `test_gemini_adapter`, resolve shard contract and zero-length projection handling in sidekick process calculators, add GUI metadata to multi-param analysis launcher, quarantine drifted pendulum simulator tests, and update module inventory (#4913).
   | 2026-09-05 | #4992 | perf(rate_of_closure): Replace array spreads with single-pass loops in launchMonitorCovariation's pairStatus to eliminate intermediate allocations and call stack crashes. |
+
+## 2026-09-05: C3D Viewer Error State and File Existence Order (#3978)
+
+- **2026-09-05**: fix(c3d-viewer, #3978) — Check file existence before checking ezc3d availability so missing files raise FileNotFoundError, show error state on C3D reader failure, and annotate demo fallback.

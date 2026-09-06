@@ -1,5 +1,3 @@
-from typing import Any
-
 """
 C3D Motion Capture Viewer GUI Tests
 ===================================
@@ -8,7 +6,11 @@ TDD tests for the C3D Motion Capture Viewer GUI components.
 Tests cover PyQt6 main window, metadata display, and export options.
 """
 
+import importlib.util
+import os
 import sys
+from pathlib import Path
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -186,3 +188,261 @@ class TestC3DViewerGUIRegistration:
             assert hasattr(launch_pyqt6, "main")
         except ImportError:
             pytest.skip("Launcher not yet implemented")
+
+
+# --------------------------------------------------------------------------- #
+# File-load UI states (#3978): success, reader errors, demo fallback.          #
+#                                                                             #
+# These tests drive the REAL PyQt6 window through ``_load_file``.              #
+# They must paint the "loaded" label only after a successful load, surface     #
+# reader failures (ValueError/RuntimeError/OSError) as a visible error state,  #
+# and annotate demo data so fabricated numbers are never shown under a real    #
+# file name.                                                                   #
+# --------------------------------------------------------------------------- #
+
+_WINDOW_MODULE_NAME = "_c3d_viewer_main_window_under_test"
+
+
+def _select_file(window: Any, module: Any, path: Path) -> None:
+    """Drive ``_load_file`` as if the user had chosen *path* in the dialog."""
+    with patch.object(
+        module.QFileDialog,
+        "getOpenFileName",
+        return_value=(str(path), "C3D Files (*.c3d)"),
+    ):
+        window._load_file()
+
+
+def _write_valid_c3d(directory: Path) -> Path | None:
+    """Write a minimal valid C3D file; return None when ezc3d is unavailable."""
+    try:
+        import ezc3d
+        import numpy as np
+    except ImportError:
+        return None
+
+    c3d = ezc3d.c3d()
+    c3d.add_parameter("POINT", "LABELS", ["LASI", "RASI"])
+    c3d.add_parameter("POINT", "DESCRIPTIONS", ["Left hip", "Right hip"])
+    c3d.add_parameter("POINT", "UNITS", ["mm"])
+    c3d.add_parameter("POINT", "RATE", [100.0])
+    c3d.add_parameter("POINT", "FRAMES", [10])
+    c3d.add_parameter("ANALOG", "LABELS", ["Fx1"])
+    c3d.add_parameter("ANALOG", "DESCRIPTIONS", ["Force x"])
+    c3d.add_parameter("ANALOG", "UNITS", ["N"])
+    c3d.add_parameter("ANALOG", "SCALE", [1.0])
+    c3d.add_parameter("ANALOG", "OFFSET", [0.0])
+    c3d.add_parameter("ANALOG", "RATE", [100.0])
+    c3d["data"]["points"] = np.zeros((4, 2, 10))
+    c3d["data"]["analogs"] = np.zeros((1, 1, 10))
+    out = directory / "valid_capture.c3d"
+    c3d.write(str(out))
+    return out
+
+
+class TestC3DViewerFileLoadStates:
+    """File-load UI states for the PyQt6 C3D Viewer window (#3978)."""
+
+    @pytest.fixture(scope="session")
+    def qt_display(self) -> None:
+        """Skip the class when no Qt platform backend can be initialised."""
+        offscreen = os.environ.get("QT_QPA_PLATFORM") == "offscreen"
+        has_display = bool(
+            os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY")
+        )
+        native = sys.platform in ("win32", "darwin")
+        if not (offscreen or has_display or native):
+            pytest.skip("No Qt platform available (set QT_QPA_PLATFORM=offscreen)")
+        from PyQt6.QtWidgets import QApplication
+
+        if QApplication.instance() is None:
+            QApplication([])
+
+    @pytest.fixture(scope="class")
+    def main_window_module(self) -> Any:
+        """Load the real PyQt6 main-window module by explicit file path.
+
+        The repository ships two packages named ``c3d_viewer`` - the GUI
+        registration metadata package (``src/c3d_viewer``) and the GUI
+        package (``src/c3d_viewer/python/c3d_viewer``) - so a plain
+        ``import c3d_viewer`` resolves to whichever wins on ``sys.path``.
+        Loading the window module by file path is deterministic and leaves
+        the registration-package tests in this module untouched.
+        """
+        window_file = (
+            Path(__file__).resolve().parents[1]
+            / "python"
+            / "c3d_viewer"
+            / "ui"
+            / "pyqt6"
+            / "main_window.py"
+        )
+        spec = importlib.util.spec_from_file_location(_WINDOW_MODULE_NAME, window_file)
+        if spec is None or spec.loader is None:
+            pytest.skip(f"PyQt6 main window not available: no spec for {window_file}")
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[_WINDOW_MODULE_NAME] = module
+        try:
+            spec.loader.exec_module(module)
+        except ImportError as exc:
+            pytest.skip(f"PyQt6 main window not available: {exc}")
+        yield module
+        sys.modules.pop(_WINDOW_MODULE_NAME, None)
+
+    @pytest.fixture
+    def viewer_window(self, qt_display, qtbot, main_window_module) -> Any:
+        """Create a real C3DViewerWindow registered for teardown."""
+        window = main_window_module.C3DViewerWindow()
+        qtbot.addWidget(window)
+        return window
+
+    def test_good_file_shows_green_label_with_filename(
+        self, viewer_window, main_window_module, tmp_path
+    ) -> Any:
+        """A successful load paints the label green with the bare file name."""
+        good = _write_valid_c3d(tmp_path)
+        if good is None:
+            pytest.skip("ezc3d not available")
+
+        _select_file(viewer_window, main_window_module, good)
+
+        palette = main_window_module.CATPPUCCIN_MOCHA
+        assert viewer_window.file_label.text() == good.name
+        assert palette["green"] in viewer_window.file_label.styleSheet()
+        assert viewer_window.info_labels["marker_count"].text() == "2"
+        assert viewer_window.marker_list.count() == 2
+        assert viewer_window.analog_table.rowCount() == 1
+        assert viewer_window.export_status.toPlainText() == ""
+
+    def test_corrupt_file_shows_error_state_and_not_green(
+        self, viewer_window, main_window_module, tmp_path
+    ) -> Any:
+        """A corrupt file shows a visible error state instead of raising."""
+        corrupt = tmp_path / "corrupt.c3d"
+        corrupt.write_text("this is definitely not a c3d file")
+        # The reader validates the header itself before touching ezc3d, so a
+        # sentinel keeps the ValueError path deterministic in environments
+        # where ezc3d is missing (which would otherwise raise ImportError).
+        with patch("shared.python.sidekick.lab.bio.c3d_reader.ezc3d", MagicMock()):
+            _select_file(viewer_window, main_window_module, corrupt)
+
+        palette = main_window_module.CATPPUCCIN_MOCHA
+        label = viewer_window.file_label
+        assert "corrupt.c3d" in label.text()
+        assert "load failed" in label.text()
+        assert palette["green"] not in label.styleSheet()
+        assert palette["red"] in label.styleSheet()
+        assert viewer_window.info_labels["marker_count"].text() == "-"
+        assert viewer_window.events_list.count() == 0
+        assert viewer_window.marker_list.count() == 0
+        assert viewer_window.analog_table.rowCount() == 0
+        status = viewer_window.export_status.toPlainText()
+        assert "corrupt.c3d" in status
+        assert "Not a valid C3D file" in status
+        assert "Choose a valid C3D file" in status
+
+    def test_stale_panels_cleared_after_good_load_then_corrupt(
+        self, viewer_window, main_window_module, tmp_path
+    ) -> Any:
+        """A failed re-load clears panels from the previously loaded file."""
+        good = _write_valid_c3d(tmp_path)
+        if good is None:
+            pytest.skip("ezc3d not available")
+        corrupt = tmp_path / "corrupt.c3d"
+        corrupt.write_text("garbage")
+
+        _select_file(viewer_window, main_window_module, good)
+        assert viewer_window.marker_list.count() == 2
+        with patch("shared.python.sidekick.lab.bio.c3d_reader.ezc3d", MagicMock()):
+            _select_file(viewer_window, main_window_module, corrupt)
+
+        palette = main_window_module.CATPPUCCIN_MOCHA
+        assert palette["red"] in viewer_window.file_label.styleSheet()
+        assert palette["green"] not in viewer_window.file_label.styleSheet()
+        assert viewer_window.info_labels["frame_count"].text() == "-"
+        assert viewer_window.events_list.count() == 0
+        assert viewer_window.marker_list.count() == 0
+        assert viewer_window.analog_table.rowCount() == 0
+
+    def test_truncated_file_shows_error_state(
+        self, viewer_window, main_window_module, tmp_path
+    ) -> Any:
+        """A truncated file (RuntimeError from ezc3d) shows the error state."""
+        good = _write_valid_c3d(tmp_path)
+        if good is None:
+            pytest.skip("ezc3d not available")
+        truncated = tmp_path / "truncated.c3d"
+        truncated.write_bytes(good.read_bytes()[:128])
+
+        _select_file(viewer_window, main_window_module, truncated)
+
+        palette = main_window_module.CATPPUCCIN_MOCHA
+        assert "truncated.c3d" in viewer_window.file_label.text()
+        assert "load failed" in viewer_window.file_label.text()
+        assert palette["green"] not in viewer_window.file_label.styleSheet()
+        assert palette["red"] in viewer_window.file_label.styleSheet()
+        assert viewer_window.marker_list.count() == 0
+
+    def test_missing_file_shows_error_state(
+        self, viewer_window, main_window_module, tmp_path
+    ) -> Any:
+        """A vanished file (OSError from the reader) shows the error state."""
+        missing = tmp_path / "vanished.c3d"
+
+        _select_file(viewer_window, main_window_module, missing)
+
+        palette = main_window_module.CATPPUCCIN_MOCHA
+        assert "vanished.c3d" in viewer_window.file_label.text()
+        assert "load failed" in viewer_window.file_label.text()
+        assert palette["green"] not in viewer_window.file_label.styleSheet()
+        assert palette["red"] in viewer_window.file_label.styleSheet()
+        assert viewer_window.marker_list.count() == 0
+        assert "vanished.c3d" in viewer_window.export_status.toPlainText()
+
+    def test_missing_library_shows_annotated_demo_data(
+        self, viewer_window, main_window_module, tmp_path
+    ) -> Any:
+        """Without ezc3d, demo data is shown under an annotated label."""
+        chosen = tmp_path / "real_capture.c3d"
+        chosen.write_text("placeholder - reader raises ImportError before reading")
+
+        with patch("shared.python.sidekick.lab.bio.c3d_reader.ezc3d", None):
+            _select_file(viewer_window, main_window_module, chosen)
+
+        palette = main_window_module.CATPPUCCIN_MOCHA
+        label = viewer_window.file_label
+        assert "real_capture.c3d" in label.text()
+        assert "demo data" in label.text()
+        assert "library unavailable" in label.text()
+        assert palette["green"] not in label.styleSheet()
+        assert palette["yellow"] in label.styleSheet()
+        assert viewer_window.marker_list.count() == 12
+        assert "demo" in viewer_window.info_labels["marker_count"].text().lower()
+        status = viewer_window.export_status.toPlainText()
+        assert "ezc3d" in status
+        assert "pip install ezc3d" in status
+
+    def test_demo_annotation_replaces_green_after_good_load(
+        self, viewer_window, main_window_module, tmp_path
+    ) -> Any:
+        """Demo fallback after a good load never leaves a green real name."""
+        good = _write_valid_c3d(tmp_path)
+        if good is None:
+            pytest.skip("ezc3d not available")
+        second = tmp_path / "second.c3d"
+        second.write_text("placeholder")
+
+        _select_file(viewer_window, main_window_module, good)
+        palette = main_window_module.CATPPUCCIN_MOCHA
+        assert palette["green"] in viewer_window.file_label.styleSheet()
+        assert viewer_window.export_status.toPlainText() == ""
+        with patch("shared.python.sidekick.lab.bio.c3d_reader.ezc3d", None):
+            _select_file(viewer_window, main_window_module, second)
+
+        label = viewer_window.file_label
+        assert "second.c3d" in label.text()
+        assert "demo data" in label.text()
+        assert palette["green"] not in label.styleSheet()
+        assert palette["yellow"] in label.styleSheet()
+        assert viewer_window.marker_list.count() == 12
+        assert "pip install ezc3d" in viewer_window.export_status.toPlainText()
