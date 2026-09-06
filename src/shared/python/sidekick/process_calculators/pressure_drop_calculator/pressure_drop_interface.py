@@ -74,6 +74,8 @@ from .pressure_drop_results import (  # noqa: F401
     wrap_text,
 )
 from .pressure_drop_units import (  # noqa: F401
+    _convert_pressure,
+    _convert_temperature,
     convert_pressure,
     convert_temperature,
 )

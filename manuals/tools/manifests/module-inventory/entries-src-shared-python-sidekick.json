@@ -8121,10 +8121,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 7190,
+      "bytes_lf": 7094,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "c1f2a3f3f1b1cbeaa5aa44e883df8011579212b06d70b11c6a572d1dc3cb7567",
+      "content_sha256_lf": "0f4aa0899f181e1208988440ea28ba951221a88eb0e3a7e3ecd9ac5a35828d94",
       "family": "process-calculators-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-PRESSURE-DROP-CALCULATOR-PRESSURE-DROP-API-PY-E19B0AACE267",
       "language": "python",
@@ -8137,7 +8137,6 @@
         "public-api",
         "scientific-review-required",
         "source-provenance-unmapped",
-        "test-evidence-unmapped",
         "unit-contract-review"
       ],
       "states": {
@@ -8149,7 +8148,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "unavailable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "unavailable"
       },
@@ -8195,7 +8194,9 @@
             "signature": "pipe_size: str | None, pipe_schedule: str | None, pipe_diameter: float | None, pipe_material: str, pipe_roughness: float | None"
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/process_calculators/test_pressure_drop_api_public_names.py"
+        ],
         "unit_mentions": [
           "Pa",
           "bar",
@@ -8207,10 +8208,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 37197,
+      "bytes_lf": 37235,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "59d7fdcbb3a595aec4d903b25d4d2e470c44b7c81adc7768cc5db803ab317a64",
+      "content_sha256_lf": "15ac1f7cfe91649baf41eefa9be92aa499b7de8b43ba7401aca0f399cb94afb6",
       "family": "process-calculators-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-PRESSURE-DROP-CALCULATOR-PRESSURE-DROP-INTERFACE-PY-B34CBB15B6FE",
       "language": "python",
@@ -8423,10 +8424,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 12010,
+      "bytes_lf": 12004,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "f31bc61d700dce9ba50ea13ca54846d0b30d70cb3db253b34751b3c9f9eed522",
+      "content_sha256_lf": "47b7f050d19369a3715c096e0a411fa9ab941f666ffaa92fb2b1d747a4297ea9",
       "family": "process-calculators-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-PRESSURE-DROP-CALCULATOR-PRESSURE-DROP-RESULTS-PY-BB179E430531",
       "language": "python",
@@ -8486,10 +8487,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 1825,
+      "bytes_lf": 1965,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "639ebff77ccd52237a85c5d9d4199c33f93b245d04584bd96fc00a222371de65",
+      "content_sha256_lf": "2b089f32a556a2b66c8ce761f76432e557f8d91931853b51bccd5af3fc11af40",
       "family": "process-calculators-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-PRESSURE-DROP-CALCULATOR-PRESSURE-DROP-UNITS-PY-5A1CD737954E",
       "language": "python",
@@ -8547,10 +8548,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 8321,
+      "bytes_lf": 8318,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "2efd9baa222884945aeb58d9b396616bb865001333cb9086f237601f54c2d810",
+      "content_sha256_lf": "0a24559ac38b2232b8e5727d6fe6b465edfe61166bc2a5532468e7035a924d62",
       "family": "process-calculators-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-PRESSURE-DROP-CALCULATOR-PRESSURE-DROP-VALIDATION-PY-E4125477F7B1",
       "language": "python",

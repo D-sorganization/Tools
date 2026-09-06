@@ -61,3 +61,8 @@ def convert_pressure(value: float, from_unit: str, to_unit: str) -> float:
 
     pa = value * to_pa[from_unit]
     return pa / to_pa[to_unit]
+
+
+# Backward compatibility aliases for existing tests/callers
+_convert_temperature = convert_temperature
+_convert_pressure = convert_pressure

@@ -1057,6 +1057,7 @@
           "src/shared/python/model_generation/tests/test_simscape.py",
           "src/shared/python/model_generation/tests/test_urdf_roundtrip.py",
           "src/shared/python/plot_engine/tests/test_trendline.py",
+          "src/shared/python/sidekick/tests/process_calculators/test_pressure_drop_api_public_names.py",
           "src/shared/python/sidekick/tests/process_calculators/test_scrubber_engine.py",
           "src/shared/python/sidekick/tests/test_launcher_factory.py",
           "src/shared/python/signal_toolkit/tests/test_noise.py",
