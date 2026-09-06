@@ -32,6 +32,17 @@
 
 ## 2. Purpose & Mission
 
+### 2026-09-06 Pressure-Drop Public-Name Hygiene (#3991)
+
+The pressure-drop calculator facade no longer launders sibling privates into
+its public namespace. `format_results`, `convert_pressure`, and
+`convert_temperature` are defined public in their home modules
+(`pressure_drop_results.py`, `pressure_drop_units.py`) and re-exported plainly
+by `pressure_drop_api.py`, `pressure_drop_validation.py` imports `wrap_text`
+from its home module, and the cross-module private aliases are gone. Every
+previously importable public spelling keeps working from the same paths, and
+AST regression tests pin that facade exports resolve to public definitions.
+
 ### 2026-08-30 Fair Force-Source Work and Activation Comparisons
 
 Version 1.18.94 replaces the force-source speed marker with explicit selectable
@@ -5681,6 +5692,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-06 | #5011 | fix(pressure-drop, #3991): rename laundered sibling privates public at their home modules so pressure_drop_api re-exports format_results, convert_pressure, and convert_temperature plainly, pressure_drop_validation imports wrap_text cross-module as a public name, and the sidekick public-API contract tests pin that facade exports resolve to public definitions without regenerating the API baseline. |
 | 2026-09-06 | #5008 | test(rate-of-closure, #5008): re-approve the pyqt/flight_explorer visual baseline from the fleet-captured trusted candidate (run 34019151967, commit 4a9a61d659c8). The legitimate visual drift was introduced when PR #5004 re-integrated the wind strategy panel and worker into the Flight Explorer tab workspace; rebind the baseline sha256 in visual_baselines.v1.json. |
 | 2026-09-06 | #4933 | fix(tests): unquarantine pendulum and interaction tests with DbC and fixture fixes (#4933). Unquarantine test_perturbation_panel.py, test_swing_comparison_dialog.py, test_perturbation_analysis.py, test_benchmarks.py, and test_tool_interactions.py after fixing DbC parameter validation, missing _app test fixtures, and pandas 2.2 frequency offset deprecation. |
 | 2026-09-05 | #5004 | feat(wind): re-land wind strategy panel, worker, and responsive flight explorer integration (#4960). Re-integrates the wind strategy panel and its web worker into the Flight Explorer tab with responsive tab switching, custom renderer hooks on PlotCanvasPane, typed legend placement, accessibility audit control count bounds, clean worker lifecycle teardown on window close, and canonicalized shared python root test alignment. |
