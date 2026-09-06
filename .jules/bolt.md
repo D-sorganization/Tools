@@ -151,3 +151,6 @@
 ## 2026-09-05 - Eliminate Math.max(...spread) after chained maps
 **Learning:** Launch Monitor analysis code contained `Math.max(...array.map())` for determining constant coordinates, which is O(N) in memory and crashes with large datasets due to call stack limits.
 **Action:** Always replace spread-based max/min with single-pass loops, especially when combined with chained map operations on unbounded datasets.
+## $(date +%Y-%m-%d) - Prevent stack overflows and GC pressure in tight render loops
+**Learning:** Using chained `.map()` calls and array spread `Math.min(...array)` / `Math.max(...array)` syntax creates significant garbage collection pressure and CPU overhead when computing chart boundaries in React rendering loops (e.g., `PuttingVisuals.tsx`). Array creation and spreads degrade to O(N^2) memory allocations, scaling poorly.
+**Action:** Replace `Math.min(...spread)` / `Math.max(...spread)` combined with `.map()` in React rendering paths with a single-pass `for` loop to compute bounds dynamically without allocating intermediate arrays.
