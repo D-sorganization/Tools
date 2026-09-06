@@ -99,6 +99,7 @@
           "rust_core/ai_backend/tests/embeddings_http_integration.rs",
           "rust_core/ai_backend/tests/llm_http_integration.rs",
           "rust_core/tools-core/tests/python_ground_reference_conformance.py",
+          "src/c3d_viewer/tests/test_c3d_viewer_gui.py",
           "src/data_processing/data_processor/python/tests/test_kalman_filter.py",
           "src/document_processing/pdf_renamer/tests/test_renamer.py",
           "src/financial_calculator/tests/test_financial_calculator_gui.py",
