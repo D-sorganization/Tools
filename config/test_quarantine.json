@@ -134,12 +134,6 @@
       "reason": "gitignore root artifact assertion drift on main"
     },
     {
-      "path": "tests/test_python_version_contract.py",
-      "owner": "tests",
-      "issue": "#4933",
-      "reason": "conftest floor resolution across sub-packages on CI"
-    },
-    {
       "path": "tests/test_shared_package_api_stability.py",
       "owner": "tests",
       "issue": "#4933",
@@ -150,12 +144,6 @@
       "owner": "tests",
       "issue": "#4933",
       "reason": "external wave solver binary missing on runner"
-    },
-    {
-      "path": "tests/vessel_drafter/test_contracts_fallback.py",
-      "owner": "tests/vessel_drafter",
-      "issue": "#4933",
-      "reason": "monorepo shared contracts imported instead of fallback"
     },
     {
       "path": "tests/rust_bindings/test_math_primitives_bindings.py",

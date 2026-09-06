@@ -48,12 +48,19 @@ def _canonical_import_environment() -> dict[str, str]:
     """Return an isolated environment that imports only this Tools checkout."""
     env = os.environ.copy()
     env["PYTHONNOUSERSITE"] = "1"
-    env["PYTHONPATH"] = os.pathsep.join(
-        (
-            str(_REPO_ROOT / "src"),
-            str(_REPO_ROOT / "src" / "python" / "src"),
-        )
-    )
+    pythonpath_parts = [
+        str(_REPO_ROOT / "src"),
+        str(_REPO_ROOT / "src" / "python" / "src"),
+    ]
+    import site
+
+    user_site = site.getusersitepackages()
+    if isinstance(user_site, str) and os.path.isdir(user_site):
+        pythonpath_parts.append(user_site)
+    for p in site.getsitepackages():
+        if os.path.isdir(p):
+            pythonpath_parts.append(p)
+    env["PYTHONPATH"] = os.pathsep.join(pythonpath_parts)
     return env
 
 
