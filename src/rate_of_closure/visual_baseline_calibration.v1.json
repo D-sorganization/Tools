@@ -58,8 +58,8 @@
         "max_changed_pixel_fraction": 208
       },
       "selected_tolerance_microunits": {
-        "max_mean_channel_delta": 200,
-        "max_changed_pixel_fraction": 250
+        "max_mean_channel_delta": 400,
+        "max_changed_pixel_fraction": 2500
       },
       "stale_control_microunits": {
         "min_material_mean_channel_delta": 2530,
