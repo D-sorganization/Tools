@@ -22,7 +22,7 @@ def test_select_best_engine() -> None:
     with patch(
         "upstream_drift_tools.calculators.thermo.steam_engine.COOLPROP_AVAILABLE", True
     ):
-        assert engine._select_best_engine("coolprop") == "coolprop"
+        assert engine.select_best_engine("coolprop") == "coolprop"
 
     with (
         patch(
@@ -34,7 +34,7 @@ def test_select_best_engine() -> None:
             False,
         ),
     ):
-        assert engine._select_best_engine("auto") == "simplified"
+        assert engine.select_best_engine("auto") == "simplified"
 
 
 def test_antoine_equation() -> None:

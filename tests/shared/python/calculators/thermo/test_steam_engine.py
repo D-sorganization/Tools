@@ -124,13 +124,13 @@ def test_select_best_engine_auto_priority(monkeypatch: pytest.MonkeyPatch) -> No
     monkeypatch.setattr(steam_engine, "COOLPROP_AVAILABLE", True)
     monkeypatch.setattr(steam_engine, "CANTERA_AVAILABLE", True)
     engine.water = object()
-    assert engine._select_best_engine("auto") == "coolprop"
+    assert engine.select_best_engine("auto") == "coolprop"
 
     monkeypatch.setattr(steam_engine, "COOLPROP_AVAILABLE", False)
-    assert engine._select_best_engine("auto") == "cantera"
+    assert engine.select_best_engine("auto") == "cantera"
 
     engine.water = None
-    assert engine._select_best_engine("auto") == "simplified"
+    assert engine.select_best_engine("auto") == "simplified"
 
 
 def test_select_best_engine_requested_unavailable_falls_back(
@@ -140,9 +140,18 @@ def test_select_best_engine_requested_unavailable_falls_back(
     monkeypatch.setattr(steam_engine, "COOLPROP_AVAILABLE", False)
     monkeypatch.setattr(steam_engine, "CANTERA_AVAILABLE", False)
     engine.water = None
-    assert engine._select_best_engine("coolprop") == "simplified"
-    assert engine._select_best_engine("cantera") == "simplified"
-    assert engine._select_best_engine("simplified") == "simplified"
+    assert engine.select_best_engine("coolprop") == "simplified"
+    assert engine.select_best_engine("cantera") == "simplified"
+    assert engine.select_best_engine("simplified") == "simplified"
+
+
+def test_select_best_engine_is_public_api() -> None:
+    """Issue #3980: engine selection is public API, not a private reach-through."""
+    engine = SteamCalculationEngine()
+
+    assert hasattr(engine, "select_best_engine")
+    assert not hasattr(engine, "_select_best_engine")
+    assert engine.select_best_engine("simplified") == "simplified"
 
 
 def test_calculate_properties_uses_selected_engine(

@@ -359,7 +359,7 @@ class SteamCalculationEngine:
             _logger.exception("Failed to initialize Cantera water: %s", e)
             self.initialized = False
 
-    def _select_best_engine(self, engine: str) -> str:
+    def select_best_engine(self, engine: str) -> str:
         """
         Select the best available calculation engine based on preference and availability.
 
@@ -391,7 +391,7 @@ class SteamCalculationEngine:
             "Requested engine '%s' not available, falling back to auto-selection",
             engine,
         )
-        return self._select_best_engine("auto")
+        return self.select_best_engine("auto")
 
     def calculate_properties(
         self, temperature: float, pressure: float, engine: str = "auto"
@@ -413,7 +413,7 @@ class SteamCalculationEngine:
             raise ValueError(f"Pressure must be positive (Pa), got {pressure}")
 
         try:
-            selected_engine = self._select_best_engine(engine)
+            selected_engine = self.select_best_engine(engine)
 
             if selected_engine == "coolprop":
                 result = self._calculate_coolprop_properties(temperature, pressure)
@@ -446,7 +446,7 @@ class SteamCalculationEngine:
         """
         self._validate_saturation_temperature(temperature)
         try:
-            selected_engine = self._select_best_engine(engine)
+            selected_engine = self.select_best_engine(engine)
 
             if selected_engine == "coolprop":
                 result = self._calculate_saturated_coolprop_from_temp(temperature)
@@ -476,7 +476,7 @@ class SteamCalculationEngine:
         """
         self._validate_saturation_pressure(pressure)
         try:
-            selected_engine = self._select_best_engine(engine)
+            selected_engine = self.select_best_engine(engine)
 
             if selected_engine == "coolprop":
                 result = self._calculate_saturated_coolprop_from_pressure(pressure)

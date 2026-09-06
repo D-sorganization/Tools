@@ -92,13 +92,13 @@ class TestSteamEngineCalculations:
     def test_engine_selection_auto(self):
         """Auto engine selection should pick best available."""
         engine = self._get_engine()
-        selected = engine._select_best_engine("auto")
+        selected = engine.select_best_engine("auto")
         assert selected in ("coolprop", "cantera", "simplified")
 
     def test_engine_selection_simplified(self):
         """Requesting 'simplified' should always return 'simplified'."""
         engine = self._get_engine()
-        assert engine._select_best_engine("simplified") == "simplified"
+        assert engine.select_best_engine("simplified") == "simplified"
 
 
 # ========================================================================
