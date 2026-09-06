@@ -327,6 +327,7 @@
           "src/shared/python/sidekick/tests/test_unit_converter_widget.py",
           "src/shared/python/swing_sim/ground/tests/test_contract.py",
           "src/shared/python/swing_sim/ground/tests/test_ground_result_composer.py",
+          "src/steam_engine_calculator/tests/test_api_contract.py",
           "tests/architecture/test_compatibility_imports_3316.py",
           "tests/architecture/test_shared_import_aliases_3316.py",
           "tests/data_processor_io/test_rust_engine_contract.py",
@@ -355,6 +356,7 @@
         "validation_paths": [
           "src/movement_optimizer/tests/test_scipy_dependency_contract.py",
           "src/shared/python/swing_sim/ground/tests/test_contract.py",
+          "src/steam_engine_calculator/tests/test_api_contract.py",
           "tests/data_processor_io/test_rust_engine_contract.py",
           "tests/unit/test_project_metadata_contracts.py",
           "tests/vessel_drafter/test_contracts_unified.py"

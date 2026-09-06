@@ -344,10 +344,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 5983,
+      "bytes_lf": 8106,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "c95e337a678990016eb0081e107a58f1757bd89edd6dd52e0f2ca678bcb55639",
+      "content_sha256_lf": "09c26e3021f9e200d6e115b04e4f052687d881e1d6fa410a2ac3e6aa37c9b4e0",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-STEAM-ENGINE-CALCULATOR-PYTHON-STEAM-ENGINE-CALCULATOR-API-PY-70C28A2D556A",
       "language": "python",
@@ -372,7 +372,7 @@
         "routes": "mapped",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "unavailable"
+        "validation": "mapped"
       },
       "traceability": {
         "adr_paths": [
@@ -404,6 +404,16 @@
             "signature": null
           },
           {
+            "kind": "constant",
+            "name": "_MODES_REQUIRING_PRESSURE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_MODES_REQUIRING_TEMPERATURE",
+            "signature": null
+          },
+          {
             "kind": "function",
             "name": "calculate_steam",
             "signature": "request: SteamRequest"
@@ -415,12 +425,15 @@
           }
         ],
         "test_paths": [
+          "src/steam_engine_calculator/tests/test_api_contract.py",
           "tests/test_phase2_critical_bugs.py"
         ],
         "unit_mentions": [
           "s"
         ],
-        "validation_paths": []
+        "validation_paths": [
+          "src/steam_engine_calculator/tests/test_api_contract.py"
+        ]
       }
     },
     {

@@ -266,10 +266,10 @@ class TestEngineSelection:
 
     def test_simplified_engine_always_available(self) -> None:
         engine = SteamCalculationEngine()
-        selected = engine._select_best_engine("simplified")
+        selected = engine.select_best_engine("simplified")
         assert selected == "simplified"
 
     def test_auto_engine_returns_something(self) -> None:
         engine = SteamCalculationEngine()
-        selected = engine._select_best_engine("auto")
+        selected = engine.select_best_engine("auto")
         assert selected in ("coolprop", "cantera", "simplified")

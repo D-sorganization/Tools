@@ -15,7 +15,7 @@ from __future__ import annotations
 import logging
 
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 from utils.compatibility import StrEnum
 
 from shared.python.cors import add_cors_middleware
@@ -54,16 +54,48 @@ class CalculationMode(StrEnum):
     SAT_P = "sat_p"
 
 
+# Inputs each mode must carry; enforced by SteamRequest's model validator so
+# saturation modes stop demanding invented placeholder values (issue #3980).
+_MODES_REQUIRING_TEMPERATURE = frozenset({CalculationMode.TP, CalculationMode.SAT_T})
+_MODES_REQUIRING_PRESSURE = frozenset({CalculationMode.TP, CalculationMode.SAT_P})
+
+
 class SteamRequest(BaseModel):
-    """Input for a steam property calculation."""
+    """Input for a steam property calculation.
+
+    Only the inputs the requested mode consumes are required (issue #3980):
+    ``tp`` needs temperature and pressure, ``sat_t`` is driven by temperature
+    alone and ``sat_p`` by pressure alone.  Sending the mode-foreign field is
+    still accepted so clients that always send both keep working.
+    """
 
     mode: CalculationMode = Field(description="Calculation mode")
-    temperature: float = Field(gt=0, description="Temperature in Kelvin")
-    pressure: float = Field(gt=0, description="Pressure in Pascals")
+    temperature: float | None = Field(
+        default=None,
+        gt=0,
+        description="Temperature in Kelvin (required for 'tp' and 'sat_t')",
+    )
+    pressure: float | None = Field(
+        default=None,
+        gt=0,
+        description="Pressure in Pascals (required for 'tp' and 'sat_p')",
+    )
     engine: str = Field(
         default="auto",
         description="Calculation engine: 'coolprop', 'cantera', 'simplified', 'auto'",
     )
+
+    @model_validator(mode="after")
+    def _require_mode_inputs(self) -> SteamRequest:
+        """DbC: reject requests missing the inputs their mode consumes."""
+        missing: list[str] = []
+        if self.temperature is None and self.mode in _MODES_REQUIRING_TEMPERATURE:
+            missing.append("temperature")
+        if self.pressure is None and self.mode in _MODES_REQUIRING_PRESSURE:
+            missing.append("pressure")
+        if missing:
+            raise ValueError(f"mode '{self.mode.value}' requires: {', '.join(missing)}")
+        return self
 
 
 class SteamResponse(BaseModel):
@@ -140,17 +172,32 @@ def calculate_steam(request: SteamRequest) -> SteamResponse:
     """
     try:
         # The engine the caller asked for (or that auto-selection intended).
-        requested_engine = _engine._select_best_engine(request.engine)
+        requested_engine = _engine.select_best_engine(request.engine)
 
         if request.mode == CalculationMode.TP:
+            if request.temperature is None or request.pressure is None:
+                # The model validator rejects this over HTTP; direct callers
+                # of calculate_steam hit the endpoint's own DbC precondition.
+                raise HTTPException(
+                    status_code=400,
+                    detail="mode 'tp' requires temperature and pressure",
+                )
             props = _engine.calculate_properties(
                 request.temperature, request.pressure, engine=request.engine
             )
         elif request.mode == CalculationMode.SAT_T:
+            if request.temperature is None:
+                raise HTTPException(
+                    status_code=400, detail="mode 'sat_t' requires temperature"
+                )
             props = _engine.calculate_saturated_properties_from_temperature(
                 request.temperature, engine=request.engine
             )
         elif request.mode == CalculationMode.SAT_P:
+            if request.pressure is None:
+                raise HTTPException(
+                    status_code=400, detail="mode 'sat_p' requires pressure"
+                )
             props = _engine.calculate_saturated_properties_from_pressure(
                 request.pressure, engine=request.engine
             )
