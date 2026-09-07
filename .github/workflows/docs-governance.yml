@@ -18,6 +18,7 @@ on:
       - "tests/architecture/test_tools_module_inventory_contract.py"
       - "tests/architecture/test_tools_manual_renderer_contract.py"
       - "tests/architecture/test_tools_textbook_chapter_contract.py"
+      - "tests/architecture/test_tools_formula_traceability_contract.py"
       - ".github/workflows/docs-governance.yml"
   push:
     branches: [main]
@@ -34,6 +35,7 @@ on:
       - "tests/architecture/test_tools_module_inventory_contract.py"
       - "tests/architecture/test_tools_manual_renderer_contract.py"
       - "tests/architecture/test_tools_textbook_chapter_contract.py"
+      - "tests/architecture/test_tools_formula_traceability_contract.py"
       - ".github/workflows/docs-governance.yml"
 
 jobs:
@@ -129,5 +131,6 @@ jobs:
           tests/architecture/test_tools_module_inventory_contract.py
           tests/architecture/test_tools_manual_renderer_contract.py
           tests/architecture/test_tools_textbook_chapter_contract.py
+          tests/architecture/test_tools_formula_traceability_contract.py
           tests/architecture/test_tools_exemplar_manuals_contract.py
           -m 'not integration' -q
