@@ -2723,6 +2723,7 @@
           "tests/shared/python/process_calculators/test_water_vapor_pressure_shared.py",
           "tests/shared/python/process_calculators/test_wave1_process_numerics.py",
           "tests/shared/python/process_calculators/test_wgs_reactor_calculator.py",
+          "tests/shared/python/sidekick/lab/mocap/test_calibration_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/signal_toolkit/test_series.py",
           "tests/shared/python/test_safe_eval.py",
@@ -2742,6 +2743,7 @@
           "src/p1am_control_system/backend/tests/test_interlock_defaults_contract.py",
           "src/shared/python/swing_sim/ground/tests/test_study_validation.py",
           "tests/rate_of_closure/test_morris_metric_validation.py",
+          "tests/shared/python/sidekick/lab/mocap/test_calibration_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/tools/test_scientific_auditor.py",
           "tests/vessel_drafter/test_contracts_unified.py"
