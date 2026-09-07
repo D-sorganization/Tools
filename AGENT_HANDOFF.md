@@ -46,6 +46,7 @@ Tools is the fleet's shared engineering-tools monorepo (45+ tools: PyQt6 GUIs, F
 4. `docs/AGENT_HANDOFF_TEMPLATE.md` — template for a new tool's handoff doc.
 5. `manuals/tools/manifests/module-inventory.json` — strict tracked-module inventory.
 6. `manuals/tools/schemas/handoff-maintenance.schema.json` — machine-checked completion-audit handoff schema.
+7. `docs/shared/divergence_ledger.v1.json` — machine-readable seam-divergence ledger.
 
 ## Gate Commands (Repo-Wide)
 
