@@ -27,10 +27,20 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.132                                   |
+| **Spec Version**        | 1.18.133                                   |
 | **Last Spec Update**    | 2026-09-07                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-09-07 Camera Acquisition Protocol & Multi-Camera Capture (#4706 / TOOLS-M2 (#4713))
+
+Subepic #4713 delivers the vendor-neutral camera acquisition protocol under the markerless-mocap
+epic #4706 in `sidekick.lab.mocap.acquisition`. Defines `FrameSource` abstract contracts, `SourceState`
+lifecycle machines, and immutable `FramePacket` records derived into formal `FrameStamp` evidence.
+Establishes `CaptureGroup` multi-camera synchronized acquisition with bounded queues, explicit
+`DropPolicy` (`DROP_OLDEST`, `DROP_NEWEST`, `FAIL_CLOSED`), and backpressure guarantees. Delivers
+deterministic `SyntheticFrameSource` and `PrerecordedFrameSource` reference drivers supporting zero,
+one, many, and mixed capability configurations without vendor SDKs or AGPL dependencies.
 
 ### 2026-09-07 Governed Completion-Audit Handoff and Maintenance Contract (#4707 / TOOLS-D9 (#4730))
 
@@ -5785,6 +5795,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-07 | #4713 | feat(mocap, #4713 TOOLS-M2): establish vendor-neutral camera acquisition protocol in sidekick.lab.mocap.acquisition, providing FrameSource, CaptureGroup, FramePacket, SourceState, and reference synthetic/prerecorded drivers with bounded queues and fail-closed backpressure. |
 | 2026-09-07 | #4730 | docs(manual, #4707/#4730 TOOLS-D9): enforce governed completion-audit handoff and maintenance contract (`tools-handoff-maintenance/1.0.0`) binding commit evidence, working tree state, test digests, diff-aware CI gates, and strict 150-line budgets across all tracked handoffs; conclude epic #4707. |
 | 2026-09-07 | #4728 | docs(manual, #4707/#4728 TOOLS-D8): enforce immutable public publication projection contract (`tools-publication-projection/1.0.0`) binding source commit, tree, calculation registry, toolchain lock, artifact digests, zero-sampling reviews, and explicit unapproved/blocked human release boundary. |
 | 2026-09-07 | #4725 | docs(manual, #4707/#4725 TOOLS-D7): enforce render, semantic, and accessibility QA with zero sampling across PDF, DOCX, HTML, and TeX; verify embedded fonts, equation math preservation, table integrity, and image alt attributes while preserving unapproved release status. |
@@ -7376,3 +7387,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-06: Folder Tool UI and Legacy Test Suites Unquarantine (#4933)
 
 - **2026-09-06**: fix(tests, #4933) — Unquarantine `tests/folder_tool/test_folder_tool_ui.py` and `tests/folder_tool/test_folders_tool_r0.py`. Align DbC contract expectations in `test_folders_tool_r0.py` for root window and file path parameters to accept `(AssertionError, ValueError)`, and provide safe teardown in `test_folder_tool_ui.py`'s `app` fixture.
+
+## 2026-09-07: Camera Acquisition Protocol (#4706 / TOOLS-M2 (#4713))
+
+- **2026-09-07**: feat(mocap, #4713) — Establish vendor-neutral camera acquisition protocol in `sidekick.lab.mocap.acquisition`, providing `FrameSource`, `CaptureGroup`, `FramePacket`, `SourceState`, and reference synthetic/prerecorded drivers with bounded queues and fail-closed backpressure.

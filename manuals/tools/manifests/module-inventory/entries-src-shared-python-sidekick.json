@@ -4142,10 +4142,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1134,
+      "bytes_lf": 1543,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f6ff7f3d59a8fd4b1e418c895e07c64ede58f3a2a16f384b44a774b228add1d1",
+      "content_sha256_lf": "787bb78d7e061f2ae922b7b7ff80d593f6e9ded00253afd4580ee9ac8ab1dd87",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-INIT-PY-BD60513A12BD",
       "language": "python",
@@ -4183,6 +4183,11 @@
         "public_surfaces": [
           {
             "kind": "re-export",
+            "name": "AcquisitionError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "Availability",
             "signature": null
           },
@@ -4194,6 +4199,11 @@
           {
             "kind": "re-export",
             "name": "CameraIdentity",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CaptureGroup",
             "signature": null
           },
           {
@@ -4213,7 +4223,22 @@
           },
           {
             "kind": "re-export",
+            "name": "DropPolicy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "FeatureSupport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FramePacket",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FrameSource",
             "signature": null
           },
           {
@@ -4253,6 +4278,16 @@
           },
           {
             "kind": "re-export",
+            "name": "PrerecordedFrameSource",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "QueueFullError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "RecordingPolicy",
             "signature": null
           },
@@ -4278,7 +4313,17 @@
           },
           {
             "kind": "re-export",
+            "name": "SourceState",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "SupportLevel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SyntheticFrameSource",
             "signature": null
           },
           {
@@ -4339,6 +4384,105 @@
         "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13404,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f212004e68704ddecb93833709eda64eb1ea2fcf0021576a0250318efc87a8f5",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-ACQUISITION-PY-3F48ADCE6C42",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/acquisition.py",
+      "purpose": "Camera acquisition protocol and reference drivers for markerless-mocap.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AcquisitionError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CaptureGroup",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DropPolicy",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FramePacket",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FrameSource",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PrerecordedFrameSource",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "QueueFullError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SourceState",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SyntheticFrameSource",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_acquisition_contracts.py"
+        ],
+        "unit_mentions": [
+          "Hz",
+          "s"
+        ],
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_acquisition_contracts.py"
+        ]
       }
     },
     {

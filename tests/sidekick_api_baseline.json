@@ -28,9 +28,7 @@
       "Calculator": {
         "type": "class",
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "name": {
               "args": [
@@ -94,9 +92,7 @@
       "DataTransformer": {
         "type": "class",
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "transform": {
               "args": [
@@ -231,9 +227,7 @@
       "ProcessCalculator": {
         "type": "class",
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "calculate": {
               "args": [
@@ -258,9 +252,7 @@
       "StateSerializable": {
         "type": "class",
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "save_state": {
               "args": [
@@ -296,9 +288,7 @@
       "UnitConverter": {
         "type": "class",
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "convert": {
               "args": [
@@ -375,9 +365,7 @@
       "SidekickArgumentParser": {
         "type": "class",
         "info": {
-          "bases": [
-            "argparse.ArgumentParser"
-          ],
+          "bases": ["argparse.ArgumentParser"],
           "methods": {
             "error": {
               "args": [
@@ -537,9 +525,7 @@
       "ActionChipState": {
         "type": "class",
         "info": {
-          "bases": [
-            "Enum"
-          ],
+          "bases": ["Enum"],
           "methods": {}
         }
       },
@@ -585,9 +571,7 @@
       "CanonicalActionPort": {
         "type": "class",
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "configure": {
               "args": [
@@ -760,19 +744,14 @@
       "FeatureKind": {
         "type": "class",
         "info": {
-          "bases": [
-            "str",
-            "Enum"
-          ],
+          "bases": ["str", "Enum"],
           "methods": {}
         }
       },
       "HostActionPort": {
         "type": "class",
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "list_capabilities": {
               "args": [
@@ -981,9 +960,7 @@
       "PendingUserDecision": {
         "type": "class",
         "info": {
-          "bases": [
-            "Exception"
-          ],
+          "bases": ["Exception"],
           "methods": {
             "__init__": {
               "args": [
@@ -1027,9 +1004,7 @@
       "PlannerError": {
         "type": "class",
         "info": {
-          "bases": [
-            "RuntimeError"
-          ],
+          "bases": ["RuntimeError"],
           "methods": {}
         }
       },
@@ -1043,9 +1018,7 @@
       "SidekickActionHandler": {
         "type": "class",
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "describe": {
               "args": [
@@ -1367,9 +1340,7 @@
       "SubtabActionPort": {
         "type": "class",
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "list_tabs": {
               "args": [
@@ -1640,9 +1611,7 @@
       "WorkflowStepStatus": {
         "type": "class",
         "info": {
-          "bases": [
-            "Enum"
-          ],
+          "bases": ["Enum"],
           "methods": {}
         }
       },
@@ -1818,10 +1787,7 @@
     }
   },
   "agent/access_policy.py": {
-    "__all__": [
-      "PolicyDecision",
-      "SidekickActionPolicy"
-    ],
+    "__all__": ["PolicyDecision", "SidekickActionPolicy"],
     "symbols": {
       "PolicyDecision": {
         "type": "class",
@@ -1875,11 +1841,7 @@
     }
   },
   "agent/action_audit.py": {
-    "__all__": [
-      "JsonlActionAudit",
-      "MemoryActionAudit",
-      "redact_secrets"
-    ],
+    "__all__": ["JsonlActionAudit", "MemoryActionAudit", "redact_secrets"],
     "symbols": {
       "JsonlActionAudit": {
         "type": "class",
@@ -2024,9 +1986,7 @@
       "SidekickActionHandler": {
         "type": "class",
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "describe": {
               "args": [
@@ -2229,9 +2189,7 @@
       "CanonicalActionPort": {
         "type": "class",
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "configure": {
               "args": [
@@ -2420,9 +2378,7 @@
       "ActionChipState": {
         "type": "class",
         "info": {
-          "bases": [
-            "Enum"
-          ],
+          "bases": ["Enum"],
           "methods": {}
         }
       },
@@ -2488,10 +2444,7 @@
       "FeatureKind": {
         "type": "class",
         "info": {
-          "bases": [
-            "str",
-            "Enum"
-          ],
+          "bases": ["str", "Enum"],
           "methods": {}
         }
       },
@@ -2564,9 +2517,7 @@
       "HostActionPort": {
         "type": "class",
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "list_capabilities": {
               "args": [
@@ -2716,9 +2667,7 @@
       "PlannerError": {
         "type": "class",
         "info": {
-          "bases": [
-            "RuntimeError"
-          ],
+          "bases": ["RuntimeError"],
           "methods": {}
         }
       },
@@ -2859,9 +2808,7 @@
       "SubtabActionPort": {
         "type": "class",
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "list_tabs": {
               "args": [
@@ -3126,9 +3073,7 @@
       "PendingUserDecision": {
         "type": "class",
         "info": {
-          "bases": [
-            "Exception"
-          ],
+          "bases": ["Exception"],
           "methods": {
             "__init__": {
               "args": [
@@ -3196,9 +3141,7 @@
       "WorkflowStepStatus": {
         "type": "class",
         "info": {
-          "bases": [
-            "Enum"
-          ],
+          "bases": ["Enum"],
           "methods": {}
         }
       },
@@ -3268,18 +3211,14 @@
       "ErrorCode": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
       "ErrorDetail": {
         "type": "class",
         "info": {
-          "bases": [
-            "BaseModel"
-          ],
+          "bases": ["BaseModel"],
           "methods": {
             "to_dict": {
               "args": [
@@ -3298,9 +3237,7 @@
       "ResponseMetadata": {
         "type": "class",
         "info": {
-          "bases": [
-            "BaseModel"
-          ],
+          "bases": ["BaseModel"],
           "methods": {
             "to_dict": {
               "args": [
@@ -3319,10 +3256,7 @@
       "StandardResponse": {
         "type": "class",
         "info": {
-          "bases": [
-            "BaseModel",
-            "Generic[T]"
-          ],
+          "bases": ["BaseModel", "Generic[T]"],
           "methods": {
             "to_dict": {
               "args": [
@@ -3464,18 +3398,14 @@
       "ErrorCode": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
       "ErrorDetail": {
         "type": "class",
         "info": {
-          "bases": [
-            "BaseModel"
-          ],
+          "bases": ["BaseModel"],
           "methods": {
             "to_dict": {
               "args": [
@@ -3494,9 +3424,7 @@
       "ResponseMetadata": {
         "type": "class",
         "info": {
-          "bases": [
-            "BaseModel"
-          ],
+          "bases": ["BaseModel"],
           "methods": {
             "to_dict": {
               "args": [
@@ -3515,10 +3443,7 @@
       "StandardResponse": {
         "type": "class",
         "info": {
-          "bases": [
-            "BaseModel",
-            "Generic[T]"
-          ],
+          "bases": ["BaseModel", "Generic[T]"],
           "methods": {
             "to_dict": {
               "args": [
@@ -3649,9 +3574,7 @@
     }
   },
   "bootstrap.py": {
-    "__all__": [
-      "ensure_paths"
-    ],
+    "__all__": ["ensure_paths"],
     "symbols": {
       "ensure_paths": {
         "type": "function",
@@ -3670,16 +3593,12 @@
     }
   },
   "calculators/__init__.py": {
-    "__all__": [
-      "BaseCalculationEngine"
-    ],
+    "__all__": ["BaseCalculationEngine"],
     "symbols": {
       "BaseCalculationEngine": {
         "type": "class",
         "info": {
-          "bases": [
-            "ABC"
-          ],
+          "bases": ["ABC"],
           "methods": {
             "calculate": {
               "args": [
@@ -3710,16 +3629,12 @@
     }
   },
   "calculators/base.py": {
-    "__all__": [
-      "BaseCalculationEngine"
-    ],
+    "__all__": ["BaseCalculationEngine"],
     "symbols": {
       "BaseCalculationEngine": {
         "type": "class",
         "info": {
-          "bases": [
-            "ABC"
-          ],
+          "bases": ["ABC"],
           "methods": {
             "calculate": {
               "args": [
@@ -4733,9 +4648,7 @@
     }
   },
   "calculators/conversion/gas_flow_mixin.py": {
-    "__all__": [
-      "GasFlowConversionMixin"
-    ],
+    "__all__": ["GasFlowConversionMixin"],
     "symbols": {
       "GasFlowConversionMixin": {
         "type": "class",
@@ -4836,9 +4749,7 @@
     }
   },
   "calculators/conversion/heating_value_mixin.py": {
-    "__all__": [
-      "HeatingValueConversionMixin"
-    ],
+    "__all__": ["HeatingValueConversionMixin"],
     "symbols": {
       "HeatingValueConversionMixin": {
         "type": "class",
@@ -4907,27 +4818,21 @@
       "IncompatibleUnitsError": {
         "type": "class",
         "info": {
-          "bases": [
-            "UnitConversionError"
-          ],
+          "bases": ["UnitConversionError"],
           "methods": {}
         }
       },
       "InvalidValueError": {
         "type": "class",
         "info": {
-          "bases": [
-            "UnitConversionError"
-          ],
+          "bases": ["UnitConversionError"],
           "methods": {}
         }
       },
       "UnitConversionError": {
         "type": "class",
         "info": {
-          "bases": [
-            "Exception"
-          ],
+          "bases": ["Exception"],
           "methods": {}
         }
       },
@@ -5137,9 +5042,7 @@
       "UnknownUnitError": {
         "type": "class",
         "info": {
-          "bases": [
-            "UnitConversionError"
-          ],
+          "bases": ["UnitConversionError"],
           "methods": {}
         }
       },
@@ -5294,9 +5197,7 @@
       "StandardCondition": {
         "type": "class",
         "info": {
-          "bases": [
-            "Enum"
-          ],
+          "bases": ["Enum"],
           "methods": {}
         }
       },
@@ -5321,9 +5222,7 @@
     }
   },
   "calculators/conversion/tar_concentration_mixin.py": {
-    "__all__": [
-      "TarConcentrationConversionMixin"
-    ],
+    "__all__": ["TarConcentrationConversionMixin"],
     "symbols": {
       "TarConcentrationConversionMixin": {
         "type": "class",
@@ -5693,9 +5592,7 @@
     }
   },
   "calculators/electrical/config.py": {
-    "__all__": [
-      "ElectrodeConfig"
-    ],
+    "__all__": ["ElectrodeConfig"],
     "symbols": {
       "ElectrodeConfig": {
         "type": "class",
@@ -5748,9 +5645,7 @@
     }
   },
   "calculators/electrical/electrical_model.py": {
-    "__all__": [
-      "ThreePhaseElectricalModelEnhanced"
-    ],
+    "__all__": ["ThreePhaseElectricalModelEnhanced"],
     "symbols": {
       "ThreePhaseElectricalModelEnhanced": {
         "type": "class",
@@ -5851,9 +5746,7 @@
     }
   },
   "calculators/electrical/glass_interface.py": {
-    "__all__": [
-      "GlassPropertiesInterface"
-    ],
+    "__all__": ["GlassPropertiesInterface"],
     "symbols": {
       "GlassPropertiesInterface": {
         "type": "class",
@@ -6907,10 +6800,7 @@
     }
   },
   "data_io.py": {
-    "__all__": [
-      "read_data",
-      "write_data"
-    ],
+    "__all__": ["read_data", "write_data"],
     "symbols": {
       "read_data": {
         "type": "function",
@@ -6992,9 +6882,7 @@
       "ColumnNotFoundError": {
         "type": "class",
         "info": {
-          "bases": [
-            "DataProcessingError"
-          ],
+          "bases": ["DataProcessingError"],
           "methods": {
             "__init__": {
               "args": [
@@ -7025,18 +6913,14 @@
       "DataNotLoadedError": {
         "type": "class",
         "info": {
-          "bases": [
-            "DataProcessingError"
-          ],
+          "bases": ["DataProcessingError"],
           "methods": {}
         }
       },
       "DataProcessingError": {
         "type": "class",
         "info": {
-          "bases": [
-            "Exception"
-          ],
+          "bases": ["Exception"],
           "methods": {}
         }
       },
@@ -7055,27 +6939,21 @@
       "FileIOError": {
         "type": "class",
         "info": {
-          "bases": [
-            "DataProcessingError"
-          ],
+          "bases": ["DataProcessingError"],
           "methods": {}
         }
       },
       "FilterError": {
         "type": "class",
         "info": {
-          "bases": [
-            "DataProcessingError"
-          ],
+          "bases": ["DataProcessingError"],
           "methods": {}
         }
       },
       "FitError": {
         "type": "class",
         "info": {
-          "bases": [
-            "DataProcessingError"
-          ],
+          "bases": ["DataProcessingError"],
           "methods": {}
         }
       },
@@ -7085,18 +6963,14 @@
       "TransformationError": {
         "type": "class",
         "info": {
-          "bases": [
-            "DataProcessingError"
-          ],
+          "bases": ["DataProcessingError"],
           "methods": {}
         }
       },
       "UnsupportedOperationError": {
         "type": "class",
         "info": {
-          "bases": [
-            "DataProcessingError"
-          ],
+          "bases": ["DataProcessingError"],
           "methods": {}
         }
       }
@@ -7116,9 +6990,7 @@
       "AggregationType": {
         "type": "class",
         "info": {
-          "bases": [
-            "Enum"
-          ],
+          "bases": ["Enum"],
           "methods": {}
         }
       },
@@ -7132,18 +7004,14 @@
       "DataFormat": {
         "type": "class",
         "info": {
-          "bases": [
-            "Enum"
-          ],
+          "bases": ["Enum"],
           "methods": {}
         }
       },
       "DataProcessorEngine": {
         "type": "class",
         "info": {
-          "bases": [
-            "BaseCalculationEngine"
-          ],
+          "bases": ["BaseCalculationEngine"],
           "methods": {
             "__init__": {
               "args": [
@@ -7575,9 +7443,7 @@
       "FitType": {
         "type": "class",
         "info": {
-          "bases": [
-            "Enum"
-          ],
+          "bases": ["Enum"],
           "methods": {}
         }
       },
@@ -7605,9 +7471,7 @@
       "DataProcessorUnavailableError": {
         "type": "class",
         "info": {
-          "bases": [
-            "RuntimeError"
-          ],
+          "bases": ["RuntimeError"],
           "methods": {}
         }
       },
@@ -7663,9 +7527,7 @@
       "ColumnNotFoundError": {
         "type": "class",
         "info": {
-          "bases": [
-            "DataProcessingError"
-          ],
+          "bases": ["DataProcessingError"],
           "methods": {
             "__init__": {
               "args": [
@@ -7696,63 +7558,49 @@
       "DataNotLoadedError": {
         "type": "class",
         "info": {
-          "bases": [
-            "DataProcessingError"
-          ],
+          "bases": ["DataProcessingError"],
           "methods": {}
         }
       },
       "DataProcessingError": {
         "type": "class",
         "info": {
-          "bases": [
-            "Exception"
-          ],
+          "bases": ["Exception"],
           "methods": {}
         }
       },
       "FileIOError": {
         "type": "class",
         "info": {
-          "bases": [
-            "DataProcessingError"
-          ],
+          "bases": ["DataProcessingError"],
           "methods": {}
         }
       },
       "FilterError": {
         "type": "class",
         "info": {
-          "bases": [
-            "DataProcessingError"
-          ],
+          "bases": ["DataProcessingError"],
           "methods": {}
         }
       },
       "FitError": {
         "type": "class",
         "info": {
-          "bases": [
-            "DataProcessingError"
-          ],
+          "bases": ["DataProcessingError"],
           "methods": {}
         }
       },
       "TransformationError": {
         "type": "class",
         "info": {
-          "bases": [
-            "DataProcessingError"
-          ],
+          "bases": ["DataProcessingError"],
           "methods": {}
         }
       },
       "UnsupportedOperationError": {
         "type": "class",
         "info": {
-          "bases": [
-            "DataProcessingError"
-          ],
+          "bases": ["DataProcessingError"],
           "methods": {}
         }
       }
@@ -7763,11 +7611,7 @@
     "symbols": {}
   },
   "data_processing/io.py": {
-    "__all__": [
-      "DataReader",
-      "DataWriter",
-      "FileFormatDetector"
-    ],
+    "__all__": ["DataReader", "DataWriter", "FileFormatDetector"],
     "symbols": {
       "DataReader": {
         "type": "class",
@@ -7847,11 +7691,7 @@
     "symbols": {}
   },
   "lab/bio/__init__.py": {
-    "__all__": [
-      "C3DDataReader",
-      "C3DEvent",
-      "C3DMetadata"
-    ],
+    "__all__": ["C3DDataReader", "C3DEvent", "C3DMetadata"],
     "symbols": {
       "C3DDataReader": {
         "type": "class",
@@ -8421,25 +8261,34 @@
   "lab/mocap/__init__.py": {
     "__all__": [
       "MOCAP_SESSION_SCHEMA_VERSION",
+      "AcquisitionError",
       "Availability",
       "CameraCapabilities",
       "CameraIdentity",
+      "CaptureGroup",
       "ClockDomain",
       "ClockKind",
       "CoordinateFrame",
+      "DropPolicy",
       "FeatureSupport",
+      "FramePacket",
+      "FrameSource",
       "FrameStamp",
       "Landmark3D",
       "MethodDescriptor",
       "MocapSessionManifest",
       "NumericRange",
       "PixelObservation",
+      "PrerecordedFrameSource",
+      "QueueFullError",
       "RecordingPolicy",
       "RigidTransform",
       "SessionState",
       "ShutterKind",
       "SkeletonDefinition",
+      "SourceState",
       "SupportLevel",
+      "SyntheticFrameSource",
       "dumps_canonical",
       "load_session_manifest"
     ],
@@ -8447,12 +8296,17 @@
       "MOCAP_SESSION_SCHEMA_VERSION": {
         "type": "variable"
       },
+      "AcquisitionError": {
+        "type": "class",
+        "info": {
+          "bases": ["RuntimeError"],
+          "methods": {}
+        }
+      },
       "Availability": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -8512,6 +8366,138 @@
           }
         }
       },
+      "CaptureGroup": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "sources",
+                  "annotation": "tuple[FrameSource, ...]",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "max_queue_size",
+                  "annotation": "int",
+                  "default": "100",
+                  "kind": "arg"
+                },
+                {
+                  "name": "drop_policy",
+                  "annotation": "DropPolicy",
+                  "default": "DropPolicy.DROP_OLDEST",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "sources": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "Mapping[str, FrameSource]"
+            },
+            "initialize": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "start_capture": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "push_frame_direct": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "source_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "frame",
+                  "annotation": "FramePacket",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "read_frames": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "timeout_seconds",
+                  "annotation": "float",
+                  "default": "5.0",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "dict[str, FramePacket]"
+            },
+            "stop_capture": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "close": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        }
+      },
       "ClockDomain": {
         "type": "class",
         "info": {
@@ -8522,9 +8508,7 @@
       "ClockKind": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -8547,11 +8531,162 @@
           }
         }
       },
+      "DropPolicy": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
       "FeatureSupport": {
         "type": "class",
         "info": {
           "bases": [],
           "methods": {}
+        }
+      },
+      "FramePacket": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "to_frame_stamp": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "stream_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "clock_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "FrameStamp"
+            }
+          }
+        }
+      },
+      "FrameSource": {
+        "type": "class",
+        "info": {
+          "bases": ["ABC"],
+          "methods": {
+            "source_id": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "identity": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CameraIdentity"
+            },
+            "capabilities": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CameraCapabilities"
+            },
+            "state": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "SourceState"
+            },
+            "initialize": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "start_capture": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "read_frame": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "timeout_seconds",
+                  "annotation": "float",
+                  "default": "5.0",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "FramePacket"
+            },
+            "stop_capture": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "close": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
         }
       },
       "FrameStamp": {
@@ -8626,6 +8761,167 @@
           "methods": {}
         }
       },
+      "PrerecordedFrameSource": {
+        "type": "class",
+        "info": {
+          "bases": ["FrameSource"],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "source_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "identity",
+                  "annotation": "CameraIdentity",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "capabilities",
+                  "annotation": "CameraCapabilities",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "frames",
+                  "annotation": "list[FramePacket]",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "loop",
+                  "annotation": "bool",
+                  "default": "False",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "source_id": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "identity": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CameraIdentity"
+            },
+            "capabilities": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CameraCapabilities"
+            },
+            "state": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "SourceState"
+            },
+            "initialize": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "start_capture": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "read_frame": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "timeout_seconds",
+                  "annotation": "float",
+                  "default": "5.0",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "FramePacket"
+            },
+            "stop_capture": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "close": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        }
+      },
+      "QueueFullError": {
+        "type": "class",
+        "info": {
+          "bases": ["AcquisitionError"],
+          "methods": {}
+        }
+      },
       "RecordingPolicy": {
         "type": "class",
         "info": {
@@ -8655,18 +8951,14 @@
       "SessionState": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
       "ShutterKind": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -8677,13 +8969,178 @@
           "methods": {}
         }
       },
+      "SourceState": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
       "SupportLevel": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
+        }
+      },
+      "SyntheticFrameSource": {
+        "type": "class",
+        "info": {
+          "bases": ["FrameSource"],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "source_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "identity",
+                  "annotation": "CameraIdentity",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "capabilities",
+                  "annotation": "CameraCapabilities",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "resolution_px",
+                  "annotation": "tuple[int, int]",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "frame_rate_hz",
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "pixel_format",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "source_id": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "identity": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CameraIdentity"
+            },
+            "capabilities": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CameraCapabilities"
+            },
+            "state": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "SourceState"
+            },
+            "initialize": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "start_capture": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "read_frame": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "timeout_seconds",
+                  "annotation": "float",
+                  "default": "5.0",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "FramePacket"
+            },
+            "stop_capture": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "close": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
         }
       },
       "dumps_canonical": {
@@ -8760,9 +9217,7 @@
       "LatexRenderError": {
         "type": "class",
         "info": {
-          "bases": [
-            "RuntimeError"
-          ],
+          "bases": ["RuntimeError"],
           "methods": {}
         }
       },
@@ -8841,9 +9296,7 @@
       "LauncherError": {
         "type": "class",
         "info": {
-          "bases": [
-            "Exception"
-          ],
+          "bases": ["Exception"],
           "methods": {}
         }
       },
@@ -8928,9 +9381,7 @@
     }
   },
   "notes_store.py": {
-    "__all__": [
-      "SidekickNotesStore"
-    ],
+    "__all__": ["SidekickNotesStore"],
     "symbols": {
       "SidekickNotesStore": {
         "type": "class",
@@ -9069,16 +9520,12 @@
     }
   },
   "notes_tab.py": {
-    "__all__": [
-      "NotesTab"
-    ],
+    "__all__": ["NotesTab"],
     "symbols": {
       "NotesTab": {
         "type": "class",
         "info": {
-          "bases": [
-            "QWidget"
-          ],
+          "bases": ["QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -9191,9 +9638,7 @@
       "SchemaMigration": {
         "type": "class",
         "info": {
-          "bases": [
-            "UserWarning"
-          ],
+          "bases": ["UserWarning"],
           "methods": {}
         }
       },
@@ -9319,9 +9764,7 @@
       "SchemaMigration": {
         "type": "class",
         "info": {
-          "bases": [
-            "UserWarning"
-          ],
+          "bases": ["UserWarning"],
           "methods": {}
         }
       },
@@ -10471,9 +10914,7 @@
     }
   },
   "process_calculators/analysis_utils.py": {
-    "__all__": [
-      "evaluate_output"
-    ],
+    "__all__": ["evaluate_output"],
     "symbols": {
       "evaluate_output": {
         "type": "function",
@@ -10516,10 +10957,7 @@
     }
   },
   "process_calculators/baghouse_calculator.py": {
-    "__all__": [
-      "BaghouseCalculator",
-      "BaghouseResult"
-    ],
+    "__all__": ["BaghouseCalculator", "BaghouseResult"],
     "symbols": {
       "BaghouseCalculator": {
         "type": "class",
@@ -11560,9 +11998,7 @@
     }
   },
   "process_calculators/electrode_advancement_calculator.py": {
-    "__all__": [
-      "ElectrodeAdvancementCalculator"
-    ],
+    "__all__": ["ElectrodeAdvancementCalculator"],
     "symbols": {
       "ElectrodeAdvancementCalculator": {
         "type": "variable"
@@ -11681,11 +12117,7 @@
     }
   },
   "process_calculators/flare_calculator.py": {
-    "__all__": [
-      "FlareCalculator",
-      "FlareDesign",
-      "GAS_PROPERTIES"
-    ],
+    "__all__": ["FlareCalculator", "FlareDesign", "GAS_PROPERTIES"],
     "symbols": {
       "FlareCalculator": {
         "type": "class",
@@ -11925,9 +12357,7 @@
     }
   },
   "process_calculators/ode_solver.py": {
-    "__all__": [
-      "ODESolver"
-    ],
+    "__all__": ["ODESolver"],
     "symbols": {
       "ODESolver": {
         "type": "class",
@@ -12036,9 +12466,7 @@
       "OptimizationResults": {
         "type": "class",
         "info": {
-          "bases": [
-            "TypedDict"
-          ],
+          "bases": ["TypedDict"],
           "methods": {}
         }
       },
@@ -13140,9 +13568,7 @@
     }
   },
   "process_calculators/pressure_drop_calculator/engine/__init__.py": {
-    "__all__": [
-      "PressureDropCalculationEngine"
-    ],
+    "__all__": ["PressureDropCalculationEngine"],
     "symbols": {
       "PressureDropCalculationEngine": {
         "type": "class",
@@ -13725,9 +14151,7 @@
     }
   },
   "process_calculators/pressure_drop_calculator/engine/fittings.py": {
-    "__all__": [
-      "calculate_fitting_pressure_drop"
-    ],
+    "__all__": ["calculate_fitting_pressure_drop"],
     "symbols": {
       "calculate_fitting_pressure_drop": {
         "type": "function",
@@ -14039,9 +14463,7 @@
     }
   },
   "process_calculators/pressure_drop_calculator/engine/pressure_drop_calculation_engine.py": {
-    "__all__": [
-      "PressureDropCalculationEngine"
-    ],
+    "__all__": ["PressureDropCalculationEngine"],
     "symbols": {
       "PressureDropCalculationEngine": {
         "type": "class",
@@ -15337,9 +15759,7 @@
     }
   },
   "process_calculators/pressure_drop_calculator/pressure_drop_results.py": {
-    "__all__": [
-      "print_results"
-    ],
+    "__all__": ["print_results"],
     "symbols": {
       "print_results": {
         "type": "function",
@@ -15370,9 +15790,7 @@
     }
   },
   "process_calculators/pressure_drop_calculator/pressure_drop_units.py": {
-    "__all__": [
-      "annotations"
-    ],
+    "__all__": ["annotations"],
     "symbols": {
       "annotations": {
         "type": "unknown"
@@ -15380,9 +15798,7 @@
     }
   },
   "process_calculators/pressure_drop_calculator/pressure_drop_validation.py": {
-    "__all__": [
-      "validate_inputs"
-    ],
+    "__all__": ["validate_inputs"],
     "symbols": {
       "validate_inputs": {
         "type": "function",
@@ -16437,9 +16853,7 @@
       "ComponentData": {
         "type": "class",
         "info": {
-          "bases": [
-            "TypedDict"
-          ],
+          "bases": ["TypedDict"],
           "methods": {}
         }
       },
@@ -16587,9 +17001,7 @@
       "InputPanel": {
         "type": "class",
         "info": {
-          "bases": [
-            "QWidget"
-          ],
+          "bases": ["QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -16625,9 +17037,7 @@
       "MplCanvas": {
         "type": "class",
         "info": {
-          "bases": [
-            "FigureCanvas"
-          ],
+          "bases": ["FigureCanvas"],
           "methods": {
             "__init__": {
               "args": [
@@ -16664,9 +17074,7 @@
       "PFDWidget": {
         "type": "class",
         "info": {
-          "bases": [
-            "QWidget"
-          ],
+          "bases": ["QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -16691,10 +17099,7 @@
       "PSAMainWindow": {
         "type": "class",
         "info": {
-          "bases": [
-            "ThemedWindowMixin",
-            "QMainWindow"
-          ],
+          "bases": ["ThemedWindowMixin", "QMainWindow"],
           "methods": {
             "__init__": {
               "args": [
@@ -16713,9 +17118,7 @@
       "ResultsPanel": {
         "type": "class",
         "info": {
-          "bases": [
-            "QWidget"
-          ],
+          "bases": ["QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -16757,9 +17160,7 @@
       "SensitivityPlotWidget": {
         "type": "class",
         "info": {
-          "bases": [
-            "QWidget"
-          ],
+          "bases": ["QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -16861,9 +17262,7 @@
       "ComponentData": {
         "type": "class",
         "info": {
-          "bases": [
-            "TypedDict"
-          ],
+          "bases": ["TypedDict"],
           "methods": {}
         }
       },
@@ -17011,9 +17410,7 @@
       "ComponentData": {
         "type": "class",
         "info": {
-          "bases": [
-            "TypedDict"
-          ],
+          "bases": ["TypedDict"],
           "methods": {}
         }
       },
@@ -17103,9 +17500,7 @@
       "InputPanel": {
         "type": "class",
         "info": {
-          "bases": [
-            "QWidget"
-          ],
+          "bases": ["QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -17141,9 +17536,7 @@
       "MplCanvas": {
         "type": "class",
         "info": {
-          "bases": [
-            "FigureCanvas"
-          ],
+          "bases": ["FigureCanvas"],
           "methods": {
             "__init__": {
               "args": [
@@ -17180,9 +17573,7 @@
       "PFDWidget": {
         "type": "class",
         "info": {
-          "bases": [
-            "QWidget"
-          ],
+          "bases": ["QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -17207,10 +17598,7 @@
       "PSAMainWindow": {
         "type": "class",
         "info": {
-          "bases": [
-            "ThemedWindowMixin",
-            "QMainWindow"
-          ],
+          "bases": ["ThemedWindowMixin", "QMainWindow"],
           "methods": {
             "__init__": {
               "args": [
@@ -17229,9 +17617,7 @@
       "ResultsPanel": {
         "type": "class",
         "info": {
-          "bases": [
-            "QWidget"
-          ],
+          "bases": ["QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -17273,9 +17659,7 @@
       "SensitivityPlotWidget": {
         "type": "class",
         "info": {
-          "bases": [
-            "QWidget"
-          ],
+          "bases": ["QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -17355,17 +17739,12 @@
     }
   },
   "process_calculators/psa_package/ui/input_panel.py": {
-    "__all__": [
-      "InputPanel",
-      "create_slider"
-    ],
+    "__all__": ["InputPanel", "create_slider"],
     "symbols": {
       "InputPanel": {
         "type": "class",
         "info": {
-          "bases": [
-            "QWidget"
-          ],
+          "bases": ["QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -17439,17 +17818,12 @@
     }
   },
   "process_calculators/psa_package/ui/main_window.py": {
-    "__all__": [
-      "PSAMainWindow"
-    ],
+    "__all__": ["PSAMainWindow"],
     "symbols": {
       "PSAMainWindow": {
         "type": "class",
         "info": {
-          "bases": [
-            "ThemedWindowMixin",
-            "QMainWindow"
-          ],
+          "bases": ["ThemedWindowMixin", "QMainWindow"],
           "methods": {
             "__init__": {
               "args": [
@@ -17468,16 +17842,12 @@
     }
   },
   "process_calculators/psa_package/ui/pfd_widget.py": {
-    "__all__": [
-      "PFDWidget"
-    ],
+    "__all__": ["PFDWidget"],
     "symbols": {
       "PFDWidget": {
         "type": "class",
         "info": {
-          "bases": [
-            "QWidget"
-          ],
+          "bases": ["QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -17502,16 +17872,12 @@
     }
   },
   "process_calculators/psa_package/ui/results_panel.py": {
-    "__all__": [
-      "ResultsPanel"
-    ],
+    "__all__": ["ResultsPanel"],
     "symbols": {
       "ResultsPanel": {
         "type": "class",
         "info": {
-          "bases": [
-            "QWidget"
-          ],
+          "bases": ["QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -17553,17 +17919,12 @@
     }
   },
   "process_calculators/psa_package/ui/sensitivity_plot.py": {
-    "__all__": [
-      "MplCanvas",
-      "SensitivityPlotWidget"
-    ],
+    "__all__": ["MplCanvas", "SensitivityPlotWidget"],
     "symbols": {
       "MplCanvas": {
         "type": "class",
         "info": {
-          "bases": [
-            "FigureCanvas"
-          ],
+          "bases": ["FigureCanvas"],
           "methods": {
             "__init__": {
               "args": [
@@ -17600,9 +17961,7 @@
       "SensitivityPlotWidget": {
         "type": "class",
         "info": {
-          "bases": [
-            "QWidget"
-          ],
+          "bases": ["QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -17644,11 +18003,7 @@
     }
   },
   "process_calculators/scrubber/__init__.py": {
-    "__all__": [
-      "ScrubberEngine",
-      "ScrubberInputs",
-      "ScrubberResults"
-    ],
+    "__all__": ["ScrubberEngine", "ScrubberInputs", "ScrubberResults"],
     "symbols": {
       "ScrubberEngine": {
         "type": "class",
@@ -17690,9 +18045,7 @@
     "symbols": {}
   },
   "process_calculators/scrubber/engine/scrubber_engine.py": {
-    "__all__": [
-      "ScrubberEngine"
-    ],
+    "__all__": ["ScrubberEngine"],
     "symbols": {
       "ScrubberEngine": {
         "type": "class",
@@ -17720,10 +18073,7 @@
     "symbols": {}
   },
   "process_calculators/scrubber/models/scrubber_models.py": {
-    "__all__": [
-      "ScrubberInputs",
-      "ScrubberResults"
-    ],
+    "__all__": ["ScrubberInputs", "ScrubberResults"],
     "symbols": {
       "ScrubberInputs": {
         "type": "class",
@@ -18277,9 +18627,7 @@
       "CompressionCalculationWorker": {
         "type": "class",
         "info": {
-          "bases": [
-            "QThread"
-          ],
+          "bases": ["QThread"],
           "methods": {
             "__init__": {
               "args": [
@@ -18353,10 +18701,7 @@
     }
   },
   "process_calculators/syngas_compression_engine.py": {
-    "__all__": [
-      "CompressionStage",
-      "SyngasCompressionEngine"
-    ],
+    "__all__": ["CompressionStage", "SyngasCompressionEngine"],
     "symbols": {
       "CompressionStage": {
         "type": "class",
@@ -18792,10 +19137,7 @@
     }
   },
   "process_calculators/thermal_profile_predictor.py": {
-    "__all__": [
-      "fit_heating_parameters",
-      "predict_temperature_profile"
-    ],
+    "__all__": ["fit_heating_parameters", "predict_temperature_profile"],
     "symbols": {
       "fit_heating_parameters": {
         "type": "function",
@@ -19064,9 +19406,7 @@
     }
   },
   "process_calculators/water_vapor_pressure_calculator.py": {
-    "__all__": [
-      "WaterVaporPressureCalculator"
-    ],
+    "__all__": ["WaterVaporPressureCalculator"],
     "symbols": {
       "WaterVaporPressureCalculator": {
         "type": "class",
@@ -19113,10 +19453,7 @@
     }
   },
   "process_calculators/wgs_reactor_calculator.py": {
-    "__all__": [
-      "WGSReactorEngine",
-      "create_wgs_reactor_calculator"
-    ],
+    "__all__": ["WGSReactorEngine", "create_wgs_reactor_calculator"],
     "symbols": {
       "WGSReactorEngine": {
         "type": "class",
@@ -19268,9 +19605,7 @@
       "Calculator": {
         "type": "class",
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "name": {
               "args": [
@@ -19334,9 +19669,7 @@
       "DataTransformer": {
         "type": "class",
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "transform": {
               "args": [
@@ -19471,9 +19804,7 @@
       "ProcessCalculator": {
         "type": "class",
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "calculate": {
               "args": [
@@ -19498,9 +19829,7 @@
       "StateSerializable": {
         "type": "class",
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "save_state": {
               "args": [
@@ -19536,9 +19865,7 @@
       "UnitConverter": {
         "type": "class",
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "convert": {
               "args": [
@@ -19604,12 +19931,7 @@
     }
   },
   "standalone/__init__.py": {
-    "__all__": [
-      "preferences",
-      "onboarding",
-      "runner",
-      "session_store"
-    ],
+    "__all__": ["preferences", "onboarding", "runner", "session_store"],
     "symbols": {
       "preferences": {
         "type": "unknown"
@@ -19626,11 +19948,7 @@
     }
   },
   "standalone/onboarding.py": {
-    "__all__": [
-      "SENTINEL_FILENAME",
-      "OnboardingState",
-      "StandaloneOnboarding"
-    ],
+    "__all__": ["SENTINEL_FILENAME", "OnboardingState", "StandaloneOnboarding"],
     "symbols": {
       "SENTINEL_FILENAME": {
         "type": "variable"
@@ -19638,9 +19956,7 @@
       "OnboardingState": {
         "type": "class",
         "info": {
-          "bases": [
-            "enum.Enum"
-          ],
+          "bases": ["enum.Enum"],
           "methods": {}
         }
       },
@@ -19925,11 +20241,7 @@
     }
   },
   "standalone/runner.py": {
-    "__all__": [
-      "list_calculators",
-      "register",
-      "run_calculator"
-    ],
+    "__all__": ["list_calculators", "register", "run_calculator"],
     "symbols": {
       "list_calculators": {
         "type": "function",
@@ -20134,9 +20446,7 @@
       "SessionStore": {
         "type": "class",
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "get": {
               "args": [
@@ -20318,10 +20628,7 @@
     }
   },
   "standalone/window.py": {
-    "__all__": [
-      "StandaloneSidekickConfig",
-      "StandaloneSidekickWindow"
-    ],
+    "__all__": ["StandaloneSidekickConfig", "StandaloneSidekickWindow"],
     "symbols": {
       "StandaloneSidekickConfig": {
         "type": "class",
@@ -20333,9 +20640,7 @@
       "StandaloneSidekickWindow": {
         "type": "class",
         "info": {
-          "bases": [
-            "QMainWindow"
-          ],
+          "bases": ["QMainWindow"],
           "methods": {
             "__init__": {
               "args": [
@@ -20514,9 +20819,7 @@
       "SymbolicEngineError": {
         "type": "class",
         "info": {
-          "bases": [
-            "RuntimeError"
-          ],
+          "bases": ["RuntimeError"],
           "methods": {}
         }
       },
@@ -20650,10 +20953,7 @@
     }
   },
   "tab_context_menu.py": {
-    "__all__": [
-      "build_tab_context_menu",
-      "show_tab_context_menu"
-    ],
+    "__all__": ["build_tab_context_menu", "show_tab_context_menu"],
     "symbols": {
       "build_tab_context_menu": {
         "type": "unknown"
@@ -20778,10 +21078,7 @@
     "symbols": {}
   },
   "ui/catppuccin_theme.py": {
-    "__all__": [
-      "COLORS",
-      "get_stylesheet"
-    ],
+    "__all__": ["COLORS", "get_stylesheet"],
     "symbols": {
       "COLORS": {
         "type": "unknown"
@@ -20885,9 +21182,7 @@
       "UnitPreferencesManager": {
         "type": "class",
         "info": {
-          "bases": [
-            "QObject"
-          ],
+          "bases": ["QObject"],
           "methods": {
             "__init__": {
               "args": [
@@ -21069,9 +21364,7 @@
       "UnitPreferencesManager": {
         "type": "class",
         "info": {
-          "bases": [
-            "QObject"
-          ],
+          "bases": ["QObject"],
           "methods": {
             "__init__": {
               "args": [
@@ -21233,16 +21526,12 @@
     "symbols": {}
   },
   "ui/mixins/base_calculator_mixin.py": {
-    "__all__": [
-      "BaseCalculatorMixin"
-    ],
+    "__all__": ["BaseCalculatorMixin"],
     "symbols": {
       "BaseCalculatorMixin": {
         "type": "class",
         "info": {
-          "bases": [
-            "CalculatorStateMixin"
-          ],
+          "bases": ["CalculatorStateMixin"],
           "methods": {
             "__init__": {
               "args": [
@@ -21318,17 +21607,12 @@
     }
   },
   "ui/mixins/calculator_state_mixin.py": {
-    "__all__": [
-      "CalculatorStateMixin"
-    ],
+    "__all__": ["CalculatorStateMixin"],
     "symbols": {
       "CalculatorStateMixin": {
         "type": "class",
         "info": {
-          "bases": [
-            "_SplitterStateMixin",
-            "_ClipboardMixin"
-          ],
+          "bases": ["_SplitterStateMixin", "_ClipboardMixin"],
           "methods": {
             "__init__": {
               "args": [
@@ -21704,9 +21988,7 @@
       "CalculatorPlotSource": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -22401,9 +22683,7 @@
       "CommonLocationsProvider": {
         "type": "class",
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "locations": {
               "args": [
@@ -23399,9 +23679,7 @@
       "SidekickThemeMode": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -24289,9 +24567,7 @@
       "CalculatorPredictionProvider": {
         "type": "class",
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "suggest": {
               "args": [
@@ -24541,9 +24817,7 @@
       "CalculatorPlotSource": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -24612,9 +24886,7 @@
       "SidekickCalculatorWidget": {
         "type": "class",
         "info": {
-          "bases": [
-            "QtWidgets.QWidget"
-          ],
+          "bases": ["QtWidgets.QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -25873,9 +26145,7 @@
       "ChatSettingsPanel": {
         "type": "class",
         "info": {
-          "bases": [
-            "QtWidgets.QWidget"
-          ],
+          "bases": ["QtWidgets.QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -26018,10 +26288,7 @@
     "symbols": {}
   },
   "ui/tools_sidebar/command_history.py": {
-    "__all__": [
-      "CommandHistoryController",
-      "DEFAULT_COMMAND_HISTORY_LIMIT"
-    ],
+    "__all__": ["CommandHistoryController", "DEFAULT_COMMAND_HISTORY_LIMIT"],
     "symbols": {
       "CommandHistoryController": {
         "type": "class",
@@ -26148,9 +26415,7 @@
       "DataExplorerError": {
         "type": "class",
         "info": {
-          "bases": [
-            "ValueError"
-          ],
+          "bases": ["ValueError"],
           "methods": {
             "__init__": {
               "args": [
@@ -26369,9 +26634,7 @@
       "SidekickDataExplorerWidget": {
         "type": "class",
         "info": {
-          "bases": [
-            "QtWidgets.QWidget"
-          ],
+          "bases": ["QtWidgets.QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -26461,18 +26724,14 @@
       "DataProcessorTabError": {
         "type": "class",
         "info": {
-          "bases": [
-            "ValueError"
-          ],
+          "bases": ["ValueError"],
           "methods": {}
         }
       },
       "SidekickDataProcessorTab": {
         "type": "class",
         "info": {
-          "bases": [
-            "QtWidgets.QWidget"
-          ],
+          "bases": ["QtWidgets.QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -26596,9 +26855,7 @@
       "WorkspaceTableWidget": {
         "type": "class",
         "info": {
-          "bases": [
-            "QtWidgets.QWidget"
-          ],
+          "bases": ["QtWidgets.QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -27195,9 +27452,7 @@
     }
   },
   "ui/tools_sidebar/dock_chrome.py": {
-    "__all__": [
-      "DockChromeController"
-    ],
+    "__all__": ["DockChromeController"],
     "symbols": {
       "DockChromeController": {
         "type": "class",
@@ -27433,17 +27688,12 @@
     }
   },
   "ui/tools_sidebar/dock_title_bar.py": {
-    "__all__": [
-      "SidekickDockTitleBar",
-      "make_redock_button"
-    ],
+    "__all__": ["SidekickDockTitleBar", "make_redock_button"],
     "symbols": {
       "SidekickDockTitleBar": {
         "type": "class",
         "info": {
-          "bases": [
-            "QtWidgets.QWidget"
-          ],
+          "bases": ["QtWidgets.QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -27524,9 +27774,7 @@
       "CommonLocationsProvider": {
         "type": "class",
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "locations": {
               "args": [
@@ -27808,9 +28056,7 @@
       "JupyterNotebookWidget": {
         "type": "class",
         "info": {
-          "bases": [
-            "QtWidgets.QWidget"
-          ],
+          "bases": ["QtWidgets.QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -27893,9 +28139,7 @@
       "JupyterUnavailableWidget": {
         "type": "class",
         "info": {
-          "bases": [
-            "QtWidgets.QWidget"
-          ],
+          "bases": ["QtWidgets.QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -27954,9 +28198,7 @@
       "NotebookLoadError": {
         "type": "class",
         "info": {
-          "bases": [
-            "RuntimeError"
-          ],
+          "bases": ["RuntimeError"],
           "methods": {}
         }
       },
@@ -28248,9 +28490,7 @@
     }
   },
   "ui/tools_sidebar/jupyter_tab/availability.py": {
-    "__all__": [
-      "JupyterTabAvailability"
-    ],
+    "__all__": ["JupyterTabAvailability"],
     "symbols": {
       "JupyterTabAvailability": {
         "type": "class",
@@ -28285,17 +28525,12 @@
     }
   },
   "ui/tools_sidebar/jupyter_tab/notebook_loader.py": {
-    "__all__": [
-      "NotebookLoadError",
-      "load_notebook"
-    ],
+    "__all__": ["NotebookLoadError", "load_notebook"],
     "symbols": {
       "NotebookLoadError": {
         "type": "class",
         "info": {
-          "bases": [
-            "RuntimeError"
-          ],
+          "bases": ["RuntimeError"],
           "methods": {}
         }
       },
@@ -28366,10 +28601,7 @@
     }
   },
   "ui/tools_sidebar/jupyter_tab/notebook_session.py": {
-    "__all__": [
-      "NotebookSessionManager",
-      "NotebookSessionModel"
-    ],
+    "__all__": ["NotebookSessionManager", "NotebookSessionModel"],
     "symbols": {
       "NotebookSessionManager": {
         "type": "class",
@@ -28486,9 +28718,7 @@
     }
   },
   "ui/tools_sidebar/jupyter_tab/sidekick_notebook_widget.py": {
-    "__all__": [
-      "SidekickNotebookWidget"
-    ],
+    "__all__": ["SidekickNotebookWidget"],
     "symbols": {
       "SidekickNotebookWidget": {
         "type": "class",
@@ -28586,16 +28816,12 @@
     }
   },
   "ui/tools_sidebar/jupyter_tab/unavailable_widget.py": {
-    "__all__": [
-      "JupyterUnavailableWidget"
-    ],
+    "__all__": ["JupyterUnavailableWidget"],
     "symbols": {
       "JupyterUnavailableWidget": {
         "type": "class",
         "info": {
-          "bases": [
-            "QtWidgets.QWidget"
-          ],
+          "bases": ["QtWidgets.QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -28637,16 +28863,12 @@
     }
   },
   "ui/tools_sidebar/jupyter_tab/widget.py": {
-    "__all__": [
-      "JupyterNotebookWidget"
-    ],
+    "__all__": ["JupyterNotebookWidget"],
     "symbols": {
       "JupyterNotebookWidget": {
         "type": "class",
         "info": {
-          "bases": [
-            "QtWidgets.QWidget"
-          ],
+          "bases": ["QtWidgets.QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -28699,9 +28921,7 @@
     }
   },
   "ui/tools_sidebar/jupyter_tab/workspace_bridge.py": {
-    "__all__": [
-      "WorkspaceBridge"
-    ],
+    "__all__": ["WorkspaceBridge"],
     "symbols": {
       "WorkspaceBridge": {
         "type": "class",
@@ -28784,9 +29004,7 @@
       "PosixPtyBackend": {
         "type": "class",
         "info": {
-          "bases": [
-            "_BackendBase"
-          ],
+          "bases": ["_BackendBase"],
           "methods": {
             "__init__": {
               "args": [
@@ -28899,9 +29117,7 @@
       "SidekickOsTerminalWidget": {
         "type": "class",
         "info": {
-          "bases": [
-            "QtWidgets.QWidget"
-          ],
+          "bases": ["QtWidgets.QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -29040,9 +29256,7 @@
       "SubprocessFallbackBackend": {
         "type": "class",
         "info": {
-          "bases": [
-            "_BackendBase"
-          ],
+          "bases": ["_BackendBase"],
           "methods": {
             "__init__": {
               "args": [
@@ -29152,9 +29366,7 @@
       "TerminalBackend": {
         "type": "class",
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "start": {
               "args": [
@@ -29241,9 +29453,7 @@
       "WindowsPtyBackend": {
         "type": "class",
         "info": {
-          "bases": [
-            "_BackendBase"
-          ],
+          "bases": ["_BackendBase"],
           "methods": {
             "__init__": {
               "args": [
@@ -29410,9 +29620,7 @@
       "DefaultProgramLauncher": {
         "type": "class",
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "open_file": {
               "args": [
@@ -29437,9 +29645,7 @@
       "ProjectFileExplorer": {
         "type": "class",
         "info": {
-          "bases": [
-            "QtWidgets.QWidget"
-          ],
+          "bases": ["QtWidgets.QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -30005,17 +30211,12 @@
     }
   },
   "ui/tools_sidebar/reporting_tab.py": {
-    "__all__": [
-      "SidekickReportingWidget",
-      "build_reporting_tab"
-    ],
+    "__all__": ["SidekickReportingWidget", "build_reporting_tab"],
     "symbols": {
       "SidekickReportingWidget": {
         "type": "class",
         "info": {
-          "bases": [
-            "QtWidgets.QWidget"
-          ],
+          "bases": ["QtWidgets.QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -30097,9 +30298,7 @@
       "AppearanceSettingsPanel": {
         "type": "class",
         "info": {
-          "bases": [
-            "QtWidgets.QWidget"
-          ],
+          "bases": ["QtWidgets.QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -30153,9 +30352,7 @@
       "PythonReplSettingsPanel": {
         "type": "class",
         "info": {
-          "bases": [
-            "AppearanceSettingsPanel"
-          ],
+          "bases": ["AppearanceSettingsPanel"],
           "methods": {
             "package_rows": {
               "args": [
@@ -30305,9 +30502,7 @@
       "PythonReplWidget": {
         "type": "class",
         "info": {
-          "bases": [
-            "QtWidgets.QWidget"
-          ],
+          "bases": ["QtWidgets.QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -30503,9 +30698,7 @@
       "SidekickNotesWidget": {
         "type": "class",
         "info": {
-          "bases": [
-            "QtWidgets.QWidget"
-          ],
+          "bases": ["QtWidgets.QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -30586,9 +30779,7 @@
       "SidekickPythonReplWidget": {
         "type": "class",
         "info": {
-          "bases": [
-            "QtWidgets.QWidget"
-          ],
+          "bases": ["QtWidgets.QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -30949,19 +31140,14 @@
       "TabSettingsDefinition": {
         "type": "class",
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {}
         }
       }
     }
   },
   "ui/tools_sidebar/shell_discovery.py": {
-    "__all__": [
-      "ShellDescriptor",
-      "discover_shells"
-    ],
+    "__all__": ["ShellDescriptor", "discover_shells"],
     "symbols": {
       "ShellDescriptor": {
         "type": "class",
@@ -30990,18 +31176,14 @@
       "LayoutMode": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
       "MatlabHomeWidget": {
         "type": "class",
         "info": {
-          "bases": [
-            "QtWidgets.QWidget"
-          ],
+          "bases": ["QtWidgets.QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -31948,11 +32130,7 @@
     }
   },
   "ui/tools_sidebar/state.py": {
-    "__all__": [
-      "SidebarState",
-      "VALID_DOCK_AREAS",
-      "VALID_LAYOUT_MODES"
-    ],
+    "__all__": ["SidebarState", "VALID_DOCK_AREAS", "VALID_LAYOUT_MODES"],
     "symbols": {
       "SidebarState": {
         "type": "class",
@@ -32033,9 +32211,7 @@
     }
   },
   "ui/tools_sidebar/state_profile_actions.py": {
-    "__all__": [
-      "StateProfileMixin"
-    ],
+    "__all__": ["StateProfileMixin"],
     "symbols": {
       "StateProfileMixin": {
         "type": "class",
@@ -32265,9 +32441,7 @@
     }
   },
   "ui/tools_sidebar/tab_collection.py": {
-    "__all__": [
-      "TabCollection"
-    ],
+    "__all__": ["TabCollection"],
     "symbols": {
       "TabCollection": {
         "type": "class",
@@ -32529,10 +32703,7 @@
     }
   },
   "ui/tools_sidebar/tab_context_menu.py": {
-    "__all__": [
-      "build_tab_context_menu",
-      "show_tab_context_menu"
-    ],
+    "__all__": ["build_tab_context_menu", "show_tab_context_menu"],
     "symbols": {
       "build_tab_context_menu": {
         "type": "function",
@@ -32577,9 +32748,7 @@
     }
   },
   "ui/tools_sidebar/tab_definition.py": {
-    "__all__": [
-      "SidebarTabDefinition"
-    ],
+    "__all__": ["SidebarTabDefinition"],
     "symbols": {
       "SidebarTabDefinition": {
         "type": "class",
@@ -32591,9 +32760,7 @@
     }
   },
   "ui/tools_sidebar/tab_display_names.py": {
-    "__all__": [
-      "TabDisplayNameMixin"
-    ],
+    "__all__": ["TabDisplayNameMixin"],
     "symbols": {
       "TabDisplayNameMixin": {
         "type": "class",
@@ -32663,9 +32830,7 @@
     }
   },
   "ui/tools_sidebar/tab_popout.py": {
-    "__all__": [
-      "TabPopoutMixin"
-    ],
+    "__all__": ["TabPopoutMixin"],
     "symbols": {
       "TabPopoutMixin": {
         "type": "class",
@@ -32791,9 +32956,7 @@
       "ConfigureTabsDialog": {
         "type": "class",
         "info": {
-          "bases": [
-            "QtWidgets.QDialog"
-          ],
+          "bases": ["QtWidgets.QDialog"],
           "methods": {
             "__init__": {
               "args": [
@@ -32994,9 +33157,7 @@
       "TabDefinitionLike": {
         "type": "class",
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "tab_id": {
               "args": [
@@ -33184,9 +33345,7 @@
       "SidekickThemeMode": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -33278,9 +33437,7 @@
     }
   },
   "ui/tools_sidebar/visibility_persistence.py": {
-    "__all__": [
-      "VisibilityPersistence"
-    ],
+    "__all__": ["VisibilityPersistence"],
     "symbols": {
       "VisibilityPersistence": {
         "type": "class",
@@ -33344,10 +33501,7 @@
     }
   },
   "ui/tools_sidebar/workspace_commands.py": {
-    "__all__": [
-      "WorkspaceCommandExecutor",
-      "WorkspaceCommandResult"
-    ],
+    "__all__": ["WorkspaceCommandExecutor", "WorkspaceCommandResult"],
     "symbols": {
       "WorkspaceCommandExecutor": {
         "type": "class",
@@ -33526,10 +33680,7 @@
       "BaseCalculatorWidget": {
         "type": "class",
         "info": {
-          "bases": [
-            "QWidget",
-            "BaseCalculatorMixin"
-          ],
+          "bases": ["QWidget", "BaseCalculatorMixin"],
           "methods": {
             "__init__": {
               "args": [
@@ -33606,11 +33757,7 @@
       "BaseCalculatorWindow": {
         "type": "class",
         "info": {
-          "bases": [
-            "ThemedWindowMixin",
-            "QMainWindow",
-            "BaseCalculatorMixin"
-          ],
+          "bases": ["ThemedWindowMixin", "QMainWindow", "BaseCalculatorMixin"],
           "methods": {
             "__init__": {
               "args": [
@@ -33716,10 +33863,7 @@
       "DataProcessorWidget": {
         "type": "class",
         "info": {
-          "bases": [
-            "DataProcessorOpsMixin",
-            "BaseCalculatorWidget"
-          ],
+          "bases": ["DataProcessorOpsMixin", "BaseCalculatorWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -33865,9 +34009,7 @@
       "UnitAwareDisplay": {
         "type": "class",
         "info": {
-          "bases": [
-            "QWidget"
-          ],
+          "bases": ["QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -33933,9 +34075,7 @@
       "UnitAwareInput": {
         "type": "class",
         "info": {
-          "bases": [
-            "QWidget"
-          ],
+          "bases": ["QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -34139,9 +34279,7 @@
       "UnitConverterWidget": {
         "type": "class",
         "info": {
-          "bases": [
-            "BaseCalculatorWindow"
-          ],
+          "bases": ["BaseCalculatorWindow"],
           "methods": {
             "__init__": {
               "args": [
@@ -34188,18 +34326,12 @@
     }
   },
   "ui/widgets/base_calculator_widget.py": {
-    "__all__": [
-      "BaseCalculatorWidget",
-      "BaseCalculatorWindow"
-    ],
+    "__all__": ["BaseCalculatorWidget", "BaseCalculatorWindow"],
     "symbols": {
       "BaseCalculatorWidget": {
         "type": "class",
         "info": {
-          "bases": [
-            "QWidget",
-            "BaseCalculatorMixin"
-          ],
+          "bases": ["QWidget", "BaseCalculatorMixin"],
           "methods": {
             "__init__": {
               "args": [
@@ -34276,11 +34408,7 @@
       "BaseCalculatorWindow": {
         "type": "class",
         "info": {
-          "bases": [
-            "ThemedWindowMixin",
-            "QMainWindow",
-            "BaseCalculatorMixin"
-          ],
+          "bases": ["ThemedWindowMixin", "QMainWindow", "BaseCalculatorMixin"],
           "methods": {
             "__init__": {
               "args": [
@@ -34386,17 +34514,12 @@
     }
   },
   "ui/widgets/data_processor_widget.py": {
-    "__all__": [
-      "DataProcessorWidget"
-    ],
+    "__all__": ["DataProcessorWidget"],
     "symbols": {
       "DataProcessorWidget": {
         "type": "class",
         "info": {
-          "bases": [
-            "DataProcessorOpsMixin",
-            "BaseCalculatorWidget"
-          ],
+          "bases": ["DataProcessorOpsMixin", "BaseCalculatorWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -34546,9 +34669,7 @@
     "symbols": {}
   },
   "ui/widgets/mixins/data_processor_ops.py": {
-    "__all__": [
-      "DataProcessorOpsMixin"
-    ],
+    "__all__": ["DataProcessorOpsMixin"],
     "symbols": {
       "DataProcessorOpsMixin": {
         "type": "class",
@@ -34560,17 +34681,12 @@
     }
   },
   "ui/widgets/unit_aware_input.py": {
-    "__all__": [
-      "UnitAwareDisplay",
-      "UnitAwareInput"
-    ],
+    "__all__": ["UnitAwareDisplay", "UnitAwareInput"],
     "symbols": {
       "UnitAwareDisplay": {
         "type": "class",
         "info": {
-          "bases": [
-            "QWidget"
-          ],
+          "bases": ["QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -34636,9 +34752,7 @@
       "UnitAwareInput": {
         "type": "class",
         "info": {
-          "bases": [
-            "QWidget"
-          ],
+          "bases": ["QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -34853,9 +34967,7 @@
       "CaseInsensitiveCompleter": {
         "type": "class",
         "info": {
-          "bases": [
-            "QCompleter"
-          ],
+          "bases": ["QCompleter"],
           "methods": {
             "__init__": {
               "args": [
@@ -35020,18 +35132,14 @@
       "TypedConverterWidget": {
         "type": "class",
         "info": {
-          "bases": [
-            "QWidget"
-          ],
+          "bases": ["QWidget"],
           "methods": {}
         }
       },
       "UnitConverterWidget": {
         "type": "class",
         "info": {
-          "bases": [
-            "BaseCalculatorWindow"
-          ],
+          "bases": ["BaseCalculatorWindow"],
           "methods": {
             "__init__": {
               "args": [
@@ -35096,10 +35204,7 @@
     "symbols": {}
   },
   "utils/json_io.py": {
-    "__all__": [
-      "safe_read_json",
-      "safe_write_json"
-    ],
+    "__all__": ["safe_read_json", "safe_write_json"],
     "symbols": {
       "safe_read_json": {
         "type": "function",
@@ -35208,9 +35313,7 @@
     }
   },
   "utils/paths.py": {
-    "__all__": [
-      "get_repo_root"
-    ],
+    "__all__": ["get_repo_root"],
     "symbols": {
       "get_repo_root": {
         "type": "function",
@@ -35229,11 +35332,7 @@
     }
   },
   "utils/state_manager.py": {
-    "__all__": [
-      "StateManager",
-      "get_state_manager",
-      "state_manager"
-    ],
+    "__all__": ["StateManager", "get_state_manager", "state_manager"],
     "symbols": {
       "StateManager": {
         "type": "class",
@@ -36213,16 +36312,12 @@
     }
   },
   "workspace_contract.py": {
-    "__all__": [
-      "WorkspaceContract"
-    ],
+    "__all__": ["WorkspaceContract"],
     "symbols": {
       "WorkspaceContract": {
         "type": "class",
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "set_variable": {
               "args": [
@@ -36282,6 +36377,639 @@
               "returns": "list[str]"
             },
             "clear_local": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        }
+      }
+    }
+  },
+  "lab/mocap/acquisition.py": {
+    "__all__": [
+      "AcquisitionError",
+      "CaptureGroup",
+      "DropPolicy",
+      "FramePacket",
+      "FrameSource",
+      "PrerecordedFrameSource",
+      "QueueFullError",
+      "SourceState",
+      "SyntheticFrameSource"
+    ],
+    "symbols": {
+      "AcquisitionError": {
+        "type": "class",
+        "info": {
+          "bases": ["RuntimeError"],
+          "methods": {}
+        }
+      },
+      "CaptureGroup": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "sources",
+                  "annotation": "tuple[FrameSource, ...]",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "max_queue_size",
+                  "annotation": "int",
+                  "default": "100",
+                  "kind": "arg"
+                },
+                {
+                  "name": "drop_policy",
+                  "annotation": "DropPolicy",
+                  "default": "DropPolicy.DROP_OLDEST",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "sources": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "Mapping[str, FrameSource]"
+            },
+            "initialize": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "start_capture": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "push_frame_direct": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "source_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "frame",
+                  "annotation": "FramePacket",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "read_frames": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "timeout_seconds",
+                  "annotation": "float",
+                  "default": "5.0",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "dict[str, FramePacket]"
+            },
+            "stop_capture": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "close": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        }
+      },
+      "DropPolicy": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
+      "FramePacket": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "to_frame_stamp": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "stream_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "clock_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "FrameStamp"
+            }
+          }
+        }
+      },
+      "FrameSource": {
+        "type": "class",
+        "info": {
+          "bases": ["ABC"],
+          "methods": {
+            "source_id": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "identity": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CameraIdentity"
+            },
+            "capabilities": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CameraCapabilities"
+            },
+            "state": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "SourceState"
+            },
+            "initialize": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "start_capture": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "read_frame": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "timeout_seconds",
+                  "annotation": "float",
+                  "default": "5.0",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "FramePacket"
+            },
+            "stop_capture": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "close": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        }
+      },
+      "PrerecordedFrameSource": {
+        "type": "class",
+        "info": {
+          "bases": ["FrameSource"],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "source_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "identity",
+                  "annotation": "CameraIdentity",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "capabilities",
+                  "annotation": "CameraCapabilities",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "frames",
+                  "annotation": "list[FramePacket]",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "loop",
+                  "annotation": "bool",
+                  "default": "False",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "source_id": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "identity": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CameraIdentity"
+            },
+            "capabilities": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CameraCapabilities"
+            },
+            "state": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "SourceState"
+            },
+            "initialize": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "start_capture": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "read_frame": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "timeout_seconds",
+                  "annotation": "float",
+                  "default": "5.0",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "FramePacket"
+            },
+            "stop_capture": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "close": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        }
+      },
+      "QueueFullError": {
+        "type": "class",
+        "info": {
+          "bases": ["AcquisitionError"],
+          "methods": {}
+        }
+      },
+      "SourceState": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
+      "SyntheticFrameSource": {
+        "type": "class",
+        "info": {
+          "bases": ["FrameSource"],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "source_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "identity",
+                  "annotation": "CameraIdentity",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "capabilities",
+                  "annotation": "CameraCapabilities",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "resolution_px",
+                  "annotation": "tuple[int, int]",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "frame_rate_hz",
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "pixel_format",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "source_id": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "identity": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CameraIdentity"
+            },
+            "capabilities": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CameraCapabilities"
+            },
+            "state": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "SourceState"
+            },
+            "initialize": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "start_capture": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "read_frame": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "timeout_seconds",
+                  "annotation": "float",
+                  "default": "5.0",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "FramePacket"
+            },
+            "stop_capture": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "close": {
               "args": [
                 {
                   "name": "self",
