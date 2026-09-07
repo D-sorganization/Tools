@@ -165,7 +165,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
     },
     {
-      "content_sha256_lf": "e3f0c3fce5a241270794b73814ef002c8c2b2e38668d1f4cb830b25897e95c54",
+      "content_sha256_lf": "41f4975c98b1f3ae79a97966d12aec7f9b01660e52e4112a8ea85ee6108d586d",
       "entry_count": 2,
       "package": "shared_scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-shared-scripts.json"

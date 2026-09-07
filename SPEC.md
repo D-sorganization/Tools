@@ -5816,7 +5816,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
-| 2026-09-07 | #4714 | feat(mocap, #4714 TOOLS-M4): deliver camera intrinsic calibration models (pinhole and fisheye), distortion representations (Brown-Conrady, rational, Kannala-Brandt), observation provenance, reprojection residual evaluation, degeneracy detection, and qualification floors in `sidekick.lab.mocap.calibration`. |
+| 2026-09-07 | #5064 | feat(mocap, #4714 TOOLS-M4): deliver camera intrinsic calibration models (pinhole and fisheye), distortion representations, observation provenance, reprojection residual evaluation, degeneracy detection, and qualification floors; permit sidekick api baseline budget. |
 | 2026-09-07 | #4718 | feat(mocap, #4718 TOOLS-M3): deliver synchronization analysis, sequence tracking, and crash-safe recording with atomic manifest persistence in `sidekick.lab.mocap.sync` and `sidekick.lab.mocap.recording`. |
 | 2026-09-07 | #4713 | feat(mocap, #4713 TOOLS-M2): establish vendor-neutral camera acquisition protocol in sidekick.lab.mocap.acquisition, providing FrameSource, CaptureGroup, FramePacket, SourceState, and reference synthetic/prerecorded drivers with bounded queues and fail-closed backpressure. |
 | 2026-09-07 | #4730 | docs(manual, #4707/#4730 TOOLS-D9): enforce governed completion-audit handoff and maintenance contract (`tools-handoff-maintenance/1.0.0`) binding commit evidence, working tree state, test digests, diff-aware CI gates, and strict 150-line budgets across all tracked handoffs; conclude epic #4707. |
