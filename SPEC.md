@@ -27,10 +27,14 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.130                                   |
+| **Spec Version**        | 1.18.131                                   |
 | **Last Spec Update**    | 2026-09-07                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-09-07 Rate of Closure Single-Pass Array Bounds Refactor (#5046)
+
+Optimizes `VariationLanding.tsx`, `flightAcceptedStudy.ts`, `puttingDispersion.ts`, and `torqueProfileEditor.ts` in `rate_of_closure` by replacing array spreads and chained maps with single-pass loops to eliminate O(N) allocation overhead.
 
 ### 2026-09-07 Governed Calculation Exemplar Manuals (#4707 / TOOLS-D4 (#4720))
 

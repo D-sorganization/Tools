@@ -191,7 +191,13 @@ export function summarizePuttOutcomes(
     leaveMeanM: mean(leaves),
     leaveP50M: percentile(leaves, 50),
     leaveP95M: percentile(leaves, 95),
-    leaveMaxM: Math.max(...leaves),
+    leaveMaxM: (() => {
+      let maxLeave = leaves[0];
+      for (let i = 1; i < leaves.length; i++) {
+        if (leaves[i] > maxLeave) maxLeave = leaves[i];
+      }
+      return maxLeave;
+    })(),
     startLineMeanDeg: mean(starts),
     startLineSigmaDeg: finiteSampleStandardDeviation(starts),
     startLineP05Deg: percentile(starts, 5),
