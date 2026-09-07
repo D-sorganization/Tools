@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.128                                   |
+| **Spec Version**        | 1.18.129                                   |
 | **Last Spec Update**    | 2026-09-06                                 |
 
 ## 2. Purpose & Mission
@@ -7261,3 +7261,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-06: Test Quarantine Unquarantine (#4933 / #5025)
 
 - **2026-09-06**: fix(tests, #4933) — Unquarantine `tests/folder_tool/test_backup_copy.py`, `tests/project_packer_fixes/test_folder_packer_gui_lod.py`, and `tests/test_phase1_quick_wins.py` after updating DbC contract test assertions and `.gitignore` stale artifact blocks.
+
+## 2026-09-06: Shared Package API Stability and Logging Consistency Unquarantine (#4933)
+
+- **2026-09-06**: fix(tests, #4933) — Unquarantine `tests/test_shared_package_api_stability.py` and `tests/test_gh1732_logging_consistency.py`. Regenerated `swing_sim` API baseline to account for impact interval modules, replaced unguarded prints with sys.stdout/sys.stderr writes and CLI echo helper in `codemap/cli.py`, `codemap/mcp_server.py`, and `morris/child.py`.

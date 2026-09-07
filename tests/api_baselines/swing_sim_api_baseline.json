@@ -21212,6 +21212,80 @@
       }
     }
   },
+  "impact/contact.py": {
+    "__all__": [
+      "KelvinVoigtContactLaw"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "KelvinVoigtContactLaw": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "from_restitution": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "stiffness_n_per_m"
+                },
+                {
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "restitution"
+                },
+                {
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "effective_mass_kg"
+                },
+                {
+                  "annotation": "float",
+                  "default": "10000000.0",
+                  "kind": "arg",
+                  "name": "maximum_force_n"
+                }
+              ],
+              "returns": "KelvinVoigtContactLaw"
+            },
+            "normal_force": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "compression_m"
+                },
+                {
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "compression_rate_mps"
+                }
+              ],
+              "returns": "float"
+            }
+          }
+        },
+        "type": "class"
+      }
+    }
+  },
   "impact/delivery.py": {
     "__all__": [
       "DeliveryDerived",
@@ -22152,6 +22226,393 @@
           "returns": "dict[str, float]"
         },
         "type": "function"
+      }
+    }
+  },
+  "impact_interval/__init__.py": {
+    "__all__": [
+      "BoundaryKind",
+      "ClubRigidBody",
+      "ImpactIntervalAudit",
+      "ImpactIntervalConfig",
+      "ImpactIntervalInitialState",
+      "ImpactIntervalResult",
+      "ImpactIntervalSample",
+      "KelvinVoigtContactLaw",
+      "solve_impact_interval"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "BoundaryKind": {
+        "info": {
+          "bases": [
+            "Enum"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ClubRigidBody": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "shaft_axis_body": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "np.ndarray"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ImpactIntervalAudit": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ImpactIntervalConfig": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ImpactIntervalInitialState": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "validate": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ImpactIntervalResult": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "at_time": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "time_s"
+                }
+              ],
+              "returns": "ImpactIntervalSample"
+            },
+            "channel": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "name"
+                }
+              ],
+              "returns": "np.ndarray"
+            },
+            "to_post_impact_state": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "PostImpactState"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ImpactIntervalSample": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "KelvinVoigtContactLaw": {
+        "type": "reexport"
+      },
+      "solve_impact_interval": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ImpactIntervalInitialState",
+              "default": null,
+              "kind": "arg",
+              "name": "initial"
+            },
+            {
+              "annotation": "ClubRigidBody",
+              "default": null,
+              "kind": "arg",
+              "name": "club"
+            },
+            {
+              "annotation": "ImpactIntervalConfig",
+              "default": null,
+              "kind": "arg",
+              "name": "config"
+            }
+          ],
+          "returns": "ImpactIntervalResult"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "impact_interval/_rotation.py": {
+    "__all__": [
+      "exp_rotation",
+      "log_rotation",
+      "skew"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "exp_rotation": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "rotation_vector"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      },
+      "log_rotation": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "rotation"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      },
+      "skew": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "vector"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "impact_interval/solver.py": {
+    "__all__": [
+      "solve_impact_interval"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "solve_impact_interval": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ImpactIntervalInitialState",
+              "default": null,
+              "kind": "arg",
+              "name": "initial"
+            },
+            {
+              "annotation": "ClubRigidBody",
+              "default": null,
+              "kind": "arg",
+              "name": "club"
+            },
+            {
+              "annotation": "ImpactIntervalConfig",
+              "default": null,
+              "kind": "arg",
+              "name": "config"
+            }
+          ],
+          "returns": "ImpactIntervalResult"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "impact_interval/types.py": {
+    "__all__": [
+      "BoundaryKind",
+      "ClubRigidBody",
+      "ImpactIntervalAudit",
+      "ImpactIntervalConfig",
+      "ImpactIntervalInitialState",
+      "ImpactIntervalResult",
+      "ImpactIntervalSample"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "BoundaryKind": {
+        "info": {
+          "bases": [
+            "Enum"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ClubRigidBody": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "shaft_axis_body": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "np.ndarray"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ImpactIntervalAudit": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ImpactIntervalConfig": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ImpactIntervalInitialState": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "validate": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ImpactIntervalResult": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "at_time": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "time_s"
+                }
+              ],
+              "returns": "ImpactIntervalSample"
+            },
+            "channel": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "name"
+                }
+              ],
+              "returns": "np.ndarray"
+            },
+            "to_post_impact_state": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "PostImpactState"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ImpactIntervalSample": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
       }
     }
   },

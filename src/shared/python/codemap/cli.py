@@ -17,21 +17,27 @@ import json
 import logging
 import sys
 from pathlib import Path
+from typing import Any
 
 from . import api as api_mod
 from . import db as db_mod
 from . import indexer as indexer_mod
 
 
+def _echo(msg: str = "", *, file: Any = None) -> None:
+    target = file if file is not None else sys.stdout
+    target.write(f"{msg}\n")
+
+
 def _cmd_rebuild(args: argparse.Namespace) -> int:
     stats = indexer_mod.rebuild(args.repo, since=args.since)
-    print(
+    _echo(
         f"indexed {stats.files_parsed} files "
         f"({stats.files_skipped_unchanged} unchanged), "
         f"{stats.symbols_inserted} symbols in {stats.elapsed_s:.2f}s"
     )
     if stats.errors:
-        print(
+        _echo(
             f"  {len(stats.errors)} errors (first: {stats.errors[0]})", file=sys.stderr
         )
     return 0
@@ -42,22 +48,22 @@ def _cmd_search(args: argparse.Namespace) -> int:
         args.query, k=args.k, kind=args.kind, repo_root=args.repo
     )
     if not hits:
-        print("(no matches)")
+        _echo("(no matches)")
         return 0
     for h in hits:
         s = h.symbol
-        print(f"[{h.score:7.2f}] {s.kind:8s} {s.qualified}")
-        print(f"           {s.path}:{s.start_line}-{s.end_line}  {s.sig}")
+        _echo(f"[{h.score:7.2f}] {s.kind:8s} {s.qualified}")
+        _echo(f"           {s.path}:{s.start_line}-{s.end_line}  {s.sig}")
     return 0
 
 
 def _cmd_who_calls(args: argparse.Namespace) -> int:
     callers = api_mod.who_calls(args.qualified, repo_root=args.repo)
     if not callers:
-        print("(no callers found)")
+        _echo("(no callers found)")
         return 0
     for c in callers:
-        print(f"{c.kind:8s} {c.qualified}  {c.path}:{c.start_line}")
+        _echo(f"{c.kind:8s} {c.qualified}  {c.path}:{c.start_line}")
     return 0
 
 
@@ -81,20 +87,20 @@ def _cmd_export(args: argparse.Namespace) -> int:
                 n += 1
     finally:
         conn.close()
-    print(f"exported {n} symbols -> {out_path}")
+    _echo(f"exported {n} symbols -> {out_path}")
     return 0
 
 
 def _cmd_info(args: argparse.Namespace) -> int:
     stats = api_mod.repo_summary(repo_root=args.repo)
-    print(f"repo:       {stats.repo_root}")
-    print(f"files:      {stats.files}")
-    print(f"symbols:    {stats.symbols}")
-    print(f"db size:    {stats.db_size_bytes / 1024:.1f} KiB")
-    print(f"last cmt:   {stats.last_commit or '(unknown)'}")
-    print("languages:")
+    _echo(f"repo:       {stats.repo_root}")
+    _echo(f"files:      {stats.files}")
+    _echo(f"symbols:    {stats.symbols}")
+    _echo(f"db size:    {stats.db_size_bytes / 1024:.1f} KiB")
+    _echo(f"last cmt:   {stats.last_commit or '(unknown)'}")
+    _echo("languages:")
     for lang, n in sorted(stats.languages.items(), key=lambda kv: -kv[1]):
-        print(f"  {lang:10s} {n}")
+        _echo(f"  {lang:10s} {n}")
     return 0
 
 
@@ -147,7 +153,7 @@ def main(argv: list[str] | None = None) -> int:
         level=logging.DEBUG if getattr(args, "verbose", False) else logging.INFO,
         format="%(levelname)s %(name)s: %(message)s",
     )
-    return args.func(args)
+    return int(args.func(args))
 
 
 if __name__ == "__main__":
