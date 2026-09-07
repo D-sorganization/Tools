@@ -1,18 +1,19 @@
 import json
+import sys
 from unittest.mock import MagicMock, patch
 
-from wave_solver import main, run_cmd
+from wave_solver import WaveConfig, main, run_cmd
 
 
 def test_run_cmd_success():
-    # Test successful command execution
-    res = run_cmd("echo Hello")
+    # Test successful command execution using portable sys.executable
+    res = run_cmd([sys.executable, "-c", "print('Hello')"])
     assert res == "Hello"
 
 
 def test_run_cmd_error():
     # Test failed command with ignore_err=True (non-zero exit code, check=False)
-    res = run_cmd('python -c "import sys; sys.exit(1)"', ignore_err=True)
+    res = run_cmd([sys.executable, "-c", "import sys; sys.exit(1)"], ignore_err=True)
     assert res is None or res == ""
 
 
@@ -23,7 +24,7 @@ def test_run_cmd_error_raises():
 
     # Test failed command with ignore_err=False raises CalledProcessError
     with pytest.raises(subprocess.CalledProcessError):
-        run_cmd('python -c "import sys; sys.exit(1)"', ignore_err=False)
+        run_cmd([sys.executable, "-c", "import sys; sys.exit(1)"], ignore_err=False)
 
 
 @patch("subprocess.run")
@@ -51,7 +52,8 @@ def test_main_with_issues(mock_run):
     # We want a mock side_effect for subprocess.run
     def run_side_effect(cmd, **kwargs):
         mock_res = MagicMock(returncode=0)
-        if isinstance(cmd, str) and "gh issue list" in cmd:
+        cmd_list = list(cmd) if isinstance(cmd, (list, tuple)) else [str(cmd)]
+        if len(cmd_list) >= 3 and cmd_list[:3] == ["gh", "issue", "list"]:
             mock_res.stdout = json.dumps(
                 [
                     {
@@ -67,7 +69,7 @@ def test_main_with_issues(mock_run):
                     },
                 ]
             )
-        elif isinstance(cmd, str) and "git status" in cmd:
+        elif len(cmd_list) >= 2 and cmd_list[:2] == ["git", "status"]:
             mock_res.stdout = ""
         else:
             mock_res.stdout = ""
@@ -75,16 +77,18 @@ def test_main_with_issues(mock_run):
 
     mock_run.side_effect = run_side_effect
 
-    main()
+    # Run main with allow_mutations=True so mutating git/gh commands execute
+    config = WaveConfig(allow_mutations=True)
+    main(config=config)
 
-    # Verify that it tried to run Claude/Git for issue #1 and closed the duplicate
     called_cmds = [call[0][0] for call in mock_run.call_args_list]
 
     # Duplicate issue with same title should be closed
-    assert any("gh issue close 1" in cmd for cmd in called_cmds)
+    assert any(cmd == ["gh", "issue", "close", "1"] for cmd in called_cmds)
 
     # We checkout branch
-    assert any("checkout -b fix/a-n-issue-1" in cmd for cmd in called_cmds)
+    expected_branch = ["git", "checkout", "-b", "fix/a-n-issue-1"]
+    assert any(cmd == expected_branch for cmd in called_cmds)
 
     # We run claude
-    assert any("claude -p" in cmd for cmd in called_cmds)
+    assert any(len(cmd) >= 2 and cmd[:2] == ["claude", "-p"] for cmd in called_cmds)
