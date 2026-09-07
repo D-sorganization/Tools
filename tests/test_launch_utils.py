@@ -11,6 +11,7 @@ Tests cover:
 from __future__ import annotations
 
 import io
+import os
 import sys
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -284,13 +285,34 @@ class TestLaunchToolDispatch:
 class TestLaunchToolLifecycle:
     """Process lifecycle tests for launcher helpers."""
 
-    @patch("tools.launch_utils._spawn_and_reap")
-    def test_file_launch_uses_spawn_and_reap(
-        self, mock_spawn_and_reap: MagicMock, tmp_path: Path
-    ) -> None:
+    def test_file_launch_uses_spawn_and_reap(self, tmp_path: Path) -> None:
         (tmp_path / "notes.txt").write_text("x")
-        launch_tool(
-            {"name": "Doc", "path": "notes.txt", "type": "file"},
-            tmp_path,
-        )
-        mock_spawn_and_reap.assert_called_once()
+        with (
+            patch("tools.launch_utils._spawn_and_reap") as mock_spawn_and_reap,
+            patch("os.startfile", create=True) as mock_startfile,
+        ):
+            # On platforms with startfile, verify startfile is invoked
+            launch_tool(
+                {"name": "Doc", "path": "notes.txt", "type": "file"},
+                tmp_path,
+            )
+            mock_startfile.assert_called_once()
+            mock_spawn_and_reap.assert_not_called()
+
+        with (
+            patch("tools.launch_utils._spawn_and_reap") as mock_spawn_and_reap,
+            patch("sys.platform", "linux"),
+        ):
+            # On POSIX without startfile, verify _spawn_and_reap is invoked
+            original_startfile = getattr(os, "startfile", None)
+            if hasattr(os, "startfile"):
+                delattr(os, "startfile")
+            try:
+                launch_tool(
+                    {"name": "Doc", "path": "notes.txt", "type": "file"},
+                    tmp_path,
+                )
+                mock_spawn_and_reap.assert_called_once()
+            finally:
+                if original_startfile is not None:
+                    os.startfile = original_startfile  # type: ignore[attr-defined]

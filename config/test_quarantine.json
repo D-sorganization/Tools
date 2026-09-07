@@ -2,12 +2,6 @@
   "_comment": "Test modules kept out of the sharded PR lane (Tools #4913). Quarantine individual modules only, never directories; every entry needs an owner cluster and a tracked issue, and `python scripts/ci_test_shards.py --check` fails when a path no longer exists. Remove entries as they are fixed; #4933 closes when this list is empty.",
   "entries": [
     {
-      "path": "src/shared/python/tests/test_god_class_guard.py",
-      "owner": "src/shared/python",
-      "issue": "#4933",
-      "reason": "1 failure: test_calculator_state_mixin_reduced expects unlanded GH1692 sub-mixin refactor"
-    },
-    {
       "path": "tests/folder_tool/test_folder_tool_ui.py",
       "owner": "tests/folder_tool",
       "issue": "#4933",
@@ -18,12 +12,6 @@
       "owner": "tests/folder_tool",
       "issue": "#4933",
       "reason": "Tkinter root instantiation and DbC contract error expectations"
-    },
-    {
-      "path": "tests/integration/test_cross_repo_contracts.py",
-      "owner": "tests/integration",
-      "issue": "#4933",
-      "reason": "FlareCalculator/FinancialCalculator calculate API drift on main"
     }
   ]
 }
