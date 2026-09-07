@@ -1,9 +1,9 @@
 {
-  "schema_version": "tools/design-manual-governance/1.6.0",
+  "schema_version": "tools/design-manual-governance/1.7.0",
   "program": {
     "epic": 4707,
-    "current_subepic": 4723,
-    "next_subepic": 4725
+    "current_subepic": 4725,
+    "next_subepic": 4728
   },
   "canonical_source": {
     "manual_id": "tools",
@@ -83,6 +83,16 @@
     ],
     "exemptions": "structured-owned-expiring-only"
   },
+  "qa": {
+    "enforcement": "release-blocking",
+    "current_gate": "zero-sampling-page-accessibility-qa-enforced",
+    "ledger": "manuals/tools/manual-qa.json",
+    "schema": "manuals/tools/schemas/manual-qa.schema.json",
+    "checker": "scripts/check_tools_manual_qa.py",
+    "inspection_mode": "complete-zero-sampling",
+    "sampling_rate": 1.0,
+    "expected_pdf_pages": 10
+  },
   "publication": {
     "default": "deny-until-approved",
     "public_projection_allowed": false,
@@ -143,9 +153,13 @@
       "scripts/tools_calculation_freshness_contract.py",
       "scripts/generate_tools_calculations.py",
       "scripts/check_tools_calculation_freshness.py",
+      "manuals/tools/manual-qa.json",
+      "manuals/tools/schemas/manual-qa.schema.json",
+      "scripts/tools_manual_qa_contract.py",
+      "scripts/check_tools_manual_qa.py",
       "SPEC.md",
       "AGENT_HANDOFF.md"
     ],
-    "required_gate": "python -m scripts.check_design_manual_governance && python -m scripts.build_tools_module_inventory --check && python -m scripts.lint_tools_textbook_chapters && python -m scripts.check_tools_exemplars && python -m scripts.check_tools_calculation_freshness --check && python -m scripts.render_tools_design_manual --check"
+    "required_gate": "python -m scripts.check_design_manual_governance && python -m scripts.build_tools_module_inventory --check && python -m scripts.lint_tools_textbook_chapters && python -m scripts.check_tools_exemplars && python -m scripts.check_tools_calculation_freshness --check && python -m scripts.check_tools_manual_qa --check && python -m scripts.render_tools_design_manual --check"
   }
 }
