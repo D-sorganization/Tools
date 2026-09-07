@@ -28,6 +28,19 @@ from .calibration import (
 )
 from .devices import CameraCapabilities, CameraIdentity, FeatureSupport, NumericRange
 from .enums import Availability, ClockKind, SessionState, ShutterKind, SupportLevel
+from .extrinsics import (
+    CameraLayout,
+    CameraPose,
+    ExtrinsicCalibrationResult,
+    ExtrinsicDegeneracyKind,
+    ExtrinsicQuality,
+    MovementDetectionResult,
+    RelocalizationResult,
+    bundle_adjust_layout,
+    detect_camera_movement,
+    estimate_pnp_pose,
+    evaluate_extrinsic_quality,
+)
 from .geometry import CoordinateFrame, RigidTransform
 from .observations import Landmark3D, PixelObservation, SkeletonDefinition
 from .recording import (
@@ -63,6 +76,8 @@ __all__ = [
     "CalibrationTarget",
     "CameraCapabilities",
     "CameraIdentity",
+    "CameraLayout",
+    "CameraPose",
     "CaptureGroup",
     "ClockDomain",
     "ClockKind",
@@ -71,6 +86,9 @@ __all__ = [
     "DistortionCoefficients",
     "DistortionModel",
     "DropPolicy",
+    "ExtrinsicCalibrationResult",
+    "ExtrinsicDegeneracyKind",
+    "ExtrinsicQuality",
     "FeatureSupport",
     "FisheyeIntrinsics",
     "FrameIndexEntry",
@@ -81,6 +99,7 @@ __all__ = [
     "Landmark3D",
     "MethodDescriptor",
     "MocapSessionManifest",
+    "MovementDetectionResult",
     "NumericRange",
     "PinholeIntrinsics",
     "PixelObservation",
@@ -90,6 +109,7 @@ __all__ = [
     "RecordingPolicy",
     "RecordingReader",
     "RecordingWriter",
+    "RelocalizationResult",
     "ReprojectionResidual",
     "RigidTransform",
     "SessionState",
@@ -102,8 +122,12 @@ __all__ = [
     "SyncMonitor",
     "SyncQuality",
     "SyntheticFrameSource",
+    "bundle_adjust_layout",
     "check_coverage_and_degeneracy",
+    "detect_camera_movement",
     "dumps_canonical",
+    "estimate_pnp_pose",
+    "evaluate_extrinsic_quality",
     "evaluate_intrinsic_quality",
     "load_session_manifest",
 ]
