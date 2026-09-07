@@ -2016,10 +2016,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 4120,
+      "bytes_lf": 4075,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "05a0b529fb73796d996f685d29329ec69415e22c1d41189f9ff7221d6d6d6cfd",
+      "content_sha256_lf": "45eb9de5434d381e1818dd27537b5844c16c842aa19b33cd95fcdb2be265d140",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-APPLICATION-MORRIS-CHILD-PY-7E9B24208FF3",
       "language": "python",
