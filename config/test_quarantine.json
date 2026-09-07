@@ -74,12 +74,6 @@
       "reason": "PressureDropCalculator calculate_pressure_drop signature drift on main"
     },
     {
-      "path": "tests/test_dry_compliance.py",
-      "owner": "tests",
-      "issue": "#4933",
-      "reason": "launch_pyqt6 DRY pattern expectation drift on main"
-    },
-    {
       "path": "tests/test_gh1732_logging_consistency.py",
       "owner": "tests",
       "issue": "#4933",
@@ -90,19 +84,6 @@
       "owner": "tests",
       "issue": "#4933",
       "reason": "swing_sim public API baseline drift on main"
-    },
-
-    {
-      "path": "tests/test_wave_solver.py",
-      "owner": "tests",
-      "issue": "#4933",
-      "reason": "external wave solver binary missing on runner"
-    },
-    {
-      "path": "tests/rust_bindings/test_math_primitives_bindings.py",
-      "owner": "tests/rust_bindings",
-      "issue": "#4933",
-      "reason": "slerp and quaternion normalization tolerance mismatch against Rust bindings on 3.11"
     }
   ]
 }
