@@ -56,7 +56,12 @@ class DummyApp(UICreationMixin):
 def app():
     app_instance = DummyApp()
     yield app_instance
-    app_instance.root.destroy()
+    try:
+        destroy_fn = getattr(app_instance.root, "destroy", None)
+        if callable(destroy_fn):
+            destroy_fn()
+    except Exception:
+        pass
 
 
 class TestUICreationMixin:

@@ -67,18 +67,7 @@
       "issue": "#4933",
       "reason": "1 failure: test_calculator_state_mixin_reduced expects unlanded GH1692 sub-mixin refactor"
     },
-    {
-      "path": "tests/folder_tool/test_folder_tool_ui.py",
-      "owner": "tests/folder_tool",
-      "issue": "#4933",
-      "reason": "Tkinter widget instantiation crashes headless CI runner without X server"
-    },
-    {
-      "path": "tests/folder_tool/test_folders_tool_r0.py",
-      "owner": "tests/folder_tool",
-      "issue": "#4933",
-      "reason": "Tkinter root instantiation and DbC contract error expectations"
-    },
+
     {
       "path": "tests/integration/test_cross_repo_contracts.py",
       "owner": "tests/integration",

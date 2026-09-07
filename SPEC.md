@@ -5702,6 +5702,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-06 | #5035 | fix(tests, #4933): unquarantine folder tool UI and legacy test suites (#4933); align DbC contracts for root window and file path parameters, and ensure headless-safe Tkinter test teardown. |
 | 2026-09-06 | #5032 | fix(tests, #4933): unquarantine wave solver and math primitives bindings tests (#4933); align wave solver test suite with argv list and allow_mutations contracts, and use exact unit quaternion components in math primitives slerp and multiply tests. |
 | 2026-09-06 | #5031 | fix(tests, #4933): unquarantine dry compliance tests (#4933); handle boolean web configuration in gui_info and register movement_optimizer, optimizer_gui, and rate_of_closure custom launchers. |
 | 2026-09-06 | #5026 | fix(tests, #4933): unquarantine model generation api adapters, fix Flask endpoint collisions, and streamline rest_api shim preserving core exports (#4933); paired with UpstreamDrift#9432. |
@@ -7272,3 +7273,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-06: DRY Compliance Tests Unquarantine (#4933)
 
 - **2026-09-06**: fix(tests, #4933) — Unquarantine `tests/test_dry_compliance.py`. Handle boolean web config in `gui_info` without TypeError, and register `movement_optimizer`, `optimizer_gui`, and `rate_of_closure` custom launchers.
+
+## 2026-09-06: Folder Tool UI and Legacy Test Suites Unquarantine (#4933)
+
+- **2026-09-06**: fix(tests, #4933) — Unquarantine `tests/folder_tool/test_folder_tool_ui.py` and `tests/folder_tool/test_folders_tool_r0.py`. Align DbC contract expectations in `test_folders_tool_r0.py` for root window and file path parameters to accept `(AssertionError, ValueError)`, and provide safe teardown in `test_folder_tool_ui.py`'s `app` fixture.

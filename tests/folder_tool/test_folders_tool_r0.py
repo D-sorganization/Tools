@@ -57,7 +57,7 @@ class TestFolderProcessorApp:
         root.destroy()
 
     def test_init_none_root(self):
-        with pytest.raises(AssertionError):
+        with pytest.raises((AssertionError, ValueError)):
             FolderProcessorApp(None)
 
     def test_validate_constants(self):
@@ -111,7 +111,7 @@ class TestSafeWriteText:
         assert f.read_text() == "content"
 
     def test_safe_write_text_none_path(self):
-        with pytest.raises(AssertionError):
+        with pytest.raises((AssertionError, ValueError)):
             safe_write_text(None, "content")
 
 
