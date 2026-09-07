@@ -57,9 +57,11 @@ def app():
     app_instance = DummyApp()
     yield app_instance
     try:
-        destroy_fn = getattr(app_instance.root, "destroy", None)
-        if callable(destroy_fn):
-            destroy_fn()
+        root = getattr(app_instance, "root", None)
+        if root is not None and not isinstance(root, MagicMock):
+            destroy_fn = getattr(root, "destroy", None)
+            if callable(destroy_fn):
+                destroy_fn()
     except Exception:
         pass
 

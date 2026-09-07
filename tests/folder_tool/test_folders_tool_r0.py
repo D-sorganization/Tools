@@ -45,58 +45,62 @@ from folder_tool.Folders_Tool_r0 import (
 
 
 class TestFolderProcessorApp:
-    def test_init_success(self):
-        root = tk.Tk()
+    @pytest.fixture
+    def tk_root(self):
+        try:
+            root = tk.Tk()
+        except tk.TclError:
+            pytest.skip("Tkinter display unavailable in headless environment")
+        yield root
+        try:
+            root.destroy()
+        except Exception:
+            pass
+
+    def test_init_success(self, tk_root):
         # Mock create_scrollable_interface and _setup_application_icon to avoid GUI rendering blocking
         with patch.object(FolderProcessorApp, "create_scrollable_interface"):
             with patch.object(FolderProcessorApp, "_setup_application_icon"):
-                app = FolderProcessorApp(root)
-                assert app.root == root
+                app = FolderProcessorApp(tk_root)
+                assert app.root == tk_root
                 assert app.source_folders == []
                 assert app.dest_folder == ""
-        root.destroy()
 
     def test_init_none_root(self):
         with pytest.raises((AssertionError, ValueError)):
             FolderProcessorApp(None)
 
-    def test_validate_constants(self):
-        root = tk.Tk()
+    def test_validate_constants(self, tk_root):
         with patch.object(FolderProcessorApp, "create_scrollable_interface"):
             with patch.object(FolderProcessorApp, "_setup_application_icon"):
-                app = FolderProcessorApp(root)
+                app = FolderProcessorApp(tk_root)
                 with patch(
                     "folder_tool.Folders_Tool_r0.validate_constants"
                 ) as mock_val:
                     app._validate_constants()
                     mock_val.assert_called_once()
-        root.destroy()
 
-    def test_get_constants_info(self):
-        root = tk.Tk()
+    def test_get_constants_info(self, tk_root):
         with patch.object(FolderProcessorApp, "create_scrollable_interface"):
             with patch.object(FolderProcessorApp, "_setup_application_icon"):
-                app = FolderProcessorApp(root)
+                app = FolderProcessorApp(tk_root)
                 with patch(
                     "folder_tool.Folders_Tool_r0.get_constants_info",
                     return_value={"mock": "data"},
                 ):
                     res = app.get_constants_info()
                     assert res == {"mock": "data"}
-        root.destroy()
 
-    def test_export_constants_documentation(self):
-        root = tk.Tk()
+    def test_export_constants_documentation(self, tk_root):
         with patch.object(FolderProcessorApp, "create_scrollable_interface"):
             with patch.object(FolderProcessorApp, "_setup_application_icon"):
-                app = FolderProcessorApp(root)
+                app = FolderProcessorApp(tk_root)
                 with patch(
                     "folder_tool.Folders_Tool_r0.export_constants_documentation",
                     return_value=True,
                 ):
                     res = app.export_constants_documentation("path")
                     assert res is True
-        root.destroy()
 
 
 class TestSafeWriteText:
