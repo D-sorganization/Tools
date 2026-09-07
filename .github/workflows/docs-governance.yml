@@ -129,6 +129,8 @@ jobs:
         run: python3 -m scripts.check_tools_calculation_freshness --check
       - name: Validate Tools render, semantic, and accessibility QA
         run: python3 -m scripts.check_tools_manual_qa --check
+      - name: Validate Tools immutable public publication projection
+        run: python3 -m scripts.check_tools_publication_projection --check
       - name: Validate Tools manual artifact freshness and semantics
         run: python3 -m scripts.render_tools_design_manual --check
       - name: Test engineering design-manual governance
@@ -143,4 +145,5 @@ jobs:
           tests/architecture/test_tools_exemplar_manuals_contract.py
           tests/architecture/test_tools_calculation_freshness_contract.py
           tests/architecture/test_tools_manual_qa_contract.py
+          tests/architecture/test_tools_publication_projection_contract.py
           -m 'not integration' -q

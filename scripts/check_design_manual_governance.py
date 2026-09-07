@@ -41,6 +41,10 @@ from scripts.tools_module_inventory_contract import (
     ToolsModuleInventoryError,
 )
 from scripts.tools_module_inventory_storage import read_inventory
+from scripts.tools_publication_projection_contract import (
+    PublicationProjectionError,
+    verify_publication_projection,
+)
 from scripts.tools_textbook_chapter_contract import TextbookChapterError
 from scripts.tools_textbook_chapter_lint import verify_textbook_chapters
 
@@ -434,7 +438,7 @@ def verify_governance_policy(policy: object) -> tuple[str, PurePosixPath, bool]:
     document = _object(policy, "governance policy", EXPECTED_POLICY_FIELDS)
     _equal(
         document["schema_version"],
-        "tools/design-manual-governance/1.7.0",
+        "tools/design-manual-governance/1.8.0",
         "schema version",
     )
     program = _object(
@@ -442,7 +446,7 @@ def verify_governance_policy(policy: object) -> tuple[str, PurePosixPath, bool]:
     )
     _equal(
         program,
-        {"epic": 4707, "current_subepic": 4725, "next_subepic": 4728},
+        {"epic": 4707, "current_subepic": 4728, "next_subepic": 4730},
         "program",
     )
     manual_id, source_path = _verify_source(document)
@@ -625,6 +629,7 @@ def _verify_context(root: Path, policy: dict[str, object]) -> None:
             "python -m scripts.check_tools_exemplars && "
             "python -m scripts.check_tools_calculation_freshness --check && "
             "python -m scripts.check_tools_manual_qa --check && "
+            "python -m scripts.check_tools_publication_projection --check && "
             "python -m scripts.render_tools_design_manual --check"
         ),
         "required gate",
@@ -639,6 +644,7 @@ def _verify_context(root: Path, policy: dict[str, object]) -> None:
             "scripts.check_tools_exemplars",
             "scripts.check_tools_calculation_freshness",
             "scripts.check_tools_manual_qa",
+            "scripts.check_tools_publication_projection",
             "scripts.render_tools_design_manual",
         ):
             if phrase not in text:
@@ -680,6 +686,7 @@ def verify_repository(root: Path = REPO_ROOT) -> DesignManualGovernanceSummary:
     verify_exemplar_repository(root)
     verify_calculation_freshness(root)
     verify_manual_qa(root)
+    verify_publication_projection(root)
     qmd_count = _verify_manual_tree(root, source_path)
     _verify_context(root, policy)
     for schema in (
@@ -690,12 +697,6 @@ def verify_repository(root: Path = REPO_ROOT) -> DesignManualGovernanceSummary:
             raise DesignManualGovernanceError(
                 f"program-owned schema copy is forbidden: {schema.relative_to(root)}"
             )
-    publication = cast(dict[str, object], policy["publication"])
-    manifest_path = _safe_path(publication["projection_manifest_path"], "manifest path")
-    if not allowed and root.joinpath(*manifest_path.parts).exists():
-        raise DesignManualGovernanceError(
-            "blocked publication must not have a projection manifest"
-        )
     registry_object = cast(dict[str, object], registry)
     return DesignManualGovernanceSummary(
         manual_id=manual_id,
@@ -718,6 +719,7 @@ def main() -> int:
         ExemplarContractError,
         CalculationFreshnessError,
         ManualQAError,
+        PublicationProjectionError,
         ToolsModuleInventoryError,
         OSError,
         json.JSONDecodeError,

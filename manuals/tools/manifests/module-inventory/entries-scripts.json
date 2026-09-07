@@ -1680,10 +1680,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 26659,
+      "bytes_lf": 26655,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6472e127ab6df54b93525c1b9dee225ea63c219399cd3089a3e27400ffc98137",
+      "content_sha256_lf": "05193b564a2728da9f771e09ce09c7a77bad6cd9bcc641345cc7cfb62c1dc4ac",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CHECK-DESIGN-MANUAL-GOVERNANCE-PY-81C2F95C1FD2",
       "language": "python",
@@ -3506,6 +3506,56 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 4397,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "28fff48140a67ce89b2abe710f3e9e90bb5b1c076eb0f4ef6b8ba433a181c52f",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CHECK-TOOLS-PUBLICATION-PROJECTION-PY-E03D153200C1",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/check_tools_publication_projection.py",
+      "purpose": "Run or generate Tools public publication projection verification.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: Sequence[str] | None=None"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2035,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -4131,10 +4181,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3538,
+      "bytes_lf": 3760,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "69e990a0a0a708267fc777398ce4bd1c7119ac66e807397626bdd7ccc8c1805b",
+      "content_sha256_lf": "319500c8563a1951fb809bb81bfcc08bbfb34b06a12a0da1b46b671a10137470",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-DESIGN-MANUAL-CONTRACT-PY-D9B04C2AF62E",
       "language": "python",
@@ -8529,6 +8579,135 @@
         "unit_mentions": [],
         "validation_paths": [
           "tests/architecture/test_tools_module_inventory_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 22615,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "38c82052c9f25c0194f890fb537d0032843f98c75fe8b8c38809c50eff352588",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-TOOLS-PUBLICATION-PROJECTION-CONTRACT-PY-C7D48F324029",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/tools_publication_projection_contract.py",
+      "purpose": "Consumer contracts and verification engines for Tools publication projection.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AccessibilityReviewRecord",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ArtifactDigestRecord",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DOCXReviewRecord",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HumanApprovalRecord",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PDFReviewRecord",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PublicationProjectionError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PublicationProjectionEvidence",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PublicationProjectionLedger",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "AUTHORITY_REPOSITORY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CATALOG_REPOSITORY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GOVERNANCE_SUBEPIC",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PROJECTION_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REPOSITORY_LICENSE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_publication_projection",
+            "signature": "root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "load_publication_projection",
+            "signature": "data: Mapping[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "verify_publication_projection",
+            "signature": "root: Path"
+          }
+        ],
+        "test_paths": [
+          "tests/architecture/test_tools_publication_projection_contract.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/architecture/test_tools_publication_projection_contract.py"
         ]
       }
     },

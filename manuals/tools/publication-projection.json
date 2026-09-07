@@ -1,0 +1,89 @@
+{
+  "schema_version": "tools-publication-projection/1.0.0",
+  "manual_id": "tools",
+  "release_status": "unapproved-projection-verified",
+  "owner_subepic": 4728,
+  "authority_repository": "D-sorganization/Tools",
+  "catalog_repository": "D-sorganization/Engineering-Design-Manuals",
+  "repository_license": "MIT",
+  "private_content_allowed": false,
+  "evidence": {
+    "immutable_source_commit": "132fc7331e1fdf20c9b33589826829355ae9cb35",
+    "source_tree_sha256": "4644bc943eaae9b1ecc8a70afae0702f06456d0e",
+    "calculation_registry_sha256": "f22e10d276306fef974368eacde887b734c6bd5610eeb78680628b0c808b9fdc",
+    "toolchain_lock_sha256": "62915da70f09da3fead98ae71ccb94c2afaec7db2de390faa97234e103426b9b",
+    "artifact_sha256": {
+      "docx": {
+        "path": "manuals/tools/dist/tools-engineering-design-manual.docx",
+        "media_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "bytes": 71156,
+        "sha256": "2b13ec732a8dc38044f606a521bb961541b2f39f434aca6d94b1d4c910719559"
+      },
+      "html": {
+        "path": "manuals/tools/dist/tools-engineering-design-manual.html",
+        "media_type": "text/html",
+        "bytes": 100607,
+        "sha256": "2cd8a1e0dc5f17bd95257e452af642cb49edd897e842250c7a0d2097d0d3c5f4"
+      },
+      "pdf": {
+        "path": "manuals/tools/dist/tools-engineering-design-manual.pdf",
+        "media_type": "application/pdf",
+        "bytes": 275840,
+        "sha256": "a2c25deea16a0b4cd03573d20b29bf68e20aa9ce723107081368a70836ffd557"
+      },
+      "tex": {
+        "path": "manuals/tools/dist/tools-engineering-design-manual.tex",
+        "media_type": "application/x-tex",
+        "bytes": 39156,
+        "sha256": "188a68d12db2c292669b414d09dafcd9204b29b2c8ddd5af7fb10d893b63789c"
+      }
+    },
+    "semantic_parity": "verified-semantic-parity",
+    "pdf_page_review": {
+      "path": "manuals/tools/dist/tools-engineering-design-manual.pdf",
+      "page_count": 10,
+      "uninspected_pages": 0,
+      "inspection_mode": "complete-zero-sampling",
+      "sampling_rate": 1.0,
+      "status": "verified"
+    },
+    "docx_page_review": {
+      "path": "manuals/tools/dist/tools-engineering-design-manual.docx",
+      "paragraph_count": 188,
+      "heading_count": 69,
+      "math_element_count": 52,
+      "table_count": 1,
+      "drawing_count": 1,
+      "bookmark_count": 74,
+      "unresolved_reference_count": 0,
+      "status": "verified"
+    },
+    "accessibility_review": {
+      "html_path": "manuals/tools/dist/tools-engineering-design-manual.html",
+      "has_lang": true,
+      "has_viewport": true,
+      "mathml_block_count": 52,
+      "images_with_valid_alt": 1,
+      "images_missing_alt": 0,
+      "unresolved_reference_count": 0,
+      "status": "verified"
+    },
+    "human_approval": {
+      "state": "blocked-pending-human-approval",
+      "blocker_id": "TOOLS-HUMAN-APPROVAL-PENDING",
+      "review_boundary": "zero-sampling-page-review-and-accessibility-verified"
+    }
+  },
+  "blockers": [
+    {
+      "id": "TOOLS-HUMAN-APPROVAL-PENDING",
+      "owner": "Lead systems maintainers",
+      "resolution": "Publication projection remains blocked pending formal human sign-off on page and accessibility review."
+    },
+    {
+      "id": "TOOLS-CATALOG-SYNC-PENDING",
+      "owner": "D-sorganization/Engineering-Design-Manuals maintainers",
+      "resolution": "Projection manifest ready for sync into catalog repository once released."
+    }
+  ]
+}

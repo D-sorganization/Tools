@@ -32,6 +32,20 @@
 
 ## 2. Purpose & Mission
 
+### 2026-09-07 Immutable Public Publication Projection (#4707 / TOOLS-D8 (#4728))
+
+Subepic #4728 formally enforces the strict
+`tools-publication-projection/1.0.0` contract, establishing an immutable public publication
+projection manifest (`manuals/tools/publication-projection.json`) while preserving `D-sorganization/Tools`
+as the sole authority and `D-sorganization/Engineering-Design-Manuals` as the downstream catalog repository.
+Binds exact immutable source commit (`132fc7331e1fdf20c9b33589826829355ae9cb35`), git source tree SHA
+(`4644bc943eaae9b1ecc8a70afae0702f06456d0e`), calculation registry SHA-256, toolchain lock SHA-256,
+and exact artifact digests for all four governed formats (`docx`, `html`, `pdf`, `tex`).
+Verifies complete zero-sampling page reviews (10 PDF pages), DOCX structure, HTML accessibility with
+zero missing alt tags, and MIT licensing with private content disallowed. Enforces fail-closed rejection
+of mutable links, missing digests, or unapproved release claims, keeping public projection blocked
+pending explicit human maintainer sign-off.
+
 ### 2026-09-07 Render, Semantic, and Accessibility QA (#4707 / TOOLS-D7 (#4725))
 
 Subepic #4725 formally enforces the strict
@@ -5760,6 +5774,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-07 | #4728 | docs(manual, #4707/#4728 TOOLS-D8): enforce immutable public publication projection contract (`tools-publication-projection/1.0.0`) binding source commit, tree, calculation registry, toolchain lock, artifact digests, zero-sampling reviews, and explicit unapproved/blocked human release boundary. |
 | 2026-09-07 | #4725 | docs(manual, #4707/#4725 TOOLS-D7): enforce render, semantic, and accessibility QA with zero sampling across PDF, DOCX, HTML, and TeX; verify embedded fonts, equation math preservation, table integrity, and image alt attributes while preserving unapproved release status. |
 | 2026-09-07 | #5048 | fix(shared, #5048): `_external_src_package_is_available()` guarded on the repository layout its `repo_root` test describes. A flattened install puts this package at `<site-packages>/shared/python`, so `_TOOLS_SRC_ROOT` was the install root and `repo_root` its parent -- every installed package, a consumer's `src` included, read as internal, the predicate returned False, and `SharedImportAliasFinder` aliased every `_SHARED_ROOTS` entry. A consumer's `src.shared.python.config` was therefore rewritten into this tree, whose `config` is an unrelated 5-symbol package; UpstreamDrift's 33-symbol copy owns `get_database_pool_pre_ping`, so its installed wheel failed to import and v2.1.2 published nothing (D-sorganization/UpstreamDrift#9631). Verified against that published wheel: the consumer's copy now wins for the `src.` spelling while `shared.python.config` still serves `get_env`/`get_env_float` to `shared.python.ai`, and `sidekick`/`chat` still alias. New test builds the flattened layout and fails on the old predicate. |
 | 2026-09-07 | #4723 | docs(manual, #4707/#4723 TOOLS-D6): enforce executable calculation freshness, fixtures, and reverse-impact gate; require nominal, boundary, and failure examples for qualifying calculations and reject stale outputs or expired exemptions. |

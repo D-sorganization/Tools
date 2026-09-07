@@ -82,6 +82,10 @@ REQUIRED_UPDATE_FILES = [
     "manuals/tools/schemas/manual-qa.schema.json",
     "scripts/tools_manual_qa_contract.py",
     "scripts/check_tools_manual_qa.py",
+    "manuals/tools/publication-projection.json",
+    "manuals/tools/schemas/publication-projection.schema.json",
+    "scripts/tools_publication_projection_contract.py",
+    "scripts/check_tools_publication_projection.py",
     "SPEC.md",
     "AGENT_HANDOFF.md",
 ]

@@ -104,6 +104,7 @@ python3 -m scripts.lint_tools_textbook_chapters
 python3 -m scripts.check_tools_exemplars
 python3 -m scripts.check_tools_calculation_freshness --check
 python3 -m scripts.check_tools_manual_qa --check
+python3 -m scripts.check_tools_publication_projection --check
 python3 -m scripts.render_tools_design_manual --check
 ```
 
@@ -152,7 +153,7 @@ Note: `ruff format --check` reports four pre-existing failures under
 ## Short-Term Roadmap (Ordered)
 
 1. Validate and protect-merge #4792/R14.3 from the R13.5 protected mainline.
-2. Deliver main-rooted TOOLS-D7 #4725, advancing to TOOLS-D8 (#4728) while reconciling D5--D9 without rewriting remote history.
+2. Complete TOOLS-D8 #4728 public publication projection contract, advancing to TOOLS-D9 / cross-repo projection while keeping release unapproved pending human sign-off.
 3. Implement the Sidekick S1–S5 plan in `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`.
 4. Restore the isolated advisory benchmark lane through #4582.
 5. **Land the camera-cluster epic #4571** so #4466 can finally close.
