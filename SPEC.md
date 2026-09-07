@@ -5702,6 +5702,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-06 | #5036 | fix(tests, #4933): unquarantine folder tool UI and legacy test suites (#4933); align DbC contracts for root window and file path parameters, and ensure headless-safe Tkinter test teardown. |
 | 2026-09-06 | #5035 | fix(tests, #4933): unquarantine 10 pendulum simulator test modules; align UnitAwareInput string coercion, ControlsWidgetBase duck typing, SimulationPanel optimizer signal wiring, lifecycle mixin width delegation, and AnalysisTab matplotlib availability guards. |
 | 2026-09-06 | #5033 | fix(tests, #4933): unquarantine god class guard and cross repo contracts tests (#4933); decompose CalculatorStateMixin into CalculatorStateCoreMixin and CalculatorStateExtendedMixin, and align FlareCalculator/FinancialCalculator calculate API signatures. |
 | 2026-09-06 | #5027 | fix(tests, #4933): unquarantine bootstrap and calculators_expanded tests (#4933); align sys.path assertions and pressure drop API calls. |
@@ -7280,3 +7281,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-06: Shared Package API Stability and Logging Consistency Unquarantine (#4933)
 
 - **2026-09-06**: fix(tests, #4933) — Unquarantine `tests/test_shared_package_api_stability.py` and `tests/test_gh1732_logging_consistency.py`. Regenerated `swing_sim` API baseline to account for impact interval modules, replaced unguarded prints with sys.stdout/sys.stderr writes and CLI echo helper in `codemap/cli.py`, `codemap/mcp_server.py`, and `morris/child.py`.
+
+## 2026-09-06: Folder Tool UI and Legacy Test Suites Unquarantine (#4933)
+
+- **2026-09-06**: fix(tests, #4933) — Unquarantine `tests/folder_tool/test_folder_tool_ui.py` and `tests/folder_tool/test_folders_tool_r0.py`. Align DbC contract expectations in `test_folders_tool_r0.py` for root window and file path parameters to accept `(AssertionError, ValueError)`, and provide safe teardown in `test_folder_tool_ui.py`'s `app` fixture.
