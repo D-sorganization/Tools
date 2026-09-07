@@ -36,18 +36,6 @@
       "owner": "tests",
       "issue": "#4933",
       "reason": "PressureDropCalculator calculate_pressure_drop signature drift on main"
-    },
-    {
-      "path": "tests/test_gh1732_logging_consistency.py",
-      "owner": "tests",
-      "issue": "#4933",
-      "reason": "18 unguarded print calls in vendor/codegen files on main"
-    },
-    {
-      "path": "tests/test_shared_package_api_stability.py",
-      "owner": "tests",
-      "issue": "#4933",
-      "reason": "swing_sim public API baseline drift on main"
     }
   ]
 }

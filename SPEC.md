@@ -5700,9 +5700,8 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 <!-- prettier-ignore-start -->
 
-| Date       | PR         | Changes    |
-| ---------- | ---------- | ---------- |
-| 2026-09-06 | #5034 | fix(tests, #4933): unquarantine 10 pendulum simulator test modules; align UnitAwareInput string coercion, ControlsWidgetBase duck typing, SimulationPanel optimizer signal wiring, and lifecycle mixin width delegation. |
+| 2026-09-06 | #5035 | fix(tests, #4933): unquarantine 10 pendulum simulator test modules; align UnitAwareInput string coercion, ControlsWidgetBase duck typing, SimulationPanel optimizer signal wiring, and lifecycle mixin width delegation. |
+| 2026-09-06 | #5029 | fix(tests, #4933): unquarantine shared package api stability and logging consistency tests (#4933); regenerate swing_sim API baseline for impact interval additions, and replace unguarded print calls with sys.stdout/sys.stderr writes and CLI echo helper. |
 | 2026-09-06 | #5032 | fix(tests, #4933): unquarantine wave solver and math primitives bindings tests (#4933); align wave solver test suite with argv list and allow_mutations contracts, and use exact unit quaternion components in math primitives slerp and multiply tests. |
 | 2026-09-06 | #5031 | fix(tests, #4933): unquarantine dry compliance tests (#4933); handle boolean web configuration in gui_info and register movement_optimizer, optimizer_gui, and rate_of_closure custom launchers. |
 | 2026-09-06 | #5026 | fix(tests, #4933): unquarantine model generation api adapters, fix Flask endpoint collisions, and streamline rest_api shim preserving core exports (#4933); paired with UpstreamDrift#9432. |
@@ -7273,3 +7272,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-06: DRY Compliance Tests Unquarantine (#4933)
 
 - **2026-09-06**: fix(tests, #4933) — Unquarantine `tests/test_dry_compliance.py`. Handle boolean web config in `gui_info` without TypeError, and register `movement_optimizer`, `optimizer_gui`, and `rate_of_closure` custom launchers.
+
+## 2026-09-06: Shared Package API Stability and Logging Consistency Unquarantine (#4933)
+
+- **2026-09-06**: fix(tests, #4933) — Unquarantine `tests/test_shared_package_api_stability.py` and `tests/test_gh1732_logging_consistency.py`. Regenerated `swing_sim` API baseline to account for impact interval modules, replaced unguarded prints with sys.stdout/sys.stderr writes and CLI echo helper in `codemap/cli.py`, `codemap/mcp_server.py`, and `morris/child.py`.
