@@ -13,26 +13,27 @@ Tools owns the MIT vendor-neutral markerless-mocap contracts and reference algor
 - #4710 / TOOLS-M1: canonical mocap schemas (merged in #4734).
 - #4713 / TOOLS-M2: camera acquisition protocol (merged in #5056).
 - #4718 / TOOLS-M3: synchronization and recording (merged in #5059).
-- #4714 / TOOLS-M4: intrinsic calibration (current branch).
-- #4715, #4716, and #4721 have dependency-stacked slices; none is merged or release authority.
+- #4714 / TOOLS-M4: intrinsic calibration (merged in #5064).
+- #4721 / TOOLS-M5: extrinsic and flexible-layout calibration (current branch).
+- #4715, #4716, and #4724 have dependency-stacked slices; none is merged or release authority.
 
 ## Current branch
 
-- Branch: `feat/4714-mocap-intrinsic-calibration`
-- Base: `origin/main` at `8c81c0bd7`
+- Branch: `feat/4721-mocap-extrinsic-calibration`
+- Base: `origin/main` at `b4875be19`
 - Worktree: `C:\Users\diete\Repositories\Tools`
 - Pull request: Pending creation
 
 ## Delivered in this slice
 
-- Subepic #4714 (TOOLS-M4): Intrinsic calibration.
-- `sidekick.lab.mocap.calibration` defines:
-  - `DistortionModel`, `DistortionCoefficients`: Brown-Conrady, rational, and Kannala-Brandt models.
-  - `PinholeIntrinsics`, `FisheyeIntrinsics`: forward projection and inverse unprojection ray mapping.
-  - `CalibrationTarget`, `CalibrationObservation`: provenance and feature mapping for calibration frames.
-  - `ReprojectionResidual`, `IntrinsicCalibrationResult`: residual accounting and covariance.
-  - `CalibrationQuality`, `CalibrationDegeneracyKind`: qualification floors and degeneracy detection.
-  - Integration with `CameraIdentity.stable_key`.
+- Subepic #4721 (TOOLS-M5): Extrinsic and flexible-layout calibration.
+- `sidekick.lab.mocap.extrinsics` defines:
+  - `CameraPose`, `CameraLayout`: multi-camera poses, world registration, and optical centers.
+  - `estimate_pnp_pose`: reference robust PnP solver with reprojection residual validation.
+  - `detect_camera_movement`: continuous verification of camera rigidity against world targets.
+  - `RelocalizationResult`, `MovementDetectionResult`: explicit typed outcomes.
+  - `bundle_adjust_layout`: joint refinement of camera poses with gauge fixing.
+  - `ExtrinsicQuality`, `ExtrinsicDegeneracyKind`: qualification floors and degeneracy detection.
 - Unit and contract test suites in `tests/shared/python/sidekick/lab/mocap/`.
 
 ## Required gates
