@@ -39,6 +39,8 @@ try:
     _HAS_MPL = True
 except ImportError:
     _HAS_MPL = False
+    FigureCanvasQTAgg = None  # type: ignore[assignment, misc]
+    Figure = None  # type: ignore[assignment, misc]
 
 
 # ---------------------------------------------------------------------------
@@ -180,7 +182,10 @@ class PopOutChart:
             return
 
         # Create figure
-        self._fig = Figure(figsize=(8, 5), dpi=100)
+        fig_cls = Figure
+        if fig_cls is None:
+            from matplotlib.figure import Figure as fig_cls  # type: ignore[no-redef]
+        self._fig = fig_cls(figsize=(8, 5), dpi=100)
         # ``add_subplot`` is untyped (matplotlib); bind the local directly so the
         # plotting calls below are Any-typed rather than narrowed to ``object``
         # via the ``self._ax: object | None`` attribute annotation.
