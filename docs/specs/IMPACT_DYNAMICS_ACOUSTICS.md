@@ -129,10 +129,11 @@ Synthetic tests and cross-engine agreement establish numerical behavior only.
 
 - Worktree: `C:/Users/diete/Repositories/Tools-impact-acoustics`.
 - Branch: `feat/5068-impact-dynamics-foundation`; base `b4875be19`.
-- Issue: #5069; implementation commit `SELF`; PR not created yet.
+- Issue: #5069; implementation commit `SELF`; PR #5077; implementation `6d94f1d3d`.
 - TDD: missing-module RED, then 30 passing independent reference tests.
 - Validation: 383 package/impact/API tests passed, 2 skipped; the configured
   qt_api warning remains. Ruff, formatting, mypy and SPEC checks pass. Additive
   API baseline and source/test inventory manifests regenerated.
-- Next: focused PR and provider review, then #5071 and the structural milestones.
+- All applicable commit/push hooks passed, including strict mypy and unit tests.
+- Next: protected PR #5077 review, then #5071 and the structural milestones.
 - Parent #5068 and downstream research slices remain open after T1 delivery.
