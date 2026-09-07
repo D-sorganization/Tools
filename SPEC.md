@@ -27,10 +27,22 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.131                                   |
+| **Spec Version**        | 1.18.132                                   |
 | **Last Spec Update**    | 2026-09-07                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-09-07 Render, Semantic, and Accessibility QA (#4707 / TOOLS-D7 (#4725))
+
+Subepic #4725 formally enforces the strict
+`tools-manual-qa/1.0.0` contract, establishing zero-sampling page, semantic, and
+accessibility quality assurance across all four governed output formats (`pdf`, `docx`,
+`html`, `tex`). Requires 100% page inspection with recorded page counts (10 PDF pages),
+digest bindings, embedded font verification, outline/bookmark trees, annotation counts,
+paragraph/heading structures, MathML and `m:oMath` equation preservation, table integrity,
+and image accessibility (`alt` text verification with zero missing tags). Rejects uninspected
+pages, broken math, or unresolved citation markers with fail-closed semantics, preserving
+release status as unapproved pending TOOLS-D8 public publication projection and human approvals.
 
 ### 2026-09-07 Executable Calculation Freshness & Reverse-Impact Gate (#4707 / TOOLS-D6 (#4723))
 
@@ -5748,6 +5760,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-07 | #4725 | docs(manual, #4707/#4725 TOOLS-D7): enforce render, semantic, and accessibility QA with zero sampling across PDF, DOCX, HTML, and TeX; verify embedded fonts, equation math preservation, table integrity, and image alt attributes while preserving unapproved release status. |
 | 2026-09-07 | #5048 | fix(shared, #5048): `_external_src_package_is_available()` guarded on the repository layout its `repo_root` test describes. A flattened install puts this package at `<site-packages>/shared/python`, so `_TOOLS_SRC_ROOT` was the install root and `repo_root` its parent -- every installed package, a consumer's `src` included, read as internal, the predicate returned False, and `SharedImportAliasFinder` aliased every `_SHARED_ROOTS` entry. A consumer's `src.shared.python.config` was therefore rewritten into this tree, whose `config` is an unrelated 5-symbol package; UpstreamDrift's 33-symbol copy owns `get_database_pool_pre_ping`, so its installed wheel failed to import and v2.1.2 published nothing (D-sorganization/UpstreamDrift#9631). Verified against that published wheel: the consumer's copy now wins for the `src.` spelling while `shared.python.config` still serves `get_env`/`get_env_float` to `shared.python.ai`, and `sidekick`/`chat` still alias. New test builds the flattened layout and fails on the old predicate. |
 | 2026-09-07 | #4723 | docs(manual, #4707/#4723 TOOLS-D6): enforce executable calculation freshness, fixtures, and reverse-impact gate; require nominal, boundary, and failure examples for qualifying calculations and reject stale outputs or expired exemptions. |
 | 2026-09-07 | #4720 | docs(manual, #4707/#4720 TOOLS-D4): publish swing_sim/Rate of Closure and markerless mocap exemplars with exact calculation and test traceability; enforce strict exemplar coverage schema, register verified-unapproved D-plane geometry and fail-closed markerless mocap interchange. |

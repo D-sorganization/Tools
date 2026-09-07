@@ -1680,10 +1680,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 25203,
+      "bytes_lf": 26659,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b06c5a5881759785aa271bdad0b68e248036ff4a03341eb448fb21bc45350ee6",
+      "content_sha256_lf": "6472e127ab6df54b93525c1b9dee225ea63c219399cd3089a3e27400ffc98137",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CHECK-DESIGN-MANUAL-GOVERNANCE-PY-81C2F95C1FD2",
       "language": "python",
@@ -3456,6 +3456,56 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 3970,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8e7f0f04b19c0703639c8f810c12de6ebfc20f439cedd5b0235086379dd484ad",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CHECK-TOOLS-MANUAL-QA-PY-B959926ECC1D",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/check_tools_manual_qa.py",
+      "purpose": "Run or generate Tools manual render, semantic, and accessibility QA verification.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: Sequence[str] | None=None"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2035,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -4081,10 +4131,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3358,
+      "bytes_lf": 3538,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c4414775de70141d0e2fe35a218ba162bac784d926b68d4bd3315947c4c550f1",
+      "content_sha256_lf": "69e990a0a0a708267fc777398ce4bd1c7119ac66e807397626bdd7ccc8c1805b",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-DESIGN-MANUAL-CONTRACT-PY-D9B04C2AF62E",
       "language": "python",
@@ -7759,6 +7809,163 @@
         ],
         "validation_paths": [
           "tests/architecture/test_tools_manual_renderer_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 23212,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f6823830add80914409c619a250def6a3ef890a62c390b532f7908bdf807608f",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-TOOLS-MANUAL-QA-CONTRACT-PY-100FD02D6EB5",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/tools_manual_qa_contract.py",
+      "purpose": "Consumer contracts and verification engines for Tools manual QA.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://schemas.openxmlformats.org/officeDocument/2006/math",
+          "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CrossFormatIntegrity",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DOCXInspectionResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HTMLInspectionResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ManualQAError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ManualQALedger",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PDFInspectionResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PDFPageRecord",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TexInspectionResult",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXPECTED_PDF_PAGES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GOVERNANCE_SUBEPIC",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MEDIA_TYPES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "QA_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SUSPICIOUS_UNRESOLVED",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_qa_ledger",
+            "signature": "repo_root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "inspect_docx_artifact",
+            "signature": "docx_path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "inspect_html_artifact",
+            "signature": "html_path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "inspect_pdf_artifact",
+            "signature": "pdf_path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "inspect_tex_artifact",
+            "signature": "tex_path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "load_qa_ledger",
+            "signature": "payload: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "sha256_file",
+            "signature": "path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "verify_manual_qa",
+            "signature": "repo_root: Path"
+          }
+        ],
+        "test_paths": [
+          "tests/architecture/test_tools_manual_qa_contract.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/architecture/test_tools_manual_qa_contract.py"
         ]
       }
     },

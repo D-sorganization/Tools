@@ -15,6 +15,7 @@ EXPECTED_POLICY_FIELDS = {
     "exemplar_contract",
     "generated_outputs",
     "freshness",
+    "qa",
     "publication",
     "quality",
     "license_boundary",
@@ -77,6 +78,10 @@ REQUIRED_UPDATE_FILES = [
     "scripts/tools_calculation_freshness_contract.py",
     "scripts/generate_tools_calculations.py",
     "scripts/check_tools_calculation_freshness.py",
+    "manuals/tools/manual-qa.json",
+    "manuals/tools/schemas/manual-qa.schema.json",
+    "scripts/tools_manual_qa_contract.py",
+    "scripts/check_tools_manual_qa.py",
     "SPEC.md",
     "AGENT_HANDOFF.md",
 ]

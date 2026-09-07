@@ -99,7 +99,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-benchmarks.json"
     },
     {
-      "content_sha256_lf": "1b38684d26743b6cf1f78d93841b9dc9dbf646fc4960a33f1f836a5bd4d238b9",
+      "content_sha256_lf": "0b15ddae67afcbf3be029ee4776f8a0b996b7dc449ee482f7219599eb4488440",
       "entry_count": 4,
       "package": "config",
       "path": "manuals/tools/manifests/module-inventory/entries-config.json"
@@ -135,7 +135,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "86d2d8f78536a72e2285d66e2f8c890eeb296fd9b567f1b0dbe591e7b403c1b0",
+      "content_sha256_lf": "9fb7ced2414b77c12e15acbdba4fbe69d2969e1696cd8a82452b4e3c60e3055c",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -159,8 +159,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "fede4805689f5601e35796fbc27e634bafa45ebb7fc5c2855fdb016a16134e90",
-      "entry_count": 97,
+      "content_sha256_lf": "8dd5dce32238d8de93abb8373f959180ca7cd52912e91f796bab5fcbf600bad4",
+      "entry_count": 99,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
     },
@@ -171,7 +171,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-shared-scripts.json"
     },
     {
-      "content_sha256_lf": "3abb2d2edcca3c321f5ae9d8be7ad36241a47088d9a51ed0b74aaf8b00084247",
+      "content_sha256_lf": "4a826e9de56a55b8e6628b34ea468f87b465bd7094eed3b093a4d05e7cdabec0",
       "entry_count": 1,
       "package": "src",
       "path": "manuals/tools/manifests/module-inventory/entries-src.json"
@@ -579,7 +579,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "81af764eb748dfab3dc2e96e07e855c00a1c2432bc66eb1688bf043b6bff2007",
+      "content_sha256_lf": "b3cffa358041d531cb1e58cd48a6292163a5a50157ef812c491bde24643339f7",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"

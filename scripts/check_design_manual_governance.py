@@ -33,6 +33,10 @@ from scripts.tools_formula_traceability_contract import (
     FormulaTraceabilityError,
     verify_formula_traceability,
 )
+from scripts.tools_manual_qa_contract import (
+    ManualQAError,
+    verify_manual_qa,
+)
 from scripts.tools_module_inventory_contract import (
     ToolsModuleInventoryError,
 )
@@ -237,6 +241,47 @@ def _verify_freshness(policy: dict[str, object]) -> None:
     _equal(paths, list(map(PurePosixPath, IMPACTED_PATHS)), "impacted paths")
 
 
+def _verify_qa(policy: dict[str, object]) -> None:
+    qa = _object(
+        policy["qa"],
+        "qa",
+        {
+            "enforcement",
+            "current_gate",
+            "ledger",
+            "schema",
+            "checker",
+            "inspection_mode",
+            "sampling_rate",
+            "expected_pdf_pages",
+        },
+    )
+    _equal(qa["enforcement"], "release-blocking", "qa enforcement")
+    _equal(
+        qa["current_gate"],
+        "zero-sampling-page-accessibility-qa-enforced",
+        "qa gate",
+    )
+    _equal(
+        _safe_path(qa["ledger"], "qa ledger"),
+        PurePosixPath("manuals/tools/manual-qa.json"),
+        "qa ledger",
+    )
+    _equal(
+        _safe_path(qa["schema"], "qa schema"),
+        PurePosixPath("manuals/tools/schemas/manual-qa.schema.json"),
+        "qa schema",
+    )
+    _equal(
+        _safe_path(qa["checker"], "qa checker"),
+        PurePosixPath("scripts/check_tools_manual_qa.py"),
+        "qa checker",
+    )
+    _equal(qa["inspection_mode"], "complete-zero-sampling", "inspection mode")
+    _equal(qa["sampling_rate"], 1.0, "sampling rate")
+    _equal(qa["expected_pdf_pages"], 10, "expected pdf pages")
+
+
 def _verify_chapter_contract(policy: dict[str, object]) -> None:
     chapter_contract = _object(
         policy["chapter_contract"],
@@ -389,7 +434,7 @@ def verify_governance_policy(policy: object) -> tuple[str, PurePosixPath, bool]:
     document = _object(policy, "governance policy", EXPECTED_POLICY_FIELDS)
     _equal(
         document["schema_version"],
-        "tools/design-manual-governance/1.6.0",
+        "tools/design-manual-governance/1.7.0",
         "schema version",
     )
     program = _object(
@@ -397,7 +442,7 @@ def verify_governance_policy(policy: object) -> tuple[str, PurePosixPath, bool]:
     )
     _equal(
         program,
-        {"epic": 4707, "current_subepic": 4723, "next_subepic": 4725},
+        {"epic": 4707, "current_subepic": 4725, "next_subepic": 4728},
         "program",
     )
     manual_id, source_path = _verify_source(document)
@@ -445,6 +490,7 @@ def verify_governance_policy(policy: object) -> tuple[str, PurePosixPath, bool]:
     _verify_chapter_contract(document)
     _verify_exemplar_contract(document)
     _verify_freshness(document)
+    _verify_qa(document)
     allowed = _verify_publication(document)
     _verify_quality_license_git(document)
     _object(
@@ -578,6 +624,7 @@ def _verify_context(root: Path, policy: dict[str, object]) -> None:
             "python -m scripts.lint_tools_textbook_chapters && "
             "python -m scripts.check_tools_exemplars && "
             "python -m scripts.check_tools_calculation_freshness --check && "
+            "python -m scripts.check_tools_manual_qa --check && "
             "python -m scripts.render_tools_design_manual --check"
         ),
         "required gate",
@@ -591,6 +638,7 @@ def _verify_context(root: Path, policy: dict[str, object]) -> None:
             "scripts.lint_tools_textbook_chapters",
             "scripts.check_tools_exemplars",
             "scripts.check_tools_calculation_freshness",
+            "scripts.check_tools_manual_qa",
             "scripts.render_tools_design_manual",
         ):
             if phrase not in text:
@@ -631,6 +679,7 @@ def verify_repository(root: Path = REPO_ROOT) -> DesignManualGovernanceSummary:
     verify_formula_traceability(root)
     verify_exemplar_repository(root)
     verify_calculation_freshness(root)
+    verify_manual_qa(root)
     qmd_count = _verify_manual_tree(root, source_path)
     _verify_context(root, policy)
     for schema in (
@@ -668,6 +717,7 @@ def main() -> int:
         FormulaTraceabilityError,
         ExemplarContractError,
         CalculationFreshnessError,
+        ManualQAError,
         ToolsModuleInventoryError,
         OSError,
         json.JSONDecodeError,
