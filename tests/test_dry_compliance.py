@@ -11,6 +11,7 @@ Verifies:
 from __future__ import annotations
 
 import importlib.util
+import types
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -26,7 +27,7 @@ _NON_REACT_WEB_LAUNCHERS = {"psa_package"}
 # ── Helper ────────────────────────────────────────────────────────────────
 
 
-def _load_module_from_path(name: str, path: Path):  # noqa: ANN201
+def _load_module_from_path(name: str, path: Path) -> types.ModuleType | None:
     """Dynamically load a Python module from a file path."""
     spec = importlib.util.spec_from_file_location(name, path)
     if spec and spec.loader:
