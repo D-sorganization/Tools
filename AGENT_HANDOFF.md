@@ -5,7 +5,8 @@
 - Foundation #5069 is locally verified on `feat/5068-impact-dynamics-foundation`,
   based on `b4875be19`; PR not created. Theory: AffineDrift #4253; consumer: UpstreamDrift #9700.
 - TDD verified by `tests/shared/python/golf_club/test_impact_mobility.py`;
-  implementation reuses `golf_club._validation` and preserve existing APIs.
+  implementation reuses `golf_club._validation` and preserves existing APIs.
+- Strict pre-push typing uses explicit float returns at validated scalar boundaries.
 - Full tensor mobility is a detached rigid-body reference, not a validated flexible
   shaft or acoustic solver. Follow-on design: `docs/specs/IMPACT_DYNAMICS_ACOUSTICS.md`.
 - Lease scripts found no claim; Tools label posting failed. Proceeding under the

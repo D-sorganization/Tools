@@ -2,7 +2,7 @@
 
 ## Impact Dynamics Review: #5068 / #5069
 
-`impact_mobility.py`: detached full-tensor reference, 30 TDD gates; direct imports, existing API/wire v1 unchanged.
+`impact_mobility.py`: detached full-tensor reference, 30 TDD gates; explicit scalar returns pass strict typing; existing API/wire v1 unchanged.
 `docs/specs/IMPACT_DYNAMICS_ACOUSTICS.md` owns #5071–#5075; distributed contact,
 measured grip impedance and acoustics remain unqualified.
 

@@ -92,7 +92,9 @@ def normal_effective_mass(body: RigidContactBody, normal: Vector3) -> float:
     ):
         raise ValueError("normal must be a unit vector")
     inverse_mass = float(direction @ contact_inverse_mass(body) @ direction)
-    return require_finite_float(1.0 / inverse_mass, "effective_mass", positive=True)
+    return float(
+        require_finite_float(1.0 / inverse_mass, "effective_mass", positive=True)
+    )
 
 
 def normal_impulse(
@@ -122,4 +124,4 @@ def normal_impulse(
     smaller, larger = min(first, second), max(first, second)
     reduced_mass = smaller / (1 + smaller / larger)
     result = (1 + cor) * max(0.0, speed) * reduced_mass
-    return require_finite_float(result, "impulse")
+    return float(require_finite_float(result, "impulse"))
