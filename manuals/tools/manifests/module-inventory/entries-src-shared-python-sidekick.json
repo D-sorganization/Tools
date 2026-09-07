@@ -4142,10 +4142,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1986,
+      "bytes_lf": 2749,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7b00ad562d5bda1abf4c68eecab10e4c7692036409d096ab78e0e0adab1960e3",
+      "content_sha256_lf": "c535cf56b3670298b6f3b0832785ac77345449dc186a282b0bc0262afb064df2",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-INIT-PY-BD60513A12BD",
       "language": "python",
@@ -4193,6 +4193,31 @@
           },
           {
             "kind": "re-export",
+            "name": "CalibrationDegeneracyKind",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalibrationObservation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalibrationPatternKind",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalibrationQuality",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalibrationTarget",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "CameraCapabilities",
             "signature": null
           },
@@ -4228,12 +4253,27 @@
           },
           {
             "kind": "re-export",
+            "name": "DistortionCoefficients",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DistortionModel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "DropPolicy",
             "signature": null
           },
           {
             "kind": "re-export",
             "name": "FeatureSupport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FisheyeIntrinsics",
             "signature": null
           },
           {
@@ -4254,6 +4294,11 @@
           {
             "kind": "re-export",
             "name": "FrameStamp",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "IntrinsicCalibrationResult",
             "signature": null
           },
           {
@@ -4279,6 +4324,11 @@
           {
             "kind": "re-export",
             "name": "NumericRange",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PinholeIntrinsics",
             "signature": null
           },
           {
@@ -4314,6 +4364,11 @@
           {
             "kind": "re-export",
             "name": "RecordingWriter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ReprojectionResidual",
             "signature": null
           },
           {
@@ -4373,7 +4428,17 @@
           },
           {
             "kind": "re-export",
+            "name": "check_coverage_and_degeneracy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "dumps_canonical",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "evaluate_intrinsic_quality",
             "signature": null
           },
           {
@@ -4536,6 +4601,56 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 17406,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "07055504df55de1c220bb16d78c67d442c969c9fc71db130c903aca8cf7eae92",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-CALIBRATION-PY-881BCCB31ECE",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/calibration.py",
+      "purpose": "Camera intrinsic calibration representations, distortion, and qualification.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_calibration_contracts.py"
+        ],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_calibration_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 5389,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -4574,10 +4689,12 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_calibration_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
         ],
         "unit_mentions": [],
         "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_calibration_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
         ]
       }

@@ -8263,6 +8263,11 @@
       "MOCAP_SESSION_SCHEMA_VERSION",
       "AcquisitionError",
       "Availability",
+      "CalibrationDegeneracyKind",
+      "CalibrationObservation",
+      "CalibrationPatternKind",
+      "CalibrationQuality",
+      "CalibrationTarget",
       "CameraCapabilities",
       "CameraIdentity",
       "CaptureGroup",
@@ -8270,16 +8275,21 @@
       "ClockKind",
       "ClockSkewEstimate",
       "CoordinateFrame",
+      "DistortionCoefficients",
+      "DistortionModel",
       "DropPolicy",
       "FeatureSupport",
+      "FisheyeIntrinsics",
       "FrameIndexEntry",
       "FramePacket",
       "FrameSource",
       "FrameStamp",
+      "IntrinsicCalibrationResult",
       "Landmark3D",
       "MethodDescriptor",
       "MocapSessionManifest",
       "NumericRange",
+      "PinholeIntrinsics",
       "PixelObservation",
       "PrerecordedFrameSource",
       "QueueFullError",
@@ -8287,6 +8297,7 @@
       "RecordingPolicy",
       "RecordingReader",
       "RecordingWriter",
+      "ReprojectionResidual",
       "RigidTransform",
       "SessionState",
       "ShutterKind",
@@ -8298,7 +8309,9 @@
       "SyncMonitor",
       "SyncQuality",
       "SyntheticFrameSource",
+      "check_coverage_and_degeneracy",
       "dumps_canonical",
+      "evaluate_intrinsic_quality",
       "load_session_manifest"
     ],
     "symbols": {
@@ -8317,6 +8330,53 @@
         "info": {
           "bases": ["StrEnum"],
           "methods": {}
+        }
+      },
+      "CalibrationDegeneracyKind": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
+      "CalibrationObservation": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "CalibrationPatternKind": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
+      "CalibrationQuality": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
+      "CalibrationTarget": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "total_points": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "int"
+            }
+          }
         }
       },
       "CameraCapabilities": {
@@ -8547,6 +8607,20 @@
           }
         }
       },
+      "DistortionCoefficients": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "DistortionModel": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
       "DropPolicy": {
         "type": "class",
         "info": {
@@ -8559,6 +8633,48 @@
         "info": {
           "bases": [],
           "methods": {}
+        }
+      },
+      "FisheyeIntrinsics": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "project_point": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "xyz",
+                  "annotation": "tuple[float, float, float]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[float, float]"
+            },
+            "unproject_point": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "uv",
+                  "annotation": "tuple[float, float]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[float, float, float]"
+            }
+          }
         }
       },
       "FrameIndexEntry": {
@@ -8760,6 +8876,25 @@
           }
         }
       },
+      "IntrinsicCalibrationResult": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "is_qualified": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "bool"
+            }
+          }
+        }
+      },
       "Landmark3D": {
         "type": "class",
         "info": {
@@ -8802,6 +8937,48 @@
                 }
               ],
               "returns": "bool"
+            }
+          }
+        }
+      },
+      "PinholeIntrinsics": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "project_point": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "xyz",
+                  "annotation": "tuple[float, float, float]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[float, float]"
+            },
+            "unproject_point": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "uv",
+                  "annotation": "tuple[float, float]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[float, float, float]"
             }
           }
         }
@@ -9150,6 +9327,13 @@
           }
         }
       },
+      "ReprojectionResidual": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
       "RigidTransform": {
         "type": "class",
         "info": {
@@ -9473,6 +9657,38 @@
           }
         }
       },
+      "check_coverage_and_degeneracy": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "points",
+              "annotation": "Sequence[tuple[float, float]]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "resolution_px",
+              "annotation": "tuple[int, int]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "min_views",
+              "annotation": "int",
+              "default": "5",
+              "kind": "arg"
+            },
+            {
+              "name": "views_count",
+              "annotation": "int",
+              "default": "1",
+              "kind": "arg"
+            }
+          ],
+          "returns": "tuple[float, tuple[CalibrationDegeneracyKind, ...]]"
+        }
+      },
       "dumps_canonical": {
         "type": "function",
         "signature": {
@@ -9485,6 +9701,38 @@
             }
           ],
           "returns": "str"
+        }
+      },
+      "evaluate_intrinsic_quality": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "mean_residual_px",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "views_count",
+              "annotation": "int",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "sensor_coverage_ratio",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "floor_threshold_px",
+              "annotation": "float",
+              "default": "1.0",
+              "kind": "arg"
+            }
+          ],
+          "returns": "tuple[CalibrationQuality, tuple[CalibrationDegeneracyKind, ...]]"
         }
       },
       "load_session_manifest": {
@@ -37696,5 +37944,9 @@
         }
       }
     }
+  },
+  "lab/mocap/calibration.py": {
+    "__all__": [],
+    "symbols": {}
   }
 }

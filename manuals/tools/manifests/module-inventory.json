@@ -117,7 +117,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "57d7df9bb43b0f294ae246668746280ddb7876a820c223bc69d3b22ea4567b31",
+      "content_sha256_lf": "35875dcfe19046eb9705a11a3f66da6149fd3eb9df605a66552008e9e5c4cb2f",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "c8c925dc9de0acad7979d4a81f25f17f51b46dbd2454741bcaf5be67c80cf081",
+      "content_sha256_lf": "cb3af96751c9f796f85ef35095be8c1bdd4ba822ce30c705897784add4a2f8e2",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -165,7 +165,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
     },
     {
-      "content_sha256_lf": "e3f0c3fce5a241270794b73814ef002c8c2b2e38668d1f4cb830b25897e95c54",
+      "content_sha256_lf": "41f4975c98b1f3ae79a97966d12aec7f9b01660e52e4112a8ea85ee6108d586d",
       "entry_count": 2,
       "package": "shared_scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-shared-scripts.json"
@@ -723,8 +723,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-scripting.json"
     },
     {
-      "content_sha256_lf": "ec94e480d392737c396b1cf8ebcdcfd856122bfa7671bcca28549b461931d32f",
-      "entry_count": 218,
+      "content_sha256_lf": "8164139e367d1b792579476d8554dbcc9b64843d507c271abe8461685213cf3c",
+      "entry_count": 219,
       "package": "src/shared/python/sidekick",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick.json"
     },
