@@ -17,6 +17,7 @@ EXPECTED_POLICY_FIELDS = {
     "freshness",
     "qa",
     "publication",
+    "handoff",
     "quality",
     "license_boundary",
     "git",
@@ -86,6 +87,10 @@ REQUIRED_UPDATE_FILES = [
     "manuals/tools/schemas/publication-projection.schema.json",
     "scripts/tools_publication_projection_contract.py",
     "scripts/check_tools_publication_projection.py",
+    "manuals/tools/handoff-manifest.json",
+    "manuals/tools/schemas/handoff-maintenance.schema.json",
+    "scripts/tools_handoff_contract.py",
+    "scripts/check_tools_handoff.py",
     "SPEC.md",
     "AGENT_HANDOFF.md",
 ]

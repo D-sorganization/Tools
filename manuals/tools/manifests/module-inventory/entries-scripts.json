@@ -1680,10 +1680,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 26655,
+      "bytes_lf": 27957,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "05193b564a2728da9f771e09ce09c7a77bad6cd9bcc641345cc7cfb62c1dc4ac",
+      "content_sha256_lf": "c27a8c0deebdc974fc37bf9b928d01a0932d47c4b44d7a08de757aba5c04fb28",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CHECK-DESIGN-MANUAL-GOVERNANCE-PY-81C2F95C1FD2",
       "language": "python",
@@ -3384,6 +3384,58 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 4544,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "330e47c2cf1a7cebe9a76d52569e9f339a1086f43b0ee409418819b4a881ac26",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CHECK-TOOLS-HANDOFF-PY-56F8642AB446",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/check_tools_handoff.py",
+      "purpose": "Run or generate Tools handoff and maintenance contract verification.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://github.com/D-sorganization/Tools/pull/5055"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: Sequence[str] | None=None"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2908,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -4181,10 +4233,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3760,
+      "bytes_lf": 3958,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "319500c8563a1951fb809bb81bfcc08bbfb34b06a12a0da1b46b671a10137470",
+      "content_sha256_lf": "e3af7f092cc0479c1df74d5fb28016743e54afff98e1ecfc2a458b5d5244eea7",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-DESIGN-MANUAL-CONTRACT-PY-D9B04C2AF62E",
       "language": "python",
@@ -7714,6 +7766,180 @@
         "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 24197,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a94a9355f80fb559782699ae0570323674490f64d85a5f3e785cd0564b068efe",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-TOOLS-HANDOFF-CONTRACT-PY-CCB22662BD24",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/tools_handoff_contract.py",
+      "purpose": "Consumer contracts and verification engines for Tools handoff and maintenance.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://github.com/D-sorganization/Tools/issues/4730",
+          "https://github.com/D-sorganization/Tools/pull/5055"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ApprovalsAndExpiryRecord",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ArtifactDigestRecord",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ArtifactsAndTestDigests",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "BlockerRecord",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "BranchWorktreeRecord",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CheckEvidenceItem",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CommitEvidenceRecord",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HandoffFileRecord",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HandoffMaintenanceError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HandoffMaintenanceManifest",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "AUTHORITY_REPOSITORY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GOVERNANCE_EPIC",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GOVERNANCE_SUBEPIC",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GOVERNED_IMPACTED_PREFIXES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "HANDOFF_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ISSUE_URL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_HANDOFF_LINE_BUDGET",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REQUIRED_CHECK_COMMANDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REQUIRED_HANDOFF_SECTIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TRACKED_HANDOFF_PATHS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_handoff_manifest",
+            "signature": "root: Path, pr_url: str='https://github.com/D-sorganization/Tools/pull/5055', remote_head_sha: str | None=None, merge_sha: str | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "check_diff_aware_freshness",
+            "signature": "root: Path, base_ref: str='origin/main'"
+          },
+          {
+            "kind": "function",
+            "name": "load_handoff_manifest",
+            "signature": "data: Mapping[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "verify_handoff_maintenance",
+            "signature": "root: Path"
+          }
+        ],
+        "test_paths": [
+          "tests/architecture/test_tools_handoff_contract.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "tests/architecture/test_tools_handoff_contract.py"
+        ]
       }
     },
     {
