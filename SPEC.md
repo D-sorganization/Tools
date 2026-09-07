@@ -5704,6 +5704,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 | ---------- | ---------- | ---------- |
 | 2026-09-06 | #5027 | fix(tests, #4933): unquarantine bootstrap and calculators_expanded tests (#4933); align sys.path assertions and pressure drop API calls. |
 | 2026-09-06 | #5032 | fix(tests, #4933): unquarantine wave solver and math primitives bindings tests (#4933); align wave solver test suite with argv list and allow_mutations contracts, and use exact unit quaternion components in math primitives slerp and multiply tests. |
+| 2026-09-06 | #5031 | fix(tests, #4933): unquarantine dry compliance tests (#4933); handle boolean web configuration in gui_info and register movement_optimizer, optimizer_gui, and rate_of_closure custom launchers. |
 | 2026-09-06 | #5026 | fix(tests, #4933): unquarantine model generation api adapters, fix Flask endpoint collisions, and streamline rest_api shim preserving core exports (#4933); paired with UpstreamDrift#9432. |
 | 2026-09-06 | #5025 | fix(tests, #4933): unquarantine project packer, backup copy, and phase 1 quick wins tests (#4933); handle OSError gracefully during copy verification and dest cleanup. |
 | 2026-09-06 | #5023 | fix(tests, #4933): unquarantine vessel drafter contracts fallback and python version contract tests (#4933). |
@@ -7268,3 +7269,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-06: Wave Solver and Math Primitives Bindings Unquarantine (#4933)
 
 - **2026-09-06**: fix(tests, #4933) — Unquarantine `tests/test_wave_solver.py` and `tests/rust_bindings/test_math_primitives_bindings.py`. Modernize wave solver test doubles to match argv list execution and `WaveConfig(allow_mutations=True)`, and calibrate quaternion component values to exact unit norm (`sqrt(0.5)`) in math primitives slerp and multiply tests.
+
+## 2026-09-06: DRY Compliance Tests Unquarantine (#4933)
+
+- **2026-09-06**: fix(tests, #4933) — Unquarantine `tests/test_dry_compliance.py`. Handle boolean web config in `gui_info` without TypeError, and register `movement_optimizer`, `optimizer_gui`, and `rate_of_closure` custom launchers.
