@@ -27,10 +27,14 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.129                                   |
-| **Last Spec Update**    | 2026-09-06                                 |
+| **Spec Version**        | 1.18.130                                   |
+| **Last Spec Update**    | 2026-09-07                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-09-07 Force Source Optimization Mutation Refactor (#5045)
+
+Optimizes `forceSourceOptimization.ts` in `pendulum-web` by replacing immutable array spread operations with mutable `.push()` in candidate selection and neighborhood refinement loops to eliminate O(N^2) allocations.
 
 ### 2026-09-07 Full Derivation-Family Traceability (#4707 / TOOLS-D3 (#4717))
 

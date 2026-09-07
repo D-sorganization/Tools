@@ -1,3 +1,7 @@
+## 2026-09-07 - Replace array spread with mutable push in candidate loops
+**Learning:** In optimization candidate selection loops, using `[...elite, ...refined]` creates O(N^2) memory allocations across iteration rounds. Using `elite.push(...refined)` mutates in-place before sorting and slicing, avoiding garbage collection pauses.
+**Action:** When gathering items across iterations into an elite set or pool, prefer `.push(...)` over `[...arr, ...newItems]`.
+
 ## 2024-05-24 - Array Pre-allocation over map
 **Learning:** When optimizing high-frequency event handlers in JavaScript/TypeScript (e.g., pose detection over multiple video frames), replacing array iterators like `.map()` with standard `for` loops and pre-allocating arrays eliminates continuous callback allocation and minimizes garbage collection overhead. (Note: Only applies to large arrays or high-frequency loops; tiny arrays provide zero measurable performance benefit, and shouldn't be touched per project guidelines).
 **Action:** Always prefer standard `for` loops over iterators for large arrays inside high-frequency execution pathways to eliminate callback allocation and GC pauses.
