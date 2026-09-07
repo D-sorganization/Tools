@@ -58,7 +58,7 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   TOOLS-D3 (#4717 / PR #5047). It enforces strict `tools-exemplar-coverage/1.0.0`,
   registering one verified-unapproved D-plane exemplar (`TOOLS-DPLANE-GEOMETRY`)
   with full source, symbol, equation, frame, unit, test, fixture, consumer, and
-  chapter traceability projected onto the deterministic module inventory,
+  chapter traceability projected onto manuals/tools/manifests/module-inventory.json,
   alongside one fail-closed markerless mocap interchange row. All 10 native PDF
   and 14 Word-rendered DOCX pages were reviewed; subsequent approval,
   accessibility, and publication gates remain pending TOOLS-D7/D8.
