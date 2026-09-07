@@ -356,6 +356,9 @@ class AnalysisTab:
         """Render a 2D line plot on the embedded canvas."""
         if not (len(x) == len(y)):
             raise ValueError("x and y must have same length")
+        if not _HAS_MPL or not hasattr(self, "_ax_2d"):
+            logger.warning("Matplotlib is unavailable or 2D canvas is not initialized")
+            return
 
         ax = self._ax_2d
         ax.clear()
@@ -757,6 +760,9 @@ class AnalysisTab:
         """Render a 3D surface on the embedded canvas."""
         if X is None:
             raise ValueError("X must be provided")
+        if not _HAS_MPL or not hasattr(self, "_ax_3d"):
+            logger.warning("Matplotlib is unavailable or 3D canvas is not initialized")
+            return
         ax = self._ax_3d
         ax.clear()
 
@@ -771,7 +777,7 @@ class AnalysisTab:
         ax.zaxis.pane.fill = False
 
         # Mask NaN for cleaner rendering
-        Z_masked: np.ma.MaskedArray[Any] = np.ma.array(Z, mask=~np.isfinite(Z))
+        Z_masked: np.ma.MaskedArray[Any, Any] = np.ma.array(Z, mask=~np.isfinite(Z))
 
         ax.plot_surface(
             X,
@@ -795,8 +801,8 @@ class AnalysisTab:
         """Programmatic 2D plot (for external callers)."""
         if x_key is None:
             raise ValueError("x_key must be provided")
-        if self._result is None:
-            logger.warning("No result loaded")
+        if not _HAS_MPL or self._result is None:
+            logger.warning("No result loaded or matplotlib unavailable")
             return
         from ..data_extractor import extract_series
 
