@@ -2,7 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
-  LAST_UPDATED: 2026-09-03
+  LAST_UPDATED: 2026-09-07
 
   This is the canonical specification template for all repositories in the
   D-sorganization fleet. Every repo MUST have a SPEC.md at its root.
@@ -7285,3 +7285,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-06: Folder Tool UI and Legacy Test Suites Unquarantine (#4933)
 
 - **2026-09-06**: fix(tests, #4933) — Unquarantine `tests/folder_tool/test_folder_tool_ui.py` and `tests/folder_tool/test_folders_tool_r0.py`. Align DbC contract expectations in `test_folders_tool_r0.py` for root window and file path parameters to accept `(AssertionError, ValueError)`, and provide safe teardown in `test_folder_tool_ui.py`'s `app` fixture.
+
+## 2026-09-07: Replace Math.max Spread in PuttingVisuals (#5044)
+
+- **2026-09-07**: perf(putting-visuals, #5044) — Replace Math.max spread with single-pass loop in SpeedPlot to avoid call stack limits and unnecessary intermediate arrays.
