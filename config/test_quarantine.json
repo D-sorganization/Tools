@@ -62,18 +62,6 @@
       "reason": "API drift in pendulum_simulator MockOpt._on_run / worker API"
     },
     {
-      "path": "tests/folder_tool/test_folder_tool_ui.py",
-      "owner": "tests/folder_tool",
-      "issue": "#4933",
-      "reason": "Tkinter widget instantiation crashes headless CI runner without X server"
-    },
-    {
-      "path": "tests/folder_tool/test_folders_tool_r0.py",
-      "owner": "tests/folder_tool",
-      "issue": "#4933",
-      "reason": "Tkinter root instantiation and DbC contract error expectations"
-    },
-    {
       "path": "tests/test_bootstrap.py",
       "owner": "tests",
       "issue": "#4933",
