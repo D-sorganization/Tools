@@ -352,10 +352,19 @@ class ShellTool(CLIToolBase):
             if base_cmd not in self._allowed_commands:
                 return False
 
+            # Prevent command injection through tool-specific arguments
+            # such as `find -exec` or `-delete`
+            dangerous_args = ["-exec", "--exec", "-execdir", "-ok", "-okdir", "-delete"]
+
             # Verify no token is a dangerous command
             for token in tokens:
                 clean_token = token.strip()
                 if clean_token in dangerous:
+                    return False
+
+                if clean_token in dangerous_args or any(
+                    clean_token.startswith(arg + "=") for arg in dangerous_args
+                ):
                     return False
 
                 try:
