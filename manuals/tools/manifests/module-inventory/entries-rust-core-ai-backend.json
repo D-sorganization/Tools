@@ -299,6 +299,7 @@
           "tests/test_pendulum_discovery.py",
           "tests/test_validation.py",
           "tests/test_wave4_launcher.py",
+          "tests/test_wave_solver.py",
           "tests/test_wave_solver_security.py",
           "tests/tools/test_config_loader.py",
           "tests/tools/test_matlab_quality_utils.py",
