@@ -5702,6 +5702,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-07 | #5044 | perf(putting-visuals, #5044): replace Math.max spread with single-pass loop in SpeedPlot to avoid call stack limits. |
 | 2026-09-06 | #5036 | fix(tests, #4933): unquarantine folder tool UI and legacy test suites (#4933); align DbC contracts for root window and file path parameters, and ensure headless-safe Tkinter test teardown. |
 | 2026-09-06 | #5035 | fix(tests, #4933): unquarantine 10 pendulum simulator test modules; align UnitAwareInput string coercion, ControlsWidgetBase duck typing, SimulationPanel optimizer signal wiring, lifecycle mixin width delegation, and AnalysisTab matplotlib availability guards. |
 | 2026-09-06 | #5033 | fix(tests, #4933): unquarantine god class guard and cross repo contracts tests (#4933); decompose CalculatorStateMixin into CalculatorStateCoreMixin and CalculatorStateExtendedMixin, and align FlareCalculator/FinancialCalculator calculate API signatures. |
@@ -7285,7 +7286,3 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-06: Folder Tool UI and Legacy Test Suites Unquarantine (#4933)
 
 - **2026-09-06**: fix(tests, #4933) — Unquarantine `tests/folder_tool/test_folder_tool_ui.py` and `tests/folder_tool/test_folders_tool_r0.py`. Align DbC contract expectations in `test_folders_tool_r0.py` for root window and file path parameters to accept `(AssertionError, ValueError)`, and provide safe teardown in `test_folder_tool_ui.py`'s `app` fixture.
-
-## 2026-09-07: Replace Math.max Spread in PuttingVisuals (#5044)
-
-- **2026-09-07**: perf(putting-visuals, #5044) — Replace Math.max spread with single-pass loop in SpeedPlot to avoid call stack limits and unnecessary intermediate arrays.

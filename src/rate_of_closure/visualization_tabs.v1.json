@@ -4,19 +4,10 @@
   "artifact_policy": "diagnostic-only-not-approved-golden",
   "reference_environments": {
     "react": {
-      "viewport_px": [
-        1440,
-        900
-      ],
+      "viewport_px": [1440, 900],
       "additional_viewports_px": [
-        [
-          1280,
-          720
-        ],
-        [
-          390,
-          844
-        ]
+        [1280, 720],
+        [390, 844]
       ],
       "minimum_visible_width_px": 240,
       "responsive_minimum_visible_height_px": 180,
@@ -34,15 +25,9 @@
       "dpi_scales": []
     },
     "pyqt": {
-      "viewport_px": [
-        1440,
-        900
-      ],
+      "viewport_px": [1440, 900],
       "minimum_visible_width_px": 240,
-      "dpi_scales": [
-        1.0,
-        1.5
-      ]
+      "dpi_scales": [1.0, 1.5]
     }
   },
   "tabs": [
@@ -69,9 +54,7 @@
       "surface": "react",
       "tab_id": "calculation",
       "purpose": "Review the governed equations, conventions, and limitations used by the rate-of-closure calculations.",
-      "data_prerequisites": [
-        "Bundled calculation-description authority."
-      ],
+      "data_prerequisites": ["Bundled calculation-description authority."],
       "counterpart_tab_id": "calculation_description",
       "classification": "reference-utility",
       "landmark_kind": "semantic-content",
@@ -225,9 +208,7 @@
       "surface": "react",
       "tab_id": "glossary",
       "purpose": "Resolve governed terminology, symbols, units, and model-boundary language.",
-      "data_prerequisites": [
-        "Bundled glossary authority."
-      ],
+      "data_prerequisites": ["Bundled glossary authority."],
       "counterpart_tab_id": "glossary",
       "classification": "reference-utility",
       "landmark_kind": "semantic-content",
@@ -282,9 +263,7 @@
       "surface": "pyqt",
       "tab_id": "calculation_description",
       "purpose": "Review the governed equations, conventions, and limitations used by the rate-of-closure calculations.",
-      "data_prerequisites": [
-        "Bundled calculation-description authority."
-      ],
+      "data_prerequisites": ["Bundled calculation-description authority."],
       "counterpart_tab_id": "calculation",
       "classification": "reference-utility",
       "landmark_kind": "semantic-content",
@@ -401,7 +380,7 @@
       "data_prerequisites": [
         "Putt initial conditions, surface parameters, and putting-model identity.",
         "A complete delivered stroke: putter-head identity with its provenance kind, resolved pace, and the aim, face, path, attack, and strike-location parameters the impact solve declares.",
-        "A green surface with a declared provenance \u2014 planar grade and aspect, or an imported heightfield read through its own declared wire \u2014 together with the hole distance and the named hole-capture model.",
+        "A green surface with a declared provenance — planar grade and aspect, or an imported heightfield read through its own declared wire — together with the hole distance and the named hole-capture model.",
         "The retained integrator samples the playback timeline replays, lifted onto the same green surface the putt was solved on."
       ],
       "counterpart_tab_id": "putting",
@@ -420,9 +399,7 @@
       "surface": "pyqt",
       "tab_id": "glossary",
       "purpose": "Resolve governed terminology, symbols, units, and model-boundary language.",
-      "data_prerequisites": [
-        "Bundled glossary authority."
-      ],
+      "data_prerequisites": ["Bundled glossary authority."],
       "counterpart_tab_id": "glossary",
       "classification": "reference-utility",
       "landmark_kind": "semantic-content",
@@ -435,6 +412,5 @@
         "error": "not-applicable"
       }
     }
-  ],
-  "_last_updated": "2026-09-07T12:00:00Z"
+  ]
 }

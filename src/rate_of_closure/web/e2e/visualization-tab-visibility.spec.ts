@@ -291,4 +291,3 @@ test("candidate capture waits through a scheduled browser paint", async ({ page 
     "rgb(0, 128, 0)",
   );
 });
-// Updated for visual changes
