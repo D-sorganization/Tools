@@ -2,7 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
-  LAST_UPDATED: 2026-09-03
+  LAST_UPDATED: 2026-09-07
 
   This is the canonical specification template for all repositories in the
   D-sorganization fleet. Every repo MUST have a SPEC.md at its root.
@@ -5702,6 +5702,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-07 | #5044 | perf(putting-visuals, #5044): replace Math.max spread with single-pass loop in SpeedPlot to avoid call stack limits. |
 | 2026-09-06 | #5036 | fix(tests, #4933): unquarantine folder tool UI and legacy test suites (#4933); align DbC contracts for root window and file path parameters, and ensure headless-safe Tkinter test teardown. |
 | 2026-09-06 | #5035 | fix(tests, #4933): unquarantine 10 pendulum simulator test modules; align UnitAwareInput string coercion, ControlsWidgetBase duck typing, SimulationPanel optimizer signal wiring, lifecycle mixin width delegation, and AnalysisTab matplotlib availability guards. |
 | 2026-09-06 | #5033 | fix(tests, #4933): unquarantine god class guard and cross repo contracts tests (#4933); decompose CalculatorStateMixin into CalculatorStateCoreMixin and CalculatorStateExtendedMixin, and align FlareCalculator/FinancialCalculator calculate API signatures. |
