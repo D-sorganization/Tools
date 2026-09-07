@@ -56,7 +56,12 @@ class DummyApp(UICreationMixin):
 def app():
     app_instance = DummyApp()
     yield app_instance
-    app_instance.root.destroy()
+    try:
+        root = app_instance.root
+        if hasattr(root, "destroy") and not isinstance(root, MagicMock):
+            root.destroy()
+    except Exception:
+        pass
 
 
 class TestUICreationMixin:
