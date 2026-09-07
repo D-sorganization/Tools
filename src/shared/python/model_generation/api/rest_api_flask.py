@@ -26,7 +26,8 @@ class FlaskAdapter:
         from flask import request as flask_request
 
         for route in self.api.get_routes():
-            endpoint = route.path.replace("/", "_").replace("{", "").replace("}", "")
+            clean_path = route.path.replace("/", "_").replace("{", "").replace("}", "")
+            endpoint = f"{route.method.value.lower()}_{clean_path}"
 
             def make_handler(r: Route) -> Callable[..., Any]:
                 def handler(**kwargs: Any) -> Any:
