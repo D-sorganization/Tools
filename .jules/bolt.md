@@ -158,3 +158,6 @@
 ## $(date +%Y-%m-%d) - Prevent stack overflows and GC pressure in tight render loops
 **Learning:** Using chained `.map()` calls and array spread `Math.min(...array)` / `Math.max(...array)` syntax creates significant garbage collection pressure and CPU overhead when computing chart boundaries in React rendering loops (e.g., `PuttingVisuals.tsx`). Array creation and spreads degrade to O(N^2) memory allocations, scaling poorly.
 **Action:** Replace `Math.min(...spread)` / `Math.max(...spread)` combined with `.map()` in React rendering paths with a single-pass `for` loop to compute bounds dynamically without allocating intermediate arrays.
+## $(date +%Y-%m-%d) - Array Spread Operator Bottlenecks
+**Learning:** Using `Math.max(...array)` and `Math.min(...array)` on dynamically sized large arrays in React rendering loops (e.g. for dynamic charting bounds) creates massive call stack overhead and O(N) garbage collection pressure, especially when repeatedly called inside high-frequency render functions like `PuttingVisuals`.
+**Action:** Replace `Math.max(...array)` on hot rendering paths with simple single-pass `for` loops. This eliminates the intermediate array creation from `.map` and the function call overhead of the spread operator, leading to a much more memory-efficient O(N) single-pass bounds calculation.
