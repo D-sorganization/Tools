@@ -1,17 +1,4 @@
 {
-  "_comment": "Test modules kept out of the sharded PR lane (Tools #4913). Quarantine individual modules only, never directories; every entry needs an owner cluster and a tracked issue, and `python scripts/ci_test_shards.py --check` fails when a path no longer exists. Remove entries as they are fixed; #4933 closes when this list is empty.",
-  "entries": [
-    {
-      "path": "tests/folder_tool/test_folder_tool_ui.py",
-      "owner": "tests/folder_tool",
-      "issue": "#4933",
-      "reason": "Tkinter widget instantiation crashes headless CI runner without X server"
-    },
-    {
-      "path": "tests/folder_tool/test_folders_tool_r0.py",
-      "owner": "tests/folder_tool",
-      "issue": "#4933",
-      "reason": "Tkinter root instantiation and DbC contract error expectations"
-    }
-  ]
+  "_comment": "Test modules kept out of the sharded PR lane (Tools #4913). Quarantine individual modules only, never directories; every entry needs an owner cluster and a tracked issue, and python scripts/ci_test_shards.py --check fails when a path no longer exists. Remove entries as they are fixed; #4933 closes when this list is empty.",
+  "entries": []
 }
