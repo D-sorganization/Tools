@@ -32,6 +32,21 @@
 
 ## 2. Purpose & Mission
 
+### 2026-09-07 Full Derivation-Family Traceability (#4707 / TOOLS-D3 (#4717))
+
+Version 1.18.24 closes the D3 completion-audit gap with
+`tools-textbook-chapter-registry/1.1.0`. Every registered calculation now owns
+at least one complete derivation family with explicit assumptions, dimensions,
+domains, numerical method, uncertainty/limitations, claims, and stable formula
+IDs. The deterministic resolver proves each formula bidirectionally against its
+manual anchor, public symbol and source path, exact test node, source citation,
+executable worked example, bounded claim, and every rendered artifact declared
+by the calculation authority. Missing, renamed, private, placeholder, orphaned,
+or asymmetrical mappings fail closed. The D-plane calculation supplies the
+first qualified family while remaining model-conditioned and
+`verified-unapproved`; scientific, artifact, accessibility, publication, and
+human approvals remain blocked under later subepics.
+
 ### 2026-09-06 Test Quarantine Unquarantine (#4933)
 
 Unquarantined `tests/folder_tool/test_backup_copy.py`,
@@ -5702,6 +5717,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-07 | #4717 | fix(manual, #4707/#4717 TOOLS-D3): require full derivation-family assumptions, dimensions, domains, numerical method, uncertainty/limitations, and stable formula IDs that resolve bidirectionally to manual anchors, public symbols/source paths, exact tests, citations, executable examples, bounded claims, and every declared rendered artifact. Reject placeholders plus missing, renamed, orphaned, or asymmetric mappings while retaining generated-unapproved and human-review boundaries. |
 | 2026-09-07 | #5044 | perf(putting-visuals, #5044): replace Math.max spread with single-pass loop in SpeedPlot to avoid call stack limits. |
 | 2026-09-06 | #5036 | fix(tests, #4933): unquarantine folder tool UI and legacy test suites (#4933); align DbC contracts for root window and file path parameters, and ensure headless-safe Tkinter test teardown. |
 | 2026-09-06 | #5035 | fix(tests, #4933): unquarantine 10 pendulum simulator test modules; align UnitAwareInput string coercion, ControlsWidgetBase duck typing, SimulationPanel optimizer signal wiring, lifecycle mixin width delegation, and AnalysisTab matplotlib availability guards. |

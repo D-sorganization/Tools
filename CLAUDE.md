@@ -20,7 +20,10 @@ is a strict, LF-normalized, tracked-file baseline; `calculation` means a
 provisional candidate and never scientific or operating approval. A successful render is not
 scientific, semantic, visual, accessibility, license, or publication approval.
 Registered textbook chapters must satisfy the versioned fourteen-section D3
-contract; passing its linter is structural evidence, not calculation approval.
+contract. Every calculation family must also map each stable formula ID
+bidirectionally to a public symbol/source path, exact test, citation, executable
+example, bounded claim, and every declared rendered format; orphaned or renamed
+edges fail closed. Passing the linter is structural evidence, not calculation approval.
 The D4 exemplar contract resolves calculation, chapter, module, source,
 consumer, test, and fixture links. Missing or unmerged implementations must be
 registered as blocked and must not be synthesized into manual content.

@@ -99,7 +99,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-benchmarks.json"
     },
     {
-      "content_sha256_lf": "9ddb1bed07e0c8b8a6e724c2c222bb40d47f527dc0205e2d34f790508399a550",
+      "content_sha256_lf": "608c7b5aabe72ddd03fbb97f5893e1aa536d757e2b6320442ddd46658737c69e",
       "entry_count": 4,
       "package": "config",
       "path": "manuals/tools/manifests/module-inventory/entries-config.json"
@@ -159,8 +159,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "9e29a5ddc7e3280baad412f99418796ddc4c0bf14dd7b34c2874ccb4c5f085e1",
-      "entry_count": 92,
+      "content_sha256_lf": "e85147a571ccc9a3e80fb3d220efe28bf53df69d67f836b15bea997a74ea1f4d",
+      "entry_count": 94,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
     },

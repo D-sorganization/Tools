@@ -1680,10 +1680,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 23341,
+      "bytes_lf": 23719,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "85cfefc67db104a126092fcdf116218bccbb8070995f60808b546b47e72efec3",
+      "content_sha256_lf": "80aacad153d9d2513c299e6872486d1f3b1ea76dbffd684cfdacfab87b1067a0",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CHECK-DESIGN-MANUAL-GOVERNANCE-PY-81C2F95C1FD2",
       "language": "python",
@@ -4020,10 +4020,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 2922,
+      "bytes_lf": 3031,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7dacc84efe2845fa95e3cfb3da4f827423ac3f6cab290ae933605cd99358f847",
+      "content_sha256_lf": "6e55bb44a6ca775f231de2fe643d96de35fae8a6d0ee968551a8043591545194",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-DESIGN-MANUAL-CONTRACT-PY-D9B04C2AF62E",
       "language": "python",
@@ -5323,10 +5323,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 980,
+      "bytes_lf": 1374,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8905713855d727bd4836fb7791dc1b9f0bbf5cf25b2cc9c9551a0fa7590060da",
+      "content_sha256_lf": "84c356b5b693792c5248b4b722ec0ab0720b35ff1ad23a149a6e83143b205e2c",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-LINT-TOOLS-TEXTBOOK-CHAPTERS-PY-16BADAC1B03C",
       "language": "python",
@@ -7049,6 +7049,189 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 15382,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "49b43f59c0ad2bf1b80063ad293e8560dccae6eccf597ecd0d5d09913a920d27",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-TOOLS-FORMULA-TRACEABILITY-CONTRACT-PY-5750FD390A60",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/tools_formula_traceability_contract.py",
+      "purpose": "Bidirectional formula-family traceability for governed Tools chapters.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FormulaTraceabilitySummary",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PLACEHOLDER_TOKENS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "verify_formula_traceability",
+            "signature": "repository_root: Path, documents: TraceabilityDocuments | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/architecture/test_tools_formula_traceability_contract.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/architecture/test_tools_formula_traceability_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 5347,
+      "classification": "calculation",
+      "classification_basis": "path-marker:solver",
+      "content_sha256_lf": "8120026a659709ec2af2bdf54447b620eb795784ea365b7740c43c33796ab677",
+      "family": "repository-tooling-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-TOOLS-FORMULA-TRACEABILITY-RESOLVERS-PY-B2B2B4A82DD3",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/tools_formula_traceability_resolvers.py",
+      "purpose": "Repository-path, public-symbol, and exact-test resolvers for manuals.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ChapterTraceabilityContext",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FormulaResolverContext",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FormulaTraceabilityError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TraceabilityDocuments",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ARTIFACT_MANIFEST_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CALCULATION_REGISTRY_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CHAPTER_CONTRACT_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CHAPTER_REGISTRY_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXEMPLAR_COVERAGE_PATH",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "assert_public_symbol",
+            "signature": "root: Path, path: str, symbol: str"
+          },
+          {
+            "kind": "function",
+            "name": "assert_test_target",
+            "signature": "root: Path, target: str"
+          },
+          {
+            "kind": "function",
+            "name": "load_authority_document",
+            "signature": "path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "load_traceability_documents",
+            "signature": "repository_root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "safe_repository_path",
+            "signature": "value: object, label: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 12529,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -7758,10 +7941,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13266,
+      "bytes_lf": 13462,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ca0bb1c99b2b776e0cae1d7b6011cb2b4baf021db2134f682120474014b25992",
+      "content_sha256_lf": "2289ca972fa5223897c0b8c20561a82537305216e714c747b8ec0abcd7987350",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-TOOLS-TEXTBOOK-CHAPTER-CONTRACT-PY-9BCB3E15D610",
       "language": "python",

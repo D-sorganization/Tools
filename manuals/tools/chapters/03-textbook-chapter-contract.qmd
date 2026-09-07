@@ -12,7 +12,7 @@ authority remains an explicit blocker rather than an inferred calculation.
 Two version identifiers are fixed:
 
 - Contract: `tools-textbook-chapter-contract/1.0.0`
-- Registry: `tools-textbook-chapter-registry/1.0.0`
+- Registry: `tools-textbook-chapter-registry/1.1.0`
 
 Their repository-owned JSON Schemas allow external consumers to validate shape
 without importing producer code. The Python consumer then applies stricter
@@ -55,7 +55,12 @@ The linter loads the contract and registry through strict typed consumers,
 resolves each registered path beneath `manuals/tools/chapters`, decodes UTF-8,
 and rejects forbidden placeholder or private-source tokens. It extracts level-2
 and level-3 headings, compares them with the exact ordered contract, and checks
-that every required section has governed body content.
+that every required section has governed body content. Registry version 1.1.0
+also requires one full derivation family for every registered calculation. Each
+stable formula ID must resolve in both directions to its manual anchor, public
+symbol and source path, exact test node, source citation, executable worked
+example, bounded claim, and every declared rendered artifact. Missing, renamed,
+or orphaned edges fail closed.
 
 For normalized chapter text \(T\) and ordered section blocks \(S_i\), the linter
 records deterministic evidence as
