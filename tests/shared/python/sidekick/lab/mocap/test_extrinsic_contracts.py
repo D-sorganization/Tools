@@ -202,7 +202,14 @@ def test_bundle_adjust_layout() -> None:
             "cam_1": CameraPose("cam_1", t1),
         },
     )
-    obj_pts = ((0.0, 0.0, 0.0), (0.2, 0.0, 0.0), (0.2, 0.2, 0.0), (0.0, 0.2, 0.0))
+    obj_pts = (
+        (0.0, 0.0, 0.0),
+        (0.2, 0.0, 0.0),
+        (0.2, 0.2, 0.0),
+        (0.0, 0.2, 0.0),
+        (0.1, 0.1, 0.0),
+        (0.05, 0.15, 0.0),
+    )
     obs_c0 = tuple(
         (pt, intrinsics.project_point((pt[0], pt[1], pt[2] + 2.0))) for pt in obj_pts
     )
