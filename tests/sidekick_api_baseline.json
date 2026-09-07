@@ -1,1248 +1,4 @@
 {
-  "__main__.py": {
-    "__all__": [
-      "SidekickArgumentParser",
-      "build_parser",
-      "launch_gui",
-      "main",
-      "parse_cli_args",
-      "run_headless"
-    ],
-    "symbols": {
-      "SidekickArgumentParser": {
-        "type": "class",
-        "info": {
-          "bases": [
-            "argparse.ArgumentParser"
-          ],
-          "methods": {
-            "error": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "message",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "NoReturn"
-            }
-          }
-        }
-      },
-      "build_parser": {
-        "type": "function",
-        "signature": {
-          "args": [],
-          "returns": "argparse.ArgumentParser"
-        }
-      },
-      "launch_gui": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "args",
-              "annotation": "argparse.Namespace",
-              "default": null,
-              "kind": "arg"
-            }
-          ],
-          "returns": "int"
-        }
-      },
-      "main": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "argv",
-              "annotation": "list[str] | None",
-              "default": "None",
-              "kind": "arg"
-            }
-          ],
-          "returns": "int"
-        }
-      },
-      "parse_cli_args": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "argv",
-              "annotation": "list[str] | None",
-              "default": "None",
-              "kind": "arg"
-            }
-          ],
-          "returns": "argparse.Namespace"
-        }
-      },
-      "run_headless": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "args",
-              "annotation": "argparse.Namespace",
-              "default": null,
-              "kind": "arg"
-            }
-          ],
-          "returns": "int"
-        }
-      }
-    }
-  },
-  "persistence/__init__.py": {
-    "__all__": [
-      "LEGACY_SCHEMA_VERSION",
-      "PROFILE_SCHEMA_VERSION",
-      "PROFILE_SCHEMA_VERSION_KEY",
-      "ProfilePayload",
-      "SchemaMigration",
-      "current_schema_version",
-      "unwrap_payload",
-      "validate",
-      "wrap_state"
-    ],
-    "symbols": {
-      "LEGACY_SCHEMA_VERSION": {
-        "type": "variable"
-      },
-      "PROFILE_SCHEMA_VERSION": {
-        "type": "variable"
-      },
-      "PROFILE_SCHEMA_VERSION_KEY": {
-        "type": "variable"
-      },
-      "ProfilePayload": {
-        "type": "class",
-        "info": {
-          "bases": [],
-          "methods": {
-            "to_dict": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "dict[str, Any]"
-            },
-            "from_dict": {
-              "args": [
-                {
-                  "name": "cls",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "raw",
-                  "annotation": "dict[str, Any]",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "ProfilePayload"
-            }
-          }
-        }
-      },
-      "SchemaMigration": {
-        "type": "class",
-        "info": {
-          "bases": [
-            "UserWarning"
-          ],
-          "methods": {}
-        }
-      },
-      "current_schema_version": {
-        "type": "function",
-        "signature": {
-          "args": [],
-          "returns": "int"
-        }
-      },
-      "unwrap_payload": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "payload",
-              "annotation": "ProfilePayload | Mapping[str, Any]",
-              "default": null,
-              "kind": "arg"
-            }
-          ],
-          "returns": "tuple[dict[str, Any], int]"
-        }
-      },
-      "validate": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "payload",
-              "annotation": "Mapping[str, Any]",
-              "default": null,
-              "kind": "arg"
-            }
-          ],
-          "returns": "None"
-        }
-      },
-      "wrap_state": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "state",
-              "annotation": "Mapping[str, Any]",
-              "default": null,
-              "kind": "arg"
-            }
-          ],
-          "returns": "ProfilePayload"
-        }
-      }
-    }
-  },
-  "persistence/schema.py": {
-    "__all__": [
-      "PROFILE_SCHEMA_VERSION",
-      "PROFILE_SCHEMA_VERSION_KEY",
-      "ProfilePayload"
-    ],
-    "symbols": {
-      "PROFILE_SCHEMA_VERSION": {
-        "type": "variable"
-      },
-      "PROFILE_SCHEMA_VERSION_KEY": {
-        "type": "variable"
-      },
-      "ProfilePayload": {
-        "type": "class",
-        "info": {
-          "bases": [],
-          "methods": {
-            "to_dict": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "dict[str, Any]"
-            },
-            "from_dict": {
-              "args": [
-                {
-                  "name": "cls",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "raw",
-                  "annotation": "dict[str, Any]",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "ProfilePayload"
-            }
-          }
-        }
-      }
-    }
-  },
-  "persistence/state_profile.py": {
-    "__all__": [
-      "LEGACY_SCHEMA_VERSION",
-      "MIGRATION_TABLE",
-      "SchemaMigration",
-      "current_schema_version",
-      "unwrap_payload",
-      "validate",
-      "wrap_state"
-    ],
-    "symbols": {
-      "LEGACY_SCHEMA_VERSION": {
-        "type": "variable"
-      },
-      "MIGRATION_TABLE": {
-        "type": "variable"
-      },
-      "SchemaMigration": {
-        "type": "class",
-        "info": {
-          "bases": [
-            "UserWarning"
-          ],
-          "methods": {}
-        }
-      },
-      "current_schema_version": {
-        "type": "function",
-        "signature": {
-          "args": [],
-          "returns": "int"
-        }
-      },
-      "unwrap_payload": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "payload",
-              "annotation": "ProfilePayload | Mapping[str, Any]",
-              "default": null,
-              "kind": "arg"
-            }
-          ],
-          "returns": "tuple[dict[str, Any], int]"
-        }
-      },
-      "validate": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "payload",
-              "annotation": "Mapping[str, Any]",
-              "default": null,
-              "kind": "arg"
-            }
-          ],
-          "returns": "None"
-        }
-      },
-      "wrap_state": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "state",
-              "annotation": "Mapping[str, Any]",
-              "default": null,
-              "kind": "arg"
-            }
-          ],
-          "returns": "ProfilePayload"
-        }
-      }
-    }
-  },
-  "standalone/__init__.py": {
-    "__all__": [
-      "preferences",
-      "onboarding",
-      "runner",
-      "session_store"
-    ],
-    "symbols": {
-      "preferences": {
-        "type": "unknown"
-      },
-      "onboarding": {
-        "type": "unknown"
-      },
-      "runner": {
-        "type": "unknown"
-      },
-      "session_store": {
-        "type": "unknown"
-      }
-    }
-  },
-  "standalone/onboarding.py": {
-    "__all__": [
-      "SENTINEL_FILENAME",
-      "OnboardingState",
-      "StandaloneOnboarding"
-    ],
-    "symbols": {
-      "SENTINEL_FILENAME": {
-        "type": "variable"
-      },
-      "OnboardingState": {
-        "type": "class",
-        "info": {
-          "bases": [
-            "enum.Enum"
-          ],
-          "methods": {}
-        }
-      },
-      "StandaloneOnboarding": {
-        "type": "class",
-        "info": {
-          "bases": [],
-          "methods": {
-            "__init__": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "config_dir",
-                  "annotation": "Path | None",
-                  "default": "None",
-                  "kind": "arg"
-                },
-                {
-                  "name": "skip",
-                  "annotation": "bool",
-                  "default": "False",
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "needs_onboarding": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "bool"
-            },
-            "mark_complete": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "current_state": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "OnboardingState"
-            },
-            "advance": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "is_complete": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "bool"
-            },
-            "collect_profile": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "profile",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "chosen_profile": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "str | None"
-            }
-          }
-        }
-      }
-    }
-  },
-  "standalone/preferences.py": {
-    "__all__": [
-      "DEFAULT_DATA_DIR",
-      "DEFAULT_LLM_PROVIDER",
-      "DEFAULT_PROFILE",
-      "DEFAULT_THEME",
-      "VALID_PROFILES",
-      "StandalonePreferences"
-    ],
-    "symbols": {
-      "DEFAULT_DATA_DIR": {
-        "type": "unknown"
-      },
-      "DEFAULT_LLM_PROVIDER": {
-        "type": "variable"
-      },
-      "DEFAULT_PROFILE": {
-        "type": "variable"
-      },
-      "DEFAULT_THEME": {
-        "type": "variable"
-      },
-      "VALID_PROFILES": {
-        "type": "variable"
-      },
-      "StandalonePreferences": {
-        "type": "class",
-        "info": {
-          "bases": [],
-          "methods": {
-            "__init__": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "store",
-                  "annotation": "Any",
-                  "default": "None",
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "profile": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "str"
-            },
-            "theme": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "str"
-            },
-            "data_dir": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "str"
-            },
-            "llm_provider": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "str"
-            },
-            "set_profile": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "profile",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "set_theme": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "theme",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "set_data_dir": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "path",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "set_llm_provider": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "provider_id",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            }
-          }
-        }
-      }
-    }
-  },
-  "standalone/runner.py": {
-    "__all__": [
-      "list_calculators",
-      "register",
-      "run_calculator"
-    ],
-    "symbols": {
-      "list_calculators": {
-        "type": "function",
-        "signature": {
-          "args": [],
-          "returns": "list[str]"
-        }
-      },
-      "register": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "name",
-              "annotation": "str",
-              "default": null,
-              "kind": "arg"
-            }
-          ],
-          "returns": "Callable[[_CalculatorFunction], _CalculatorFunction]"
-        }
-      },
-      "run_calculator": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "calculator",
-              "annotation": "str",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "inputs_path",
-              "annotation": "str",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "output",
-              "annotation": "str",
-              "default": "'-'",
-              "kind": "arg"
-            },
-            {
-              "name": "format",
-              "annotation": "str",
-              "default": "'json'",
-              "kind": "arg"
-            }
-          ],
-          "returns": "int"
-        }
-      }
-    }
-  },
-  "standalone/session_store.py": {
-    "__all__": [
-      "FileSessionStore",
-      "InMemorySessionStore",
-      "SessionStore",
-      "StandaloneSessionStore",
-      "default_store_root"
-    ],
-    "symbols": {
-      "FileSessionStore": {
-        "type": "class",
-        "info": {
-          "bases": [],
-          "methods": {
-            "__init__": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "path",
-                  "annotation": "Path",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "get": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "key",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "default",
-                  "annotation": "Any",
-                  "default": "None",
-                  "kind": "arg"
-                }
-              ],
-              "returns": "Any"
-            },
-            "set": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "key",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "value",
-                  "annotation": "Any",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            }
-          }
-        }
-      },
-      "InMemorySessionStore": {
-        "type": "class",
-        "info": {
-          "bases": [],
-          "methods": {
-            "__init__": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "get": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "key",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "default",
-                  "annotation": "Any",
-                  "default": "None",
-                  "kind": "arg"
-                }
-              ],
-              "returns": "Any"
-            },
-            "set": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "key",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "value",
-                  "annotation": "Any",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            }
-          }
-        }
-      },
-      "SessionStore": {
-        "type": "class",
-        "info": {
-          "bases": [
-            "Protocol"
-          ],
-          "methods": {
-            "get": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "key",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "default",
-                  "annotation": "Any",
-                  "default": "None",
-                  "kind": "arg"
-                }
-              ],
-              "returns": "Any"
-            },
-            "set": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "key",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "value",
-                  "annotation": "Any",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            }
-          }
-        }
-      },
-      "StandaloneSessionStore": {
-        "type": "class",
-        "info": {
-          "bases": [],
-          "methods": {
-            "__init__": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "root",
-                  "annotation": "Path | str | None",
-                  "default": "None",
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "save_profile": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "name",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "payload",
-                  "annotation": "ProfilePayload",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "load_profile": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "name",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "ProfilePayload"
-            },
-            "list_profiles": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "list[str]"
-            },
-            "delete_profile": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "name",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "set_last_profile": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "name",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "last_profile": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "str | None"
-            }
-          }
-        }
-      },
-      "default_store_root": {
-        "type": "function",
-        "signature": {
-          "args": [],
-          "returns": "Path"
-        }
-      }
-    }
-  },
-  "standalone/window.py": {
-    "__all__": [
-      "StandaloneSidekickConfig",
-      "StandaloneSidekickWindow"
-    ],
-    "symbols": {
-      "StandaloneSidekickConfig": {
-        "type": "class",
-        "info": {
-          "bases": [],
-          "methods": {}
-        }
-      },
-      "StandaloneSidekickWindow": {
-        "type": "class",
-        "info": {
-          "bases": [
-            "QMainWindow"
-          ],
-          "methods": {
-            "__init__": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "config",
-                  "annotation": "StandaloneSidekickConfig",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "splitter_handle_positions": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "list[int]"
-            },
-            "panel_for": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "profile",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "QWidget"
-            },
-            "sidebar": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "QWidget"
-            },
-            "active_profile": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "str"
-            },
-            "active_theme": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "str | None"
-            },
-            "host_action_port": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "Any"
-            },
-            "save_profile_to_store": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "name",
-                  "annotation": "str",
-                  "default": "_DEFAULT_PROFILE_NAME",
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "load_profile_from_store": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "name",
-                  "annotation": "str",
-                  "default": "_DEFAULT_PROFILE_NAME",
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "showEvent": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "event",
-                  "annotation": "QShowEvent | None",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "closeEvent": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "event",
-                  "annotation": "QCloseEvent | None",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            }
-          }
-        }
-      }
-    }
-  },
   "__init__.py": {
     "__all__": [
       "CalculationResult",
@@ -1603,6 +359,108 @@
       },
       "utils": {
         "type": "unknown"
+      }
+    }
+  },
+  "__main__.py": {
+    "__all__": [
+      "SidekickArgumentParser",
+      "build_parser",
+      "launch_gui",
+      "main",
+      "parse_cli_args",
+      "run_headless"
+    ],
+    "symbols": {
+      "SidekickArgumentParser": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "argparse.ArgumentParser"
+          ],
+          "methods": {
+            "error": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "message",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "NoReturn"
+            }
+          }
+        }
+      },
+      "build_parser": {
+        "type": "function",
+        "signature": {
+          "args": [],
+          "returns": "argparse.ArgumentParser"
+        }
+      },
+      "launch_gui": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "args",
+              "annotation": "argparse.Namespace",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "int"
+        }
+      },
+      "main": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "argv",
+              "annotation": "list[str] | None",
+              "default": "None",
+              "kind": "arg"
+            }
+          ],
+          "returns": "int"
+        }
+      },
+      "parse_cli_args": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "argv",
+              "annotation": "list[str] | None",
+              "default": "None",
+              "kind": "arg"
+            }
+          ],
+          "returns": "argparse.Namespace"
+        }
+      },
+      "run_headless": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "args",
+              "annotation": "argparse.Namespace",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "int"
+        }
       }
     }
   },
@@ -2496,6 +1354,9 @@
           "methods": {}
         }
       },
+      "StateError": {
+        "type": "unknown"
+      },
       "StateProfile": {
         "type": "class",
         "info": {
@@ -2953,9 +1814,6 @@
           ],
           "returns": "dict[str, Any]"
         }
-      },
-      "StateError": {
-        "type": "unknown"
       }
     }
   },
@@ -6363,15 +5221,6 @@
       "ANGULAR_VELOCITY_FACTORS": {
         "type": "variable"
       },
-      "NORMAL_REFERENCE_CONDITION": {
-        "type": "variable"
-      },
-      "NORMAL_REFERENCE_PRESSURE_PA": {
-        "type": "variable"
-      },
-      "NORMAL_REFERENCE_TEMPERATURE_K": {
-        "type": "variable"
-      },
       "AREA_FACTORS": {
         "type": "variable"
       },
@@ -6416,6 +5265,15 @@
         "type": "variable"
       },
       "MASS_FLOW_FACTORS": {
+        "type": "variable"
+      },
+      "NORMAL_REFERENCE_CONDITION": {
+        "type": "variable"
+      },
+      "NORMAL_REFERENCE_PRESSURE_PA": {
+        "type": "variable"
+      },
+      "NORMAL_REFERENCE_TEMPERATURE_K": {
         "type": "variable"
       },
       "PERFORMANCE_UNITS": {
@@ -9560,80 +8418,6 @@
       }
     }
   },
-  "latex_renderer.py": {
-    "__all__": [
-      "LatexRenderError",
-      "is_latex_ready",
-      "is_qt_available",
-      "render_expr_label",
-      "render_latex_label"
-    ],
-    "symbols": {
-      "LatexRenderError": {
-        "type": "class",
-        "info": {
-          "bases": [
-            "RuntimeError"
-          ],
-          "methods": {}
-        }
-      },
-      "is_latex_ready": {
-        "type": "function",
-        "signature": {
-          "args": [],
-          "returns": "bool"
-        }
-      },
-      "is_qt_available": {
-        "type": "function",
-        "signature": {
-          "args": [],
-          "returns": "bool"
-        }
-      },
-      "render_expr_label": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "expr_str",
-              "annotation": "str",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "parent",
-              "annotation": "Any",
-              "default": "None",
-              "kind": "kwonlyarg"
-            }
-          ],
-          "returns": "Any"
-        }
-      },
-      "render_latex_label": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "latex_str",
-              "annotation": "str",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "parent",
-              "annotation": "Any",
-              "default": "None",
-              "kind": "kwonlyarg"
-            }
-          ],
-          "returns": "Any"
-        }
-      }
-    }
-  },
   "lab/mocap/__init__.py": {
     "__all__": [
       "MOCAP_SESSION_SCHEMA_VERSION",
@@ -9964,6 +8748,80 @@
     "__all__": [],
     "symbols": {}
   },
+  "latex_renderer.py": {
+    "__all__": [
+      "LatexRenderError",
+      "is_latex_ready",
+      "is_qt_available",
+      "render_expr_label",
+      "render_latex_label"
+    ],
+    "symbols": {
+      "LatexRenderError": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "RuntimeError"
+          ],
+          "methods": {}
+        }
+      },
+      "is_latex_ready": {
+        "type": "function",
+        "signature": {
+          "args": [],
+          "returns": "bool"
+        }
+      },
+      "is_qt_available": {
+        "type": "function",
+        "signature": {
+          "args": [],
+          "returns": "bool"
+        }
+      },
+      "render_expr_label": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "expr_str",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "parent",
+              "annotation": "Any",
+              "default": "None",
+              "kind": "kwonlyarg"
+            }
+          ],
+          "returns": "Any"
+        }
+      },
+      "render_latex_label": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "latex_str",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "parent",
+              "annotation": "Any",
+              "default": "None",
+              "kind": "kwonlyarg"
+            }
+          ],
+          "returns": "Any"
+        }
+      }
+    }
+  },
   "launcher_factory.py": {
     "__all__": [
       "LauncherConfig",
@@ -10268,6 +9126,252 @@
               "returns": "list[str]"
             }
           }
+        }
+      }
+    }
+  },
+  "persistence/__init__.py": {
+    "__all__": [
+      "LEGACY_SCHEMA_VERSION",
+      "PROFILE_SCHEMA_VERSION",
+      "PROFILE_SCHEMA_VERSION_KEY",
+      "ProfilePayload",
+      "SchemaMigration",
+      "current_schema_version",
+      "unwrap_payload",
+      "validate",
+      "wrap_state"
+    ],
+    "symbols": {
+      "LEGACY_SCHEMA_VERSION": {
+        "type": "variable"
+      },
+      "PROFILE_SCHEMA_VERSION": {
+        "type": "variable"
+      },
+      "PROFILE_SCHEMA_VERSION_KEY": {
+        "type": "variable"
+      },
+      "ProfilePayload": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "to_dict": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            },
+            "from_dict": {
+              "args": [
+                {
+                  "name": "cls",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "raw",
+                  "annotation": "dict[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ProfilePayload"
+            }
+          }
+        }
+      },
+      "SchemaMigration": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "UserWarning"
+          ],
+          "methods": {}
+        }
+      },
+      "current_schema_version": {
+        "type": "function",
+        "signature": {
+          "args": [],
+          "returns": "int"
+        }
+      },
+      "unwrap_payload": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "payload",
+              "annotation": "ProfilePayload | Mapping[str, Any]",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "tuple[dict[str, Any], int]"
+        }
+      },
+      "validate": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "payload",
+              "annotation": "Mapping[str, Any]",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "None"
+        }
+      },
+      "wrap_state": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "state",
+              "annotation": "Mapping[str, Any]",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "ProfilePayload"
+        }
+      }
+    }
+  },
+  "persistence/schema.py": {
+    "__all__": [
+      "PROFILE_SCHEMA_VERSION",
+      "PROFILE_SCHEMA_VERSION_KEY",
+      "ProfilePayload"
+    ],
+    "symbols": {
+      "PROFILE_SCHEMA_VERSION": {
+        "type": "variable"
+      },
+      "PROFILE_SCHEMA_VERSION_KEY": {
+        "type": "variable"
+      },
+      "ProfilePayload": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "to_dict": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            },
+            "from_dict": {
+              "args": [
+                {
+                  "name": "cls",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "raw",
+                  "annotation": "dict[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ProfilePayload"
+            }
+          }
+        }
+      }
+    }
+  },
+  "persistence/state_profile.py": {
+    "__all__": [
+      "LEGACY_SCHEMA_VERSION",
+      "MIGRATION_TABLE",
+      "SchemaMigration",
+      "current_schema_version",
+      "unwrap_payload",
+      "validate",
+      "wrap_state"
+    ],
+    "symbols": {
+      "LEGACY_SCHEMA_VERSION": {
+        "type": "variable"
+      },
+      "MIGRATION_TABLE": {
+        "type": "variable"
+      },
+      "SchemaMigration": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "UserWarning"
+          ],
+          "methods": {}
+        }
+      },
+      "current_schema_version": {
+        "type": "function",
+        "signature": {
+          "args": [],
+          "returns": "int"
+        }
+      },
+      "unwrap_payload": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "payload",
+              "annotation": "ProfilePayload | Mapping[str, Any]",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "tuple[dict[str, Any], int]"
+        }
+      },
+      "validate": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "payload",
+              "annotation": "Mapping[str, Any]",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "None"
+        }
+      },
+      "wrap_state": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "state",
+              "annotation": "Mapping[str, Any]",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "ProfilePayload"
         }
       }
     }
@@ -10640,6 +9744,23 @@
                 }
               ],
               "returns": "list[dict[str, Any]]"
+            },
+            "calculate": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "parameters",
+                  "annotation": "FinancialParameters",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "FinancialResults"
             }
           }
         }
@@ -10711,6 +9832,41 @@
                 }
               ],
               "returns": "dict[str, float]"
+            },
+            "calculate": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "total_flow",
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "gas_composition",
+                  "annotation": "dict[str, float]",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "temperature",
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "pressure",
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "FlareDesign"
             },
             "calculate_combustion_efficiency": {
               "args": [
@@ -11221,6 +10377,9 @@
           }
         }
       },
+      "MMHG_TO_PA_CONV": {
+        "type": "variable"
+      },
       "estimate_condensation_risk": {
         "type": "function",
         "signature": {
@@ -11308,9 +10467,6 @@
           ],
           "returns": "dict[str, float | str]"
         }
-      },
-      "MMHG_TO_PA_CONV": {
-        "type": "variable"
       }
     }
   },
@@ -12487,6 +11643,23 @@
                 }
               ],
               "returns": "list[dict[str, Any]]"
+            },
+            "calculate": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "parameters",
+                  "annotation": "FinancialParameters",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "FinancialResults"
             }
           }
         }
@@ -12581,6 +11754,41 @@
                 }
               ],
               "returns": "dict[str, float]"
+            },
+            "calculate": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "total_flow",
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "gas_composition",
+                  "annotation": "dict[str, float]",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "temperature",
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "pressure",
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "FlareDesign"
             },
             "calculate_combustion_efficiency": {
               "args": [
@@ -19691,6 +18899,170 @@
       }
     }
   },
+  "process_calculators/water_vapor_pressure.py": {
+    "__all__": [
+      "PA_PER_HPA",
+      "PA_PER_KPA",
+      "antoine_pressure_pa",
+      "antoine_temperature_c",
+      "buck_pressure_pa",
+      "iapws_pressure_pa",
+      "magnus_pressure_pa",
+      "safe_exp"
+    ],
+    "symbols": {
+      "PA_PER_HPA": {
+        "type": "variable"
+      },
+      "PA_PER_KPA": {
+        "type": "variable"
+      },
+      "antoine_pressure_pa": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "a",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "b",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "c",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "temperature_c",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "float"
+        }
+      },
+      "antoine_temperature_c": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "a",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "b",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "c",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "pressure_pa",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "float"
+        }
+      },
+      "buck_pressure_pa": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "a_kpa",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "b",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "c",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "d",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "temperature_c",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "float"
+        }
+      },
+      "iapws_pressure_pa": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "temperature_c",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "float"
+        }
+      },
+      "magnus_pressure_pa": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "temperature_c",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "float"
+        }
+      },
+      "safe_exp": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "x",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "float"
+        }
+      }
+    }
+  },
   "process_calculators/water_vapor_pressure_calculator.py": {
     "__all__": [
       "WaterVaporPressureCalculator"
@@ -20228,6 +19600,902 @@
       },
       "build_tab_settings_toolbar": {
         "type": "unknown"
+      }
+    }
+  },
+  "standalone/__init__.py": {
+    "__all__": [
+      "preferences",
+      "onboarding",
+      "runner",
+      "session_store"
+    ],
+    "symbols": {
+      "preferences": {
+        "type": "unknown"
+      },
+      "onboarding": {
+        "type": "unknown"
+      },
+      "runner": {
+        "type": "unknown"
+      },
+      "session_store": {
+        "type": "unknown"
+      }
+    }
+  },
+  "standalone/onboarding.py": {
+    "__all__": [
+      "SENTINEL_FILENAME",
+      "OnboardingState",
+      "StandaloneOnboarding"
+    ],
+    "symbols": {
+      "SENTINEL_FILENAME": {
+        "type": "variable"
+      },
+      "OnboardingState": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "enum.Enum"
+          ],
+          "methods": {}
+        }
+      },
+      "StandaloneOnboarding": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "config_dir",
+                  "annotation": "Path | None",
+                  "default": "None",
+                  "kind": "arg"
+                },
+                {
+                  "name": "skip",
+                  "annotation": "bool",
+                  "default": "False",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "needs_onboarding": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "bool"
+            },
+            "mark_complete": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "current_state": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "OnboardingState"
+            },
+            "advance": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "is_complete": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "bool"
+            },
+            "collect_profile": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "profile",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "chosen_profile": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str | None"
+            }
+          }
+        }
+      }
+    }
+  },
+  "standalone/preferences.py": {
+    "__all__": [
+      "DEFAULT_DATA_DIR",
+      "DEFAULT_LLM_PROVIDER",
+      "DEFAULT_PROFILE",
+      "DEFAULT_THEME",
+      "VALID_PROFILES",
+      "StandalonePreferences"
+    ],
+    "symbols": {
+      "DEFAULT_DATA_DIR": {
+        "type": "unknown"
+      },
+      "DEFAULT_LLM_PROVIDER": {
+        "type": "variable"
+      },
+      "DEFAULT_PROFILE": {
+        "type": "variable"
+      },
+      "DEFAULT_THEME": {
+        "type": "variable"
+      },
+      "VALID_PROFILES": {
+        "type": "variable"
+      },
+      "StandalonePreferences": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "store",
+                  "annotation": "Any",
+                  "default": "None",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "profile": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "theme": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "data_dir": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "llm_provider": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "set_profile": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "profile",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "set_theme": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "theme",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "set_data_dir": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "path",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "set_llm_provider": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "provider_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        }
+      }
+    }
+  },
+  "standalone/runner.py": {
+    "__all__": [
+      "list_calculators",
+      "register",
+      "run_calculator"
+    ],
+    "symbols": {
+      "list_calculators": {
+        "type": "function",
+        "signature": {
+          "args": [],
+          "returns": "list[str]"
+        }
+      },
+      "register": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "name",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "Callable[[_CalculatorFunction], _CalculatorFunction]"
+        }
+      },
+      "run_calculator": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "calculator",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "inputs_path",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "output",
+              "annotation": "str",
+              "default": "'-'",
+              "kind": "arg"
+            },
+            {
+              "name": "format",
+              "annotation": "str",
+              "default": "'json'",
+              "kind": "arg"
+            }
+          ],
+          "returns": "int"
+        }
+      }
+    }
+  },
+  "standalone/session_store.py": {
+    "__all__": [
+      "FileSessionStore",
+      "InMemorySessionStore",
+      "SessionStore",
+      "StandaloneSessionStore",
+      "default_store_root"
+    ],
+    "symbols": {
+      "FileSessionStore": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "path",
+                  "annotation": "Path",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "get": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "key",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "default",
+                  "annotation": "Any",
+                  "default": "None",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "Any"
+            },
+            "set": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "key",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "value",
+                  "annotation": "Any",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        }
+      },
+      "InMemorySessionStore": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "get": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "key",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "default",
+                  "annotation": "Any",
+                  "default": "None",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "Any"
+            },
+            "set": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "key",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "value",
+                  "annotation": "Any",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        }
+      },
+      "SessionStore": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "Protocol"
+          ],
+          "methods": {
+            "get": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "key",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "default",
+                  "annotation": "Any",
+                  "default": "None",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "Any"
+            },
+            "set": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "key",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "value",
+                  "annotation": "Any",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        }
+      },
+      "StandaloneSessionStore": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "root",
+                  "annotation": "Path | str | None",
+                  "default": "None",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "save_profile": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "name",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "payload",
+                  "annotation": "ProfilePayload",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "load_profile": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "name",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ProfilePayload"
+            },
+            "list_profiles": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "list[str]"
+            },
+            "delete_profile": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "name",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "set_last_profile": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "name",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "last_profile": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str | None"
+            }
+          }
+        }
+      },
+      "default_store_root": {
+        "type": "function",
+        "signature": {
+          "args": [],
+          "returns": "Path"
+        }
+      }
+    }
+  },
+  "standalone/window.py": {
+    "__all__": [
+      "StandaloneSidekickConfig",
+      "StandaloneSidekickWindow"
+    ],
+    "symbols": {
+      "StandaloneSidekickConfig": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "StandaloneSidekickWindow": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "QMainWindow"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "config",
+                  "annotation": "StandaloneSidekickConfig",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "splitter_handle_positions": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "list[int]"
+            },
+            "panel_for": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "profile",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "QWidget"
+            },
+            "sidebar": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "QWidget"
+            },
+            "active_profile": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "active_theme": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str | None"
+            },
+            "host_action_port": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "Any"
+            },
+            "save_profile_to_store": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "name",
+                  "annotation": "str",
+                  "default": "_DEFAULT_PROFILE_NAME",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "load_profile_from_store": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "name",
+                  "annotation": "str",
+                  "default": "_DEFAULT_PROFILE_NAME",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "showEvent": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "event",
+                  "annotation": "QShowEvent | None",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "closeEvent": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "event",
+                  "annotation": "QCloseEvent | None",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        }
       }
     }
   },
@@ -21057,7 +21325,10 @@
       "CalculatorStateMixin": {
         "type": "class",
         "info": {
-          "bases": [],
+          "bases": [
+            "_SplitterStateMixin",
+            "_ClipboardMixin"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -21069,51 +21340,6 @@
                 },
                 {
                   "name": "calculator_name",
-                  "annotation": "str | None",
-                  "default": "None",
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "setup_copy_paste": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "setup_shortcuts": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "register_splitter": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "splitter",
-                  "annotation": "QSplitter",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "name",
                   "annotation": "str | None",
                   "default": "None",
                   "kind": "arg"
@@ -21144,96 +21370,11 @@
               ],
               "returns": "None"
             },
-            "register_copyable_widget": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "widget",
-                  "annotation": "Any",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "widget_type",
-                  "annotation": "str",
-                  "default": "'text'",
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
             "auto_register_widgets": {
               "args": [
                 {
                   "name": "self",
                   "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "on_splitter_moved": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "splitter_info",
-                  "annotation": "dict[str, Any]",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "save_splitter_states": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "dict[str, Any]"
-            },
-            "restore_splitter_states": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "states",
-                  "annotation": "dict[str, Any]",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "restore_splitter_state": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "splitter_info",
-                  "annotation": "dict[str, Any]",
                   "default": null,
                   "kind": "arg"
                 }
@@ -21369,165 +21510,6 @@
               ],
               "returns": "None"
             },
-            "copy_selected_text": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "checked",
-                  "annotation": "bool",
-                  "default": "False",
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "copy_all_results": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "checked",
-                  "annotation": "bool",
-                  "default": "False",
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "get_text_from_widget": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "widget",
-                  "annotation": "Any",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "str"
-            },
-            "get_table_text": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "table",
-                  "annotation": "QTableWidget",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "str"
-            },
-            "copy_to_clipboard": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "text",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "paste_text": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "checked",
-                  "annotation": "bool",
-                  "default": "False",
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "show_context_menu": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "position",
-                  "annotation": "Any",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "show_widget_context_menu": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "position",
-                  "annotation": "Any",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "widget_info",
-                  "annotation": "dict[str, Any]",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "copy_widget_text": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "widget",
-                  "annotation": "Any",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
             "handle_close_event": {
               "args": [
                 {
@@ -21555,23 +21537,6 @@
                 }
               ],
               "returns": "None"
-            },
-            "create_copy_button": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "text",
-                  "annotation": "str",
-                  "default": "'Copy Results'",
-                  "kind": "arg"
-                }
-              ],
-              "returns": "Any"
             },
             "create_save_load_buttons": {
               "args": [
@@ -29018,6 +28983,17 @@
               ],
               "returns": "None"
             },
+            "shutdown": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
             "eventFilter": {
               "args": [
                 {
@@ -29052,17 +29028,6 @@
                 {
                   "name": "event",
                   "annotation": "object",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "shutdown": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
                   "default": null,
                   "kind": "arg"
                 }
@@ -30486,6 +30451,17 @@
               ],
               "returns": "CalculatorStartupConfig"
             },
+            "namespace": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            },
             "apply_startup_config": {
               "args": [
                 {
@@ -30502,17 +30478,6 @@
                 }
               ],
               "returns": "CalculatorStartupResult"
-            },
-            "namespace": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "dict[str, Any]"
             }
           }
         }
@@ -31157,6 +31122,34 @@
                 }
               ],
               "returns": "QtCore.QSize"
+            },
+            "shutdown": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "closeEvent": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "event",
+                  "annotation": "object",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
             },
             "dock_widget": {
               "args": [
@@ -31948,34 +31941,6 @@
                 }
               ],
               "returns": "bool"
-            },
-            "shutdown": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "closeEvent": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "event",
-                  "annotation": "object",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
             }
           }
         }
@@ -35840,6 +35805,12 @@
       "FOOT_H2O_TO_PASCAL": {
         "type": "variable"
       },
+      "FOOT_POUND_TO_JOULE": {
+        "type": "variable"
+      },
+      "FOOT_POUND_TO_NEWTON_METER": {
+        "type": "variable"
+      },
       "FOOT_POUND_PER_SECOND_TO_WATT": {
         "type": "variable"
       },
@@ -36074,6 +36045,9 @@
       "POUND_PER_GALLON_TO_KG_PER_CU_METER": {
         "type": "variable"
       },
+      "POUND_FORCE_INCH_TO_NEWTON_METER": {
+        "type": "variable"
+      },
       "POUND_PER_HOUR_TO_KG_PER_SECOND": {
         "type": "variable"
       },
@@ -36235,15 +36209,6 @@
       },
       "YARD_TO_METER": {
         "type": "variable"
-      },
-      "FOOT_POUND_TO_JOULE": {
-        "type": "variable"
-      },
-      "FOOT_POUND_TO_NEWTON_METER": {
-        "type": "variable"
-      },
-      "POUND_FORCE_INCH_TO_NEWTON_METER": {
-        "type": "variable"
       }
     }
   },
@@ -36328,170 +36293,6 @@
               "returns": "None"
             }
           }
-        }
-      }
-    }
-  },
-  "process_calculators/water_vapor_pressure.py": {
-    "__all__": [
-      "PA_PER_HPA",
-      "PA_PER_KPA",
-      "antoine_pressure_pa",
-      "antoine_temperature_c",
-      "buck_pressure_pa",
-      "iapws_pressure_pa",
-      "magnus_pressure_pa",
-      "safe_exp"
-    ],
-    "symbols": {
-      "PA_PER_HPA": {
-        "type": "variable"
-      },
-      "PA_PER_KPA": {
-        "type": "variable"
-      },
-      "antoine_pressure_pa": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "a",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "b",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "c",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "temperature_c",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            }
-          ],
-          "returns": "float"
-        }
-      },
-      "antoine_temperature_c": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "a",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "b",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "c",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "pressure_pa",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            }
-          ],
-          "returns": "float"
-        }
-      },
-      "buck_pressure_pa": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "a_kpa",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "b",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "c",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "d",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "temperature_c",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            }
-          ],
-          "returns": "float"
-        }
-      },
-      "iapws_pressure_pa": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "temperature_c",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            }
-          ],
-          "returns": "float"
-        }
-      },
-      "magnus_pressure_pa": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "temperature_c",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            }
-          ],
-          "returns": "float"
-        }
-      },
-      "safe_exp": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "x",
-              "annotation": "float",
-              "default": null,
-              "kind": "arg"
-            }
-          ],
-          "returns": "float"
         }
       }
     }
