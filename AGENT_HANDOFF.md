@@ -1,5 +1,16 @@
 # AGENT_HANDOFF — Tools (Monorepo Root)
 
+## Impact Dynamics and Acoustics: #5068
+
+- Foundation #5069 is locally verified on `feat/5068-impact-dynamics-foundation`,
+  based on `b4875be19`; PR not created. Theory: AffineDrift #4253; consumer: UpstreamDrift #9700.
+- TDD verified by `tests/shared/python/golf_club/test_impact_mobility.py`;
+  implementation reuses `golf_club._validation` and preserve existing APIs.
+- Full tensor mobility is a detached rigid-body reference, not a validated flexible
+  shaft or acoustic solver. Follow-on design: `docs/specs/IMPACT_DYNAMICS_ACOUSTICS.md`.
+- Lease scripts found no claim; Tools label posting failed. Proceeding under the
+  fleet's documented fail-open rule; do not treat that as a successfully posted lease.
+
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-09-07
 > **Current state only**, capped at 150 lines by `CLAUDE.md`; history lives in git and `docs/agent_handoff_archive/`.

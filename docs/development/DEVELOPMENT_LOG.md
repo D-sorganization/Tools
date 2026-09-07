@@ -18,6 +18,20 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-0054 · Impact Dynamics Reference Foundation
+
+- **State:** in_progress
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5069
+- **PR:** not created
+- **Branch:** feat/5068-impact-dynamics-foundation
+- **Paths:** `src/shared/python/golf_club/impact_mobility.py`, `src/shared/python/golf_club/impact_coupling.py`, `tests/shared/python/golf_club/test_impact_mobility.py`, `docs/specs/IMPACT_DYNAMICS_ACOUSTICS.md`
+- **Started:** 2026-09-07
+- **Last verified:** 2026-09-07 (`b4875be19` base plus this working diff)
+- **Summary:** Tensor mobility reference passes 30 TDD gates; additive public baseline recorded. Manifest, broader checks and PR in progress. #5068 retains future distributed/acoustic scope.
+
+- **Next step:** Open the focused PR, record its revision, and follow the separately scoped research dependencies.
+
 ### DL-0001 · Backup Tools 3300 Pyo3 Split
 
 - **State:** parked
