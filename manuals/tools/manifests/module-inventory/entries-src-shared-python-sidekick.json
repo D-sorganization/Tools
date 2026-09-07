@@ -742,6 +742,7 @@
           }
         ],
         "test_paths": [
+          "tests/unit/ai/gui/test_assistant_panel_sidekick_bridge.py",
           "tests/unit/sidekick/agent/test_action_audit.py",
           "tests/unit/sidekick/agent/test_action_service.py",
           "tests/unit/sidekick/agent/test_planner.py"
@@ -1233,6 +1234,7 @@
           }
         ],
         "test_paths": [
+          "tests/unit/ai/gui/test_assistant_panel_sidekick_bridge.py",
           "tests/unit/sidekick/agent/test_planner.py"
         ],
         "unit_mentions": [
@@ -4142,10 +4144,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 2749,
+      "bytes_lf": 3361,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c535cf56b3670298b6f3b0832785ac77345449dc186a282b0bc0262afb064df2",
+      "content_sha256_lf": "79026525398cc429aeadd88caf75314867b03cbbc257724d3d5db7d7b8046cec",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-INIT-PY-BD60513A12BD",
       "language": "python",
@@ -4228,6 +4230,16 @@
           },
           {
             "kind": "re-export",
+            "name": "CameraLayout",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CameraPose",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "CaptureGroup",
             "signature": null
           },
@@ -4264,6 +4276,21 @@
           {
             "kind": "re-export",
             "name": "DropPolicy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ExtrinsicCalibrationResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ExtrinsicDegeneracyKind",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ExtrinsicQuality",
             "signature": null
           },
           {
@@ -4323,6 +4350,11 @@
           },
           {
             "kind": "re-export",
+            "name": "MovementDetectionResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "NumericRange",
             "signature": null
           },
@@ -4364,6 +4396,11 @@
           {
             "kind": "re-export",
             "name": "RecordingWriter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RelocalizationResult",
             "signature": null
           },
           {
@@ -4428,12 +4465,32 @@
           },
           {
             "kind": "re-export",
+            "name": "bundle_adjust_layout",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "check_coverage_and_degeneracy",
             "signature": null
           },
           {
             "kind": "re-export",
+            "name": "detect_camera_movement",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "dumps_canonical",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "estimate_pnp_pose",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "evaluate_extrinsic_quality",
             "signature": null
           },
           {
@@ -4639,13 +4696,15 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
-          "tests/shared/python/sidekick/lab/mocap/test_calibration_contracts.py"
+          "tests/shared/python/sidekick/lab/mocap/test_calibration_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py"
         ],
         "unit_mentions": [
           "g"
         ],
         "validation_paths": [
-          "tests/shared/python/sidekick/lab/mocap/test_calibration_contracts.py"
+          "tests/shared/python/sidekick/lab/mocap/test_calibration_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py"
         ]
       }
     },
@@ -4748,6 +4807,56 @@
       }
     },
     {
+      "authority_status": "not-applicable",
+      "bytes_lf": 14668,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0b2486b16007a2887ff3390b02ad2601b55de675bd1f40c3424d1790d7bf4571",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-EXTRINSICS-PY-FD8B0A3C2EFE",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/extrinsics.py",
+      "purpose": "Extrinsic and flexible-layout camera calibration and relocalization.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py"
+        ]
+      }
+    },
+    {
       "authority_status": "provisional",
       "bytes_lf": 3019,
       "classification": "calculation",
@@ -4792,10 +4901,12 @@
         "test_paths": [
           "src/shared/python/programmatic_pid/tests/test_geometry.py",
           "tests/programmatic_pid/test_geometry.py",
+          "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
         ],
         "unit_mentions": [],
         "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
         ]
       }

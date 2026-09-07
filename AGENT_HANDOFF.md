@@ -6,6 +6,7 @@
   based on `b4875be19`; PR #5077; implementation `6d94f1d3d`. Theory: AffineDrift #4253; consumer: UpstreamDrift #9700.
 - TDD verified by `tests/shared/python/golf_club/test_impact_mobility.py`;
   implementation reuses `golf_club._validation` and preserves existing APIs.
+- PR #5077 synced protected main `6b27c4f0569ac486c491e073f87f67440a9521fa`; provider inventory rechecked.
 - Strict pre-push typing uses explicit float returns at validated scalar boundaries.
 - Full tensor mobility is a detached rigid-body reference, not a validated flexible
   shaft or acoustic solver. Follow-on design: `docs/specs/IMPACT_DYNAMICS_ACOUSTICS.md`.
