@@ -45,8 +45,8 @@ def _collect_library_py_files() -> list[Path]:
         # Skip test subdirectories
         if "tests" in parts:
             continue
-        # Skip __pycache__
-        if "__pycache__" in parts:
+        # Skip __pycache__ and node_modules
+        if "__pycache__" in parts or "node_modules" in parts:
             continue
         result.append(f)
     return result
