@@ -16,6 +16,7 @@ and handoff when their governed pathways change, and run
 `python -m scripts.check_tools_exemplars` and
 `python -m scripts.check_tools_calculation_freshness --check` and
 `python -m scripts.check_tools_manual_qa --check` and
+`python -m scripts.check_tools_publication_projection --check` and
 `python -m scripts.render_tools_design_manual --check`. Render only through the
 pinned toolchain lock and never edit `manuals/tools/dist` directly. The module inventory
 is a strict, LF-normalized, tracked-file baseline; `calculation` means a
