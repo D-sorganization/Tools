@@ -1,5 +1,83 @@
 # Changelog
 
+## [1.16.2] - 2026-09-06 (patch bump)
+
+### Changes
+
+#### Features
+
+- feat(wind): re-land wind strategy panel, worker, and responsive flight explorer integration (#4960) (#5004)
+- feat(launcher): one tool registry, one launcher — generated tools.json/contract/README, tile launcher retired (#4916) (#4935)
+- feat(spec): key SPEC.md change-log rows by PR instead of a serial version (#1520) (#4949)
+- feat(swing_sim): re-land impact-interval club dynamics from PR #4133 (#4130) (#4945)
+- feat(governance): divergence ledger + paired-PR gate; package-sharded module inventory (#4915, #4818) (#4934)
+
+#### Fixes
+
+- fix(tests, #4933): unquarantine dry compliance tests (#5031)
+- fix(tests, #4933): unquarantine wave solver and math primitives bindings tests (#5032)
+- fix(tests, #4933): unquarantine model generation api adapters, fix Flask endpoint collisions, and streamline rest_api shim (#4933) (#5026)
+- fix(tests, #4933): unquarantine project packer, backup copy, and phase 1 quick wins tests (#5025)
+- fix(tests, #4933): unquarantine vessel drafter contracts fallback and python version contract tests (#5023)
+- fix(pressure-drop): rename laundered sibling privates public at home (#3991) (#5011)
+- fix(tests): unquarantine pendulum and interaction tests with DbC and fixture fixes (#4933) (#5010)
+- fix(p1am-firmware): remove blanket [0,100] tag clamp; enforce interlock limit domain at the boundary (#5003)
+- fix(steam-engine-calculator): make SteamRequest mode-aware and expose engine selection (#5000)
+- fix(c3d-viewer): show error state on reader failure, annotate demo fallback (#4999)
+- fix(safety): withdraw uninstantiable neural PLC driver branch from PLCFactory (#4950) (#4990)
+- fix(rate-web): preserve scroll position in visual capture for variation E2E (#4977) (#4987)
+- fix(rate-of-closure): support explicit exemption marker in visual evidence gate (#4858) (#4984)
+- fix(registry): report tools dropped for a missing launcher instead of hiding them (#4916) (#4981)
+- fix(sidekick): replace token keyword in theme logger to prevent Semgrep credential disclosure false positive (#4978)
+- fix(rate): raise pyqt resize budget and ensure visual state viewport visibility (#4968) (#4973)
+- fix(ai): initialize message controller before loading session history (#4966) (#4970)
+- fix(ci): allow ControlTower and Oglaptop font stack versions in Rate PyQt check (#4930) (#4965)
+- fix(ai): honest chat placeholders and live Sidekick analytics registration (UD #9474) (#4959)
+- fix(rate-web): close the second 6 px putting overflow at 390x844 — the green-import row (RM #1507) (#4936)
+- fix(hooks): actually register the spec-rows merge driver (#1520) (#4956)
+- fix(spec): register the spec-rows merge driver by a worktree-relative path (#1520) (#4953)
+- fix(p1am): wire the PLC interlock reset path and stop backend defaults from tripping unmapped tags (#4911) (#4928)
+- fix(ci): main-green — rate web narrow-viewport overflow, ci-standard concurrency (RM #1507) (#4927)
+
+#### Other
+
+- test(rate-of-closure, #5021): re-approve pyqt visual baselines from trusted push run 34045862045 (#5021) (#5022)
+- ⚡ Bolt: Replace map and array spread in PuttingVisuals with single-pass loop (#5015)
+- ⚡ Bolt: [performance improvement] Eliminate intermediate array allocations for chart bounds calculation (#5016)
+- 🎨 Palette: Add focus rings to PlotsPanel buttons (#5017)
+- test(rate-of-closure, #5018): re-approve pyqt visual baselines from trusted push run 34024927028 (#5018) (#5020)
+- test(rate-of-closure, #5008): re-approve pyqt flight_explorer visual baseline (#5008) (#5013)
+- refactor(folder-tools): delete vendored folder_tools leftover and fix dead tests (#5002)
+- refactor(optimizer_gui): remove dead vendored GUI copy, keep canonical shim (#5001)
+- docs(audit): reconcile golf app gap audit and rate of closure campaign ledger (#4921) (#4998)
+- chore(deps): bump trimesh from 4.12.2 to 5.1.0 (#4996)
+- chore(deps): bump ruff from 0.16.4 to 0.16.5 (#4995)
+- ⚡ Bolt: Optimize swing scene bounds calculation (#4993)
+- ⚡ Bolt: [performance improvement] Replace array spreads with single-pass validation bounds in golfLikeImpactIndex (#4991)
+- ⚡ Bolt: [performance improvement] Replace spread operators with single-pass loops in launch monitor analysis (#4992)
+- ci(tests): run the whole test tree as CI shards, one coverage floor, one mypy pin (#4913) (#4938)
+- chore(inventory): make module-inventory index derivable from shards (#4957) (#4989)
+- ⚡ Bolt: Optimize charting domain bounds calculation (#4969)
+- ⚡ Bolt: Optimize launch monitor column inspection and grouping (#4971)
+- test(ci): guard against required checks that can never report (#4983)
+- ci: drop the remaining pull_request path filter (#4976)
+- chore(security): ignore agent-local permission state (#4974)
+- docs(scada): F-matrix as the tracker of record + three independent defect fixes (#4912) (#4947)
+- chore(ci): retire 25 unowned Jules-* workflows, keep 3 (#1483) (#4948)
+- 🎨 Palette: Add explicit label-input associations for accessibility (#4940)
+- test(rate-of-closure, #4844): name every visual-drift offender; verify the system font stack (#4963)
+- test(rate-of-closure, #4844): re-approve the nine drifted PyQt baselines under the recorded new font stack (#4964)
+- test(rate-of-closure): re-approve the stale react/putting visual baseline (RM #1507 main-green) (#4958)
+- ⚡ Bolt: [Performance] Replace Math.min/max spread with single-pass loop in VariationScatter (#4942)
+- ⚡ Bolt: Optimize 3D projection bounds calculation (#4943)
+- docs(spec): correct the merge-abort claim left in driver_command (#1520) (#4955)
+- docs(spec-merge-driver): correct the merge-abort claim shipped in #4949/#4953 (#4954)
+- refactor(rate-of-closure): launch-monitor tab consumes the canonical layer where twins permit (ADR-0046 Stage 2) (#4944)
+- ci(security): re-enable CodeQL, same-repo guard on workflow_run jobs, drop dead pip-audit ignore, Jules inventory (#4923) (#4937)
+- ci(contracts): fail without a downstream suite, API baselines for every vendored package, wheel + SBOM per release (#4920) (#4939)
+- docs(release): closed-stack gap-audit decisions and campaign states (#4921 Phase 1) (#4932)
+- docs(adr): fleet ADR home — mirror ADR-0016/0022/0031/0045-0048, add ADR-0049 + reference gate, fix ADR-007 duplicate (#4914) (#4931)
+
 ## [1.16.1] - 2026-09-06 (patch bump)
 
 ### Changes
