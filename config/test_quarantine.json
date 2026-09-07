@@ -73,18 +73,6 @@
       "owner": "tests/integration",
       "issue": "#4933",
       "reason": "FlareCalculator/FinancialCalculator calculate API drift on main"
-    },
-    {
-      "path": "tests/test_bootstrap.py",
-      "owner": "tests",
-      "issue": "#4933",
-      "reason": "assert repo_root matches temp mock repo layout on main"
-    },
-    {
-      "path": "tests/test_calculators_expanded.py",
-      "owner": "tests",
-      "issue": "#4933",
-      "reason": "PressureDropCalculator calculate_pressure_drop signature drift on main"
     }
   ]
 }
