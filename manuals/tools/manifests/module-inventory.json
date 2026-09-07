@@ -579,7 +579,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "3e8dc03b586b753ae4ba9c9875b7a80154ddb6e8a0ff705e6a236e717085ed6c",
+      "content_sha256_lf": "60438f200f35fc9fd046871c5d1061986d5c2deaadb3e4cd091e302201688de0",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
@@ -615,7 +615,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-codemap.json"
     },
     {
-      "content_sha256_lf": "e81092eb935bf0478771c4d215eb8f380634df529891b80d0b3f75e866b1d2e5",
+      "content_sha256_lf": "ff9a3bb0e68078bb1c0c322df0d1e73fca90329e63cbe301c2993a14156710b0",
       "entry_count": 2,
       "package": "src/shared/python/config",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-config.json"
