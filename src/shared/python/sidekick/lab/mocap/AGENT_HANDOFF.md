@@ -1,6 +1,6 @@
 # Markerless Mocap Handoff
 
-Last updated: 2026-08-25
+Last updated: 2026-09-07
 
 ## Authority
 
@@ -9,24 +9,26 @@ Tools owns the MIT vendor-neutral markerless-mocap contracts and reference algor
 ## Active issues
 
 - Epic #4706: vendor-neutral acquisition, calibration, reconstruction, and C3D exchange.
-- #4708 / TOOLS-M0: authority ADR and acceptance program.
-- #4710 / TOOLS-M1: canonical mocap schemas. M0/M1 are under protected review in PR #4734.
-- #4713, #4714, #4715, #4716, #4718, and #4721 have locally verified dependency-stacked slices; none is merged or release authority.
+- #4708 / TOOLS-M0: authority ADR and acceptance program (merged in #4734).
+- #4710 / TOOLS-M1: canonical mocap schemas (merged in #4734).
+- #4713 / TOOLS-M2: camera acquisition protocol (current branch).
+- #4714, #4715, #4716, #4718, and #4721 have dependency-stacked slices; none is merged or release authority.
 
 ## Current branch
 
-- Branch: `feat/4708-mocap-authority-schemas`
-- Original base: `origin/main` at `e76a7a214`
-- Latest merged base: `origin/main` at `31d28b0a0a0435cd47d05bedc61a1357d670a8d8`
-- Worktree: `C:\Users\diete\Repositories\Tools-worktrees\4708-mocap-authority-schemas`
-- Pull request: #4734
+- Branch: `feat/4713-camera-acquisition-protocol`
+- Base: `origin/main` at `c9fccd4ac`
+- Worktree: `C:\Users\diete\Repositories\Tools`
+- Pull request: Pending creation
 
 ## Delivered in this slice
 
-- ADR-008 (formerly numbered ADR-007; renumbered 2026-09-03 to clear the duplicate) records cross-repository, coordinate/time, evidence, C3D, privacy, and licensing authority.
-- The acceptance program defines unit through physical/release gates.
-- `sidekick.lab.mocap` establishes frozen, DbC-validated identity, capability, clock, frame, coordinate, transform, skeleton, 2-D/3-D observation, provenance, policy, and session records.
-- Strict `mocap-session/1.0.0` JSON Schema, golden fixture, canonical serializer, and fail-closed loader are under test.
+- Subepic #4713 (TOOLS-M2): Camera Acquisition Protocol.
+- `sidekick.lab.mocap.acquisition` defines:
+  - `SourceState`, `DropPolicy`, `FramePacket`, `FrameSource`, `CaptureGroup`.
+  - Synthetic and prerecorded reference drivers (`SyntheticFrameSource`, `PrerecordedFrameSource`).
+  - Strict bounded queue backpressure, fail-closed handling, and frame drop policies.
+- Unit and property contract tests in `tests/shared/python/sidekick/lab/mocap/test_acquisition_contracts.py`.
 
 ## Required gates
 
@@ -38,15 +40,7 @@ python -m ruff check <changed-python-files>
 python -m mypy <changed-python-files>
 ```
 
-Observed before merging current `origin/main`: 26 focused tests passed; the nine mocap API modules
-exactly match their hand-edited baseline entries; Ruff format/check and mypy
-passed. After merging `31d28b0a0a0435cd47d05bedc61a1357d670a8d8`,
-78 of 79 focused mocap plus incoming-main tests passed; the single failure is the
-repository-wide API baseline's known non-mocap drift across existing API,
-calculator, units, and shell surfaces. Do not regenerate the full baseline.
-Full exact-HEAD export and protected CI remain mandatory before merge claims.
-
-Consumer coordination: UpstreamDrift #9069 owns schema adoption;
+Consumer coordination: UpstreamDrift #9069 owns schema and acquisition adoption;
 Gasification_Model #4751 owns exact-Tools-SHA impact qualification.
 
 ## Do not
