@@ -254,22 +254,7 @@ class SimulationPanel(_SimulationLifecycleMixin, _SimulationExportMixin, QWidget
             _obj_builder = self.objective_builder  # capture for closure
             assert callable(_obj_builder), "objective_builder must be callable"
 
-            # Before each optimizer run, rebuild the objective with current params
-            orig_on_run = opt._on_run
-
-            def _patched_on_run() -> None:
-                """Build objective from current UI params, then run optimizer."""
-                try:
-                    p = self.controls.get_params()
-                    obj_fn = _obj_builder(p)
-                    opt.set_objective_function(obj_fn)
-                except (ValueError, AssertionError) as e:
-                    opt._log.append(f"⚠ Cannot build objective: {e}")
-                    return
-                orig_on_run()
-
-            opt._btn_run.clicked.disconnect()
-            opt._btn_run.clicked.connect(_patched_on_run)
+            opt.bind_objective_builder(self.controls.get_params, _obj_builder)
 
             # Wire apply back to controls (set torque coefficients)
             opt.optimized_coefficients.connect(self._apply_optimized_coefficients)

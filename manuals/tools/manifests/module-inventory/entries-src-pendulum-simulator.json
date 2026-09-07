@@ -7251,10 +7251,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 22100,
+      "bytes_lf": 22041,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "2aad22ac2ebbc91a4b26b7a35d6940c33f10334ffbfcc9c2fdcf3205bf8c8601",
+      "content_sha256_lf": "86d58b23238bfa49880276306a5bf27c2f97d3b0eb3d3fb0e75764a7fed3a18f",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-GUI-CONTROLS-WIDGET-BASE-PY-9A84F91F6B1B",
       "language": "python",
@@ -8849,10 +8849,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 698,
+      "bytes_lf": 841,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "cfa6b85bbec1e56139737d33f846b2963c567947e41bd31d0821c0410ef75d4a",
+      "content_sha256_lf": "d2b577d10b2ab0373856accb38b3f8901e28e6bd9b6967838441d53e67842c26",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-GUI-SIMULATION-PANEL-INIT-PY-C9B69689B411",
       "language": "python",
@@ -8893,7 +8893,22 @@
         "public_surfaces": [
           {
             "kind": "re-export",
+            "name": "QFileDialog",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "QMessageBox",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "SimulationPanel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "subprocess",
             "signature": null
           }
         ],
@@ -8953,10 +8968,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 12486,
+      "bytes_lf": 12449,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "99a12a44de1210fc5c02948dc851c198be3b0808007b13813cf94ba699c13392",
+      "content_sha256_lf": "f8eec2942fa8a37ef3c153af3772a23539977d162ed91eb493cf32856c4b30a9",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-GUI-SIMULATION-PANEL-LIFECYCLE-MIXIN-PY-1D60F66D8078",
       "language": "python",
@@ -9003,10 +9018,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 16655,
+      "bytes_lf": 16023,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "163a9bbca607d7ad8edad94d35fecb248dcd0fc093697b3b5bcb7b882699f7b2",
+      "content_sha256_lf": "3119588a42a14058245035eae97a565170f40fa7479676a263d685d26c764180",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-GUI-SIMULATION-PANEL-SIMULATION-PANEL-PY-B1C17F9B4753",
       "language": "python",
