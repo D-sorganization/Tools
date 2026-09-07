@@ -5703,6 +5703,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
 | 2026-09-06 | #5035 | fix(tests, #4933): unquarantine 10 pendulum simulator test modules; align UnitAwareInput string coercion, ControlsWidgetBase duck typing, SimulationPanel optimizer signal wiring, lifecycle mixin width delegation, and AnalysisTab matplotlib availability guards. |
+| 2026-09-06 | #5027 | fix(tests, #4933): unquarantine bootstrap and calculators_expanded tests (#4933); align sys.path assertions and pressure drop API calls. |
 | 2026-09-06 | #5029 | fix(tests, #4933): unquarantine shared package api stability and logging consistency tests (#4933); regenerate swing_sim API baseline for impact interval additions, and replace unguarded print calls with sys.stdout/sys.stderr writes and CLI echo helper. |
 | 2026-09-06 | #5032 | fix(tests, #4933): unquarantine wave solver and math primitives bindings tests (#4933); align wave solver test suite with argv list and allow_mutations contracts, and use exact unit quaternion components in math primitives slerp and multiply tests. |
 | 2026-09-06 | #5031 | fix(tests, #4933): unquarantine dry compliance tests (#4933); handle boolean web configuration in gui_info and register movement_optimizer, optimizer_gui, and rate_of_closure custom launchers. |
