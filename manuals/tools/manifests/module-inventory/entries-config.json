@@ -83,10 +83,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5733,
+      "bytes_lf": 6480,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0cc2b5bedc772bc4dc3faea1260478fd64104d6a37c49dd995dfd1cb251f0782",
+      "content_sha256_lf": "25249dc6eadc8328244227a6fae755fec86dd7bec839ea853bbd178d853054e4",
       "family": "repository-governance-non-calculation",
       "id": "TOOLS-MODULE-CONFIG-DESIGN-MANUAL-GOVERNANCE-JSON-36B84BAED1E6",
       "language": "json",

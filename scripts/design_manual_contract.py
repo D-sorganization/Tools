@@ -71,6 +71,12 @@ REQUIRED_UPDATE_FILES = [
     "scripts/tools_formula_traceability_resolvers.py",
     "manuals/tools/exemplar-coverage.json",
     "manuals/tools/schemas/exemplar-coverage.schema.json",
+    "manuals/tools/calculation-freshness.json",
+    "manuals/tools/schemas/calculation-freshness.schema.json",
+    "manuals/tools/fixtures/dplane-calculation-fixtures.json",
+    "scripts/tools_calculation_freshness_contract.py",
+    "scripts/generate_tools_calculations.py",
+    "scripts/check_tools_calculation_freshness.py",
     "SPEC.md",
     "AGENT_HANDOFF.md",
 ]
