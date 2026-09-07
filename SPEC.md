@@ -5700,6 +5700,8 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 <!-- prettier-ignore-start -->
 
+| Date       | PR         | Changes    |
+| ---------- | ---------- | ---------- |
 | 2026-09-06 | #5027 | fix(tests, #4933): unquarantine bootstrap and calculators_expanded tests (#4933); align sys.path assertions and pressure drop API calls. |
 | 2026-09-06 | #5029 | fix(tests, #4933): unquarantine shared package api stability and logging consistency tests (#4933); regenerate swing_sim API baseline for impact interval additions, and replace unguarded print calls with sys.stdout/sys.stderr writes and CLI echo helper. |
 | 2026-09-06 | #5032 | fix(tests, #4933): unquarantine wave solver and math primitives bindings tests (#4933); align wave solver test suite with argv list and allow_mutations contracts, and use exact unit quaternion components in math primitives slerp and multiply tests. |
