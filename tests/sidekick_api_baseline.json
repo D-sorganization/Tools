@@ -8268,9 +8268,11 @@
       "CaptureGroup",
       "ClockDomain",
       "ClockKind",
+      "ClockSkewEstimate",
       "CoordinateFrame",
       "DropPolicy",
       "FeatureSupport",
+      "FrameIndexEntry",
       "FramePacket",
       "FrameSource",
       "FrameStamp",
@@ -8281,13 +8283,20 @@
       "PixelObservation",
       "PrerecordedFrameSource",
       "QueueFullError",
+      "RecordingIntegrityReport",
       "RecordingPolicy",
+      "RecordingReader",
+      "RecordingWriter",
       "RigidTransform",
       "SessionState",
       "ShutterKind",
       "SkeletonDefinition",
       "SourceState",
       "SupportLevel",
+      "SyncAnomaly",
+      "SyncAnomalyType",
+      "SyncMonitor",
+      "SyncQuality",
       "SyntheticFrameSource",
       "dumps_canonical",
       "load_session_manifest"
@@ -8512,6 +8521,13 @@
           "methods": {}
         }
       },
+      "ClockSkewEstimate": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
       "CoordinateFrame": {
         "type": "class",
         "info": {
@@ -8543,6 +8559,42 @@
         "info": {
           "bases": [],
           "methods": {}
+        }
+      },
+      "FrameIndexEntry": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "to_json": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "from_dict": {
+              "args": [
+                {
+                  "name": "cls",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "data",
+                  "annotation": "dict[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "FrameIndexEntry"
+            }
+          }
         }
       },
       "FramePacket": {
@@ -8922,11 +8974,180 @@
           "methods": {}
         }
       },
+      "RecordingIntegrityReport": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "is_valid": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "bool"
+            }
+          }
+        }
+      },
       "RecordingPolicy": {
         "type": "class",
         "info": {
           "bases": [],
           "methods": {}
+        }
+      },
+      "RecordingReader": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "session_dir",
+                  "annotation": "Path | str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "read_manifest": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "MocapSessionManifest"
+            },
+            "read_index": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "list[FrameIndexEntry]"
+            },
+            "read_frames": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "Iterator[FramePacket]"
+            },
+            "verify_integrity": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "RecordingIntegrityReport"
+            }
+          }
+        }
+      },
+      "RecordingWriter": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "session_dir",
+                  "annotation": "Path | str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "manifest",
+                  "annotation": "MocapSessionManifest",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "initialize": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "write_frame": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "packet",
+                  "annotation": "FramePacket",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "FrameIndexEntry"
+            },
+            "finalize": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "close": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
         }
       },
       "RigidTransform": {
@@ -8977,6 +9198,115 @@
         }
       },
       "SupportLevel": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
+      "SyncAnomaly": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "SyncAnomalyType": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
+      "SyncMonitor": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "max_allowable_skew_ns",
+                  "annotation": "int",
+                  "default": "5000000",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "record_frame": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "packet",
+                  "annotation": "FramePacket",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "list[SyncAnomaly]"
+            },
+            "estimate_skew": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "source_a",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "source_b",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ClockSkewEstimate | None"
+            },
+            "evaluate_quality": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "source_a",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "source_b",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "SyncQuality"
+            }
+          }
+        }
+      },
+      "SyncQuality": {
         "type": "class",
         "info": {
           "bases": ["StrEnum"],
@@ -37021,6 +37351,348 @@
               "returns": "None"
             }
           }
+        }
+      }
+    }
+  },
+  "lab/mocap/recording.py": {
+    "__all__": [
+      "FrameIndexEntry",
+      "RecordingIntegrityReport",
+      "RecordingReader",
+      "RecordingWriter"
+    ],
+    "symbols": {
+      "FrameIndexEntry": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "to_json": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "from_dict": {
+              "args": [
+                {
+                  "name": "cls",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "data",
+                  "annotation": "dict[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "FrameIndexEntry"
+            }
+          }
+        }
+      },
+      "RecordingIntegrityReport": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "is_valid": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "bool"
+            }
+          }
+        }
+      },
+      "RecordingReader": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "session_dir",
+                  "annotation": "Path | str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "read_manifest": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "MocapSessionManifest"
+            },
+            "read_index": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "list[FrameIndexEntry]"
+            },
+            "read_frames": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "Iterator[FramePacket]"
+            },
+            "verify_integrity": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "RecordingIntegrityReport"
+            }
+          }
+        }
+      },
+      "RecordingWriter": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "session_dir",
+                  "annotation": "Path | str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "manifest",
+                  "annotation": "MocapSessionManifest",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "initialize": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "write_frame": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "packet",
+                  "annotation": "FramePacket",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "FrameIndexEntry"
+            },
+            "finalize": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "close": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        }
+      }
+    }
+  },
+  "lab/mocap/sync.py": {
+    "__all__": [
+      "ClockSkewEstimate",
+      "SyncAnomaly",
+      "SyncAnomalyType",
+      "SyncMonitor",
+      "SyncQuality"
+    ],
+    "symbols": {
+      "ClockSkewEstimate": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "SyncAnomaly": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "SyncAnomalyType": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
+      "SyncMonitor": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "max_allowable_skew_ns",
+                  "annotation": "int",
+                  "default": "5000000",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "record_frame": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "packet",
+                  "annotation": "FramePacket",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "list[SyncAnomaly]"
+            },
+            "estimate_skew": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "source_a",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "source_b",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ClockSkewEstimate | None"
+            },
+            "evaluate_quality": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "source_a",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "source_b",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "SyncQuality"
+            }
+          }
+        }
+      },
+      "SyncQuality": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
         }
       }
     }

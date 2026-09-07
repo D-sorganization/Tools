@@ -4142,10 +4142,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1543,
+      "bytes_lf": 1986,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "787bb78d7e061f2ae922b7b7ff80d593f6e9ded00253afd4580ee9ac8ab1dd87",
+      "content_sha256_lf": "7b00ad562d5bda1abf4c68eecab10e4c7692036409d096ab78e0e0adab1960e3",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-INIT-PY-BD60513A12BD",
       "language": "python",
@@ -4218,6 +4218,11 @@
           },
           {
             "kind": "re-export",
+            "name": "ClockSkewEstimate",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "CoordinateFrame",
             "signature": null
           },
@@ -4229,6 +4234,11 @@
           {
             "kind": "re-export",
             "name": "FeatureSupport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FrameIndexEntry",
             "signature": null
           },
           {
@@ -4288,7 +4298,22 @@
           },
           {
             "kind": "re-export",
+            "name": "RecordingIntegrityReport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "RecordingPolicy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RecordingReader",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RecordingWriter",
             "signature": null
           },
           {
@@ -4319,6 +4344,26 @@
           {
             "kind": "re-export",
             "name": "SupportLevel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SyncAnomaly",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SyncAnomalyType",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SyncMonitor",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SyncQuality",
             "signature": null
           },
           {
@@ -4474,14 +4519,18 @@
           }
         ],
         "test_paths": [
-          "tests/shared/python/sidekick/lab/mocap/test_acquisition_contracts.py"
+          "tests/shared/python/sidekick/lab/mocap/test_acquisition_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_sync_contracts.py"
         ],
         "unit_mentions": [
           "Hz",
           "s"
         ],
         "validation_paths": [
-          "tests/shared/python/sidekick/lab/mocap/test_acquisition_contracts.py"
+          "tests/shared/python/sidekick/lab/mocap/test_acquisition_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_sync_contracts.py"
         ]
       }
     },
@@ -4510,9 +4559,9 @@
         "public_surfaces": "unavailable",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "not-applicable",
-        "validation": "not-applicable"
+        "validation": "mapped"
       },
       "traceability": {
         "adr_paths": [
@@ -4524,9 +4573,13 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [],
-        "test_paths": [],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
+        ],
         "unit_mentions": [],
-        "validation_paths": []
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
+        ]
       }
     },
     {
@@ -4554,9 +4607,9 @@
         "public_surfaces": "unavailable",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "not-applicable",
-        "validation": "not-applicable"
+        "validation": "mapped"
       },
       "traceability": {
         "adr_paths": [
@@ -4568,9 +4621,13 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [],
-        "test_paths": [],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
+        ],
         "unit_mentions": [],
-        "validation_paths": []
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
+        ]
       }
     },
     {
@@ -4603,7 +4660,7 @@
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "unavailable",
-        "validation": "unavailable"
+        "validation": "mapped"
       },
       "traceability": {
         "adr_paths": [
@@ -4617,10 +4674,13 @@
         "public_surfaces": [],
         "test_paths": [
           "src/shared/python/programmatic_pid/tests/test_geometry.py",
-          "tests/programmatic_pid/test_geometry.py"
+          "tests/programmatic_pid/test_geometry.py",
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
         ],
         "unit_mentions": [],
-        "validation_paths": []
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
+        ]
       }
     },
     {
@@ -4665,6 +4725,77 @@
         "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11523,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "fe9f083a4d620ca11948d74dad7a63ab3d4e5e6144e22752962bbec04db94cfd",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-RECORDING-PY-DACA4031F62C",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/recording.py",
+      "purpose": "Crash-safe recording writer and reader for multi-camera session streams.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FrameIndexEntry",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RecordingIntegrityReport",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RecordingReader",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RecordingWriter",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
+        ]
       }
     },
     {
@@ -4738,9 +4869,9 @@
         "public_surfaces": "unavailable",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "not-applicable",
-        "validation": "not-applicable"
+        "validation": "mapped"
       },
       "traceability": {
         "adr_paths": [
@@ -4752,9 +4883,89 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [],
-        "test_paths": [],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
+        ],
         "unit_mentions": [],
-        "validation_paths": []
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8259,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f68eef72c39e85645e7da37eef3df315ceae16a90a5012592650e9c4cb5d6628",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-SYNC-PY-6C5062F6154F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/sync.py",
+      "purpose": "Synchronization analysis and sequence tracking for multi-camera streams.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ClockSkewEstimate",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SyncAnomaly",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SyncAnomalyType",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SyncMonitor",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SyncQuality",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_sync_contracts.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_sync_contracts.py"
+        ]
       }
     },
     {
@@ -4782,9 +4993,9 @@
         "public_surfaces": "unavailable",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "not-applicable",
-        "validation": "not-applicable"
+        "validation": "mapped"
       },
       "traceability": {
         "adr_paths": [
@@ -4796,9 +5007,13 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [],
-        "test_paths": [],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
+        ],
         "unit_mentions": [],
-        "validation_paths": []
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
+        ]
       }
     },
     {
