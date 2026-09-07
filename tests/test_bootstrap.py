@@ -1,3 +1,4 @@
+from pathlib import Path
 import sys
 
 import pytest
@@ -5,14 +6,15 @@ import pytest
 from _bootstrap import bootstrap
 
 
-def test_bootstrap_invalid_args():
+def test_bootstrap_invalid_args() -> None:
+    bad_arg: object = 123
     with pytest.raises(TypeError):
-        bootstrap(123)  # type: ignore
+        bootstrap(bad_arg)
     with pytest.raises(ValueError):
         bootstrap("")
 
 
-def test_bootstrap_resolves_paths(tmp_path):
+def test_bootstrap_resolves_paths(tmp_path: Path) -> None:
     # Setup dummy directory structure to mock a repo
     repo_dir = tmp_path / "dummy_repo"
     repo_dir.mkdir()
@@ -36,10 +38,11 @@ def test_bootstrap_resolves_paths(tmp_path):
         resolved_root = bootstrap(str(caller_file))
         assert resolved_root.resolve() == repo_dir.resolve()
 
-        # Verify sys.path updates
-        assert str(shared_dir.resolve()) in sys.path
-        assert str(repo_dir.resolve()) in sys.path
+        # Verify sys.path updates (src and src/python/src roots)
         assert str((repo_dir / "src").resolve()) in sys.path
+        assert str((repo_dir / "src" / "python" / "src").resolve()) in sys.path
+        # shared/python is no longer directly added to sys.path since #3316
+        assert str(shared_dir.resolve()) not in sys.path
     finally:
         # Restore sys.path
         sys.path = original_path

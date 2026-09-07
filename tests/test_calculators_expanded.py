@@ -77,7 +77,7 @@ except ImportError:
 # Import pressure drop calculator
 try:
     from upstream_drift_tools.process_calculators.pressure_drop_calculator import (
-        PressureDropCalculator,
+        calculate_pressure_drop,
     )
 
     HAS_PRESSURE_DROP = True
@@ -344,8 +344,7 @@ class TestPressureDropBasics:
     )
     def test_pressure_drop_basic_air(self) -> None:
         """Basic pressure drop calculation with air."""
-        calc = PressureDropCalculator()
-        result = calc.calculate_pressure_drop(
+        result = calculate_pressure_drop(
             pipe_size="2",
             pipe_schedule="40",
             pipe_length=100.0,
@@ -359,16 +358,14 @@ class TestPressureDropBasics:
         # Result should contain pressure drop
         assert result is not None
         # Pressure drop should be positive
-        if hasattr(result, "pressure_drop"):
-            assert result.pressure_drop >= 0.0
+        assert result.get("pressure_drop_pa", 0.0) >= 0.0
 
     @pytest.mark.skipif(
         not HAS_PRESSURE_DROP, reason="PressureDropCalculator not available"
     )
     def test_pressure_drop_increases_with_flow(self) -> None:
         """Pressure drop should increase with flow rate."""
-        calc = PressureDropCalculator()
-        result_low = calc.calculate_pressure_drop(
+        result_low = calculate_pressure_drop(
             pipe_size="2",
             pipe_schedule="40",
             pipe_length=100.0,
@@ -379,7 +376,7 @@ class TestPressureDropBasics:
             temperature=300.0,
             temperature_unit="K",
         )
-        result_high = calc.calculate_pressure_drop(
+        result_high = calculate_pressure_drop(
             pipe_size="2",
             pipe_schedule="40",
             pipe_length=100.0,
@@ -391,18 +388,14 @@ class TestPressureDropBasics:
             temperature_unit="K",
         )
         # Both should have pressure drops
-        if hasattr(result_low, "pressure_drop") and hasattr(
-            result_high, "pressure_drop"
-        ):
-            assert result_high.pressure_drop > result_low.pressure_drop
+        assert result_high["pressure_drop_pa"] > result_low["pressure_drop_pa"]
 
     @pytest.mark.skipif(
         not HAS_PRESSURE_DROP, reason="PressureDropCalculator not available"
     )
     def test_pressure_drop_increases_with_length(self) -> None:
         """Pressure drop should increase with pipe length."""
-        calc = PressureDropCalculator()
-        result_short = calc.calculate_pressure_drop(
+        result_short = calculate_pressure_drop(
             pipe_size="2",
             pipe_schedule="40",
             pipe_length=50.0,
@@ -413,7 +406,7 @@ class TestPressureDropBasics:
             temperature=300.0,
             temperature_unit="K",
         )
-        result_long = calc.calculate_pressure_drop(
+        result_long = calculate_pressure_drop(
             pipe_size="2",
             pipe_schedule="40",
             pipe_length=200.0,
@@ -425,10 +418,7 @@ class TestPressureDropBasics:
             temperature_unit="K",
         )
         # Both should have pressure drops
-        if hasattr(result_short, "pressure_drop") and hasattr(
-            result_long, "pressure_drop"
-        ):
-            assert result_long.pressure_drop > result_short.pressure_drop
+        assert result_long["pressure_drop_pa"] > result_short["pressure_drop_pa"]
 
 
 # =============================================================================
