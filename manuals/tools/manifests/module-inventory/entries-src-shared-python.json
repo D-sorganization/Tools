@@ -343,6 +343,7 @@
           "tests/shared/python/test_compatibility.py",
           "tests/test_compatibility.py",
           "tests/test_cross_repo_import_compatibility.py",
+          "tests/test_dry_compliance.py",
           "tests/test_waves_2_3_imports.py",
           "tests/tools/test_mypy_autofix_agent.py",
           "tests/unit/rust/test_movement_optimizer_maturin_workflow.py",

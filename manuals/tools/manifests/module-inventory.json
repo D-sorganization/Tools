@@ -351,7 +351,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-model-generation.json"
     },
     {
-      "content_sha256_lf": "5fa362740ee292d9cdf90b475e8b5ea7412a0989f35c9343dffd893fb7d525f1",
+      "content_sha256_lf": "70f49bfb62e65bd3293d251b03894665ec8c4437d0d1bbc64ab5401e829530f0",
       "entry_count": 93,
       "package": "src/movement_optimizer",
       "path": "manuals/tools/manifests/module-inventory/entries-src-movement-optimizer.json"
@@ -579,7 +579,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "ae540991d1c512e783eea207d0f0c46f4c316274d79763382bbdaa5d7da9c6a2",
+      "content_sha256_lf": "3e8dc03b586b753ae4ba9c9875b7a80154ddb6e8a0ff705e6a236e717085ed6c",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
