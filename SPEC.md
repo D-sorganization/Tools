@@ -2,7 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
-  LAST_UPDATED: 2026-09-07
+  LAST_UPDATED: 2026-09-03
 
   This is the canonical specification template for all repositories in the
   D-sorganization fleet. Every repo MUST have a SPEC.md at its root.
@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.129                                   |
-| **Last Spec Update**    | 2026-09-06                                 |
+| **Spec Version**        | 1.18.130                                   |
+| **Last Spec Update**    | 2026-09-07                                 |
 
 ## 2. Purpose & Mission
 
@@ -5695,6 +5695,7 @@ Active development with stable core, continuous tool expansion, and web API in p
   web apps' APIs may still lack auth.
 
 ## 12. Change Log
+| 2026-09-07 | [PR] | Replace Math.max spread in PuttingVisuals (spec 1.18.130) |
 
 Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<pr> | summary |`. Add exactly one row for your own pull request and do not renumber anybody else's; the `Spec Version` field in section 1 is bumped at release time by `scripts/bump_spec_version.py`, never by an individual pull request. See [Repository_Management#1520](https://github.com/D-sorganization/Repository_Management/issues/1520).
 
@@ -5702,7 +5703,6 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
-| 2026-09-07 | #5044 | perf(putting-visuals, #5044): replace Math.max spread with single-pass loop in SpeedPlot to avoid call stack limits. |
 | 2026-09-06 | #5036 | fix(tests, #4933): unquarantine folder tool UI and legacy test suites (#4933); align DbC contracts for root window and file path parameters, and ensure headless-safe Tkinter test teardown. |
 | 2026-09-06 | #5035 | fix(tests, #4933): unquarantine 10 pendulum simulator test modules; align UnitAwareInput string coercion, ControlsWidgetBase duck typing, SimulationPanel optimizer signal wiring, lifecycle mixin width delegation, and AnalysisTab matplotlib availability guards. |
 | 2026-09-06 | #5033 | fix(tests, #4933): unquarantine god class guard and cross repo contracts tests (#4933); decompose CalculatorStateMixin into CalculatorStateCoreMixin and CalculatorStateExtendedMixin, and align FlareCalculator/FinancialCalculator calculate API signatures. |
