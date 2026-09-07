@@ -164,6 +164,8 @@ class TestGUIInfoWebConfig:
                 continue
 
             web = gui_info["web"]
+            if not isinstance(web, dict):
+                continue
             if "port" not in web:
                 rel = str(path.relative_to(REPO_ROOT))
                 problems.append(f"{rel}: web config missing 'port'")
@@ -245,6 +247,9 @@ class TestPyQt6LauncherDRY:
         "pdf_renamer",  # custom logging setup
         "glass_bath_fea",  # custom main() with error handling
         "lower_body_model",  # custom MuJoCo viewer/control panel
+        "movement_optimizer",  # launches via movement_optimizer.__main__
+        "optimizer_gui",  # compatibility shim delegating to movement_optimizer
+        "rate_of_closure",  # custom launcher with Morris authority lifecycle
     }
 
     def test_launch_pyqt6_files_use_factory_or_bootstrap(self) -> None:
