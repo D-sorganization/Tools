@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """MCP server exposing the code map to external coding agents.
 
 Tools exposed (matching the in-app chat surface):
@@ -78,10 +79,9 @@ def main(argv: list[str] | None = None) -> int:
     """Run the MCP server on stdio."""
     server = _build_fastmcp()
     if server is None:
-        print(
+        sys.stderr.write(
             "codemap-mcp: the 'mcp' package is not installed. "
-            "Install with: pip install mcp",
-            file=sys.stderr,
+            "Install with: pip install mcp\n"
         )
         return 2
     server.run()

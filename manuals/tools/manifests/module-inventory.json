@@ -435,7 +435,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure.json"
     },
     {
-      "content_sha256_lf": "78ca486e4d9d4286cb5853c275a64fe0c9ee37107a24e9a0b83c72327d260c4b",
+      "content_sha256_lf": "336791dbbada80ac71af86ecffe9e4dce4706c73a46c068824f0d96a054cb383",
       "entry_count": 66,
       "package": "src/rate_of_closure/application",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-application.json"
@@ -609,7 +609,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-chat-contracts.json"
     },
     {
-      "content_sha256_lf": "fd53abfc8290f523ba0ea0424ffea943753f0db0c64fbc88c60db2aca32f39a9",
+      "content_sha256_lf": "0212b357369038b8fe7d224d2701c49aa7739a76ccbe352b58477f7c4bea34ff",
       "entry_count": 14,
       "package": "src/shared/python/codemap",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-codemap.json"
