@@ -11,6 +11,7 @@ Verifies:
 from __future__ import annotations
 
 import importlib.util
+import types
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -26,7 +27,7 @@ _NON_REACT_WEB_LAUNCHERS = {"psa_package"}
 # ── Helper ────────────────────────────────────────────────────────────────
 
 
-def _load_module_from_path(name: str, path: Path):  # noqa: ANN201
+def _load_module_from_path(name: str, path: Path) -> types.ModuleType | None:
     """Dynamically load a Python module from a file path."""
     spec = importlib.util.spec_from_file_location(name, path)
     if spec and spec.loader:
@@ -164,6 +165,8 @@ class TestGUIInfoWebConfig:
                 continue
 
             web = gui_info["web"]
+            if not isinstance(web, dict):
+                continue
             if "port" not in web:
                 rel = str(path.relative_to(REPO_ROOT))
                 problems.append(f"{rel}: web config missing 'port'")
@@ -245,6 +248,9 @@ class TestPyQt6LauncherDRY:
         "pdf_renamer",  # custom logging setup
         "glass_bath_fea",  # custom main() with error handling
         "lower_body_model",  # custom MuJoCo viewer/control panel
+        "movement_optimizer",  # launches via movement_optimizer.__main__
+        "optimizer_gui",  # compatibility shim delegating to movement_optimizer
+        "rate_of_closure",  # custom launcher with Morris authority lifecycle
     }
 
     def test_launch_pyqt6_files_use_factory_or_bootstrap(self) -> None:
