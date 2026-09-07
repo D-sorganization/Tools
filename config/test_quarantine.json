@@ -98,18 +98,6 @@
       "reason": "PressureDropCalculator calculate_pressure_drop signature drift on main"
     },
     {
-      "path": "tests/test_dry_compliance.py",
-      "owner": "tests",
-      "issue": "#4933",
-      "reason": "launch_pyqt6 DRY pattern expectation drift on main"
-    },
-    {
-      "path": "tests/test_model_generation_api_adapters.py",
-      "owner": "tests",
-      "issue": "#4933",
-      "reason": "Flask endpoint and adapter shim size drift on main"
-    },
-    {
       "path": "tests/test_wave_solver.py",
       "owner": "tests",
       "issue": "#4933",

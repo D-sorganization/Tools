@@ -1,19 +1,7 @@
 # ARCHITECTURE_DEBT resolved — tracked as GitHub issue #1953
-# Split into focused submodules (issue #1953):
-#   rest_api_types.py   — HTTPMethod, APIRequest, APIResponse, Route
-#   rest_api_routes.py  — ModelGenerationAPI with all handler methods
-#   rest_api_flask.py   — FlaskAdapter
-#   rest_api_fastapi.py — FastAPIAdapter
-# This file is now a backward-compatibility shim only.
-
-"""
-REST API for model_generation package.
-
-Provides HTTP endpoints for URDF generation, conversion, editing, and library access.
-Can be used with Flask, FastAPI, or other frameworks via adapters.
-
-All symbols are re-exported from the focused submodules for backward compatibility.
-"""
+# Split into focused submodules: rest_api_types, rest_api_routes,
+# rest_api_flask, rest_api_fastapi. Backward-compatibility shim only.
+"""REST API for model_generation package (backward-compatibility shim)."""
 
 from __future__ import annotations
 

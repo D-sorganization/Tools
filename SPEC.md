@@ -5702,6 +5702,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-06 | #5030 | fix(tests, #4933): unquarantine dry compliance and model generation api adapter tests (#4933); handle boolean web configuration in gui_info, register movement_optimizer/optimizer_gui/rate_of_closure custom launchers, condense rest_api shim docstring to meet line budget, and prefix Flask endpoint names with HTTP method to avoid registration collisions. |
 | 2026-09-06 | #5025 | fix(tests, #4933): unquarantine project packer, backup copy, and phase 1 quick wins tests (#4933); handle OSError gracefully during copy verification and dest cleanup. |
 | 2026-09-06 | #5023 | fix(tests, #4933): unquarantine vessel drafter contracts fallback and python version contract tests (#4933). |
 | 2026-09-06 | #5021 | test(rate-of-closure, #5021): re-approve pyqt visual baselines from trusted push run 34045862045 (commit be71b03676eda7bbfa40c880ded3a3bb7112b868). Synchronize all 10 PyQt baseline PNGs and their sha256 checksums with the runner-captured candidates and rebind source_artifact_commit in visual_baselines.v1.json and test_visual_baseline_compare.py. |
@@ -7265,3 +7266,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-06: Shared Package API Stability and Logging Consistency Unquarantine (#4933)
 
 - **2026-09-06**: fix(tests, #4933) — Unquarantine `tests/test_shared_package_api_stability.py` and `tests/test_gh1732_logging_consistency.py`. Regenerated `swing_sim` API baseline to account for impact interval modules, replaced unguarded prints with sys.stdout/sys.stderr writes and CLI echo helper in `codemap/cli.py`, `codemap/mcp_server.py`, and `morris/child.py`.
+
+## 2026-09-06: DRY Compliance and Model Generation API Adapters Unquarantine (#4933)
+
+- **2026-09-06**: fix(tests, #4933) — Unquarantine `tests/test_dry_compliance.py` and `tests/test_model_generation_api_adapters.py`. Handle boolean web config in `gui_info`, register `movement_optimizer`/`optimizer_gui`/`rate_of_closure` custom launchers, condense `rest_api.py` docstring to meet line budget, and prefix Flask endpoint names with HTTP method to avoid registration collisions.
