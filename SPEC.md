@@ -32,6 +32,17 @@
 
 ## 2. Purpose & Mission
 
+### 2026-09-07 Governed Calculation Exemplar Manuals (#4707 / TOOLS-D4 (#4720))
+
+Subepic #4720 formally verifies the strict
+`tools-exemplar-coverage/1.0.0` contract, registering the model-conditioned
+`TOOLS-DPLANE-GEOMETRY` calculation pathway with source, symbol, equation,
+frame, unit, test, fixture, consumer, and chapter traceability projected onto the
+deterministic governed module inventory. Retains markerless mocap interchange
+as explicitly blocked pending protected M0 authority and downstream modules,
+and preserves all generated artifacts as unapproved pending D7/D8 page-review,
+accessibility, publication, and human-approval gates.
+
 ### 2026-09-07 Force Source Optimization Mutation Refactor (#5045)
 
 Optimizes `forceSourceOptimization.ts` in `pendulum-web` by replacing immutable array spread operations with mutable `.push()` in candidate selection and neighborhood refinement loops to eliminate O(N^2) allocations.
@@ -5721,6 +5732,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-07 | #4720 | docs(manual, #4707/#4720 TOOLS-D4): publish swing_sim/Rate of Closure and markerless mocap exemplars with exact calculation and test traceability; enforce strict exemplar coverage schema, register verified-unapproved D-plane geometry and fail-closed markerless mocap interchange. |
 | 2026-09-07 | #4717 | fix(manual, #4707/#4717 TOOLS-D3): require full derivation-family assumptions, dimensions, domains, numerical method, uncertainty/limitations, and stable formula IDs that resolve bidirectionally to manual anchors, public symbols/source paths, exact tests, citations, executable examples, bounded claims, and every declared rendered artifact. Reject placeholders plus missing, renamed, orphaned, or asymmetric mappings while retaining generated-unapproved and human-review boundaries. |
 | 2026-09-07 | #5044 | perf(putting-visuals, #5044): replace Math.max spread with single-pass loop in SpeedPlot to avoid call stack limits. |
 | 2026-09-06 | #5036 | fix(tests, #4933): unquarantine folder tool UI and legacy test suites (#4933); align DbC contracts for root window and file path parameters, and ensure headless-safe Tkinter test teardown. |
