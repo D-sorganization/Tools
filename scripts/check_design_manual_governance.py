@@ -33,6 +33,10 @@ from scripts.tools_formula_traceability_contract import (
     FormulaTraceabilityError,
     verify_formula_traceability,
 )
+from scripts.tools_handoff_contract import (
+    HandoffMaintenanceError,
+    verify_handoff_maintenance,
+)
 from scripts.tools_manual_qa_contract import (
     ManualQAError,
     verify_manual_qa,
@@ -405,6 +409,35 @@ def _verify_publication(policy: dict[str, object]) -> bool:
     return False
 
 
+def _verify_handoff(policy: dict[str, object]) -> None:
+    handoff = _object(
+        policy["handoff"],
+        "handoff",
+        {"enforcement", "current_gate", "manifest", "schema", "checker"},
+    )
+    _equal(handoff["enforcement"], "release-blocking", "handoff enforcement")
+    _equal(
+        handoff["current_gate"],
+        "governed-completion-audit-handoff-enforced",
+        "handoff gate",
+    )
+    _equal(
+        _safe_path(handoff["manifest"], "handoff manifest"),
+        PurePosixPath("manuals/tools/handoff-manifest.json"),
+        "handoff manifest",
+    )
+    _equal(
+        _safe_path(handoff["schema"], "handoff schema"),
+        PurePosixPath("manuals/tools/schemas/handoff-maintenance.schema.json"),
+        "handoff schema",
+    )
+    _equal(
+        _safe_path(handoff["checker"], "handoff checker"),
+        PurePosixPath("scripts/check_tools_handoff.py"),
+        "handoff checker",
+    )
+
+
 def _verify_quality_license_git(policy: dict[str, object]) -> None:
     quality = _object(
         policy["quality"],
@@ -438,7 +471,7 @@ def verify_governance_policy(policy: object) -> tuple[str, PurePosixPath, bool]:
     document = _object(policy, "governance policy", EXPECTED_POLICY_FIELDS)
     _equal(
         document["schema_version"],
-        "tools/design-manual-governance/1.8.0",
+        "tools/design-manual-governance/1.9.0",
         "schema version",
     )
     program = _object(
@@ -446,7 +479,7 @@ def verify_governance_policy(policy: object) -> tuple[str, PurePosixPath, bool]:
     )
     _equal(
         program,
-        {"epic": 4707, "current_subepic": 4728, "next_subepic": 4730},
+        {"epic": 4707, "current_subepic": 4730, "next_subepic": None},
         "program",
     )
     manual_id, source_path = _verify_source(document)
@@ -496,6 +529,7 @@ def verify_governance_policy(policy: object) -> tuple[str, PurePosixPath, bool]:
     _verify_freshness(document)
     _verify_qa(document)
     allowed = _verify_publication(document)
+    _verify_handoff(document)
     _verify_quality_license_git(document)
     _object(
         document["agent_context"],
@@ -630,6 +664,7 @@ def _verify_context(root: Path, policy: dict[str, object]) -> None:
             "python -m scripts.check_tools_calculation_freshness --check && "
             "python -m scripts.check_tools_manual_qa --check && "
             "python -m scripts.check_tools_publication_projection --check && "
+            "python -m scripts.check_tools_handoff --check && "
             "python -m scripts.render_tools_design_manual --check"
         ),
         "required gate",
@@ -645,6 +680,7 @@ def _verify_context(root: Path, policy: dict[str, object]) -> None:
             "scripts.check_tools_calculation_freshness",
             "scripts.check_tools_manual_qa",
             "scripts.check_tools_publication_projection",
+            "scripts.check_tools_handoff",
             "scripts.render_tools_design_manual",
         ):
             if phrase not in text:
@@ -687,11 +723,13 @@ def verify_repository(root: Path = REPO_ROOT) -> DesignManualGovernanceSummary:
     verify_calculation_freshness(root)
     verify_manual_qa(root)
     verify_publication_projection(root)
+    verify_handoff_maintenance(root)
     qmd_count = _verify_manual_tree(root, source_path)
     _verify_context(root, policy)
     for schema in (
         root / "schemas" / "calculation-registry.schema.json",
         root / "schemas" / "publication-projection.schema.json",
+        root / "schemas" / "handoff-maintenance.schema.json",
     ):
         if schema.exists():
             raise DesignManualGovernanceError(
@@ -720,6 +758,7 @@ def main() -> int:
         CalculationFreshnessError,
         ManualQAError,
         PublicationProjectionError,
+        HandoffMaintenanceError,
         ToolsModuleInventoryError,
         OSError,
         json.JSONDecodeError,

@@ -1,9 +1,9 @@
 {
-  "schema_version": "tools/design-manual-governance/1.8.0",
+  "schema_version": "tools/design-manual-governance/1.9.0",
   "program": {
     "epic": 4707,
-    "current_subepic": 4728,
-    "next_subepic": 4730
+    "current_subepic": 4730,
+    "next_subepic": null
   },
   "canonical_source": {
     "manual_id": "tools",
@@ -112,6 +112,13 @@
       "human_approval"
     ]
   },
+  "handoff": {
+    "enforcement": "release-blocking",
+    "current_gate": "governed-completion-audit-handoff-enforced",
+    "manifest": "manuals/tools/handoff-manifest.json",
+    "schema": "manuals/tools/schemas/handoff-maintenance.schema.json",
+    "checker": "scripts/check_tools_handoff.py"
+  },
   "quality": {
     "python_version": "3.11",
     "python_formatter": "ruff format",
@@ -161,9 +168,13 @@
       "manuals/tools/schemas/publication-projection.schema.json",
       "scripts/tools_publication_projection_contract.py",
       "scripts/check_tools_publication_projection.py",
+      "manuals/tools/handoff-manifest.json",
+      "manuals/tools/schemas/handoff-maintenance.schema.json",
+      "scripts/tools_handoff_contract.py",
+      "scripts/check_tools_handoff.py",
       "SPEC.md",
       "AGENT_HANDOFF.md"
     ],
-    "required_gate": "python -m scripts.check_design_manual_governance && python -m scripts.build_tools_module_inventory --check && python -m scripts.lint_tools_textbook_chapters && python -m scripts.check_tools_exemplars && python -m scripts.check_tools_calculation_freshness --check && python -m scripts.check_tools_manual_qa --check && python -m scripts.check_tools_publication_projection --check && python -m scripts.render_tools_design_manual --check"
+    "required_gate": "python -m scripts.check_design_manual_governance && python -m scripts.build_tools_module_inventory --check && python -m scripts.lint_tools_textbook_chapters && python -m scripts.check_tools_exemplars && python -m scripts.check_tools_calculation_freshness --check && python -m scripts.check_tools_manual_qa --check && python -m scripts.check_tools_publication_projection --check && python -m scripts.check_tools_handoff --check && python -m scripts.render_tools_design_manual --check"
   }
 }

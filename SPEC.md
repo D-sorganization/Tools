@@ -32,6 +32,17 @@
 
 ## 2. Purpose & Mission
 
+### 2026-09-07 Governed Completion-Audit Handoff and Maintenance Contract (#4707 / TOOLS-D9 (#4730))
+
+Subepic #4730 concludes epic #4707 by formally enforcing the strict `tools-handoff-maintenance/1.0.0`
+contract and diff-aware CI gate across root and per-tool agent handoffs. Establishes machine-verifiable
+audit records in `manuals/tools/handoff-manifest.json` conforming to `manuals/tools/schemas/handoff-maintenance.schema.json`.
+Guarantees all tracked handoffs expose owners, program coordinates, commit evidence, working tree status,
+exact check results, test and artifact digests, known limitations, explicit unapproved/blocked release boundaries,
+and freshness timestamps. Strictly enforces a 150-line budget across all tracked handoff files, complete
+section header requirements, and diff-aware fail-closed gating whenever governed code, schemas, calculations,
+manuals, artifacts, rules, or release state change.
+
 ### 2026-09-07 Immutable Public Publication Projection (#4707 / TOOLS-D8 (#4728))
 
 Subepic #4728 formally enforces the strict
@@ -5774,6 +5785,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-07 | #4730 | docs(manual, #4707/#4730 TOOLS-D9): enforce governed completion-audit handoff and maintenance contract (`tools-handoff-maintenance/1.0.0`) binding commit evidence, working tree state, test digests, diff-aware CI gates, and strict 150-line budgets across all tracked handoffs; conclude epic #4707. |
 | 2026-09-07 | #4728 | docs(manual, #4707/#4728 TOOLS-D8): enforce immutable public publication projection contract (`tools-publication-projection/1.0.0`) binding source commit, tree, calculation registry, toolchain lock, artifact digests, zero-sampling reviews, and explicit unapproved/blocked human release boundary. |
 | 2026-09-07 | #4725 | docs(manual, #4707/#4725 TOOLS-D7): enforce render, semantic, and accessibility QA with zero sampling across PDF, DOCX, HTML, and TeX; verify embedded fonts, equation math preservation, table integrity, and image alt attributes while preserving unapproved release status. |
 | 2026-09-07 | #5048 | fix(shared, #5048): `_external_src_package_is_available()` guarded on the repository layout its `repo_root` test describes. A flattened install puts this package at `<site-packages>/shared/python`, so `_TOOLS_SRC_ROOT` was the install root and `repo_root` its parent -- every installed package, a consumer's `src` included, read as internal, the predicate returned False, and `SharedImportAliasFinder` aliased every `_SHARED_ROOTS` entry. A consumer's `src.shared.python.config` was therefore rewritten into this tree, whose `config` is an unrelated 5-symbol package; UpstreamDrift's 33-symbol copy owns `get_database_pool_pre_ping`, so its installed wheel failed to import and v2.1.2 published nothing (D-sorganization/UpstreamDrift#9631). Verified against that published wheel: the consumer's copy now wins for the `src.` spelling while `shared.python.config` still serves `get_env`/`get_env_float` to `shared.python.ai`, and `sidekick`/`chat` still alias. New test builds the flattened layout and fails on the old predicate. |
