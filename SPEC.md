@@ -5702,6 +5702,8 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-06 | #5027 | fix(tests, #4933): unquarantine bootstrap and calculators_expanded tests (#4933); align sys.path assertions and pressure drop API calls. |
+| 2026-09-06 | #5026 | fix(tests, #4933): unquarantine model generation api adapters, fix Flask endpoint collisions, and streamline rest_api shim preserving core exports (#4933); paired with UpstreamDrift#9432. |
 | 2026-09-06 | #5025 | fix(tests, #4933): unquarantine project packer, backup copy, and phase 1 quick wins tests (#4933); handle OSError gracefully during copy verification and dest cleanup. |
 | 2026-09-06 | #5023 | fix(tests, #4933): unquarantine vessel drafter contracts fallback and python version contract tests (#4933). |
 | 2026-09-06 | #5021 | test(rate-of-closure, #5021): re-approve pyqt visual baselines from trusted push run 34045862045 (commit be71b03676eda7bbfa40c880ded3a3bb7112b868). Synchronize all 10 PyQt baseline PNGs and their sha256 checksums with the runner-captured candidates and rebind source_artifact_commit in visual_baselines.v1.json and test_visual_baseline_compare.py. |
