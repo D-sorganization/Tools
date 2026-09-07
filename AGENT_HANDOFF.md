@@ -62,6 +62,11 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   alongside one fail-closed markerless mocap interchange row. All 10 native PDF
   and 14 Word-rendered DOCX pages were reviewed; subsequent approval,
   accessibility, and publication gates remain pending TOOLS-D7/D8.
+- TOOLS-D6 (#4723) enforces strict `tools-calculation-freshness/1.0.0` with governed
+  fixtures (`manuals/tools/fixtures/dplane-calculation-fixtures.json`) and generator
+  (`scripts/generate_tools_calculations.py`). Requires nominal, boundary, and failure
+  examples for qualifying calculations, exact numerical output tolerance checks,
+  and a transitive reverse-impact gate rejecting stale values or expired exemptions.
 - #4142 R12.3 protected-squash-merged via PR #4782 as `a1b00db14`. R13.3 PR
   #4784 protected-squash-merged as `d6c8a0a67`; its required gates passed and
   optional fleet-only backlog was not redundantly rerun. R13.5 protected-
@@ -97,6 +102,7 @@ python3 -m scripts.check_design_manual_governance
 python3 -m scripts.build_tools_module_inventory --check
 python3 -m scripts.lint_tools_textbook_chapters
 python3 -m scripts.check_tools_exemplars
+python3 -m scripts.check_tools_calculation_freshness --check
 python3 -m scripts.render_tools_design_manual --check
 ```
 
@@ -145,7 +151,7 @@ Note: `ruff format --check` reports four pre-existing failures under
 ## Short-Term Roadmap (Ordered)
 
 1. Validate and protect-merge #4792/R14.3 from the R13.5 protected mainline.
-2. Deliver main-rooted TOOLS-D4 #4720, then reconcile D5--D9 without rewriting remote history.
+2. Deliver main-rooted TOOLS-D4 #4720 and TOOLS-D6 #4723, advancing to TOOLS-D7 (#4725) while reconciling D5--D9 without rewriting remote history.
 3. Implement the Sidekick S1–S5 plan in `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`.
 4. Restore the isolated advisory benchmark lane through #4582.
 5. **Land the camera-cluster epic #4571** so #4466 can finally close.

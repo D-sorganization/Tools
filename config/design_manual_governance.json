@@ -1,9 +1,9 @@
 {
-  "schema_version": "tools/design-manual-governance/1.5.0",
+  "schema_version": "tools/design-manual-governance/1.6.0",
   "program": {
     "epic": 4707,
-    "current_subepic": 4720,
-    "next_subepic": 4722
+    "current_subepic": 4723,
+    "next_subepic": 4725
   },
   "canonical_source": {
     "manual_id": "tools",
@@ -67,7 +67,12 @@
   },
   "freshness": {
     "enforcement": "release-blocking",
-    "current_gate": "blocked-pending-TOOLS-D6",
+    "current_gate": "qualified-executable-freshness-enforced",
+    "manifest": "manuals/tools/calculation-freshness.json",
+    "schema": "manuals/tools/schemas/calculation-freshness.schema.json",
+    "checker": "scripts/check_tools_calculation_freshness.py",
+    "generator": "scripts/generate_tools_calculations.py",
+    "fixtures": "manuals/tools/fixtures/dplane-calculation-fixtures.json",
     "impacted_paths": [
       "src",
       "scripts",
@@ -132,9 +137,15 @@
       "scripts/tools_formula_traceability_resolvers.py",
       "manuals/tools/exemplar-coverage.json",
       "manuals/tools/schemas/exemplar-coverage.schema.json",
+      "manuals/tools/calculation-freshness.json",
+      "manuals/tools/schemas/calculation-freshness.schema.json",
+      "manuals/tools/fixtures/dplane-calculation-fixtures.json",
+      "scripts/tools_calculation_freshness_contract.py",
+      "scripts/generate_tools_calculations.py",
+      "scripts/check_tools_calculation_freshness.py",
       "SPEC.md",
       "AGENT_HANDOFF.md"
     ],
-    "required_gate": "python -m scripts.check_design_manual_governance && python -m scripts.build_tools_module_inventory --check && python -m scripts.lint_tools_textbook_chapters && python -m scripts.check_tools_exemplars && python -m scripts.render_tools_design_manual --check"
+    "required_gate": "python -m scripts.check_design_manual_governance && python -m scripts.build_tools_module_inventory --check && python -m scripts.lint_tools_textbook_chapters && python -m scripts.check_tools_exemplars && python -m scripts.check_tools_calculation_freshness --check && python -m scripts.render_tools_design_manual --check"
   }
 }

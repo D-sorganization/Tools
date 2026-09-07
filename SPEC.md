@@ -32,6 +32,18 @@
 
 ## 2. Purpose & Mission
 
+### 2026-09-07 Executable Calculation Freshness & Reverse-Impact Gate (#4707 / TOOLS-D6 (#4723))
+
+Subepic #4723 formally enforces the strict
+`tools-calculation-freshness/1.0.0` contract, establishing governed executable
+fixtures and regeneration tooling for manual calculations (`TOOLS-DPLANE-GEOMETRY`).
+Requires executable nominal, boundary, and failure examples for every qualifying
+calculation, verifying exact numerical outputs, formulas, and LF-normalized digests
+against documented textbook values, figures, and tables. Establishes a transitive
+reverse-impact gate covering upstream code, public APIs, schemas, tests, citations,
+renderers, registries, and file moves/deletions, with fail-closed rejection of stale
+outputs, untracked drifts, or expired exemptions.
+
 ### 2026-09-07 Rate of Closure Single-Pass Array Bounds Refactor (#5046)
 
 Optimizes `VariationLanding.tsx`, `flightAcceptedStudy.ts`, `puttingDispersion.ts`, and `torqueProfileEditor.ts` in `rate_of_closure` by replacing array spreads and chained maps with single-pass loops to eliminate O(N) allocation overhead.
@@ -5736,6 +5748,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-07 | #4723 | docs(manual, #4707/#4723 TOOLS-D6): enforce executable calculation freshness, fixtures, and reverse-impact gate; require nominal, boundary, and failure examples for qualifying calculations and reject stale outputs or expired exemptions. |
 | 2026-09-07 | #4720 | docs(manual, #4707/#4720 TOOLS-D4): publish swing_sim/Rate of Closure and markerless mocap exemplars with exact calculation and test traceability; enforce strict exemplar coverage schema, register verified-unapproved D-plane geometry and fail-closed markerless mocap interchange. |
 | 2026-09-07 | #4717 | fix(manual, #4707/#4717 TOOLS-D3): require full derivation-family assumptions, dimensions, domains, numerical method, uncertainty/limitations, and stable formula IDs that resolve bidirectionally to manual anchors, public symbols/source paths, exact tests, citations, executable examples, bounded claims, and every declared rendered artifact. Reject placeholders plus missing, renamed, orphaned, or asymmetric mappings while retaining generated-unapproved and human-review boundaries. |
 | 2026-09-07 | #5044 | perf(putting-visuals, #5044): replace Math.max spread with single-pass loop in SpeedPlot to avoid call stack limits. |

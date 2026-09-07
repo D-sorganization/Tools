@@ -99,7 +99,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-benchmarks.json"
     },
     {
-      "content_sha256_lf": "608c7b5aabe72ddd03fbb97f5893e1aa536d757e2b6320442ddd46658737c69e",
+      "content_sha256_lf": "1b38684d26743b6cf1f78d93841b9dc9dbf646fc4960a33f1f836a5bd4d238b9",
       "entry_count": 4,
       "package": "config",
       "path": "manuals/tools/manifests/module-inventory/entries-config.json"
@@ -159,8 +159,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "e85147a571ccc9a3e80fb3d220efe28bf53df69d67f836b15bea997a74ea1f4d",
-      "entry_count": 94,
+      "content_sha256_lf": "fede4805689f5601e35796fbc27e634bafa45ebb7fc5c2855fdb016a16134e90",
+      "entry_count": 97,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
     },
@@ -171,7 +171,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-shared-scripts.json"
     },
     {
-      "content_sha256_lf": "1e3993a6329a976b1cad87dcedf1071a7ec0af1806ab5aabac3882ed07fa1af1",
+      "content_sha256_lf": "3abb2d2edcca3c321f5ae9d8be7ad36241a47088d9a51ed0b74aaf8b00084247",
       "entry_count": 1,
       "package": "src",
       "path": "manuals/tools/manifests/module-inventory/entries-src.json"
@@ -579,7 +579,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "3e8dc03b586b753ae4ba9c9875b7a80154ddb6e8a0ff705e6a236e717085ed6c",
+      "content_sha256_lf": "3fcd03d628fd10cb31fadcd319ad14ba66113c805240c65459b8edc3319cc89e",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
