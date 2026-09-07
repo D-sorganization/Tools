@@ -120,7 +120,7 @@
       "id": "boundary-vertical-projection",
       "description": "Pure vertical travel makes horizontal path heading explicitly unavailable.",
       "travel_vector": [0.0, 1.0, 0.0],
-      "face_normal": [0.9396926207859084, 0.3420201433256687, 0.0],
+      "face_normal": [1.0, 0.0, 0.0],
       "expected": {
         "status": "defined",
         "club_path_deg": null,

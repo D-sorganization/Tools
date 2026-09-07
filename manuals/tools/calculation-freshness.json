@@ -39,7 +39,7 @@
         {
           "path": "manuals/tools/fixtures/dplane-calculation-fixtures.json",
           "schema_version": "dplane-calculation-fixtures/1.0.0",
-          "sha256_lf": "d531443285f75af489c494d85a0e4fcbe982c9fc2ca5435df34c3134a9908ca5"
+          "sha256_lf": "0266885e23a92825794ccf4774119124f6de917e0b2da2864b99946b02c903fc"
         },
         {
           "path": "src/rate_of_closure/web/src/model/__fixtures__/dplane_golden_v1.json",
@@ -85,8 +85,16 @@
           "fixture_path": "manuals/tools/fixtures/dplane-calculation-fixtures.json",
           "fixture_case_id": "square-descending",
           "inputs": {
-            "travel_vector": [0.9986295347545738, -0.052335956242943835, 0.0],
-            "face_normal": [0.9781476007338057, 0.20791169081775934, 0.0]
+            "travel_vector": [
+              0.9986295347545738,
+              -0.052335956242943835,
+              0.0
+            ],
+            "face_normal": [
+              0.9781476007338057,
+              0.20791169081775934,
+              0.0
+            ]
           },
           "expected_outcome": {
             "status": "defined",
@@ -99,7 +107,11 @@
             "face_angle_deg": 0.0,
             "dynamic_loft_deg": 12.0,
             "face_to_path_deg": 0.0,
-            "dplane_normal_unit": [0.0, 0.0, 1.0],
+            "dplane_normal_unit": [
+              0.0,
+              0.0,
+              1.0
+            ],
             "dplane_normal_azimuth_deg": 90.0,
             "dplane_tilt_deg": 0.0,
             "dplane_inclination_deg": 90.0,
@@ -115,10 +127,14 @@
           "fixture_case_id": "compound-rightward-face",
           "inputs": {
             "travel_vector": [
-              0.995587843197948, -0.08715574274765817, -0.03476669358110182
+              0.995587843197948,
+              -0.08715574274765817,
+              -0.03476669358110182
             ],
             "face_normal": [
-              0.8524716485419714, 0.5150380749100542, 0.08959838070567443
+              0.8524716485419714,
+              0.5150380749100542,
+              0.08959838070567443
             ]
           },
           "expected_outcome": {
@@ -147,10 +163,14 @@
           "fixture_case_id": "crossed-leftward-face",
           "inputs": {
             "travel_vector": [
-              0.9901283591011188, 0.0697564737441253, 0.12157247580974431
+              0.9901283591011188,
+              0.0697564737441253,
+              0.12157247580974431
             ],
             "face_normal": [
-              0.9361168066628592, 0.3420201433256687, -0.08189960831908934
+              0.9361168066628592,
+              0.3420201433256687,
+              -0.08189960831908934
             ]
           },
           "expected_outcome": {
@@ -178,8 +198,16 @@
           "fixture_path": "manuals/tools/fixtures/dplane-calculation-fixtures.json",
           "fixture_case_id": "boundary-zero-travel",
           "inputs": {
-            "travel_vector": [0.0, 0.0, 0.0],
-            "face_normal": [0.9396926207859084, 0.3420201433256687, 0.0]
+            "travel_vector": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "face_normal": [
+              0.9396926207859084,
+              0.3420201433256687,
+              0.0
+            ]
           },
           "expected_outcome": {
             "status": "zero_travel",
@@ -198,8 +226,16 @@
           "fixture_path": "manuals/tools/fixtures/dplane-calculation-fixtures.json",
           "fixture_case_id": "boundary-parallel-collinear",
           "inputs": {
-            "travel_vector": [1.0, 0.0, 0.0],
-            "face_normal": [1.0, 0.0, 0.0]
+            "travel_vector": [
+              1.0,
+              0.0,
+              0.0
+            ],
+            "face_normal": [
+              1.0,
+              0.0,
+              0.0
+            ]
           },
           "expected_outcome": {
             "status": "parallel",
@@ -215,8 +251,16 @@
           "fixture_path": "manuals/tools/fixtures/dplane-calculation-fixtures.json",
           "fixture_case_id": "boundary-antiparallel-collinear",
           "inputs": {
-            "travel_vector": [1.0, 0.0, 0.0],
-            "face_normal": [-1.0, 0.0, 0.0]
+            "travel_vector": [
+              1.0,
+              0.0,
+              0.0
+            ],
+            "face_normal": [
+              -1.0,
+              0.0,
+              0.0
+            ]
           },
           "expected_outcome": {
             "status": "antiparallel",
@@ -232,8 +276,16 @@
           "fixture_path": "manuals/tools/fixtures/dplane-calculation-fixtures.json",
           "fixture_case_id": "boundary-vertical-projection",
           "inputs": {
-            "travel_vector": [0.0, 1.0, 0.0],
-            "face_normal": [0.9396926207859084, 0.3420201433256687, 0.0]
+            "travel_vector": [
+              0.0,
+              1.0,
+              0.0
+            ],
+            "face_normal": [
+              1.0,
+              0.0,
+              0.0
+            ]
           },
           "expected_outcome": {
             "status": "defined",
@@ -241,7 +293,7 @@
             "face_to_path_deg": null,
             "attack_angle_deg": 90.0
           },
-          "execution_digest": "5e7a51b46e0823780319809a4064af5bb8044689d1e7945db33e1074f5678645"
+          "execution_digest": "a15e7912efc7e505e7a4b83d558590b63bf8d358d525bb1372e0aa2546d0e266"
         },
         {
           "example_id": "failure-non-orthogonal-frame",
@@ -250,10 +302,26 @@
           "fixture_path": "manuals/tools/fixtures/dplane-calculation-fixtures.json",
           "fixture_case_id": "failure-non-orthogonal-frame",
           "inputs": {
-            "travel_vector": [1.0, 0.0, 0.0],
-            "face_normal": [1.0, 0.0, 0.0],
-            "target": [1.0, 0.0, 0.0],
-            "up": [1.0, 1.0, 0.0]
+            "travel_vector": [
+              1.0,
+              0.0,
+              0.0
+            ],
+            "face_normal": [
+              1.0,
+              0.0,
+              0.0
+            ],
+            "target": [
+              1.0,
+              0.0,
+              0.0
+            ],
+            "up": [
+              1.0,
+              1.0,
+              0.0
+            ]
           },
           "expected_outcome": {
             "error_type": "ValueError",
@@ -268,8 +336,16 @@
           "fixture_path": "manuals/tools/fixtures/dplane-calculation-fixtures.json",
           "fixture_case_id": "failure-degenerate-face-norm",
           "inputs": {
-            "travel_vector": [1.0, 0.0, 0.0],
-            "face_normal": [0.0, 0.0, 0.0]
+            "travel_vector": [
+              1.0,
+              0.0,
+              0.0
+            ],
+            "face_normal": [
+              0.0,
+              0.0,
+              0.0
+            ]
           },
           "expected_outcome": {
             "error_type": "ValueError",
@@ -284,8 +360,16 @@
           "fixture_path": "manuals/tools/fixtures/dplane-calculation-fixtures.json",
           "fixture_case_id": "failure-non-finite-vector",
           "inputs": {
-            "travel_vector": ["NaN", 0.0, 0.0],
-            "face_normal": [1.0, 0.0, 0.0]
+            "travel_vector": [
+              "NaN",
+              0.0,
+              0.0
+            ],
+            "face_normal": [
+              1.0,
+              0.0,
+              0.0
+            ]
           },
           "expected_outcome": {
             "error_type": "ValueError",
@@ -301,7 +385,7 @@
           "example_id": "square-descending",
           "value": 15.0,
           "unit": "degree",
-          "tolerance": 1e-9,
+          "tolerance": 1e-09,
           "manual_chapter": "manuals/tools/chapters/04-swing-rate-of-closure-dplane.qmd",
           "manual_anchor": "#example-results"
         },
@@ -311,7 +395,7 @@
           "example_id": "square-descending",
           "value": 15.0,
           "unit": "degree",
-          "tolerance": 1e-9,
+          "tolerance": 1e-09,
           "manual_chapter": "manuals/tools/chapters/04-swing-rate-of-closure-dplane.qmd",
           "manual_anchor": "#example-results"
         },
@@ -321,7 +405,7 @@
           "example_id": "square-descending",
           "value": 0.0,
           "unit": "degree",
-          "tolerance": 1e-9,
+          "tolerance": 1e-09,
           "manual_chapter": "manuals/tools/chapters/04-swing-rate-of-closure-dplane.qmd",
           "manual_anchor": "#example-results"
         },
@@ -329,9 +413,13 @@
           "value_id": "square_descending.dplane_normal_unit",
           "field_name": "dplane_normal_unit",
           "example_id": "square-descending",
-          "value": [0.0, 0.0, 1.0],
+          "value": [
+            0.0,
+            0.0,
+            1.0
+          ],
           "unit": "1",
-          "tolerance": 1e-9,
+          "tolerance": 1e-09,
           "manual_chapter": "manuals/tools/chapters/04-swing-rate-of-closure-dplane.qmd",
           "manual_anchor": "#example-results"
         },
@@ -341,7 +429,7 @@
           "example_id": "compound-rightward-face",
           "value": 36.80234585197317,
           "unit": "degree",
-          "tolerance": 1e-9,
+          "tolerance": 1e-09,
           "manual_chapter": "manuals/tools/chapters/04-swing-rate-of-closure-dplane.qmd",
           "manual_anchor": "#example-results"
         },
@@ -351,7 +439,7 @@
           "example_id": "compound-rightward-face",
           "value": 8.0,
           "unit": "degree",
-          "tolerance": 1e-9,
+          "tolerance": 1e-09,
           "manual_chapter": "manuals/tools/chapters/04-swing-rate-of-closure-dplane.qmd",
           "manual_anchor": "#example-results"
         },
@@ -361,7 +449,7 @@
           "example_id": "crossed-leftward-face",
           "value": 19.817514323544046,
           "unit": "degree",
-          "tolerance": 1e-9,
+          "tolerance": 1e-09,
           "manual_chapter": "manuals/tools/chapters/04-swing-rate-of-closure-dplane.qmd",
           "manual_anchor": "#example-results"
         },
@@ -381,7 +469,7 @@
           "example_id": "boundary-parallel-collinear",
           "value": 0.0,
           "unit": "degree",
-          "tolerance": 1e-9,
+          "tolerance": 1e-09,
           "manual_chapter": "manuals/tools/chapters/04-swing-rate-of-closure-dplane.qmd",
           "manual_anchor": "#boundary-and-singular-delivery-cases"
         },
@@ -391,7 +479,7 @@
           "example_id": "boundary-antiparallel-collinear",
           "value": 180.0,
           "unit": "degree",
-          "tolerance": 1e-9,
+          "tolerance": 1e-09,
           "manual_chapter": "manuals/tools/chapters/04-swing-rate-of-closure-dplane.qmd",
           "manual_anchor": "#boundary-and-singular-delivery-cases"
         }
