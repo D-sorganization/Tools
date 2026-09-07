@@ -55,12 +55,14 @@ def test_popout_chart(qapp) -> Any:
     # Show with mpl
     with patch("double_pendulum_golf.gui.popout_chart._HAS_MPL", True):
         with (
-            patch("matplotlib.backends.backend_qtagg.FigureCanvasQTAgg"),
+            patch("double_pendulum_golf.gui.popout_chart.Figure"),
+            patch("double_pendulum_golf.gui.popout_chart.FigureCanvasQTAgg"),
             patch("PyQt6.QtWidgets.QMainWindow.show"),
             patch("PyQt6.QtWidgets.QMainWindow.setWindowTitle"),
             patch("PyQt6.QtWidgets.QMainWindow.setMinimumSize"),
             patch("PyQt6.QtWidgets.QMainWindow.setAttribute"),
             patch("PyQt6.QtWidgets.QMainWindow.setCentralWidget"),
+            patch("PyQt6.QtWidgets.QVBoxLayout.addWidget"),
         ):
             chart.show()
             assert chart._fig is not None

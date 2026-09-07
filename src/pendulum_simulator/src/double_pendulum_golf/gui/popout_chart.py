@@ -37,10 +37,10 @@ try:
     from matplotlib.figure import Figure
 
     _HAS_MPL = True
-except ImportError:
-    _HAS_MPL = False
-    FigureCanvasQTAgg = None  # type: ignore[assignment, misc]
+except (ImportError, RuntimeError):
     Figure = None  # type: ignore[assignment, misc]
+    FigureCanvasQTAgg = None  # type: ignore[assignment, misc]
+    _HAS_MPL = False
 
 
 # ---------------------------------------------------------------------------
