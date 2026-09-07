@@ -20,11 +20,8 @@ class DummyVar:
 
 
 class DummyApp(UICreationMixin):
-    def __init__(self):
-        try:
-            self.root = tk.Tk()
-        except tk.TclError:
-            self.root = MagicMock()
+    def __init__(self, root: tk.Tk):
+        self.root = root
         self.source_folders = []
         self.dest_folder = ""
         self.unzip_var = DummyVar()
@@ -54,14 +51,14 @@ class DummyApp(UICreationMixin):
 
 @pytest.fixture
 def app():
-    app_instance = DummyApp()
+    try:
+        root = tk.Tk()
+    except tk.TclError:
+        pytest.skip("Tkinter display unavailable in headless environment")
+    app_instance = DummyApp(root)
     yield app_instance
     try:
-        root = getattr(app_instance, "root", None)
-        if root is not None and not isinstance(root, MagicMock):
-            destroy_fn = getattr(root, "destroy", None)
-            if callable(destroy_fn):
-                destroy_fn()
+        root.destroy()
     except Exception:
         pass
 
