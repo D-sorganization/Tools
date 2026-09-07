@@ -8580,10 +8580,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 7639,
+      "bytes_lf": 7894,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "af1c6d768bd9165f64d21558b892615ae15d7203c39a5311e8771ed64b407bea",
+      "content_sha256_lf": "75e5250ac611eddcaa20eda084aef9cb0559620d15b31af664b70b25a692f3cc",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-GUI-POPOUT-CHART-PY-5BAA6F293F79",
       "language": "python",
