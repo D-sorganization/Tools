@@ -62,16 +62,16 @@
       "reason": "API drift in pendulum_simulator MockOpt._on_run / worker API"
     },
     {
-      "path": "tests/test_bootstrap.py",
-      "owner": "tests",
+      "path": "tests/folder_tool/test_folder_tool_ui.py",
+      "owner": "tests/folder_tool",
       "issue": "#4933",
-      "reason": "assert repo_root matches temp mock repo layout on main"
+      "reason": "Tkinter widget instantiation crashes headless CI runner without X server"
     },
     {
-      "path": "tests/test_calculators_expanded.py",
-      "owner": "tests",
+      "path": "tests/folder_tool/test_folders_tool_r0.py",
+      "owner": "tests/folder_tool",
       "issue": "#4933",
-      "reason": "PressureDropCalculator calculate_pressure_drop signature drift on main"
+      "reason": "Tkinter root instantiation and DbC contract error expectations"
     }
   ]
 }
