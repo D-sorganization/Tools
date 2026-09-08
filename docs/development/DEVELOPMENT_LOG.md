@@ -960,6 +960,30 @@ reachable from any live state and `abandoned` from `parked`.
   state; a live entry without a real issue is orphaned by
   definition.
 
+### DL-0054 · ThemeColors 60-Token Derivation Restoration
+
+- **State:** in_review
+- **Owner:** @dieterolson (agent `claude`, session `omp-01a07e96`)
+- **PR:** SELF (fixes #5063)
+- **Paths:** `src/shared/python/theme/api.py`,
+  `src/shared/python/theme/__init__.py`,
+  `src/shared/python/theme/color_derivation.py`,
+  `tests/shared/python/theme/test_theme_colors_derivation.py`,
+  `AGENT_HANDOFF.md`, `docs/development/DEVELOPMENT_LOG.md`
+- **Started:** 2026-09-08
+- **Last verified:** 2026-09-08 (SELF)
+- **Summary:** Restored the `ThemeColors` 60-token semantic derivation
+  pipeline (`model_post_init`, `is_dark` inference from `bg`, the derived
+  surface/border/text/brand/semantic/chart/effect tokens, dict-style
+  access, `as_dict`), the `_derive_full_palette` package shim, and the
+  orphaned `color_derivation` helper module that the UpstreamDrift
+  `b8d95ad25` sync wave had stripped from the canonical tree. Mirrored
+  the 8-case derivation regression oracle into
+  `tests/shared/python/theme/test_theme_colors_derivation.py`
+  (RED 7 failed/1 passed before restore, 8 passed after).
+- **Next step:** Bump UpstreamDrift's `vendor/ud-tools` pin to this
+  PR's merge commit so its child copies re-sync the restored pipeline.
+
 ## Shipped (Last 90 Days)
 
 Entries stay here for 90 days after merge, then move to the archive.
