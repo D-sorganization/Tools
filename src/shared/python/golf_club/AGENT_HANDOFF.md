@@ -4,7 +4,7 @@
 
 `impact_mobility.py`: detached tensor reference, T1 PR #5077; not a flexible/acoustic solver.
 T2 #5071 adds event-resolved integration, preload states and all four passive loss channels; v1 report fields retain their meanings.
-T3 #5072 adds tensile FEM, passive grip, stationary spatial shaft/full head and distributed rotating transport; 110 transport tests plus 26 objective section-kinematics tests pass; `LOADED_STATE_REVIEW.md` records the private chart and open energy/tangent gates. `docs/development/impact-acoustics/ROTATING_TRANSPORT.md`, `SHAFT_LINEAR_SYSTEM.md`, `GRIP_IMPEDANCE.md` and `SHAFT_PRESTRESS.md` record derivations and limits. Loaded state, moving work and convergence remain open; `PROGRESS.md` retains the full program matrix.
+T3 #5072 adds tensile FEM, passive grip, stationary spatial shaft/full head and distributed rotating transport; 464 golf/API tests pass (two optional CAD skips); `LOADED_STATE_REVIEW.md` derives the private section energy and full fixed-chart internal tangent. Equilibrium and external-load derivatives remain open. `docs/development/impact-acoustics/ROTATING_TRANSPORT.md`, `SHAFT_LINEAR_SYSTEM.md`, `GRIP_IMPEDANCE.md` and `SHAFT_PRESTRESS.md` record derivations and limits. Loaded state, moving work and convergence remain open; `PROGRESS.md` retains the full program matrix.
 
 > Update this file in every implementation commit that changes this package.
 > Last updated: 2026-09-08

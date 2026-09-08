@@ -9,7 +9,7 @@ dynamic tangent. The principal relative rotation must remain below pi.
 from __future__ import annotations
 
 import numpy as np
-from scipy.linalg import expm
+from scipy.linalg import expm, expm_frechet
 from scipy.spatial.transform import Rotation
 
 from ._grip_contracts import finite_array
@@ -24,16 +24,49 @@ def _rotation_chart(vector: np.ndarray) -> None:
         raise ValueError("rotation reaches the principal-logarithm branch boundary")
 
 
+def _phi1_generator(matrix: np.ndarray) -> np.ndarray:
+    size = len(matrix)
+    generator = np.zeros((2 * size, 2 * size))
+    generator[:size, :size] = matrix
+    generator[:size, size:] = np.eye(size)
+    return generator
+
+
 def _left_rotation_jacobian(vector: np.ndarray) -> np.ndarray:
     """Integrate Exp(t*[rotation]x), retaining the exact zero-angle limit.
 
     The upper block of Exp([[A, I], [0, 0]]) is phi_1(A). Using SciPy's
     matrix exponential avoids divisions by small angles and a dead zone.
     """
-    generator = np.zeros((6, 6))
-    generator[:3, :3] = np.cross(vector, np.eye(3)).T
-    generator[:3, 3:] = np.eye(3)
+    generator = _phi1_generator(np.cross(vector, np.eye(3)).T)
     return np.asarray(expm(generator)[:3, 3:])
+
+
+def twist_ad(value: object) -> np.ndarray:
+    """Return the Lie bracket matrix for a finite linear-first twist."""
+    twist = finite_array(value, (6,), "section twist")
+    angular = np.cross(twist[3:], np.eye(3)).T
+    linear = np.cross(twist[:3], np.eye(3)).T
+    return np.block([[angular, linear], [np.zeros((3, 3)), angular]])
+
+
+def right_jacobian(value: object) -> np.ndarray:
+    """Map exponential-coordinate rates to material twists: phi_1(-ad(q))."""
+    generator = _phi1_generator(-twist_ad(value))
+    return finite_array(expm(generator)[:6, 6:], (6, 6), "right Jacobian")
+
+
+def right_jacobian_derivative(value: object, direction: object) -> np.ndarray:
+    """Differentiate the right Jacobian without differencing or angle cutoffs.
+
+    The upper block of the matrix-exponential Frechet derivative differentiates
+    the integral defining phi_1. SciPy uses scaling, Pade and squaring.
+    """
+    generator = _phi1_generator(-twist_ad(value))
+    derivative = np.zeros_like(generator)
+    derivative[:6, :6] = -twist_ad(direction)
+    result = expm_frechet(generator, derivative, compute_expm=False)
+    return finite_array(result[:6, 6:], (6, 6), "right Jacobian derivative")
 
 
 def _rigid_pose(value: object) -> np.ndarray:
