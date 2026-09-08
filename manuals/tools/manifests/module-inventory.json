@@ -111,7 +111,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "9039b478c3fed7b4e70e6a559c5c76e87285d0580c84dbedb4e68d5817979286",
+      "content_sha256_lf": "8ce4f200fa0d7c75217fba3dfb6d62edf29ed68ec3550b09ac43a8227f0c4156",
       "entry_count": 17,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
@@ -567,7 +567,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rotation-transforms.json"
     },
     {
-      "content_sha256_lf": "ce5571a9fbc233fd774511f72ea9b9070a8e589f75b6103976b604d8ae258253",
+      "content_sha256_lf": "af6b9bd7f54e8e10e617922f60d99826c3ec2fccc0759ce8567e3e92c0ae950a",
       "entry_count": 26,
       "package": "src/rrt_path_planner",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rrt-path-planner.json"
@@ -609,7 +609,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-chat-contracts.json"
     },
     {
-      "content_sha256_lf": "0212b357369038b8fe7d224d2701c49aa7739a76ccbe352b58477f7c4bea34ff",
+      "content_sha256_lf": "a8abbb1dc2ad3cbdfa2ffe98eb8096d9ae1e669a71d575747361e8e147e2462e",
       "entry_count": 14,
       "package": "src/shared/python/codemap",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-codemap.json"
@@ -703,6 +703,12 @@
       "entry_count": 16,
       "package": "src/shared/python/programmatic_pid",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-programmatic-pid.json"
+    },
+    {
+      "content_sha256_lf": "6df304bea083a9add2fd2400c1dd0892c519f4d1c0b0889ef63ce1f11e6aed00",
+      "entry_count": 2,
+      "package": "src/shared/python/realtime",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-realtime.json"
     },
     {
       "content_sha256_lf": "95a572264144cce2bffa99693f4da3a7659412631d706f15bd5f82b9571211e6",

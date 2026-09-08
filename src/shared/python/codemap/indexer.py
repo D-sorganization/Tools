@@ -17,6 +17,7 @@ import logging
 import os
 import subprocess
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -33,13 +34,42 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 
-def _hash_bytes(data: bytes) -> str:
-    try:
-        import blake3  # type: ignore[import-not-found]
-    except ImportError:
-        return hashlib.blake2b(data, digest_size=16).hexdigest()
+_BLAKE2B_DIGEST_SIZE = 16
+"""Fallback blake2b digest size; the digest cached indexes were built with."""
 
-    return str(blake3.blake3(data).hexdigest())
+
+def _blake2b_digest16(data: bytes) -> Any:
+    """Bind ``hashlib.blake2b`` to the fallback digest size."""
+    return hashlib.blake2b(data, digest_size=_BLAKE2B_DIGEST_SIZE)
+
+
+def _resolve_hash() -> Callable[[bytes], Any]:
+    """Resolve the preferred hash callable once.
+
+    ``import blake3`` inside ``_hash_bytes`` retried a failing import on
+    every call: Python does not cache failed imports, so each call
+    re-walked every ``sys.path`` entry and raised (blake3 is optional and
+    undeclared, so the failure path was the default). Resolving the
+    callable once at module import keeps both digest semantics — blake3's
+    full hexdigest when the package is importable, else the 16-byte
+    ``blake2b`` hexdigest that every cached index in this repo uses.
+    """
+    try:
+        import blake3
+    except ImportError:
+        return _blake2b_digest16
+
+    hasher: Callable[[bytes], Any] = blake3.blake3
+    return hasher
+
+
+_HASH: Callable[[bytes], Any] = _resolve_hash()
+
+
+def _hash_bytes(data: bytes) -> str:
+    """Hash *data* with the module-resolved hash callable."""
+    digest = _HASH(data).hexdigest()
+    return str(digest)
 
 
 # ---------------------------------------------------------------------------

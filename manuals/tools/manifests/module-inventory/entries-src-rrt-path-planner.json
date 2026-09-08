@@ -1736,6 +1736,7 @@
           "tests/shared/python/process_calculators/test_syngas_compression_edge_cases.py",
           "tests/shared/python/process_calculators/test_syngas_water_calculator_edge_cases.py",
           "tests/shared/python/process_calculators/test_syngas_water_overflow.py",
+          "tests/shared/python/realtime/test_transport_file.py",
           "tests/shared/python/signal_toolkit/test_widget_mixins.py",
           "tests/test_debug_utils.py",
           "tests/test_dry_compliance.py",

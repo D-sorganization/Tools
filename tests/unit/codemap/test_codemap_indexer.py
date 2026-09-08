@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import sqlite3
 import subprocess
@@ -316,39 +317,77 @@ def test_git_helpers_parse_successful_command_output(
     assert indexer._current_commit(tmp_path) == "abc123"
 
 
-def test_hash_bytes_uses_blake3_when_available(
+def test_hash_bytes_delegates_to_the_resolved_hasher(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     class FakeHasher:
         def hexdigest(self) -> str:
-            return "fake-blake3"
+            return "fake-hash"
 
-    fake_blake3 = SimpleNamespace(blake3=lambda data: FakeHasher())
+    monkeypatch.setattr(indexer, "_HASH", lambda _data: FakeHasher())
+
+    assert indexer._hash_bytes(b"payload") == "fake-hash"
+
+
+def test_resolve_hash_prefers_blake3_when_importable(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    fake_blake3 = SimpleNamespace(blake3=lambda data: data)  # type: ignore[arg-type,return-value]
     monkeypatch.setitem(sys.modules, "blake3", fake_blake3)
 
-    assert indexer._hash_bytes(b"payload") == "fake-blake3"
+    resolved = indexer._resolve_hash()
+
+    assert resolved is fake_blake3.blake3  # type: ignore[attr-defined]
 
 
-def test_hash_bytes_fallback_when_blake3_missing(
+def test_resolve_hash_falls_back_to_blake2b_digest16_when_blake3_missing(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setitem(sys.modules, "blake3", None)
-    import hashlib
+
+    resolved = indexer._resolve_hash()
 
     expected = hashlib.blake2b(b"payload", digest_size=16).hexdigest()
-    assert indexer._hash_bytes(b"payload") == expected
+    assert resolved(b"payload").hexdigest() == expected  # type: ignore[attr-defined]
 
 
-def test_hash_bytes_raises_when_blake3_fails(
+def test_hash_bytes_propagates_hasher_errors(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    def bad_blake3(data: bytes) -> None:
+    """A failing hash callable surfaces its error; nothing is swallowed."""
+
+    def bad_hasher(data: bytes) -> object:
         raise RuntimeError("Corrupt memory")
 
-    fake_blake3 = SimpleNamespace(blake3=bad_blake3)
-    monkeypatch.setitem(sys.modules, "blake3", fake_blake3)
+    monkeypatch.setattr(indexer, "_HASH", bad_hasher)
     with pytest.raises(RuntimeError, match="Corrupt memory"):
         indexer._hash_bytes(b"payload")
+
+
+def test_hash_bytes_avoids_import_machinery_per_call(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Hashing must not re-walk the import system on every call.
+
+    Python does not cache failed imports, so an ``import blake3`` inside
+    the hash helper re-walks ``sys.path`` once per file and once per
+    symbol. The hash callable must be resolved once at module import.
+    """
+    import builtins
+
+    attempts: list[str] = []
+    real_import = builtins.__import__
+
+    def counting_import(name: str, *args: object, **kwargs: object) -> object:
+        if name.split(".")[0] == "blake3":
+            attempts.append(name)
+        return real_import(name, *args, **kwargs)  # type: ignore[arg-type]
+
+    monkeypatch.setattr(builtins, "__import__", counting_import)
+    for _ in range(3):
+        indexer._hash_bytes(b"payload")
+
+    assert attempts == [], attempts
 
 
 def test_gitignore_loader_uses_simple_fallback_when_pathspec_is_unavailable(
