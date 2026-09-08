@@ -9,63 +9,63 @@
   },
   "repository": "D-sorganization/Tools",
   "issue_url": "https://github.com/D-sorganization/Tools/issues/4730",
-  "pr_url": "https://github.com/D-sorganization/Tools/pull/5078",
+  "pr_url": "https://github.com/D-sorganization/Tools/pull/5081",
   "commit_evidence": {
-    "local_head_sha": "c2670f93f69abe6b7fc9644ea598d18cbdabef11",
+    "local_head_sha": "b3a6b5628b411d35d46a03959c3e5f7106458e10",
     "remote_head_sha": null,
-    "reviewed_tree_sha": "c0595daef1e1f256222704102c02bafbff49ab4d",
+    "reviewed_tree_sha": "2638c5c68d26410f2efeacc47ebb026434c15026",
     "merge_sha": null
   },
   "branch_and_worktree": {
-    "branch": "claude/issue-5063-theme-restore",
-    "worktree": "C:\\tmp\\Tools",
+    "branch": "claude/issue-8942-provider-perf",
+    "worktree": "C:\\tmp\\Tools_w8942",
     "is_clean": false
   },
   "check_evidence": {
     "check_design_manual_governance": {
       "command": "python -m scripts.check_design_manual_governance",
       "status": "passed",
-      "timestamp": "2026-09-08T01:49:51Z"
+      "timestamp": "2026-09-08T02:10:09Z"
     },
     "build_tools_module_inventory": {
       "command": "python -m scripts.build_tools_module_inventory --check",
       "status": "passed",
-      "timestamp": "2026-09-08T01:49:51Z"
+      "timestamp": "2026-09-08T02:10:09Z"
     },
     "lint_tools_textbook_chapters": {
       "command": "python -m scripts.lint_tools_textbook_chapters",
       "status": "passed",
-      "timestamp": "2026-09-08T01:49:51Z"
+      "timestamp": "2026-09-08T02:10:09Z"
     },
     "check_tools_exemplars": {
       "command": "python -m scripts.check_tools_exemplars",
       "status": "passed",
-      "timestamp": "2026-09-08T01:49:51Z"
+      "timestamp": "2026-09-08T02:10:09Z"
     },
     "check_tools_calculation_freshness": {
       "command": "python -m scripts.check_tools_calculation_freshness --check",
       "status": "passed",
-      "timestamp": "2026-09-08T01:49:51Z"
+      "timestamp": "2026-09-08T02:10:09Z"
     },
     "check_tools_manual_qa": {
       "command": "python -m scripts.check_tools_manual_qa --check",
       "status": "passed",
-      "timestamp": "2026-09-08T01:49:51Z"
+      "timestamp": "2026-09-08T02:10:09Z"
     },
     "check_tools_publication_projection": {
       "command": "python -m scripts.check_tools_publication_projection --check",
       "status": "passed",
-      "timestamp": "2026-09-08T01:49:51Z"
+      "timestamp": "2026-09-08T02:10:09Z"
     },
     "render_tools_design_manual": {
       "command": "python -m scripts.render_tools_design_manual --check",
       "status": "passed",
-      "timestamp": "2026-09-08T01:49:51Z"
+      "timestamp": "2026-09-08T02:10:09Z"
     },
     "check_tools_handoff": {
       "command": "python -m scripts.check_tools_handoff --check",
       "status": "passed",
-      "timestamp": "2026-09-08T01:49:51Z"
+      "timestamp": "2026-09-08T02:10:09Z"
     }
   },
   "artifact_and_test_digests": {
@@ -112,7 +112,7 @@
       "TOOLS-HUMAN-APPROVAL-PENDING",
       "TOOLS-MARKERLESS-EXEMPLAR-BLOCKED"
     ],
-    "expiry_timestamp": "2026-12-07T01:49:51Z"
+    "expiry_timestamp": "2026-12-07T02:10:09Z"
   },
   "blockers": [
     {
@@ -127,12 +127,12 @@
     }
   ],
   "next_dependency": "TOOLS-M0 (#4708 / #4734) and parent epic DOC-TOOLS (#4707) closure",
-  "freshness_timestamp": "2026-09-08T01:49:51Z",
+  "freshness_timestamp": "2026-09-08T02:10:09Z",
   "governed_handoff_files": {
     "AGENT_HANDOFF.md": {
       "path": "AGENT_HANDOFF.md",
-      "sha256_lf": "c8282611ad31c6de229d32bfb9c8fb02fb26be451f7cdac464783be5ecea2f33",
-      "line_count": 86,
+      "sha256_lf": "fb7b1b8bef0497432630769522d907a33dafead8802ecba728739d086d322123",
+      "line_count": 91,
       "max_line_budget": 150,
       "required_sections": [
         "## Merge Governance",
@@ -202,8 +202,8 @@
     },
     "src/shared/python/sidekick/lab/mocap/AGENT_HANDOFF.md": {
       "path": "src/shared/python/sidekick/lab/mocap/AGENT_HANDOFF.md",
-      "sha256_lf": "591decacfbdadcfacce9de0d350903eb7da232b00aa3507e01c240edab98b66e",
-      "line_count": 59,
+      "sha256_lf": "8d67890d0e5bef67140ff38499a79b4bfbc8bbd16a5d0afb7f03b5da3fd42a09",
+      "line_count": 62,
       "max_line_budget": 150,
       "required_sections": [
         "## Authority",

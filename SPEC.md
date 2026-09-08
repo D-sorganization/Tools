@@ -32,6 +32,18 @@
 
 ## 2. Purpose & Mission
 
+### 2026-09-07 Pose Backend Adapters & Fail-Closed Licensing (#4706 / TOOLS-M6 (#4715))
+
+Subepic #4715 delivers vendor-neutral pose backend adapters, skeleton mapping, model/version/license
+provenance, MediaPipe migration, and optional external service boundaries in `sidekick.lab.mocap.adapters`
+and `sidekick.lab.mocap.skeletons`. Enforces strict fail-closed licensing verification across 5 mandatory categories
+(adapter code, inference framework, checkpoint weights, training dataset, and body model) with explicit
+`unavailable_license` rejection. Provides canonical skeleton definitions (`mediapipe-pose-33-v1`, `coco-17-v1`),
+`KeypointMapping`, and `SkeletonConverter` in `sidekick.lab.mocap.skeletons` to produce standard `PixelObservation`
+records. Implements reference `MediaPipePoseAdapter` (with graceful `UNAVAILABLE_BACKEND` when uninstalled),
+`ExternalServicePoseAdapter` for process-separated runners, and `SyntheticPoseAdapter` for deterministic
+zero-dependency test pipelines.
+
 ### 2026-09-07 Camera Extrinsic Calibration & Layout Alignment (#4706 / TOOLS-M5 (#4721))
 
 Subepic #4721 delivers multi-camera extrinsic calibration, flexible layout management, global bundle
@@ -5827,6 +5839,8 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
 | 2026-09-08 | #5078 | fix(theme, #5063): restore the `ThemeColors` 60-token semantic derivation pipeline (`model_post_init`, `is_dark` inference, the derived surface/border/text/brand/semantic/chart/effect tokens, dict-style access, `as_dict`), the `_derive_full_palette` package shim, and the `color_derivation` colour-math helper module stripped from the canonical tree by the UpstreamDrift `b8d95ad25` sync wave; mirror the 8-case derivation regression oracle into `tests/shared/python/theme/test_theme_colors_derivation.py` (RED 7 failed/1 passed before, 8 passed after). Deliberately not restored (zero references per the issue): `ThemeColorsCompat` and `style_for_export`. Follow-up: bump UpstreamDrift's `vendor/ud-tools` pin after merge. |
+| 2026-09-08 | #5081 | perf(shared, UpstreamDrift#8942): resolve the codemap hash callable once at module import (`_HASH`, blake3-preferred/blake2b-16 fallback) instead of retrying a failing `import blake3` per file and per symbol, and land the tools-canonical file realtime transport at `src/shared/python/realtime/transport_file.py` with persistent per-channel append handles, offset-tracked tailing serialized under the transport lock, and the truncation size check off the per-message path. |
+| 2026-09-07 | #5076 | feat(mocap, #4715 TOOLS-M6): deliver pose backend adapters, skeleton mapping, fail-closed provider licensing manifest, MediaPipe adapter, and external service protocol in `sidekick.lab.mocap.adapters`. |
 | 2026-09-07 | #5066 | feat(mocap, #4721 TOOLS-M5): deliver camera extrinsic calibration, flexible layout management, robust PnP, bundle adjustment, camera movement invalidation, and qualification floors in `sidekick.lab.mocap.extrinsics`. |
 | 2026-09-07 | #5064 | feat(mocap, #4714 TOOLS-M4): deliver camera intrinsic calibration models (pinhole and fisheye), distortion representations, observation provenance, reprojection residual evaluation, degeneracy detection, and qualification floors; permit sidekick api baseline budget. |
 | 2026-09-07 | #4718 | feat(mocap, #4718 TOOLS-M3): deliver synchronization analysis, sequence tracking, and crash-safe recording with atomic manifest persistence in `sidekick.lab.mocap.sync` and `sidekick.lab.mocap.recording`. |
