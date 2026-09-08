@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5101 · Scientific Import Inventory Detection
+
+- **State:** in_progress
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5101
+- **PR:** not created
+- **Branch:** fix/5101-scientific-import-inventory
+- **Paths:** `scripts/build_tools_module_inventory.py`, `scripts/tools_module_inventory_imports.py`, inventory import/contract tests, generated inventory and `docs/development/impact-acoustics/INVENTORY_IMPORT_REVIEW.*`
+- **Started:** 2026-09-08
+- **Last verified:** 2026-09-08 (53 import/inventory/merge tests, pinned repository Ruff, scoped mypy and all nine final manual gates pass)
+- **Summary:** TDD replaces false Python import regex matches with non-executing AST inspection. All 410 changed candidates have real scientific imports and retain source hashes, owners and publication blockers. No existing calculation is downgraded; the added parser is inventoried.
+- **Next step:** Publish through normal hooks and protected PR review; retain provisional classifications and existing approval boundaries.
+
 ### DL-#5095 · Deterministic Rust Watcher Debounce
 
 - **State:** in_review
