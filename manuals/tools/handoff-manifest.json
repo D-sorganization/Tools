@@ -131,8 +131,8 @@
   "governed_handoff_files": {
     "AGENT_HANDOFF.md": {
       "path": "AGENT_HANDOFF.md",
-      "sha256_lf": "ba2d7272bca1b121d154f8f7d29435941206f926625a416d67bc394f1437585d",
-      "line_count": 109,
+      "sha256_lf": "0965a866a787f48e6ca07c59c0a74edd49a3c2316ca4bc45c39e8b241afe4a4f",
+      "line_count": 122,
       "max_line_budget": 150,
       "required_sections": [
         "## Merge Governance",
@@ -187,8 +187,8 @@
     },
     "src/shared/python/golf_club/AGENT_HANDOFF.md": {
       "path": "src/shared/python/golf_club/AGENT_HANDOFF.md",
-      "sha256_lf": "c411379ea5ea61d4d612eab0732f04529135e986fe1066d4576d825516889dbd",
-      "line_count": 149,
+      "sha256_lf": "ee9671d92bd55315f5f521a66b612255a74a74dea2b96a0423293e12e05125f5",
+      "line_count": 150,
       "max_line_budget": 150,
       "required_sections": [
         "## Stack and Integration Position",
