@@ -12,6 +12,16 @@
 - Continuation matrix: `docs/development/impact-acoustics/PROGRESS.md`.
   T3–T6, consumer adapters/studies and physical/perceptual validation remain open.
 - T2 lease posting failed; #9735 compatibility lease succeeded. Fresh downstream import regression reproduced; see continuation matrix.
+- Foundation #5069 is locally verified on `feat/5068-impact-dynamics-foundation`,
+  based on `b4875be19`; PR #5077; implementation `6d94f1d3d`. Theory: AffineDrift #4253; consumer: UpstreamDrift #9700.
+- TDD verified by `tests/shared/python/golf_club/test_impact_mobility.py`;
+  implementation reuses `golf_club._validation` and preserves existing APIs.
+- PR #5077 synced protected main `6b27c4f0569ac486c491e073f87f67440a9521fa`; provider inventory rechecked.
+- Strict pre-push typing uses explicit float returns at validated scalar boundaries.
+- Full tensor mobility is a detached rigid-body reference, not a validated flexible
+  shaft or acoustic solver. Follow-on design: `docs/specs/IMPACT_DYNAMICS_ACOUSTICS.md`.
+- Lease scripts found no claim; Tools label posting failed. Proceeding under the
+  fleet's documented fail-open rule; do not treat that as a successfully posted lease.
 
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-09-08

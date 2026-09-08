@@ -2,12 +2,12 @@
 
 ## Impact Dynamics Review: #5068 / #5069
 
-`impact_mobility.py`: detached tensor reference, T1 PR #5077; not a flexible/acoustic solver.
-T2 #5071 adds event-resolved integration, preload states and all four passive loss channels; v1 report fields retain their meanings.
-See `docs/development/impact-acoustics/PROGRESS.md` for current validation and the full open research matrix.
+`impact_mobility.py`: detached full-tensor reference, 30 TDD gates; explicit scalar returns pass strict typing; existing API/wire v1 unchanged.
+`docs/specs/IMPACT_DYNAMICS_ACOUSTICS.md` owns #5071–#5075; distributed contact,
+measured grip impedance and acoustics remain unqualified.
 
 > Update this file in every implementation commit that changes this package.
-> Last updated: 2026-08-27
+> Last updated: 2026-09-08
 
 ## Stack and Integration Position
 

@@ -19,6 +19,14 @@ This model answers that bounded mathematical question. An XML body reduction
 is not measured dynamic impedance, and one wave-transit estimate cannot prove
 that every shaft or hand mechanism is absent. The distributed, rotating and
 acoustic extensions are tracked in #5068; no universal percentage is inferred.
+During the ~500 µs of club-ball contact, how much can the golfer's hands and
+body actually change the impact — and therefore, how _separate_ is the impact
+model from whatever multibody system drives it? The classical claim (Cochran &
+Stobbs; Jorgensen) is that the head behaves as a nearly free body: flexural
+waves cannot travel grip-ward and return within the contact window. This epic
+**quantifies** that claim with a transient coupled model and counterfactuals,
+and makes the answer computable for _any_ golfer model exported from the
+engines UpstreamDrift features — MuJoCo, Drake, OpenSim, Pinocchio.
 
 ## 2. Architecture
 
@@ -102,6 +110,20 @@ untruncated linear oscillator's half period. It is not an exact inversion of
 force-clipped Kelvin-Voigt restitution. Use the actual event law when comparing
 or calibrating restitution; never transfer one fixed restitution across changed
 reduced masses or changed cutoff/cap conventions.
+
+**Gates (analytic/consistency, TDD):**
+
+1. Detached limit (`k_s = 0`) reproduces `SpringDamperImpactModel`'s ball
+   exit speed for identical contact parameters (tight tolerance).
+2. Welded-rigid limit (`k_s, k_g → large`) approaches the infinite-mass
+   two-body bound `v_ball → (1+e)·v_head` from below; monotone in `k_g`.
+3. **Decoupling law**: influence shrinks as contact duration shrinks
+   (stiffer contact ⇒ less hand influence) — monotonicity gate.
+4. Energy conservation within integration tolerance at zero damping.
+5. Physiological inputs (grip stiffness ~1e4–1e5 N/m, hand+forearm mass
+   ~2–4 kg) yield **sub-percent** ball-speed influence — the quantified
+   classical claim, asserted as a band, with the rigid-shaft upper bound
+   also reported.
 
 ## 4. H2 — Importing Golfer Models From the Engines
 
