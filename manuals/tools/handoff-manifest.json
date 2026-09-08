@@ -1,0 +1,218 @@
+{
+  "schema_version": "tools-handoff-maintenance/1.0.0",
+  "manual_id": "tools",
+  "release_status": "unapproved-handoff-verified",
+  "owner": "Tools maintainers",
+  "program": {
+    "epic": 4707,
+    "subepic": 4730
+  },
+  "repository": "D-sorganization/Tools",
+  "issue_url": "https://github.com/D-sorganization/Tools/issues/4730",
+  "pr_url": "https://github.com/D-sorganization/Tools/pull/5055",
+  "commit_evidence": {
+    "local_head_sha": "b4875be1986e14a8d21d2cd116f564e57cdd3e02",
+    "remote_head_sha": null,
+    "reviewed_tree_sha": "e72a635d7a92dd79a7b756841a42aa85df664f7f",
+    "merge_sha": null
+  },
+  "branch_and_worktree": {
+    "branch": "feat/4721-mocap-extrinsic-calibration",
+    "worktree": "C:\\Users\\diete\\Repositories\\Tools",
+    "is_clean": false
+  },
+  "check_evidence": {
+    "check_design_manual_governance": {
+      "command": "python -m scripts.check_design_manual_governance",
+      "status": "passed",
+      "timestamp": "2026-09-07T19:59:06Z"
+    },
+    "build_tools_module_inventory": {
+      "command": "python -m scripts.build_tools_module_inventory --check",
+      "status": "passed",
+      "timestamp": "2026-09-07T19:59:06Z"
+    },
+    "lint_tools_textbook_chapters": {
+      "command": "python -m scripts.lint_tools_textbook_chapters",
+      "status": "passed",
+      "timestamp": "2026-09-07T19:59:06Z"
+    },
+    "check_tools_exemplars": {
+      "command": "python -m scripts.check_tools_exemplars",
+      "status": "passed",
+      "timestamp": "2026-09-07T19:59:06Z"
+    },
+    "check_tools_calculation_freshness": {
+      "command": "python -m scripts.check_tools_calculation_freshness --check",
+      "status": "passed",
+      "timestamp": "2026-09-07T19:59:06Z"
+    },
+    "check_tools_manual_qa": {
+      "command": "python -m scripts.check_tools_manual_qa --check",
+      "status": "passed",
+      "timestamp": "2026-09-07T19:59:06Z"
+    },
+    "check_tools_publication_projection": {
+      "command": "python -m scripts.check_tools_publication_projection --check",
+      "status": "passed",
+      "timestamp": "2026-09-07T19:59:06Z"
+    },
+    "render_tools_design_manual": {
+      "command": "python -m scripts.render_tools_design_manual --check",
+      "status": "passed",
+      "timestamp": "2026-09-07T19:59:06Z"
+    },
+    "check_tools_handoff": {
+      "command": "python -m scripts.check_tools_handoff --check",
+      "status": "passed",
+      "timestamp": "2026-09-07T19:59:06Z"
+    }
+  },
+  "artifact_and_test_digests": {
+    "calculation_registry_sha256": "f22e10d276306fef974368eacde887b734c6bd5610eeb78680628b0c808b9fdc",
+    "toolchain_lock_sha256": "62915da70f09da3fead98ae71ccb94c2afaec7db2de390faa97234e103426b9b",
+    "artifacts_manifest_sha256": "cd7495bbabf083e197a16676ab7e352903fd54c46df97366dd4f7466de31f215",
+    "qa_ledger_sha256": "bdc5d27e97283015191d7a633f205506095cbddd2c609b71978ff51af16ba126",
+    "publication_projection_sha256": "5d18142822b9d8f254cdccda1725db67ac02bf5d5cd997ed90c674473c9ea06b",
+    "artifacts_sha256": {
+      "docx": {
+        "path": "manuals/tools/dist/tools-engineering-design-manual.docx",
+        "media_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "bytes": 71156,
+        "sha256": "2b13ec732a8dc38044f606a521bb961541b2f39f434aca6d94b1d4c910719559"
+      },
+      "html": {
+        "path": "manuals/tools/dist/tools-engineering-design-manual.html",
+        "media_type": "text/html",
+        "bytes": 100607,
+        "sha256": "2cd8a1e0dc5f17bd95257e452af642cb49edd897e842250c7a0d2097d0d3c5f4"
+      },
+      "pdf": {
+        "path": "manuals/tools/dist/tools-engineering-design-manual.pdf",
+        "media_type": "application/pdf",
+        "bytes": 275840,
+        "sha256": "a2c25deea16a0b4cd03573d20b29bf68e20aa9ce723107081368a70836ffd557"
+      },
+      "tex": {
+        "path": "manuals/tools/dist/tools-engineering-design-manual.tex",
+        "media_type": "application/x-tex",
+        "bytes": 39156,
+        "sha256": "188a68d12db2c292669b414d09dafcd9204b29b2c8ddd5af7fb10d893b63789c"
+      }
+    }
+  },
+  "limitations": [
+    "Formal human sign-off on design manual publication and production release remains pending TOOLS-HUMAN-APPROVAL-PENDING.",
+    "Markerless motion-capture exemplar remains blocked on TOOLS-M0 issue #4708 and PR #4734.",
+    "Visual baselines are produced on Linux fleet runners and cannot be regenerated in local Windows environments without candidate download."
+  ],
+  "approvals_and_expiry": {
+    "state": "unapproved-handoff-verified",
+    "blockers": [
+      "TOOLS-HUMAN-APPROVAL-PENDING",
+      "TOOLS-MARKERLESS-EXEMPLAR-BLOCKED"
+    ],
+    "expiry_timestamp": "2026-12-06T19:59:06Z"
+  },
+  "blockers": [
+    {
+      "id": "TOOLS-HUMAN-APPROVAL-PENDING",
+      "owner": "Lead systems maintainers",
+      "resolution": "Publication projection and release approval remain blocked pending formal human sign-off on page review, accessibility, and completion audit."
+    },
+    {
+      "id": "TOOLS-MARKERLESS-EXEMPLAR-BLOCKED",
+      "owner": "TOOLS-M0 issue #4708 and TOOLS-D4 issue #4720",
+      "resolution": "Merge markerless authority contracts through protected review, then register source-backed calculation and textbook chapter without copying unmerged code."
+    }
+  ],
+  "next_dependency": "TOOLS-M0 (#4708 / #4734) and parent epic DOC-TOOLS (#4707) closure",
+  "freshness_timestamp": "2026-09-07T19:59:06Z",
+  "governed_handoff_files": {
+    "AGENT_HANDOFF.md": {
+      "path": "AGENT_HANDOFF.md",
+      "sha256_lf": "1423be154f822ed32e3a39b94c62318cefcf9e35f7a2bfc334f59cb2eb595603",
+      "line_count": 85,
+      "max_line_budget": 150,
+      "required_sections": [
+        "## Merge Governance",
+        "## Where This Repo Is Headed",
+        "## Active Delivery Boundaries",
+        "## Must-Read Architecture Pointers",
+        "## Gate Commands (Repo-Wide)",
+        "## Do-Not List",
+        "## Short-Term Roadmap (Ordered)"
+      ]
+    },
+    "src/pendulum_simulator/AGENT_HANDOFF.md": {
+      "path": "src/pendulum_simulator/AGENT_HANDOFF.md",
+      "sha256_lf": "b299212787a3139ad4afae9e407a30282d49aa773603110c43caac15c25bf751",
+      "line_count": 58,
+      "max_line_budget": 150,
+      "required_sections": [
+        "## Where This Tool Is Headed",
+        "## Active Epics \u2014 #4766 objectives, #4775 actuation and realism",
+        "## Must-Read Architecture Pointers",
+        "## Gate Commands (this tool)",
+        "## Do-Not List",
+        "## Roadmap (ordered)"
+      ]
+    },
+    "src/rate_of_closure/AGENT_HANDOFF.md": {
+      "path": "src/rate_of_closure/AGENT_HANDOFF.md",
+      "sha256_lf": "2928e8ca4e78bee752431800dafdc9166f19ee9ff4465799705cb56e04524176",
+      "line_count": 56,
+      "max_line_budget": 150,
+      "required_sections": [
+        "## What This Tool Is Now",
+        "## Active Epics \u2014 Golf Epics Merged",
+        "## Must-Read Architecture Pointers",
+        "## Gate Commands (This Tool)",
+        "## Do-Not List"
+      ]
+    },
+    "src/rotation_converter/AGENT_HANDOFF.md": {
+      "path": "src/rotation_converter/AGENT_HANDOFF.md",
+      "sha256_lf": "ebaddae562be5663d591de4c95851b52263f81c027966071a22748d8558559d4",
+      "line_count": 76,
+      "max_line_budget": 150,
+      "required_sections": [
+        "## Where This Tool Is Headed",
+        "## Recent Activity (grounding \u2014 `git log --oneline -15 -- src/rotation_converter`)",
+        "## Must-Read Architecture Pointers",
+        "## Gate Commands (this tool)",
+        "## Do-Not List",
+        "## Roadmap (ordered)"
+      ]
+    },
+    "src/shared/python/golf_club/AGENT_HANDOFF.md": {
+      "path": "src/shared/python/golf_club/AGENT_HANDOFF.md",
+      "sha256_lf": "c411379ea5ea61d4d612eab0732f04529135e986fe1066d4576d825516889dbd",
+      "line_count": 149,
+      "max_line_budget": 150,
+      "required_sections": [
+        "## Stack and Integration Position",
+        "## Club Fitting Tester Epic (#4549) \u2014 COMPLETED (#4557, #4577)",
+        "## Heavy Hit Epic (#4562) \u2014 COMPLETED (#4568, #4577)",
+        "## Putting Epic #4800 \u2014 P3 putter head, P5 putter fitting",
+        "## Current CAD and Export Contract",
+        "## Focused Verification",
+        "## Residual #4149 / #4146 Scope"
+      ]
+    },
+    "src/shared/python/sidekick/lab/mocap/AGENT_HANDOFF.md": {
+      "path": "src/shared/python/sidekick/lab/mocap/AGENT_HANDOFF.md",
+      "sha256_lf": "591decacfbdadcfacce9de0d350903eb7da232b00aa3507e01c240edab98b66e",
+      "line_count": 59,
+      "max_line_budget": 150,
+      "required_sections": [
+        "## Authority",
+        "## Active issues",
+        "## Current branch",
+        "## Delivered in this slice",
+        "## Required gates",
+        "## Do not"
+      ]
+    }
+  }
+}

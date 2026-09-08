@@ -1,9 +1,9 @@
 {
-  "schema_version": "tools/design-manual-governance/1.5.0",
+  "schema_version": "tools/design-manual-governance/1.9.0",
   "program": {
     "epic": 4707,
-    "current_subepic": 4720,
-    "next_subepic": 4722
+    "current_subepic": 4730,
+    "next_subepic": null
   },
   "canonical_source": {
     "manual_id": "tools",
@@ -67,7 +67,12 @@
   },
   "freshness": {
     "enforcement": "release-blocking",
-    "current_gate": "blocked-pending-TOOLS-D6",
+    "current_gate": "qualified-executable-freshness-enforced",
+    "manifest": "manuals/tools/calculation-freshness.json",
+    "schema": "manuals/tools/schemas/calculation-freshness.schema.json",
+    "checker": "scripts/check_tools_calculation_freshness.py",
+    "generator": "scripts/generate_tools_calculations.py",
+    "fixtures": "manuals/tools/fixtures/dplane-calculation-fixtures.json",
     "impacted_paths": [
       "src",
       "scripts",
@@ -77,6 +82,16 @@
       "manuals/tools"
     ],
     "exemptions": "structured-owned-expiring-only"
+  },
+  "qa": {
+    "enforcement": "release-blocking",
+    "current_gate": "zero-sampling-page-accessibility-qa-enforced",
+    "ledger": "manuals/tools/manual-qa.json",
+    "schema": "manuals/tools/schemas/manual-qa.schema.json",
+    "checker": "scripts/check_tools_manual_qa.py",
+    "inspection_mode": "complete-zero-sampling",
+    "sampling_rate": 1.0,
+    "expected_pdf_pages": 10
   },
   "publication": {
     "default": "deny-until-approved",
@@ -96,6 +111,13 @@
       "accessibility_review",
       "human_approval"
     ]
+  },
+  "handoff": {
+    "enforcement": "release-blocking",
+    "current_gate": "governed-completion-audit-handoff-enforced",
+    "manifest": "manuals/tools/handoff-manifest.json",
+    "schema": "manuals/tools/schemas/handoff-maintenance.schema.json",
+    "checker": "scripts/check_tools_handoff.py"
   },
   "quality": {
     "python_version": "3.11",
@@ -132,9 +154,27 @@
       "scripts/tools_formula_traceability_resolvers.py",
       "manuals/tools/exemplar-coverage.json",
       "manuals/tools/schemas/exemplar-coverage.schema.json",
+      "manuals/tools/calculation-freshness.json",
+      "manuals/tools/schemas/calculation-freshness.schema.json",
+      "manuals/tools/fixtures/dplane-calculation-fixtures.json",
+      "scripts/tools_calculation_freshness_contract.py",
+      "scripts/generate_tools_calculations.py",
+      "scripts/check_tools_calculation_freshness.py",
+      "manuals/tools/manual-qa.json",
+      "manuals/tools/schemas/manual-qa.schema.json",
+      "scripts/tools_manual_qa_contract.py",
+      "scripts/check_tools_manual_qa.py",
+      "manuals/tools/publication-projection.json",
+      "manuals/tools/schemas/publication-projection.schema.json",
+      "scripts/tools_publication_projection_contract.py",
+      "scripts/check_tools_publication_projection.py",
+      "manuals/tools/handoff-manifest.json",
+      "manuals/tools/schemas/handoff-maintenance.schema.json",
+      "scripts/tools_handoff_contract.py",
+      "scripts/check_tools_handoff.py",
       "SPEC.md",
       "AGENT_HANDOFF.md"
     ],
-    "required_gate": "python -m scripts.check_design_manual_governance && python -m scripts.build_tools_module_inventory --check && python -m scripts.lint_tools_textbook_chapters && python -m scripts.check_tools_exemplars && python -m scripts.render_tools_design_manual --check"
+    "required_gate": "python -m scripts.check_design_manual_governance && python -m scripts.build_tools_module_inventory --check && python -m scripts.lint_tools_textbook_chapters && python -m scripts.check_tools_exemplars && python -m scripts.check_tools_calculation_freshness --check && python -m scripts.check_tools_manual_qa --check && python -m scripts.check_tools_publication_projection --check && python -m scripts.check_tools_handoff --check && python -m scripts.render_tools_design_manual --check"
   }
 }

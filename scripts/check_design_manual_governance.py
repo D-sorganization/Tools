@@ -21,6 +21,10 @@ from scripts.design_manual_contract import (
     is_valid_revision,
 )
 from scripts.render_tools_design_manual import check_manual
+from scripts.tools_calculation_freshness_contract import (
+    CalculationFreshnessError,
+    verify_calculation_freshness,
+)
 from scripts.tools_exemplar_contract import (
     ExemplarContractError,
     verify_exemplar_repository,
@@ -29,10 +33,22 @@ from scripts.tools_formula_traceability_contract import (
     FormulaTraceabilityError,
     verify_formula_traceability,
 )
+from scripts.tools_handoff_contract import (
+    HandoffMaintenanceError,
+    verify_handoff_maintenance,
+)
+from scripts.tools_manual_qa_contract import (
+    ManualQAError,
+    verify_manual_qa,
+)
 from scripts.tools_module_inventory_contract import (
     ToolsModuleInventoryError,
 )
 from scripts.tools_module_inventory_storage import read_inventory
+from scripts.tools_publication_projection_contract import (
+    PublicationProjectionError,
+    verify_publication_projection,
+)
 from scripts.tools_textbook_chapter_contract import TextbookChapterError
 from scripts.tools_textbook_chapter_lint import verify_textbook_chapters
 
@@ -182,16 +198,96 @@ def _verify_freshness(policy: dict[str, object]) -> None:
     freshness = _object(
         policy["freshness"],
         "freshness",
-        {"enforcement", "current_gate", "impacted_paths", "exemptions"},
+        {
+            "enforcement",
+            "current_gate",
+            "manifest",
+            "schema",
+            "checker",
+            "generator",
+            "fixtures",
+            "impacted_paths",
+            "exemptions",
+        },
     )
     _equal(freshness["enforcement"], "release-blocking", "freshness enforcement")
-    _equal(freshness["current_gate"], "blocked-pending-TOOLS-D6", "freshness gate")
+    _equal(
+        freshness["current_gate"],
+        "qualified-executable-freshness-enforced",
+        "freshness gate",
+    )
+    _equal(
+        _safe_path(freshness["manifest"], "freshness manifest"),
+        PurePosixPath("manuals/tools/calculation-freshness.json"),
+        "freshness manifest",
+    )
+    _equal(
+        _safe_path(freshness["schema"], "freshness schema"),
+        PurePosixPath("manuals/tools/schemas/calculation-freshness.schema.json"),
+        "freshness schema",
+    )
+    _equal(
+        _safe_path(freshness["checker"], "freshness checker"),
+        PurePosixPath("scripts/check_tools_calculation_freshness.py"),
+        "freshness checker",
+    )
+    _equal(
+        _safe_path(freshness["generator"], "freshness generator"),
+        PurePosixPath("scripts/generate_tools_calculations.py"),
+        "freshness generator",
+    )
+    _equal(
+        _safe_path(freshness["fixtures"], "freshness fixtures"),
+        PurePosixPath("manuals/tools/fixtures/dplane-calculation-fixtures.json"),
+        "freshness fixtures",
+    )
     _equal(freshness["exemptions"], "structured-owned-expiring-only", "exemptions")
     paths = [
         _safe_path(item, "impacted path")
         for item in _array(freshness["impacted_paths"], "impacted paths")
     ]
     _equal(paths, list(map(PurePosixPath, IMPACTED_PATHS)), "impacted paths")
+
+
+def _verify_qa(policy: dict[str, object]) -> None:
+    qa = _object(
+        policy["qa"],
+        "qa",
+        {
+            "enforcement",
+            "current_gate",
+            "ledger",
+            "schema",
+            "checker",
+            "inspection_mode",
+            "sampling_rate",
+            "expected_pdf_pages",
+        },
+    )
+    _equal(qa["enforcement"], "release-blocking", "qa enforcement")
+    _equal(
+        qa["current_gate"],
+        "zero-sampling-page-accessibility-qa-enforced",
+        "qa gate",
+    )
+    _equal(
+        _safe_path(qa["ledger"], "qa ledger"),
+        PurePosixPath("manuals/tools/manual-qa.json"),
+        "qa ledger",
+    )
+    _equal(
+        _safe_path(qa["schema"], "qa schema"),
+        PurePosixPath("manuals/tools/schemas/manual-qa.schema.json"),
+        "qa schema",
+    )
+    _equal(
+        _safe_path(qa["checker"], "qa checker"),
+        PurePosixPath("scripts/check_tools_manual_qa.py"),
+        "qa checker",
+    )
+    _equal(qa["inspection_mode"], "complete-zero-sampling", "inspection mode")
+    _equal(qa["sampling_rate"], 1.0, "sampling rate")
+    _equal(qa["expected_pdf_pages"], 10, "expected pdf pages")
 
 
 def _verify_chapter_contract(policy: dict[str, object]) -> None:
@@ -313,6 +409,35 @@ def _verify_publication(policy: dict[str, object]) -> bool:
     return False
 
 
+def _verify_handoff(policy: dict[str, object]) -> None:
+    handoff = _object(
+        policy["handoff"],
+        "handoff",
+        {"enforcement", "current_gate", "manifest", "schema", "checker"},
+    )
+    _equal(handoff["enforcement"], "release-blocking", "handoff enforcement")
+    _equal(
+        handoff["current_gate"],
+        "governed-completion-audit-handoff-enforced",
+        "handoff gate",
+    )
+    _equal(
+        _safe_path(handoff["manifest"], "handoff manifest"),
+        PurePosixPath("manuals/tools/handoff-manifest.json"),
+        "handoff manifest",
+    )
+    _equal(
+        _safe_path(handoff["schema"], "handoff schema"),
+        PurePosixPath("manuals/tools/schemas/handoff-maintenance.schema.json"),
+        "handoff schema",
+    )
+    _equal(
+        _safe_path(handoff["checker"], "handoff checker"),
+        PurePosixPath("scripts/check_tools_handoff.py"),
+        "handoff checker",
+    )
+
+
 def _verify_quality_license_git(policy: dict[str, object]) -> None:
     quality = _object(
         policy["quality"],
@@ -346,7 +471,7 @@ def verify_governance_policy(policy: object) -> tuple[str, PurePosixPath, bool]:
     document = _object(policy, "governance policy", EXPECTED_POLICY_FIELDS)
     _equal(
         document["schema_version"],
-        "tools/design-manual-governance/1.5.0",
+        "tools/design-manual-governance/1.9.0",
         "schema version",
     )
     program = _object(
@@ -354,7 +479,7 @@ def verify_governance_policy(policy: object) -> tuple[str, PurePosixPath, bool]:
     )
     _equal(
         program,
-        {"epic": 4707, "current_subepic": 4720, "next_subepic": 4722},
+        {"epic": 4707, "current_subepic": 4730, "next_subepic": None},
         "program",
     )
     manual_id, source_path = _verify_source(document)
@@ -402,7 +527,9 @@ def verify_governance_policy(policy: object) -> tuple[str, PurePosixPath, bool]:
     _verify_chapter_contract(document)
     _verify_exemplar_contract(document)
     _verify_freshness(document)
+    _verify_qa(document)
     allowed = _verify_publication(document)
+    _verify_handoff(document)
     _verify_quality_license_git(document)
     _object(
         document["agent_context"],
@@ -534,6 +661,10 @@ def _verify_context(root: Path, policy: dict[str, object]) -> None:
             "python -m scripts.build_tools_module_inventory --check && "
             "python -m scripts.lint_tools_textbook_chapters && "
             "python -m scripts.check_tools_exemplars && "
+            "python -m scripts.check_tools_calculation_freshness --check && "
+            "python -m scripts.check_tools_manual_qa --check && "
+            "python -m scripts.check_tools_publication_projection --check && "
+            "python -m scripts.check_tools_handoff --check && "
             "python -m scripts.render_tools_design_manual --check"
         ),
         "required gate",
@@ -546,6 +677,10 @@ def _verify_context(root: Path, policy: dict[str, object]) -> None:
             "scripts.build_tools_module_inventory",
             "scripts.lint_tools_textbook_chapters",
             "scripts.check_tools_exemplars",
+            "scripts.check_tools_calculation_freshness",
+            "scripts.check_tools_manual_qa",
+            "scripts.check_tools_publication_projection",
+            "scripts.check_tools_handoff",
             "scripts.render_tools_design_manual",
         ):
             if phrase not in text:
@@ -585,22 +720,21 @@ def verify_repository(root: Path = REPO_ROOT) -> DesignManualGovernanceSummary:
     chapter_summary = verify_textbook_chapters(root)
     verify_formula_traceability(root)
     verify_exemplar_repository(root)
+    verify_calculation_freshness(root)
+    verify_manual_qa(root)
+    verify_publication_projection(root)
+    verify_handoff_maintenance(root)
     qmd_count = _verify_manual_tree(root, source_path)
     _verify_context(root, policy)
     for schema in (
         root / "schemas" / "calculation-registry.schema.json",
         root / "schemas" / "publication-projection.schema.json",
+        root / "schemas" / "handoff-maintenance.schema.json",
     ):
         if schema.exists():
             raise DesignManualGovernanceError(
                 f"program-owned schema copy is forbidden: {schema.relative_to(root)}"
             )
-    publication = cast(dict[str, object], policy["publication"])
-    manifest_path = _safe_path(publication["projection_manifest_path"], "manifest path")
-    if not allowed and root.joinpath(*manifest_path.parts).exists():
-        raise DesignManualGovernanceError(
-            "blocked publication must not have a projection manifest"
-        )
     registry_object = cast(dict[str, object], registry)
     return DesignManualGovernanceSummary(
         manual_id=manual_id,
@@ -621,6 +755,10 @@ def main() -> int:
         TextbookChapterError,
         FormulaTraceabilityError,
         ExemplarContractError,
+        CalculationFreshnessError,
+        ManualQAError,
+        PublicationProjectionError,
+        HandoffMaintenanceError,
         ToolsModuleInventoryError,
         OSError,
         json.JSONDecodeError,

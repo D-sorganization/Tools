@@ -20,6 +20,10 @@ on:
       - "tests/architecture/test_tools_textbook_chapter_contract.py"
       - "tests/architecture/test_tools_formula_traceability_contract.py"
       - "tests/architecture/test_tools_exemplar_manuals_contract.py"
+      - "tests/architecture/test_tools_calculation_freshness_contract.py"
+      - "tests/architecture/test_tools_manual_qa_contract.py"
+      - "tests/architecture/test_tools_publication_projection_contract.py"
+      - "tests/architecture/test_tools_handoff_contract.py"
       - ".github/workflows/docs-governance.yml"
   push:
     branches: [main]
@@ -38,6 +42,10 @@ on:
       - "tests/architecture/test_tools_textbook_chapter_contract.py"
       - "tests/architecture/test_tools_formula_traceability_contract.py"
       - "tests/architecture/test_tools_exemplar_manuals_contract.py"
+      - "tests/architecture/test_tools_calculation_freshness_contract.py"
+      - "tests/architecture/test_tools_manual_qa_contract.py"
+      - "tests/architecture/test_tools_publication_projection_contract.py"
+      - "tests/architecture/test_tools_handoff_contract.py"
       - ".github/workflows/docs-governance.yml"
 
 jobs:
@@ -112,7 +120,7 @@ jobs:
       - name: Install focused governance test dependencies
         run: >-
           python -m pip install --disable-pip-version-check
-          pytest==9.0.3 jsonschema==4.24.0 pypdf==6.15.0
+          pytest==9.0.3 jsonschema==4.24.0 pypdf==6.15.0 numpy
       - name: Validate docs governance
         run: python3 scripts/check_docs_governance.py
       - name: Validate engineering design-manual governance
@@ -123,6 +131,14 @@ jobs:
         run: python3 -m scripts.lint_tools_textbook_chapters
       - name: Validate Tools governed exemplar traceability
         run: python3 -m scripts.check_tools_exemplars
+      - name: Validate Tools calculation freshness
+        run: python3 -m scripts.check_tools_calculation_freshness --check
+      - name: Validate Tools render, semantic, and accessibility QA
+        run: python3 -m scripts.check_tools_manual_qa --check
+      - name: Validate Tools immutable public publication projection
+        run: python3 -m scripts.check_tools_publication_projection --check
+      - name: Validate Tools governed completion-audit handoff and maintenance
+        run: python3 -m scripts.check_tools_handoff --check
       - name: Validate Tools manual artifact freshness and semantics
         run: python3 -m scripts.render_tools_design_manual --check
       - name: Test engineering design-manual governance
@@ -135,4 +151,8 @@ jobs:
           tests/architecture/test_tools_textbook_chapter_contract.py
           tests/architecture/test_tools_formula_traceability_contract.py
           tests/architecture/test_tools_exemplar_manuals_contract.py
+          tests/architecture/test_tools_calculation_freshness_contract.py
+          tests/architecture/test_tools_manual_qa_contract.py
+          tests/architecture/test_tools_publication_projection_contract.py
+          tests/architecture/test_tools_handoff_contract.py
           -m 'not integration' -q

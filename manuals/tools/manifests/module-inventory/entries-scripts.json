@@ -1680,10 +1680,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 23719,
+      "bytes_lf": 27957,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "80aacad153d9d2513c299e6872486d1f3b1ea76dbffd684cfdacfab87b1067a0",
+      "content_sha256_lf": "c27a8c0deebdc974fc37bf9b928d01a0932d47c4b44d7a08de757aba5c04fb28",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CHECK-DESIGN-MANUAL-GOVERNANCE-PY-81C2F95C1FD2",
       "language": "python",
@@ -3272,6 +3272,67 @@
       }
     },
     {
+      "authority_status": "provisional",
+      "bytes_lf": 2087,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculation",
+      "content_sha256_lf": "c4003572d4cc517b785f4c1f9e206a80e8e62f9ddc11d180d7ee77ecb39ea8d5",
+      "family": "repository-tooling-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CHECK-TOOLS-CALCULATION-FRESHNESS-PY-07877B7B4D2B",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/check_tools_calculation_freshness.py",
+      "purpose": "CLI check gate for Tools calculation freshness and reverse-impact governance.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "ROOT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "not-applicable",
       "bytes_lf": 903,
       "classification": "non-calculation",
@@ -3314,6 +3375,58 @@
             "kind": "function",
             "name": "main",
             "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4544,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "330e47c2cf1a7cebe9a76d52569e9f339a1086f43b0ee409418819b4a881ac26",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CHECK-TOOLS-HANDOFF-PY-56F8642AB446",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/check_tools_handoff.py",
+      "purpose": "Run or generate Tools handoff and maintenance contract verification.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://github.com/D-sorganization/Tools/pull/5055"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: Sequence[str] | None=None"
           }
         ],
         "test_paths": [],
@@ -3389,6 +3502,106 @@
         "test_paths": [
           "tests/scripts/test_check_tools_manifest_layout.py"
         ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3970,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8e7f0f04b19c0703639c8f810c12de6ebfc20f439cedd5b0235086379dd484ad",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CHECK-TOOLS-MANUAL-QA-PY-B959926ECC1D",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/check_tools_manual_qa.py",
+      "purpose": "Run or generate Tools manual render, semantic, and accessibility QA verification.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: Sequence[str] | None=None"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4397,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "28fff48140a67ce89b2abe710f3e9e90bb5b1c076eb0f4ef6b8ba433a181c52f",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CHECK-TOOLS-PUBLICATION-PROJECTION-PY-E03D153200C1",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/check_tools_publication_projection.py",
+      "purpose": "Run or generate Tools public publication projection verification.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: Sequence[str] | None=None"
+          }
+        ],
+        "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []
       }
@@ -4020,10 +4233,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3031,
+      "bytes_lf": 3958,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6e55bb44a6ca775f231de2fe643d96de35fae8a6d0ee968551a8043591545194",
+      "content_sha256_lf": "e3af7f092cc0479c1df74d5fb28016743e54afff98e1ecfc2a458b5d5244eea7",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-DESIGN-MANUAL-CONTRACT-PY-D9B04C2AF62E",
       "language": "python",
@@ -4726,6 +4939,82 @@
         "unit_mentions": [
           "kPa",
           "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 17337,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculation",
+      "content_sha256_lf": "5f070beebad53be08ca29f86fe9737d54f93495e6d12ef06d593782a468b61bb",
+      "family": "repository-tooling-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-GENERATE-TOOLS-CALCULATIONS-PY-EE94CB5B6258",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/generate_tools_calculations.py",
+      "purpose": "Generate and verify the deterministic Tools calculation-freshness manifest.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "FIXTURES_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ROOT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_freshness_manifest",
+            "signature": "root: Path=ROOT"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "write_freshness_manifest",
+            "signature": "root: Path=ROOT"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "deg"
         ],
         "validation_paths": []
       }
@@ -6291,10 +6580,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9405,
+      "bytes_lf": 9701,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ccab121c58845cad378e79559a8f346d4d4c53f9990ca22e43304f321c248bb5",
+      "content_sha256_lf": "1eff8159b42567d53a6645c08e654dc78a20bee7a7a9608b4a2bcc34b1012eee",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-RENDER-TOOLS-DESIGN-MANUAL-PY-BE094E4A8964",
       "language": "python",
@@ -6924,6 +7213,255 @@
       }
     },
     {
+      "authority_status": "provisional",
+      "bytes_lf": 36473,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculation",
+      "content_sha256_lf": "34f51a3d69f2975807c887e9d825587b7221e82dfdd96b031724125eaaa8ab5e",
+      "family": "repository-tooling-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-TOOLS-CALCULATION-FRESHNESS-CONTRACT-PY-07A0044FF2A9",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/tools_calculation_freshness_contract.py",
+      "purpose": "Strict TOOLS-D6 calculation freshness, executable evidence, and reverse-impact contracts.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CalculationFreshnessEntry",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CalculationFreshnessError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CalculationFreshnessManifest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CitationLink",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DocumentedFigure",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DocumentedTable",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DocumentedValue",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DriftError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ExecutableExample",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ExemptionError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ExpiringExemption",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FreshnessVerificationSummary",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ReverseImpactError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SchemaLink",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SourceLink",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TestLink",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TransitiveReverseImpactGate",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ARTIFACT_MANIFEST_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CALCULATION_ID_PATTERN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CALCULATION_REGISTRY_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CHAPTER_CONTRACT_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXAMPLE_ID_PATTERN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXEMPLAR_COVERAGE_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXEMPTION_ID_PATTERN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FRESHNESS_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FRESHNESS_SCHEMA_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FRESHNESS_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "HASH_PATTERN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PLACEHOLDER_TOKENS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REFERENCES_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TEXTBOOK_REGISTRY_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TOOLCHAIN_LOCK_PATH",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "canonical_json_digest",
+            "signature": "data: Any"
+          },
+          {
+            "kind": "function",
+            "name": "execute_dplane_calculation",
+            "signature": "case: dict[str, Any], frame_id: str='app_frame:x_target,y_up,z_right', root: Path | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "load_calculation_freshness",
+            "signature": "payload: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "sha256_file_lf",
+            "signature": "path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "sha256_lf",
+            "signature": "data: bytes | str"
+          },
+          {
+            "kind": "function",
+            "name": "verify_calculation_freshness",
+            "signature": "root: Path, changed_files: Sequence[str | PurePosixPath] | None=None, current_time: datetime | None=None, tolerance_deg: float=1e-09"
+          },
+          {
+            "kind": "function",
+            "name": "verify_expiring_exemptions",
+            "signature": "manifest: CalculationFreshnessManifest, current_time: datetime | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/architecture/test_tools_calculation_freshness_contract.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "tests/architecture/test_tools_calculation_freshness_contract.py"
+        ]
+      }
+    },
+    {
       "authority_status": "not-applicable",
       "bytes_lf": 16173,
       "classification": "non-calculation",
@@ -7232,6 +7770,180 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 24197,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a94a9355f80fb559782699ae0570323674490f64d85a5f3e785cd0564b068efe",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-TOOLS-HANDOFF-CONTRACT-PY-CCB22662BD24",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/tools_handoff_contract.py",
+      "purpose": "Consumer contracts and verification engines for Tools handoff and maintenance.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://github.com/D-sorganization/Tools/issues/4730",
+          "https://github.com/D-sorganization/Tools/pull/5055"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ApprovalsAndExpiryRecord",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ArtifactDigestRecord",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ArtifactsAndTestDigests",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "BlockerRecord",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "BranchWorktreeRecord",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CheckEvidenceItem",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CommitEvidenceRecord",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HandoffFileRecord",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HandoffMaintenanceError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HandoffMaintenanceManifest",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "AUTHORITY_REPOSITORY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GOVERNANCE_EPIC",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GOVERNANCE_SUBEPIC",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GOVERNED_IMPACTED_PREFIXES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "HANDOFF_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ISSUE_URL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_HANDOFF_LINE_BUDGET",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REQUIRED_CHECK_COMMANDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REQUIRED_HANDOFF_SECTIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TRACKED_HANDOFF_PATHS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_handoff_manifest",
+            "signature": "root: Path, pr_url: str='https://github.com/D-sorganization/Tools/pull/5055', remote_head_sha: str | None=None, merge_sha: str | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "check_diff_aware_freshness",
+            "signature": "root: Path, base_ref: str='origin/main'"
+          },
+          {
+            "kind": "function",
+            "name": "load_handoff_manifest",
+            "signature": "data: Mapping[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "verify_handoff_maintenance",
+            "signature": "root: Path"
+          }
+        ],
+        "test_paths": [
+          "tests/architecture/test_tools_handoff_contract.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "tests/architecture/test_tools_handoff_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 12529,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -7373,6 +8085,163 @@
         ],
         "validation_paths": [
           "tests/architecture/test_tools_manual_renderer_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 23212,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f6823830add80914409c619a250def6a3ef890a62c390b532f7908bdf807608f",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-TOOLS-MANUAL-QA-CONTRACT-PY-100FD02D6EB5",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/tools_manual_qa_contract.py",
+      "purpose": "Consumer contracts and verification engines for Tools manual QA.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://schemas.openxmlformats.org/officeDocument/2006/math",
+          "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CrossFormatIntegrity",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DOCXInspectionResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HTMLInspectionResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ManualQAError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ManualQALedger",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PDFInspectionResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PDFPageRecord",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TexInspectionResult",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXPECTED_PDF_PAGES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GOVERNANCE_SUBEPIC",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MEDIA_TYPES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "QA_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SUSPICIOUS_UNRESOLVED",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_qa_ledger",
+            "signature": "repo_root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "inspect_docx_artifact",
+            "signature": "docx_path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "inspect_html_artifact",
+            "signature": "html_path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "inspect_pdf_artifact",
+            "signature": "pdf_path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "inspect_tex_artifact",
+            "signature": "tex_path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "load_qa_ledger",
+            "signature": "payload: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "sha256_file",
+            "signature": "path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "verify_manual_qa",
+            "signature": "repo_root: Path"
+          }
+        ],
+        "test_paths": [
+          "tests/architecture/test_tools_manual_qa_contract.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/architecture/test_tools_manual_qa_contract.py"
         ]
       }
     },
@@ -7936,6 +8805,135 @@
         "unit_mentions": [],
         "validation_paths": [
           "tests/architecture/test_tools_module_inventory_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 22615,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "38c82052c9f25c0194f890fb537d0032843f98c75fe8b8c38809c50eff352588",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-TOOLS-PUBLICATION-PROJECTION-CONTRACT-PY-C7D48F324029",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/tools_publication_projection_contract.py",
+      "purpose": "Consumer contracts and verification engines for Tools publication projection.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AccessibilityReviewRecord",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ArtifactDigestRecord",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DOCXReviewRecord",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HumanApprovalRecord",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PDFReviewRecord",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PublicationProjectionError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PublicationProjectionEvidence",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PublicationProjectionLedger",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "AUTHORITY_REPOSITORY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CATALOG_REPOSITORY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GOVERNANCE_SUBEPIC",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PROJECTION_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REPOSITORY_LICENSE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_publication_projection",
+            "signature": "root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "load_publication_projection",
+            "signature": "data: Mapping[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "verify_publication_projection",
+            "signature": "root: Path"
+          }
+        ],
+        "test_paths": [
+          "tests/architecture/test_tools_publication_projection_contract.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/architecture/test_tools_publication_projection_contract.py"
         ]
       }
     },
