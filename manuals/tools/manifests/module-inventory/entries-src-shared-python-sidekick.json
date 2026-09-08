@@ -742,6 +742,7 @@
           }
         ],
         "test_paths": [
+          "tests/unit/ai/gui/test_assistant_panel_sidekick_bridge.py",
           "tests/unit/sidekick/agent/test_action_audit.py",
           "tests/unit/sidekick/agent/test_action_service.py",
           "tests/unit/sidekick/agent/test_planner.py"
@@ -1233,6 +1234,7 @@
           }
         ],
         "test_paths": [
+          "tests/unit/ai/gui/test_assistant_panel_sidekick_bridge.py",
           "tests/unit/sidekick/agent/test_planner.py"
         ],
         "unit_mentions": [
