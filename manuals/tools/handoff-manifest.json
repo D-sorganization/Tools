@@ -131,8 +131,8 @@
   "governed_handoff_files": {
     "AGENT_HANDOFF.md": {
       "path": "AGENT_HANDOFF.md",
-      "sha256_lf": "a1db3a5b0f52bd368cbaabce7ba549deb5a9a97039268ad5d542a5cfceca6cfd",
-      "line_count": 132,
+      "sha256_lf": "6b6ce1f6f2c8fb7623b484557ac5f1a846a5c0104fab6d01c9a8001e7c9aeeff",
+      "line_count": 133,
       "max_line_budget": 150,
       "required_sections": [
         "## Impact Dynamics and Acoustics: #5068",

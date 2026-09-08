@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 import numpy as np
 import pytest
 
@@ -29,7 +31,8 @@ def _sine(
 
 
 def _recording(**overrides: object) -> WaveformRecording:
-    defaults: dict[str, object] = {
+    # Adversarial contract tests intentionally pass values outside the API types.
+    defaults: dict[str, Any] = {
         "samples": _sine(),
         "sample_rate_hz": 1024.0,
         "unit": "Pa",
@@ -39,7 +42,7 @@ def _recording(**overrides: object) -> WaveformRecording:
         "source_kind": SourceKind.MEASURED,
     }
     defaults.update(overrides)
-    return WaveformRecording(**defaults)  # type: ignore[arg-type]
+    return WaveformRecording(**defaults)
 
 
 def test_recording_round_trips_calibrated_provenance() -> None:

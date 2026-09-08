@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5095 · Deterministic Rust Watcher Debounce
+
+- **State:** in_review
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5095
+- **PR:** https://github.com/D-sorganization/Tools/pull/5097
+- **Branch:** fix/5095-deterministic-debounce
+- **Paths:** `rust_core/file_watcher/src/debounce.rs`, `rust_core/file_watcher/src/watcher.rs`, `rust_core/file_watcher/src/watcher_tests.rs`
+- **Started:** 2026-09-08
+- **Last verified:** 2026-09-08 (12 tests pass with default and Python features; Clippy and formatting pass)
+- **Summary:** TDD extracts the quiet-period accumulator to test exact supplied monotonic timestamps, coalescing, restart, shutdown, zero-delay and backward-time boundaries. Retains four real filesystem tests and existing filtered-notification timing.
+- **Next step:** Publish the focused prerequisite PR and verify normal protected CI; do not relax debounce expectations or bypass unrelated consumer gates.
+
 ### DL-0054 · Impact Dynamics Reference Foundation
 
 - **State:** in_review
@@ -31,6 +44,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Summary:** Tensor mobility reference passes 30 TDD gates; additive public baseline recorded. 383 broader tests passed, 2 skipped; manifest and all push hooks pass. PR #5077 in review. #5068 retains future distributed/acoustic scope.
 
 - **Next step:** Resolve protected PR #5077 review/check results, then follow the separately scoped research dependencies.
+
 ### DL-#5062 · Glass Conductivity Provider Contracts And Fallback Policy
 
 - **State:** in_review
@@ -53,6 +67,7 @@ reachable from any live state and `abandoned` from `parked`.
   (1 S/cm = 100 S/m), failed responses never cached, provider switch
   invalidates cache.
 - **Next step:** Protect-merge the glass-contracts PR after CI acceptance.
+
 ### DL-#8942 · Realtime Transport And Codemap Hashing Hot-Path Fixes
 
 - **State:** in_review
@@ -1020,6 +1035,7 @@ reachable from any live state and `abandoned` from `parked`.
   `impact_interval/tests/test_solver.py::TestIndependentEnergyAudit`.
 - **Next step:** Protect-merge the PR and hand the merged SHA to the
   UpstreamDrift pin-bump that closes the provider issue.
+
 ### DL-0054 · ThemeColors 60-Token Derivation Restoration
 
 - **State:** in_review
