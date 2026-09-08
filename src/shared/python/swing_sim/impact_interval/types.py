@@ -31,6 +31,52 @@ def _matrix(value: np.ndarray, name: str) -> np.ndarray:
     return cast(np.ndarray, array)
 
 
+class ImpactTermination(Enum):
+    """Why the integration stopped.
+
+    The solver leaves its loop by more than one route, and the routes are not
+    interchangeable: SEPARATED is a physical result, TIME_LIMIT is the budget
+    running out mid-contact, and NO_CONTACT is a miss. Collapsing them loses
+    the distinction between "the ball left the face at this velocity" and
+    "the ball was still being compressed when we stopped looking".
+    """
+
+    SEPARATED = "separated"
+    TIME_LIMIT = "time_limit"
+    NO_CONTACT = "no_contact"
+
+    @property
+    def contact_completed(self) -> bool:
+        """Whether contact ran to physical separation."""
+        return self is ImpactTermination.SEPARATED
+
+
+class IncompleteContactError(RuntimeError):
+    """Raised when a post-impact state is requested from unfinished contact.
+
+    Carries the partial result so a caller can still inspect the trace -- the
+    trace is evidence, and refusing to export a conclusion is not a reason to
+    discard it.
+    """
+
+    def __init__(self, result: ImpactIntervalResult) -> None:
+        self.result = result
+        self.termination = result.termination
+        final_compression = (
+            float(result.compression_m[-1]) if len(result.compression_m) else 0.0
+        )
+        final_force = (
+            float(result.normal_force_n[-1]) if len(result.normal_force_n) else 0.0
+        )
+        super().__init__(
+            "cannot export a post-impact state from contact that did not "
+            f"separate: termination={result.termination.name}, "
+            f"final compression={final_compression:.6g} m, "
+            f"final normal force={final_force:.6g} N. "
+            "Inspect .result for the partial trace."
+        )
+
+
 class BoundaryKind(Enum):
     """Grip/shaft idealization applied at the attachment point."""
 
@@ -204,6 +250,12 @@ class ImpactIntervalResult:
     contact_duration_s: float
     did_contact: bool
     audit: ImpactIntervalAudit
+    termination: ImpactTermination = ImpactTermination.NO_CONTACT
+
+    @property
+    def contact_completed(self) -> bool:
+        """Whether contact ran to separation rather than hitting the cap."""
+        return self.termination.contact_completed
 
     def channel(self, name: str) -> np.ndarray:
         """Return a named history channel without exposing implementation modules."""
@@ -256,7 +308,16 @@ class ImpactIntervalResult:
         )
 
     def to_post_impact_state(self) -> PostImpactState:
-        """Adapt the final interval state to the established impact façade."""
+        """Adapt the final interval state to the established impact façade.
+
+        Raises:
+            IncompleteContactError: if contact did not reach separation. The
+                final sample is then mid-contact, and its ball velocity is not
+                a post-impact velocity -- downstream flight and optimisation
+                would consume it as one.
+        """
+        if not self.contact_completed:
+            raise IncompleteContactError(self)
         ball_pre_ke = (
             0.5
             * GOLF_BALL_MASS_KG
@@ -280,6 +341,8 @@ class ImpactIntervalResult:
 
 __all__ = [
     "BoundaryKind",
+    "ImpactTermination",
+    "IncompleteContactError",
     "ClubRigidBody",
     "ImpactIntervalAudit",
     "ImpactIntervalConfig",

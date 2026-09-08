@@ -11973,10 +11973,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 886,
+      "bytes_lf": 992,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "8a1945bcc0d4bfc3a6b8de0c5fa7793673efec82741aeba7463969bac4228372",
+      "content_sha256_lf": "efb09d1c406f9e188fb9ae8499f086d8ac4f0a5c80740148aa021d409c2deec2",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-INTERVAL-INIT-PY-DCBA6FDCB2C6",
       "language": "python",
@@ -12053,6 +12053,16 @@
           },
           {
             "kind": "re-export",
+            "name": "ImpactTermination",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "IncompleteContactError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "KelvinVoigtContactLaw",
             "signature": null
           },
@@ -12117,10 +12127,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 13585,
+      "bytes_lf": 14510,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "57204a48bb245b189ac6213622b6ed17d001c8449b52554280f8b3e8b772bcc2",
+      "content_sha256_lf": "62e0f15dd68cb4ddb10a8ccee799e3dc87da3e977e374972eeebea9fa28dda99",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-INTERVAL-SOLVER-PY-4B56FB1A484E",
       "language": "python",
@@ -12145,7 +12155,7 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "unavailable",
+        "units": "mapped",
         "validation": "unavailable"
       },
       "traceability": {
@@ -12169,16 +12179,18 @@
           "src/shared/python/swing_sim/impact/tests/test_solver.py",
           "src/shared/python/swing_sim/impact_interval/tests/test_solver.py"
         ],
-        "unit_mentions": [],
+        "unit_mentions": [
+          "s"
+        ],
         "validation_paths": []
       }
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 10928,
+      "bytes_lf": 13352,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "dc1fcb59f4a2bcc26ad211e336fc6ae6c7090abb1c5774e7c7f9731c578e3f5a",
+      "content_sha256_lf": "916d14e9ccaec9e6ce806ea9a1556a787bb6ea821ffec3427ec54487d8e3db9b",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-INTERVAL-TYPES-PY-19AA8D67EF7F",
       "language": "python",
@@ -12204,7 +12216,7 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "unavailable",
-        "units": "unavailable",
+        "units": "mapped",
         "validation": "unavailable"
       },
       "traceability": {
@@ -12252,10 +12264,22 @@
             "kind": "class",
             "name": "ImpactIntervalSample",
             "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImpactTermination",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "IncompleteContactError",
+            "signature": null
           }
         ],
         "test_paths": [],
-        "unit_mentions": [],
+        "unit_mentions": [
+          "N"
+        ],
         "validation_paths": []
       }
     },
