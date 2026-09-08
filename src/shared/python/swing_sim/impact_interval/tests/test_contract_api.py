@@ -14,6 +14,11 @@ EXPECTED_PUBLIC_API = {
     "ImpactIntervalInitialState",
     "ImpactIntervalResult",
     "ImpactIntervalSample",
+    # Added for Tools #4130 / UpstreamDrift #9547: callers must be able to
+    # tell a separated contact from one truncated by the time budget, and to
+    # catch the refusal to export an unfinished one.
+    "ImpactTermination",
+    "IncompleteContactError",
     "KelvinVoigtContactLaw",
     "solve_impact_interval",
 }

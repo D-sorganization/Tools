@@ -117,7 +117,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "18f1c3656df23e4c886faabde4e3a78f7ddebdd08ae592ed9e55df07fe81e7d2",
+      "content_sha256_lf": "24101d89d8604b514863fc6a6cf0b184d3964b776c4e1916ab667631d7a1b6f4",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
@@ -159,7 +159,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "3f7c2ca71558b7593f24d02ab3d942b4a3a4f73fac75010657c655279e88fa85",
+      "content_sha256_lf": "2e2789037a35625ea872795d53b03664633e664d07e12e04bbbce42644c92593",
       "entry_count": 103,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
@@ -705,7 +705,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-programmatic-pid.json"
     },
     {
-      "content_sha256_lf": "6df304bea083a9add2fd2400c1dd0892c519f4d1c0b0889ef63ce1f11e6aed00",
+      "content_sha256_lf": "ba94f233e0a3c0e824590d6a779267f6d736004b198359dfbb910305fd00dbaf",
       "entry_count": 2,
       "package": "src/shared/python/realtime",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-realtime.json"
@@ -783,7 +783,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-impact.json"
     },
     {
-      "content_sha256_lf": "e6b5c2a87001daaf1b468ca56c2087188486848cbcede8b2bce937533e5a7b32",
+      "content_sha256_lf": "e71f4792c076474ded6649d61b0e2b4b45f7e0fa2554505f0614e2ea1402b46a",
       "entry_count": 4,
       "package": "src/shared/python/swing_sim/impact_interval",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-impact-interval.json"

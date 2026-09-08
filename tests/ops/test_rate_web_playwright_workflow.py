@@ -170,7 +170,7 @@ def test_pull_request_workflow_is_hosted_only_without_fleet_vocabulary() -> None
     expected_jobs = {"production-worker-e2e"}
     assert set(workflow["jobs"]) == expected_jobs
     assert all(
-        workflow["jobs"][job_name]["runs-on"] == "ubuntu-latest"
+        workflow["jobs"][job_name]["runs-on"] == "ubuntu-24.04"
         for job_name in expected_jobs
     )
 
@@ -190,7 +190,8 @@ def test_trusted_workflow_is_main_push_only_without_untrusted_ref_seam() -> None
         "push-production-worker-e2e",
         "push-pyqt-rendered-evidence",
     }
-    assert all(job["runs-on"] == "d-sorg-fleet" for job in jobs.values())
+    assert jobs["push-production-worker-e2e"]["runs-on"] == "d-sorg-fleet"
+    assert jobs["push-pyqt-rendered-evidence"]["runs-on"] == "d-sorg-fleet"
 
     for job in jobs.values():
         push_checkout = _checkout(job)
@@ -228,14 +229,8 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
         < baseline_index
     )
 
-    assert pr_job["env"]["RATE_VISUAL_BASELINE_CANDIDATE_DIR"] == (
-        "${{ github.workspace }}/visual-baseline-candidates"
-    )
     assert pr_job["env"]["RATE_VISUAL_BASELINE_SOURCE_COMMIT"] == (
         "${{ github.event.pull_request.head.sha }}"
-    )
-    assert trusted_pyqt_job["env"]["RATE_VISUAL_BASELINE_CANDIDATE_DIR"] == (
-        "${{ github.workspace }}/visual-baseline-candidates"
     )
     assert trusted_pyqt_job["env"]["RATE_VISUAL_BASELINE_SOURCE_COMMIT"] == (
         "${{ github.sha }}"
@@ -243,7 +238,8 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
     assert pr_commands["Install locked web dependencies"] == "npm ci"
     assert trusted_web_commands["Install locked web dependencies"] == "npm ci"
     assert pr_commands["Install Playwright-pinned browser runtimes"] == (
-        "npx --no-install playwright install --with-deps chromium firefox webkit"
+        'env HOME="$RATE_BROWSER_HOME" npx --no-install playwright install '
+        "--with-deps chromium firefox webkit"
     )
     assert (
         "npx --no-install playwright install --with-deps chromium"
@@ -251,7 +247,7 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
     )
     assert (
         pr_commands["Exercise production Worker lifecycle, layouts, and browser parity"]
-        == "npm run test:e2e"
+        == 'env HOME="$RATE_BROWSER_HOME" npm run test:e2e'
     )
     assert pr_commands["Install bounded PyQt render dependencies"] == (
         'python -m pip install --constraint requirements-rate-pyqt.txt -e ".[gui,dev]"'
@@ -402,7 +398,7 @@ def test_pr_trigger_tracks_every_pyqt_render_authority() -> None:
 def test_pr_visual_job_requires_changed_path_governance_before_expensive_e2e() -> None:
     workflow = _workflow(PR_WORKFLOW_PATH)
     job = workflow["jobs"]["production-worker-e2e"]
-    checkout = job["steps"][0]
+    checkout = _checkout(job)
     commands = _run_steps(job)
     step_names = [step.get("name") for step in job["steps"]]
 
@@ -505,3 +501,57 @@ def test_touched_hosted_runner_guard_uses_only_immutable_actions() -> None:
     action_uses = [str(step["uses"]) for step in steps if "uses" in step]
     assert action_uses
     assert all(FULL_ACTION_SHA.fullmatch(value) for value in action_uses)
+
+
+def test_both_pyqt_paths_share_an_immutable_container_and_font_setup() -> None:
+    pr_job = _workflow(PR_WORKFLOW_PATH)["jobs"]["production-worker-e2e"]
+    trusted_job = _workflow(TRUSTED_WORKFLOW_PATH)["jobs"][
+        "push-pyqt-rendered-evidence"
+    ]
+    image = pr_job["container"]["image"]
+    assert re.fullmatch(r"ubuntu:24\.04@sha256:[0-9a-f]{64}", image)
+    assert trusted_job["container"]["image"] == image
+    for job in (pr_job, trusted_job):
+        first = job["steps"][0]
+        assert first["name"] == "Install container render system dependencies"
+        assert first["working-directory"] == "/"
+        assert "fonts-dejavu-core" in first["run"]
+        assert "fontconfig" in first["run"]
+    assert pr_job["steps"][0] == trusted_job["steps"][0]
+
+
+def test_container_shell_uses_mounted_workspace_after_checkout() -> None:
+    for path, name in (
+        (PR_WORKFLOW_PATH, "production-worker-e2e"),
+        (TRUSTED_WORKFLOW_PATH, "push-pyqt-rendered-evidence"),
+    ):
+        job = _workflow(path)["jobs"][name]
+        step = _named_step(job, "Initialize container workspace")
+        steps = job["steps"]
+        assert steps.index(step) == steps.index(_checkout(job)) + 1
+        assert step["working-directory"] == "."
+        assert (
+            'git config --global --add safe.directory "$GITHUB_WORKSPACE"'
+            in step["run"]
+        )
+        assert 'git -C "$GITHUB_WORKSPACE" rev-parse --show-toplevel' in step["run"]
+        assert (
+            "RATE_VISUAL_BASELINE_CANDIDATE_DIR=$GITHUB_WORKSPACE/visual-baseline-candidates"
+            in step["run"]
+        )
+        assert '>> "$GITHUB_ENV"' in step["run"]
+        assert "RATE_VISUAL_BASELINE_CANDIDATE_DIR" not in job["env"]
+
+
+def test_container_browser_install_and_execution_share_an_owned_home() -> None:
+    job = _workflow(PR_WORKFLOW_PATH)["jobs"]["production-worker-e2e"]
+    prepare = _named_step(job, "Prepare isolated browser home")
+    assert 'mktemp -d "$RUNNER_TEMP/rate-browser-home.XXXXXX"' in prepare["run"]
+    assert "RATE_BROWSER_HOME=$RATE_BROWSER_HOME" in prepare["run"]
+    for name in (
+        "Install Playwright-pinned browser runtimes",
+        "Exercise production Worker lifecycle, layouts, and browser parity",
+    ):
+        step = _named_step(job, name)
+        assert job["steps"].index(prepare) < job["steps"].index(step)
+        assert step["run"].startswith('env HOME="$RATE_BROWSER_HOME" ')
