@@ -295,6 +295,32 @@ a source-read timeout. The unchanged 60-second test limit and all nine manual
 gates pass. Integration `ace9a007b` is published through all normal hooks;
 protected CI is running.
 
+## Current Moving-Grip Kinematics Checkpoint
+
+The private moving-anchor implementation retains finite relative orientation,
+actual point separation, body twist derivatives and both physical work ports.
+`MOVING_GRIP_KINEMATICS.md` gives the chain-rule derivation and independent
+finite-pose derivative, force/moment and power controls. Eight new tests and
+23 existing grip controls pass (6.25 s); the API adds only one private empty
+entry. Full Linux golf/API regression passes 628 tests (174.65 s), with two
+optional CAD skips and three unavailable-plugin warnings. An earlier run
+timed out inside the unchanged rotating-rod convergence test; that isolated
+test passes (54.72 s) with one BLAS thread, as does the broad rerun. The
+60-second per-test limit, equations and tolerances are unchanged. This is a
+kinematic foundation, not the finite grip law or its loaded balance/tangent.
+Anchor work in time evolution, stability and physical/acoustic validation
+remain open. All nine final manual gates, repository Ruff 0.14.10 (3,742 files)
+and actual hook mypy pass. Normal publication is pending.
+
+Acoustic repair PR #5106 publishes `3a9362530922346814e8be65a9b3fbd8ae95481d`.
+Both Python matrices, quality/docs checks and the UpstreamDrift consumer pass.
+The Gasification_Model consumer fails at private repository lookup before
+tests; credential configuration remains unresolved. Inventory PR #5103's
+single retry repeats the Python 3.12 worker crash in the deterministic/freshness
+test; a replacement worker again passes it (43.34 s). No assertion mismatch is
+reported. Local generator profiling is in progress; no timeout or expectation
+is relaxed and no further speculative CI retry is issued.
+
 ## Current Authority Coordination Boundary
 
 UD remote `b8da0c0240c20926f8fb7ba9e55a7e5613c5d78d` restores the compatible
