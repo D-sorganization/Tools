@@ -8263,23 +8263,39 @@
       "MOCAP_SESSION_SCHEMA_VERSION",
       "AcquisitionError",
       "Availability",
+      "CalibrationDegeneracyKind",
+      "CalibrationObservation",
+      "CalibrationPatternKind",
+      "CalibrationQuality",
+      "CalibrationTarget",
       "CameraCapabilities",
       "CameraIdentity",
+      "CameraLayout",
+      "CameraPose",
       "CaptureGroup",
       "ClockDomain",
       "ClockKind",
       "ClockSkewEstimate",
       "CoordinateFrame",
+      "DistortionCoefficients",
+      "DistortionModel",
       "DropPolicy",
+      "ExtrinsicCalibrationResult",
+      "ExtrinsicDegeneracyKind",
+      "ExtrinsicQuality",
       "FeatureSupport",
+      "FisheyeIntrinsics",
       "FrameIndexEntry",
       "FramePacket",
       "FrameSource",
       "FrameStamp",
+      "IntrinsicCalibrationResult",
       "Landmark3D",
       "MethodDescriptor",
       "MocapSessionManifest",
+      "MovementDetectionResult",
       "NumericRange",
+      "PinholeIntrinsics",
       "PixelObservation",
       "PrerecordedFrameSource",
       "QueueFullError",
@@ -8287,6 +8303,8 @@
       "RecordingPolicy",
       "RecordingReader",
       "RecordingWriter",
+      "RelocalizationResult",
+      "ReprojectionResidual",
       "RigidTransform",
       "SessionState",
       "ShutterKind",
@@ -8298,7 +8316,13 @@
       "SyncMonitor",
       "SyncQuality",
       "SyntheticFrameSource",
+      "bundle_adjust_layout",
+      "check_coverage_and_degeneracy",
+      "detect_camera_movement",
       "dumps_canonical",
+      "estimate_pnp_pose",
+      "evaluate_extrinsic_quality",
+      "evaluate_intrinsic_quality",
       "load_session_manifest"
     ],
     "symbols": {
@@ -8317,6 +8341,53 @@
         "info": {
           "bases": ["StrEnum"],
           "methods": {}
+        }
+      },
+      "CalibrationDegeneracyKind": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
+      "CalibrationObservation": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "CalibrationPatternKind": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
+      "CalibrationQuality": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
+      "CalibrationTarget": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "total_points": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "int"
+            }
+          }
         }
       },
       "CameraCapabilities": {
@@ -8371,6 +8442,61 @@
                 }
               ],
               "returns": "str"
+            }
+          }
+        }
+      },
+      "CameraLayout": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "camera_count": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "int"
+            },
+            "get_pose": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "camera_key",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CameraPose"
+            }
+          }
+        }
+      },
+      "CameraPose": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "camera_center_world": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[float, float, float]"
             }
           }
         }
@@ -8547,7 +8673,42 @@
           }
         }
       },
+      "DistortionCoefficients": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "DistortionModel": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
       "DropPolicy": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
+      "ExtrinsicCalibrationResult": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "ExtrinsicDegeneracyKind": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
+      "ExtrinsicQuality": {
         "type": "class",
         "info": {
           "bases": ["StrEnum"],
@@ -8559,6 +8720,48 @@
         "info": {
           "bases": [],
           "methods": {}
+        }
+      },
+      "FisheyeIntrinsics": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "project_point": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "xyz",
+                  "annotation": "tuple[float, float, float]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[float, float]"
+            },
+            "unproject_point": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "uv",
+                  "annotation": "tuple[float, float]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[float, float, float]"
+            }
+          }
         }
       },
       "FrameIndexEntry": {
@@ -8760,6 +8963,25 @@
           }
         }
       },
+      "IntrinsicCalibrationResult": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "is_qualified": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "bool"
+            }
+          }
+        }
+      },
       "Landmark3D": {
         "type": "class",
         "info": {
@@ -8775,6 +8997,13 @@
         }
       },
       "MocapSessionManifest": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "MovementDetectionResult": {
         "type": "class",
         "info": {
           "bases": [],
@@ -8802,6 +9031,48 @@
                 }
               ],
               "returns": "bool"
+            }
+          }
+        }
+      },
+      "PinholeIntrinsics": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "project_point": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "xyz",
+                  "annotation": "tuple[float, float, float]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[float, float]"
+            },
+            "unproject_point": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "uv",
+                  "annotation": "tuple[float, float]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[float, float, float]"
             }
           }
         }
@@ -9150,6 +9421,20 @@
           }
         }
       },
+      "RelocalizationResult": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "ReprojectionResidual": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
       "RigidTransform": {
         "type": "class",
         "info": {
@@ -9473,6 +9758,108 @@
           }
         }
       },
+      "bundle_adjust_layout": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "initial_layout",
+              "annotation": "CameraLayout",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "observations_by_camera",
+              "annotation": "Mapping[str, Sequence[tuple[tuple[float, float, float], tuple[float, float]]]]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "intrinsics_by_camera",
+              "annotation": "Mapping[str, PinholeIntrinsics | FisheyeIntrinsics]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "fix_gauge_camera_key",
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "arg"
+            }
+          ],
+          "returns": "ExtrinsicCalibrationResult"
+        }
+      },
+      "check_coverage_and_degeneracy": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "points",
+              "annotation": "Sequence[tuple[float, float]]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "resolution_px",
+              "annotation": "tuple[int, int]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "min_views",
+              "annotation": "int",
+              "default": "5",
+              "kind": "arg"
+            },
+            {
+              "name": "views_count",
+              "annotation": "int",
+              "default": "1",
+              "kind": "arg"
+            }
+          ],
+          "returns": "tuple[float, tuple[CalibrationDegeneracyKind, ...]]"
+        }
+      },
+      "detect_camera_movement": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "nominal_pose",
+              "annotation": "CameraPose",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "object_points",
+              "annotation": "Sequence[tuple[float, float, float]]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "image_points",
+              "annotation": "Sequence[tuple[float, float]]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "intrinsics",
+              "annotation": "PinholeIntrinsics | FisheyeIntrinsics",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "threshold_px",
+              "annotation": "float",
+              "default": "1.5",
+              "kind": "arg"
+            }
+          ],
+          "returns": "MovementDetectionResult"
+        }
+      },
       "dumps_canonical": {
         "type": "function",
         "signature": {
@@ -9485,6 +9872,114 @@
             }
           ],
           "returns": "str"
+        }
+      },
+      "estimate_pnp_pose": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "camera_key",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "object_points",
+              "annotation": "Sequence[tuple[float, float, float]]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "image_points",
+              "annotation": "Sequence[tuple[float, float]]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "intrinsics",
+              "annotation": "PinholeIntrinsics | FisheyeIntrinsics",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "target_frame_id",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "source_frame_id",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "tuple[CameraPose, float]"
+        }
+      },
+      "evaluate_extrinsic_quality": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "mean_residual_px",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "camera_count",
+              "annotation": "int",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "min_points_per_view",
+              "annotation": "int",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "threshold_px",
+              "annotation": "float",
+              "default": "1.0",
+              "kind": "arg"
+            }
+          ],
+          "returns": "tuple[ExtrinsicQuality, tuple[ExtrinsicDegeneracyKind, ...]]"
+        }
+      },
+      "evaluate_intrinsic_quality": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "mean_residual_px",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "views_count",
+              "annotation": "int",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "sensor_coverage_ratio",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "floor_threshold_px",
+              "annotation": "float",
+              "default": "1.0",
+              "kind": "arg"
+            }
+          ],
+          "returns": "tuple[CalibrationQuality, tuple[CalibrationDegeneracyKind, ...]]"
         }
       },
       "load_session_manifest": {
@@ -37696,5 +38191,13 @@
         }
       }
     }
+  },
+  "lab/mocap/calibration.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "lab/mocap/extrinsics.py": {
+    "__all__": [],
+    "symbols": {}
   }
 }

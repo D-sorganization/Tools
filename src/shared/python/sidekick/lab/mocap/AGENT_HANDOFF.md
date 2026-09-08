@@ -12,28 +12,28 @@ Tools owns the MIT vendor-neutral markerless-mocap contracts and reference algor
 - #4708 / TOOLS-M0: authority ADR and acceptance program (merged in #4734).
 - #4710 / TOOLS-M1: canonical mocap schemas (merged in #4734).
 - #4713 / TOOLS-M2: camera acquisition protocol (merged in #5056).
-- #4718 / TOOLS-M3: synchronization and recording (current branch).
-- #4714, #4715, #4716, and #4721 have dependency-stacked slices; none is merged or release authority.
+- #4718 / TOOLS-M3: synchronization and recording (merged in #5059).
+- #4714 / TOOLS-M4: intrinsic calibration (merged in #5064).
+- #4721 / TOOLS-M5: extrinsic and flexible-layout calibration (current branch).
+- #4715, #4716, and #4724 have dependency-stacked slices; none is merged or release authority.
 
 ## Current branch
 
-- Branch: `feat/4718-mocap-synchronization-and-recording`
-- Base: `origin/main` at `c7eca91c9`
+- Branch: `feat/4721-mocap-extrinsic-calibration`
+- Base: `origin/main` at `b4875be19`
 - Worktree: `C:\Users\diete\Repositories\Tools`
 - Pull request: Pending creation
 
 ## Delivered in this slice
 
-- Subepic #4718 (TOOLS-M3): Synchronization and recording.
-- `sidekick.lab.mocap.sync` defines:
-  - `SyncQuality`, `SyncAnomalyType`, `SyncAnomaly`, `ClockSkewEstimate`, `SyncMonitor`.
-  - Inter-camera clock skew, drift, and jitter bounds with fail-closed rejection.
-  - Frame anomaly detection (dropped, duplicate, out-of-order sequence numbers).
-- `sidekick.lab.mocap.recording` defines:
-  - `FrameIndexEntry`, `RecordingIntegrityReport`, `RecordingWriter`, `RecordingReader`.
-  - Append-only chunked frame streaming with CRC32 integrity verification.
-  - Crash-safe atomic manifest updates using temporary file replacement.
-  - Strict enforcement of `RecordingPolicy` (rejection of raw image storage under `no_store`).
+- Subepic #4721 (TOOLS-M5): Extrinsic and flexible-layout calibration.
+- `sidekick.lab.mocap.extrinsics` defines:
+  - `CameraPose`, `CameraLayout`: multi-camera poses, world registration, and optical centers.
+  - `estimate_pnp_pose`: reference robust PnP solver with reprojection residual validation.
+  - `detect_camera_movement`: continuous verification of camera rigidity against world targets.
+  - `RelocalizationResult`, `MovementDetectionResult`: explicit typed outcomes.
+  - `bundle_adjust_layout`: joint refinement of camera poses with gauge fixing.
+  - `ExtrinsicQuality`, `ExtrinsicDegeneracyKind`: qualification floors and degeneracy detection.
 - Unit and contract test suites in `tests/shared/python/sidekick/lab/mocap/`.
 
 ## Required gates
@@ -46,7 +46,7 @@ python -m ruff check <changed-python-files>
 python -m mypy <changed-python-files>
 ```
 
-Consumer coordination: UpstreamDrift #9069 owns schema, acquisition, and sync adoption;
+Consumer coordination: UpstreamDrift #9069 owns schema, acquisition, sync, and calibration adoption;
 Gasification_Model #4751 owns exact-Tools-SHA impact qualification.
 
 ## Do not

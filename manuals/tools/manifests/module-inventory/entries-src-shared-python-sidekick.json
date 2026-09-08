@@ -742,6 +742,7 @@
           }
         ],
         "test_paths": [
+          "tests/unit/ai/gui/test_assistant_panel_sidekick_bridge.py",
           "tests/unit/sidekick/agent/test_action_audit.py",
           "tests/unit/sidekick/agent/test_action_service.py",
           "tests/unit/sidekick/agent/test_planner.py"
@@ -1233,6 +1234,7 @@
           }
         ],
         "test_paths": [
+          "tests/unit/ai/gui/test_assistant_panel_sidekick_bridge.py",
           "tests/unit/sidekick/agent/test_planner.py"
         ],
         "unit_mentions": [
@@ -4142,10 +4144,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1986,
+      "bytes_lf": 3361,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7b00ad562d5bda1abf4c68eecab10e4c7692036409d096ab78e0e0adab1960e3",
+      "content_sha256_lf": "79026525398cc429aeadd88caf75314867b03cbbc257724d3d5db7d7b8046cec",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-INIT-PY-BD60513A12BD",
       "language": "python",
@@ -4193,12 +4195,47 @@
           },
           {
             "kind": "re-export",
+            "name": "CalibrationDegeneracyKind",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalibrationObservation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalibrationPatternKind",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalibrationQuality",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalibrationTarget",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "CameraCapabilities",
             "signature": null
           },
           {
             "kind": "re-export",
             "name": "CameraIdentity",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CameraLayout",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CameraPose",
             "signature": null
           },
           {
@@ -4228,12 +4265,42 @@
           },
           {
             "kind": "re-export",
+            "name": "DistortionCoefficients",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DistortionModel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "DropPolicy",
             "signature": null
           },
           {
             "kind": "re-export",
+            "name": "ExtrinsicCalibrationResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ExtrinsicDegeneracyKind",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ExtrinsicQuality",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "FeatureSupport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FisheyeIntrinsics",
             "signature": null
           },
           {
@@ -4258,6 +4325,11 @@
           },
           {
             "kind": "re-export",
+            "name": "IntrinsicCalibrationResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "Landmark3D",
             "signature": null
           },
@@ -4278,7 +4350,17 @@
           },
           {
             "kind": "re-export",
+            "name": "MovementDetectionResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "NumericRange",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PinholeIntrinsics",
             "signature": null
           },
           {
@@ -4314,6 +4396,16 @@
           {
             "kind": "re-export",
             "name": "RecordingWriter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RelocalizationResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ReprojectionResidual",
             "signature": null
           },
           {
@@ -4373,7 +4465,37 @@
           },
           {
             "kind": "re-export",
+            "name": "bundle_adjust_layout",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "check_coverage_and_degeneracy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "detect_camera_movement",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "dumps_canonical",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "estimate_pnp_pose",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "evaluate_extrinsic_quality",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "evaluate_intrinsic_quality",
             "signature": null
           },
           {
@@ -4536,6 +4658,58 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 17406,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "07055504df55de1c220bb16d78c67d442c969c9fc71db130c903aca8cf7eae92",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-CALIBRATION-PY-881BCCB31ECE",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/calibration.py",
+      "purpose": "Camera intrinsic calibration representations, distortion, and qualification.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_calibration_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py"
+        ],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_calibration_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 5389,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -4574,10 +4748,12 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_calibration_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
         ],
         "unit_mentions": [],
         "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_calibration_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
         ]
       }
@@ -4631,6 +4807,56 @@
       }
     },
     {
+      "authority_status": "not-applicable",
+      "bytes_lf": 14668,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0b2486b16007a2887ff3390b02ad2601b55de675bd1f40c3424d1790d7bf4571",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-EXTRINSICS-PY-FD8B0A3C2EFE",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/extrinsics.py",
+      "purpose": "Extrinsic and flexible-layout camera calibration and relocalization.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py"
+        ]
+      }
+    },
+    {
       "authority_status": "provisional",
       "bytes_lf": 3019,
       "classification": "calculation",
@@ -4675,10 +4901,12 @@
         "test_paths": [
           "src/shared/python/programmatic_pid/tests/test_geometry.py",
           "tests/programmatic_pid/test_geometry.py",
+          "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
         ],
         "unit_mentions": [],
         "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
         ]
       }
