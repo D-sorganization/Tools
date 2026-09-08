@@ -144,7 +144,7 @@ def _derive_full_palette(
     partial: dict[str, Any], theme_name: str | None = None
 ) -> dict[str, Any]:
     """Promote a partial colour dict into a full 60+ token palette."""
-    from src.shared.python.theme.api import ThemeColors
+    from .api import ThemeColors
 
     _BASE_DEFAULTS: dict[str, Any] = {
         "bg": "#ffffff",

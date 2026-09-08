@@ -14,8 +14,6 @@ from __future__ import annotations
 
 def _expand(hex_color: str) -> str:
     """Return a ``#rrggbb``-form copy of *hex_color*; pass through on failure."""
-    if not isinstance(hex_color, str):
-        return hex_color  # type: ignore[return-value]
     val = hex_color.lstrip("#")
     if len(val) == 3:
         val = "".join(c * 2 for c in val)
