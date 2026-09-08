@@ -7,8 +7,8 @@ from dataclasses import dataclass, replace
 import numpy as np
 
 from ._grip_contracts import finite_array
-from ._shaft_equilibrium import EquilibriumControls, _check_strains
-from ._shaft_loaded_dynamics import linearized_chain_dynamics
+from ._shaft_clamped import balanced_clamped_dynamics
+from ._shaft_equilibrium import EquilibriumControls
 from ._shaft_rotating_chain import RotatingSectionChain
 
 _NODE_DOF = 6
@@ -196,22 +196,9 @@ def clamped_chain_spectrum(
     Returned modes use physical material coordinates. A balanced snapshot can
     still be unstable or nonautonomous; no physical bandwidth is established.
     """
-    if (
-        not isinstance(chain, RotatingSectionChain)
-        or not isinstance(controls, EquilibriumControls)
-        or not isinstance(scales, SpectrumScales)
-    ):
-        raise TypeError(
-            "expected RotatingSectionChain, EquilibriumControls, SpectrumScales"
-        )
-    current = finite_array(poses, (chain.node_count, 4, 4), "chain poses")
-    operators = linearized_chain_dynamics(chain, current)
-    _check_strains(chain, current, controls.strain_limits)
-    free = operators.residual[_NODE_DOF:].reshape(-1, _NODE_DOF)
-    if np.any(np.abs(free[:, :3]) > controls.force_tolerance_n) or np.any(
-        np.abs(free[:, 3:]) > controls.moment_tolerance_nm
-    ):
-        raise ValueError("free nodes must satisfy the declared balance tolerances")
+    if not isinstance(scales, SpectrumScales):
+        raise TypeError("expected SpectrumScales")
+    operators = balanced_clamped_dynamics(chain, poses, controls)
     coordinate_scale = np.tile([scales.length_m] * 3 + [1.0] * 3, chain.node_count - 1)
     congruence = coordinate_scale[:, None] * coordinate_scale[None, :]
     mass, gyroscopic, stiffness = (

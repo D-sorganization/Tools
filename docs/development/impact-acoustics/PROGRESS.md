@@ -247,3 +247,23 @@ offset-body mechanics and independent continuum tip-mass controls, including
 the principal-axis assumption that the first reference fixture violated.
 The final Linux golf/API run passes 601 tests with two optional CAD skips and three optional-plugin warnings (292.46 s). Loaded grip impedance, moving-boundary work,
 stability, full FRF/bandwidth convergence and physical/acoustic gates stay open.
+
+## Current Frozen Tip Response Checkpoint
+
+Rigid attachment is published at `42f229951`. The new private point-force/torque
+response reuses loaded operators and shared clamped balance/domain validation.
+`FROZEN_TIP_RESPONSE.md` derives six-axis ports, support transfer, continuum
+compliance, scaling and coefficient-cancellation refusal. All 41 harmonic and
+spectral Windows tests and nine API tests pass. Final Linux regression passes
+620 tests (216.99 s), with two optional CAD skips and three optional-plugin
+warnings; all nine manual gates pass. Publication is the next delivery step;
+this is not a stability, swing-trajectory, impact or acoustic qualification.
+
+Inventory #5101 / PR #5103 corrects scientific-import detection on a separate
+main-based branch, with every one of 410 reclassified candidates reviewed and
+publication-blocked. Main's contact-completion #5088 merged; preserve it during
+future T3 integration. UD #9787 / PR #9804 is subject to repeated concurrent
+rollbacks of compatible pins and claim-preservation guards. Validated local
+`6235789dc` is committed but not published; further shared-branch pushes are
+paused while the competing writer is active. Remote `3837792da` does not carry
+this task's validated scientific authority. The full goal remains active.

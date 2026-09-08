@@ -27,9 +27,9 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/5072-prestressed-shaft
 - **Paths:** `src/shared/python/golf_club/*shaft*`, `src/shared/python/golf_club/_beam_fem.py`, `src/shared/python/golf_club/*grip*`, `src/shared/python/golf_club/*rotating_body*`, `tests/shared/python/golf_club/test_shaft*.py`, `tests/shared/python/golf_club/test_rotating_body.py`, `tests/shared/python/golf_club/test_grip_impedance.py`, `docs/development/impact-acoustics/*`
 - **Started:** 2026-09-07
-- **Last verified:** 2026-09-08 (12 final attachment Windows tests and 601 Linux golf/API tests pass, with two optional CAD skips and three optional-plugin warnings)
-- **Summary:** Frozen spectra `cbc43b659` are published. Private rigid nodal attachment reuses full-inertia endpoint quadrature. Independent offset-head Newton/Euler, kinetic-energy, tangent and Coriolis controls pass; principal-axis rod/tip-mass extension, support and guided frequency converge. The original continuum fixture's products of inertia applied a real moment; its principal-axis assumption is now explicit, without relaxed tolerances. Stability and impact/acoustics remain unqualified.
-- **Next step:** Publish attachment checkpoint, then qualify stability/refusal, moving boundary work and loaded grip integration; establish full shear/rotary bandwidth, mesh/time/modal and FRF convergence. Preserve the guided axial control's distinction from a free-shaft mode.
+- **Last verified:** 2026-09-08 (41 harmonic/spectral Windows tests and nine API tests pass; final Linux checkpoint: 620 passes, two optional CAD skips, three optional-plugin warnings; all nine manual gates pass)
+- **Summary:** Rigid attachment `42f229951` is published. Private six-axis tip compliance retains full loaded M/G/K, offset force/moment ports and support reactions, reusing a shared clamped balance/domain check. Independent rod compliance and point-power controls pass. A near-cancellation control exposes the inadequacy of dynamic condition number alone; explicit coefficient resolution now fails closed. Stability and impact/acoustics remain unqualified.
+- **Next step:** Publish verified harmonic response; then qualify stability/refusal, moving boundary work, loaded grip and full shear/rotary bandwidth, mesh/time/modal/FRF convergence. Preserve frozen algebraic response versus actual swing/impact/acoustic prediction boundaries.
 
 ### DL-0055 · Qualified Lumped Impact Dynamics
 

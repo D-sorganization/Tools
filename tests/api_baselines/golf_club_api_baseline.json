@@ -2834,12 +2834,22 @@
     "explicit_all": true,
     "symbols": {}
   },
+  "_shaft_clamped.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
   "_shaft_equilibrium.py": {
     "__all__": [],
     "explicit_all": true,
     "symbols": {}
   },
   "_shaft_frame_inertia.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_harmonic_response.py": {
     "__all__": [],
     "explicit_all": true,
     "symbols": {}
