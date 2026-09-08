@@ -5826,6 +5826,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-07 | #5079 | fix(impact, #4130; provider fix for UpstreamDrift#9548): rebuild the impact-interval audit as an independent energy ledger — recoverable Kelvin-Voigt spring energy tracked from the contact state, release counted only at identified tensile-clip steps, dashpot/friction/torsional damping integrated separately, signed unfudged residual with separate free/supported momentum diagnostics and halving-dt convergence evidence; nine RED→GREEN audit tests; energy-audit contract rewritten in docs/physics/IMPACT_INTERVAL_DYNAMICS.md. |
 | 2026-09-07 | #5066 | feat(mocap, #4721 TOOLS-M5): deliver camera extrinsic calibration, flexible layout management, robust PnP, bundle adjustment, camera movement invalidation, and qualification floors in `sidekick.lab.mocap.extrinsics`. |
 | 2026-09-07 | #5064 | feat(mocap, #4714 TOOLS-M4): deliver camera intrinsic calibration models (pinhole and fisheye), distortion representations, observation provenance, reprojection residual evaluation, degeneracy detection, and qualification floors; permit sidekick api baseline budget. |
 | 2026-09-07 | #4718 | feat(mocap, #4718 TOOLS-M3): deliver synchronization analysis, sequence tracking, and crash-safe recording with atomic manifest persistence in `sidekick.lab.mocap.sync` and `sidekick.lab.mocap.recording`. |

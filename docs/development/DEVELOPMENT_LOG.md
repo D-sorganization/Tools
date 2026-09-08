@@ -923,8 +923,7 @@ reachable from any live state and `abandoned` from `parked`.
 
 - **State:** in_review
 - **Owner:** dieterolson (agent `claude`, fleet wave 2)
-- **PR:** opened from branch `claude/issue-9548-contact-energy` against
-  `main` (number recorded in the PR body)
+- **PR:** #5079 (`claude/issue-9548-contact-energy` → `main`)
 - **Paths:** `src/shared/python/swing_sim/impact_interval/**`,
   `src/shared/python/swing_sim/impact/contact.py`,
   `docs/physics/IMPACT_INTERVAL_DYNAMICS.md`
