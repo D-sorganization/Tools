@@ -10,6 +10,7 @@
 - Subepic #4728 protected-squash-merged as `682c1402b4bdb1b387877cbdaaf4999fa04a074a`; verify current `origin/main` before acting.
 - Live `main` rules require zero approving reviews. Do not require or request a named maintainer's approval; `@dieterolson` is not a standing release gate.
 - Never use admin bypass, force-push, check bypass, or protection changes to merge a failing or stale head.
+- `cross-repo-python-integration.yml` initializes UpstreamDrift's `vendor/ud-tools` pin in the _downstream checkout (#5085): UD retired tools-canonical child copies (UD #9569), so the consumer contract lane fails on every PR without it.
 
 ## Where This Repo Is Headed
 
@@ -90,3 +91,18 @@ python3 -m scripts.render_tools_design_manual --check
 3. Validate and protect-merge #4792/R14.3 from the R13.5 protected mainline.
 4. Implement Sidekick S1–S5 plan in `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`.
 5. Land camera-cluster epic #4571 to close #4466.
+
+## PR Disposition — 2026-09-07/08 Fleet Backlog Sweep (Tools, 22 open PRs)
+
+| PR    | Disposition                                                                                                                    |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------ |
+| #5076 | MERGED (1e6f21d61): dirty conflict resolved via local merge with the module-inventory-regen merge driver + sidekick shard regen. |
+| #5081 | MERGED (squash 69aeeed83): minimum-test-contract + divergence-ledger UD-PAIR fixes; main-merge conflict resolved in-branch first. |
+| #5078 | Theme-restore CI repaired (mypy duplicate module, inventory, theme API baseline) + main merged; merging when clean.             |
+| #5079 | API baseline (additive KelvinVoigt method), handoff-manifest re-pin, inventory regen; pushed, merging when clean.               |
+| #5080 | Sidekick API baseline re-pinned (glass contracts) + main merged; merging when clean.                                            |
+| #5082 | No PR-caused failure: E2E = hosted-runner font-stack drift (#5087), cancelled shards rerunning; merge when required checks green.|
+| #5077 | Awaiting CI (full-tensor impact reference; upstream defect UpstreamDrift#8942).                                                  |
+| 15 release bumps (#5024-#5070) | Stale mutually-conflicting v1.16.2 duplicates (newest = #5070 v1.17.0); branch-updated twice, required checks green; merge #5070 first, then close the rest as superseded duplicates under an exempt label. |
+| #5086 | bot/ infra PR: initialize UD vendor/ud-tools pin in downstream lane (fixes #5085).                                             |
+| #5087 | bot/ infra PR: run PR-lane Worker E2E on the fleet-calibrated renderer image (hosted font-stack drift).                        |
