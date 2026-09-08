@@ -111,7 +111,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "dc0f5b394c53643358c96cfbe0c533e3a02fce9220227759bb8570ebb450f675",
+      "content_sha256_lf": "8ce4f200fa0d7c75217fba3dfb6d62edf29ed68ec3550b09ac43a8227f0c4156",
       "entry_count": 17,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
@@ -567,7 +567,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rotation-transforms.json"
     },
     {
-      "content_sha256_lf": "731df810b77e9b57869c660547534287a1ea4267d732435ad4d3fa2039a97dbe",
+      "content_sha256_lf": "f4fc65f2759183795a26be84d7a9be53c20c79ad432da9886489f4f1a6269bfd",
       "entry_count": 26,
       "package": "src/rrt_path_planner",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rrt-path-planner.json"
@@ -705,7 +705,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-programmatic-pid.json"
     },
     {
-      "content_sha256_lf": "a00d02422ba823aa13512d54b7437bf7af4660c5488f7ef5aa9e011f4ebf050f",
+      "content_sha256_lf": "6df304bea083a9add2fd2400c1dd0892c519f4d1c0b0889ef63ce1f11e6aed00",
       "entry_count": 2,
       "package": "src/shared/python/realtime",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-realtime.json"

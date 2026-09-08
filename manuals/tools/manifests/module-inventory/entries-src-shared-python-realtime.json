@@ -113,7 +113,7 @@
           }
         ],
         "test_paths": [
-          "tests/unit/realtime/test_transport_file.py"
+          "tests/shared/python/realtime/test_transport_file.py"
         ],
         "unit_mentions": [
           "Hz",
