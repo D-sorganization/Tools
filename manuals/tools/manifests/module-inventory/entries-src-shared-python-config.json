@@ -141,6 +141,7 @@
           }
         ],
         "test_paths": [
+          "tests/architecture/test_shared_import_aliases_3316.py",
           "tests/conftest.py",
           "tests/shared/python/ai/test_shared_dependency_imports.py",
           "tests/shared/python/chat/test_adapter_lifecycle.py",

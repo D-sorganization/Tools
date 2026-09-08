@@ -244,6 +244,21 @@ class FlareCalculator:
 
         return zones
 
+    def calculate(
+        self,
+        total_flow: float,
+        gas_composition: dict[str, float],
+        temperature: float,
+        pressure: float,
+    ) -> FlareDesign:
+        """Alias for calculate_flare_size fulfilling ProcessCalculator protocol."""
+        return self.calculate_flare_size(
+            total_flow=total_flow,
+            gas_composition=gas_composition,
+            temperature=temperature,
+            pressure=pressure,
+        )
+
     def calculate_combustion_efficiency(
         self,
         gas_composition: dict[str, float],

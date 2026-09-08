@@ -71,7 +71,7 @@ class _SimulationLifecycleMixin:
 
         try:
             params = self._params_builder(p)
-        except (ValueError, TypeError, KeyError) as e:
+        except (ValueError, TypeError, KeyError, AssertionError) as e:
             logger.warning("Parameter build failed: %s", e, exc_info=True)
             get_tracker().record_exception("simulation", e, context="Parameter build")
             QMessageBox.warning(self, "Parameter Error", str(e))  # type: ignore[arg-type]
@@ -84,7 +84,7 @@ class _SimulationLifecycleMixin:
         try:
             initial_state = self._state_builder(p)
             torque_func = self._torque_builder(p)
-        except (ValueError, TypeError, KeyError) as e:
+        except (ValueError, TypeError, KeyError, AssertionError) as e:
             logger.warning("State/torque build failed: %s", e, exc_info=True)
             get_tracker().record_exception("simulation", e, context="State/torque build")
             QMessageBox.warning(self, "Build Error", str(e))  # type: ignore[arg-type]
@@ -311,9 +311,8 @@ class _SimulationLifecycleMixin:
 
     # QWidget-compat stubs so mypy/mixin checks don't trip over method calls
     def width(self) -> int:  # pragma: no cover
-        """QWidget-compat stub — provided by the QWidget base class at runtime.
-
-        Raises NotImplementedError in mixin context where QWidget is not yet
-        in the MRO.  This is intentional for static analysis compatibility.
-        """
-        raise NotImplementedError
+        """QWidget-compat stub — provided by the QWidget base class at runtime."""
+        w_func = getattr(super(), "width", None)
+        if callable(w_func):
+            return int(w_func())
+        return 0

@@ -3,10 +3,10 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 18689,
+      "bytes_lf": 19311,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4009ca004d5e4711aefe14263f11ff319ffcd79996acf65eb294cb30c0a09f1a",
+      "content_sha256_lf": "0e202b2ae9f1dc7b2b125b2dc6478f7d64b67948d6277b72e1a5c9403182d62e",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SHARED-SCRIPTS-FLEET-HOOKS-PY-B72B87E03803",
       "language": "python",
@@ -78,6 +78,11 @@
           {
             "kind": "constant",
             "name": "DOC_GOVERNANCE_PREFIXES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "OVERSIZED_FILE_BYTE_BASELINES",
             "signature": null
           },
           {

@@ -1,152 +1,41 @@
 # AGENT_HANDOFF — Rate_of_Closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-09-03
-> **Current state only**, capped at 150 lines; history lives in git and in [`docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md`](../../docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md).
-> Do not append dated entries — that is how it reached 2,205 lines.
+> Last updated: 2026-09-07
+> **Current state only**, capped at 150 lines; history lives in git and `docs/agent_handoff_archive/`.
 
 ## What This Tool Is Now
 
-A swing → impact → ball-flight simulator with parity **PyQt6 and React
-surfaces**, plus a Rust fast path; it began as a closure-rate calculator.
+A swing → impact → ball-flight simulator with parity **PyQt6 and React surfaces**, plus a Rust fast path (`swing-core`); it began as a closure-rate calculator.
 
-PyQt6 entry: `rate_of_closure.ui.pyqt6.main_window:RateOfClosureMainWindow`,
-titled "Rate of Closure Impact Explorer" as UpstreamDrift's manifest advertises.
+PyQt6 entry: `rate_of_closure.ui.pyqt6.main_window:RateOfClosureMainWindow`.
 React mirror: `web/` (Vite/TS, ~1,570 tests across 193 files).
-
-Physics lives in `src/shared/python/swing_sim/` — outside this tool, so
-UpstreamDrift reaches it through `vendor/ud-tools`: `impact/` (contact law,
-gear effect; #4130 extends `SpringDamperImpactModel` rather than duplicating
-it), `flight/`, `ground/`, `variation/`, `solver/`. Club physics for the
-fitting epics is the sibling `shared/python/golf_club/`.
+Physics lives in `src/shared/python/swing_sim/` and `src/shared/python/golf_club/`.
 
 ## Active Epics — Golf Epics Merged
 
-Launch-monitor #4583 Release A merged (explicit-identity projects, bounded
-private-authority loading, source-backed expected-strokes); no private rows or
-baseline data are bundled. Release B open — **do not claim vendor emulation or
-paired-device validation without real paired observations.** #4584/#4599 merged
-strokes-gained v2 into both clients; #4600 owns the PyQt reference and
-#4602/#4608/#4610/#4613 the isolated rendered gates.
+- Launch-monitor #4583 Release A merged; Release B open (vendor emulation requires real paired data). #4584/#4599 merged strokes-gained v2.
+- ADR-0046 Stage 2 is classified; no modules retire yet. 20 symbols from 10 modules are pinned by UpstreamDrift drift gates.
+- Source-backed SG excludes and audits; it does not raise (ADR-0048 G1-D3). Both runtimes assert `input_row_count == included_row_count + total_excluded`.
+- Club Fitting #4549, Heavy Hit #4562, packaging #4579, Putting #4800 (P1-P9), and Clubhead-realism #4799 are complete. Python remains sole Monte-Carlo authority.
+- #4142 variation and sensitivity: R10-R14 merged; R14.6/calibrated-renderer PRs #4835/#4837 on main through `d7a95e2a4`.
 
-**ADR-0046 Stage 2 is classified, and nothing in this package retires yet.**
-All 15 `launch_monitor_*`/`player_covariation*` Python modules were mapped to the
-canonical `shared/python/launch_monitor/` layer: **0 pure-duplicates**. See
-`docs/specs/LAUNCH_MONITOR_ANALYTICS.md` §"ADR-0046 Stage 2 - Canonical-Layer
-Mapping" for the per-module verdict and evidence. Before touching any of them:
-seven are `split` in `docs/shared/divergence_ledger.v1.json` (three
-`paired-open`, so a Tools-only diff is refused without a `UD-PAIR:` line), and
-UpstreamDrift's drift gates import **20 symbols from 10 of these modules by
-name** - `tests/rate_of_closure/test_launch_monitor_drift_gate_surface.py` pins
-that surface, and a retirement must leave a deprecating re-export at the old
-path rather than delete it.
+### Adding a Tab: The Five-Manifest Lockstep
 
-**Source-backed SG excludes and audits; it does not raise** (ADR-0048 G1-D3).
-`calculate_source_backed_strokes_gained` and its TS twin classify a bad row as
-`missing_course_state`/`invalid_distance`/`outside_baseline`, count it in
-`exclusions`, and set `status` `partial`/`unavailable` (`mean=None`). **Never
-restore a silent drop** — both runtimes assert `input_row_count ==
-included_row_count + total_excluded`. Request defects (absent columns, a unit
-that is not `yd`/`m`, a failed digest) stay fatal. UpstreamDrift's
-`test_strokes_gained_drift.py` pins this from the other side.
+Five packaged manifests in `src/rate_of_closure/` declare the tab set, cross-checked by **order-strict tuple equality** on `(surface, tab_id)`: `visualization_tabs.v1.json` is authority (20 entries = 10 `pyqt` + 10 `react`), matched by `visualization_accessibility`, `visualization_performance`, `visual_baselines`, and `visualization_acceptance`.
 
-Club Fitting #4549, Heavy Hit #4562, packaging #4579, and Putting #4800
-(P1-P9) are complete; physics is shared-first in
-`shared/python/{golf_club,swing_sim}`. `putting_result/2` supersedes v1 without
-silent migration. Python remains the sole Monte-Carlo authority; React mirrors
-only the outcome vocabulary and deterministic single-putt evaluation through
-`evaluatePuttWithTrajectory`. Both clients consume the one shared playback
-transport and the `putt` block of `playback_transport_golden_v1.json`.
-**Never fork a second transport, sampler, or golden.** P6-P8 deliberately
-rebuilt the putting first viewport, so both putting baselines went stale: the
-React one is re-approved here from a trusted-run candidate; the PyQt one must
-wait for #4844's environment fix — re-approving it now would launder that
-glyph drift. The 390x844 overflow had TWO 6 px sources: the P8 transport row
-(#4927) and F2's green-import row (#4936), whose file input's font-dependent
-intrinsic width blocked shrinking. **Correcting #4936's own claim:** that fix
-does _not_ change the approved 1440x900 image — baselines are viewport-only
-screenshots and the import row sits near y=1149, below the fold — so it was
-the 390x844 document width, not the captured first viewport, that it fixed.
-ADR-0047 H4 (UD #9353) wired the Flight Explorer tab's "Import Trajectory
-Record…" action to replay an imported `swing_sim.ball_flight_trajectory/1`
-record (either flight-model family) through this **same** P8 transport — no
-new transport was added. The loader is
-`rate_of_closure/simulation/flight_record_playback.py` (frame-converts the
-record's closed `flight`/`app` frame enum, refusing an unrecognized one by
-name) and its TS twin `web/src/model/flightRecordPlayback.ts`; both are
-pinned by the additive `imported_trajectory` block of
-`playback_transport_golden_v1.json`. ADR-0045 F2 (#4800 P6's "Import
-heightfield…" button) accepts both the `swing_sim.green_surface/1` wire and a
-UD `putting_green` topography, dispatched by the P9 adapter (`ud_adapter.py` /
-`puttingGreenUdAdapter.ts`) in both UIs; a weighted-slope UD document is
-refused by name, never approximated.
-Clubhead-realism #4799 is complete (G1-G5): lean, offset hosels, real blade
-soles, 16 cross-runtime club gates, and toe-view acceptance gates over the
-**public** `parametric_head_mesh` (per-club tables plus a center-pivot
-counterfactual that reddens all 16 clubs if the lean is reverted). G4 rebuilt
-every regenerable consumer artifact through its own flow — all byte-identical —
-and gates the camera golden's header block in both twins. **Do not rebind the
-PyQt visual baselines to fix #4799**: all ten drift 924-2660 microunits against
-a 250 limit, including tabs with no clubhead, from glyph re-rasterization no
-repo change explains (#4844).
-
-#4142 remains Python-authoritative; PyQt6 and React do not reimplement physics. R10.3, R10.4,
-R11.1 and R11.3 are protected-merged through `4ddec9175`. The complete-trial authority and
-`swing-trace-time-linear-contiguous/v1` preserve stable trial/point/frame identity, missing
-intervals, outcomes, failure semantics and approximate impact-marker error; the inherited
-3-source by 4-adapter matrix has two verified double-pendulum cells and ten unavailable.
-
-R12.3 (#4782, `a1b00db14`) and R13.3 (#4784, `d6c8a0a67`) are protected-squash-merged; the
-paired-attribution schema binds one independently estimable source and optional exact locus
-to state, impact and shot scalars, preserving ten unsupported cells. R13.5 (#4794,
-`35853199b`) binds `morris-target-selection` v1 over kind/name/unit/point/time/frame. R14.3
-(#4792) replays from that base; its governed matrix proves PyQt/React parity from authoring
-through export. The ledger is 30 verified / 1 partial, all model-scenario screening views,
-not global main effects, causal anatomy, governed human validation or coaching authority.
-
-PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only the initial
-React/PyQt visibility, accessibility, performance and baseline tier. #4733 merged V0.1 with
-purpose, prerequisites and reciprocal counterparts; #4736 merged strict TypeScript-reader
-parity as `34a809d9` and #4738 merged V5.2's fail-closed changed-path governance as
-`4b4aec421`. PRs #4835/#4837 are protected-merged through `d7a95e2a4`; the fifth manifest
-expands all 20 tabs over registered states/reference cases and binds scientific/nonvisual
-context. PR #4838's checklist and immutable consumer map move the audit to 10 verified / 21
-partial; executed render, performance, decimation, approved-image and human gaps remain, and
-no pixel tolerance was loosened.
-
-### Adding a Tab: The Five-Manifest Lockstep (Read Before Starting C6/C7)
-
-A new tab is **not** just a widget. Five packaged manifests in
-`src/rate_of_closure/` declare the tab set, cross-checked by **order-strict
-tuple equality** on `(surface, tab_id)`: `visualization_tabs.v1.json` is the
-authority (20 entries = 10 `pyqt` + 10 `react`) and `visualization_accessibility`,
-`visualization_performance`, `visual_baselines` and `visualization_acceptance`
-must match it entry-for-entry, in order. Adding to four of five — or to all five
-in a different order — fails without naming the offending file.
-
-- Surface strings are **`pyqt` and `react`**, _not_ `pyqt6`, despite `ui/pyqt6`.
-- PyQt6 registration: build the widget in `ui/pyqt6/main_window.py` (~line 127,
-  beside `self._plots_tab = PlotsTab()`), then add a `PrimaryTabSpec`
-  `(module_id, widget, label)`; `create_primary_tabs` stores `module_id` via
-  `setTabData`, which must equal the manifest `tab_id`.
-- **Visual baselines cannot be produced locally.** Only the fleet workflows
-  capture them (`RATE_VISUAL_BASELINE_CANDIDATE_DIR`); to inspect or approve
-  one, download that run's `visual-baseline-candidates` artifact.
-- `visualization_tabs` demands a `primary_visual_locator` that resolves at
-  runtime — the probe drives the real widget, so a locator for a
-  not-yet-rendered canvas fails there.
-- Gates in `tests/rate_of_closure/`: the three `test_visualization_*_manifest`
-  /`accessibility` modules, `test_visual_baseline_compare.py` and
-  `test_pyqt_visualization_tab_visibility.py`.
+- Surface strings are `pyqt` and `react`, not `pyqt6`.
+- PyQt6 registration: build widget in `ui/pyqt6/main_window.py`, add `PrimaryTabSpec(module_id, widget, label)`.
+- Visual baselines are captured on Linux fleet runners (`RATE_VISUAL_BASELINE_CANDIDATE_DIR`).
+- Gates: `tests/rate_of_closure/test_visualization_*_manifest`, `test_visual_baseline_compare.py`, `test_pyqt_visualization_tab_visibility.py`.
 
 ## Must-Read Architecture Pointers
 
 1. `src/rate_of_closure/README.md` — frame and unit conventions, run/build.
-2. `src/shared/python/swing_sim/impact/` — the contact-force law #4130 extends.
-3. `web/src/model/__fixtures__/` — golden fixtures pinning Python↔TS parity;
-   changing one is a contract change on **both** sides, so land them together.
-4. `rust_core/swing-core/` — pendulum EOM + plane projection, pyo3 + wasm; and
-   `src/shared/python/golf_club/AGENT_HANDOFF.md` — fitting/heavy-hit physics.
+2. `src/shared/python/swing_sim/impact/` — contact-force law #4130 extends.
+3. `web/src/model/__fixtures__/` — golden fixtures pinning Python↔TS parity.
+4. `rust_core/swing-core/` — pendulum EOM + plane projection, pyo3 + wasm.
+5. `src/shared/python/golf_club/AGENT_HANDOFF.md` — fitting/heavy-hit physics.
 
 ## Gate Commands (This Tool)
 
@@ -159,30 +48,9 @@ python3 -m ruff check src/rate_of_closure src/shared/python/swing_sim
 
 ## Do-Not List
 
-- **Do not append a dated entry to this file.** See the header.
-- **Do not merge #4466, #4446 or #4447 with a strategy flag.** See above.
-- **Do not take a branch file wholesale without diffing it against `main`.**
-  Symbol comparison misses body and data-only changes — read the diff.
-- Do not exceed 500 LOC per file in `rate_of_closure`, `swing_sim` or
-  `swing-core` — split along a real seam, as `ui/pyqt6`'s mixins do.
-- Do not eagerly import `assembly_binding`, `engineering_sidecar` or
-  `simulation_adapter` from `club/__init__.py`, nor `shared.python.golf_club` at
-  module scope — both reach SciPy via `swing_sim.variation → solver → flight`,
-  breaking the Morris UI import contract; use the lazy-export map.
-
-## Known Local-Environment Traps
-
-- **Reproduce CI's mypy exactly.** Pass every changed file to one Python 3.12
-  invocation with `MYPYPATH=src:src/python/src`; tests are excluded. The flag is
-  **`--follow-imports=silent`**, matching `ci-standard.yml`; `=skip` crashes
-  mypy 1.13 on files already on `main`, reporting failures CI does not have.
-  `MYPYPATH='src;src/python/src' py -3.12 -m mypy --ignore-missing-imports --follow-imports=silent <changed non-test files>`
-- **`tools_core` capability is two-tier** — a wheel can expose
-  `simulate_trajectory` yet lack the tee-aware full-state API; guard on the
-  specific capability. `test_club_view_camera.py`'s cadence test budgets
-  process-CPU time and trips when sibling suites saturate the box.
-- **A purely additive file can still be wrong.** `PrimaryViewTabs.test.tsx` and
-  `TorqueProfilePanel.test.tsx` delete no lines yet fail against `main`.
-- PowerShell `Set-Content` and `pathlib.write_text` rewrite LF as CRLF unless
-  newlines are preserved explicitly; `detect_secrets scan` writes native
-  separators, so on Windows run it _before_ normalising the baseline.
+- **Do not exceed 150 lines in this file.**
+- **Do not append dated entries to this file.** Put history in commit messages.
+- Do not exceed 500 LOC per file in `rate_of_closure`, `swing_sim`, or `swing-core`.
+- Do not eagerly import `assembly_binding`, `engineering_sidecar`, or `simulation_adapter` from `club/__init__.py`.
+- Reproduce CI's mypy exactly with `--follow-imports=silent` and `MYPYPATH='src;src/python/src'`.
+- Do not rebind PyQt visual baselines without verifying candidate artifacts.

@@ -1,0 +1,342 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.d-sorganization.org/tools/handoff-maintenance/1.0.0.json",
+  "title": "Tools Governed Completion-Audit Handoff and Maintenance Contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "manual_id",
+    "release_status",
+    "owner",
+    "program",
+    "repository",
+    "issue_url",
+    "pr_url",
+    "commit_evidence",
+    "branch_and_worktree",
+    "check_evidence",
+    "artifact_and_test_digests",
+    "limitations",
+    "approvals_and_expiry",
+    "blockers",
+    "next_dependency",
+    "freshness_timestamp",
+    "governed_handoff_files"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "tools-handoff-maintenance/1.0.0"
+    },
+    "manual_id": {
+      "const": "tools"
+    },
+    "release_status": {
+      "enum": ["unapproved-handoff-verified", "approved-handoff-closed"]
+    },
+    "owner": {
+      "type": "string",
+      "minLength": 1
+    },
+    "program": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["epic", "subepic"],
+      "properties": {
+        "epic": {
+          "const": 4707
+        },
+        "subepic": {
+          "const": 4730
+        }
+      }
+    },
+    "repository": {
+      "const": "D-sorganization/Tools"
+    },
+    "issue_url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "pr_url": {
+      "type": "string"
+    },
+    "commit_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "local_head_sha",
+        "remote_head_sha",
+        "reviewed_tree_sha",
+        "merge_sha"
+      ],
+      "properties": {
+        "local_head_sha": {
+          "$ref": "#/$defs/gitRevision"
+        },
+        "remote_head_sha": {
+          "$ref": "#/$defs/nullableGitRevision"
+        },
+        "reviewed_tree_sha": {
+          "$ref": "#/$defs/gitRevision"
+        },
+        "merge_sha": {
+          "$ref": "#/$defs/nullableGitRevision"
+        }
+      }
+    },
+    "branch_and_worktree": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["branch", "worktree", "is_clean"],
+      "properties": {
+        "branch": {
+          "type": "string",
+          "minLength": 1
+        },
+        "worktree": {
+          "type": "string",
+          "minLength": 1
+        },
+        "is_clean": {
+          "type": "boolean"
+        }
+      }
+    },
+    "check_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "check_design_manual_governance",
+        "build_tools_module_inventory",
+        "lint_tools_textbook_chapters",
+        "check_tools_exemplars",
+        "check_tools_calculation_freshness",
+        "check_tools_manual_qa",
+        "check_tools_publication_projection",
+        "render_tools_design_manual",
+        "check_tools_handoff"
+      ],
+      "patternProperties": {
+        "^[a-z0-9_]+$": {
+          "$ref": "#/$defs/checkItem"
+        }
+      }
+    },
+    "artifact_and_test_digests": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "calculation_registry_sha256",
+        "toolchain_lock_sha256",
+        "artifacts_manifest_sha256",
+        "qa_ledger_sha256",
+        "publication_projection_sha256",
+        "artifacts_sha256"
+      ],
+      "properties": {
+        "calculation_registry_sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "toolchain_lock_sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "artifacts_manifest_sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "qa_ledger_sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "publication_projection_sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "artifacts_sha256": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["docx", "html", "pdf", "tex"],
+          "properties": {
+            "docx": {
+              "$ref": "#/$defs/artifactDigest"
+            },
+            "html": {
+              "$ref": "#/$defs/artifactDigest"
+            },
+            "pdf": {
+              "$ref": "#/$defs/artifactDigest"
+            },
+            "tex": {
+              "$ref": "#/$defs/artifactDigest"
+            }
+          }
+        }
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "approvals_and_expiry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "blockers", "expiry_timestamp"],
+      "properties": {
+        "state": {
+          "enum": ["unapproved-handoff-verified", "approved-handoff-closed"]
+        },
+        "blockers": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "expiry_timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/blocker"
+      }
+    },
+    "next_dependency": {
+      "type": "string",
+      "minLength": 1
+    },
+    "freshness_timestamp": {
+      "type": "string"
+    },
+    "governed_handoff_files": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "AGENT_HANDOFF.md",
+        "src/pendulum_simulator/AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "src/rotation_converter/AGENT_HANDOFF.md",
+        "src/shared/python/golf_club/AGENT_HANDOFF.md",
+        "src/shared/python/sidekick/lab/mocap/AGENT_HANDOFF.md"
+      ],
+      "patternProperties": {
+        "^(?:[a-zA-Z0-9_./-]+/)?AGENT_HANDOFF\\.md$": {
+          "": "#//handoffFileRecord"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "gitRevision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "nullableGitRevision": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "checkItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["command", "status", "timestamp"],
+      "properties": {
+        "command": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "enum": ["passed", "verified", "skipped"]
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "artifactDigest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "media_type", "bytes", "sha256"],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "media_type": {
+          "type": "string"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/hash"
+        }
+      }
+    },
+    "blocker": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "owner", "resolution"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "resolution": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "handoffFileRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256_lf",
+        "line_count",
+        "max_line_budget",
+        "required_sections"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "sha256_lf": {
+          "$ref": "#/$defs/hash"
+        },
+        "line_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 150
+        },
+        "max_line_budget": {
+          "const": 150
+        },
+        "required_sections": {
+          "type": "array",
+          "minItems": 3,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}
