@@ -8,7 +8,7 @@
 - Full offset-head and explicit section rotary inertia retained; independent kinetic Hessians, inertial-frame trajectory and radial frequency references pass. No general impact/acoustic qualification.
 - UpstreamDrift #9735 / PR #9745 merged as `1b48707d54fb47655e43eaaffaad7b1739445e40`; confirmed ancestor of main. Tools T2 downstream UD job 101951943569 passes; T1 job 101955835753 also passes.
 - T2 CI: prior UD consumer passes; Gasification checkout still fails on renderer `b8c6e6013`. #5090 has repeatable reviewed references and a passing production workflow. Rust #5095 / PR #5097 passes local deterministic and filesystem tests and is syncing main; UpstreamDrift #9783 / PR #9784 passes 18 contracts against both providers and all publication hooks. Secret metadata 403 leaves credential state unknown; configuration requested without secret values.
-- T3 codex lease succeeds through 2026-09-08T14:31:23Z; renew before expiry.
+- T3 uses codex lease session `impact-acoustics-01a07d8a-t3`; check its live expiry through Repository_Management before editing.
 - Turnover: `docs/development/impact-acoustics/DEFORMED_FRAME_INERTIA.md`, `LOADED_INERTIA.md`, `LOADED_STATE_REVIEW.md`, `ROTATING_TRANSPORT.md`, `SHAFT_LINEAR_SYSTEM.md`, `GRIP_IMPEDANCE.md`, `SHAFT_PRESTRESS.md`; full requirement matrix: `PROGRESS.md` in the same directory.
 - T5 ingestion PR #5084 merged at `86a725c6c`; reuse `swing_sim.vibroacoustics`. Exact-commit boundary probes and limits are in `VIBROACOUSTICS_INGESTION_REVIEW.md`. T3-T6, exact-pin studies, physical/blinded gates and final synthesis remain required.
 

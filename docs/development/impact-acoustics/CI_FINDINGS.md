@@ -110,3 +110,18 @@ the two reviewed source/hash pairs and rejects swaps/unknowns. All eighteen
 shared contracts pass against both the exact pin and renderer candidate; pinned
 Ruff 0.15.17, governance and commit hooks pass. PR #9784 publishes head `aa08217c5` with every normal commit/push hook passing. Pixel tolerances and vendor pin are unchanged. Private checkout access
 remains independently unresolved; the credential-configuration question is pending.
+
+At current PR #9784 head `aa08217c520c68867945b999a8c77425e6b3ae2b`, the actual
+shared-tools-consumer-contracts job 102066036416 passes, as do normal Python,
+Rust and security lanes. Three companion gates fail in run 34227729340:
+rolling native semantics lacks execution provenance; optional-stack manufactured
+source keys disagree; the authority lane cannot load liburdfdom_sensor.so.4.0.
+Main is still `98c68af2f`. Diagnose those concrete failures without weakening
+research provenance or making an unsupported claim of a green head.
+
+Rust PR #5097's main merge is committed at `b268228bd` but its push was refused:
+Prettier reformatted the incoming swing_sim API JSON and mypy rejected an
+unused ignore in the incoming ingestion test helper. A claimed #5074 fixture
+annotation correction passes the actual mypy hook and all eighteen ingestion
+tests. The JSON formatting must preserve parsed content exactly; delivery remains
+pending until all applicable normal push checks pass.
