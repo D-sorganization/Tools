@@ -117,7 +117,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "35875dcfe19046eb9705a11a3f66da6149fd3eb9df605a66552008e9e5c4cb2f",
+      "content_sha256_lf": "18f1c3656df23e4c886faabde4e3a78f7ddebdd08ae592ed9e55df07fe81e7d2",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
@@ -735,7 +735,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-signal-toolkit.json"
     },
     {
-      "content_sha256_lf": "effaf642f2d614c4195f02f8db5a9c9637e06b9e29703d954f4cd3bcdcada726",
+      "content_sha256_lf": "426598eb2c8af7094cb7fd7e0d7656f9912cab9d10291d13fbca11c27d177953",
       "entry_count": 220,
       "package": "src/shared/python/swing_sim",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim.json"
