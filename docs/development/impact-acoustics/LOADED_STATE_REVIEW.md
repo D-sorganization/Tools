@@ -1,7 +1,7 @@
 # Loaded-State Formulation Review
 
 Tools #5072 is still in progress. This note records the next implementation
-decision and source access, not an implemented nonlinear solver. The existing
+decision, verified private kinematics and source access; no nonlinear solver is implemented. The existing
 rotating transport and radial references remain independently useful checks.
 
 ## Objective Section Kinematics
@@ -19,10 +19,45 @@ geometric and external-load derivatives must be derived for this prestress work.
 Their material-frame tangent and velocity coordinates must not be substituted
 unchanged for the current canonical small-rotation operators.
 
-This is a candidate for the loaded-state and shear extension. Its first TDD
-gates should establish rigid-motion objectivity, exact circular pure bending,
-axial/torsional energy, and virtual-work derivatives before equilibrium solving.
-No test or implementation of this candidate has yet been run in this project.
+The first private kinematics are now implemented in `_shaft_se3.py` and checked
+by `test_shaft_se3.py`. TDD first failed because the module did not exist;
+26 isolated tests then passed (7.44 s). The initial broad run found the new
+test's use of the alternate top-level package alias caused duplicate turf
+registration; the test now follows the suite's `shared.python.golf_club` imports.
+
+Twists are linear-first, with translation generator in metres and rotation in
+radians. Poses map section material axes into a common observer frame. For
+angular generator A, the upper-right block of `expm([[A, I], [0, 0]])` gives
+`J = integral_0^1 exp(t A) dt`. Thus `Exp([v,w]) = [Exp(A), J v; 0, 1]`;
+the inverse obtains w from SciPy's principal SO(3) logarithm and solves J v = p.
+This uses existing SciPy numerical routines rather than importing or copying
+the leaf rotation-converter algorithms. There is no small-angle dead zone.
+The kernel uses existing strict numeric and proper-rotation validators.
+
+The tests compare screw motion with an independent 4x4 matrix exponential,
+preserve 1e-12-radian rotations, and recover exact circular pure bending at
+four material positions after an arbitrary common rigid motion. The resulting
+section twist per length is `[0,0,1,0,curvature,0]`, with no spurious axial or
+shear strain. Non-rigid transforms, invalid fractions and coerced numeric
+values are refused. Rotations at or within 1e-6 rad of pi are explicitly outside
+the local chart; this numerical margin does not establish a material strain limit.
+
+The broader golf suite passes 424 tests with two optional build123d skips; all
+nine API checks pass after recording the new module with an explicitly empty
+export tuple. No existing API signature changed. Repository Ruff 0.14.10 passes,
+and changed-module mypy with `--follow-imports=silent` passes. All nine manual
+governance checks pass after staging the new module and regenerating inventory.
+Validation used `python -m pytest tests/shared/python/golf_club tests/test_shared_package_api_stability.py -q -n0 --no-cov`;
+after the additive API baseline update, the nine API checks were rerun separately.
+The optional CAD skips are missing build123d, not physics test failures.
+
+The implementation remains kinematics only. Next derive section strain energy,
+axial/torsional limits, virtual work and the **complete geometric tangent** before
+equilibrium solving. A common material-frame tangent is not automatically the
+Hessian in a fixed nodal exponential chart: its moving nodal coordinate bases
+also contribute derivatives. Preserve this distinction when checking symmetry
+and prestressed vibration. No loaded-shape, stability, inertia, contact or
+acoustic result follows merely from passing these kinematic tests.
 
 ## Energy and Time Integration
 
@@ -67,6 +102,7 @@ its complete derivation or numerical tables have been reviewed.
   A hand impedance or imposed trajectory must carry its own provenance and
   power-conjugate frames. Contact and ringdown need a complete work ledger.
 
-No new dependency or nonlinear backend has been selected or installed. All
+The private kinematics use existing SciPy; no dependency was added or upgraded.
+No nonlinear equilibrium or time-integration backend is selected. All
 later contact, acoustic, consumer, experimental and synthesis gates remain
 required in PROGRESS.md.

@@ -1,6 +1,8 @@
 # Provider UI Delivery Investigation
 
-This is a diagnosis checkpoint, not a baseline approval or completed CI fix.
+Renderer prerequisite [PR #5090](https://github.com/D-sorganization/Tools/pull/5090)
+is open at `53f072a58bce42a9c11a639329da01b093e30557`. No baseline approval or
+completed CI fix is claimed.
 
 ## Evidence Inspected
 
@@ -16,8 +18,9 @@ was downloaded to a temporary analysis directory. Its name is
 `rate-web-playwright-pr-34180114955-2`, reported archive size 38,823,824 bytes.
 The committed and candidate clubhead PNGs were visually inspected. The main
 plot/content remain present; differences appear around widget labels and borders.
-No quantitative image-region classification or complete nine-view visual review
-has been performed, and no reference image was replaced.
+An RGB-delta >1 region audit found exactly 705 changed left-panel pixels in all
+ten views. A complete all-view visual review remains open; no reference image
+was replaced.
 
 The candidate manifest declares
 `posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900`.
@@ -29,21 +32,29 @@ in `scripts/check_rate_pyqt_environment.py` verifies distribution versions for
 NumPy, SciPy, PyQt6 and Matplotlib, but does not check the separately supplied
 Qt runtime. The font-stack check passes in this job.
 
-This proves the reported environment does not fully identify the loaded Qt
-runtime. It does **not** prove that the runtime difference alone causes every
-pixel difference, or establish which runtime produced the approved baseline.
+The latest reference PNGs trace to trusted run 34045862045, job 101522812023
+on OGLaptop, **also Qt runtime 6.11.2**. Its FreeType/Fontconfig packages are
+2.14.2+dfsg-1ubuntu0.1 / 2.17.1-3ubuntu1; the candidate uses
+2.13.2+dfsg-1ubuntu0.1 / 2.15.0-1.1ubuntu2. The old checker accepted both stacks
+under one screenshot identity. These observations support a common rendering
+difference, not proof that every changed pixel is attributable to fonts.
 
-## Required Next Steps
+## Current Remediation and Next Steps
 
-Establish the baseline capture's actual runtime from its original job evidence.
-Check for an existing issue/claim before implementation. Reproduce the runtime
-identity discrepancy with TDD, including a compiled/runtime version disagreement.
-Ensure the shared runtime probe, dependency constraint and candidate metadata
-agree. Preserve the existing font checks and fail closed on a mismatched stack.
-Then rerun the rendered comparisons in the intended Linux environment and inspect
-any remaining differences. No threshold widening or automatic baseline replacement.
+Existing issue #4844 was claimed and updated with the actual runtime/font
+provenance. PR #5090 uses one digest-pinned Ubuntu 24.04 container and common
+font installation for both paths while retaining the PR-hosted/trusted-fleet
+runner boundary. It checks the exact font stack and the Qt runtime/SIP pins.
+TDD and SPEC checks pass 49 tests; all nine manual checks and normal commit/push
+hooks pass. No image, tolerance or runner-policy guard was weakened.
+
+Continue in `C:/Users/diete/Repositories/Tools-impact-render`, branch
+`fix/4844-consistent-pyqt-renderer`, with its
+`docs/development/rate-pyqt-renderer-4844.md`. Linux capture, every-candidate
+inspection and a protected reference update remain required. The local shell
+has no Docker executable, so no local container render is claimed.
 
 The T2 UpstreamDrift consumer job 101951943569 passes after upstream PR #9745
-merged. T1's separate UD retry is pending. The carried-forward Gasification
+merged. T1's separate UD retry job 101955835753 also passes. The carried-forward Gasification
 failure remains a private-repository checkout error; secret-metadata access
 returned 403, so credential availability is unknown. These are separate gates.
