@@ -68,3 +68,59 @@ values, units, clipping and calibration remain uninspected. No model was fitted.
 Source: [authors' hosted archive](https://downloads.cs.stanford.edu/viscam/RealImpact/67_IronPlate.zip),
 selected from the pinned repository's `dataset/object_names.txt`. No external
 recordings or derived data are redistributed in this repository.
+
+## KIT Hand-Arm Impedance Candidates
+
+Primary KITopen metadata inspected on 2026-09-08 UTC identifies a measured
+boundary-model candidate family, distinct from golf impacts or acoustic
+preferences. No payload has been downloaded, inspected, fitted or approved.
+
+| Record                                                                                                           | Declared coverage                                                                      | Potential use                                                        |
+| ---------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| [Translation xh, 1000194060](https://publikationen.bibliothek.kit.edu/1000194060), DOI 10.35097/t28dnwf7rhmv2dwm | 13 participants, 10–500 Hz, complex impedance/apparent mass and validation records     | Translational boundary identification within the recorded conditions |
+| [Rotation xh, 1000185119](https://publikationen.bibliothek.kit.edu/1000185119), DOI 10.35097/1r2qfkquz7mzar0s    | Six participants, 10–500 Hz, direct and cross-axis response, raw and evaluated records | Rotational and coupling controls with an unloaded-handle reference   |
+| [Rotation zh, 1000185118](https://publikationen.bibliothek.kit.edu/1000185118), DOI 10.35097/vfrrc2hbxkujanz8    | Six participants, 10–500 Hz, direct and cross-axis response                            | Complementary rotational identification and calibration checks       |
+| [Rotation yh, 1000194062](https://publikationen.bibliothek.kit.edu/1000194062), DOI 10.35097/h5p055shpntph522    | Ten participants, 10–100 Hz, complex rotational impedance/apparent inertia             | Restricted-band handle-axis response and validation                  |
+
+The translation-xh record declares CC BY 4.0 and separate main/validation MATLAB
+structs. Reported response values at 100, 200, 300 and 400 Hz are interpolated
+because of electrical interference. Those bins must be flagged as processed
+values, not treated as independent measured response points. Its overlapping
+segments are not independent participants or independent trials. [Source](https://publikationen.bibliothek.kit.edu/1000194060).
+
+Both xh/zh rotational records declare CC BY 4.0, measured grip/push force,
+condition exclusion indicators, raw torque/angular-acceleration channels and
+an unloaded-handle file. Their reported cross-axis terms are useful partial
+coupling evidence; they do not alone identify every element of a full 6×6
+impedance. Coordinate conventions and calibration must be checked against
+actual file contents before comparing directions. [xh](https://publikationen.bibliothek.kit.edu/1000185119), [zh](https://publikationen.bibliothek.kit.edu/1000185118).
+
+The yh rotational metadata declares torque/angular-velocity impedance in
+N m s/rad and apparent inertia in kg m², but its excitation paragraph uses
+linear-acceleration units while describing a rotational experiment. Resolve
+this metadata inconsistency from acquisition/calibration records before using
+amplitudes or units. Preserve its narrower frequency domain and condition
+ranges. [Source](https://publikationen.bibliothek.kit.edu/1000194062).
+
+A related [model-parameter record, 1000185357](https://publikationen.bibliothek.kit.edu/1000185357)
+(DOI 10.35097/r7uckpr276vanaua) describes fitted three-, four- and five-mass
+oscillators and errors for weighted/unweighted fitting. Its declared license
+is CC BY-SA 4.0, distinct from the measurement records. These are candidate
+published comparisons, not parameters already imported into Tools. Its metadata
+calls the contents CSV while describing sheets; inspect the actual format.
+
+Inference and next steps: pin payload hashes, retain provenance and processing
+flags, verify complex phase/sign, axes, calibration and physical units, then
+register participant/trial/condition holdouts before fitting. Keep overlapped
+segments grouped to avoid leakage. Compare the simple constant-coefficient
+coordinate law against frequency-dependent passive alternatives using held-out
+complex response and uncertainty. Do not extrapolate these handle measurements
+to swinging two-hand grips, unobserved matrix entries, kilohertz golf ringdown
+or preferred sound. These data cannot close the golf/physical/blinded gates.
+
+Access evidence is limited: DOI resolution by HEAD reaches the RADAR dataset
+landing page with HTTP 200. The web reader refuses that landing URL as unsafe
+(non-retryable); no payload fetch is attempted through another tool to bypass
+that refusal. File sizes, archive members, byte hashes and independent
+calibration validation remain unverified. KITopen metadata above remains the
+reviewed source-access boundary.

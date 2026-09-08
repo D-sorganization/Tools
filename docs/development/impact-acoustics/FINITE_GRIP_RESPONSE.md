@@ -85,7 +85,10 @@ actual three-module pre-push mypy passes, and all production functions remain
 within 50 lines. Complete Linux golf/API regression passes 634 tests (232.32 s),
 with two optional CAD skips and three unavailable-plugin configuration warnings.
 The same one-thread BLAS settings and 60-second per-test limit are retained.
-All nine final manual gates pass. Normal delivery is pending at this checkpoint.
+All nine final manual gates pass. Implementation is published at
+`28c45eb15f73ab7cfc551efbe97996b21ed22ccb` through every normal commit/push
+hook, including repository unit tests, type checks, Bandit, dependency audit
+and fleet guardrails; the remote SHA is verified.
 
 ## Remaining Loaded-Shaft Coupling
 

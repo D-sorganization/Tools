@@ -343,7 +343,9 @@ Full Linux golf/API regression passes 634 tests (232.32 s), with two optional
 CAD skips and three unavailable-plugin warnings, one BLAS thread and the
 unchanged 60-second limit. Repository Ruff 0.14.10 passes (3,745 files), as
 does actual three-module hook mypy. The API adds only two empty private module
-entries. All nine final manual gates pass; publication is pending. Loaded root balance
+entries. All nine final manual gates pass; implementation is published at
+`28c45eb15f73ab7cfc551efbe97996b21ed22ccb` through every normal commit/push
+hook, with its remote SHA verified. Loaded root balance
 and tangent, anchor/frame work in evolution, stability and impact/acoustic
 qualification remain required; #5072 stays open.
 
@@ -354,6 +356,18 @@ now passes on CI, as does the UpstreamDrift consumer; the remaining public
 embedded/native checks are running. Private Gasification_Model job
 `102225339951` fails at repository lookup before tests. The final classifier
 must be integrated and the inventory regenerated before combined delivery.
+
+## Measured Boundary Data Discovery
+
+`DATA_CANDIDATES.md` now records primary KITopen hand-arm impedance metadata,
+including translational and rotational experiments, selected cross-axis
+responses and separate validation records. It preserves interpolation flags,
+an angular/linear excitation-unit ambiguity, differing payload licenses and
+participant/trial grouping needs. No payload is downloaded or fitted. The
+RADAR landing page is refused by the web reader; no alternate payload-fetch
+path is used to bypass it. These are candidates for measured boundary-model
+checks, not golf impacts, full six-axis identification or sweetness evidence.
+The model-parameter comparison record is also catalogued for later review.
 
 ## Current Authority Coordination Boundary
 

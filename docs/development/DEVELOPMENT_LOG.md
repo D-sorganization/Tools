@@ -29,7 +29,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-07
 - **Last verified:** 2026-09-08 (634 Linux golf/API passes, two optional CAD skips; 37 focused grip tests; nine API tests, repository Ruff and actual three-module hook mypy pass)
 - **Summary:** Moving-grip kinematics `0d45c4b7f` is published. A separate finite-coordinate impedance now shares the existing Gram energy algebra and returns both physical reactions with observer-specific power. Independent finite-pose energy gradients and accelerating-observer controls pass. Local small-rotation semantics are preserved. No calibrated hand mass, driven-system stability or acoustic prediction is inferred.
-- **Next step:** Complete finite-grip final gates and normal publication, then derive the consistent loaded-root balance/tangent and time evolution with anchor/frame work. Qualify stability, full shear/rotary bandwidth and mesh/time/modal/FRF convergence; integrate protected inventory correction #5103 before final combined delivery.
+- **Next step:** Finite-grip response is published at `28c45eb15`; derive the consistent loaded-root balance/tangent and time evolution with anchor/frame work. Qualify stability, full shear/rotary bandwidth and mesh/time/modal/FRF convergence; integrate protected inventory correction #5103 before final combined delivery. Inspect the catalogued KIT measurement candidates without treating metadata as calibrated payload evidence.
 
 ### DL-0055 · Qualified Lumped Impact Dynamics
 
