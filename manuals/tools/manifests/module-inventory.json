@@ -117,7 +117,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "18f1c3656df23e4c886faabde4e3a78f7ddebdd08ae592ed9e55df07fe81e7d2",
+      "content_sha256_lf": "117a774ced4b0d513d2768fc4f61be1c65857340372f6a13d70c38db7024b907",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
@@ -783,7 +783,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-impact.json"
     },
     {
-      "content_sha256_lf": "e6b5c2a87001daaf1b468ca56c2087188486848cbcede8b2bce937533e5a7b32",
+      "content_sha256_lf": "e71f4792c076474ded6649d61b0e2b4b45f7e0fa2554505f0614e2ea1402b46a",
       "entry_count": 4,
       "package": "src/shared/python/swing_sim/impact_interval",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-impact-interval.json"

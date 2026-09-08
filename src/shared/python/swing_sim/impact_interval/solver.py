@@ -27,6 +27,7 @@ from .types import (
     ImpactIntervalConfig,
     ImpactIntervalInitialState,
     ImpactIntervalResult,
+    ImpactTermination,
 )
 
 
@@ -180,7 +181,9 @@ def solve_impact_interval(
         not more than one ball radius beyond the ball center.
     Postconditions:
         The returned histories have equal length, finite values, monotonic
-        time, and contain the separated post-impact state when contact occurs.
+        time. ``termination`` states whether contact separated, ran out of
+        time budget, or never occurred; ``to_post_impact_state`` refuses to
+        convert anything but a separated contact.
         Every audit ledger term is integrated from the contact state, the
         declared law, and the declared boundary independently of the signed
         energy residual; no term is derived from that residual. The ledger
@@ -252,7 +255,13 @@ def solve_impact_interval(
     stored_contact_previous = stored_contact_initial
     tensile_clip_pending = False
     supported_torque_impulse = np.zeros(3)
-    max_steps = int(math.ceil(config.maximum_time_s / config.time_step_s)) + 1
+    # Samples are taken at step * dt, so the last admissible index is
+    # floor(T/dt): `ceil(T/dt) + 1` sampled one step *past* the configured
+    # budget, reporting a final time of 1.01e-5 s under a 1e-5 s cap. A
+    # non-integer T/dt therefore stops just short of the cap rather than
+    # silently running over it.
+    max_steps = int(math.floor(config.maximum_time_s / config.time_step_s)) + 1
+    termination = ImpactTermination.NO_CONTACT
 
     for step in range(max_steps):
         time_s = step * config.time_step_s
@@ -316,8 +325,16 @@ def solve_impact_interval(
             did_contact = True
             last_contact_time = time_s
         elif did_contact and compression <= 0.0 and rate < 0.0:
+            termination = ImpactTermination.SEPARATED
             break
         if step == max_steps - 1:
+            # Budget exhausted. If contact began and never separated, the final
+            # sample is mid-contact and must not be mistaken for a result.
+            termination = (
+                ImpactTermination.TIME_LIMIT
+                if did_contact
+                else ImpactTermination.NO_CONTACT
+            )
             break
 
         dt = config.time_step_s
@@ -417,6 +434,7 @@ def solve_impact_interval(
         **arrays,
         contact_duration_s=contact_duration,
         did_contact=did_contact,
+        termination=termination,
         audit=audit,
     )
 
