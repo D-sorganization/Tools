@@ -1266,10 +1266,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 12963,
+      "bytes_lf": 13073,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "5a8355db95748ef12fda81e4ce0e2a50d452540a3c49ea38f12db373cddff712",
+      "content_sha256_lf": "0fc02ed495a920c2b25705f0a499d841ff51f3913c60100ce3bf87d17741a302",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-IMPACT-COUPLING-PY-08CD71D1C49A",
       "language": "python",
@@ -1347,6 +1347,84 @@
         "unit_mentions": [
           "s",
           "µs"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 5090,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "bf4e7c2d9e73deeba87cec7537ec45dae249ca1e378e18157a4cd8cbb1363e73",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-IMPACT-MOBILITY-PY-07A2B9B14381",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/impact_mobility.py",
+      "purpose": "Detached rigid-body contact reference for IA-T1 (#5069).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "RigidContactBody",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "contact_inverse_mass",
+            "signature": "body: RigidContactBody"
+          },
+          {
+            "kind": "function",
+            "name": "normal_effective_mass",
+            "signature": "body: RigidContactBody, normal: Vector3"
+          },
+          {
+            "kind": "function",
+            "name": "normal_impulse",
+            "signature": "closing_speed_mps: float, first_effective_mass_kg: float, second_effective_mass_kg: float, restitution: float"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_impact_mobility.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "W",
+          "kg",
+          "m/s",
+          "s"
         ],
         "validation_paths": []
       }
