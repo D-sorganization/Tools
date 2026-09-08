@@ -237,3 +237,13 @@ tests with two optional CAD skips and three optional-plugin warnings (245.81 s).
 `FROZEN_SPECTRA.md` records the derivation, independent counterexamples and
 remaining stability, moving-work, loaded grip/head and FRF qualification.
 This is a T3 foundation, not a full epic or physical/acoustic qualification.
+
+## Current Rigid Attachment Checkpoint
+
+Frozen spectra are published at `cbc43b659`. Private rigid nodal attachment
+now reuses the loaded-chain inertia samples without duplicating mechanics.
+Twelve final Windows tests pass. `LOADED_BODY_ATTACHMENT.md` derives the
+offset-body mechanics and independent continuum tip-mass controls, including
+the principal-axis assumption that the first reference fixture violated.
+The final Linux golf/API run passes 601 tests with two optional CAD skips and three optional-plugin warnings (292.46 s). Loaded grip impedance, moving-boundary work,
+stability, full FRF/bandwidth convergence and physical/acoustic gates stay open.

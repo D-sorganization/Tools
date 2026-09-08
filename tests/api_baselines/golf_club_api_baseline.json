@@ -2824,6 +2824,11 @@
       }
     }
   },
+  "_shaft_body_assembly.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
   "_shaft_chain.py": {
     "__all__": [],
     "explicit_all": true,
