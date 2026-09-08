@@ -22125,6 +22125,236 @@
       }
     }
   },
+  "impact_studies/__init__.py": {
+    "__all__": [
+      "STUDY_WIRE_FORMAT",
+      "AcousticsUnavailableError",
+      "CompletenessChecks",
+      "EvidenceTier",
+      "ImpactStudyV1",
+      "InvalidCase",
+      "MetricRecord",
+      "Provenance",
+      "acoustic_metrics_or_raise",
+      "acoustics_available",
+      "parse_study_wire",
+      "serialize_study_wire",
+      "study_statement"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "AcousticsUnavailableError": {
+        "type": "reexport"
+      },
+      "CompletenessChecks": {
+        "type": "reexport"
+      },
+      "EvidenceTier": {
+        "type": "reexport"
+      },
+      "ImpactStudyV1": {
+        "type": "reexport"
+      },
+      "InvalidCase": {
+        "type": "reexport"
+      },
+      "MetricRecord": {
+        "type": "reexport"
+      },
+      "Provenance": {
+        "type": "reexport"
+      },
+      "STUDY_WIRE_FORMAT": {
+        "type": "reexport"
+      },
+      "acoustic_metrics_or_raise": {
+        "type": "reexport"
+      },
+      "acoustics_available": {
+        "type": "reexport"
+      },
+      "parse_study_wire": {
+        "type": "reexport"
+      },
+      "serialize_study_wire": {
+        "type": "reexport"
+      },
+      "study_statement": {
+        "type": "reexport"
+      }
+    }
+  },
+  "impact_studies/surface.py": {
+    "__all__": [
+      "AcousticsUnavailableError",
+      "acoustic_metrics_or_raise",
+      "acoustics_available",
+      "study_statement"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "AcousticsUnavailableError": {
+        "info": {
+          "bases": ["LookupError"],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "study_id"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "acoustic_metrics_or_raise": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ImpactStudyV1",
+              "default": null,
+              "kind": "arg",
+              "name": "study"
+            }
+          ],
+          "returns": "tuple[MetricRecord, ...]"
+        },
+        "type": "function"
+      },
+      "acoustics_available": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ImpactStudyV1",
+              "default": null,
+              "kind": "arg",
+              "name": "study"
+            }
+          ],
+          "returns": "bool"
+        },
+        "type": "function"
+      },
+      "study_statement": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ImpactStudyV1",
+              "default": null,
+              "kind": "arg",
+              "name": "study"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "impact_studies/wire.py": {
+    "__all__": [
+      "CompletenessChecks",
+      "EvidenceTier",
+      "ImpactStudyV1",
+      "InvalidCase",
+      "MetricRecord",
+      "Provenance",
+      "STUDY_WIRE_FORMAT",
+      "SUPPORTED_WIRE_FORMATS",
+      "parse_study_wire",
+      "serialize_study_wire"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "CompletenessChecks": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "EvidenceTier": {
+        "info": {
+          "bases": ["Enum"],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ImpactStudyV1": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "InvalidCase": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "MetricRecord": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "Provenance": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "STUDY_WIRE_FORMAT": {
+        "type": "variable"
+      },
+      "SUPPORTED_WIRE_FORMATS": {
+        "type": "variable"
+      },
+      "parse_study_wire": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "document"
+            }
+          ],
+          "returns": "ImpactStudyV1"
+        },
+        "type": "function"
+      },
+      "serialize_study_wire": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ImpactStudyV1",
+              "default": null,
+              "kind": "arg",
+              "name": "study"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      }
+    }
+  },
   "integration_grid.py": {
     "__all__": ["DEFAULT_SWING_RK4_DT_S", "effective_rk4_duration"],
     "explicit_all": true,

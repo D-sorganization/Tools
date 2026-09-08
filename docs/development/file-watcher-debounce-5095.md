@@ -63,3 +63,9 @@ contract inputs via Any and no longer suppresses a nonexistent diagnostic.
 The actual mypy hook and all eighteen ingestion tests pass. #5074 was unclaimed
 and is leased to codex for this bounded prerequisite. No runtime calibration,
 alignment, spectral algorithm or source-provenance gate changed in this repair.
+
+Corrected head `e0369fdda` is published with every normal push hook passing.
+Main subsequently merged IA-T6 reporting as `cfca06449`; this second main merge
+retains its exact implementation and all existing T5/runtime corrections. The
+root epic row now records both early T5 and T6 foundations as landed while the
+full impact program remains open. Inventory is regenerated from the final merge.
