@@ -238,7 +238,8 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
     assert pr_commands["Install locked web dependencies"] == "npm ci"
     assert trusted_web_commands["Install locked web dependencies"] == "npm ci"
     assert pr_commands["Install Playwright-pinned browser runtimes"] == (
-        "npx --no-install playwright install --with-deps chromium firefox webkit"
+        'env HOME="$RATE_BROWSER_HOME" npx --no-install playwright install '
+        "--with-deps chromium firefox webkit"
     )
     assert (
         "npx --no-install playwright install --with-deps chromium"
@@ -246,7 +247,7 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
     )
     assert (
         pr_commands["Exercise production Worker lifecycle, layouts, and browser parity"]
-        == "npm run test:e2e"
+        == 'env HOME="$RATE_BROWSER_HOME" npm run test:e2e'
     )
     assert pr_commands["Install bounded PyQt render dependencies"] == (
         'python -m pip install --constraint requirements-rate-pyqt.txt -e ".[gui,dev]"'
@@ -540,3 +541,17 @@ def test_container_shell_uses_mounted_workspace_after_checkout() -> None:
         )
         assert '>> "$GITHUB_ENV"' in step["run"]
         assert "RATE_VISUAL_BASELINE_CANDIDATE_DIR" not in job["env"]
+
+
+def test_container_browser_install_and_execution_share_an_owned_home() -> None:
+    job = _workflow(PR_WORKFLOW_PATH)["jobs"]["production-worker-e2e"]
+    prepare = _named_step(job, "Prepare isolated browser home")
+    assert 'mktemp -d "$RUNNER_TEMP/rate-browser-home.XXXXXX"' in prepare["run"]
+    assert "RATE_BROWSER_HOME=$RATE_BROWSER_HOME" in prepare["run"]
+    for name in (
+        "Install Playwright-pinned browser runtimes",
+        "Exercise production Worker lifecycle, layouts, and browser parity",
+    ):
+        step = _named_step(job, name)
+        assert job["steps"].index(prepare) < job["steps"].index(step)
+        assert step["run"].startswith('env HOME="$RATE_BROWSER_HOME" ')

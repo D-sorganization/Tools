@@ -106,3 +106,24 @@ The normal commit hook also detected one newly inferred test link in the
 Rust AI-backend inventory shard from the workflow regression. The standard
 inventory generator adds only that link and its shard digest; no backend
 implementation changes. Re-run the complete hooks with this generated repair.
+
+## Firefox Home Ownership Follow-up
+
+Linux run 34209196902/job 102005880697 at published head
+`a2d4fdf07ac09b11a9bb2fc91c3828b999c6c811` confirms the scoped workspace
+initialization and evidence co-change gate pass. Browser installation succeeds;
+72 web tests pass. Firefox alone cannot start because the root container process
+inherits /github/home owned by host uid 1001. The log explicitly identifies
+that ownership mismatch. PyQt capture remains skipped after this web failure.
+
+The PR job now creates one private browser home under RUNNER_TEMP with mktemp.
+Browser installation and execution receive that same home as their subprocess
+HOME, while the mounted runner home is untouched. Scoped Git trust is also
+initialized in the private home. Browser caches stay consistent between install
+and execution. No browser project, sandbox policy, assertion or failure is
+skipped. The workflow regression first failed without this setup; 53 related
+contracts now pass. An isolated shell experiment executes the actual setup and
+verifies directory/config creation. That experiment clears this Windows host's
+inherited GIT_CONFIG_GLOBAL override from its test subprocess; the one incidental
+safe.directory entry created before noticing the override was removed exactly.
+No Linux Firefox launch success is claimed until the next real run.

@@ -154,11 +154,17 @@ jobs:
       - name: Install locked web dependencies
         run: npm ci
 
+      - name: Prepare isolated browser home
+        run: |-
+          RATE_BROWSER_HOME="$(mktemp -d "$RUNNER_TEMP/rate-browser-home.XXXXXX")"
+          echo "RATE_BROWSER_HOME=$RATE_BROWSER_HOME" >> "$GITHUB_ENV"
+          env HOME="$RATE_BROWSER_HOME" git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
       - name: Install Playwright-pinned browser runtimes
-        run: npx --no-install playwright install --with-deps chromium firefox webkit
+        run: env HOME="$RATE_BROWSER_HOME" npx --no-install playwright install --with-deps chromium firefox webkit
 
       - name: Exercise production Worker lifecycle, layouts, and browser parity
-        run: npm run test:e2e
+        run: env HOME="$RATE_BROWSER_HOME" npm run test:e2e
 
       - name: Install bounded PyQt render dependencies
         working-directory: .
