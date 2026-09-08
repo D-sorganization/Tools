@@ -131,8 +131,8 @@
   "governed_handoff_files": {
     "AGENT_HANDOFF.md": {
       "path": "AGENT_HANDOFF.md",
-      "sha256_lf": "8a3ae5dff1e09df97ad3aebfcecbdf31940648a98c5ced5d529c3d936f03f5a5",
-      "line_count": 107,
+      "sha256_lf": "eed53cbf72b24d139f624dbcd2a3a31cd1101073846fa02dfc2ffd06c3380d18",
+      "line_count": 108,
       "max_line_budget": 150,
       "required_sections": [
         "## Merge Governance",
