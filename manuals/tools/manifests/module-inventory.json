@@ -729,8 +729,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-scripting.json"
     },
     {
-      "content_sha256_lf": "85973760f6372d71ea2836da5162e7814d74f44ccb12f2c61fb36bc5402e0eee",
-      "entry_count": 220,
+      "content_sha256_lf": "24ff4a590ed3fd6f9477134912384b1fed2fa350f1c2da00c44556b06848bf3d",
+      "entry_count": 222,
       "package": "src/shared/python/sidekick",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick.json"
     },

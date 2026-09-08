@@ -202,8 +202,8 @@
     },
     "src/shared/python/sidekick/lab/mocap/AGENT_HANDOFF.md": {
       "path": "src/shared/python/sidekick/lab/mocap/AGENT_HANDOFF.md",
-      "sha256_lf": "591decacfbdadcfacce9de0d350903eb7da232b00aa3507e01c240edab98b66e",
-      "line_count": 59,
+      "sha256_lf": "8d67890d0e5bef67140ff38499a79b4bfbc8bbd16a5d0afb7f03b5da3fd42a09",
+      "line_count": 62,
       "max_line_budget": 150,
       "required_sections": [
         "## Authority",
