@@ -1,18 +1,26 @@
 # Heavy Hit — Hand/Body Coupling at Impact
 
+> Scientific scope correction, #5068: this is the historical specification of
+> the initially relaxed one-dimensional chain. Its rigid-link and sub-percent
+> comparisons are fixture-specific, not universal physical bounds. The v1
+> `decoupling_fraction` measures clipped relative ball-speed difference, not a
+> body mass contribution. [The new research specification](IMPACT_DYNAMICS_ACOUSTICS.md)
+> and #5071 govern reconciliation of the historical claims and event/energy
+> assumptions below; the legacy wire remains unchanged.
+
 Status: **active** · Epic: heavy-hit (GitHub epic issue) · Owner: shared
 (`golf_club`, `swing_sim`) · Related: `CLUB_FITTING_TESTER.md`,
 `swing_sim/impact/` (Kelvin-Voigt contact), `delivery_interchange` (C5)
 
-## 1. The question
+## 1. The Question
 
 During the ~500 µs of club-ball contact, how much can the golfer's hands and
-body actually change the impact — and therefore, how *separate* is the impact
+body actually change the impact — and therefore, how _separate_ is the impact
 model from whatever multibody system drives it? The classical claim (Cochran &
 Stobbs; Jorgensen) is that the head behaves as a nearly free body: flexural
 waves cannot travel grip-ward and return within the contact window. This epic
 **quantifies** that claim with a transient coupled model and counterfactuals,
-and makes the answer computable for *any* golfer model exported from the
+and makes the answer computable for _any_ golfer model exported from the
 engines UpstreamDrift features — MuJoCo, Drake, OpenSim, Pinocchio.
 
 ## 2. Architecture
@@ -32,7 +40,7 @@ H4  surfaces            GUI panels (follow-on children, after the club-tester
                         C6 pattern lands)
 ```
 
-## 3. H1 — the coupled transient model (upper-bound semantics)
+## 3. H1 — The Coupled Transient Model (Legacy Bound Semantics)
 
 Lumped longitudinal chain along the hit direction:
 
@@ -58,6 +66,7 @@ ball m_b ←KV contact (k_c, c_c)→ head m_h ←shaft (k_s, c_s)→ hands m_g �
   spring / grip spring) are reported.
 
 **Gates (analytic/consistency, TDD):**
+
 1. Detached limit (`k_s = 0`) reproduces `SpringDamperImpactModel`'s ball
    exit speed for identical contact parameters (tight tolerance).
 2. Welded-rigid limit (`k_s, k_g → large`) approaches the infinite-mass
@@ -70,7 +79,7 @@ ball m_b ←KV contact (k_c, c_c)→ head m_h ←shaft (k_s, c_s)→ hands m_g �
    classical claim, asserted as a band, with the rigid-shaft upper bound
    also reported.
 
-## 4. H2 — importing golfer models from the engines
+## 4. H2 — Importing Golfer Models From the Engines
 
 Wire `swing_sim.body_chain/1`: an ordered chain of bodies
 `{name, mass_kg, inertia_diag_kg_m2, joint: {name, type, axis, stiffness_nm_rad | n_m, damping}}`
@@ -80,19 +89,19 @@ serialization — the C5 posture.
 Parsers are **runtime-free XML readers** of each engine's native model
 format (no engine imports, fixture-tested):
 
-| Engine | Format | Parser | Notes |
-| --- | --- | --- | --- |
-| MuJoCo | MJCF `<body>/<inertial>/<joint>` | `chain_from_mjcf` | joint `stiffness`/`damping` native |
-| Drake | URDF `<link>/<joint>` | `chain_from_urdf` | Drake loads URDF natively |
-| Pinocchio | URDF | `chain_from_urdf` | same parser, documented |
-| OpenSim | `.osim` `<Body>` | `chain_from_osim` | joint stiffness not native → 0 + explicit override |
+| Engine    | Format                           | Parser            | Notes                                              |
+| --------- | -------------------------------- | ----------------- | -------------------------------------------------- |
+| MuJoCo    | MJCF `<body>/<inertial>/<joint>` | `chain_from_mjcf` | joint `stiffness`/`damping` native                 |
+| Drake     | URDF `<link>/<joint>`            | `chain_from_urdf` | Drake loads URDF natively                          |
+| Pinocchio | URDF                             | `chain_from_urdf` | same parser, documented                            |
+| OpenSim   | `.osim` `<Body>`                 | `chain_from_osim` | joint stiffness not native → 0 + explicit override |
 
 `grip_boundary(chain, hand_bodies=..., wrist_joint=...)` reduces a chain to
 `GripBoundary{effective_mass_kg, stiffness_n_m, damping_n_s_m, provenance}`
 — the selection is **explicit** (caller names the hand-side bodies and the
 boundary joint); nothing is guessed from names.
 
-## 5. H3 — counterfactual quantification
+## 5. H3 — Counterfactual Quantification
 
 `impact_coupling_report(...)`: baseline free-head vs coupled outcomes over a
 declared grid of `(k_g, m_g, k_s)` counterfactuals, each with ball-speed
