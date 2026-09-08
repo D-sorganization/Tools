@@ -326,6 +326,35 @@ test; a replacement worker again passes it (43.34 s). No assertion mismatch is
 reported. Local generator profiling is in progress; no timeout or expectation
 is relaxed and no further speculative CI retry is issued.
 
+## Current Finite-Grip Constitutive Checkpoint
+
+After published moving kinematics `0d45c4b7f` and turnover `74b366903`, a
+separate finite-coordinate law now maps supplied Gram factors to root and
+anchor physical reactions. `FINITE_GRIP_RESPONSE.md` derives storage, loss,
+observer-specific power and the remaining geometric preload tangent. Both
+finite and existing local paths share `_grip_energy.py`; the small-rotation
+public API is unchanged. Initial collection is RED (module absent); all
+37 finite/moving/local grip tests pass (10.11 s), as do nine API tests (7.82 s).
+An independent physical-pose energy gradient verifies finite elastic reactions;
+an accelerating-observer control distinguishes invariant internal-port power
+from each observer-dependent port. These are synthetic numerical controls.
+
+Full Linux golf/API regression passes 634 tests (232.32 s), with two optional
+CAD skips and three unavailable-plugin warnings, one BLAS thread and the
+unchanged 60-second limit. Repository Ruff 0.14.10 passes (3,745 files), as
+does actual three-module hook mypy. The API adds only two empty private module
+entries. All nine final manual gates pass; publication is pending. Loaded root balance
+and tangent, anchor/frame work in evolution, stability and impact/acoustic
+qualification remain required; #5072 stays open.
+
+Inventory PR #5103 publishes the test-granularity adjustment at
+`81b28da05006bb0d8fd1e98ad072f7d97c21be40` through all normal hooks. All 96
+local combined tests pass. Its previously failing Python 3.12 unit shard
+now passes on CI, as does the UpstreamDrift consumer; the remaining public
+embedded/native checks are running. Private Gasification_Model job
+`102225339951` fails at repository lookup before tests. The final classifier
+must be integrated and the inventory regenerated before combined delivery.
+
 ## Current Authority Coordination Boundary
 
 UD remote `b8da0c0240c20926f8fb7ba9e55a7e5613c5d78d` restores the compatible

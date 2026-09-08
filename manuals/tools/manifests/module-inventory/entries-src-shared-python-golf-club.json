@@ -1073,6 +1073,102 @@
     },
     {
       "authority_status": "provisional",
+      "bytes_lf": 2188,
+      "classification": "calculation",
+      "classification_basis": "path-marker:energy",
+      "content_sha256_lf": "fb006a708e83dfe90b53dbf20c75dbd188741c10581c9e338b22731adbcfa342",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-GRIP-ENERGY-PY-D76A990DD163",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_grip_energy.py",
+      "purpose": "Shared Gram-factor algebra for explicitly declared grip coordinates.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3843,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f1c20bfde06dc019722bfd53746033e8c30c34e21fca9f7418d331aa347fddde",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-GRIP-FINITE-RESPONSE-PY-78EF8371B661",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_grip_finite_response.py",
+      "purpose": "Private coordinate-potential grip law with finite-pose physical work ports.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_grip_finite_response.py"
+        ],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 5826,
       "classification": "calculation",
       "classification_basis": "path-marker:kinematic",
@@ -1114,6 +1210,7 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
+          "tests/shared/python/golf_club/test_grip_finite_response.py",
           "tests/shared/python/golf_club/test_grip_moving_kinematics.py"
         ],
         "unit_mentions": [
@@ -2645,10 +2742,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5966,
+      "bytes_lf": 5278,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "478c59bebe6a51cfdb74741ce8371fe95582f16b8f11243e40c020a2d60434ba",
+      "content_sha256_lf": "bcf52dbc30fdf473e5e3dd5d9fac4b9e217815660d8c7a9303c120f22e39b25d",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-GRIP-IMPEDANCE-PY-47375E654010",
       "language": "python",

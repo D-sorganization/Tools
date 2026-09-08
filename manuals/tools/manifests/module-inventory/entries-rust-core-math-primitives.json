@@ -690,6 +690,7 @@
           "tests/rust_bindings/test_math_primitives_bindings.py",
           "tests/shared/python/golf_club/test_assembly.py",
           "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/golf_club/test_grip_finite_response.py",
           "tests/shared/python/golf_club/test_grip_impedance.py",
           "tests/shared/python/golf_club/test_grip_moving_kinematics.py",
           "tests/shared/python/golf_club/test_impact_mobility.py",

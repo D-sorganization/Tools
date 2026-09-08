@@ -11,6 +11,7 @@ from ._grip_contracts import (
     factor6,
     vector6,
 )
+from ._grip_energy import coordinate_impedance as _coordinate_impedance
 from ._validation import require_finite_float
 from .types import RigidTransform
 
@@ -38,41 +39,26 @@ def evaluate_grip_impedance(
     _require_state(state)
     if grip.frame_id != state.frame_id:
         raise ValueError("grip and state must use the same frame")
-    mass, damping, stiffness = map(
-        np.asarray, (grip.inertance_factor, grip.damping_factor, grip.stiffness_factor)
+    result = _coordinate_impedance(
+        tuple(
+            map(
+                np.asarray,
+                (grip.inertance_factor, grip.damping_factor, grip.stiffness_factor),
+            )
+        ),
+        tuple(
+            map(np.asarray, (state.displacement, state.velocity, state.acceleration))
+        ),
     )
-    q, velocity, acceleration = map(
-        np.asarray, (state.displacement, state.velocity, state.acceleration)
-    )
-    with np.errstate(over="ignore", invalid="ignore"):
-        mass_velocity, mass_acceleration = mass @ velocity, mass @ acceleration
-        damping_velocity = damping @ velocity
-        elastic_q, elastic_velocity = stiffness @ q, stiffness @ velocity
-        input_wrench = (
-            mass.T @ mass_acceleration
-            + damping.T @ damping_velocity
-            + stiffness.T @ elastic_q
-        )
-        dissipated = float(damping_velocity @ damping_velocity)
-        input_power = float(input_wrench @ velocity)
-        energy_rate = float(
-            mass_velocity @ mass_acceleration + elastic_q @ elastic_velocity
-        )
-        values = (
-            float(mass_velocity @ mass_velocity / 2),
-            float(elastic_q @ elastic_q / 2),
-            dissipated,
-            input_power,
-            energy_rate,
-            input_power - energy_rate - dissipated,
-        )
-    if not np.all(np.isfinite(values)):
-        raise ValueError("grip response must be finite")
     return GripPortResponse(
         grip.frame_id,
         grip.source_id,
-        vector6(-input_wrench, "reaction_wrench"),
-        *values[:5],
+        vector6(-np.asarray(result.effort), "reaction_wrench"),
+        result.inertial_energy_j,
+        result.elastic_energy_j,
+        result.dissipated_power_w,
+        result.input_power_w,
+        result.stored_energy_rate_w,
     )
 
 

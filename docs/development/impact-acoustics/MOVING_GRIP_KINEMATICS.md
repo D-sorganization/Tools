@@ -87,8 +87,10 @@ dissipation. Individual port power depends on the observer. Use inertial
 motion states for an inertial energy ledger; if the observer moves, retain
 its frame-work terms before interpreting this contribution as actuator power.
 The sum of the two internal-port powers is invariant under a common rigid
-observer motion because their total force and moment close. This is a derived candidate law,
-not an implemented extension or an identification of hand mass.
+observer motion because their total force and moment close. This law was a
+candidate at the kinematic checkpoint; the subsequent private implementation
+and independent tests are documented in `FINITE_GRIP_RESPONSE.md`. It is not
+an identification of hand mass or a reinterpretation of the local grip API.
 
 The geometric-control literature supports deriving force laws from declared
 pose potentials instead of treating finite orientation coordinates as ordinary

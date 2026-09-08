@@ -27,9 +27,9 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/5072-prestressed-shaft
 - **Paths:** `src/shared/python/golf_club/*shaft*`, `src/shared/python/golf_club/_beam_fem.py`, `src/shared/python/golf_club/*grip*`, `src/shared/python/golf_club/*rotating_body*`, `tests/shared/python/golf_club/test_shaft*.py`, `tests/shared/python/golf_club/test_rotating_body.py`, `tests/shared/python/golf_club/test_grip_impedance.py`, `docs/development/impact-acoustics/*`
 - **Started:** 2026-09-07
-- **Last verified:** 2026-09-08 (628 Linux golf/API passes, two optional CAD skips; one BLAS thread and unchanged 60-second test limit; 31 focused grip tests and scoped mypy pass)
-- **Summary:** Frozen tip response `f37e37bd2` is published. Private finite-pose moving-grip kinematics reuse existing rotation Jacobians and retain acceleration transport and dual work ports. Independent finite-pose derivatives, world force/moment closure and power controls pass. This is kinematics only; no finite grip constitutive law, calibrated hand mass, stability or impact/acoustic prediction is inferred.
-- **Next step:** Verify and publish moving-anchor kinematics; frozen response is published at `f37e37bd2`. Then qualify stability/refusal, moving boundary work, loaded grip and full shear/rotary bandwidth, mesh/time/modal/FRF convergence. Preserve frozen algebraic response versus actual swing/impact/acoustic prediction boundaries.
+- **Last verified:** 2026-09-08 (634 Linux golf/API passes, two optional CAD skips; 37 focused grip tests; nine API tests, repository Ruff and actual three-module hook mypy pass)
+- **Summary:** Moving-grip kinematics `0d45c4b7f` is published. A separate finite-coordinate impedance now shares the existing Gram energy algebra and returns both physical reactions with observer-specific power. Independent finite-pose energy gradients and accelerating-observer controls pass. Local small-rotation semantics are preserved. No calibrated hand mass, driven-system stability or acoustic prediction is inferred.
+- **Next step:** Complete finite-grip final gates and normal publication, then derive the consistent loaded-root balance/tangent and time evolution with anchor/frame work. Qualify stability, full shear/rotary bandwidth and mesh/time/modal/FRF convergence; integrate protected inventory correction #5103 before final combined delivery.
 
 ### DL-0055 · Qualified Lumped Impact Dynamics
 
