@@ -33,7 +33,7 @@ Five packaged manifests in `src/rate_of_closure/` declare the tab set, cross-che
 
 - Worktree `C:/Users/diete/Repositories/Tools-impact-render`; branch `fix/4844-consistent-pyqt-renderer`; commit `SELF`; PR #5090 open.
 - PR and trusted PyQt capture use one digest-pinned Ubuntu 24.04 container; trusted remains on fleet runners. Exact font versions replace alternate-version acceptance; Qt runtime/SIP pins are checked.
-- TDD: 10 original failures plus container RED reproduced; 49 focused and SPEC tests pass. Main merge passes 68 tests; a float-return annotation fix passes mypy and all 19 impact tests. Linux starts; first shell Git exits 129. Scoped checkout trust/runtime candidate paths pass 52 contracts and an ownership reproduction; workspace now passes in Linux; Firefox home ownership is corrected with 53 local contracts. Capture/review remain pending.
+- Published `df4101f28`: two Linux captures pass 73 browser and 23 PyQt tests; all ten PyQt PNGs are byte-identical. The reviewed 20-image proposal preserves tolerances; its provenance test fails before and all 60 local contracts pass after refresh. Both captured sets pass the comparison CLI. Normal hooks and fresh CI remain; #5087 closed unmerged.
 - Continue from `docs/development/rate-pyqt-renderer-4844.md`. Do not accept another host stack under the same image identity.
 
 ## Must-Read Architecture Pointers

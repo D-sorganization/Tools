@@ -127,3 +127,17 @@ verifies directory/config creation. That experiment clears this Windows host's
 inherited GIT_CONFIG_GLOBAL override from its test subprocess; the one incidental
 safe.directory entry created before noticing the override was removed exactly.
 No Linux Firefox launch success is claimed until the next real run.
+
+## Repeated Linux Capture and Reference Proposal
+
+Published `df4101f28` passes both browser/private-home setup and all 73 browser
+plus 23 PyQt tests in run 34213771459 attempts 1 and 2. Their ten PyQt PNGs are
+byte-identical; React repeatability is at most 22 changed-pixel millionths.
+All 20 initial reference candidates were individually reviewed, with existing
+loading and clipped-label cases explicitly retained as findings. The complete
+attempt-1 set is proposed under the manifest's single exact source commit,
+without changing any tolerance or the historical calibration ledger. All 60
+local baseline/environment/workflow/SPEC tests and both real candidate comparisons
+pass. See `rate-pyqt-renderer-4844-reference-review.md` for hashes, actual runtime
+and font identity, per-view findings, repeatability, and the protected approval
+boundary. Related #5087 is closed unmerged. Normal hooks and fresh CI remain.

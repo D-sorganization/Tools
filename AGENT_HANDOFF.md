@@ -48,7 +48,7 @@ Tools is the fleet's shared engineering-tools monorepo (45+ tools: PyQt6 GUIs, F
 
 ## Active Delivery Boundaries
 
-- #4844 renderer prerequisite active on `fix/4844-consistent-pyqt-renderer`, worktree `C:/Users/diete/Repositories/Tools-impact-render`, commit `SELF`, PR #5090 open. Exact container/font-stack and SPEC contracts pass 49 tests; Current-main merge passes 68 tests; the inherited impact-test helper has an explicit float return. Linux starts but shell Git exits 129; scoped mounted-checkout trust and runtime candidate paths pass 52 contracts and an ownership reproduction. Next Linux run passes workspace and 72 web tests; Firefox needs an owned private home (53 local contracts pass). Capture/reference review remain open. See `docs/development/rate-pyqt-renderer-4844.md`.
+- #4844 renderer prerequisite: `fix/4844-consistent-pyqt-renderer`, worktree `C:/Users/diete/Repositories/Tools-impact-render`, PR #5090. Published `df4101f28` passes 73 browser and 23 PyQt tests in two Linux captures; all ten PyQt images repeat byte-identically. A reviewed 20-image reference set is proposed with unchanged tolerances; 60 local contracts and both candidate comparisons pass. Hooks/fresh CI remain. See `docs/development/rate-pyqt-renderer-4844-reference-review.md`; #5087 is closed unmerged.
 
 - TOOLS-D8 (#4728 / PR #5054) merged: enforces immutable public publication projection (`tools-publication-projection/1.0.0`).
 - TOOLS-D9 (#4730) enforces governed completion-audit handoff and maintenance contract (`tools-handoff-maintenance/1.0.0`) across root and per-tool handoffs with diff-aware CI gating, line budgets (<= 150 lines), and machine-checked evidence.
