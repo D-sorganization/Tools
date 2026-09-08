@@ -145,3 +145,36 @@ def test_mixed_staging_fails_on_the_scratch_file_only(
 @pytest.mark.unit
 def test_clean_staging_passes(monkeypatch: pytest.MonkeyPatch) -> None:
     assert _run(monkeypatch, []) == 0
+
+
+@pytest.mark.unit
+def test_oversized_file_byte_baselines_honored(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """Check that files in OVERSIZED_FILE_BYTE_BASELINES are allowed up to their
+    baseline.
+    """
+    test_file = tmp_path / "baseline_file.json"
+    test_file.write_text("x" * 1050, encoding="utf-8")
+    monkeypatch.setattr(fleet_hooks, "ROOT", tmp_path)
+    monkeypatch.setattr(fleet_hooks, "changed_files", lambda: ["baseline_file.json"])
+    monkeypatch.setattr(
+        fleet_hooks,
+        "OVERSIZED_FILE_BYTE_BASELINES",
+        {"baseline_file.json": 2000},
+    )
+
+    args = argparse.Namespace(
+        warn_only=False,
+        max_bytes=1000,
+        max_source_lines=1500,
+    )
+    assert fleet_hooks.check_file_size(args) == 0
+
+    # Over baseline fails
+    monkeypatch.setattr(
+        fleet_hooks,
+        "OVERSIZED_FILE_BYTE_BASELINES",
+        {"baseline_file.json": 1000},
+    )
+    assert fleet_hooks.check_file_size(args) == 1

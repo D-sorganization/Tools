@@ -177,7 +177,13 @@ function conditionNumber(design: number[][]): number {
   }
   const values = eigen.map((row, index) => row[index]).filter((value) => value > 1e-12);
   if (values.length !== columns) throw new Error("Polynomial fit design is singular");
-  return Math.sqrt(Math.max(...values) / Math.min(...values));
+  let maxVal = values[0];
+  let minVal = values[0];
+  for (let i = 1; i < values.length; i++) {
+    if (values[i] > maxVal) maxVal = values[i];
+    if (values[i] < minVal) minVal = values[i];
+  }
+  return Math.sqrt(maxVal / minVal);
 }
 
 function binomial(n: number, k: number): number {
@@ -226,10 +232,15 @@ function fitPolynomial(
     (sum, value, power) => sum + value * row.timeS ** power, 0));
   const squaredError = residuals.reduce((sum, value) => sum + value ** 2, 0);
   const centeredTorque = rows.reduce((sum, row) => sum + (row[key] - meanTorque) ** 2, 0);
+  let maxAbsErrorNm = 0;
+  for (let i = 0; i < residuals.length; i++) {
+    const absVal = Math.abs(residuals[i]);
+    if (absVal > maxAbsErrorNm) maxAbsErrorNm = absVal;
+  }
   const metadata = new FitMetadata({
     degree,
     rmseNm: Math.sqrt(squaredError / count),
-    maxAbsErrorNm: Math.max(...residuals.map(Math.abs)),
+    maxAbsErrorNm,
     rSquared: centeredTorque === 0 ? (squaredError === 0 ? 1 : 0) : 1 - squaredError / centeredTorque,
     conditionNumber: fitCondition,
   });

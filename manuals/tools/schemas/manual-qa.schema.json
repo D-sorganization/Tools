@@ -1,0 +1,390 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.d-sorganization.org/tools/manual-qa/1.0.0.json",
+  "title": "Tools Manual Render, Semantic, and Accessibility QA Ledger",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "manual_id",
+    "release_status",
+    "owner_subepic",
+    "inspection_mode",
+    "sampling_rate",
+    "artifacts_manifest_sha256_lf",
+    "inspections",
+    "cross_format_integrity",
+    "blockers"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "tools-manual-qa/1.0.0"
+    },
+    "manual_id": {
+      "const": "tools"
+    },
+    "release_status": {
+      "const": "unapproved-qa-verified"
+    },
+    "owner_subepic": {
+      "const": 4725
+    },
+    "inspection_mode": {
+      "const": "complete-zero-sampling"
+    },
+    "sampling_rate": {
+      "const": 1.0
+    },
+    "artifacts_manifest_sha256_lf": {
+      "$ref": "#/$defs/hash"
+    },
+    "inspections": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pdf", "docx", "html", "tex"],
+      "properties": {
+        "pdf": {
+          "$ref": "#/$defs/pdfInspection"
+        },
+        "docx": {
+          "$ref": "#/$defs/docxInspection"
+        },
+        "html": {
+          "$ref": "#/$defs/htmlInspection"
+        },
+        "tex": {
+          "$ref": "#/$defs/texInspection"
+        }
+      }
+    },
+    "cross_format_integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "semantic_phrases_verified",
+        "figure_presence_verified",
+        "table_presence_verified",
+        "math_representation_verified",
+        "status"
+      ],
+      "properties": {
+        "semantic_phrases_verified": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "figure_presence_verified": {
+          "type": "boolean",
+          "const": true
+        },
+        "table_presence_verified": {
+          "type": "boolean",
+          "const": true
+        },
+        "math_representation_verified": {
+          "type": "boolean",
+          "const": true
+        },
+        "status": {
+          "const": "verified-semantic-parity"
+        }
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/blocker"
+      }
+    }
+  },
+  "$defs": {
+    "hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "blocker": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "owner", "resolution"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "resolution": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "pdfPageRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "page_number",
+        "character_count",
+        "line_count",
+        "image_count",
+        "annotation_count",
+        "first_line_prefix"
+      ],
+      "properties": {
+        "page_number": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "character_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "line_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "image_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "annotation_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "first_line_prefix": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "pdfInspection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256",
+        "bytes",
+        "page_count",
+        "uninspected_pages",
+        "fonts",
+        "outline_item_count",
+        "total_images",
+        "total_annotations",
+        "pages"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "page_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "uninspected_pages": {
+          "type": "integer",
+          "const": 0
+        },
+        "fonts": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "outline_item_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "total_images": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "total_annotations": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "pages": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/pdfPageRecord"
+          }
+        }
+      }
+    },
+    "docxInspection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256",
+        "bytes",
+        "paragraph_count",
+        "heading_count",
+        "math_element_count",
+        "table_count",
+        "drawing_count",
+        "bookmark_count",
+        "unresolved_reference_count"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "paragraph_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "heading_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "math_element_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "table_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "drawing_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "bookmark_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "unresolved_reference_count": {
+          "type": "integer",
+          "const": 0
+        }
+      }
+    },
+    "htmlInspection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256",
+        "bytes",
+        "has_lang",
+        "has_viewport",
+        "mathml_block_count",
+        "table_count",
+        "image_count",
+        "images_with_valid_alt",
+        "images_missing_alt",
+        "unresolved_reference_count"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "has_lang": {
+          "type": "boolean",
+          "const": true
+        },
+        "has_viewport": {
+          "type": "boolean",
+          "const": true
+        },
+        "mathml_block_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "table_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "image_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "images_with_valid_alt": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "images_missing_alt": {
+          "type": "integer",
+          "const": 0
+        },
+        "unresolved_reference_count": {
+          "type": "integer",
+          "const": 0
+        }
+      }
+    },
+    "texInspection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256",
+        "bytes",
+        "has_geometry",
+        "has_microtype",
+        "figure_count",
+        "csl_reference_block_present",
+        "unresolved_reference_count"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "has_geometry": {
+          "type": "boolean",
+          "const": true
+        },
+        "has_microtype": {
+          "type": "boolean",
+          "const": true
+        },
+        "figure_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "csl_reference_block_present": {
+          "type": "boolean",
+          "const": true
+        },
+        "unresolved_reference_count": {
+          "type": "integer",
+          "const": 0
+        }
+      }
+    }
+  }
+}

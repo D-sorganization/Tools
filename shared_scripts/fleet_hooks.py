@@ -49,6 +49,12 @@ ROOT_SCRATCH_SUFFIXES = {".log", ".tmp", ".bak", ".zip", ".7z"}
 
 DEFAULT_MAX_BYTES = 1_000_000
 DEFAULT_MAX_SOURCE_LINES = 1500
+OVERSIZED_FILE_BYTE_BASELINES = {
+    # Public API baseline for Sidekick AST verification (tracked in Tools #3032).
+    # As new subpackages are added (such as mocap #4714), this tracked AST file
+    # scales with the total public symbol surface.
+    "tests/sidekick_api_baseline.json": 1_100_000,
+}
 OVERSIZED_SOURCE_LINE_BASELINES = {
     # Legacy MATLAB GUI monolith tracked by Tools #3359. It may be touched for
     # cleanup, but it must not grow beyond this frozen line-count budget.
@@ -203,7 +209,13 @@ def check_file_size(args: argparse.Namespace) -> int:
         if ".git/" in rel(path) or "node_modules/" in rel(path):
             continue
         size = path.stat().st_size
-        if size > args.max_bytes:
+        oversized_byte_baseline = OVERSIZED_FILE_BYTE_BASELINES.get(repo_rel(path))
+        if oversized_byte_baseline is not None:
+            if size > oversized_byte_baseline:
+                failures.append(
+                    f"{rel(path)} is {size} bytes; baseline is {oversized_byte_baseline}"
+                )
+        elif size > args.max_bytes:
             failures.append(f"{rel(path)} is {size} bytes; limit is {args.max_bytes}")
             continue
         if path.suffix.lower() in SOURCE_SUFFIXES:

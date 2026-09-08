@@ -183,6 +183,7 @@
           "src/shared/python/swing_sim/putting/tests/test_roll.py",
           "src/shared/python/swing_sim/solver/tests/test_spatial_targets.py",
           "src/shared/python/swing_sim/solver/tests/test_targets.py",
+          "tests/architecture/test_tools_manual_qa_contract.py",
           "tests/heavy_integration/test_tools_contracts.py",
           "tests/programmatic_pid/test_geometry.py",
           "tests/rate_of_closure/pyqt_variation_visual_state_probe.py",
@@ -209,6 +210,7 @@
         ],
         "validation_paths": [
           "src/shared/python/model_generation/tests/test_physics_validation.py",
+          "tests/architecture/test_tools_manual_qa_contract.py",
           "tests/heavy_integration/test_tools_contracts.py"
         ]
       }
@@ -913,7 +915,8 @@
           "tests/shared/python/golf_club/test_contracts.py",
           "tests/shared/python/model_generation/inertia/test_spatial.py",
           "tests/shared/python/rotation_transforms/test_rotation_transforms.py",
-          "tests/shared/python/sidekick/lab/mocap/test_contracts.py"
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py"
         ],
         "unit_mentions": [
           "s"
@@ -921,7 +924,8 @@
         "validation_paths": [
           "tests/contract/test_calc_backend_contract_surface.py",
           "tests/shared/python/golf_club/test_contracts.py",
-          "tests/shared/python/sidekick/lab/mocap/test_contracts.py"
+          "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py"
         ]
       }
     },
