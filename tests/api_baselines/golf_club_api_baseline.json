@@ -2656,6 +2656,174 @@
       }
     }
   },
+  "_rotating_body_contracts.py": {
+    "__all__": ["RotatingFrameState", "strict_vector3"],
+    "explicit_all": false,
+    "symbols": {
+      "RotatingFrameState": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "strict_vector3": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "Vector3"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "_rotating_body_kernel.py": {
+    "__all__": [
+      "BodyGeometry",
+      "body_geometry",
+      "cross_matrix",
+      "equilibrium_force",
+      "kinetic_position_hessian",
+      "rotation_hessian",
+      "velocity_position"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "BodyGeometry": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "body_geometry": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ComponentMassProperties",
+              "default": null,
+              "kind": "arg",
+              "name": "body"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "reference"
+            }
+          ],
+          "returns": "BodyGeometry"
+        },
+        "type": "function"
+      },
+      "cross_matrix": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "vector"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      },
+      "equilibrium_force": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "BodyGeometry",
+              "default": null,
+              "kind": "arg",
+              "name": "data"
+            },
+            {
+              "annotation": "tuple[np.ndarray, ...]",
+              "default": null,
+              "kind": "arg",
+              "name": "motion"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      },
+      "kinetic_position_hessian": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "BodyGeometry",
+              "default": null,
+              "kind": "arg",
+              "name": "data"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "omega"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      },
+      "rotation_hessian": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "left"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "right"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      },
+      "velocity_position": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "BodyGeometry",
+              "default": null,
+              "kind": "arg",
+              "name": "data"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "omega"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      }
+    }
+  },
   "_shaft_linear_contracts.py": {
     "__all__": ["ShaftAttachments", "ShaftRodProperties"],
     "explicit_all": false,
@@ -2714,6 +2882,98 @@
               "default": null,
               "kind": "arg",
               "name": "body"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "_shaft_transport_contracts.py": {
+    "__all__": ["ShaftRotaryInertia", "ShaftRotatingModel"],
+    "explicit_all": false,
+    "symbols": {
+      "ShaftRotaryInertia": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ShaftRotatingModel": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      }
+    }
+  },
+  "_shaft_transport_quadrature.py": {
+    "__all__": ["element_quadrature", "quadrature_body", "section_motion_map"],
+    "explicit_all": false,
+    "symbols": {
+      "element_quadrature": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "tuple[float, float]",
+              "default": null,
+              "kind": "arg",
+              "name": "bounds"
+            }
+          ],
+          "returns": "tuple[np.ndarray, np.ndarray]"
+        },
+        "type": "function"
+      },
+      "quadrature_body": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftRotatingModel",
+              "default": null,
+              "kind": "arg",
+              "name": "model"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "position"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "weight"
+            }
+          ],
+          "returns": "ComponentMassProperties"
+        },
+        "type": "function"
+      },
+      "section_motion_map": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "coordinate"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "length"
             }
           ],
           "returns": "np.ndarray"
@@ -4444,6 +4704,45 @@
       }
     }
   },
+  "rotating_body.py": {
+    "__all__": ["RotatingFrameState", "rotating_body_tangent"],
+    "explicit_all": true,
+    "symbols": {
+      "RotatingFrameState": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "rotating_body_tangent": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ComponentMassProperties",
+              "default": null,
+              "kind": "arg",
+              "name": "body"
+            },
+            {
+              "annotation": "RotatingFrameState",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "Vector3",
+              "default": null,
+              "kind": "arg",
+              "name": "reference_position_m"
+            }
+          ],
+          "returns": "_BodyTangent"
+        },
+        "type": "function"
+      }
+    }
+  },
   "serialization.py": {
     "__all__": [
       "CURRENT_FORMAT",
@@ -4902,6 +5201,56 @@
           "methods": {}
         },
         "type": "class"
+      }
+    }
+  },
+  "shaft_rotating_transport.py": {
+    "__all__": [
+      "ShaftRotaryInertia",
+      "ShaftRotatingModel",
+      "assemble_shaft_rotating_transport"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "ShaftRotaryInertia": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ShaftRotatingModel": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "assemble_shaft_rotating_transport": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftRotatingModel",
+              "default": null,
+              "kind": "arg",
+              "name": "model"
+            },
+            {
+              "annotation": "RotatingFrameState",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "ShaftModalSettings",
+              "default": "_DEFAULT_SETTINGS",
+              "kind": "arg",
+              "name": "settings"
+            }
+          ],
+          "returns": "_ShaftTransport"
+        },
+        "type": "function"
       }
     }
   },

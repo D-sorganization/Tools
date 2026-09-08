@@ -1073,6 +1073,136 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 2739,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5e2295818731e67aa61b2d42cf5c67b72e9e1aa043c2caacd3607577fa5d237a",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-ROTATING-BODY-CONTRACTS-PY-3EF0D0E8E476",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_rotating_body_contracts.py",
+      "purpose": "Frame-explicit instantaneous motion and body-tangent snapshots.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "m/s",
+          "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3096,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "fbabbfd50ed0e91d54e9d8df2539084d0f40abef3eee15be8209c66769a82392",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-ROTATING-BODY-KERNEL-PY-261A01475844",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_rotating_body_kernel.py",
+      "purpose": "Canonical small-rotation kinetic Hessians; all quantities in observer axes.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "BodyGeometry",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "body_geometry",
+            "signature": "body: ComponentMassProperties, reference: np.ndarray"
+          },
+          {
+            "kind": "function",
+            "name": "cross_matrix",
+            "signature": "vector: np.ndarray"
+          },
+          {
+            "kind": "function",
+            "name": "equilibrium_force",
+            "signature": "data: BodyGeometry, motion: tuple[np.ndarray, ...]"
+          },
+          {
+            "kind": "function",
+            "name": "kinetic_position_hessian",
+            "signature": "data: BodyGeometry, omega: np.ndarray"
+          },
+          {
+            "kind": "function",
+            "name": "rotation_hessian",
+            "signature": "left: np.ndarray, right: np.ndarray"
+          },
+          {
+            "kind": "function",
+            "name": "velocity_position",
+            "signature": "data: BodyGeometry, omega: np.ndarray"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 4137,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -1193,6 +1323,114 @@
             "kind": "function",
             "name": "tip_spatial_inertia",
             "signature": "body: ComponentMassProperties"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5625,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "045e751e3c6f49a4dab67615e1e6b2c26bd5d304b3b10c9f5c885f3a962868bf",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-TRANSPORT-CONTRACTS-PY-BBB5DA087ECA",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_shaft_transport_contracts.py",
+      "purpose": "Measured section inertia and model contracts for distributed transport.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "kg"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2640,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6de87cc6676a023b56d501962d8da918377e87a4d090a57d493fe48217583270",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-TRANSPORT-QUADRATURE-PY-1A5F6719C3F7",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_shaft_transport_quadrature.py",
+      "purpose": "Section motion mapping and property quadrature for a straight Rayleigh rod.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "element_quadrature",
+            "signature": "profile: ShaftProfile, bounds: tuple[float, float]"
+          },
+          {
+            "kind": "function",
+            "name": "quadrature_body",
+            "signature": "model: ShaftRotatingModel, position: float, weight: float"
+          },
+          {
+            "kind": "function",
+            "name": "section_motion_map",
+            "signature": "coordinate: float, length: float"
           }
         ],
         "test_paths": [],
@@ -1745,7 +1983,8 @@
         ],
         "test_paths": [
           "tests/shared/python/golf_club/test_grip_impedance.py",
-          "tests/shared/python/golf_club/test_shaft_linear_system.py"
+          "tests/shared/python/golf_club/test_shaft_linear_system.py",
+          "tests/shared/python/golf_club/test_shaft_rotating_transport.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
@@ -2344,6 +2583,68 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 2628,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "41d3bc71edb3beceb59968886704d89bbe6c7536aa942c5f12ba67d6b04e1db0",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-ROTATING-BODY-PY-46EDF90D0906",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/rotating_body.py",
+      "purpose": "Full head inertia linearized in a translating and rotating observer frame.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "rotating_body_tangent",
+            "signature": "body: ComponentMassProperties, frame: RotatingFrameState, reference_position_m: Vector3"
+          },
+          {
+            "kind": "re-export",
+            "name": "RotatingFrameState",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_rotating_body.py",
+          "tests/shared/python/golf_club/test_shaft_rotating_transport.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 9531,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -2616,7 +2917,8 @@
           "tests/shared/python/golf_club/test_shaft_delivery.py",
           "tests/shared/python/golf_club/test_shaft_dynamics.py",
           "tests/shared/python/golf_club/test_shaft_linear_system.py",
-          "tests/shared/python/golf_club/test_shaft_prestress.py"
+          "tests/shared/python/golf_club/test_shaft_prestress.py",
+          "tests/shared/python/golf_club/test_shaft_rotating_transport.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
@@ -2680,7 +2982,8 @@
           }
         ],
         "test_paths": [
-          "tests/shared/python/golf_club/test_shaft_linear_system.py"
+          "tests/shared/python/golf_club/test_shaft_linear_system.py",
+          "tests/shared/python/golf_club/test_shaft_rotating_transport.py"
         ],
         "unit_mentions": [
           "s"
@@ -2751,7 +3054,8 @@
           }
         ],
         "test_paths": [
-          "tests/shared/python/golf_club/test_shaft_prestress.py"
+          "tests/shared/python/golf_club/test_shaft_prestress.py",
+          "tests/shared/python/golf_club/test_shaft_rotating_transport.py"
         ],
         "unit_mentions": [
           "N",
@@ -2826,7 +3130,72 @@
         "test_paths": [
           "tests/shared/python/golf_club/test_shaft_linear_system.py",
           "tests/shared/python/golf_club/test_shaft_prestress.py",
-          "tests/shared/python/golf_club/test_shaft_profile.py"
+          "tests/shared/python/golf_club/test_shaft_profile.py",
+          "tests/shared/python/golf_club/test_shaft_rotating_transport.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4576,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b0f16fc7889dc86a002e2106cf0d2720bcf5ba2c5ecefc754ccee044acdc1e4c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-ROTATING-TRANSPORT-PY-08B6A1038E51",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/shaft_rotating_transport.py",
+      "purpose": "Distributed full-section and full-head inertial transport for Tools #5072.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "assemble_shaft_rotating_transport",
+            "signature": "model: ShaftRotatingModel, frame: RotatingFrameState, settings: ShaftModalSettings=_DEFAULT_SETTINGS"
+          },
+          {
+            "kind": "re-export",
+            "name": "ShaftRotaryInertia",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ShaftRotatingModel",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_rotating_transport.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
@@ -3564,7 +3933,9 @@
         ],
         "test_paths": [
           "tests/shared/python/golf_club/test_grip_impedance.py",
-          "tests/shared/python/golf_club/test_shaft_linear_system.py"
+          "tests/shared/python/golf_club/test_rotating_body.py",
+          "tests/shared/python/golf_club/test_shaft_linear_system.py",
+          "tests/shared/python/golf_club/test_shaft_rotating_transport.py"
         ],
         "unit_mentions": [
           "s"

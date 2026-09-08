@@ -6,37 +6,63 @@ perceptual validation cannot be inferred from numerical fixtures.
 
 ## Requirement and Evidence Matrix
 
-| Slice                          | Issue / Delivery               | Evidence Required Before Completion                                                                                           | Current State                                                                            |
-| ------------------------------ | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| Theory review                  | AffineDrift #4254 / PR #4258   | Corrected rendered theory, source ledger and inventory; protected delivery                                                    | Merged PR #4258 at `1ce02d7ae4d916d4c598b62be78cefa83452aaa7`                            |
-| Final theory synthesis         | AffineDrift #4255              | Qualified downstream results with uncertainty and limits                                                                      | Not started; depends on evidence                                                         |
-| Rigid reference                | Tools #5069 / PR #5077         | Analytic tensor/impulse gates and protected provider delivery                                                                 | PR open; prior local 383-test verification                                               |
-| Lumped qualification           | Tools #5071 / PR #5082         | Events, work/loss ledger, timeout/step contracts, law-consistent restitution, scaling counterexamples, parity and convergence | Implemented in `31ebe4993`; PR #5082 published; local push gates pass                    |
-| Distributed shaft/grip         | Tools #5072                    | Prestressed rotating operators, passive impedance, beam limits, frame agreement, modal/mesh/time/FRF convergence              | Tensile FEM and stationary spatial shaft/head/grip verified; rotating model remains open |
-| Flexible contact               | Tools #5073                    | Off-center friction/contact and head/shaft modes; launch and ringdown; complete energy closure                                | Pending T3                                                                               |
-| Acoustics                      | Tools #5074                    | Calibrated signals, identified transfer, qualified radiation and held-out validation                                          | Pending; generic audio tools are not sufficient                                          |
-| Reports/surfaces               | Tools #5075                    | Versioned provenance reports, consumer compatibility and truthful UI integration                                              | Pending qualified provider tiers                                                         |
-| Integration plan               | UpstreamDrift #9701 / PR #9706 | Source/state inventory and protected delivery                                                                                 | Merged PR #9706 at `dbc6727aa4f0d422b7adaf6957e658e8997f7f29`                            |
-| Swing adapters                 | UpstreamDrift #9703            | Compatible rigid, elastic, prestress and wrench transfer on exact provider pin                                                | Pending provider contract                                                                |
-| Counterfactual studies         | UpstreamDrift #9704            | Registered matched-state and matched-input studies, reproducible results, uncertainty                                         | Pending verified coupled model                                                           |
-| Physical/perceptual validation | UpstreamDrift #9705            | Synchronized calibrated measurements, held-out validation, blinded sweetness analysis                                         | Data/equipment availability requested; no experiment run                                 |
+| Slice                          | Issue / Delivery               | Evidence Required Before Completion                                                                                           | Current State                                                                 |
+| ------------------------------ | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| Theory review                  | AffineDrift #4254 / PR #4258   | Corrected rendered theory, source ledger and inventory; protected delivery                                                    | Merged PR #4258 at `1ce02d7ae4d916d4c598b62be78cefa83452aaa7`                 |
+| Final theory synthesis         | AffineDrift #4255              | Qualified downstream results with uncertainty and limits                                                                      | Not started; depends on evidence                                              |
+| Rigid reference                | Tools #5069 / PR #5077         | Analytic tensor/impulse gates and protected provider delivery                                                                 | PR open; prior local 383-test verification                                    |
+| Lumped qualification           | Tools #5071 / PR #5082         | Events, work/loss ledger, timeout/step contracts, law-consistent restitution, scaling counterexamples, parity and convergence | PR #5082 open at `2f975d06e`; local push gates pass                           |
+| Distributed shaft/grip         | Tools #5072                    | Prestressed rotating operators, passive impedance, beam limits, frame agreement, modal/mesh/time/FRF convergence              | Rotating full-head/distributed transport verified; loaded state/work/FRF open |
+| Flexible contact               | Tools #5073                    | Off-center friction/contact and head/shaft modes; launch and ringdown; complete energy closure                                | Pending T3                                                                    |
+| Acoustics                      | Tools #5074                    | Calibrated signals, identified transfer, qualified radiation and held-out validation                                          | Pending; generic audio tools are not sufficient                               |
+| Reports/surfaces               | Tools #5075                    | Versioned provenance reports, consumer compatibility and truthful UI integration                                              | Pending qualified provider tiers                                              |
+| Integration plan               | UpstreamDrift #9701 / PR #9706 | Source/state inventory and protected delivery                                                                                 | Merged PR #9706 at `dbc6727aa4f0d422b7adaf6957e658e8997f7f29`                 |
+| Swing adapters                 | UpstreamDrift #9703            | Compatible rigid, elastic, prestress and wrench transfer on exact provider pin                                                | Pending provider contract                                                     |
+| Counterfactual studies         | UpstreamDrift #9704            | Registered matched-state and matched-input studies, reproducible results, uncertainty                                         | Pending verified coupled model                                                |
+| Physical/perceptual validation | UpstreamDrift #9705            | Synchronized calibrated measurements, held-out validation, blinded sweetness analysis                                         | Data/equipment availability requested; no experiment run                      |
 
 ## Current Implementation: IA-T3 (Partial)
 
 `Tools-impact-shaft`, branch `feat/5072-prestressed-shaft`, base T2 `2f975d06e`.
-Tensile geometric stiffness, radial centrifugal tension, point-tip inertia and
-shared unloaded FE kernel are implemented. A passive six-axis local grip port
-adds energy, dissipation and fixed-frame transformations. The stationary spatial
-assembly adds explicit axial/polar properties, torsion, full offset-head inertia
-and grip coupling; 84 combined tests pass. See SHAFT_LINEAR_SYSTEM.md and
-GRIP_IMPEDANCE.md for derivations, source limits and TDD evidence.
-Full derivation, RED/GREEN evidence, benchmark source, claim and remaining
-physics: `SHAFT_PRESTRESS.md`. This partial checkpoint does not close #5072.
-UpstreamDrift prerequisite #9735 is PR #9745 with 13 no-vendor and 72 pinned
-provider/CLI/fallback tests passing locally plus installed-wheel and mutation
-checks. The provider CI job now passes; a main sync preserves #9740 and remaining
-parity/security checks stay open. T2 #5082 is ready, not draft; its seven-view
-PyQt baseline drift and Gasification checkout access failure need resolution.
+Pushed checkpoints include tensile FEM `f1f8da112`, grip `8f025d570` and stationary
+spatial shaft/full head `43c228da1`. Rotating transport is the next local checkpoint.
+It retains the full head COM/inertia and explicit distributed section rotary
+inertia, with separate gyroscopic, centrifugal, Euler and origin-acceleration
+terms. Nominal inertial forcing is returned; equilibrium is never presumed.
+
+The combined shaft/grip/head/API suite passes 110 tests (31.76 s). Independent
+finite-rotation kinetic Hessians, a free inertial trajectory reconstructed from
+an accelerating rotating frame, and published radial frequencies are checked.
+See ROTATING_TRANSPORT.md for equations, tolerances and the exact/approximate
+reference distinction. SHAFT_LINEAR_SYSTEM.md, GRIP_IMPEDANCE.md and
+SHAFT_PRESTRESS.md retain earlier derivations and TDD evidence. These numerical
+checks do not close #5072: loaded shape, consistent prestress/boundary work,
+stability and mesh/time/modal/FRF/bandwidth qualification remain required.
+
+## Current Delivery and Data Status
+
+UpstreamDrift prerequisite #9735 / PR #9745 merged on 2026-09-08 at 04:47:54 UTC
+as `1b48707d54fb47655e43eaaffaad7b1739445e40`; a compare against main confirms
+zero commits behind and three ahead. It preserves runtime imports and the exact
+vendor pin. Local evidence includes 13 no-vendor contracts, 72 pinned-provider/
+CLI/fallback tests, actual installed-wheel bootstrap, ownership mutation and
+14 explicit-mode contracts. The earlier fixture-mode mismatch had seven RED
+failures before correction. Obsolete branch parity/security failures are not
+reported as current blockers after the merge.
+
+Tools T1 #5077 and T2 #5082 remain open. The failed T2 UD consumer job
+101931398231 (run 34180114995) was rerun through the normal REST endpoint after
+confirming the upstream merge. Its result is pending. Gasification_Model exists
+as a private repository but checkout previously failed; a secret-metadata query
+returned 403 and does not establish whether a credential is absent or expired.
+Seven PyQt view-baseline drifts also require inspection. Never weaken checkout
+failure handling, replace images without review or bypass protected checks.
+
+DATA_CANDIDATES.md records RealImpact as a measured household-object acoustic
+method candidate. No recordings have been inspected or calibrated; dataset
+licensing and preprocessing assumptions still need verification. It cannot
+replace golf/player measurements. Hardware/data availability remains unanswered;
+no experiment, acoustic effect or perceptual preference is inferred.
 
 ## Previous Implementation: IA-T2
 
@@ -83,14 +109,16 @@ No scalar score is reinterpreted as coupled body mass.
 
 ## Next Actions and Completion Boundary
 
-Resolve protected provider checks and continue the full T3 operators and grip model.
-Resolve review/CI on the existing foundation PRs through normal protections,
-then proceed to #5072. Recheck GitHub heads before incorporating remote edits.
-Do not silently overwrite the later UpstreamDrift PR head.
+Save the rotating checkpoint with refreshed inventories, handoff hashes and all
+required gates, then construct a consistent loaded state and moving boundary
+work audit. Preserve the existing `swing_sim.impact_interval` facade and rigid
+full-inertia/friction/trace/wire capabilities as T4 integration points. It is
+not a distributed shaft or radiation solver. Resolve remaining provider CI
+through normal protections and inspect remote heads before changing branches.
 
-The full goal is active. A passing lumped model does not complete the distributed
-shaft, acoustic, experimental, consumer or final theory milestones. Data and
-hardware availability remain unknown; do not invent measurements or approvals.
+The full goal remains active. T4-T6, exact-pin U2 adapters, U3 counterfactuals,
+U4 physical/blinded validation and A2 synthesis remain required in the matrix.
+Do not invent measurements or approvals to complete a gate.
 
 ## Stiff-Fixture Failure Discovered in the Broader Run
 
@@ -116,85 +144,17 @@ The baseline speed changes by only about 0.00018 m/s, while the previously
 unfinished stiff case changes materially. Do not conceal that difference as
 floating-point noise or certify the previous output as a completed collision.
 
-## Provider Delivery Status
+## Execution Environment
 
-T1 PR #5077 remains blocked at `5932146f1` by both downstream consumer jobs.
-The rate shard and aggregate Python 3.11 job passed after retry. The rate shard passed 2,889 tests with 29 skips, then failed
-artifact upload with ETIMEDOUT; that failed workflow was retried. The UpstreamDrift
-consumer passed 10 tests and failed the fresh-provider import check with missing
-`src.shared.python.logging_pkg`. This is a real integration failure still to
-resolve. Gasification_Model previously failed repository checkout. No Tools protection has been bypassed and no Tools merge is claimed.
+Use the ignored worktree Python 3.12 `.venv`, with pytest-qt 4.5.0. Prepend its
+Scripts directory to PATH and set PYTEST_ADDOPTS=-n0 and QT_QPA_PLATFORM=offscreen
+for normal hooks. System Python 3.13 previously crashed a MuJoCo parallel worker.
+The qualified serial unit run passed 1,614 tests with 29 skips, 9 expected failures
+and one existing unexpected pass. No hook was bypassed. Tools pins Ruff 0.14.10.
+Changed-module mypy with `--follow-imports=silent` passes; unrestricted recursive
+mypy encounters existing fitting_document.py diagnostics and is not claimed green.
 
-## Delivery Environment and Next Integration Audit
-
-The first push failed in system Python 3.13 when a MuJoCo plugin crashed a
-parallel unit-test worker. Python 3.12 imported MuJoCo successfully but lacked
-pytest-qt. An ignored worktree `.venv` now uses Python 3.12 system packages plus
-pytest-qt 4.5.0; serial offscreen execution passed 1,614 tests, with 29 skips,
-9 expected failures and one existing unexpected pass (161.32 s). Use this
-process-local environment for push hooks: prepend `.venv/Scripts` to PATH,
-set PYTEST_ADDOPTS=-n0 and QT_QPA_PLATFORM=offscreen. No hook was bypassed.
-
-AffineDrift A1 and UpstreamDrift U1 have been protected-merged; their parent
-issue checklists were updated and remain open. The later U1 branch commit was
-a merge from main containing unrelated motion-capture changes; it was preserved.
-
-The next inventory refinement must explicitly preserve the existing Tools
-`swing_sim.impact_interval` facade, its rigid full-inertia club/ball state,
-FREE/PINNED/TORSIONAL_GRIP boundaries, friction, trace queries and audit wire.
-Its fixed-step solver is a useful T4 integration point, not a distributed shaft
-or radiation solver. Read its contact geometry, termination and energy accounting
-before extending it, and use the T1 tensor reference for independent limits.
-
-The failing downstream import occurs in UpstreamDrift `cli_utils.py`, which
-imports Tools-owned logging via `src.shared.python.logging_pkg.logging_config`.
-UpstreamDrift has no physical logging_pkg there; the Tools alias finder deliberately
-limits aliases under an external src namespace. Investigate an explicit canonical
-provider import and fresh-process consumer tests, preserving downstream ownership.
-Do not broaden namespace takeover to hide the failure. T3 has not been claimed yet.
-
-## Current Checkpoint: T3 Tensile Reference Saved
-
-T3 implementation is committed as `f1f8da112` in Tools-impact-shaft. The full
-program remains active; this is the first part of #5072. All nine manual gates,
-repository-wide pinned Ruff (3,700 files), three-module mypy and commit hooks
-pass. The broader provider run passed 334 tests, skipped two, and exposed the
-expected additive facade export-list update; after that correction, all 62
-focused facade/shaft/API tests pass (14.26 s). No failing result is counted as
-a complete passing broad run. Source/module inventory and governed handoff
-hashes are current. See SHAFT_PRESTRESS.md for the derivation and remaining T3.
-
-Tools #5077/#5082 remain open ready PRs. T2 checks still need the UpstreamDrift
-consumer correction, Gasification checkout access, and inspection of seven
-PyQt visual-baseline drifts. Do not change reference images or tolerances just
-to obtain a green gate. The user-authorized theory/inventory and integration
-planning PRs are merged; later science and experimental gates are open.
-
-UpstreamDrift #9735 / PR #9745 contains the real-provider bootstrap/origin fix.
-Initial qualification passed 13 contracts without an initialized vendor, 72
-pinned-vendor/CLI/fallback tests, an actual installed-wheel bootstrap and an
-ownership-eviction mutation. CI then exposed a fixture mismatch between explicit
-vendored mode and the sibling checkout recorded in TOOLS_REPO_ROOT. Local RED
-reproduced seven failures; the mode-aware correction passes 13 contracts in
-each actual provider route. With its new explicit-mode assertion, all 14
-vendored-mode contracts pass (12.14 s). The corrective commit is `94034b56e`;
-protected CI remains required. Runtime imports and exact vendor pin are unchanged.
-
-The tensile checkpoint `561cb3d58` is pushed with all hooks passing. The local
-grip component is added afterward and must be coupled and qualified before T3
-is complete. No measured impedance or acoustic effect is claimed.
-
-Stationary assembly and the grip checkpoint are now implemented locally;
-see SHAFT_LINEAR_SYSTEM.md. Next resolve delivery checks and derive the coupled
-rotating-base/head operators with consistent prestress and moving grip work. The complete T4-T6, U2-U4 and AffineDrift final-synthesis requirements
-are retained in the matrix. Hardware/data availability is still unanswered;
-no measurement, perceptual preference or acoustic effect is inferred from these
-synthetic beam checks.
-
-The stationary spatial checkpoint passes 372 golf-club tests with two skips
-(192.03 s), 84 combined shaft/grip/API tests, and repository-wide pinned Ruff.
-The grip implementation is committed at `8f025d570`. UpstreamDrift prerequisite
-head `14aa47eec` is pushed after preserving a concurrent main synchronization;
-CI remains pending. DATA_CANDIDATES.md records RealImpact as a measured
-household-object acoustic-method candidate. No recordings have been inspected
-or calibrated, and it does not replace the golf/player experimental gates.
+The previous stationary checkpoint passed 372 golf-club tests with two skips
+(192.03 s), repository-wide Ruff, all nine manual gates, and commit/push hooks.
+Publication approval remains separate. Refreshed rotating-checkpoint evidence
+belongs in ROTATING_TRANSPORT.md; prior execution details remain in git history.

@@ -4,12 +4,12 @@
 
 - Full program active; theory AffineDrift #4258 and integration plan UpstreamDrift #9706 merged.
 - T1 #5077 and T2 #5082 are open ready PRs. T2: 396 broader tests, 15 final audit tests, 6 browser tests and 1,614 unit tests pass locally.
-- T3 #5072: `feat/5072-prestressed-shaft`, based on T2 `2f975d06e`; tensile FEM, stationary spatial shaft/full head inertia and passive grip assembly implemented; 84 combined tests pass. Full rotating dynamics remain open.
-- Shared unloaded FE kernel reused; explicit radial tension and point tip mass. No general rotating, impact or acoustic qualification is claimed.
-- UpstreamDrift prerequisite #9735 / PR #9745: provider CI passes at `94034b56e`; main sync retains #9740. Parity/security checks remain open.
-- T2 CI: downstream UD bootstrap failure addressed by #9745; Gasification checkout Not Found; seven PyQt visual baseline drifts need inspection. Never bypass gates.
-- T3 codex lease succeeded through 2026-09-08T04:51:16Z; renew before expiry.
-- Turnover: `docs/development/impact-acoustics/SHAFT_LINEAR_SYSTEM.md`, `GRIP_IMPEDANCE.md` and `SHAFT_PRESTRESS.md`; full requirement matrix: `docs/development/impact-acoustics/PROGRESS.md`.
+- T3 #5072: `feat/5072-prestressed-shaft`, based on T2 `2f975d06e`; tensile FEM, stationary shaft/head/grip and distributed rotating transport implemented; 110 combined tests pass. Loaded-state/work/FRF qualification remains open.
+- Full offset-head and explicit section rotary inertia retained; independent kinetic Hessians, inertial-frame trajectory and radial frequency references pass. No general impact/acoustic qualification.
+- UpstreamDrift #9735 / PR #9745 merged as `1b48707d54fb47655e43eaaffaad7b1739445e40`; confirmed ancestor of main. Tools T2 downstream UD job rerun requested.
+- T2 CI: UD consumer retry pending; Gasification checkout access and seven PyQt visual baseline drifts remain unresolved. Secret metadata read returned 403; credential state is unknown. Never bypass gates.
+- T3 codex lease succeeds through 2026-09-08T06:40:24Z; renew before expiry.
+- Turnover: `docs/development/impact-acoustics/ROTATING_TRANSPORT.md`, `SHAFT_LINEAR_SYSTEM.md`, `GRIP_IMPEDANCE.md`, `SHAFT_PRESTRESS.md`; full requirement matrix: `PROGRESS.md` in the same directory.
 - T3-T6, exact-pin consumers, counterfactual studies, physical/blinded validation and final theory synthesis remain required.
 
 > **Update this file with every PR and every push to main.**
