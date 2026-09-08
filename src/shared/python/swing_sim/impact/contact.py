@@ -50,17 +50,25 @@ class KelvinVoigtContactLaw:
         damping = 2.0 * damping_ratio * math.sqrt(stiffness_n_per_m * effective_mass_kg)
         return cls(stiffness_n_per_m, damping, maximum_force_n)
 
+    def unclipped_normal_force(
+        self, compression_m: float, compression_rate_mps: float
+    ) -> float:
+        """Return the spring+dashpot force before unilateral/cap clipping."""
+        if not math.isfinite(compression_m) or not math.isfinite(compression_rate_mps):
+            raise ValueError("contact state must be finite")
+        return (
+            self.stiffness_n_per_m * compression_m
+            + self.damping_n_s_per_m * compression_rate_mps
+        )
+
     def normal_force(self, compression_m: float, compression_rate_mps: float) -> float:
         """Return compressive normal force for the current overlap state."""
         if not math.isfinite(compression_m) or not math.isfinite(compression_rate_mps):
             raise ValueError("contact state must be finite")
         if compression_m <= 0.0:
             return 0.0
-        force = (
-            self.stiffness_n_per_m * compression_m
-            + self.damping_n_s_per_m * compression_rate_mps
-        )
-        return max(0.0, min(float(force), self.maximum_force_n))
+        force = self.unclipped_normal_force(compression_m, compression_rate_mps)
+        return max(0.0, min(force, self.maximum_force_n))
 
 
 __all__ = ["KelvinVoigtContactLaw"]

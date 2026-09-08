@@ -111,13 +111,13 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "9039b478c3fed7b4e70e6a559c5c76e87285d0580c84dbedb4e68d5817979286",
+      "content_sha256_lf": "8ce4f200fa0d7c75217fba3dfb6d62edf29ed68ec3550b09ac43a8227f0c4156",
       "entry_count": 17,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "35875dcfe19046eb9705a11a3f66da6149fd3eb9df605a66552008e9e5c4cb2f",
+      "content_sha256_lf": "18f1c3656df23e4c886faabde4e3a78f7ddebdd08ae592ed9e55df07fe81e7d2",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
@@ -567,7 +567,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rotation-transforms.json"
     },
     {
-      "content_sha256_lf": "99eddf58b6d2bf7251b35e9f5581227a652972222cf71f465ff1b0ed82ee10b9",
+      "content_sha256_lf": "f4fc65f2759183795a26be84d7a9be53c20c79ad432da9886489f4f1a6269bfd",
       "entry_count": 26,
       "package": "src/rrt_path_planner",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rrt-path-planner.json"
@@ -609,7 +609,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-chat-contracts.json"
     },
     {
-      "content_sha256_lf": "0212b357369038b8fe7d224d2701c49aa7739a76ccbe352b58477f7c4bea34ff",
+      "content_sha256_lf": "a8abbb1dc2ad3cbdfa2ffe98eb8096d9ae1e669a71d575747361e8e147e2462e",
       "entry_count": 14,
       "package": "src/shared/python/codemap",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-codemap.json"
@@ -705,6 +705,12 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-programmatic-pid.json"
     },
     {
+      "content_sha256_lf": "6df304bea083a9add2fd2400c1dd0892c519f4d1c0b0889ef63ce1f11e6aed00",
+      "entry_count": 2,
+      "package": "src/shared/python/realtime",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-realtime.json"
+    },
+    {
       "content_sha256_lf": "95a572264144cce2bffa99693f4da3a7659412631d706f15bd5f82b9571211e6",
       "entry_count": 2,
       "package": "src/shared/python/reporting",
@@ -735,14 +741,14 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-signal-toolkit.json"
     },
     {
-      "content_sha256_lf": "effaf642f2d614c4195f02f8db5a9c9637e06b9e29703d954f4cd3bcdcada726",
+      "content_sha256_lf": "426598eb2c8af7094cb7fd7e0d7656f9912cab9d10291d13fbca11c27d177953",
       "entry_count": 220,
       "package": "src/shared/python/swing_sim",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim.json"
     },
     {
-      "content_sha256_lf": "6c12742907f3f500034910ac99d3f91da527a641b8f351abc916284b6f31922b",
-      "entry_count": 21,
+      "content_sha256_lf": "2575012ff07d350f8050d730f23138dd3f481a4dac50b52770706fd862c0c52d",
+      "entry_count": 22,
       "package": "src/shared/python/theme",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-theme.json"
     },
