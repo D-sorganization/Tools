@@ -8263,33 +8263,66 @@
       "MOCAP_SESSION_SCHEMA_VERSION",
       "AcquisitionError",
       "Availability",
+      "CalibrationDegeneracyKind",
+      "CalibrationObservation",
+      "CalibrationPatternKind",
+      "CalibrationQuality",
+      "CalibrationTarget",
       "CameraCapabilities",
       "CameraIdentity",
+      "CameraLayout",
+      "CameraPose",
       "CaptureGroup",
       "ClockDomain",
       "ClockKind",
+      "ClockSkewEstimate",
       "CoordinateFrame",
+      "DistortionCoefficients",
+      "DistortionModel",
       "DropPolicy",
+      "ExtrinsicCalibrationResult",
+      "ExtrinsicDegeneracyKind",
+      "ExtrinsicQuality",
       "FeatureSupport",
+      "FisheyeIntrinsics",
+      "FrameIndexEntry",
       "FramePacket",
       "FrameSource",
       "FrameStamp",
+      "IntrinsicCalibrationResult",
       "Landmark3D",
       "MethodDescriptor",
       "MocapSessionManifest",
+      "MovementDetectionResult",
       "NumericRange",
+      "PinholeIntrinsics",
       "PixelObservation",
       "PrerecordedFrameSource",
       "QueueFullError",
+      "RecordingIntegrityReport",
       "RecordingPolicy",
+      "RecordingReader",
+      "RecordingWriter",
+      "RelocalizationResult",
+      "ReprojectionResidual",
       "RigidTransform",
       "SessionState",
       "ShutterKind",
       "SkeletonDefinition",
       "SourceState",
       "SupportLevel",
+      "SyncAnomaly",
+      "SyncAnomalyType",
+      "SyncMonitor",
+      "SyncQuality",
       "SyntheticFrameSource",
+      "bundle_adjust_layout",
+      "check_coverage_and_degeneracy",
+      "detect_camera_movement",
       "dumps_canonical",
+      "estimate_pnp_pose",
+      "evaluate_extrinsic_quality",
+      "evaluate_intrinsic_quality",
       "load_session_manifest"
     ],
     "symbols": {
@@ -8308,6 +8341,53 @@
         "info": {
           "bases": ["StrEnum"],
           "methods": {}
+        }
+      },
+      "CalibrationDegeneracyKind": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
+      "CalibrationObservation": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "CalibrationPatternKind": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
+      "CalibrationQuality": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
+      "CalibrationTarget": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "total_points": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "int"
+            }
+          }
         }
       },
       "CameraCapabilities": {
@@ -8362,6 +8442,61 @@
                 }
               ],
               "returns": "str"
+            }
+          }
+        }
+      },
+      "CameraLayout": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "camera_count": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "int"
+            },
+            "get_pose": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "camera_key",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CameraPose"
+            }
+          }
+        }
+      },
+      "CameraPose": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "camera_center_world": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[float, float, float]"
             }
           }
         }
@@ -8512,6 +8647,13 @@
           "methods": {}
         }
       },
+      "ClockSkewEstimate": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
       "CoordinateFrame": {
         "type": "class",
         "info": {
@@ -8531,7 +8673,42 @@
           }
         }
       },
+      "DistortionCoefficients": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "DistortionModel": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
       "DropPolicy": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
+      "ExtrinsicCalibrationResult": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "ExtrinsicDegeneracyKind": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
+      "ExtrinsicQuality": {
         "type": "class",
         "info": {
           "bases": ["StrEnum"],
@@ -8543,6 +8720,84 @@
         "info": {
           "bases": [],
           "methods": {}
+        }
+      },
+      "FisheyeIntrinsics": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "project_point": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "xyz",
+                  "annotation": "tuple[float, float, float]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[float, float]"
+            },
+            "unproject_point": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "uv",
+                  "annotation": "tuple[float, float]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[float, float, float]"
+            }
+          }
+        }
+      },
+      "FrameIndexEntry": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "to_json": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "from_dict": {
+              "args": [
+                {
+                  "name": "cls",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "data",
+                  "annotation": "dict[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "FrameIndexEntry"
+            }
+          }
         }
       },
       "FramePacket": {
@@ -8708,6 +8963,25 @@
           }
         }
       },
+      "IntrinsicCalibrationResult": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "is_qualified": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "bool"
+            }
+          }
+        }
+      },
       "Landmark3D": {
         "type": "class",
         "info": {
@@ -8723,6 +8997,13 @@
         }
       },
       "MocapSessionManifest": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "MovementDetectionResult": {
         "type": "class",
         "info": {
           "bases": [],
@@ -8750,6 +9031,48 @@
                 }
               ],
               "returns": "bool"
+            }
+          }
+        }
+      },
+      "PinholeIntrinsics": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "project_point": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "xyz",
+                  "annotation": "tuple[float, float, float]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[float, float]"
+            },
+            "unproject_point": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "uv",
+                  "annotation": "tuple[float, float]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[float, float, float]"
             }
           }
         }
@@ -8922,7 +9245,190 @@
           "methods": {}
         }
       },
+      "RecordingIntegrityReport": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "is_valid": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "bool"
+            }
+          }
+        }
+      },
       "RecordingPolicy": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "RecordingReader": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "session_dir",
+                  "annotation": "Path | str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "read_manifest": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "MocapSessionManifest"
+            },
+            "read_index": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "list[FrameIndexEntry]"
+            },
+            "read_frames": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "Iterator[FramePacket]"
+            },
+            "verify_integrity": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "RecordingIntegrityReport"
+            }
+          }
+        }
+      },
+      "RecordingWriter": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "session_dir",
+                  "annotation": "Path | str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "manifest",
+                  "annotation": "MocapSessionManifest",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "initialize": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "write_frame": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "packet",
+                  "annotation": "FramePacket",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "FrameIndexEntry"
+            },
+            "finalize": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "close": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        }
+      },
+      "RelocalizationResult": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "ReprojectionResidual": {
         "type": "class",
         "info": {
           "bases": [],
@@ -8977,6 +9483,115 @@
         }
       },
       "SupportLevel": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
+      "SyncAnomaly": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "SyncAnomalyType": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
+      "SyncMonitor": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "max_allowable_skew_ns",
+                  "annotation": "int",
+                  "default": "5000000",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "record_frame": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "packet",
+                  "annotation": "FramePacket",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "list[SyncAnomaly]"
+            },
+            "estimate_skew": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "source_a",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "source_b",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ClockSkewEstimate | None"
+            },
+            "evaluate_quality": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "source_a",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "source_b",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "SyncQuality"
+            }
+          }
+        }
+      },
+      "SyncQuality": {
         "type": "class",
         "info": {
           "bases": ["StrEnum"],
@@ -9143,6 +9758,108 @@
           }
         }
       },
+      "bundle_adjust_layout": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "initial_layout",
+              "annotation": "CameraLayout",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "observations_by_camera",
+              "annotation": "Mapping[str, Sequence[tuple[tuple[float, float, float], tuple[float, float]]]]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "intrinsics_by_camera",
+              "annotation": "Mapping[str, PinholeIntrinsics | FisheyeIntrinsics]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "fix_gauge_camera_key",
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "arg"
+            }
+          ],
+          "returns": "ExtrinsicCalibrationResult"
+        }
+      },
+      "check_coverage_and_degeneracy": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "points",
+              "annotation": "Sequence[tuple[float, float]]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "resolution_px",
+              "annotation": "tuple[int, int]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "min_views",
+              "annotation": "int",
+              "default": "5",
+              "kind": "arg"
+            },
+            {
+              "name": "views_count",
+              "annotation": "int",
+              "default": "1",
+              "kind": "arg"
+            }
+          ],
+          "returns": "tuple[float, tuple[CalibrationDegeneracyKind, ...]]"
+        }
+      },
+      "detect_camera_movement": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "nominal_pose",
+              "annotation": "CameraPose",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "object_points",
+              "annotation": "Sequence[tuple[float, float, float]]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "image_points",
+              "annotation": "Sequence[tuple[float, float]]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "intrinsics",
+              "annotation": "PinholeIntrinsics | FisheyeIntrinsics",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "threshold_px",
+              "annotation": "float",
+              "default": "1.5",
+              "kind": "arg"
+            }
+          ],
+          "returns": "MovementDetectionResult"
+        }
+      },
       "dumps_canonical": {
         "type": "function",
         "signature": {
@@ -9155,6 +9872,114 @@
             }
           ],
           "returns": "str"
+        }
+      },
+      "estimate_pnp_pose": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "camera_key",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "object_points",
+              "annotation": "Sequence[tuple[float, float, float]]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "image_points",
+              "annotation": "Sequence[tuple[float, float]]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "intrinsics",
+              "annotation": "PinholeIntrinsics | FisheyeIntrinsics",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "target_frame_id",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "source_frame_id",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "tuple[CameraPose, float]"
+        }
+      },
+      "evaluate_extrinsic_quality": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "mean_residual_px",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "camera_count",
+              "annotation": "int",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "min_points_per_view",
+              "annotation": "int",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "threshold_px",
+              "annotation": "float",
+              "default": "1.0",
+              "kind": "arg"
+            }
+          ],
+          "returns": "tuple[ExtrinsicQuality, tuple[ExtrinsicDegeneracyKind, ...]]"
+        }
+      },
+      "evaluate_intrinsic_quality": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "mean_residual_px",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "views_count",
+              "annotation": "int",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "sensor_coverage_ratio",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "floor_threshold_px",
+              "annotation": "float",
+              "default": "1.0",
+              "kind": "arg"
+            }
+          ],
+          "returns": "tuple[CalibrationQuality, tuple[CalibrationDegeneracyKind, ...]]"
         }
       },
       "load_session_manifest": {
@@ -37024,5 +37849,355 @@
         }
       }
     }
+  },
+  "lab/mocap/recording.py": {
+    "__all__": [
+      "FrameIndexEntry",
+      "RecordingIntegrityReport",
+      "RecordingReader",
+      "RecordingWriter"
+    ],
+    "symbols": {
+      "FrameIndexEntry": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "to_json": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "from_dict": {
+              "args": [
+                {
+                  "name": "cls",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "data",
+                  "annotation": "dict[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "FrameIndexEntry"
+            }
+          }
+        }
+      },
+      "RecordingIntegrityReport": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "is_valid": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "bool"
+            }
+          }
+        }
+      },
+      "RecordingReader": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "session_dir",
+                  "annotation": "Path | str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "read_manifest": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "MocapSessionManifest"
+            },
+            "read_index": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "list[FrameIndexEntry]"
+            },
+            "read_frames": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "Iterator[FramePacket]"
+            },
+            "verify_integrity": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "RecordingIntegrityReport"
+            }
+          }
+        }
+      },
+      "RecordingWriter": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "session_dir",
+                  "annotation": "Path | str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "manifest",
+                  "annotation": "MocapSessionManifest",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "initialize": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "write_frame": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "packet",
+                  "annotation": "FramePacket",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "FrameIndexEntry"
+            },
+            "finalize": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "close": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        }
+      }
+    }
+  },
+  "lab/mocap/sync.py": {
+    "__all__": [
+      "ClockSkewEstimate",
+      "SyncAnomaly",
+      "SyncAnomalyType",
+      "SyncMonitor",
+      "SyncQuality"
+    ],
+    "symbols": {
+      "ClockSkewEstimate": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "SyncAnomaly": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "SyncAnomalyType": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
+      "SyncMonitor": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "max_allowable_skew_ns",
+                  "annotation": "int",
+                  "default": "5000000",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "record_frame": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "packet",
+                  "annotation": "FramePacket",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "list[SyncAnomaly]"
+            },
+            "estimate_skew": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "source_a",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "source_b",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ClockSkewEstimate | None"
+            },
+            "evaluate_quality": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "source_a",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "source_b",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "SyncQuality"
+            }
+          }
+        }
+      },
+      "SyncQuality": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      }
+    }
+  },
+  "lab/mocap/calibration.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "lab/mocap/extrinsics.py": {
+    "__all__": [],
+    "symbols": {}
   }
 }
