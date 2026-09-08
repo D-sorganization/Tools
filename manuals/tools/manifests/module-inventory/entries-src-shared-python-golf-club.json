@@ -1203,6 +1203,57 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 5168,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0a09ea7277b03f26055b6ecb2da3cd850d7e50db84bf15b950a949601f3b294b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-CHAIN-PY-E5C1779B3243",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_shaft_chain.py",
+      "purpose": "Assemble verified section and point-load work in common nodal charts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_chain.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "N m",
+          "rad",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 4137,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -1288,6 +1339,7 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_chain.py",
           "tests/shared/python/golf_club/test_shaft_point_load.py"
         ],
         "unit_mentions": [
@@ -1343,6 +1395,7 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_chain.py",
           "tests/shared/python/golf_club/test_shaft_point_load.py",
           "tests/shared/python/golf_club/test_shaft_se3.py",
           "tests/shared/python/golf_club/test_shaft_section.py"
@@ -1394,6 +1447,7 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_chain.py",
           "tests/shared/python/golf_club/test_shaft_section.py"
         ],
         "unit_mentions": [

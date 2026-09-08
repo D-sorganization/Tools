@@ -6,20 +6,20 @@ perceptual validation cannot be inferred from numerical fixtures.
 
 ## Requirement and Evidence Matrix
 
-| Slice                          | Issue / Delivery               | Evidence Required Before Completion                                                                                           | Current State                                                                                              |
-| ------------------------------ | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| Theory review                  | AffineDrift #4254 / PR #4258   | Corrected rendered theory, source ledger and inventory; protected delivery                                                    | Merged PR #4258 at `1ce02d7ae4d916d4c598b62be78cefa83452aaa7`                                              |
-| Final theory synthesis         | AffineDrift #4255              | Qualified downstream results with uncertainty and limits                                                                      | Not started; depends on evidence                                                                           |
-| Rigid reference                | Tools #5069 / PR #5077         | Analytic tensor/impulse gates and protected provider delivery                                                                 | Merged PR #5077 at `f7254461399ac18e5667a0215afd90a9ebff9d22`                                              |
-| Lumped qualification           | Tools #5071 / PR #5082         | Events, work/loss ledger, timeout/step contracts, law-consistent restitution, scaling counterexamples, parity and convergence | PR #5082 open at `2f975d06e`; local push gates pass                                                        |
-| Distributed shaft/grip         | Tools #5072                    | Prestressed rotating operators, passive impedance, beam limits, frame agreement, modal/mesh/time/FRF convergence              | Rotating transport and objective section energy/full internal tangent verified; loaded state/work/FRF open |
-| Flexible contact               | Tools #5073                    | Off-center friction/contact and head/shaft modes; launch and ringdown; complete energy closure                                | Pending T3                                                                                                 |
-| Acoustics                      | Tools #5074                    | Calibrated signals, identified transfer, qualified radiation and held-out validation                                          | Pending; generic audio tools are not sufficient                                                            |
-| Reports/surfaces               | Tools #5075                    | Versioned provenance reports, consumer compatibility and truthful UI integration                                              | Pending qualified provider tiers                                                                           |
-| Integration plan               | UpstreamDrift #9701 / PR #9706 | Source/state inventory and protected delivery                                                                                 | Merged PR #9706 at `dbc6727aa4f0d422b7adaf6957e658e8997f7f29`                                              |
-| Swing adapters                 | UpstreamDrift #9703            | Compatible rigid, elastic, prestress and wrench transfer on exact provider pin                                                | Pending provider contract                                                                                  |
-| Counterfactual studies         | UpstreamDrift #9704            | Registered matched-state and matched-input studies, reproducible results, uncertainty                                         | Pending verified coupled model                                                                             |
-| Physical/perceptual validation | UpstreamDrift #9705            | Synchronized calibrated measurements, held-out validation, blinded sweetness analysis                                         | Data/equipment availability requested; no experiment run                                                   |
+| Slice                          | Issue / Delivery               | Evidence Required Before Completion                                                                                           | Current State                                                                                        |
+| ------------------------------ | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Theory review                  | AffineDrift #4254 / PR #4258   | Corrected rendered theory, source ledger and inventory; protected delivery                                                    | Merged PR #4258 at `1ce02d7ae4d916d4c598b62be78cefa83452aaa7`                                        |
+| Final theory synthesis         | AffineDrift #4255              | Qualified downstream results with uncertainty and limits                                                                      | Not started; depends on evidence                                                                     |
+| Rigid reference                | Tools #5069 / PR #5077         | Analytic tensor/impulse gates and protected provider delivery                                                                 | Merged PR #5077 at `f7254461399ac18e5667a0215afd90a9ebff9d22`                                        |
+| Lumped qualification           | Tools #5071 / PR #5082         | Events, work/loss ledger, timeout/step contracts, law-consistent restitution, scaling counterexamples, parity and convergence | PR #5082 open; latest observed remote head `476eaa98b`                                               |
+| Distributed shaft/grip         | Tools #5072                    | Prestressed rotating operators, passive impedance, beam limits, frame agreement, modal/mesh/time/FRF convergence              | Rotating transport, section/load derivatives and full-node chain verified; equilibrium/work/FRF open |
+| Flexible contact               | Tools #5073                    | Off-center friction/contact and head/shaft modes; launch and ringdown; complete energy closure                                | Pending T3                                                                                           |
+| Acoustics                      | Tools #5074                    | Calibrated signals, identified transfer, qualified radiation and held-out validation                                          | Pending; generic audio tools are not sufficient                                                      |
+| Reports/surfaces               | Tools #5075                    | Versioned provenance reports, consumer compatibility and truthful UI integration                                              | Pending qualified provider tiers                                                                     |
+| Integration plan               | UpstreamDrift #9701 / PR #9706 | Source/state inventory and protected delivery                                                                                 | Merged PR #9706 at `dbc6727aa4f0d422b7adaf6957e658e8997f7f29`                                        |
+| Swing adapters                 | UpstreamDrift #9703            | Compatible rigid, elastic, prestress and wrench transfer on exact provider pin                                                | Pending provider contract                                                                            |
+| Counterfactual studies         | UpstreamDrift #9704            | Registered matched-state and matched-input studies, reproducible results, uncertainty                                         | Pending verified coupled model                                                                       |
+| Physical/perceptual validation | UpstreamDrift #9705            | Synchronized calibrated measurements, held-out validation, blinded sweetness analysis                                         | Data/equipment availability requested; no experiment run                                             |
 
 ## Current Implementation: IA-T3 (Partial)
 
@@ -40,18 +40,19 @@ SHAFT_PRESTRESS.md retain earlier derivations and TDD evidence. These numerical
 checks do not close #5072: loaded shape, consistent prestress/boundary work,
 stability and mesh/time/modal/FRF/bandwidth qualification remain required.
 
-The section-kinematics checkpoint is `52d6ec791`; the current section-energy
-checkpoint is `SELF`. T3 PR is not created. The private section element now
-accepts explicit coupled stiffness and derives energy, virtual work and the
-complete fixed-chart internal Hessian, including moving-coordinate derivatives.
-Production derivatives use matrix-exponential Frechet derivatives, not finite
-differences. The 57 section/kinematic tests pass; the combined golf/API run
-passes 464 tests in 97.60 s with two optional build123d CAD skips. Scoped mypy
-passes all three changed Python files. The API baseline adds only a private
-module with no exports; existing signatures are preserved. See
-LOADED_STATE_REVIEW.md for equations, tolerances and limitations. Applied-load
-derivatives, equilibrium, stability, consistent inertia/work and FRF qualification
-remain open; this internal element does not close T3.
+The section-kinematics checkpoint is `52d6ec791`; elastic energy and full
+internal tangent are published at `b625eb2cc`, and physical point-load work and
+derivatives at `6323944ee658f1254da1a08bb899551f082c7b5c`. All normal hooks
+passed for those pushes. Current `SELF` adds a private full-node chain residual
+and fixed-chart tangent, retaining repeated offset loads and support entries.
+No artificial symmetry is imposed on couple derivatives. The 97 focused tests
+verify virtual work, all section and assembled curvature entries, rigid modes,
+frame invariance, analytic axial force continuity/reactions and strict contracts.
+Full golf/API verification passes 504 tests with two optional CAD skips (115.91 s).
+Ruff 0.14.10 and scoped mypy pass. The private API module has no public exports.
+See LOADED_STATE_REVIEW.md for the chart derivative distinction and limits.
+No equilibrium, stability or dynamic qualification is claimed; T3 PR is not
+created. Inventory is regenerated and all nine manual gates pass; run all normal hooks before push.
 
 ## Current Delivery and Data Status
 
@@ -72,11 +73,17 @@ now also passed as job 101955835753. Gasification_Model exists
 as a private repository but checkout previously failed; a secret-metadata query
 returned 403 and does not establish whether a credential is absent or expired.
 Nine PyQt view-baseline drifts are listed in the complete log; CI_FINDINGS.md
-records the font-stack mismatch and separate renderer prerequisite PR #5090
-(head `53f072a58`), whose 49 local contracts and all normal hooks pass. Linux
-container capture and reference review remain pending. Both old runs used Qt
-runtime 6.11.2; a Qt downgrade is not justified. Never weaken checkout
-failure handling, replace images without review or bypass protected checks.
+records the font-stack mismatch. Renderer prerequisite PR #5090 is published at
+`df4101f2825b3b2d255dad1d6f8746818fc82812` with 53 local contracts and all normal
+hooks passing. Its container/workspace repair passed in Linux, then Firefox
+rejected the inherited host-owned home after 72 of 73 web tests. Both browser
+installation and execution now use one task-owned temporary home. Run 34213771459
+is exercising that repair; Linux PyQt capture and full reference review remain
+pending. Both old runs used Qt runtime 6.11.2; a downgrade is not justified.
+Never weaken checkout failure handling, replace images without review or bypass
+protected checks. AffineDrift PR #4282 owns the paired Coriolis/damping correction;
+its PDF is being regenerated after integration of the incoming complete-swing
+chapter to preserve both authors' changes.
 
 DATA_CANDIDATES.md records RealImpact as a measured household-object acoustic
 method candidate. A bounded ZIP-directory inspection found only deconvolved audio plus geometry
@@ -182,14 +189,9 @@ The previous stationary checkpoint passed 372 golf-club tests with two skips
 Publication approval remains separate. Refreshed rotating-checkpoint evidence
 belongs in ROTATING_TRANSPORT.md; prior execution details remain in git history.
 
-## Applied-Load Checkpoint in Progress
+## Current Assembly Checkpoint
 
-`_shaft_point_load.py` now separates an offset dead force from a free spatial
-couple and includes their full canonical load derivatives and physical power.
-The 81 load/section/kinematic tests passed before final shared-validator reuse;
-final full golf/API validation passes 488 tests with two optional CAD skips (94.07 s). The previous elastic energy checkpoint is
-published at `b625eb2cca279472795a93896776fdef6ac33995`. No equilibrium,
-contact, acoustic or empirical gate is closed by this slice. AffineDrift #4277
-tracks the paired Coriolis/damping clarification and publication QA. Renderer
-PR #5090 has a scoped container-checkout trust repair under normal hook review;
-its first Linux run stopped before capture, and no references are approved.
+The point-load slice is published at `6323944ee`; current full-node assembly
+passes 97 focused tests and 504 full golf/API tests, with two optional CAD skips.
+It does not close equilibrium, contact, acoustics, physical or blinded gates.
+The complete program requirement/evidence matrix above remains authoritative.

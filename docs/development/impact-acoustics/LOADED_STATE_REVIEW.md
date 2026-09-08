@@ -249,3 +249,54 @@ two `no-any-return` boundaries despite the earlier scoped mypy pass. The failed
 push was stopped. Power and force-potential results now explicitly convert the
 validated scalar to float; the actual pre-push mypy hook and all 24 point-load
 tests pass (7.35 s). Retry all normal hooks after regenerating inventory hashes.
+
+## Full-Node Section-Chain Residual
+
+The point-load checkpoint is published at
+`6323944ee658f1254da1a08bb899551f082c7b5c` with all normal push checks passing.
+The private `_shaft_chain.py` now connects consecutive section elements and
+prescribed spatial point loads in the same local nodal exponential charts.
+For the Boolean gather matrix E_e of element e, assembly is
+`r = sum(E_e^T g_e) - sum(E_i^T Q_i)` and
+`K = sum(E_e^T K_e E_e) - sum(E_i^T K_load,i E_i)`.
+This is a sum of virtual work, not an additional constitutive approximation.
+Six linear-first entries per node remain translations [m] and rotations [rad];
+their residuals are forces [N] and moments [N m]. No boundary nodes are deleted.
+After a future constrained solve, the retained support residual can supply the
+required support-on-shaft reaction; it is not itself evidence of equilibrium.
+
+Multiple loads can share a node while retaining distinct material offsets.
+Replacing these by a configuration-independent couple would change their load
+derivatives. The assembly preserves nonsymmetric couple terms and reports
+elastic energy and dead-force potential separately. Their sum is a total static
+potential only when every applied load is conservative; a nonzero spatial couple
+does not acquire a potential because a force-only subtotal is available.
+
+All derivatives use a fixed chart at the supplied state. Away from equilibrium,
+the derivative of a re-expressed material residual differs: for a local nodal
+direction a, `D r_body[a] = K a + blockdiag(ad(a_i))^T r/2`.
+This follows from `r_chart(q)=blockdiag(J_r(q_i))^T r_body(H(q))`.
+A nonlinear method must handle that distinction explicitly. No nonlinear solver,
+support condition, material-strain bound, stability classification or dynamic
+inertia has been supplied by this assembly layer. Dense assembly is intended for
+verification and is not a qualified large-model performance claim.
+
+TDD began with a missing-module collection failure. The first 14 tests passed;
+two expanded checks verify all 324 assembled tangent entries against independent
+scalar-potential curvature and retain six free rigid modes. The combined
+chain/point-load/section/SE(3) suite passes 97 tests (19.96 s). Other checks cover
+all residual entries, mixed directional curvature, multiple loads on one node,
+nonsymmetric couple derivatives, observer invariance including the potential's
+constant origin shift, strict typed/ranged load nodes, malformed poses and copy
+isolation. A two-section axial fixture recovers force continuity, the analytic
+support reaction and elastic energy. All fixtures are synthetic.
+
+Full golf/API verification passes 504 tests with two optional build123d CAD skips
+(115.91 s). The API baseline adds one private module with no exports. Unrelated
+swing_sim baseline regeneration was compared as parsed JSON and restored as a
+formatting-only change. Ruff 0.14.10 passes. Scoped mypy initially rejected its
+numeric-tower narrowing; the explicit int/NumPy-integer boundary now passes.
+All nine manual gates pass before and after edits. Regenerated inventory adds
+one private module entry and its index digest/count; normal publication hooks
+remain to run. Equilibrium and subsequent T3–T6,
+U2–U4 and A2 gates remain open.
