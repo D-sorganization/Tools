@@ -31,6 +31,7 @@ Tools is the fleet's shared engineering-tools monorepo (45+ tools: PyQt6 GUIs, F
 | #4584 | Strokes gained v2. **COMPLETED** (#4599, #4600, #4602, #4608, #4610, #4613) — shared-first analytics.                                                        |
 | #4706 | Markerless mocap. Open. TOOLS-M0 (#4708) / TOOLS-M1 (#4710) in review under PR #4734.                                                                        |
 | #4707 | Engineering design manual authority. TOOLS-D1 (#4711), TOOLS-D2 (#4714), TOOLS-D3 (#4717) through TOOLS-D8 completed. TOOLS-D9 (#4730) active final subepic. |
+| #5068 | Impact & vibroacoustics models. Open. IA-T6 study wire + truthful surface landed (PR #5083); IA-T1 (#5077) / IA-T2 (#5082) in review; IA-T3 leased; IA-T4/T5 pending T1–T3. |
 
 ## Active Delivery Boundaries
 
