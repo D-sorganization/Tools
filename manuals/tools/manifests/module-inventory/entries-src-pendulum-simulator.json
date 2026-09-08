@@ -533,6 +533,7 @@
           "tests/test_sidekick_public_api_stability.py",
           "tests/test_src_package_import_contract.py",
           "tests/tools/test_matlab_quality_utils.py",
+          "tests/unit/ai/gui/test_assistant_panel_sidekick_bridge.py",
           "tests/unit/ai/integrations/github_mcp/test_integration.py",
           "tests/unit/ai/mcp/test_client.py",
           "tests/unit/ai/mcp/test_pool.py",
@@ -3585,10 +3586,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 47872,
+      "bytes_lf": 48096,
       "classification": "calculation",
       "classification_basis": "path-marker:force",
-      "content_sha256_lf": "a7ac25eef33a4f280990d6ff6b19467c79047f76af460028a24fa7b931b37b88",
+      "content_sha256_lf": "33c4ec1a40e9dc2793b73c38ec01c91cfc9d2e242e0ec1a056accfeec72e9a8e",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-FORCESOURCEOPTIMIZATION-TS-F6C0040C15CC",
       "language": "typescript",
@@ -3710,6 +3711,7 @@
         ],
         "test_paths": [],
         "unit_mentions": [
+          "N",
           "N m",
           "g",
           "s"

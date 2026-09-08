@@ -652,7 +652,7 @@
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "mapped"
       },
       "traceability": {
         "adr_paths": [
@@ -733,6 +733,9 @@
           "tests/rate_of_closure/test_variation_geometry_properties.py",
           "tests/shared/python/ai/test_rust_adapter_extended.py",
           "tests/shared/python/chat/test_ai_memory_manager.py",
+          "tests/shared/python/sidekick/lab/mocap/test_acquisition_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_calibration_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_session_serialization.py",
           "tests/test_debug_utils.py",
           "tests/test_health_checks.py",
@@ -749,7 +752,11 @@
           "ms",
           "s"
         ],
-        "validation_paths": []
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_acquisition_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_calibration_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
+        ]
       }
     },
     {
