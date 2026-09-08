@@ -2656,6 +2656,72 @@
       }
     }
   },
+  "_shaft_linear_contracts.py": {
+    "__all__": ["ShaftAttachments", "ShaftRodProperties"],
+    "explicit_all": false,
+    "symbols": {
+      "ShaftAttachments": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ShaftRodProperties": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      }
+    }
+  },
+  "_shaft_spatial_element.py": {
+    "__all__": ["spatial_element", "tip_spatial_inertia"],
+    "explicit_all": false,
+    "symbols": {
+      "spatial_element": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftRodProperties",
+              "default": null,
+              "kind": "arg",
+              "name": "rod"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "raw_midpoint"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "length"
+            }
+          ],
+          "returns": "tuple[np.ndarray, np.ndarray]"
+        },
+        "type": "function"
+      },
+      "tip_spatial_inertia": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ComponentMassProperties",
+              "default": null,
+              "kind": "arg",
+              "name": "body"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      }
+    }
+  },
   "_validation.py": {
     "__all__": [
       "Matrix3",
@@ -4570,6 +4636,56 @@
             }
           ],
           "returns": "ShaftModalResponse"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "shaft_linear_system.py": {
+    "__all__": [
+      "ShaftRodProperties",
+      "ShaftAttachments",
+      "assemble_shaft_linear_system"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "ShaftAttachments": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ShaftRodProperties": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "assemble_shaft_linear_system": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftRodProperties",
+              "default": null,
+              "kind": "arg",
+              "name": "rod"
+            },
+            {
+              "annotation": "ShaftModalSettings",
+              "default": "_DEFAULT_SETTINGS",
+              "kind": "arg",
+              "name": "settings"
+            },
+            {
+              "annotation": "ShaftAttachments",
+              "default": "_NO_ATTACHMENTS",
+              "kind": "arg",
+              "name": "attachments"
+            }
+          ],
+          "returns": "_LinearOperators"
         },
         "type": "function"
       }

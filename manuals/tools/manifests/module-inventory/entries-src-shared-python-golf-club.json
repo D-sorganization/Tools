@@ -1073,6 +1073,135 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 4137,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c4f1a2bc2bfb8383ce60f685ba71c66fd1735426419b87442827aa176973f5be",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-LINEAR-CONTRACTS-PY-57C7B797621A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_shaft_linear_contracts.py",
+      "purpose": "Stationary shaft assembly inputs; no inferred axial or polar properties.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "N",
+          "kg"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2682,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6009b9b5aebad48a3ca9d9db8d5705e7fe7b44fb89423eb8d37ae4de76752c55",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-SPATIAL-ELEMENT-PY-2A0F2069AD1F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_shaft_spatial_element.py",
+      "purpose": "Unloaded six-axis straight beam kernel, sharing the existing bending FEM.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_ROD_GRADIENT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ROD_MASS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_X_BENDING",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_Y_BENDING",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_Y_SIGNS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "spatial_element",
+            "signature": "rod: ShaftRodProperties, raw_midpoint: float, length: float"
+          },
+          {
+            "kind": "function",
+            "name": "tip_spatial_inertia",
+            "signature": "body: ComponentMassProperties"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 4729,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -1615,7 +1744,8 @@
           }
         ],
         "test_paths": [
-          "tests/shared/python/golf_club/test_grip_impedance.py"
+          "tests/shared/python/golf_club/test_grip_impedance.py",
+          "tests/shared/python/golf_club/test_shaft_linear_system.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
@@ -2485,9 +2615,76 @@
         "test_paths": [
           "tests/shared/python/golf_club/test_shaft_delivery.py",
           "tests/shared/python/golf_club/test_shaft_dynamics.py",
+          "tests/shared/python/golf_club/test_shaft_linear_system.py",
           "tests/shared/python/golf_club/test_shaft_prestress.py"
         ],
         "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4334,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cdde26a54df3f35215d0be63ca69da7ba28adabe3ea5fab9ca0d5b0eeb36db5e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-LINEAR-SYSTEM-PY-3B9CC1F01BFB",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/shaft_linear_system.py",
+      "purpose": "Stationary full-shaft assembly for the rotating-model reference limits.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "assemble_shaft_linear_system",
+            "signature": "rod: ShaftRodProperties, settings: ShaftModalSettings=_DEFAULT_SETTINGS, attachments: ShaftAttachments=_NO_ATTACHMENTS"
+          },
+          {
+            "kind": "re-export",
+            "name": "ShaftAttachments",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ShaftRodProperties",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_linear_system.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
         "validation_paths": []
       }
     },
@@ -2627,6 +2824,7 @@
           }
         ],
         "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_linear_system.py",
           "tests/shared/python/golf_club/test_shaft_prestress.py",
           "tests/shared/python/golf_club/test_shaft_profile.py"
         ],
@@ -3365,7 +3563,8 @@
           }
         ],
         "test_paths": [
-          "tests/shared/python/golf_club/test_grip_impedance.py"
+          "tests/shared/python/golf_club/test_grip_impedance.py",
+          "tests/shared/python/golf_club/test_shaft_linear_system.py"
         ],
         "unit_mentions": [
           "s"

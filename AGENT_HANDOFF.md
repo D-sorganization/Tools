@@ -4,12 +4,12 @@
 
 - Full program active; theory AffineDrift #4258 and integration plan UpstreamDrift #9706 merged.
 - T1 #5077 and T2 #5082 are open ready PRs. T2: 396 broader tests, 15 final audit tests, 6 browser tests and 1,614 unit tests pass locally.
-- T3 #5072: `feat/5072-prestressed-shaft`, based on T2 `2f975d06e`; tensile FEM plus passive six-axis local grip port implemented; 61 combined shaft/grip/API tests pass. Assembly and full rotating dynamics remain open.
+- T3 #5072: `feat/5072-prestressed-shaft`, based on T2 `2f975d06e`; tensile FEM, stationary spatial shaft/full head inertia and passive grip assembly implemented; 84 combined tests pass. Full rotating dynamics remain open.
 - Shared unloaded FE kernel reused; explicit radial tension and point tip mass. No general rotating, impact or acoustic qualification is claimed.
 - UpstreamDrift prerequisite #9735 / PR #9745: provider CI passes at `94034b56e`; main sync retains #9740. Parity/security checks remain open.
 - T2 CI: downstream UD bootstrap failure addressed by #9745; Gasification checkout Not Found; seven PyQt visual baseline drifts need inspection. Never bypass gates.
 - T3 codex lease succeeded through 2026-09-08T04:51:16Z; renew before expiry.
-- Turnover: `docs/development/impact-acoustics/GRIP_IMPEDANCE.md` and `SHAFT_PRESTRESS.md`; full requirement matrix: `docs/development/impact-acoustics/PROGRESS.md`.
+- Turnover: `docs/development/impact-acoustics/SHAFT_LINEAR_SYSTEM.md`, `GRIP_IMPEDANCE.md` and `SHAFT_PRESTRESS.md`; full requirement matrix: `docs/development/impact-acoustics/PROGRESS.md`.
 - T3-T6, exact-pin consumers, counterfactual studies, physical/blinded validation and final theory synthesis remain required.
 
 > **Update this file with every PR and every push to main.**
