@@ -910,6 +910,7 @@
           "tests/test_integration_test_helpers.py",
           "tests/test_path_setup.py",
           "tests/test_test_utils.py",
+          "tests/unit/realtime/test_transport_file.py",
           "tests/unit/sidekick/test_sidekick_f4_collaborators.py"
         ],
         "unit_mentions": [],

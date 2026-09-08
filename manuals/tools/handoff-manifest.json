@@ -9,63 +9,63 @@
   },
   "repository": "D-sorganization/Tools",
   "issue_url": "https://github.com/D-sorganization/Tools/issues/4730",
-  "pr_url": "https://github.com/D-sorganization/Tools/pull/5055",
+  "pr_url": "https://github.com/D-sorganization/UpstreamDrift/issues/8942",
   "commit_evidence": {
-    "local_head_sha": "b4875be1986e14a8d21d2cd116f564e57cdd3e02",
+    "local_head_sha": "6b27c4f0569ac486c491e073f87f67440a9521fa",
     "remote_head_sha": null,
-    "reviewed_tree_sha": "e72a635d7a92dd79a7b756841a42aa85df664f7f",
+    "reviewed_tree_sha": "f0a4dbf133748f3a1456da989af80390855a113f",
     "merge_sha": null
   },
   "branch_and_worktree": {
-    "branch": "feat/4721-mocap-extrinsic-calibration",
-    "worktree": "C:\\Users\\diete\\Repositories\\Tools",
+    "branch": "claude/issue-8942-provider-perf",
+    "worktree": "C:\\tmp\\Tools_w8942",
     "is_clean": false
   },
   "check_evidence": {
     "check_design_manual_governance": {
       "command": "python -m scripts.check_design_manual_governance",
       "status": "passed",
-      "timestamp": "2026-09-07T19:59:06Z"
+      "timestamp": "2026-09-08T02:08:19Z"
     },
     "build_tools_module_inventory": {
       "command": "python -m scripts.build_tools_module_inventory --check",
       "status": "passed",
-      "timestamp": "2026-09-07T19:59:06Z"
+      "timestamp": "2026-09-08T02:08:19Z"
     },
     "lint_tools_textbook_chapters": {
       "command": "python -m scripts.lint_tools_textbook_chapters",
       "status": "passed",
-      "timestamp": "2026-09-07T19:59:06Z"
+      "timestamp": "2026-09-08T02:08:19Z"
     },
     "check_tools_exemplars": {
       "command": "python -m scripts.check_tools_exemplars",
       "status": "passed",
-      "timestamp": "2026-09-07T19:59:06Z"
+      "timestamp": "2026-09-08T02:08:19Z"
     },
     "check_tools_calculation_freshness": {
       "command": "python -m scripts.check_tools_calculation_freshness --check",
       "status": "passed",
-      "timestamp": "2026-09-07T19:59:06Z"
+      "timestamp": "2026-09-08T02:08:19Z"
     },
     "check_tools_manual_qa": {
       "command": "python -m scripts.check_tools_manual_qa --check",
       "status": "passed",
-      "timestamp": "2026-09-07T19:59:06Z"
+      "timestamp": "2026-09-08T02:08:19Z"
     },
     "check_tools_publication_projection": {
       "command": "python -m scripts.check_tools_publication_projection --check",
       "status": "passed",
-      "timestamp": "2026-09-07T19:59:06Z"
+      "timestamp": "2026-09-08T02:08:19Z"
     },
     "render_tools_design_manual": {
       "command": "python -m scripts.render_tools_design_manual --check",
       "status": "passed",
-      "timestamp": "2026-09-07T19:59:06Z"
+      "timestamp": "2026-09-08T02:08:19Z"
     },
     "check_tools_handoff": {
       "command": "python -m scripts.check_tools_handoff --check",
       "status": "passed",
-      "timestamp": "2026-09-07T19:59:06Z"
+      "timestamp": "2026-09-08T02:08:19Z"
     }
   },
   "artifact_and_test_digests": {
@@ -112,7 +112,7 @@
       "TOOLS-HUMAN-APPROVAL-PENDING",
       "TOOLS-MARKERLESS-EXEMPLAR-BLOCKED"
     ],
-    "expiry_timestamp": "2026-12-06T19:59:06Z"
+    "expiry_timestamp": "2026-12-07T02:08:19Z"
   },
   "blockers": [
     {
@@ -127,12 +127,12 @@
     }
   ],
   "next_dependency": "TOOLS-M0 (#4708 / #4734) and parent epic DOC-TOOLS (#4707) closure",
-  "freshness_timestamp": "2026-09-07T19:59:06Z",
+  "freshness_timestamp": "2026-09-08T02:08:19Z",
   "governed_handoff_files": {
     "AGENT_HANDOFF.md": {
       "path": "AGENT_HANDOFF.md",
-      "sha256_lf": "1423be154f822ed32e3a39b94c62318cefcf9e35f7a2bfc334f59cb2eb595603",
-      "line_count": 85,
+      "sha256_lf": "f5565437a6ec20442f28b72c762c5195347eea6c7851a5493f2004fece1402ba",
+      "line_count": 90,
       "max_line_budget": 150,
       "required_sections": [
         "## Merge Governance",

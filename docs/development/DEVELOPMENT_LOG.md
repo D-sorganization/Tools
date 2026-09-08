@@ -18,6 +18,26 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#8942 · Realtime Transport And Codemap Hashing Hot-Path Fixes
+
+- **State:** in_review
+- **Owner:** claude (fleet wave 5)
+- **PR:** not created
+- **Paths:** `src/shared/python/codemap/indexer.py`,
+  `src/shared/python/realtime/`, `tests/unit/codemap/`,
+  `tests/unit/realtime/`
+- **Started:** 2026-09-08
+- **Last verified:** 2026-09-08 (`SELF`)
+- **Summary:** Resolved the codemap hash callable once at module import
+  (the per-call `import blake3` retried a failing import — Python does not
+  cache failed imports — once per file and once per symbol) and added the
+  tools-canonical file realtime transport (`src/shared/python/realtime/`)
+  with persistent per-channel append handles and offset-tracked tailing,
+  removing per-message mkdir/exists/stat/open syscalls from publish.
+  Fixes UpstreamDrift#8942 Defects A and B on the provider side.
+- **Next step:** UpstreamDrift bumps its `vendor/ud-tools` pin and re-points
+  `src/shared/python/realtime/transport_file.py` at the vendored module.
+
 ### DL-0001 · Backup Tools 3300 Pyo3 Split
 
 - **State:** parked
