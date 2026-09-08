@@ -100,7 +100,13 @@ permissions:
 jobs:
   production-worker-e2e:
     name: Rate web production Worker E2E (ephemeral PR)
-    runs-on: ubuntu-latest
+    # Visual baselines are calibrated on the d-sorg-fleet runner image
+    # (#5018/#5021 re-approvals; scripts/config/rate_pyqt_font_stack.v1.json
+    # pins that stack). The hosted ubuntu-latest image currently serves the
+    # other permitted font stack (2.13.2/2.15.0), so every PyQt tab drifts
+    # far outside the calibrated envelope on PRs while the trusted main lane
+    # stays green - run this job on the same fleet image as the baselines.
+    runs-on: d-sorg-fleet
     timeout-minutes: 30
     defaults:
       run:
