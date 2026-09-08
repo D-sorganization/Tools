@@ -2829,6 +2829,11 @@
     "explicit_all": true,
     "symbols": {}
   },
+  "_shaft_equilibrium.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
   "_shaft_linear_contracts.py": {
     "__all__": ["ShaftAttachments", "ShaftRodProperties"],
     "explicit_all": false,

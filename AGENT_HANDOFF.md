@@ -2,13 +2,13 @@
 
 ## Impact Dynamics and Acoustics: #5068
 
-- Full program active; theory AffineDrift #4258 and integration plan UpstreamDrift #9706 merged.
+- Full program active; theory AffineDrift #4258/#4282 and integration plan UpstreamDrift #9706 merged. Damping correction #4282 merged as `1968897ec65044b8393705087fccdf755e3e89a2` after all CI passed.
 - T1 #5077 merged at `f7254461399ac18e5667a0215afd90a9ebff9d22`; T2 #5082 remains open. T2: 396 broader tests, 15 final audit tests, 6 browser tests and 1,614 unit tests pass locally.
-- T3 #5072: `feat/5072-prestressed-shaft`, based on T2 `2f975d06e`; commit `SELF`, PR not created; tensile FEM, stationary shaft/head/grip and distributed rotating transport implemented; 504 golf/API tests pass (two optional CAD skips), including section energy, point-load work and a full-node chain residual/tangent; 97 focused derivative and assembly tests pass. Loaded-state/work/FRF qualification remains open.
+- T3 #5072: `feat/5072-prestressed-shaft`, based on T2 `2f975d06e`; commit `SELF`, PR not created; tensile FEM, stationary shaft/head/grip, rotating transport and clamped section-chain root finding implemented. 524 golf/API tests pass (two optional CAD skips); 117 focused derivative/equilibrium contracts pass. Explicit strain bounds, reactions and moving-frame Jacobian retained; stability, loaded inertia, work and FRF qualification remain open.
 - Full offset-head and explicit section rotary inertia retained; independent kinetic Hessians, inertial-frame trajectory and radial frequency references pass. No general impact/acoustic qualification.
 - UpstreamDrift #9735 / PR #9745 merged as `1b48707d54fb47655e43eaaffaad7b1739445e40`; confirmed ancestor of main. Tools T2 downstream UD job 101951943569 passes; T1 job 101955835753 also passes.
-- T2 CI: UD consumer passes; Gasification checkout access and nine PyQt visual baseline drifts remain unresolved. Renderer PR #5090 is open; container capture/review pending. Secret metadata 403 leaves credential state unknown. Never bypass gates.
-- T3 codex lease succeeds through 2026-09-08T10:49:02Z; renew before expiry.
+- T2 CI: UD consumer passes; private Gasification checkout remains unresolved. Renderer #5090 publishes `b8c6e6013`: two repeat captures, all twenty references reviewed, unchanged thresholds; fresh Linux workflow 34217794994 passes. Other protected checks remain pending. Secret metadata 403 leaves credential state unknown; credential configuration requested without secret values.
+- T3 codex lease succeeds through 2026-09-08T12:43:17Z; renew before expiry.
 - Turnover: `docs/development/impact-acoustics/ROTATING_TRANSPORT.md`, `SHAFT_LINEAR_SYSTEM.md`, `GRIP_IMPEDANCE.md`, `SHAFT_PRESTRESS.md`; full requirement matrix: `PROGRESS.md` in the same directory.
 - T3-T6, exact-pin consumers, counterfactual studies, physical/blinded validation and final theory synthesis remain required.
 

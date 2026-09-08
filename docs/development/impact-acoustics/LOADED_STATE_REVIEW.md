@@ -1,8 +1,8 @@
 # Loaded-State Formulation Review
 
-Tools #5072 is still in progress. This note records the next implementation
-decision, verified private kinematics, elastic energy derivatives and source access;
-no nonlinear equilibrium solver is implemented. The existing
+Tools #5072 is still in progress. This note records verified private kinematics,
+elastic/load derivatives and a clamped-chain equilibrium candidate. Root finding
+does not qualify stability or dynamic response. The existing
 rotating transport and radial references remain independently useful checks.
 
 ## Objective Section Kinematics
@@ -300,3 +300,78 @@ All nine manual gates pass before and after edits. Regenerated inventory adds
 one private module entry and its index digest/count; normal publication hooks
 remain to run. Equilibrium and subsequent T3–T6,
 U2–U4 and A2 gates remain open.
+
+## Clamped-Chain Equilibrium Candidate
+
+Full-node assembly is published at `87231b2f0c8d6fea45b37e9b92795eca740ba578`
+with every normal hook passing. The current private `_shaft_equilibrium.py`
+solves prescribed spatial force/couple balance with node zero fixed at the
+supplied seed pose. It uses the moving-material residual Jacobian derived above,
+not the fixed-chart Hessian unchanged. It retains the generally nonsymmetric
+operator and solves its free-node block without symmetry repair or clipping.
+The retained root residual is the support-on-shaft wrench in root material axes.
+
+Let S_r contain declared force/moment tolerances and S_q declared translation/
+rotation step scales. The Newton system is
+`(S_r^-1 J_free S_q) delta_scaled = -S_r^-1 r_free`.
+Its recovered direction is capped by the largest scaled nodal translation or
+rotation vector norm. Poses update multiplicatively as H_i Exp(delta_i), while
+the root pose is copied unchanged. Backtracking halves the step and requires
+a decrease in the norm of scaled free residuals, using numerical Armijo fraction
+1e-4. These are solver controls, not physical dissipation or an energy evolution.
+Convergence tests the maximum absolute free force and moment components against
+their separate SI tolerances. No iteration returns a partially balanced state.
+
+Every initial and trial section must satisfy six explicit positive componentwise
+absolute strain limits: dimensionless extension/shear and curvature in 1/m.
+The section exposes its existing strain law through one reused private helper;
+no duplicate constitutive formula was introduced. Limits must be supplied by
+the caller and are not inferred from the principal-logarithm chart or beam
+slenderness. They do not implement a composite failure envelope. Initial domain
+violations raise ValueError; exhausted iterations or admissible backtracking
+raise RuntimeError. Numerical singularity also raises RuntimeError. The root
+finder may depend on the supplied seed and does not prove uniqueness.
+
+The returned record is explicitly `stability_status="unqualified"`. A zero
+residual can be a saddle or unstable state. It must not become an operating
+point for impact, acoustics or FRFs without a separate stability and dynamic
+assessment. Prescribed spatial loads do not yet include rotating distributed
+inertia, follower laws or a moving grip. The earlier straight-state rotating
+operators cannot be substituted for a consistent loaded SE(3) inertia model.
+
+TDD began with missing-module failure. The first 17 tests passed; expanded
+verification passes 117 equilibrium/chain/load/section/SE(3) tests (23.52 s).
+All 324 entries of the moving residual Jacobian agree with independently
+differenced material residuals at step 1e-5 (rtol 2e-7, atol 1e-7), and differ
+materially from the uncorrected chart Hessian. Synthetic static benchmarks
+recover axial extension F L/EA, circular pure bending with curvature M/EI,
+combined axial/torsional response, support reactions and elastic energies.
+Common observer changes preserve the solution. Root-only loading leaves the
+free solution unchanged. Copy isolation, malformed poses/controls, unattainable
+strain-bounded loads and exhausted iteration budgets are checked.
+
+The full golf/API suite passes 524 tests with two optional build123d CAD skips
+(87.52 s). Ruff 0.14.10 and scoped two-module mypy pass. The additive API baseline
+records only the private module with no exports; existing public signatures are
+unchanged. Inventory/handoff refresh and normal publication checks follow.
+These are numerical benchmarks, not measurements of golf clubs or players.
+
+The actual pre-push mypy configuration then found that one reused loop variable
+retained a float inference at the integer-count validator. The count boundary
+now has its own object-typed variable. Actual pre-push mypy and all 20 solver
+tests pass (14.42 s) after that typing-only correction. No numerical law changed.
+
+All nine manual gates pass before and after implementation. The generated
+inventory adds the private equilibrium module and updates the section digest.
+Its provisional test-name index also associates the new test with the existing
+Rust math-primitives entry; no Rust implementation changed and this heuristic
+link is not a new Rust verification claim. The API diff is exactly five lines.
+Normal commit/push hooks remain the publication boundary.
+
+For the next inertia step, manuscript pages 13, 14, 21 and 28 were rendered and
+visually inspected after web screenshot retrieval failed. Equations 69–71 use
+one configuration-dependent section-velocity map; equations 78–82 retain both
+its time derivative and material-frame inertial transport. This identifies the
+consistent kinetic formulation to derive and verify next, not an implemented
+dynamic model. The existing pure-bending benchmark uses the circular solution
+on page 13 with a different axis convention; it is not a golf measurement.

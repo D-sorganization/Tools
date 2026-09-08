@@ -107,7 +107,7 @@ class SectionElement:
         return log_pose(np.linalg.solve(_rigid_pose(left), _rigid_pose(right)))
 
     def _constitutive(self, relative: np.ndarray) -> tuple[float, np.ndarray]:
-        strain = (relative - self.reference_twist) / self.length_m
+        strain = self._strain(relative)
         with np.errstate(over="ignore", invalid="ignore"):
             force = np.asarray(self.stiffness) @ strain
             energy = self.length_m * float(strain @ force) / 2
@@ -115,6 +115,19 @@ class SectionElement:
             require_finite_float(energy, "section energy"),
             finite_array(force, (6,), "section resultant"),
         )
+
+    def _strain(self, relative: np.ndarray) -> np.ndarray:
+        return finite_array(
+            (relative - self.reference_twist) / self.length_m, (6,), "section strain"
+        )
+
+    def strain(self, left: object, right: object) -> np.ndarray:
+        """Return fresh material strain: extension/shear, then curvature [1/m].
+
+        Numerical log-chart admissibility does not establish physical validity;
+        callers must compare these components with explicit material limits.
+        """
+        return self._strain(self._relative(left, right))
 
     def energy(self, left: object, right: object) -> float:
         """Return finite elastic energy [J] for proper poses in a common frame."""

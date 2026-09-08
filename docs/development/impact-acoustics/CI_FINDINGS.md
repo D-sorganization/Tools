@@ -1,8 +1,9 @@
 # Provider UI Delivery Investigation
 
 Renderer prerequisite [PR #5090](https://github.com/D-sorganization/Tools/pull/5090)
-is open at `53f072a58bce42a9c11a639329da01b093e30557`. No baseline approval or
-completed CI fix is claimed.
+is open at `b8c6e6013ad9dab6eab0bbfe0096b449feb16abb`. Its fresh production
+workflow passes; remaining protected checks and merge are pending. Historical
+investigation follows, with the superseding capture evidence at the end.
 
 ## Evidence Inspected
 
@@ -58,3 +59,26 @@ The T2 UpstreamDrift consumer job 101951943569 passes after upstream PR #9745
 merged. T1's separate UD retry job 101955835753 also passes. The carried-forward Gasification
 failure remains a private-repository checkout error; secret-metadata access
 returned 403, so credential availability is unknown. These are separate gates.
+
+## Repeatable Capture and Reviewed Reference Update
+
+Linux run 34213771459 attempts 1 and 2, source `df4101f2825b3b2d255dad1d6f8746818fc82812`,
+each pass 73 browser and 23 PyQt capture/accessibility tests. The ten PyQt PNGs
+are byte-identical; React repeat differences remain within unchanged thresholds.
+All twenty initial desktop references were individually reviewed and copied
+unedited from the first capture; both candidate sets pass the production
+comparator against them. No tolerance or historical calibration was changed.
+
+The [complete review ledger](https://github.com/D-sorganization/Tools/blob/b8c6e6013ad9dab6eab0bbfe0096b449feb16abb/docs/development/rate-pyqt-renderer-4844-reference-review.md)
+records exact artifact/hash provenance and existing initial-state/clipping
+limits. Agent review does not replace human or whole-product acceptance.
+All 60 local contracts, nine manual gates and normal hooks pass. Fresh
+run 34217794994/job 102033568943 now passes the production workflow, including
+the new references. PR #5087 is closed, unmerged. Protected delivery is pending.
+
+Current T2 Gasification checkout still fails with 404 at job 102009926186 on
+head `476eaa98b`. The workflow references RUNNER_CHECK_TOKEN with github.token
+fallback, but masked logs do not identify which credential was selected. The
+browser is signed out and secret metadata is inaccessible. Existing access
+configuration was requested without secret values. Do not copy a local login
+token into CI, weaken checkout failure handling or claim consumer test success.
