@@ -43,8 +43,6 @@ export function LandingCanvas({
     ctx.clearRect(0, 0, width, height);
     if (points.length === 0) return;
     const ellipse = dispersionEllipse(dataset);
-    const xs = points.map((p) => p[0]);
-    const ys = points.map((p) => p[1]);
     const pad = 2.0;
     const reach = ellipse ? ellipse.semiMajorM : 0;
     // Window includes the target region so its boundary never clips.
@@ -61,10 +59,26 @@ export function LandingCanvas({
             target.distanceM + target.bandHalfLengthM,
           ]
       : [];
-    const minX = Math.min(...xs, ...tx, (ellipse?.centerLateralM ?? 0) - reach) - pad;
-    const maxX = Math.max(...xs, ...tx, (ellipse?.centerLateralM ?? 0) + reach) + pad;
-    const minY = Math.min(...ys, ...ty, (ellipse?.centerCarryM ?? 0) - reach) - pad;
-    const maxY = Math.max(...ys, ...ty, (ellipse?.centerCarryM ?? 0) + reach) + pad;
+    // ⚡ Bolt Optimization: Calculate bounds with a single pass instead of spreading large arrays
+    // This avoids "Maximum call stack size exceeded" errors and O(N) garbage collection on hot renders
+    const ellipseCenterLat = ellipse?.centerLateralM ?? 0;
+    const ellipseCenterCarry = ellipse?.centerCarryM ?? 0;
+    let minXRaw = Math.min(...tx, ellipseCenterLat - reach);
+    let maxXRaw = Math.max(...tx, ellipseCenterLat + reach);
+    let minYRaw = Math.min(...ty, ellipseCenterCarry - reach);
+    let maxYRaw = Math.max(...ty, ellipseCenterCarry + reach);
+    for (let i = 0; i < points.length; i++) {
+      const pX = points[i][0];
+      const pY = points[i][1];
+      if (pX < minXRaw) minXRaw = pX;
+      if (pX > maxXRaw) maxXRaw = pX;
+      if (pY < minYRaw) minYRaw = pY;
+      if (pY > maxYRaw) maxYRaw = pY;
+    }
+    const minX = minXRaw - pad;
+    const maxX = maxXRaw + pad;
+    const minY = minYRaw - pad;
+    const maxY = maxYRaw + pad;
     const scale = Math.min(
       (width - 40) / (maxX - minX || 1),
       (height - 40) / (maxY - minY || 1),

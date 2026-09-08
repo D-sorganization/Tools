@@ -12,7 +12,7 @@ from typing import cast
 CONTRACT_PATH = PurePosixPath("manuals/tools/textbook-chapter-contract.json")
 REGISTRY_PATH = PurePosixPath("manuals/tools/textbook-chapters.json")
 CONTRACT_VERSION = "tools-textbook-chapter-contract/1.0.0"
-REGISTRY_VERSION = "tools-textbook-chapter-registry/1.0.0"
+REGISTRY_VERSION = "tools-textbook-chapter-registry/1.1.0"
 CHAPTER_PATH_ROOT = PurePosixPath("manuals/tools/chapters")
 SEMVER_PATTERN = re.compile(r"^[1-9]\d*\.\d+\.\d+$|^0\.\d+\.\d+$")
 DATE_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
@@ -74,6 +74,7 @@ class TextbookChapterDescriptor:
     verification_tests: tuple[str, ...]
     source_citations: tuple[str, ...]
     limitations: tuple[str, ...]
+    derivation_families: tuple[object, ...]
     revision_history: tuple[RevisionRecord, ...]
 
 
@@ -266,6 +267,7 @@ def _descriptor(value: object) -> TextbookChapterDescriptor:
             "verification_tests",
             "source_citations",
             "limitations",
+            "derivation_families",
             "revision_history",
         },
     )
@@ -303,6 +305,9 @@ def _descriptor(value: object) -> TextbookChapterDescriptor:
         ),
         source_citations=_unique_texts(item["source_citations"], "source citations"),
         limitations=_unique_texts(item["limitations"], "limitations"),
+        derivation_families=tuple(
+            _array(item["derivation_families"], "derivation families")
+        ),
         revision_history=revisions,
     )
 

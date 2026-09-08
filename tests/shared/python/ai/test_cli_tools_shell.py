@@ -133,6 +133,13 @@ class TestAllowDenyMatrix:
             "ls ./rm",
             "ls --use-compress-program=rm",
             "ls --exec=/usr/bin/sudo",
+            "find . -exec rm -rf {} +",
+            "find . --exec rm -rf {} +",
+            "find . -execdir rm -rf {} +",
+            "find . -ok rm -rf {} +",
+            "find . -okdir rm -rf {} +",
+            "find . -name '*.tmp' -delete",
+            "find . --exec=/bin/sh",
         ],
     )
     def test_bypasses_rejected(self, tool: ShellTool, command: str) -> None:

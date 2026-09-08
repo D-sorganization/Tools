@@ -1,0 +1,171 @@
+{
+  "schema_version": "tools-manual-qa/1.0.0",
+  "manual_id": "tools",
+  "release_status": "unapproved-qa-verified",
+  "owner_subepic": 4725,
+  "inspection_mode": "complete-zero-sampling",
+  "sampling_rate": 1.0,
+  "artifacts_manifest_sha256_lf": "cd7495bbabf083e197a16676ab7e352903fd54c46df97366dd4f7466de31f215",
+  "inspections": {
+    "pdf": {
+      "path": "manuals/tools/dist/tools-engineering-design-manual.pdf",
+      "sha256": "a2c25deea16a0b4cd03573d20b29bf68e20aa9ce723107081368a70836ffd557",
+      "bytes": 275840,
+      "page_count": 10,
+      "uninspected_pages": 0,
+      "fonts": [
+        "/DSTOOL+LMMathItalic10-Bold",
+        "/DSTOOL+LMMathItalic10-Regular",
+        "/DSTOOL+LMMathItalic7-Regular",
+        "/DSTOOL+LMMathSymbols10-Regular",
+        "/DSTOOL+LMMathSymbols7-Regular",
+        "/DSTOOL+LMMono10-Regular",
+        "/DSTOOL+LMRoman10-Bold",
+        "/DSTOOL+LMRoman10-Regular",
+        "/DSTOOL+LMRoman7-Regular",
+        "/DSTOOL+NimbusSanL-Bold",
+        "/DSTOOL+NimbusSanL-Regu",
+        "/DSTOOL+NimbusSanL-ReguItal"
+      ],
+      "outline_item_count": 68,
+      "total_images": 1,
+      "total_annotations": 2,
+      "pages": [
+        {
+          "page_number": 1,
+          "character_count": 2646,
+          "line_count": 33,
+          "image_count": 0,
+          "annotation_count": 0,
+          "first_line_prefix": "Tools Engineering Design Manual"
+        },
+        {
+          "page_number": 2,
+          "character_count": 3676,
+          "line_count": 44,
+          "image_count": 0,
+          "annotation_count": 0,
+          "first_line_prefix": "Tools Engineering Design Manual Generated - Unapproved"
+        },
+        {
+          "page_number": 3,
+          "character_count": 3822,
+          "line_count": 44,
+          "image_count": 0,
+          "annotation_count": 0,
+          "first_line_prefix": "Tools Engineering Design Manual Generated - Unapproved"
+        },
+        {
+          "page_number": 4,
+          "character_count": 1983,
+          "line_count": 29,
+          "image_count": 1,
+          "annotation_count": 0,
+          "first_line_prefix": "Tools Engineering Design Manual Generated - Unapproved"
+        },
+        {
+          "page_number": 5,
+          "character_count": 3335,
+          "line_count": 41,
+          "image_count": 0,
+          "annotation_count": 0,
+          "first_line_prefix": "Tools Engineering Design Manual Generated - Unapproved"
+        },
+        {
+          "page_number": 6,
+          "character_count": 2597,
+          "line_count": 40,
+          "image_count": 0,
+          "annotation_count": 0,
+          "first_line_prefix": "Tools Engineering Design Manual Generated - Unapproved"
+        },
+        {
+          "page_number": 7,
+          "character_count": 2103,
+          "line_count": 41,
+          "image_count": 0,
+          "annotation_count": 0,
+          "first_line_prefix": "Tools Engineering Design Manual Generated - Unapproved"
+        },
+        {
+          "page_number": 8,
+          "character_count": 2711,
+          "line_count": 41,
+          "image_count": 0,
+          "annotation_count": 0,
+          "first_line_prefix": "Tools Engineering Design Manual Generated - Unapproved"
+        },
+        {
+          "page_number": 9,
+          "character_count": 3081,
+          "line_count": 41,
+          "image_count": 0,
+          "annotation_count": 0,
+          "first_line_prefix": "Tools Engineering Design Manual Generated - Unapproved"
+        },
+        {
+          "page_number": 10,
+          "character_count": 2144,
+          "line_count": 31,
+          "image_count": 0,
+          "annotation_count": 2,
+          "first_line_prefix": "Tools Engineering Design Manual Generated - Unapproved"
+        }
+      ]
+    },
+    "docx": {
+      "path": "manuals/tools/dist/tools-engineering-design-manual.docx",
+      "sha256": "2b13ec732a8dc38044f606a521bb961541b2f39f434aca6d94b1d4c910719559",
+      "bytes": 71156,
+      "paragraph_count": 188,
+      "heading_count": 69,
+      "math_element_count": 52,
+      "table_count": 1,
+      "drawing_count": 1,
+      "bookmark_count": 74,
+      "unresolved_reference_count": 0
+    },
+    "html": {
+      "path": "manuals/tools/dist/tools-engineering-design-manual.html",
+      "sha256": "2cd8a1e0dc5f17bd95257e452af642cb49edd897e842250c7a0d2097d0d3c5f4",
+      "bytes": 100607,
+      "has_lang": true,
+      "has_viewport": true,
+      "mathml_block_count": 52,
+      "table_count": 1,
+      "image_count": 1,
+      "images_with_valid_alt": 1,
+      "images_missing_alt": 0,
+      "unresolved_reference_count": 0
+    },
+    "tex": {
+      "path": "manuals/tools/dist/tools-engineering-design-manual.tex",
+      "sha256": "188a68d12db2c292669b414d09dafcd9204b29b2c8ddd5af7fb10d893b63789c",
+      "bytes": 39156,
+      "has_geometry": true,
+      "has_microtype": true,
+      "figure_count": 2,
+      "csl_reference_block_present": true,
+      "unresolved_reference_count": 0
+    }
+  },
+  "cross_format_integrity": {
+    "semantic_phrases_verified": 10,
+    "figure_presence_verified": true,
+    "table_presence_verified": true,
+    "math_representation_verified": true,
+    "status": "verified-semantic-parity"
+  },
+  "blockers": [
+    {
+      "id": "TOOLS-D8-PUBLICATION-PENDING",
+      "owner": "TOOLS-D8 subepic #4728",
+      "resolution": "Establish immutable public publication projection under TOOLS-D8 before releasing artifacts."
+    },
+    {
+      "id": "TOOLS-HUMAN-APPROVAL-PENDING",
+      "owner": "Lead systems maintainers",
+      "resolution": "Recorded page and accessibility review requires explicit maintainer sign-off prior to publication."
+    }
+  ]
+}
